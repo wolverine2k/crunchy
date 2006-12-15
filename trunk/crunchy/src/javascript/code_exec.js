@@ -187,12 +187,13 @@ function exec_canvas(canvas_id)
 function interp_trapkeys(event, interp_id){
 	switch(event.keyCode){
 		case 13:
-			hide_tipbar(interp_id);
+			//tipbar currently disabled :(
+			//hide_tipbar(interp_id);
 			interp_push(interp_id);
 			break;
 		case 48: 	//close )
 		case 8:    // backspace
-          hide_tipbar(interp_id);
+          //hide_tipbar(interp_id);
           break;
       case 57:  // open paren "("
             interp_doc(interp_id);
@@ -273,8 +274,8 @@ function interp_doc(interp_id) {
     input = document.getElementById(interp_id+"_input");
 	 end = input.selectionEnd;    
     data = input.value.substring(0, end);
-    tipbar = document.getElementById(interp_id+"_tipbar");
-    hide_tipbar(interp_id);
+    //tipbar = document.getElementById(interp_id+"_tipbar");
+    //hide_tipbar(interp_id);
    
     h = get_http();
     h.onreadystatechange = function() {
@@ -286,8 +287,8 @@ function interp_doc(interp_id) {
             }
             switch (status) {
                 case 200:
-                    tipbar.appendChild(document.createTextNode(h.responseText));
-                    show_tipbar(interp_id);
+                    //tipbar.appendChild(document.createTextNode(h.responseText));
+                    //show_tipbar(interp_id);
                     input.focus();
                     break;
                 // Internet Explorer might return 1223 for 204
@@ -311,8 +312,8 @@ function interp_dir(interp_id) {
     input = document.getElementById(interp_id+"_input");
 	 end = input.selectionEnd;    
     data = input.value.substring(0, end);
-    tipbar = document.getElementById(interp_id+"_tipbar");
-    hide_tipbar(interp_id);
+    //tipbar = document.getElementById(interp_id+"_tipbar");
+    //hide_tipbar(interp_id);
    
     h = get_http();
     h.onreadystatechange = function() {
@@ -324,8 +325,8 @@ function interp_dir(interp_id) {
             }
             switch (status) {
                 case 200:
-                    tipbar.appendChild(document.createTextNode(h.responseText));
-                    show_tipbar(interp_id);
+                    //tipbar.appendChild(document.createTextNode(h.responseText));
+                    //show_tipbar(interp_id);
                     input.focus();
                     break;
                 // Internet Explorer might return 1223 for 204

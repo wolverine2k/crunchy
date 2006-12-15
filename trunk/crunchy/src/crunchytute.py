@@ -19,7 +19,7 @@ import colourize
 import security
 import preferences
 prefs = preferences.UserPreferences()
-
+import widgets
 from translation import _
 
 #the DTD to use:
@@ -208,82 +208,15 @@ class VLAMPage(object):
     def substitute_interpreter(self, elem):
         """substitute an interpreter for elem"""
         id, text, elem = self.prepare_elem(elem)
-        elem.attrib['class'] = "interpreter"
-        #container for the example code:
-        pre = et.SubElement(elem, 'pre')
-        if text:
-            self.style_code(pre, text)
-        output = et.SubElement(elem, 'div', id=id+'_output_container')
-        output.attrib['class'] = "interp_output_container"
-        output.text = '\n' # a single space would push the first "output" prompt right
-        prompt = et.SubElement(elem, "span", id=id+"_prompt")
-        prompt.attrib['class'] = "stdin"
-        prompt.text = ">>> "
-        input = et.SubElement(elem, "input", type="text", id=id+"_input", onkeyup='interp_trapkeys(event, "'+id+'")')
-        input.attrib['class'] = "interp_input"
-        httprepl.interps[id] = httprepl.HTTPrepl()
-        tipbar = et.SubElement(self.body, "div", id=id+"_tipbar")
-        tipbar.attrib['class'] = "interp_tipbar"
-        tipbar.text = " "
+        #neutralise the element
+        elem.tag = "span"
+        #and add an interpreter
+        elem.append(widgets.Interpreter(text))
 
     def substitute_editor(self, elem):
         """Substitutes an editor for elem.  It is used for 'editor', 'doctest',
            as well as 'interpreter to editor' options."""
-        global DOCTESTS
-        id, text, elem = self.prepare_elem(elem)
-        a = et.SubElement(elem, 'a', id=id)
-        a.text = ' '
-        pre = et.SubElement(elem, 'pre')
-        # no-pre does not show the code inside the <pre> element, but
-        # only the editor.  This does not make sense for a doctest nor for
-        # an "interpreter to editor" option.  It does not make sense either
-        # if the code is not copied into the textarea!
-        if 'no-pre' in self.vlamcode and not 'no-copy' in self.vlamcode \
-            and not 'doctest' in self.vlamcode \
-            and not 'interpreter' in self.vlamcode:
-            pre.text = '\n'
-        elif text:
-            self.style_code(pre, text)
-        else:
-            self.python_code = "\n"
-
-        if 'size' in self.vlamcode:
-            try:
-                res = re.search(r'size\s*=\s*\((.+?),(.+?)\)', self.vlamcode)
-                rows = int(res.groups()[0])
-                cols = int(res.groups()[1])
-            except:
-                rows, cols = (10, 80)
-        else:
-            rows, cols = (10, 80)
-        textarea = et.SubElement(elem, "textarea", rows=str(rows), cols=str(cols), id=id+"_code")
-        if 'no-copy' in self.vlamcode:
-            textarea.text = '\n'
-        else:
-            textarea.text = self.python_code
-        br = et.SubElement(elem, "br")
         
-        if 'external' in self.vlamcode:
-            if not 'nointernal' in self.vlamcode:
-                btn = et.SubElement(elem, "button", onclick='exec_by_id("'+id+'")')
-                btn.text = _("Evaluate")
-            if 'console' in self.vlamcode:
-                btn2 = et.SubElement(elem, "button", onclick='exec_external_console("'+id+'")')
-            else:
-                btn2 = et.SubElement(elem, "button", onclick='exec_external("'+id+'")')
-            btn2.text = _("Execute externally")
-        else:
-            btn = et.SubElement(elem, "button", onclick='exec_by_id("'+id+'")')
-            btn.text = _("Evaluate")
-        out = et.SubElement(elem, "div", id=id+"_output")
-        out.text = ' '
-        out.attrib['class'] = 'term_out'
-        if 'doctest' in self.vlamcode:
-            btn.attrib['onclick'] = 'doctest_by_id("'+id+'")'
-            DOCTESTS[id] = text
-            textarea.text = '\n'
-            out.attrib['class'] = 'doctest_out'
-        return
 
     def substitute_canvas(self, elem):
         """substitute a canvas for elem"""
