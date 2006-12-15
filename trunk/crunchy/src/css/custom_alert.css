@@ -1,0 +1,58 @@
+/* Code adapted from http://slayeroffice.com/code/custom_alert/ */
+#modalContainer {
+	background-color:transparent;
+	position:absolute;
+	width:100%;
+	height:100%;
+	top:0px;
+	left:0px;
+	z-index:10000;
+	background-image:url(../images/tp.png); /* required by MSIE to prevent actions on lower z-index elements */
+}
+
+#alertBox {
+	position:relative;
+	width:500px;
+	min-height:200px;
+	margin-top:50px;
+	border:2px solid red;
+	background-color: white;
+	background-image:url(../images/question61x61.png);
+	background-repeat:no-repeat;
+	background-position:0px 40px;
+}
+
+#modalContainer > #alertBox {
+	position:fixed;
+}
+
+#alertBox h1 {
+	margin:0;
+	font:bold 0.9em verdana, arial;
+	background-color:orange;
+	color:black;
+	border-bottom:1px solid #000;
+	padding:2px 0 2px 5px;
+}
+
+#alertBox p {
+	font:0.8em verdana,arial;
+	height:50px;
+	padding-left:5px;
+	margin-left:55px;
+}
+
+#alertBox #closeBtn {
+	display:block;
+	position:relative;
+	margin:25px auto;
+	padding:3px;
+	border:2px solid #000;
+	width:70px;
+	font:0.9em bold verdana, arial;
+	text-transform:uppercase;
+	text-align:center;
+	color:black;
+	background-color:springgreen;
+	text-decoration:none;
+}
