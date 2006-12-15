@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Frog DocTest</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+<link href="tutor.css" type="text/css" rel="stylesheet" />
+<link href="tutor_bw.css" title="Black and white"
+type="text/css" rel="stylesheet" />
+<link href="tutor_menu.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="maths.gif" class="titleimage"/>
+<span class="title">Quiz time</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics: drawing</a>
+<a href="plot.html">Graphics: plotting</a>
+<a href="sound.html">Sound</a>
+<a href="external.html">External applications</a>
+</div>
+<div id="main">
+<p>People that know about these things apparently say that you should test your code.  One method that is used in Python is known as DocTest.  I am sure you know about DocTests; if not, you probably shouldn't be reading this, but rather read a real Python tutorial.</p>
+<p>Jeff Elkner wrote on edu-sig that Python tutorials should perhaps be based around the use of DocTest.  Here's an example of what he meant: try your hand at writing <em>just enough code</em> to make the following DocTest pass.</p>
+<pre title="doctest size=(6, 80)">
+>>> p = Animal()
+>>> p.name
+''
+>>> p.friends
+[]
+</pre>
+<p>After making a few (<em>aham</em>) intentional mistakes to verify how
+friendly the error messages are, you will most certainly write the correct code to see what kind of congratulatory message you are going to get.  
+Afterwards try the next, slightly more difficult example.</p>
+<pre title="doctest size=(13, 80)">
+>>> p = Animal('Pooh')
+>>> p.name
+'Pooh'
+>>> p.addFriend('Piglet')
+>>> p.friends
+['Piglet']
+</pre>
+<p>If you are using Crunchy Frog, you realise that you can simply enter your code in the "box" above, press the button, and see what happens.</p>
+<p>If you are not using Crunchy Frog, and you still want to try your hand at this DocTest business, you have to:</p>
+<ul>
+<li>copy the above test in a file (which can be the same as your program);</li>
+<li>edit your program to add the desired code;</li>
+<li>look up the syntax to call up the appropriate method in the doctest module and feel like you are wasting too much time on something that should be much easier if life were fair.</li>
+</ul>  
+<p>Crunchy Frog's ultimate goal is to make your life seem more fair.</p>
+<p><small>If you prefer things that are not fair, use this link to go to the <a href="canvas.html">canvas</a> tutorial; however, you won't be able to see anything interesting if you are not using Crunchy Frog.</small></p>
+</div>
+</body>
+</html>
