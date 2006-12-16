@@ -23,7 +23,7 @@ et = ElementTree
 from StringIO import StringIO
 import tokenize, keyword
 
-import luid
+import utils
 import httprepl
 from colourize import Colourizer
 from translation import _
@@ -37,13 +37,15 @@ CONSOLE_BUTTON = 0x8
 colourer = Colourizer()
 
 class Interpreter(et._ElementInterface):
-    javascript = None
     def __init__(self, text = None):
-        uid = luid.next()
+        uid = utils.next_luid()
         elem = et.Element("div")
         elem.attrib['class'] = "interpreter"
         #make sure the support code is there:
-        #js = Javascript(self.javascript) #disabled because we load it all at once for now
+        t = Javascript('/js_interp')
+        print t
+        print t.attrib
+        elem.append(t) 
         #container for the example code:
         elem.append(parseListing(text))
         output = et.SubElement(elem, 'div', id=uid+'_output_container')
@@ -53,17 +55,16 @@ class Interpreter(et._ElementInterface):
         prompt.attrib['class'] = "stdin"
         prompt.text = ">>> "
         input = et.SubElement(elem, "input", type="text", id=uid+"_input", 
-            onkeyup='interp_trapkeys(event, "'+uid+'")')
+            onkeyup='interp_trapkeys(event, %s)' % uid)
         input.attrib['class'] = "interp_input"
         httprepl.interps[uid] = httprepl.HTTPrepl()
         self.__dict__ = elem.__dict__
 
 class Javascript(et._ElementInterface):
-    """Some javascript embedded in appropriate XHTML"""
-    def __init__(self, source):
-        elem = et.Element("script", type="text/javascript")
-        elem.text = source
-        self.__dict__ == elem.__dict__
+    """Some javascript linked in"""
+    def __init__(self, link):
+        elem = et.Element("script", type="text/javascript", src=link)
+        self.__dict__ = elem.__dict__
         
 class Editor(et._ElementInterface):
     """An editor with one some execute buttons"""
@@ -71,7 +72,7 @@ class Editor(et._ElementInterface):
     def __init__(self, buttons, text, rows=10, cols=80, copy=True, doctest=None):
         """Initialise it, buttons must be a bitwise ORed comination of the constants above"""
         elem = et.Element("div")
-        uid = luid.next()
+        uid = utils.next_luid()
         a = et.SubElement(elem, 'a', id=uid)
         a.text = ' '
         if text:
@@ -99,7 +100,6 @@ class Editor(et._ElementInterface):
     
 class ExecOutput(et._ElementInterface):
     """An output box with pretty colouring etc"""
-    javascript = None
     def __init__(self, uid):
         elem = et.Element("div")
         elem.attrib['class'] = 'term_out'
@@ -123,6 +123,12 @@ class Plotter(Canvas):
     """Like a canvas but for plotting curves"""
     pass
 
+class WidgetInit(et._ElementInterface):
+    """needed in the head of every page"""
+    def __init__(self):
+        elem = et.Element('script', type='text/javascript',src='/js_common')
+        self.__dict__ = elem.__dict__
+    
 def parseListing(code, line_nos = False):
     """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py"""
     in_buf = StringIO(code)
@@ -172,7 +178,7 @@ def parseListing(code, line_nos = False):
             else:
                 token_elem.attrib['class']='py_variable'
         elif tokenType == tokenize.STRING:
-            tokenString = changeHTMLspecialCharacters(tokenString)
+            tokenString = utils.html_escape(tokenString)
             string_elem = et.SubElement(out_elem, 'span')
             string_elem.attrib['class'] = 'py_string'
             if tokenString[0:3] in ['"""',"'''"]:
@@ -206,8 +212,3 @@ def parseListing(code, line_nos = False):
             other_elem.text = tokenString
     return out_elem
 
-def changeHTMLspecialCharacters(aString):
-    aString = aString.replace('&', '&amp;')
-    aString = aString.replace('<', '&lt;')
-    aString = aString.replace('>', '&gt;')
-    return aString

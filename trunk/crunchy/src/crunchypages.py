@@ -5,6 +5,7 @@ from urllib import pathname2url
 
 import httprepl
 import crunchytute
+import widget_javascript
 
 # The following variables are initialised in crunchy.py
 repl = None    # read-eval-print-loop: Python interpreter
@@ -96,3 +97,11 @@ def get_language(args):
     vlam = crunchytute.VLAMPage(handle, prefs.options)
     return vlam.get()
 
+def get_editor_js(args):
+    return widget_javascript.editor
+
+def get_common_js(args):
+    return widget_javascript.common
+
+def get_interpreter_js(args):
+    return widget_javascript.interpreter

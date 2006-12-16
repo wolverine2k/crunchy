@@ -19,6 +19,7 @@ import preferences
 from crunchyrequest import CrunchyRequestHandler as request
 import crunchypages as pages
 import urllib
+import widget_javascript
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -147,18 +148,10 @@ class SecureSession(object):
         global js_name
         self.root_dir = root_dir
         prefs = preferences.UserPreferences()
-        js_infile = open(os.path.join(root_dir, 'src', 'javascript', 
-                                  'code_exec.js'), 'r')
         self.session_id = str(port)+str(int(random.random()*1000000000))
         self.map_commands()
         # create a unique javascript file to be used within a session
-        js_name = os.path.join(prefs.working_dir, str(self.session_id)+'code_exec.js')
-        js_outfile = open(os.path.join(root_dir, js_name), 'w')
-        js_outfile.write("var session_id = " + self.session_id + '\n')
-        js_outfile.write(js_infile.read())
-        js_outfile.close()
-        # checks to see if old javascript files were left behind
-        # and remove them.
+        widget_javascript.set_sessionid(self.session_id)
         
     def map_commands(self):
         commands['/'] = '/'  # safe; no need to add session_id
@@ -194,6 +187,11 @@ class SecureSession(object):
         commands['/canvas_exec'] = '/canvas_exec' + self.session_id
         commands['/spawn'] = '/spawn' + self.session_id
         commands['/spawn_console'] = '/spawn_console' + self.session_id
+        #
+        request.pagemap['/js_interp'] = pages.get_interpreter_js
+        request.pagemap['/js_common'] = pages.get_common_js
+        request.pagemap['/js_editor'] = pages.get_editor_js
+        #request.pagemap['/js_output'] = pages.get_output_js
         return   
 
     def close(self):

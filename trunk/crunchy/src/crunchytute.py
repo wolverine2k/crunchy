@@ -61,8 +61,9 @@ class VLAMPage(object):
         #add the standard crunchy includes
         #self.insert_js("/src/javascript/code_exec.js")
         #"file:" + 
-        self.insert_js(security.commands['/get_user_js']+"?"+urllib.pathname2url(security.js_name))
-        self.insert_js("/src/javascript/custom_alert.js")
+        self.head.insert(0,widgets.WidgetInit())
+        self.head.append(widgets.Javascript('/js_interp'))
+        #self.insert_js("/src/javascript/custom_alert.js")
         self.insert_css("/src/css/default.css")
         self.insert_css("/src/css/custom_alert.css")
         for style in prefs.styles:
@@ -80,14 +81,6 @@ class VLAMPage(object):
         css.set("href", filename)
         css.set("type", "text/css")
         self.head.insert(0, css)
-        return
-
-    def insert_js(self, filename):
-        '''Inserts a js file in the <head>.'''
-        js = et.Element("script")
-        js.set("src", filename)
-        js.set("type", "text/javascript")
-        self.head.insert(0, js)
         return
         
     def process_body(self):
