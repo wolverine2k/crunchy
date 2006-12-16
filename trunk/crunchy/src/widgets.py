@@ -20,14 +20,19 @@ the visual elements as XML trees.
 
 from elementtree import ElementTree
 et = ElementTree
+from StringIO import StringIO
+import tokenize, keyword
+
 import luid
 import httprepl
 from colourize import Colourizer
+from translation import _
 
 #some constants:
 EXEC_BUTTON = 0x1
 DOCTEST_BUTTON = 0x2
 EXTERNAL_BUTTON = 0x4
+CONSOLE_BUTTON = 0x8
 
 colourer = Colourizer()
 
@@ -38,12 +43,9 @@ class Interpreter(et._ElementInterface):
         elem = et.Element("div")
         elem.attrib['class'] = "interpreter"
         #make sure the support code is there:
-        js = Javascript(self.javascript)
+        #js = Javascript(self.javascript) #disabled because we load it all at once for now
         #container for the example code:
-        pre = et.SubElement(elem, 'pre')
-        #todo: styling
-        if text:
-            pre.text = text
+        elem.append(parseListing(text))
         output = et.SubElement(elem, 'div', id=uid+'_output_container')
         output.attrib['class'] = "interp_output_container"
         output.text = '\n' # a single space would push the first "output" prompt right
@@ -78,6 +80,7 @@ class Editor(et._ElementInterface):
         if not copy:
             textarea.text = '\n'
         else:
+            #todo: styling
             textarea.text = text
         et.SubElement(elem, "br")
         if buttons & EXEC_BUTTON:
@@ -107,8 +110,8 @@ class Code(et._ElementInterface):
     """Non-interactive highlighted code"""
     def __init__(self, code):
         """Initialise a simple colouring"""
-        elem = et.Element("span")
-        elem.text = colourer.parseListing(code)
+        elem = parseListing(code)
+        self.__dict__ = elem.__dict__
         
 class Canvas(et._ElementInterface):
     """Graphics Canvas"""
@@ -119,3 +122,92 @@ class Canvas(et._ElementInterface):
 class Plotter(Canvas):
     """Like a canvas but for plotting curves"""
     pass
+
+def parseListing(code, line_nos = False):
+    """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py"""
+    in_buf = StringIO(code)
+    out_elem = et.Element("pre")
+    out_elem.text = ''
+    tokenType = None
+    tokenString = ""
+    endLine = endColumn = 0
+    for tok in tokenize.generate_tokens(in_buf.readline):
+        lastTokenType = tokenType
+        tokenType = tok[0]
+        lastTokenString = tokenString
+        tokenString = tok[1]
+        beginLine, beginColumn = tok[2]
+        endOldLine, endOldColumn = endLine, endColumn
+        endLine, endColumn = tok[3]
+        internal_elems = out_elem.getchildren()
+        if tokenType == tokenize.ENDMARKER:  
+            break
+        if beginLine != endOldLine:
+            if lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]: 
+                if line_nos:
+                    line_no = et.SubElement(out_elem,"span")
+                    line_no.attrib['class'] = "py_linenumber"
+                    line_no.text = "%3d" % beginLine
+            elif tokenType != tokenize.DEDENT:  # logical line continues
+                if len(internal_elems):
+                    internal_elems[-1].tail = "\n"
+            if not len(internal_elems):
+                out_elem.text = " "*(beginColumn - endOldColumn)
+            else:
+                internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
+        else:
+            #insert the requisite spaces:
+            if not len(internal_elems):
+                #spaces at start:
+                out_elem.text = " "*(beginColumn - endOldColumn)
+            else:
+                #spaces after last subelement:
+                internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
+        #the stuff from htmlFormat():
+        if tokenType == tokenize.NAME:
+            token_elem = et.SubElement(out_elem, "span")
+            token_elem.text = tokenString
+            if keyword.iskeyword(tokenString.strip()):
+                token_elem.attrib['class']='py_keyword'
+            else:
+                token_elem.attrib['class']='py_variable'
+        elif tokenType == tokenize.STRING:
+            tokenString = changeHTMLspecialCharacters(tokenString)
+            string_elem = et.SubElement(out_elem, 'span')
+            string_elem.attrib['class'] = 'py_string'
+            if tokenString[0:3] in ['"""',"'''"]:
+                string_elem.attrib['class'] = 'py_comment'
+                if line_nos:
+                    line_no = 1
+                    for line in tkenString.split('\n'):
+                        line_lbl = et.SubElement(string_elem,'span')
+                        line_lbl.text = "%3d" % line_no
+                        line_lbl.attrib['class'] = 'py_linenumber'
+                        line_lbl.tail = line
+                        line_no += 1
+                else:
+                    string_elem.text = tokenString
+            else:
+                string_elem.text = tokenString
+        elif tokenType == tokenize.COMMENT:
+            comm_elem = et.SubElement(out_elem, 'span')
+            comm_elem.attrib['class'] = 'py_comment'
+            comm_elem.text = tokenString
+        elif tokenType == tokenize.NUMBER:
+            num_elem = et.SubElement(out_elem, 'span')
+            num_elem.attrib['class'] = 'py_number'
+            num_elem.text = tokenString
+        elif tokenType == tokenize.OP:
+            op_elem = et.SubElement(out_elem, 'span')
+            op_elem.attrib['class'] = 'py_op'
+            op_elem.text = tokenString
+        else:
+            other_elem = et.SubElement(out_elem, 'span')
+            other_elem.text = tokenString
+    return out_elem
+
+def changeHTMLspecialCharacters(aString):
+    aString = aString.replace('&', '&amp;')
+    aString = aString.replace('<', '&lt;')
+    aString = aString.replace('>', '&gt;')
+    return aString

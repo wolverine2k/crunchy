@@ -216,7 +216,11 @@ class VLAMPage(object):
     def substitute_editor(self, elem):
         """Substitutes an editor for elem.  It is used for 'editor', 'doctest',
            as well as 'interpreter to editor' options."""
-        
+        id, text, elem = self.prepare_elem(elem)
+        #neutralise it:
+        elem.tag = "span"
+        #this needs support for finessing the buttons:
+        elem.append(widgets.Editor(widgets.EXEC_BUTTON, text))
 
     def substitute_canvas(self, elem):
         """substitute a canvas for elem"""
