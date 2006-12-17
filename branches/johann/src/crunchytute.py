@@ -364,7 +364,10 @@ class VLAMPage(object):
                         elem.attrib['src'] = urlparse.urljoin(self.base, elem.attrib['src'])
             elif 'href' in elem.attrib:
                 if not 'http://' in elem.attrib['href']:
-                    if elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
+                    if elem.attrib['href'].startswith('#'):
+                        #leave it be
+                        pass
+                    elif elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
                         elem.attrib['href'] = '/load_external?path=' + \
                             urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['href']))
                     else:
