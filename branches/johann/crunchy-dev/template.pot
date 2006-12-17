@@ -1,0 +1,302 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Crunchy\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2006-08-17 17:34-0400\n"
+"Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
+"Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: CANADA\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-Basepath: c:\\crunchy_work\\branches\\andre\n"
+"X-Poedit-SearchPath-0: src\n"
+
+#: src/canvas.py:40
+#: src/canvas.py:59
+msgid "set_line_color"
+msgstr ""
+
+#: src/canvas.py:41
+#: src/canvas.py:60
+msgid "set_line_colour"
+msgstr ""
+
+#: src/canvas.py:42
+msgid "color"
+msgstr ""
+
+#: src/canvas.py:43
+msgid "colour"
+msgstr ""
+
+#: src/canvas.py:44
+msgid "x_range"
+msgstr ""
+
+#: src/canvas.py:45
+msgid "y_range"
+msgstr ""
+
+#: src/canvas.py:46
+msgid "x_axis"
+msgstr ""
+
+#: src/canvas.py:47
+msgid "y_axis"
+msgstr ""
+
+#: src/canvas.py:48
+msgid "prepare_graph"
+msgstr ""
+
+#: src/canvas.py:49
+msgid "plot_function"
+msgstr ""
+
+#: src/canvas.py:53
+msgid "circle"
+msgstr ""
+
+#: src/canvas.py:54
+msgid "filled_circle"
+msgstr ""
+
+#: src/canvas.py:55
+msgid "filled_rectangle"
+msgstr ""
+
+#: src/canvas.py:56
+msgid "filled_triangle"
+msgstr ""
+
+#: src/canvas.py:57
+msgid "line"
+msgstr ""
+
+#: src/canvas.py:58
+msgid "rectangle"
+msgstr ""
+
+#: src/canvas.py:61
+msgid "set_fill_color"
+msgstr ""
+
+#: src/canvas.py:62
+msgid "set_fill_colour"
+msgstr ""
+
+#: src/canvas.py:63
+msgid "triangle"
+msgstr ""
+
+#: src/canvas.py:64
+msgid "point"
+msgstr ""
+
+#: src/crunchytraceback.py:16
+#, python-format
+msgid ""
+"Error on line %s:\n"
+"%s%s\n"
+msgstr ""
+
+#: src/crunchytute.py:141
+msgid "Load local tutorial"
+msgstr ""
+
+#: src/crunchytute.py:155
+msgid "Load remote tutorial"
+msgstr ""
+
+#: src/crunchytute.py:175
+msgid "Submit language choice"
+msgstr ""
+
+#: src/crunchytute.py:272
+#: src/crunchytute.py:280
+msgid "Evaluate"
+msgstr ""
+
+#: src/crunchytute.py:277
+msgid "Execute externally"
+msgstr ""
+
+#: src/crunchytute.py:318
+msgid "Draw"
+msgstr ""
+
+#: src/crunchytute.py:322
+msgid "Plot"
+msgstr ""
+
+#: src/errorhandler.py:84
+#, python-format
+msgid "Error in processing %s: %s"
+msgstr ""
+
+#: src/errorhandler.py:87
+#, python-format
+msgid "The file '%s' has some html errors in it: %s."
+msgstr ""
+
+#: src/errorhandler.py:88
+msgid "  It can not be displayed."
+msgstr ""
+
+#: src/errorhandler.py:95
+#, python-format
+msgid "Canvas error: %s is an invalid colour."
+msgstr ""
+
+#: src/errorhandler.py:98
+#, python-format
+msgid "Canvas error.  Python info: %s."
+msgstr ""
+
+#: src/errorhandler.py:102
+#, python-format
+msgid "Python execution error.  Info: %s."
+msgstr ""
+
+#: src/errorhandler.py:106
+#, python-format
+msgid ""
+"Parsing error occurred in the following Python code.\n"
+"Info: %s."
+msgstr ""
+
+#: src/errorhandler.py:115
+#: src/errorhandler.py:121
+#, python-format
+msgid "Unexpected error in %s. "
+msgstr ""
+
+#: src/errorhandler.py:116
+#, python-format
+msgid "This occurred while trying to open %s. "
+msgstr ""
+
+#: src/errorhandler.py:117
+#: src/errorhandler.py:124
+#, python-format
+msgid "The information given by Python is: %s."
+msgstr ""
+
+#: src/errorhandler.py:122
+#, python-format
+msgid "This occurred while trying to process the tree for %s. "
+msgstr ""
+
+#: src/errorhandler.py:123
+#, python-format
+msgid "The files processed so far are %s. "
+msgstr ""
+
+#: src/errorhandler.py:128
+#, python-format
+msgid "Unrecognized argument in Tutorials.get(): %s. "
+msgstr ""
+
+#: src/errorhandler.py:129
+msgid "This should never happen - and has not happened since the last bug fix!"
+msgstr ""
+
+#: src/errorhandler.py:130
+msgid " Please contact the developpers with a copy of the html file "
+msgstr ""
+
+#: src/errorhandler.py:131
+msgid "that caused this problem, and a description of what was done."
+msgstr ""
+
+#: src/httprepl.py:36
+msgid "Type help(object) for help about object."
+msgstr ""
+
+#: src/httprepl.py:38
+msgid "You cannot call help() without an argument."
+msgstr ""
+
+#: src/httprepl.py:109
+#, python-format
+msgid "%s is not defined yet"
+msgstr ""
+
+#: src/interp_backend.py:72
+msgid "Follow this link if you want to know more about exceptions."
+msgstr ""
+
+#: src/interp_backend.py:107
+msgid "The following example failed:"
+msgstr ""
+
+#: src/interp_backend.py:109
+msgid "The expected result was:"
+msgstr ""
+
+#: src/interp_backend.py:111
+msgid "The result obtained was:"
+msgstr ""
+
+#: src/interp_backend.py:113
+msgid "An exception was raised:"
+msgstr ""
+
+#: src/interp_backend.py:157
+msgid "There was no test to satisfy."
+msgstr ""
+
+#: src/interp_backend.py:160
+msgid "Congratulation, your code passed the test!"
+msgstr ""
+
+#: src/interp_backend.py:162
+msgid "You code failed the test."
+msgstr ""
+
+#: src/interp_backend.py:165
+#, python-format
+msgid "Congratulation, your code passed all %d tests!"
+msgstr ""
+
+#: src/interp_backend.py:167
+#, python-format
+msgid "Your code failed all %d tests."
+msgstr ""
+
+#: src/interp_backend.py:169
+#, python-format
+msgid "Your code failed %s out of %s tests."
+msgstr ""
+
+#: src/soundout.py:47
+msgid "'approximate' settings will be ignored."
+msgstr ""
+
+#: src/soundout.py:48
+msgid "It is only available under Windows."
+msgstr ""
+
+#: src/soundout.py:133
+msgid "WARNING: sounds multiple of 233.1 Hz may be 'noisy' on your computer."
+msgstr ""
+
+#: src/soundout.py:258
+msgid "Sound is not supported on this platform."
+msgstr ""
+
+#: src/soundout.py:259
+msgid "You need one of the following 2 choices:"
+msgstr ""
+
+#: src/soundout.py:260
+msgid " use MS Windows with winsound installed;"
+msgstr ""
+
+#: src/soundout.py:261
+msgid " use a UNIX system that supports OSS (ossaudiodev)."
+msgstr ""
+

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Code Editor External Test</title></head>
+<body>
+<h1>Crunchy Frog External Execution Tests</h1>
+<p>Here's an Editor box, try running the code supplied (runs an interpreter):</p>
+<pre title="editor external nointernal console">
+import code
+code.interact()
+</pre>
+<p>Here's another one, this one requires pygtk (shamelessly lifted from http://www.pygtk.org/pygtk2tutorial/):</p>
+<pre title="editor external">
+import gtk
+class HelloWorld:
+    def hello(self, widget, data=None):
+        print "Hello World"
+    def delete_event(self, widget, event, data=None):
+        print "delete event occurred"
+        return False
+    def destroy(self, widget, data=None):
+        gtk.main_quit()
+    def __init__(self):
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.connect("delete_event", self.delete_event)
+        self.window.connect("destroy", self.destroy)
+        self.window.set_border_width(10)
+        self.button = gtk.Button("Hello World")
+        self.button.connect("clicked", self.hello, None)
+        self.button.connect_object("clicked", gtk.Widget.destroy, self.window)
+        self.window.add(self.button)
+        self.button.show()
+        self.window.show()
+    def main(self):
+        gtk.main()
+hello = HelloWorld()
+hello.main()
+</pre>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
