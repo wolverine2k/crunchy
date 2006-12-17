@@ -90,7 +90,7 @@ class Editor(et._ElementInterface):
             btn.text = _("Evaluate")
         if buttons & DOCTEST_BUTTON:
             btn = et.SubElement(elem, "button", onclick='doctest_by_id("'+uid+'")')
-            btn.text = _("Evaluate Doctest")
+            btn.text = _("Evaluate")
         if buttons & EXTERNAL_BUTTON:
             btn = et.SubElement(elem, "button", onclick='exec_external("'+uid+'")')
             btn.text = _("Execute Externally")
@@ -134,7 +134,7 @@ class WidgetInit(et._ElementInterface):
         self.__dict__ = elem.__dict__
     
 def parseListing(code, line_nos = False):
-    """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py
+    """parse some Python code returning an XHTML tree, a simple refactoring of Andre's colourizer.py
     this actually broken in some presumably subtle way
     """
     try:

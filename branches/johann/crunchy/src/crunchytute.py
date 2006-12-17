@@ -1,7 +1,7 @@
 '''
 Process VLAM pages and describe each one as a class instance,
 
-based on treetools.py by André Roberge
+based on treetools.py by Andre Roberge
 
 '''
 from elementtree import ElementTree, HTMLTreeBuilder
@@ -216,7 +216,7 @@ class VLAMPage(object):
         #this needs support for finessing the buttons:
         elem.append(widgets.Editor(widgets.EXEC_BUTTON, text))
         
-    def subsitute_doctest(self, elem):
+    def substitute_doctest(self, elem):
         """what it says on the box"""
         id, text, elem = self.prepare_elem(elem)
         #neutralise it:

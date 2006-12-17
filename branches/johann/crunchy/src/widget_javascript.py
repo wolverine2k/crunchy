@@ -20,7 +20,7 @@ interpreters = {};
 
 function create_output_widget(objid){
     //create the output widget
-    new_output = document.createElement("div");
+    new_output = document.createElement("pre");
     new_output.id = objid + "_output";
     parent = document.getElementById(objid+"_output_container");
     try{
