@@ -69,19 +69,20 @@ class Javascript(et._ElementInterface):
 class Editor(et._ElementInterface):
     """An editor with one some execute buttons"""
     javascript = None
-    def __init__(self, buttons, text, rows=10, cols=80, copy=True, doctest=None):
+    def __init__(self, buttons, text, rows=10, cols=80, copy=True, doctest=None, line_numbering=False):
         """Initialise it, buttons must be a bitwise ORed comination of the constants above"""
         elem = et.Element("div")
         uid = utils.next_luid()
         a = et.SubElement(elem, 'a', id=uid)
         a.text = ' '
         if text:
-            elem.append(Code(text))
+            elem.append(Code(text, line_numbering))
+        else:
+            text = '\n'
         textarea = et.SubElement(elem, "textarea", rows=str(rows), cols=str(cols), id=uid+"_code")
         if not copy:
             textarea.text = '\n'
         else:
-            #todo: styling
             textarea.text = text
         et.SubElement(elem, "br")
         if buttons & EXEC_BUTTON:
@@ -100,7 +101,7 @@ class Editor(et._ElementInterface):
         self.__dict__ = elem.__dict__
         
 
-# this is now handled in javascript - much faster :)
+# this is now handled in javascript - which is much faster :)
 #class ExecOutput(et._ElementInterface):
 #    """An output box with pretty colouring etc"""
 #    def __init__(self, uid):
@@ -111,9 +112,9 @@ class Editor(et._ElementInterface):
         
 class Code(et._ElementInterface):
     """Non-interactive highlighted code"""
-    def __init__(self, code):
+    def __init__(self, code, line_numbering):
         """Initialise a simple colouring"""
-        elem = parseListing(code)
+        elem = parseListing(code, line_nos=line_numbering)
         self.__dict__ = elem.__dict__
         
 class Canvas(et._ElementInterface):
@@ -133,7 +134,9 @@ class WidgetInit(et._ElementInterface):
         self.__dict__ = elem.__dict__
     
 def parseListing(code, line_nos = False):
-    """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py"""
+    """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py
+    this actually broken in some presumably subtle way
+    """
     in_buf = StringIO(code)
     out_elem = et.Element("pre")
     out_elem.text = ''

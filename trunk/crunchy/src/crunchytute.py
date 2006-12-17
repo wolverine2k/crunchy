@@ -179,7 +179,7 @@ class VLAMPage(object):
                 elif 'interpreter' in attrib[1]:
                     self.substitute_interpreter(pre)
                 elif 'doctest' in attrib[1]:
-                    self.substitute_editor(pre)
+                    self.substitute_doctest(pre)
                 elif 'canvas' in attrib[1] or 'plot' in attrib[1]:
                     self.substitute_canvas(pre)
 
@@ -215,7 +215,18 @@ class VLAMPage(object):
         elem.tag = "span"
         #this needs support for finessing the buttons:
         elem.append(widgets.Editor(widgets.EXEC_BUTTON, text))
-
+        
+    def subsitute_doctest(self, elem):
+        """what it says on the box"""
+        id, text, elem = self.prepare_elem(elem)
+        #neutralise it:
+        t = elem.tail
+        elem.clear()
+        elem.tag = "span"
+        elem.tail = t
+        #this needs support for finessing the buttons:
+        elem.append(widgets.Editor(widgets.DOCTEST_BUTTON, text, copy=False))
+        
     def substitute_canvas(self, elem):
         """substitute a canvas for elem"""
         id, text, elem = self.prepare_elem(elem)

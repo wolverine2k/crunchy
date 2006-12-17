@@ -28,7 +28,7 @@ function create_output_widget(objid){
         parent.replaceChild(new_output, t);
         }
     catch(e) {
-        alert(e);
+        //alert(e);
         parent.appendChild(new_output);
         };
     sendNotification(objid);
