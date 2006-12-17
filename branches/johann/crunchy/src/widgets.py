@@ -137,84 +137,90 @@ def parseListing(code, line_nos = False):
     """parse some Python code returning an XHTML tree, a simple refactoring of André's colourizer.py
     this actually broken in some presumably subtle way
     """
-    in_buf = StringIO(code)
-    out_elem = et.Element("pre")
-    out_elem.text = ''
-    tokenType = None
-    tokenString = ""
-    endLine = endColumn = 0
-    for tok in tokenize.generate_tokens(in_buf.readline):
-        lastTokenType = tokenType
-        tokenType = tok[0]
-        lastTokenString = tokenString
-        tokenString = tok[1]
-        beginLine, beginColumn = tok[2]
-        endOldLine, endOldColumn = endLine, endColumn
-        endLine, endColumn = tok[3]
-        internal_elems = out_elem.getchildren()
-        if tokenType == tokenize.ENDMARKER:  
-            break
-        if beginLine != endOldLine:
-            if lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]: 
-                if line_nos:
-                    line_no = et.SubElement(out_elem,"span")
-                    line_no.attrib['class'] = "py_linenumber"
-                    line_no.text = "%3d" % beginLine
-            elif tokenType != tokenize.DEDENT:  # logical line continues
-                if len(internal_elems):
-                    internal_elems[-1].tail = "\n"
-            if not len(internal_elems):
-                out_elem.text = " "*(beginColumn - endOldColumn)
+    try:
+        in_buf = StringIO(code)
+        out_elem = et.Element("pre")
+        out_elem.text = ''
+        tokenType = None
+        tokenString = ""
+        endLine = endColumn = 0
+        for tok in tokenize.generate_tokens(in_buf.readline):
+            lastTokenType = tokenType
+            tokenType = tok[0]
+            lastTokenString = tokenString
+            tokenString = tok[1]
+            beginLine, beginColumn = tok[2]
+            endOldLine, endOldColumn = endLine, endColumn
+            endLine, endColumn = tok[3]
+            internal_elems = out_elem.getchildren()
+            if tokenType == tokenize.ENDMARKER:  
+                break
+            if beginLine != endOldLine:
+                if lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]: 
+                    if line_nos:
+                        line_no = et.SubElement(out_elem,"span")
+                        line_no.attrib['class'] = "py_linenumber"
+                        line_no.text = "%3d" % beginLine
+                elif tokenType != tokenize.DEDENT:  # logical line continues
+                    if len(internal_elems):
+                        internal_elems[-1].tail = "\n"
+                if not len(internal_elems):
+                    out_elem.text = " "*(beginColumn - endOldColumn)
+                else:
+                    internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
             else:
-                internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
-        else:
-            #insert the requisite spaces:
-            if not len(internal_elems):
-                #spaces at start:
-                out_elem.text = " "*(beginColumn - endOldColumn)
-            else:
-                #spaces after last subelement:
-                internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
-        #the stuff from htmlFormat():
-        if tokenType == tokenize.NAME:
-            token_elem = et.SubElement(out_elem, "span")
-            token_elem.text = tokenString
-            if keyword.iskeyword(tokenString.strip()):
-                token_elem.attrib['class']='py_keyword'
-            else:
-                token_elem.attrib['class']='py_variable'
-        elif tokenType == tokenize.STRING:
-            tokenString = utils.html_escape(tokenString)
-            string_elem = et.SubElement(out_elem, 'span')
-            string_elem.attrib['class'] = 'py_string'
-            if tokenString[0:3] in ['"""',"'''"]:
-                string_elem.attrib['class'] = 'py_comment'
-                if line_nos:
-                    line_no = 1
-                    for line in tkenString.split('\n'):
-                        line_lbl = et.SubElement(string_elem,'span')
-                        line_lbl.text = "%3d" % line_no
-                        line_lbl.attrib['class'] = 'py_linenumber'
-                        line_lbl.tail = line
-                        line_no += 1
+                #insert the requisite spaces:
+                if not len(internal_elems):
+                    #spaces at start:
+                    out_elem.text = " "*(beginColumn - endOldColumn)
+                else:
+                    #spaces after last subelement:
+                    internal_elems[-1].tail = " "*(beginColumn - endOldColumn)
+            #the stuff from htmlFormat():
+            if tokenType == tokenize.NAME:
+                token_elem = et.SubElement(out_elem, "span")
+                token_elem.text = tokenString
+                if keyword.iskeyword(tokenString.strip()):
+                    token_elem.attrib['class']='py_keyword'
+                else:
+                    token_elem.attrib['class']='py_variable'
+            elif tokenType == tokenize.STRING:
+                tokenString = utils.html_escape(tokenString)
+                string_elem = et.SubElement(out_elem, 'span')
+                string_elem.attrib['class'] = 'py_string'
+                if tokenString[0:3] in ['"""',"'''"]:
+                    string_elem.attrib['class'] = 'py_comment'
+                    if line_nos:
+                        line_no = 1
+                        for line in tkenString.split('\n'):
+                            line_lbl = et.SubElement(string_elem,'span')
+                            line_lbl.text = "%3d" % line_no
+                            line_lbl.attrib['class'] = 'py_linenumber'
+                            line_lbl.tail = line
+                            line_no += 1
+                    else:
+                        string_elem.text = tokenString
                 else:
                     string_elem.text = tokenString
+            elif tokenType == tokenize.COMMENT:
+                comm_elem = et.SubElement(out_elem, 'span')
+                comm_elem.attrib['class'] = 'py_comment'
+                comm_elem.text = tokenString
+            elif tokenType == tokenize.NUMBER:
+                num_elem = et.SubElement(out_elem, 'span')
+                num_elem.attrib['class'] = 'py_number'
+                num_elem.text = tokenString
+            elif tokenType == tokenize.OP:
+                op_elem = et.SubElement(out_elem, 'span')
+                op_elem.attrib['class'] = 'py_op'
+                op_elem.text = tokenString
             else:
-                string_elem.text = tokenString
-        elif tokenType == tokenize.COMMENT:
-            comm_elem = et.SubElement(out_elem, 'span')
-            comm_elem.attrib['class'] = 'py_comment'
-            comm_elem.text = tokenString
-        elif tokenType == tokenize.NUMBER:
-            num_elem = et.SubElement(out_elem, 'span')
-            num_elem.attrib['class'] = 'py_number'
-            num_elem.text = tokenString
-        elif tokenType == tokenize.OP:
-            op_elem = et.SubElement(out_elem, 'span')
-            op_elem.attrib['class'] = 'py_op'
-            op_elem.text = tokenString
-        else:
-            other_elem = et.SubElement(out_elem, 'span')
-            other_elem.text = tokenString
-    return out_elem
-
+                other_elem = et.SubElement(out_elem, 'span')
+                other_elem.text = tokenString
+        return out_elem
+    except:
+        #if anything fails, anything at all, then just return the unhighlighted script
+        out_elem = et.Element
+        out_elem = et.Element("pre")
+        out_elem.text = code
+        return out_elem
