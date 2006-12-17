@@ -63,6 +63,7 @@ class VLAMPage(object):
         #"file:" + 
         self.head.insert(0,widgets.WidgetInit())
         self.head.append(widgets.Javascript('/js_interp'))
+        self.head.append(widgets.Javascript('/js_editor'))
         #self.insert_js("/src/javascript/custom_alert.js")
         self.insert_css("/src/css/default.css")
         self.insert_css("/src/css/custom_alert.css")

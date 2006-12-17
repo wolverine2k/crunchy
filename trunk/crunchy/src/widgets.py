@@ -96,15 +96,18 @@ class Editor(et._ElementInterface):
         if buttons & CONSOLE_BUTTON:
             btn = et.SubElement(elem, "button", onclick='exec_external_console("'+uid+'")')
             btn.text = _("Execute in Console")
+        output_c = et.SubElement(elem, "span", id=uid+'_output_container')
         self.__dict__ = elem.__dict__
-    
-class ExecOutput(et._ElementInterface):
-    """An output box with pretty colouring etc"""
-    def __init__(self, uid):
-        elem = et.Element("div")
-        elem.attrib['class'] = 'term_out'
-        elem.attrib['onload'] = "update_output(%s)" % uid
-        self.__dict = elem.__dict__
+        
+
+# this is now handled in javascript - much faster :)
+#class ExecOutput(et._ElementInterface):
+#    """An output box with pretty colouring etc"""
+#    def __init__(self, uid):
+#        elem = et.Element("div")
+#        elem.attrib['class'] = 'term_out'
+#        elem.attrib['onload'] = 'sendNotification("%s")' % uid
+#        self.__dict__ = elem.__dict__
         
 class Code(et._ElementInterface):
     """Non-interactive highlighted code"""

@@ -4,6 +4,7 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 import urllib
 import os
 import sys
+from elementtree.ElementTree import ElementTree
 
 import crunchypages
 import interp_backend
@@ -12,6 +13,7 @@ import crunchytute
 import errorhandler
 import exec_external
 import security
+import widgets
 
 class CrunchyRequestHandler(SimpleHTTPRequestHandler):
     '''handle HTTP requests'''
@@ -102,10 +104,15 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
                 self.send_data(data)
         elif self.path.startswith(security.commands["/execute"]):           #code editor
             code = self.rfile.read(int(self.headers["Content-Length"]))
-            i = interp_backend.CrunchyInterpreter(code, self.path.split('?')[1])
+            uid = self.path.split('?')[1]
+            i = interp_backend.CrunchyInterpreter(code, uid)
             i.start()
+            #out_xml = widgets.ExecOutput(uid)
+            #t = ElementTree(element=out_xml)
             self.send_response(200)
             self.end_headers()
+            #t.write(self.wfile)
+            
         elif self.path.startswith(security.commands["/doctest"]):      #doctest
             code = self.rfile.read(int(self.headers["Content-Length"]))
             parts = self.path.split('?')

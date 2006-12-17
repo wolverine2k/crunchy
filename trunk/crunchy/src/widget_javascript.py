@@ -18,6 +18,21 @@ function get_http()
 
 interpreters = {};
 
+function create_output_widget(objid){
+    //create the output widget
+    new_output = document.createElement("div");
+    new_output.id = objid + "_output";
+    parent = document.getElementById(objid+"_output_container");
+    try{
+        t = document.getElementById(objid+"_output");
+        parent.replaceChild(new_output, t);
+        }
+    catch(e) {
+        alert(e);
+        parent.appendChild(new_output);
+        };
+    sendNotification(objid);
+};
 """
 
 interpreter = r"""
@@ -208,8 +223,6 @@ function exec_by_id(objid)
 {
     codebox = document.getElementById(objid + "_code");
     interpreters[objid] = 1;
-    e = document.getElementById(objid + "_output"); 
-    e.innerHTML = '';   
     code = codebox.value;
     h = get_http();
     h.onreadystatechange = function()
@@ -227,12 +240,8 @@ function exec_by_id(objid)
                 switch (status)
                 {
                 case 200:
-                    //set_element_text(outputspan, h.responseText)
-                    setTimeout("sendNotification('" + objid +"')", 500);
+                    create_output_widget(objid);
                     break;
-                case 12029:
-                    //IE could not connect to server
-                    status = "NO HTTP RESPONSE";
                 default:
                     alert(status + ": " + h.responseText);
                 }
@@ -282,6 +291,7 @@ function doctest_by_id(objid)
 
 
 function sendNotification(term_id)
+//used to update the output
 {
 
     var h = get_http();
