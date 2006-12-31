@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+
+<style type="text/css" title="Black and white">
+.topic{font-weight:bold; font-size:14pt;}
+</style>
+
+<style type="text/css" title="Pycon slides">
+.notes{display: none;}
+.topic{font-size:28pt; font-weight:bold;color:darkblue;margin-top:300pt;}
+.subtopic{font-size:28pt; font-weight:bold;color:blue}
+.vlam{color:darkgreen;font-size:24pt;}
+p.topic:before{content:  counter(slide) ". ";}
+p.topic{counter-increment: slide; max-width:100%;}
+pre {font-size:20pt; border: solid orange 2px;}
+textarea{font-size:20pt;}
+.py_string{font-family:serif;}
+.py_variable{font-weight:bold;}
+span.py_linenumber{font-size: 14pt; color: #660066;}
+span.stdout{font-size:20pt;}
+span.stderr{font-size:20pt;}
+span.error_info{font-size:20pt;}
+div.interp_output_container{font-size:20pt;}
+span.stdin{font-size:20pt;}
+input.interp_input{font-size: 20pt;}
+div.term_out{font-size: 20pt;}
+#menu a {
+	background-color:#ffffcc;
+	color:darkblue;
+	border:1px solid darkblue;
+}
+#menu a:hover { background:blue; color:white; border:1px solid blue}
+</style>
+
+
+<title>Easy Creation of Interactive Tutorials</title>
+</head>
+<body>
+
+<h1>Easy Creation of Interactive Tutorials</h1>
+<h3>Andr&eacute; Roberge</h3>
+<h4>Pycon 2007</h4>
+<div class="notes">
+<h3>Summary</h3>
+<p>
+In this talk, I will illustrate how a Python program
+(crunchy.sourceforge.net) can be used to
+transform easily static html-based tutorials into interactive sessions.  
+Two types of interactive tutorials will demonstrated: those that teach about 
+learning to program in Python, and those that teach about using a given
+module.
+</p>
+<h3>Introduction</h3>
+<p>
+The easiest way to explain to as many people as possible how to do
+something is to write about it and make it available on the web.
+However, the most effective way to learn something, be it cooking,
+playing a musical instrument or programming, is by doing it - not simply
+reading about it.
+</p>
+<p>
+Crunchy [http://crunchy.sourceforge.net] has been designed as an easy means
+to create interactive Python tutorials, thus enabling a smooth
+transition between writing, reading and doing.
+In this talk, I will demonstrate how Crunchy can be used to transform
+traditional html-based tutorials into interactive
+sessions within a web browser.
+</p>
+<p>
+While the topics covered are simple enough to be accessible to complete
+beginners, this talk will be of a greater interest for the more
+advanced programmers interested
+in either teaching programming or in writing tutorials for modules
+they have written.
+</p>
+<h3>Warnings to the reader</h3>
+<p>If you are reading this file as a normal html document, you will
+most likely be puzzled by apparent discrepancies between some of the text, 
+especially some topic titles, and the code samples given.  
+This is due to a few reasons. First of all, this html file is going
+to be used, with a bit of currently hidden css magic, to present the
+talk as a series of slides.  If you are reading this file using Firefox,
+you can view the alternate styling using the View -&gt; Page style menu.</p>
+<p>Secondly, the intention is to use Crunchy itself to actually display
+the talk.  Whether or not you use the alternative styling, Crunchy itself
+will add its own styling (mostly Python code styling) as well as
+interactive Python elements on the page.  Without using Crunchy, most of
+the explanations given will appear puzzling.</p>
+<p>You have been warned.</p>
+</div>
+<p class="topic">Outline</p>
+<p class="subtopic">Easy Creation of <u><em>Interactive</em></u> Tutorials</p>
+<p class="subtopic">VLAM Philosophy</p>
+<p class="subtopic">Basic Interactive Elements</p>
+<p class="subtopic">Doctest as a Teaching Tool </p>
+<p class="subtopic">Running External Programs</p>
+<p class="topic">Acknowledgement</p>
+<p class="subtopic">Johannes Woolard and Google's Summer of Code 2006</p>
+<div class="notes">
+<p>Crunchy has greatly benefited from Google's Summer of Code 2006
+initiative.  This has allowed Johannes Woolard to join the project; he
+very quickly made essential contributions to the project and I gladly
+welcomed him as an equal co-developer of this project.</p>
+</div>
+
+<p class="topic">VLAM philosophy</p>
+<div class="notes">
+<p>
+VLAM stands for Very Little Additional Markup, or VLAM.  The idea
+behind VLAM is to make it as simple as possible for a tutorial writer
+to transform a standard html-based tutorial into an interactive session.
+The basic markup is added using the <code>title</code> attribute of the
+<code>pre</code> html tag.  This additional markup, while non-standard
+in its use, is nonetheless W3C compliant.
+Different values given to the title attribute will be interpreted in
+different ways by Crunchy.</p>
+<p>
+The simplest example is the following.  
+Computer code is usually displayed inside a &lt;pre&gt; tag in an html
+document.
+</p>
+</div>
+<p class="topic">Unprocessed code:<br/> 
+<code class="vlam">&lt;pre&gt; ... &lt;/pre&gt;</code></p>
+<pre>
+# Python is cool.
+
+def gcd(a, b):
+    while a:
+        a, b = b%a, a
+    return b
+</pre>
+<div class="notes">
+<p>
+However, unless some styling is applied, the result can be a bit
+uninteresting to read and, perhaps, harder to understand than it would be
+when the same code is viewed using a syntax-aware editor.
+By styling, we mean choosing different colours and/or font styles to
+keywords, strings and other elements.  
+The "simplest" way to style code is to put in the font information "by-hand";
+however, this gets rapidly tedious.  The next simplest way is to use a script
+that takes as input the raw code and outputs a styled version of that code
+that can be inserted in the html document. 
+Crunchy helps to automate this process so that the tutorial writer
+can write (or paste) standard Python code and the styling will be added when
+the code is displayed using Crunchy.
+</p>
+<p>In order to instruct Crunchy to process the code inside a <code>pre</code>
+tag, we need to write some Very Little Additional Markup, or VLAM.  
+Since the main purpose of Crunchy is to add interactive elements we normally
+need to tell it what interactive element is to be added.  
+The simplest case is the one here when there is no interactive elements;
+it is obtained by simply writing "none" as the value of the
+<code>title</code> tag.</p>
+</div>
+<p class="topic">Styled code:<br/> 
+<code class="vlam">&lt;pre title="none"&gt; ... &lt;/pre&gt;</code></p>
+<pre title="none">
+# Python is cool.
+
+def gcd(a, b):
+    while a:
+        a, b = b%a, a
+    return b
+</pre>
+
+<div class="notes">
+<p>
+One can also number lines of code using the following VLAM option.</p>
+</div>
+<p class="topic">Styled code with line numbers:<br/> 
+<code class="vlam">&lt;pre title="none linenumber"&gt;</code></p>
+<pre title="none linenumber">
+# Python is cool.
+
+def gcd(a, b):
+    while a:
+        a, b = b%a, a
+    return b
+
+# line numbering alignment should be good until 999
+</pre>
+
+<div class="notes">
+<p>
+The basic interactive element in Python is the interpreter prompt.  
+Before we show how to introduce it with Crunchy, we first illustrate
+the code styling option available for interactive sessions.
+</div>
+
+<p class="topic">Styled interpreter (code only): <br/>
+<code class="vlam">&lt;pre title="none interpreter"&gt;</code></p>
+<pre title="none interpreter">
+&gt;&gt;&gt; print "Hello world!"
+Hello world!
+&gt;&gt;&gt; for i in range(11):
+...     print i,
+...
+0 1 2 3 4 5 6 7 8 9 10
+</pre>
+
+<div class="notes">
+<p>
+A line numbering option (for input only) is also available.
+</p>
+</div>
+
+<p class="topic">Styled interpreter (code only) with line numbers:<br/>
+<code class="vlam">&lt;pre title="none interpreter linenumber"&gt;</code></p>
+<pre title="none interpreter linenumber">
+&gt;&gt;&gt; print "Hello world!"
+Hello world!
+&gt;&gt;&gt; for i in range(11):
+...     print i,
+...
+0 1 2 3 4 5 6 7 8 9 10
+</pre>
+
+<div class="notes">
+<p>
+We are now ready to introduce an interpreter prompt as an interactive
+element within a browser (Firefox) window using Crunchy.  
+</p>
+</div>
+<p class="topic">Styled interpreter:<br/>
+<code class="vlam">&lt;pre title="interpreter"&gt;</code></p>
+<pre title="interpreter">
+&gt;&gt;&gt; # Interpreter inspired by Robert Brewer
+&gt;&gt;&gt; print "Hello world!"
+Hello world!
+&gt;&gt;&gt; print a
+...Some error message...
+&gt;&gt;&gt; a = 3
+&gt;&gt;&gt; print a
+3
+</pre>
+<br class="vspace"/>
+<div class="notes">
+<p>
+We can have a more than one interpreter prompt embedded within a given page;
+all interpreter prompt will share the same values.
+</p>
+</div>
+<p class="topic">-<p>
+<pre title="interpreter">
+&gt;&gt;&gt; print a
+3
+&gt;&gt;&gt; # Type slowly and watch
+&gt;&gt;&gt; for i in range(11):
+...     print i,
+... 
+0 1 2 3 4 5 6 7 8 9 10
+</pre>
+<br class="vspace"/>
+<div class="notes">
+<p>Yet, one more interpreter, this one to show how a user-defined
+function's docstring can appear on the screen (top right corner).</p>
+</div>
+<p class="topic">-<p>
+<pre title="interpreter">
+&gt;&gt;&gt; def hello():
+...     "Some doctring."
+...     print "Hello!"
+...
+&gt;&gt;&gt; hello()
+Hello!
+</pre>
+<div class="notes">
+<p>While using an interpreter is useful for experienced Python programmers
+who also happen to be good typists, others might find it difficult to
+reproduce examples as they appear without making mistakes.  This is why
+an option exists to take the simulated interpreter input and put it in
+a textarea for editing and interpretation by Python.</p>
+</div>
+<p class="topic">Styled interpreter to editor:<br/>
+<code class="vlam">&lt;pre title="interpreter editor size=(4, 40)"&gt;</code></p>
+<pre title="interpreter editor size=(4, 40)">
+&gt;&gt;&gt; a = 3
+&gt;&gt;&gt; print a
+3
+</pre>
+<div class="notes">
+<p>Of course, the option of adding line numbers is also available.</p>
+</div>
+<p class="topic">Styled interpreter to editor with line numbers:<br/>
+<code class="vlam">&lt;pre title="interpreter editor linenumber"&gt;</code></p>
+<pre title="interpreter editor linenumber">
+&gt;&gt;&gt; for i in range(11):
+...     print i,
+... 
+0 1 2 3 4 5 6 7 8 9 10
+&gt;&gt;&gt; print "Hello world!"
+Hello world!
+</pre>
+<div class="notes">
+<p>While the Python interpreter is very useful, most code is written
+in an editor. You can try to experiment, modifying and executing
+the following code.</p>
+</div>
+<p class="topic">Styled code with sized editor:<br/> 
+<code class="vlam">&lt;pre title="editor size=(4, 40)"&gt;</code></p>
+<pre title="editor size=(4, 40)">
+for i in range(11):
+    print i,
+print "\nHello world!"
+</pre>
+<p class="topic">Using Crunchy as a Teaching tool</p>
+<p class="subtopic">Graphics: canvas<p>
+<p class="subtopic">Graphics: plot<p>
+<p class="subtopic">Sound<p>
+<p class="subtopic">Doctests<p>
+<div class="notes">
+
+<p>Using Crunchy Frog, you can draw the most incredible pictures. Enter your code in the text area on the right, press "Draw" and watch the result. 
+The origin is at the top left corner, as will be indicated by a red circle as soon as you make a drawing. Try the following example.  The drawing will take place when you press the appropriate button; it is left as a challenge for you to find it.</p>
+</div>
+<p class="topic">Canvas demo 1<br/>
+<code class="vlam">&lt;pre title="canvas area=(300, 300)"&gt;</code></p>
+<pre title="canvas area=(300, 300)">
+for i in range(50):
+   for j in range(50):
+       r = 255 - 5*i
+       g = 255 - 5*j
+       set_fill_color('rgb(%d, %d, 0)'%(r,g))
+       filled_rectangle((j*6, i*6), 6, 6)
+</pre>
+<div class="notes">
+<p>
+Drawing only squares, however colorful, might be boring.  Instead, you could try the following; it includes <b>all</b> the canvas graphics commands currently supported by Crunchy Frog (version 0.7).  
+</p>
+</div>
+<p class="topic">Canvas demo 2<br/>
+<code class="vlam">&lt;pre title="canvas"&gt;</code></p>
+<pre title="canvas">
+point(10, 10)
+point(100, 10)
+set_line_colour('red')  # Canadian/British spelling for "colour"
+line((11, 10), (99, 10))
+
+circle((100, 100), 50)
+set_line_color('blue') # American spelling for "color"
+circle((100, 100), 30)
+
+set_line_colour('#ff0000') # red
+triangle((200, 10), (240, 10), (220, 30))
+set_fill_colour('#00ff00') # green
+filled_triangle((200, 50), (240, 50), (220, 30))
+
+filled_circle((100, 200), 50)
+set_fill_colour('rgb(0, 0, 255)')  # blue
+filled_circle((100, 200), 40)
+
+width, height = 20, 10
+rectangle((150, 10), width, height)
+filled_rectangle((150, 25), width, height)
+
+set_fill_color('red')
+y = 300
+filled_circle((100, y), 40)
+for i in range(10):
+    r = 255-i*5
+    g = i*20
+    b = i*20
+    a = 0.5 - 0.04*i
+    set_fill_colour('rgba(%s, %s, %s, %s)'%(r, g, b, a))
+    x = 100 + 20*i
+    r = 40 + 10*i
+    filled_circle((x, y), r)
+</pre>
+
+<div class="notes">
+<p>In addition to drawing pictures, Crunchy allows you to plot mathematical functions (of one variable). 
+However, the drawing canvas and the plotting canvas are different; the first 
+one can be identified by its green border whereas the second is identified by 
+its blue border. We will see two examples of plots. The first is an example 
+of drawing two functions, one define by the user, the other from the math
+library.</p>
+</div>
+<p class="topic">Plotting example 1<br/>
+<code class="vlam">&lt;pre title="plot size=(10, 80) area=(300, 200)"&gt;</code></p>
+<pre title="plot size=(10, 80) area=(300, 200)">
+from math import sin
+prepare_graph(x_range=(0, 20), y_range=(-2, 2))
+set_line_colour('red')
+def wave(x):
+  return sin(x)
+plot_function(sin)
+def simple(x):
+    return x/6.
+set_line_colour('green')
+plot_function(simple)
+</pre>
+<div class="notes">
+<p>
+The second example will add some sound effects (a separate introduction to
+sound will follow.) Two pure tones will be played at the same time.  Because
+their frequencies are chosen to be very close, the sum of the two produces a
+beat pattern.  We will give a visual representation of this beat pattern by
+adding two sine functions.  
+</p>
+</div>
+<p class="topic">Plotting example 2 (and sound demo)<br/>
+<code class="vlam">&lt;pre title="plot area=(700, 400)"&gt;</code></p>
+<pre title="plot area=(700, 400)">
+play_tones((440, 441), 4)
+from math import sin
+prepare_graph(x_range=(0, 90), y_range=(-2, 2))
+f1 = 5.
+f2 = 5.3
+def wave1(x):
+  return sin(f1*x)
+def wave2(x):
+  return sin(f2*x)
+def wave_sum(x):
+  return wave1(x) + wave2(x)
+set_line_colour('red')
+plot_function(wave1)
+set_line_colour('green')
+plot_function(wave2)
+set_line_colour('blue')
+plot_function(wave_sum)
+</pre>
+<div class="notes">
+<p>The doctest module allows testing a given code sample to see
+if it can be used to reproduce a given (test) simulated interepreter
+session.  I first read about the idea of using doctests in a
+teaching environment from Jeff Elkner, well known educator and contributor
+to edu-sig.</p>
+</div>
+<p class="topic">Styled doctest with sized editor and line numbers:<br/> 
+<code class="vlam">&lt;pre title="doctest size=(5, 60) linenumber"&gt;</code></p>
+<pre title="doctest size=(5, 60) linenumber">
+&gt;&gt;&gt; # Write code to satisfy the following.
+&gt;&gt;&gt; teacher = Teacher('Jeff Elkner')
+&gt;&gt;&gt; teacher.name
+'Jeff Elkner'
+</pre>
+
+<p class="topic">External application with console (Python interpreter)<br/> 
+<code class="vlam">&lt;pre title="editor external nointernal console size=(4, 60)"&gt;</code></p>
+<pre title="editor external nointernal console size=(4, 60)">
+import code
+code.interact()
+</pre>
+
+<p class="topic">External application without console (Pygame)<br/> 
+<code class="vlam">&lt;pre title="editor external nointernal"&gt;</code></p>
+<pre title="editor external nointernal">
+import sys, pygame
+pygame.init()
+clock = pygame.time.Clock()
+size = width, height = 320, 240
+speed = [3, 3]
+black = 0, 0, 0
+screen = pygame.display.set_mode(size)
+ball = pygame.image.load("e:/ball.gif")
+#ball = pygame.image.load("e:/guido.png")
+ballrect = ball.get_rect()
+while True:
+    for event in pygame.event.get():
+       if event.type == pygame.QUIT: sys.exit()
+    ballrect = ballrect.move(speed)
+    if ballrect.left &lt; 0 or ballrect.right &gt; width:
+        speed[0] = -speed[0]
+    if ballrect.top &lt; 0 or ballrect.bottom &gt; height:
+        speed[1] = -speed[1]
+    clock.tick(30)
+    screen.fill(black)
+    screen.blit(ball, ballrect)
+    pygame.display.flip()
+</pre>
+
+</body>
+</html>
+

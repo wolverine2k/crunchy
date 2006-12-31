@@ -1,0 +1,153 @@
+Proposed reorganization of crunchy code
+
+See at the end for idea about easier "vlam-ization"
+
+Andre Roberge, December 26
+
+=======================================================
+
+1. Crunchy files reorganisation and various changes
+    (see topic #2 below for a clean look at the new structure)
+===================
+crunchypages.py : Moved/added to server.py [DONE]
+crunchyrequest.py : Moved/added to server.py [DONE]
+
+crunchytraceback.py : Moved/added to errors.py [DONE]
+errorhandler.py: Moved/added to errors.py [DONE]
+
+crunchytute.py: Renamed crunchyfier.py [DONE]
+
+exec_external.py: Moved/added to interpreters.py [DONE]
+                  removed class StrBuf(object) [obsolete]
+httprepl.py: Moved/added to interpreters.py [DONE]
+interp_backend.py: Moved/added to interpreters.py [DONE]
+                   Simplification of error messsage should go in errors.py
+                   fixLineEnding() moved to utilities.py [DONE]
+canvas.run(): now interpreters.exec_graphics [DONE]
+
+preferences.py:  renamed configuration.py [DONE]
+
+canvas.py renamed to graphics.py [DONE]
+soundout.py: renamed sound.py [DONE]
+
+settings.py: deleted (obsolete; was not used) [DONE]
+
+thread_stream.py: Move/added to utilities.py [DONE]
+
+colourize.py: No name changed. Added new styling options (builtins, stdlib, etc.)
+              so that they are more similar to those of EditArea. [DONE]
+
+security.py: No change
+
+interpreter.js: removed (was apparently superceded a 
+                         while ago by code_exec.js) [DONE]
+
+-----------------------
+Elementtree stuff
+
+It appears we are only using 3 modules from the elementtree distribution.
+I have created a subdirectory called element_tree with only
+these three (Python) files in it.  Having a different name
+from the official version should prevent erroneous imports.
+Having these files in the crunchy distribution will make it
+easier to package.   [DONE]
+
+
+======= TO DO ==============
+
+menu_extractor.py
+
+Currently, simple function to read in a menu (in an html file) and use
+it throughout a session as the default menu for crunchy.
+
+Should be incorporated in some other module
+
+=============================================
+
+2. New (Python) crunchy files structure
+-----------------------------
+crunchy.py
+src/colourize.py
+src/configuration.py
+src/crunchyfier.py
+src/errors.py
+src/graphics.py
+src/interpreters.py
+src/menu_extractor.py ---- to be changed/ added to vlam_elements
+src/security.py
+src/server.py
+src/sound.py
+src/translation.py
+src/utilities.py
+
+src/element_tree/ElementPath.py
+src/element_tree/HTMLTreeBuilder.py
+src/element_tree/ElementTree.py
+
+===========================================
+
+3. EditArea.js
+
+I've played with it a fair bit.  It is cool -- but rather big.
+Given the number of files included, I don't think it makes sense
+to extract js code and put it in strings like Johannes was doing
+with widget_javascript.py.   
+
+I have now incorporated EditArea into crunchy.  Some tweaking
+needs to be done, but it is looking great!
+-----
+
+New: changed styling options from default to be similar to those of
+     crunchy. [DONE]
+
+code_exec.js: Changed so that code execution (editor, doctest, canvas, plot) works
+when EditArea is toggled on (or off). [DONE]
+     
+New: wrote adapt_for_crunchy.py to adapt EditArea for crunchy
+use.  Changes that are done by adapt_for_crunchy are:  [DONE]
+
++ Insertion of newlines after ";" in edit_area_full.js to make it
+  easier to read by humans (while increasing the total file size
+  by less than 1%).
+
++ change minimum size for editor; default is too small, especially
+  when <textarea> contains too few rows to start with.
+  
++ added new font sizes (17, 20, 24, 28 pts) with the large ones
+  presumably more suitable for talks (e.g. Pycon 2007).
+
+To do:
+
+* Make it possible to save a file
+
+* Make it possible to load a file
+
+============================================
+Easier "vlam-ization"
+
+This is inspired by Johannes' description of what he was trying
+to do (doing?) when attempting to adapt "How to think like a
+computer scientist" - and alluded to in a recent email message
+(currently not available).
+
+We should have an indendent program (maker.py) which would help
+to transform plain html tutorial into crunchy-ready one. Here's
+how I envisage it:
+
+1. Upon starting, maker would initiate a web-server and launch
+firefox with a welcome page.
+2. The welcoming page would contain a "browser" form which
+would let the user choose a local html file to load.
+3. When loaded, the html file would be processed and displayed
+so that above every <pre> tag, an html "dropdown selector" 
+would be inserted whose content would be the various vlam options.
+   3. a) additional "dropdown selectors" could be inserted for
+   vlam options such as "size" (rows and cols, for <textarea>) 
+   and area (width and height, for <canvas>).
+4. The user would go down the page and make the appropriate
+choice for each <pre> element.
+5. Upon reaching the bottom of the page, the user could
+press a button that would create the new file.
+  5. a) Alternatively, the user could press a "preview" button 
+  which would launch crunchy and display the processed
+  file into a separate Firefox tab.

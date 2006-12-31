@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Menus test</title>
+<link href="/src/css/menu.css" rel="stylesheet" type="text/css">
+<!-- Alternative styles; first one chosen as default -->
+<link href="/src/css/gradient1.css" title="Colour gradients (earth tones)" rel="stylesheet" type="text/css">
+<link href="/src/css/bold.css" title="Bold colours" rel="alternative stylesheet" type="text/css">
+<link href="/src/css/b-w.css" title="Black and white" rel="alternative stylesheet" type="text/css">
+<link href="/src/css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div> <!-- leave this div here. -->
+<!-- Important: because of the way we float items to the right, we have to
+ construct the menu from the rightmost item going left.-->
+<ul id="menu">
+	<li class="menuitem"><a href="/exit">Quit Crunchy</a></li>
+	<li class="menuitem"><a href="/src/html/options.html">Options</a></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Help</a>
+	<ul class="submenu">
+		<li><a href="/docs/reference/faq.html">FAQ</a></li>
+		<li><a href="/docs/reference/errors.html">Python exceptions</a></li>
+		<li><a href="#" class="right_arrow">Graphics</a>
+			<ul class="subsubmenu">
+			<li><a href="/docs/reference/canvas_summary.html">Canvas</a></li>
+			<li><a href="/docs/reference/plot_summary.html">Plot</a></li>
+			<li><a href="/docs/reference/named_colours.html">Colours</a></li>
+			</ul></li>
+		<li><a href="/docs/reference/sound_summary.html">Sound</a></li>
+		<li><a href="/docs/reference/about.html">About</a></li>
+	</ul></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Tutorials</a>
+	<ul class="submenu">
+		<li><a href="/docs/Python_tutorials/index.html">Python tutorials</a></li>
+		<li><a href="/docs/crunchy_tutor/index.html">Using Crunchy</a></li>
+		<li><a href="#" class="right_arrow">Making Crunchy tutorials</a>
+		<ul class="subsubmenu">    
+			<li><a href="/docs/crunchy_maker/howto.html">How to...</a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_summary.html">VLAM summary</a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_examples.html">VLAM examples</a></li>
+		</ul></li>
+	</ul></li>
+<li class="menuitem"><a href="/">Home</a></li>
+</ul>
+<br /> <!-- This br will, within a div, will ensure that the menu does not
+				hide the page content -->
+</div>
+<h1>Welcome to Crunchy!</h1>
+<p>Use the menu above to navigate.  "Home" always brings you back to this page; "Quit Crunchy" closes the browser tab (or window) in addition to
+ending the program as such.</p>
+<p>You can change the page style using Firefox (menu: View --&gt; Page Style.  
+Note that, if you do not want to use the default style, you will have to
+set your style choice for every page that is viewed.  In the future, you will 
+be able to set your preferred option, and Crunchy will remember it.</p>
+<p>If you want to learn what Crunchy can do, select the "Using Crunchy" tutorial.</p>
+<p>If you are viewing this page without using Crunchy, then the menu above
+(shown as a list of links) will not be working.  You can use <a href="docs/crunchy_tutor/index.html">this link</a>
+to go through the "Using Crunchy" tutorial; unfortunately, this will give you 
+a very poor impression of Crunchy's true capabilities.</p>
+
+<p><a href="pycon.html">pycon</a></p>
+
+<h2>Experimental stuff</h2>
+<p><small>As we, Johannes and Andr&eacute;, are busy working on Crunchy Frog, we break working stuff all the time. To try and keep track of what works and what doesn't, we make use of the following.  Bug reports and suggestions for new features and new tests are always welcome.
+<a href="src/test/index.html">Standard tests</a></small>
+</p>
+</body>
+</html>
