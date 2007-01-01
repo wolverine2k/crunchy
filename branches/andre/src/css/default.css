@@ -3,7 +3,7 @@
 /* basic html tags, including canvas */
 body {font-family: sans-serif;}
 p {max-width: 700px}
-pre{margin-bottom: 5px;}
+pre{margin-bottom: 5px; font-family:monospace;}
 li {max-width: 700px; padding: 2px;}
 blockquote {font-family: serif;}
 
@@ -55,9 +55,9 @@ canvas.plot { border: solid blue 2px; }
 }
 
 /* result (text) of the code execution: */
-span.stdout{ color : darkgreen; font-family: monospace; }
-span.stderr{ color : darkred;  font-family: monospace }
-span.error_info{ color : blue;}
+.stdout{ color : darkgreen; font-family: monospace;}
+.stderr{ color : darkred;  font-family: monospace;}
+.error_info{ color : blue; font-family: monospace;}
 
 /* div containing all terminal output except for doctests */
 pre.term_out {

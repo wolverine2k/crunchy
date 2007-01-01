@@ -6,6 +6,7 @@ by Andre Roberge; feel free to adapt to your own use.
 This program takes the "full" version of EditArea (edit_area_full.js)
 and adapts it for use with crunchy.  It has been designed for
 and tested with EditArea 0.6.3.1.
+  ## update: tested with 0.6.4 pre-release
 
 EditArea comes in various "versions", each with its own strength and
 weaknesses.  Unfortunately, the only readable version that works
@@ -84,38 +85,41 @@ def break_into_lines(text):
         if total_line != '\n':
             all_lines.append(total_line)
     return all_lines
-
-def change_minimum_size(text):
-    """ 
-       Changes the minimum height for an EditArea since the default
-       is too small to be useful; it is also hard to resize if it
-       is the last element on a page.
-       The change includes a fix so that the toggled EditArea starts
-       with at least the minimum size; the minimum values currently
-       only take effect when resizing.
-    """
-    min_original = 'this.min_area_size={"x": 400, "y": 100};'
-    min_changed = 'this.min_area_size={"x": 400, "y": 150};'
-    min_flag = False
-    h_original = 'var height=elem.offsetHeight+"px";'
-    h_changed = 'var height=Math.max(eAL.min_area_size["y"], elem.offsetHeight)+"px";'
-    h_flag = False
-    w_original = 'var width=elem.offsetWidth+"px";'
-    w_changed = 'var width=Math.max(eAL.min_area_size["x"], elem.offsetWidth)+"px";'
-    w_flag = False
-    for index, line in enumerate(text):
-        if line == min_original:
-            text[index] = min_changed
-            min_flag = True
-        elif line == h_original:
-            text[index] = h_changed
-            h_flag = True
-        elif line == w_original:
-            text[index] = w_changed
-            w_flag = True
-        if w_flag and h_flag and min_flag:
-            return
-    return
+##
+## The following is no longer needed in 0.6.4 (private version
+## obtained as pre-release from the author.
+##
+##def change_minimum_size(text):
+##    """ 
+##       Changes the minimum height for an EditArea since the default
+##       is too small to be useful; it is also hard to resize if it
+##       is the last element on a page.
+##       The change includes a fix so that the toggled EditArea starts
+##       with at least the minimum size; the minimum values currently
+##       only take effect when resizing.
+##    """
+##    min_original = 'this.min_area_size={"x": 400, "y": 100};'
+##    min_changed = 'this.min_area_size={"x": 400, "y": 150};'
+##    min_flag = False
+##    h_original = 'var height=elem.offsetHeight+"px";'
+##    h_changed = 'var height=Math.max(eAL.min_area_size["y"], elem.offsetHeight)+"px";'
+##    h_flag = False
+##    w_original = 'var width=elem.offsetWidth+"px";'
+##    w_changed = 'var width=Math.max(eAL.min_area_size["x"], elem.offsetWidth)+"px";'
+##    w_flag = False
+##    for index, line in enumerate(text):
+##        if line == min_original:
+##            text[index] = min_changed
+##            min_flag = True
+##        elif line == h_original:
+##            text[index] = h_changed
+##            h_flag = True
+##        elif line == w_original:
+##            text[index] = w_changed
+##            w_flag = True
+##        if w_flag and h_flag and min_flag:
+##            return
+##    return
 
 def add_font_choices(text):
     """
