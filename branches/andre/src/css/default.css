@@ -11,7 +11,7 @@ canvas.canvas { border: solid green 2px; }
 canvas.plot { border: solid blue 2px; }
 
 /* Messages styling */
-.warning{color: #FFD700; /*gold*/
+.warning{background-color: #FFD700; /*gold*/
          font-weight: bold; font-size: 1.2em;}
 .crunchy_comment{color:green; font-weight: bold;}
 
