@@ -344,17 +344,18 @@ obj.style.visibility = "visible";
     def _apportion_code(self, pre, code):
         '''Decide on what code (if any) to put in the pre element and
            in the textarea.'''
-        textarea_code = code
-        if 'no-copy' in self.vlamcode or 'doctest' in self.vlamcode: 
-            self.style_code(pre, code)
-            textarea_code = '\n'
-        elif 'interpreter' in self.vlamcode:
-            self.style_code(pre, code)
-            textarea_code = self.python_code
-        elif 'no-pre' in self.vlamcode:
-            pre.text = '\n'
-        elif code:
-            self.style_code(pre, code)
+        if code:
+            textarea_code = code
+            if 'no-copy' in self.vlamcode or 'doctest' in self.vlamcode: 
+                self.style_code(pre, code)
+                textarea_code = '\n'
+            elif 'interpreter' in self.vlamcode:
+                self.style_code(pre, code)
+                textarea_code = self.python_code
+            elif 'no-pre' in self.vlamcode:
+                pre.text = '\n'
+            else:
+                self.style_code(pre, code)
         else:
             textarea_code = '\n'
         return textarea_code
