@@ -265,12 +265,15 @@ obj.style.visibility = "visible";
         
         if 'external' in self.vlamcode:
             if not 'nointernal' in self.vlamcode:
-                btn = et.SubElement(elem, "button", onclick='exec_by_id("'+id+'")')
+                btn = et.SubElement(elem, "button", 
+                                    onclick='exec_by_id("'+id+'")')
                 btn.text = _("Evaluate")
             if 'console' in self.vlamcode:
-                btn2 = et.SubElement(elem, "button", onclick='exec_external_console("'+id+'")')
+                btn2 = et.SubElement(elem, "button", 
+                                     onclick='exec_external_console("'+id+'")')
             else:
-                btn2 = et.SubElement(elem, "button", onclick='exec_external("'+id+'")')
+                btn2 = et.SubElement(elem, "button", 
+                                             onclick='exec_external("'+id+'")')
             btn2.text = _("Execute externally")
         else:
             btn = et.SubElement(elem, "button", onclick='exec_by_id("'+id+'")')
@@ -373,16 +376,21 @@ obj.style.visibility = "visible";
         return fake_file.getvalue()
     
     def get_base(self):
-        """retrieve the base that relative links are relative to and store it in self.base
-        see http://www.faqs.org/rfcs/rfc1808.html
-        In future this should check through the document to see if the base has been redefined.
+        """retrieve the base that relative links are relative to and store it 
+           in self.base; see http://www.faqs.org/rfcs/rfc1808.html
+           In future this probably should check through the document to see if 
+           the base has been redefined.
         """
         self.base = self.url
         
     def convert_all_links(self):
-        """looks for any attribute anywhere in the document, called 'src' or 'href' and converts it if it's relative
-        In future this should be user-configurable, the user should be able to specify whether or not external links are loaded as vlam
-        It might also be good if tute writers can specify a preference too.
+        """looks for any attribute anywhere in the document, called 
+           'src' or 'href' and converts it if it's a relative link -
+            absolute links (starting with http://) are left alone.
+            In future this might be user-configurable, the user could be able 
+            to specify whether or not external links are loaded as vlam
+            It might also be desirable if tutorial writers could specify 
+            a preference too.
         """
         for elem in self.tree.getiterator():
             if self.external_flag:
@@ -394,35 +402,49 @@ obj.style.visibility = "visible";
         return
     
     def _convert_external_link(self, elem):
+        '''Converts all relativelinks to html files to use the "/load_external"
+           command and relative links to absolute ones; the browser can
+           handle loading of images, css files, etc. without using the
+           "/load_external" command.  Absolute links (starting with "http://"
+           are left untouched - and so, the browser will load them directly,
+           bypassing crunchy.'''
         if 'src' in elem.attrib:
-            if not 'http://' in elem.attrib['src']:
-                if elem.attrib['src'].endswith('.html') or elem.attrib['src'].endswith('.htm'):
-                    elem.attrib['src'] = security.commands['/load_external']+'?path=' + \
-                        urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['src']))
+            e = elem.attrib['src']
+            if not 'http://' in e:
+                if e.endswith('.html') or e.endswith('.htm'):
+                    elem.attrib['src'] = security.commands['/load_external']\
+                                        + '?path=' + \
+                             urllib.quote_plus(urlparse.urljoin(self.base, e))
                 else:
-                    elem.attrib['src'] = urlparse.urljoin(self.base, elem.attrib['src'])
+                    elem.attrib['src'] = urlparse.urljoin(self.base, e)
         elif 'href' in elem.attrib:
-            if not 'http://' in elem.attrib['href']:
-                if elem.attrib['href'].startswith('#'):
+            e = elem.attrib['href']
+            if not 'http://' in e:
+                if e.startswith('#'):
                     pass # the browser will handle these "as is"
-                elif elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
-                    elem.attrib['href'] = security.commands['/load_external']+'?path=' + \
-                        urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['href']))
+                elif e.endswith('.html') or e.endswith('.htm'):
+                    elem.attrib['href'] = security.commands['/load_external']\
+                                        + '?path=' + \
+                             urllib.quote_plus(urlparse.urljoin(self.base, e))
                 else:
-                    elem.attrib['href'] = urlparse.urljoin(self.base, elem.attrib['href'])
+                    elem.attrib['href'] = urlparse.urljoin(self.base, e)
 
     def _convert_local_link(self, elem):
+        '''Converts all links, except external links using "http://", 
+           to use the "/load_local" command.'''
         if 'src' in elem.attrib:
-            if not 'http://' in elem.attrib['src']:
-                elem.attrib['src'] = security.commands['/load_local']+'?path=' + \
-                        urllib.quote_plus(os.path.join(self.base, elem.attrib['src']))
+            e = elem.attrib['src']
+            if not 'http://' in e:
+                elem.attrib['src'] = security.commands['/load_local'] +\
+                      '?path=' + urllib.quote_plus(os.path.join(self.base, e))
         elif 'href' in elem.attrib:
-            if not 'http://' in elem.attrib['href']:
-                if elem.attrib['href'].startswith('#'):
+            e = elem.attrib['href']
+            if not 'http://' in e:
+                if e.startswith('#'):
                     pass # the browser will handle these "as is"
                 else:
-                    elem.attrib['href'] = security.commands['/load_local']+'?path=' + \
-                        urllib.quote_plus(os.path.join(self.base, elem.attrib['href']))
+                    elem.attrib['href'] = security.commands['/load_local'] +\
+                       '?path=' + urllib.quote_plus(os.path.join(self.base, e))
 
     def strip_prompts(self, text):
         """ Strips fake interpreter prompts from html code meant to
@@ -448,8 +470,8 @@ obj.style.visibility = "visible";
                 new_lines.append(line[4:].rstrip())
                 self.lines_of_prompt.append(("... ", linenumber))
                 linenumber += 1
-            elif line.rstrip() == "...": # tutorial writer may forget the extra space
-                new_lines.append('')
+            elif line.rstrip() == "...": # tutorial writer may forget the extra
+                new_lines.append('')     # space
                 self.lines_of_prompt.append(("... ", linenumber))
                 linenumber += 1
             else:
@@ -463,7 +485,8 @@ obj.style.visibility = "visible";
         
         if 'linenumber' in self.vlamcode:
             add_line = True
-            # the following is reset by self.colourizer; do not attempt to use directly
+            # the following is reset by self.colourizer; 
+            # do not attempt to use directly
             self.colourizer.outputLineNumber = True
             length = len("<span class='py_linenumber'>999 </span>")
         else:
