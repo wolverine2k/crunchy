@@ -76,7 +76,17 @@ function save_python_file(path, id)
 	obj.style.visibility = "hidden";
 };
 
-
+function save_and_run(path, id)
+{
+	data = document.getElementById(id).value;
+	h = get_http();
+	h.open("POST", "/save_and_run"+session_id, true);
+	// Use an unlikely part of a filename (path) as a separator between file
+	// path and file content.
+	h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
+  var obj = document.getElementById('hidden_save'+id);
+	obj.style.visibility = "hidden";
+};
 // send code to be executed and display the result
 //
 

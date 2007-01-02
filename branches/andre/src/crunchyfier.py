@@ -124,8 +124,10 @@ min_height: 150});"""%id
         return
 
     def add_editarea_add_callbacks(self):
-        '''Appends a js script for loading and saving a file;
-           currently more a stub than anything else.
+        '''Appends the EditArea call back functions to enable saving and
+           loading programs from the editor.  Actually, these function only
+           trigger the visibility of the required <form> elements that do
+           the actual work.
         '''
         js = et.Element("script")
         js.set("type", "text/javascript")
@@ -615,6 +617,10 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     btn2 = et.SubElement(parent, 'button', 
         onclick="c=getElementById('%s');path=c.style.visibility='hidden';"%hidden_save_id)
     btn2.text = _("Cancel")
+    btn3 = et.SubElement(parent, 'button', 
+        onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
+        "c=getElementById('%s');path=c.value;save_and_run(path,'%s');"%(path, textarea_id))
+    btn3.text = _("Save and Run")
     return
 
 def addLoadRemote(parent, url=''):

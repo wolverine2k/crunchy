@@ -164,6 +164,17 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             content = '_::EOF::_'.join(info[1:]) 
             filename.write(content)
             filename.close()
+        elif self.path.startswith(security.commands['/save_and_run']):
+            # combination of /save_python and /span_console as above
+            # save file first
+            data = self.rfile.read(int(self.headers["Content-Length"]))
+            info = data.split("_::EOF::_")
+            filename = open(info[0], 'w')
+            content = '_::EOF::_'.join(info[1:]) 
+            filename.write(content)
+            filename.close()
+            # then run it
+            interpreters.exec_external(content, console=True, path=info[0])
         else:
             self.send_error(404, self.path)
 

@@ -203,6 +203,7 @@ class SecureSession(object):
         commands['/canvas_exec'] = '/canvas_exec' + self.session_id
         commands['/spawn'] = '/spawn' + self.session_id
         commands['/spawn_console'] = '/spawn_console' + self.session_id
+        commands['/save_and_run'] = '/save_and_run' + self.session_id
         return   
 
     def close(self):

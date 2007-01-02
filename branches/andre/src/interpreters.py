@@ -309,25 +309,28 @@ def analyse_doctest_result(x):
 
 
 
-def exec_external(code, console=False):
+def exec_external(code, console=False, path=None):
     """execute code in an external process
     currently works under: 
         * Windows NT (tested)
-        * GNOME (tested)
+        * GNOME (tested)  [January 2nd change untested]
     This also needs to be implemented for OS X, KDE 
     and some form of linux fallback (xterm?)
     """
-    filename = open("temp.py", 'w')
+    if path is None:
+        path = os.path.join("temp", "temp.py")
+    filename = open(path, 'w')
     filename.write(code)
     filename.close()
     if os.name == 'nt':
         if console:
-            win_run("cmd", ('/c start python temp.py'))
+            win_run("cmd", ('/c start python %s'%path))
         else:
-            win_run("cmd", ('/c python temp.py'))
+            win_run("cmd", ('/c python %s'%path))
     elif os.name == 'posix':
         try:
-            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', '-x', 'python', 'temp.py')
+            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', 
+                                '-x', 'python', '%s'%path)
         except:
             raise NotImplementedError
     else:
