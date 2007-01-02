@@ -1,2 +1,2 @@
 import crunchy
-crunchy.run("pycon.html")
+crunchy.run("/pycon2007.html")

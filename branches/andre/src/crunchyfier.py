@@ -117,7 +117,9 @@ syntax: "python",
 start_highlight: true,
 load_callback:"my_load_file",
 save_callback:"my_save_file",
-display: "later"});"""%id
+display: "later",
+replace_tab_by_spaces:4,
+min_height: 150});"""%id
         self.head.append(js)
         return
 
@@ -143,7 +145,8 @@ obj.style.visibility = "visible";
 
     def process_body(self):
         """set up <body>"""
-        fileinfo = et.Element("span")
+        self.body.attrib['spellcheck'] = 'false' # turn off Firefox spell check
+        fileinfo = et.Element("span")            # in all <textarea> & <input>
         fileinfo.set("class", "fileinfo")
         fileinfo.text = self.url
         self.body.insert(0, fileinfo)

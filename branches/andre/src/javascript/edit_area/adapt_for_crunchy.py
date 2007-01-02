@@ -142,7 +142,7 @@ def add_font_choices(text):
 
 all_text = open("edit_area_full.js", "rb").readlines()
 new_text = break_into_lines(all_text)
-change_minimum_size(new_text)
+##change_minimum_size(new_text)
 add_font_choices(new_text)
 
 out = open("edit_area_crunchy.js", "wb")
