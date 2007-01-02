@@ -36,7 +36,8 @@ class VLAMPage(object):
     
     def __init__(self, filehandle, url, remoteflag=False):
         """all you have to give it is a file handle to read from and an url."""
-        
+        print "filehandle = ", filehandle
+        print "url=", url
         try:
             self.tree = HTMLTreeBuilder.parse(filehandle)
         except Exception, info:
@@ -385,7 +386,7 @@ obj.style.visibility = "visible";
             if 'src' in elem.attrib:
                 if not 'http://' in elem.attrib['src']:
                     if elem.attrib['src'].endswith('.html') or elem.attrib['src'].endswith('.htm'):
-                        elem.attrib['src'] = '/load_external?path=' + \
+                        elem.attrib['src'] = security.commands['/load_external']+'?path=' + \
                             urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['src']))
                     else:
                         elem.attrib['src'] = urlparse.urljoin(self.base, elem.attrib['src'])
@@ -395,7 +396,7 @@ obj.style.visibility = "visible";
                         #leave it be
                         pass
                     elif elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
-                        elem.attrib['href'] = '/load_external?path=' + \
+                        elem.attrib['href'] = security.commands['/load_external']+'?path=' + \
                             urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['href']))
                     else:
                         elem.attrib['href'] = urlparse.urljoin(self.base, elem.attrib['href'])
