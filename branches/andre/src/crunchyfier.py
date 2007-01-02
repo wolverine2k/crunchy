@@ -34,7 +34,7 @@ class VLAMPage(object):
     #for locally unique IDs
     __ID = -1
     
-    def __init__(self, filehandle, url, remoteflag=False):
+    def __init__(self, filehandle, url, external_flag=False, local_flag=False):
         """all you have to give it is a file handle to read from and an url."""
         print "filehandle = ", filehandle
         print "url=", url
@@ -44,13 +44,15 @@ class VLAMPage(object):
             raise errors.HTMLTreeBuilderError(url, info)
         self.tree = security.remove_unwanted(self.tree)
         self.url = url
-        # If self.remoteflag is True (and this is a vlam file), 
-        # all links in the page are converted to refer to the 
-        # local crunchy frog server.
-        self.remoteflag = remoteflag
         self.colourizer = colourize.Colourizer()
+        # If self.external_flag or self.local_flag is True, which means
+        # that the original page was loaded via an input box 
+        # (/load_local or /load_external)
+        # all links in the page are converted to use the same
+        self.external_flag = external_flag
+        self.local_flag = local_flag
         self.get_base()
-        if self.remoteflag:
+        if self.external_flag or self.local_flag:
             self.convert_all_links()
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
@@ -383,23 +385,44 @@ obj.style.visibility = "visible";
         It might also be good if tute writers can specify a preference too.
         """
         for elem in self.tree.getiterator():
-            if 'src' in elem.attrib:
-                if not 'http://' in elem.attrib['src']:
-                    if elem.attrib['src'].endswith('.html') or elem.attrib['src'].endswith('.htm'):
-                        elem.attrib['src'] = security.commands['/load_external']+'?path=' + \
-                            urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['src']))
-                    else:
-                        elem.attrib['src'] = urlparse.urljoin(self.base, elem.attrib['src'])
-            elif 'href' in elem.attrib:
-                if not 'http://' in elem.attrib['href']:
-                    if elem.attrib['href'].startswith('#'):
-                        #leave it be
-                        pass
-                    elif elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
-                        elem.attrib['href'] = security.commands['/load_external']+'?path=' + \
-                            urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['href']))
-                    else:
-                        elem.attrib['href'] = urlparse.urljoin(self.base, elem.attrib['href'])
+            if self.external_flag:
+                self._convert_external_link(elem)
+            elif self.local_flag:
+                self._convert_local_link(elem)
+            else:
+                raise # this should never happen
+        return
+    
+    def _convert_external_link(self, elem):
+        if 'src' in elem.attrib:
+            if not 'http://' in elem.attrib['src']:
+                if elem.attrib['src'].endswith('.html') or elem.attrib['src'].endswith('.htm'):
+                    elem.attrib['src'] = security.commands['/load_external']+'?path=' + \
+                        urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['src']))
+                else:
+                    elem.attrib['src'] = urlparse.urljoin(self.base, elem.attrib['src'])
+        elif 'href' in elem.attrib:
+            if not 'http://' in elem.attrib['href']:
+                if elem.attrib['href'].startswith('#'):
+                    pass # the browser will handle these "as is"
+                elif elem.attrib['href'].endswith('.html') or elem.attrib['href'].endswith('.htm'):
+                    elem.attrib['href'] = security.commands['/load_external']+'?path=' + \
+                        urllib.quote_plus(urlparse.urljoin(self.base, elem.attrib['href']))
+                else:
+                    elem.attrib['href'] = urlparse.urljoin(self.base, elem.attrib['href'])
+
+    def _convert_local_link(self, elem):
+        if 'src' in elem.attrib:
+            if not 'http://' in elem.attrib['src']:
+                elem.attrib['src'] = security.commands['/load_local']+'?path=' + \
+                        urllib.quote_plus(os.path.join(self.base, elem.attrib['src']))
+        elif 'href' in elem.attrib:
+            if not 'http://' in elem.attrib['href']:
+                if elem.attrib['href'].startswith('#'):
+                    pass # the browser will handle these "as is"
+                else:
+                    elem.attrib['href'] = security.commands['/load_local']+'?path=' + \
+                        urllib.quote_plus(os.path.join(self.base, elem.attrib['href']))
 
     def strip_prompts(self, text):
         """ Strips fake interpreter prompts from html code meant to

@@ -218,7 +218,7 @@ def get_external_page(args):
         handle = urlopen(args['path'])
     except:
         return 404
-    vlam = crunchyfier.VLAMPage(handle, args['path'], True)
+    vlam = crunchyfier.VLAMPage(handle, args['path'], external_flag=True)
     return vlam.get()
 
 def get_local_page(args):
@@ -228,8 +228,12 @@ def get_local_page(args):
         handle = urlopen('file://' + path)
     except:
         return 404
-    vlam = crunchyfier.VLAMPage(handle, 'file://' + path, True)
-    return vlam.get()
+    if path.endswith('.html') or path.endswith('.htm'):
+        base = os.path.dirname(args['path'])
+        vlam = crunchyfier.VLAMPage(handle, base, local_flag=True)
+        return vlam.get()
+    else:
+        return handle.read()
 
 def get_user_js(args):
     """loads a user-constructed javascript into crunchy"""
@@ -248,7 +252,6 @@ def get_python_file(args):
     try:
         handle = urlopen('file://' + path)
     except:
-        print "error in get_python_file"
         return 404
     return handle.read()
 
