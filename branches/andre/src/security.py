@@ -15,6 +15,7 @@ caused by insertion of malicious javascript code within a web page.
 import os
 import random
 import urllib
+from StringIO import StringIO
 # crunchy modules
 import configuration
 import server
@@ -141,28 +142,28 @@ for key in specific_allowed:
         specific_allowed[key].append(item)
 
 commands = {}
-js_name = ''
+js_memory_file = ''
 
 class SecureSession(object):
     
     def __init__(self, root_dir, port):
-        global js_name
+        global js_memory_file
         self.root_dir = root_dir
+        # For security reason, we create a unique session ID and use this
+        # to create unique names to javascript function that interact
+        # with the Python server.  This way, if ever some outside javascript
+        # code were to be able to affect the execution of a crunchy page,
+        # it would have to guess the unique functions name. 
+        # This may be an excessive precaution.
+        self.session_id = str(port)+str(int(random.random()*1000000000))
         js_infile = open(os.path.join(root_dir, 'src', 'javascript', 
                                   'code_exec.js'), 'r')
-        #prefs = configuration.UserPreferences()
-        #self.session_id = ''
-        self.session_id = str(port)+str(int(random.random()*1000000000))
+        js_memory_file = StringIO()
+        js_memory_file.write("var session_id = " + self.session_id + '\n')
+        js_memory_file.write(js_infile.read())
+        # We do a similar mapping to unique names within a session
         self.map_commands()
-        # create a unique javascript file to be used within a session
-        prefs = configuration.UserPreferences(root_dir)
-        js_name = os.path.join(prefs.working_dir, str(self.session_id)+'code_exec.js')
-        js_outfile = open(os.path.join(root_dir, js_name), 'w')
-        js_outfile.write("var session_id = " + self.session_id + '\n')
-        js_outfile.write(js_infile.read())
-        js_outfile.close()
-        # checks to see if old javascript files were left behind
-        # and remove them.
+        return
         
     def map_commands(self):
         commands['/'] = '/'  # safe; no need to add session_id
@@ -206,9 +207,9 @@ class SecureSession(object):
         commands['/save_and_run'] = '/save_and_run' + self.session_id
         return   
 
-    def close(self):
-        #remove the javascript file created for that session
-        os.remove(os.path.join(self.root_dir, js_name))
+##    def close(self):
+##        #remove the javascript file created for that session
+##        os.remove(os.path.join(self.root_dir, js_name))
         
 def remove_unwanted(tree):
     '''Removes unwanted tags and or attributes from a "tree" created by

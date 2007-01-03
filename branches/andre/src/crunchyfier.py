@@ -65,8 +65,7 @@ class VLAMPage(object):
         if self.textareas:
             # we want edit_area_full.js to be loaded first
             self.append_js_file("/src/javascript/edit_area/edit_area_crunchy.js")
-        self.append_js_file(security.commands['/get_user_js']+"?"+
-                            urllib.pathname2url(security.js_name))
+        self.append_js_file(security.commands['/get_user_js'])
         self.append_js_file("/src/javascript/custom_alert.js")
         if self.textareas:
             for id in self.textareas:

@@ -73,9 +73,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
         # values are decoded with urllib.unquote_plus
         argmap = {}
         arg = []
-        if path.startswith("/get_user_js"):  # special Crunchy case
-            argmap['path'] = str(parts[1])
-        elif len(parts) > 1:
+        if len(parts) > 1:
             argstring = str(parts[1])
             arglist = argstring.split('&')
             for i in arglist:
@@ -254,12 +252,7 @@ def get_local_page(args):
 
 def get_user_js(args):
     """loads a user-constructed javascript into crunchy"""
-    path = args['path']
-    try:
-        handle = urlopen('file://' + path)
-    except:
-        return 404
-    return handle.read()
+    return security.js_memory_file.getvalue()
 
 def get_python_file(args):
     """loads a local Python file; intended target should be
