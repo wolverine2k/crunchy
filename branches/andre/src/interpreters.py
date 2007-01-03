@@ -300,9 +300,9 @@ def analyse_doctest_result(x):
             return _("You code failed the test.")
     else:
         if failures == 0:
-            return _("Congratulation, your code passed all %d tests!")%total
+            return _("Congratulation, your code passed all (%d) tests!")%total
         elif failures == total:
-            return _("Your code failed all %d tests.")%total
+            return _("Your code failed all (%d) tests.")%total
         else:
             return _("Your code failed %s out of %s tests.")%(failures, total)
 
@@ -347,16 +347,6 @@ def exec_external(code, console=False, path=None):
             raise NotImplementedError
     else:
         raise NotImplementedError
-
-# The following is adapted from "Python Standard Library", by Fredrik Lundh
-##def win_run(program, *args):
-##    for path in os.environ["PATH"].split(os.pathsep):
-##        filename = os.path.join(path, program) + ".exe"
-##        try:
-##            return Popen([filename, args])
-##        except:
-##            pass
-##    raise os.error, "cannot find executable"
 
 #---- The following is for graphics
 _js_init = """
