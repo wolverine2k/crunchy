@@ -319,14 +319,26 @@ def exec_external(code, console=False, path=None):
     """
     if path is None:
         path = os.path.join("temp", "temp.py")
+        if os.name == 'nt':
+            current_dir = os.getcwd()
+            target_dir = current_dir
+            fname = path
+    elif os.name == 'nt':
+        target_dir, fname = os.path.split(path)
+        current_dir = os.getcwd() 
+                                  
     filename = open(path, 'w')
     filename.write(code)
     filename.close()
+        
     if os.name == 'nt':
+        os.chdir(target_dir) # change dir so as to deal with paths that
+                             # include spaces
         if console:
-            win_run("cmd", ('/c start python %s'%path))
+            Popen(["cmd.exe", ('/c start python %s'%fname)])
         else:
-            win_run("cmd", ('/c python %s'%path))
+            Popen(["cmd.exe", ('/c python %s'%fname)])
+        os.chdir(current_dir)
     elif os.name == 'posix':
         try:
             os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', 
@@ -337,15 +349,14 @@ def exec_external(code, console=False, path=None):
         raise NotImplementedError
 
 # The following is adapted from "Python Standard Library", by Fredrik Lundh
-def win_run(program, *args):
-    for path in os.environ["PATH"].split(os.pathsep):
-        filename = os.path.join(path, program) + ".exe"
-        try:
-            return Popen([filename, args])
-        except:
-            pass
-    raise os.error, "cannot find executable"
-
+##def win_run(program, *args):
+##    for path in os.environ["PATH"].split(os.pathsep):
+##        filename = os.path.join(path, program) + ".exe"
+##        try:
+##            return Popen([filename, args])
+##        except:
+##            pass
+##    raise os.error, "cannot find executable"
 
 #---- The following is for graphics
 _js_init = """

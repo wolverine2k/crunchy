@@ -159,7 +159,11 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             # a separator where we check to make sure the path recreated
             # is of the correct length - but it probably would be an overkill.
             info = data.split("_::EOF::_")
-            filename = open(info[0], 'w')
+            path = info[0].decode('utf-8')
+            path = path.encode(sys.getdefaultencoding())
+            #path = info[0].encode(sys.getdefaultencoding())
+            #print "path = ", path
+            filename = open(path, 'w')
             # the following is in case "_::EOF::_" appeared in the file content
             content = '_::EOF::_'.join(info[1:]) 
             filename.write(content)
@@ -169,12 +173,14 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             # save file first
             data = self.rfile.read(int(self.headers["Content-Length"]))
             info = data.split("_::EOF::_")
-            filename = open(info[0], 'w')
+            path = info[0].decode('utf-8')
+            path = path.encode(sys.getdefaultencoding())
+            #filename = open(path, 'w')
             content = '_::EOF::_'.join(info[1:]) 
-            filename.write(content)
-            filename.close()
+            #filename.write(content)
+            #filename.close()
             # then run it
-            interpreters.exec_external(content, console=True, path=info[0])
+            interpreters.exec_external(content, console=False, path=path)
         else:
             self.send_error(404, self.path)
 
