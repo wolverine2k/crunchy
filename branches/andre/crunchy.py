@@ -8,16 +8,11 @@ import socket
 import sys
 import webbrowser
 # crunchy modules
-
-root_dir = os.getcwd()
 import src.configuration as configuration
-prefs = configuration.UserPreferences(root_dir)
-
 import src.interpreters as interpreters
 import src.security as security
 import src.server
 import src.utilities
-import src.menu_extractor as menu_extractor
 # Third party modules
 try:
     import psyco
@@ -25,7 +20,9 @@ try:
     print "Succesfully imported psyco"
 except ImportError:
     pass
-
+# globally defined objects
+root_dir = os.getcwd()
+prefs = configuration.UserPreferences(root_dir)
 sys.stdout = src.utilities.ThreadStream(sys.stdout)
 sys.stderr = src.utilities.ThreadStream(sys.stderr)
 serverclass = BaseHTTPServer.HTTPServer
@@ -54,7 +51,6 @@ def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     """
     root_dir = os.getcwd()
     session = security.SecureSession(root_dir, port)
-    menu_extractor.main(root_dir)
     serveraddress = (host, port)
     server = serverclass(serveraddress, handlerclass)
     src.server.repl = interpreters.HTTPrepl()
@@ -62,7 +58,7 @@ def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     server.still_serving = True
     if openbrowser:
         webbrowser.open('http://' + host + ':' + str(port) + filename)
-    print 'Crunchy Server: serving up ready formatted interactive tutorials on port %s' % port
+    print 'Crunchy Server: serving up interactive tutorials on port %s' % port
     try:
         while server.still_serving:
             server.handle_request()

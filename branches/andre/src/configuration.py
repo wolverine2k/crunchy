@@ -8,16 +8,17 @@ from ConfigParser import SafeConfigParser
 from element_tree import HTMLTreeBuilder
 import translation
 
-class Singleton(object):
+class Borg(object):
     """From the 2nd edition of the Python cookbook.
-       Ensures that only one instance is created per running script, so
-       that it can be accessed from any running module as a unique object."""
-    def __new__(cls, *args, **kwargs):
-        if '_inst' not in vars(cls):
-            cls._inst = object.__new__(cls, *args, **kwargs)
-        return cls._inst
-
-class UserPreferences(Singleton):
+       Ensures that all instances share the same state and behaviour.
+    """
+    _shared_state={}
+    def __new__(cls, *a, **k):
+        obj = object.__new__(cls, *a, **k)
+        obj.__dict__ = cls._shared_state
+        return obj
+    
+class UserPreferences(Borg):
     """Keeps track of user preferences such as:
     language: the preferred language;
     working_dir: the directory where user-created Python files are saved;
@@ -40,13 +41,6 @@ class UserPreferences(Singleton):
                 self.create_path()
             self.user_file = os.path.join(self.user_dir, "crunchy.cfg")
             self.load()
-            self.home = "index.html" # English is default
-            self.options = "src/html/options.html"
-            translation.select('en')
-            if self._language == 'fr':
-                self.home = "index_fr.html"
-                self.options = "src/html/options_fr.html"
-                translation.select('fr')
         return
     
     def create_path(self):
@@ -76,7 +70,7 @@ class UserPreferences(Singleton):
         return
     
     def load(self):
-        '''Reads the configuration values'''
+        '''Reads the configuration values and sets them for this session'''
         try:
             self.config.readfp(open(self.user_file, 'r'))
         except:
@@ -117,12 +111,14 @@ class UserPreferences(Singleton):
                 self.changed = True
         self._language = lang
         self.set_preference('language', lang)
-        if self._language == "en":
-            self.home = "index.html"
-            self.options = "src/html/options.html"
-        elif self._language == "fr":
+        if self._language == "fr":
             self.home = "index_fr.html"
             self.options = "src/html/options_fr.html"
+        else: # English is the default
+            self.home = "index.html"
+            self.options = "src/html/options.html"
+            self._language = "en"
+
         translation.select(self._language)
         self.extract_menu()
         self.save()

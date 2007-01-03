@@ -13,7 +13,8 @@ import crunchyfier
 import errors
 import interpreters
 import security
-
+import configuration
+prefs = configuration.UserPreferences()
 # The following variables are initialised in crunchy.py
 repl = None    # read-eval-print-loop: Python interpreter
 server = None
@@ -184,9 +185,10 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
 
 def get_index(dummy):
     '''Default page displayed to user.'''
-    # In future version, a choice might be given as to which file
-    # is loaded based on the language.
-    return open("index.html").read()
+    if prefs._language == 'fr':
+        return open("index_fr.html").read()
+    else: # default is English
+        return open("index.html").read()
 
 def get_exit(dummy):
     """

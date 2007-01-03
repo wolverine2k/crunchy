@@ -8,33 +8,37 @@
 import os
 
 home = None # home is defined properly in preferences
-print home
 
+##_language = ''
 english = {}
 french = {}
 
 def select(lang):
-    global selected
+    global _selected#, _language
     global english, french
     if lang == 'en':
         if english == {}:
             print "home =", home
             filename = os.path.join(home, "crunchy_locale", "en", "english.po")
             english = build_dict(filename)
-        selected = english
+        _selected = english
     elif lang == 'fr':
         if french == {}:
             filename = os.path.join(home, "crunchy_locale", "fr", "french.po")
             french = build_dict(filename)
-        selected = french
+        _selected = french
+##    _language = lang
     print "selected language in translation.py is :", lang
 
 def _(message):
     message = message.replace("\n","")  # message is a key in a dict
-    if message in selected:
-        return selected[message]
+    if message in _selected:
+        return _selected[message]
     else:
         return message # returns untranslated one as default
+
+##def get_language():
+##    return _language
 
 def build_dict(filename):
     translation = {}

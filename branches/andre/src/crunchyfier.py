@@ -110,7 +110,7 @@ id: %s,
 font_size: "11",
 allow_resize: "both", 
 allow_toggle: true,
-language: "en",
+language: "%s",
 toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
 syntax: "python",
 start_highlight: true,
@@ -118,7 +118,7 @@ load_callback:"my_load_file",
 save_callback:"my_save_file",
 display: "later",
 replace_tab_by_spaces:4,
-min_height: 150});"""%id
+min_height: 150});"""%(id, prefs._language)
         self.head.append(js)
         return
 
@@ -180,8 +180,6 @@ obj.style.visibility = "visible";
                         addLoadLocal(div)
                     elif 'remote' in self.vlamcode:
                         addLoadRemote(div, text)
-                    elif 'python' in self.vlamcode:
-                        addLoadPython(div)
                 elif 'choose' in self.vlamcode and 'language' in self.vlamcode:
                     addLanguageSelect(div, text)
         return
