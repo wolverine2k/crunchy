@@ -11,21 +11,33 @@ home = None # home is defined properly in preferences
 
 english = {}
 french = {}
+_editarea_lang = 'en' # default
 
 def select(lang):
-    global _selected#, _language
+    global _selected, _editarea_lang
     global english, french
-    if lang == 'en':
-        if english == {}:
-            filename = os.path.join(home, "crunchy_locale", "en", "english.po")
-            english = build_dict(filename)
-        _selected = english
-    elif lang == 'fr':
+    
+    print "selected language in translation.py is :", lang
+    if lang in ['en', 'fr', 'pt', 'pl', 'ja', 'it', 'dk', 'de']:
+        _editarea_lang = lang
+    else:
+        _editarea_lang = 'en'
+    
+    if lang == 'fr':
         if french == {}:
             filename = os.path.join(home, "crunchy_locale", "fr", "french.po")
             french = build_dict(filename)
         _selected = french
-    print "selected language in translation.py is :", lang
+    else: # English is the default
+        if english == {}:
+            filename = os.path.join(home, "crunchy_locale", "en", "english.po")
+            english = build_dict(filename)
+        _selected = english
+
+
+def get_editarea_lang():
+    global _editarea_lang
+    return _editarea_lang
 
 def _(message):
     message = message.replace("\n","")  # message is a key in a dict

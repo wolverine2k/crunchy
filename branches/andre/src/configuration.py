@@ -111,6 +111,12 @@ class UserPreferences(Borg):
                 self.changed = True
         self._language = lang
         self.set_preference('language', lang)
+        # make sure we set it first in module translation as it has more
+        # choices for editarea
+        translation.select(self._language)
+        self._editarea_lang = translation.get_editarea_lang()
+        
+        # more limited choices here.
         if self._language == "fr":
             self.home = "index_fr.html"
             self.options = "src/html/options_fr.html"
@@ -118,8 +124,6 @@ class UserPreferences(Borg):
             self.home = "index.html"
             self.options = "src/html/options.html"
             self._language = "en"
-
-        translation.select(self._language)
         self.extract_menu()
         self.save()
         return

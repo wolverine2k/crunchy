@@ -20,6 +20,7 @@ import configuration
 prefs = configuration.UserPreferences()
 import security
 from translation import _
+
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
@@ -122,7 +123,7 @@ load_callback:"my_load_file",
 save_callback:"my_save_file",
 display: "later",
 replace_tab_by_spaces:4,
-min_height: 150});"""%(id, prefs._language)
+min_height: 150});"""%(id, prefs._editarea_lang)
         self.head.append(js)
         return
 

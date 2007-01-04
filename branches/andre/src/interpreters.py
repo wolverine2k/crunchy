@@ -31,7 +31,6 @@ from doctest import DocTestRunner, DocTestParser
 from StringIO import StringIO
 from popen2 import popen2
 from subprocess import Popen
-#from xml.sax.saxutils import escape as _escape
 # crunchy modules
 import errors
 import crunchyfier
@@ -165,7 +164,6 @@ def escape(data):
     data = data.replace('\n', '<br/>')
     data = data.decode(sys.getdefaultencoding()).encode('utf-8')
     return data
-
     
 class CrunchyInterpreter(threading.Thread):
     """Run python source asynchronously and parse the standard 
