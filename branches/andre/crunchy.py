@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 '''Serves up ready formatted interactive tutorials over http'''
 
 # Python standard library modules
@@ -9,6 +10,9 @@ import sys
 import webbrowser
 # crunchy modules
 import src.configuration as configuration
+# need to set the root directory for use in other modules
+root_dir = os.getcwd()
+prefs = configuration.UserPreferences(root_dir)
 import src.interpreters as interpreters
 import src.security as security
 import src.server
@@ -20,9 +24,8 @@ try:
     print "Succesfully imported psyco"
 except ImportError:
     pass
+    
 # globally defined objects
-root_dir = os.getcwd()
-prefs = configuration.UserPreferences(root_dir)
 sys.stdout = src.utilities.ThreadStream(sys.stdout)
 sys.stderr = src.utilities.ThreadStream(sys.stderr)
 serverclass = BaseHTTPServer.HTTPServer

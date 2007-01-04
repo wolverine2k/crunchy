@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 security.py
 
@@ -207,9 +208,13 @@ class SecureSession(object):
         commands['/save_and_run'] = '/save_and_run' + self.session_id
         return   
 
-##    def close(self):
-##        #remove the javascript file created for that session
-##        os.remove(os.path.join(self.root_dir, js_name))
+    def close(self):
+        #remove the javascript file created for that session
+        #
+        # Note: this is not the correct path anymore...
+        #
+        #
+        os.remove(os.path.join(self.root_dir, js_name))
         
 def remove_unwanted(tree):
     '''Removes unwanted tags and or attributes from a "tree" created by

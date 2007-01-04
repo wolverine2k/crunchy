@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 crunchyfier.py
 
@@ -75,6 +76,10 @@ class VLAMPage(object):
         self.insert_css("/src/css/custom_alert.css")
         for style in prefs.styles:
             self.head.append(style)
+        meta_lang = et.Element("meta")
+        meta_lang.set("http-equiv", "Content-Type")
+        meta_lang.set("content", "text/html; charset=utf-8")
+        self.head.append(meta_lang)
         return
 
     def insert_css(self, filename):

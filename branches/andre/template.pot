@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-03 20:30-0400\n"
+"PO-Revision-Date: 2007-01-03 20:10-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -10,55 +10,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
 "X-Poedit-Country: CANADA\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-Basepath: c:\\Documents and Settings\\André\\My Documents\\crunchy\\branches\\andre\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-Basepath: c:\\Documents and Settings\\André\\My Documents\\branches\\andre\n"
 "X-Poedit-SearchPath-0: src\n"
 
 #: src/crunchyfier.py:272
 #: src/crunchyfier.py:282
 msgid "Evaluate"
-msgstr "Évaluer"
+msgstr ""
 
 #: src/crunchyfier.py:279
 msgid "Execute externally"
-msgstr "Exécution externe"
+msgstr ""
 
 #: src/crunchyfier.py:300
 msgid "Draw"
-msgstr "Dessiner"
+msgstr ""
 
 #: src/crunchyfier.py:304
 msgid "Plot"
-msgstr "Graphique"
+msgstr ""
 
 #: src/crunchyfier.py:571
 msgid "Load local tutorial"
-msgstr "Didacticiel local"
+msgstr ""
 
 #: src/crunchyfier.py:591
 msgid "Load Python file"
-msgstr "Charger un fichier Python"
+msgstr ""
 
 #: src/crunchyfier.py:594
 #: src/crunchyfier.py:616
 msgid "Cancel"
-msgstr "Annuler"
+msgstr ""
 
 #: src/crunchyfier.py:613
 msgid "Save Python file"
-msgstr "Sauvegarder"
+msgstr ""
 
 #: src/crunchyfier.py:620
 msgid "Save and Run"
-msgstr "Sauvegarder et exécuter"
+msgstr ""
 
 #: src/crunchyfier.py:629
 msgid "Load remote tutorial"
-msgstr "Didacticiel externe"
+msgstr ""
 
 #: src/crunchyfier.py:652
 msgid "Submit language choice"
-msgstr "Indiquez le choix de langue"
+msgstr ""
 
 #: src/errors.py:22
 #, python-format
@@ -66,37 +66,35 @@ msgid ""
 "Error on line %s:\n"
 "%s%s\n"
 msgstr ""
-"Erreur à la ligne %s :\n"
-" %s%s\n"
 
 #: src/errors.py:122
 #, python-format
 msgid "Error in processing %s: %s"
-msgstr "Erreur dans l'interpréation de %s : %s"
+msgstr ""
 
 #: src/errors.py:125
 #, python-format
 msgid "The file '%s' has some html errors in it: %s."
-msgstr "Le fichier '%s' comporte des erreurs html : %s."
+msgstr ""
 
 #: src/errors.py:126
 msgid "  It can not be displayed."
-msgstr "Il ne peut pas être présenté."
+msgstr ""
 
 #: src/errors.py:133
 #, python-format
 msgid "Canvas error: %s is an invalid colour."
-msgstr "Erreur graphique : %s n'est pas une couleur valide."
+msgstr ""
 
 #: src/errors.py:136
 #, python-format
 msgid "Canvas error.  Python info: %s."
-msgstr "Erreur graphique.  Information donnée par Python : %s."
+msgstr ""
 
 #: src/errors.py:140
 #, python-format
 msgid "Python execution error.  Info: %s."
-msgstr "Erreur d'exécution Python.  Information : %s."
+msgstr ""
 
 #: src/errors.py:144
 #, python-format
@@ -104,220 +102,218 @@ msgid ""
 "Parsing error occurred in the following Python code.\n"
 "Info: %s."
 msgstr ""
-"Une erreur a été détectée dans le code Python.\n"
-" Information : %s."
 
 #: src/errors.py:153
 #: src/errors.py:159
 #, python-format
 msgid "Unexpected error in %s. "
-msgstr "Erreur inattendue dans %s."
+msgstr ""
 
 #: src/errors.py:154
 #, python-format
 msgid "This occurred while trying to open %s. "
-msgstr "Ceci a eu lieu lors de l'ouverture de %s."
+msgstr ""
 
 #: src/errors.py:155
 #: src/errors.py:162
 #, python-format
 msgid "The information given by Python is: %s."
-msgstr "L'information donnée par Python est : %s."
+msgstr ""
 
 #: src/errors.py:160
 #, python-format
 msgid "This occurred while trying to process the tree for %s. "
-msgstr "Ceci a eu lieu pendant le traitement de %s fait par ElementTree."
+msgstr ""
 
 #: src/errors.py:161
 #, python-format
 msgid "The files processed so far are %s. "
-msgstr "Les fichiers traités à date sont: %s."
+msgstr ""
 
 #: src/errors.py:166
 #, python-format
 msgid "Unrecognized argument in Tutorials.get(): %s. "
-msgstr "Argument inconnu dans Tutorials.get() : %s."
+msgstr ""
 
 #: src/errors.py:167
 msgid "This should never happen - and has not happened since the last bug fix!"
-msgstr "Ceci ne devrait pas survenir - et n'est pas survenu depuis la correction du fichier."
+msgstr ""
 
 #: src/errors.py:168
 msgid " Please contact the developpers with a copy of the html file "
-msgstr "SVP, contactez les programmeurs avec une copie du fichier html"
+msgstr ""
 
 #: src/errors.py:169
 msgid "that caused this problem, and a description of what was done."
-msgstr "qui a causé ce problème, et une description de ce que vous avez fait."
+msgstr ""
 
 #: src/interpreters.py:65
 msgid "Type help(object) for help about object."
-msgstr "help(objet) vous fournira de l'aide sur cet objet."
+msgstr ""
 
 #: src/interpreters.py:67
 msgid "You cannot call help() without an argument."
-msgstr "Vous ne pouvez pas invoquer help() sans argument."
+msgstr ""
 
 #: src/interpreters.py:138
 #, python-format
 msgid "%s is not defined yet"
-msgstr "%s n'est pas encore défini."
+msgstr ""
 
 #: src/interpreters.py:209
 msgid "Follow this link if you want to know more about exceptions."
-msgstr "Suivez ce lien si vous voulez en savoir davantage au sujet des exceptions."
+msgstr ""
 
 #: src/interpreters.py:244
 msgid "The following example failed:"
-msgstr "L'exemple suivant n'a pas donné le résultat attendu :"
+msgstr ""
 
 #: src/interpreters.py:246
 msgid "The expected result was:"
-msgstr "Le résultat attendu était :"
+msgstr ""
 
 #: src/interpreters.py:248
 msgid "The result obtained was:"
-msgstr "Le résultat obtenu était :"
+msgstr ""
 
 #: src/interpreters.py:250
 msgid "An exception was raised:"
-msgstr "Une exception est survenue :"
+msgstr ""
 
 #: src/interpreters.py:295
 msgid "There was no test to satisfy."
-msgstr "Il n'y avait pas de test à satisfaire."
+msgstr ""
 
 #: src/interpreters.py:298
 msgid "Congratulation, your code passed the test!"
-msgstr "Félicitations, votre code a passé le test!"
+msgstr ""
 
 #: src/interpreters.py:300
 msgid "You code failed the test."
-msgstr "Votre code a échoué le test."
+msgstr ""
 
 #: src/interpreters.py:303
 #, python-format
 msgid "Congratulation, your code passed all (%d) tests!"
-msgstr "Félicitations, votre code a passé tous les tests (%d)!"
+msgstr ""
 
 #: src/interpreters.py:305
 #, python-format
 msgid "Your code failed all (%d) tests."
-msgstr "Votre code a échoué tous les tests (%d)."
+msgstr ""
 
 #: src/interpreters.py:307
 #, python-format
 msgid "Your code failed %s out of %s tests."
-msgstr "Votre code a échoué %s des %s tests."
+msgstr ""
 
 #: src/interpreters.py:377
 #: src/interpreters.py:396
 msgid "set_line_color"
-msgstr "set_line_color"
+msgstr ""
 
 #: src/interpreters.py:378
 #: src/interpreters.py:397
 msgid "set_line_colour"
-msgstr "set_line_colour"
+msgstr ""
 
 #: src/interpreters.py:379
 msgid "color"
-msgstr "color"
+msgstr ""
 
 #: src/interpreters.py:380
 msgid "colour"
-msgstr "colour"
+msgstr ""
 
 #: src/interpreters.py:381
 msgid "x_range"
-msgstr "x_range"
+msgstr ""
 
 #: src/interpreters.py:382
 msgid "y_range"
-msgstr "y_range"
+msgstr ""
 
 #: src/interpreters.py:383
 msgid "x_axis"
-msgstr "x_axis"
+msgstr ""
 
 #: src/interpreters.py:384
 msgid "y_axis"
-msgstr "y_axis"
+msgstr ""
 
 #: src/interpreters.py:385
 msgid "prepare_graph"
-msgstr "prepare_graph"
+msgstr ""
 
 #: src/interpreters.py:386
 msgid "plot_function"
-msgstr "plot_function"
+msgstr ""
 
 #: src/interpreters.py:390
 msgid "circle"
-msgstr "circle"
+msgstr ""
 
 #: src/interpreters.py:391
 msgid "filled_circle"
-msgstr "filled_circle"
+msgstr ""
 
 #: src/interpreters.py:392
 msgid "filled_rectangle"
-msgstr "filled_rectangle"
+msgstr ""
 
 #: src/interpreters.py:393
 msgid "filled_triangle"
-msgstr "filled_triangle"
+msgstr ""
 
 #: src/interpreters.py:394
 msgid "line"
-msgstr "line"
+msgstr ""
 
 #: src/interpreters.py:395
 msgid "rectangle"
-msgstr "rectangle"
+msgstr ""
 
 #: src/interpreters.py:398
 msgid "set_fill_color"
-msgstr "set_fill_color"
+msgstr ""
 
 #: src/interpreters.py:399
 msgid "set_fill_colour"
-msgstr "set_fill_colour"
+msgstr ""
 
 #: src/interpreters.py:400
 msgid "triangle"
-msgstr "triangle"
+msgstr ""
 
 #: src/interpreters.py:401
 msgid "point"
-msgstr "point"
+msgstr ""
 
 #: src/sound.py:45
 msgid "'approximate' settings will be ignored."
-msgstr "L'argument 'approximate' sera ignoré."
+msgstr ""
 
 #: src/sound.py:46
 msgid "It is only available under Windows."
-msgstr "Ceci n'est disponible que sous Windows."
+msgstr ""
 
 #: src/sound.py:131
 msgid "WARNING: sounds multiple of 233.1 Hz may be 'noisy' on your computer."
-msgstr "AVERTISSEMENT : les fréquences multiples de 233.1 Hz peuvent être \"défecteuses\" avec votre ordinateur."
+msgstr ""
 
 #: src/sound.py:256
 msgid "Sound is not supported on this platform."
-msgstr "Votre ordinateur ne permet pas la production de sons."
+msgstr ""
 
 #: src/sound.py:257
 msgid "You need one of the following 2 choices:"
-msgstr "Vous avez un des deux choix suivants :"
+msgstr ""
 
 #: src/sound.py:258
 msgid " use MS Windows with winsound installed;"
-msgstr "utiliser Microsoft Windows avec le module winsound installé;"
+msgstr ""
 
 #: src/sound.py:259
 msgid " use a UNIX system that supports OSS (ossaudiodev)."
-msgstr "utiliser un système Unix qui supporte OSS (ossaudiodev)."
+msgstr ""
 

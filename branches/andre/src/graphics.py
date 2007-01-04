@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ''' graphics.py
 Andre Roberge
 Class and utility function used to process graphics within a <canvas> tag.

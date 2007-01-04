@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Sublass SimpleHTTPRequestHandler to deal with our specific needs
 """
 

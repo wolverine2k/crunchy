@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ configuration.py:
     Keeps track of user preferences.
     In future we should provides a GUI for changing the preferences.

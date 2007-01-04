@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''utilities.py
 
 Contain various function and classes for general use.

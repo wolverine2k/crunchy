@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 errors.py
 
@@ -19,7 +20,7 @@ def get_traceback(code):
     ex_type, ex_val, ex_trace = sys.exc_info()
     ex_lineno = ex_trace.tb_next.tb_lineno
     ex_line = code.splitlines(True)[ex_lineno - 1]
-    return _("Error on line %s:\n%s%s\n")%(ex_lineno, ex_line, ex_val)
+    return _(u"Error on line %s:\n%s%s\n")%(ex_lineno, ex_line, ex_val)
 
         
 def get_syntax_error(code):
