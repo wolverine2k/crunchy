@@ -98,6 +98,7 @@ class HTTPrepl(Singleton):
             sys.stdout = oldout
             sys.stderr = olderr
         out.close()
+        result = result.decode(sys.getdefaultencoding()).encode('utf-8')
         return result
    
     def dir(self, line):
