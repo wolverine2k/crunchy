@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # translation.py
 
 # Note: the base directory is called "crunchy_locale" instead of "locale".

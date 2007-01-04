@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """sound.py:
 system-agnostic wave sound output
 """

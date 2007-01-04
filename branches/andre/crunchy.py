@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 '''Serves up ready formatted interactive tutorials over http'''
 
 # Python standard library modules

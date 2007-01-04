@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 '''
 interpreters.py
 
@@ -32,7 +31,7 @@ from doctest import DocTestRunner, DocTestParser
 from StringIO import StringIO
 from popen2 import popen2
 from subprocess import Popen
-from xml.sax.saxutils import escape as _escape
+#from xml.sax.saxutils import escape as _escape
 # crunchy modules
 import errors
 import crunchyfier
@@ -156,11 +155,15 @@ class HTTPrepl(Singleton):
         doc = getattr(result, "__doc__", "") or ""
         return "%s(%s)\n%s" % (line, ", ".join(arglist), doc)
 
-
 def escape(data):
-    """make a string suitable for embedding in HTML"""
-    data =  _escape(data)
+    """Escape &, <, >  and \n in a string, making it suitable for
+       embedding in HTML."""
+    # must do ampersand first
+    data = data.replace("&", "&amp;")
+    data = data.replace(">", "&gt;")
+    data = data.replace("<", "&lt;")
     data = data.replace('\n', '<br/>')
+    data = data.decode(sys.getdefaultencoding()).encode('utf-8')
     return data
 
     
