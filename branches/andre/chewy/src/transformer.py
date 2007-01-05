@@ -101,26 +101,16 @@ class VLAMPage(object):
         return
 
     def process_pre(self, pre):
-        """process a pre element and decide what to do with it"""
+        """process a pre element and insert the required html controls
+           to select the appropriate vlam options"""
+        id, text, new_div = self.prepare_element(pre)
+        new_pre = et.SubElement(new_div, 'pre')
+        new_pre.text = text
+        addVLAM(new_div, id)
         return
-##        for attrib in pre.attrib.items():
-##            if attrib[0] == 'title':
-##                if 'none' in attrib[1]: # no interactive element
-##                    self.vlamcode = pre.attrib['title'].lower()
-##                    if pre.text.startswith('\n'):
-##                        pre.text = pre.text[1:]
-##                    self.style_code(pre, pre.text)
-##                elif 'editor' in attrib[1]: # includes "interpreter to editor"
-##                    self.substitute_editor(pre)
-##                elif 'interpreter' in attrib[1]:
-##                    self.substitute_interpreter(pre)
-##                elif 'doctest' in attrib[1]:
-##                    self.substitute_editor(pre)
-##                elif 'canvas' in attrib[1] or 'plot' in attrib[1]:
-##                    self.substitute_canvas(pre)
 
     def prepare_element(self, elem):
-        '''Common code for all vlam elements using the "title" tag.
+        '''Replaces an element by a <div> as a container
         '''
         self.__ID += 1
         id = 'code' + str(self.__ID)
@@ -129,7 +119,6 @@ class VLAMPage(object):
                 elem.text = elem.text[1:]
         text = elem.text
         tail = elem.tail
-        self.vlamcode = elem.attrib['title'].lower()
         elem.clear()
         elem.tail = tail
         elem.tag = 'div'
@@ -145,15 +134,7 @@ class VLAMPage(object):
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
-
 ###================
-#
-# The following are functions used to insert various "vlam elements".
-# These are purely ElementTree constructions, without any "vlam logic"
-# They are introduced as a possible first step to refactor them into
-# separate classes.
-###================
-
 
 def addLanguageSelect(parent, text):
     """Inserts an html selector for languages.
@@ -176,4 +157,76 @@ def addLanguageSelect(parent, text):
     inp.set("type", "submit")
     inp.set("value", _("Submit language choice"))
     inp.set("class", "crunchy")
+    return
+
+def addVLAM(parent, id):
+    '''Intended to add the various vlam options under a <pre>'''
+    form = et.SubElement(parent, 'form')
+    table = et.SubElement(form, 'table')
+    table.attrib["class"] = "vlam"
+    tr = et.SubElement(table, 'tr')
+    # first column: interactive elements
+    td1 = et.SubElement(tr, 'td')
+    fs1 = et.SubElement(td1, 'fieldset')
+    legend1 = et.SubElement(fs1, 'legend')
+    legend1.text = _("Interactive elements")
+    input1 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="none", checked='')
+    input1.text = "none"
+    br = et.SubElement(fs1, 'br')
+    input2 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="interpreter")
+    input2.text = "interpreter"
+    br = et.SubElement(fs1, 'br')
+    input3 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="interpreter editor")
+    input3.text = "interpreter to editor"
+    br = et.SubElement(fs1, 'br')
+    input4 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="editor")
+    input4.text = "editor"
+    br = et.SubElement(fs1, 'br')
+    input5 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="doctest")
+    input5.text = "doctest"
+    br = et.SubElement(fs1, 'br')
+    input6 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="canvas")
+    input6.text = "canvas"
+    br = et.SubElement(fs1, 'br')
+    input7 = et.SubElement(fs1, 'input', type='radio', name=id,
+                            value="plot")
+    input7.text = "plot"
+    # 2nd column: line number choices
+    td2 = et.SubElement(tr, 'td')
+    fs2 = et.SubElement(td2, 'fieldset')
+    legend2 = et.SubElement(fs2, 'legend')
+    legend2.text = _("Line numbers")
+    input21 = et.SubElement(fs2, 'input', type='radio', name=id,
+                            value="", checked='')
+    input21.text = "No linenumbers"
+    br = et.SubElement(fs2, 'br')
+    input22 = et.SubElement(fs2, 'input', type='radio', name=id,
+                            value="linenumber")
+    input22.text = "With linenumbers"
+    # 3rd column: code options
+    td3 = et.SubElement(tr, 'td')
+    fs3 = et.SubElement(td3, 'fieldset')
+    legend3 = et.SubElement(fs3, 'legend')
+    legend3.text = _("Code options")
+    input31 = et.SubElement(fs3, 'input', type='radio', name=id,
+                            value="", checked='')
+    input31.text = "Default"
+    br = et.SubElement(fs3, 'br')
+    input32 = et.SubElement(fs3, 'input', type='radio', name=id,
+                            value="no-pre")
+    input32.text = "no-pre"
+    br = et.SubElement(fs3, 'br')
+    input33 = et.SubElement(fs3, 'input', type='radio', name=id,
+                            value="no-copy")
+    input33.text = "no-copy"
+
+
+    button = et.SubElement(parent, 'button')
+    button.text = id
     return
