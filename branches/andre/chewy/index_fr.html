@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Chewy</title>
+<link href="/src/css/menu.css" rel="stylesheet" type="text/css">
+<!-- Alternative styles; first one chosen as default -->
+<link href="/src/css/gradient1.css" title="Colour gradients (earth tones)"
+rel="stylesheet" type="text/css">
+<link href="/src/css/bold.css" title="Bold colours" rel=
+"alternative stylesheet" type="text/css">
+<link href="/src/css/b-w.css" title="Black and white" rel=
+"alternative stylesheet" type="text/css">
+<link href="/src/css/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div><!-- leave this div here. -->
+<!-- Important: because of the way we float items to the right, we have to
+ construct the menu from the rightmost item going left.-->
+<ul id="menu">
+	<li class="menuitem"><a href="/exit">Quitter Chewy</a></li>
+	<li class="menuitem"><a href="/src/html/options.html">Options</a></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Aide</a>
+	<ul class="submenu">
+		<li><a href="/docs/reference/faq.html">FAQ</a></li>
+		<li><a href="/docs/reference/about.html">A propos</a></li>
+	</ul></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Tutoriels</a>
+	<ul class="submenu">
+		<li><a href="/docs/crunchy_maker/vlam_summary.html">Sommaire VLAM</a></li>    
+		</ul></li>
+<li class="menuitem"><a href="/">Maison</a></li>
+</ul>
+<br>
+<!-- This br will, within a div, will ensure that the menu does not
+            hide the page content --></div>
+<h1>Chewy vous souhaite la bienvenue!</h1>
+<p>Utilisez le menu ci-dessus pour naviguer. "Maison" vous ram&egrave;nera toujours ici. "Quitter Chewy" terminera le programme Python, vous laissant avec un onglet (ou une fen&ecirc;tre) &agrave; fermer.
+</p>
+<p><p>Vous pouvez changer le style de la page &agrave; partir du menu de Firefox.   Notez que, si vous changer le style, vous devrez le refaire pour chaque page 
+que vous visiterez.  &Agrave; l'avenir, nous pr&eacute; voyons inclure une option vous permettant de faire un choix global pour le style choisi.</p>
+<form name="browser_" onblur="document.submit_.path.value=document.browser_.filename.value">
+<input name="filename" size="80" type="file" /><br />
+</form>
+<form action="/load_local" method="get" name="submit_">
+<input name="path" type="hidden" />
+<input class="crunchy" type="submit" value="Chargez un fichier html" />
+</form>
+</body>
+</html>

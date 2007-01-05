@@ -22,9 +22,9 @@ server = None
 class CrunchyRequestHandler(SimpleHTTPRequestHandler):
     '''handle HTTP requests'''
     pagemap = {}
-    
+
     def do_GET(self):
-        '''handle a GET request, called by methods in SimpleHTTPRequestHandler'''       
+        '''handle a GET request, called by methods in SimpleHTTPRequestHandler'''
         path, argmap = self.process_GET_path(self.path)
         if path in self.pagemap:
             data = self.pagemap[path](argmap)
@@ -51,7 +51,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
                     page = crunchyfier.VLAMPage(handle, 'file://' + path)
                 except errors.HTMLTreeBuilderError, e:
                     self.send_data(errors.HTMLTreeBuilder_error_dialog(e))
-                    return 
+                    return
                 data = page.get()
                 self.send_response(200)
                 self.end_headers()
@@ -60,16 +60,16 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             else:
                 #its not VLAM, fall back:
                 SimpleHTTPRequestHandler.do_GET(self)
-    
+
     def process_GET_path(self, path):
         """process a path passed in a GET request:
-            dplit of the path from the argument segment 
+            dplit of the path from the argument segment
             and return the path and a mapping of argument names to values
             - very pythonic :-)
         """
         parts = self.path.split("?")
         path = str(parts[0])
-        #extract the arguments, 
+        #extract the arguments,
         # argmap will map from argument names to values as strings
         # values are decoded with urllib.unquote_plus
         argmap = {}
@@ -92,7 +92,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
         return
-        
+
     def do_POST(self):
         '''Handles a POST request, called by methods in SimpleHTTPRequestHandler'''
         if self.path.startswith(security.commands["/push"]):  #interactive interpreter
@@ -119,7 +119,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
         elif self.path.startswith(security.commands['/canvas_exec']):
             canvas_id = self.path.split('?')[1]
             try:
-                data = interpreters.exec_graphics(canvas_id, 
+                data = interpreters.exec_graphics(canvas_id,
                           self.rfile.read(int(self.headers["Content-Length"])))
                 self.send_data(data)
             except errors.ColourNameError, info:
@@ -128,16 +128,16 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
                 self.send_error(400, errors.canvas_error_dialog(info))
 
         elif self.path.startswith(security.commands['/rawio']):
-            bufname = self.path.split('?')[1]  
-            print bufname  
-            if bufname in interpreters.interpreters:  
-                i = interpreters.interpreters[bufname]  
-                #print self.headers  
-                self.send_response(200)  
-                self.end_headers()   
-                data = i.get()  
-                self.wfile.write(data)  
-                if not i.isAlive():  
+            bufname = self.path.split('?')[1]
+            print bufname
+            if bufname in interpreters.interpreters:
+                i = interpreters.interpreters[bufname]
+                #print self.headers
+                self.send_response(200)
+                self.end_headers()
+                data = i.get()
+                self.wfile.write(data)
+                if not i.isAlive():
                     del interpreters.interpreters[bufname]
             else:
                 self.send_error(403)
@@ -149,7 +149,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             interpreters.exec_external(data, console=False)
         elif self.path.startswith(security.commands['/save_python']):
             data = self.rfile.read(int(self.headers["Content-Length"]))
-            # We've sent the file (content) and filename (path) in one 
+            # We've sent the file (content) and filename (path) in one
             # "document" written as path+"_::EOF::_"+content; the assumption
             # is that "_::EOF::_" would never be part of a filename/path.
             #
@@ -164,7 +164,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             #print "path = ", path
             filename = open(path, 'w')
             # the following is in case "_::EOF::_" appeared in the file content
-            content = '_::EOF::_'.join(info[1:]) 
+            content = '_::EOF::_'.join(info[1:])
             filename.write(content)
             filename.close()
         elif self.path.startswith(security.commands['/save_and_run']):
@@ -175,7 +175,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             path = info[0].decode('utf-8')
             path = path.encode(sys.getdefaultencoding())
             #filename = open(path, 'w')
-            content = '_::EOF::_'.join(info[1:]) 
+            content = '_::EOF::_'.join(info[1:])
             #filename.write(content)
             #filename.close()
             # then run it
@@ -206,7 +206,7 @@ def get_push(args):
     '''the push part of the ajax interpreter, uses POST
     '''
     result = interpreters.interps[args['name']].push(args["line"])
-    if result is None: 
+    if result is None:
         return 204
     return result
 
@@ -214,7 +214,7 @@ def get_dir(args):
     '''the dir part of the ajax interpreter, uses GET
     '''
     result = interpreters.interps[args['name']].dir(args["line"])
-    if result == None: 
+    if result == None:
         return 204
     else:
         #have to convert the list to a string
@@ -225,7 +225,7 @@ def get_doc(args):
     '''the doc part of the ajax interpreter, uses GET
     '''
     result = interpreters.interps[args['name']].doc(args["line"])
-    if not result: 
+    if not result:
         return 204
     return result
 
@@ -240,13 +240,17 @@ def get_external_page(args):
 
 def get_local_page(args):
     """load an arbitrary local page into crunchy"""
-    path = pathname2url(args['path'])
+    # pages are encoded in utf-8; the info received is thus in that encoding.
+    # If the path contains "weird" characters, such as &eacute; we apparently
+    # need to decode them into the expected local default.
+    path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
+    fullpath = pathname2url(path)
     try:
-        handle = urlopen('file://' + path)
+        handle = urlopen('file://' + fullpath)
     except:
         return 404
     if path.endswith('.html') or path.endswith('.htm'):
-        base = os.path.dirname(args['path'])
+        base = os.path.dirname(path)
         vlam = crunchyfier.VLAMPage(handle, base, local_flag=True)
         return vlam.get()
     else:

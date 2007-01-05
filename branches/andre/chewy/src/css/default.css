@@ -1,0 +1,141 @@
+/* some temporary default values to make things more interesting. */
+
+/* basic html tags, including canvas */
+body {font-family: sans-serif;}
+p {max-width: 700px}
+pre{margin-bottom: 5px; font-family:monospace;}
+li {max-width: 700px; padding: 2px;}
+blockquote {font-family: serif;}
+
+canvas.canvas { border: solid green 2px; }
+canvas.plot { border: solid blue 2px; }
+
+/* Messages styling */
+.warning{background-color: #FFD700; /*gold*/
+         font-weight: bold; font-size: 1.2em;}
+.crunchy_comment{color:green; font-weight: bold;}
+
+/* Basic Python Elements; color choice are chosen, if possible, to be
+   consistent with those of the editor (EditArea); these are
+	 found in file python.js */
+.py_keyword{color: #0000FF; /* blue */ 
+            font-weight: bold;} /* EditArea does not support font-weight */
+.py_number{color: #000000;} /* EditArea does not recognize number; keep black.*/
+.py_comment{color: gray;}
+.py_string{color: #660066;} /* Indigo */
+.py_variable{color: #000000;}
+.py_op{color: #993300; font-weight:bold;}
+.py_builtins{color: #009900;} /* builtins and string functions */
+.py_stdlib{color: #009900;} /* standard library modules */
+.py_special{color: #006666;} /* special method of the form __x__ */
+.py_linenumber{font-size: small; color: #666666;}
+.py_prompt{color:blue; }
+.py_output{color:darkgreen; background-color: #f0f0dd;}
+
+/* Load and save python forms. These are in a fixed position
+   the screen so that they can be seen even when the editor is
+	 in fullscreen mode. */
+
+.load_python{position:fixed; top:100px; z-index:99;
+            border:4px solid #063; border-style: outset; 
+						visibility:hidden; background-color:#696}
+.save_python{position:fixed; top:200px; z-index:99;
+            border:4px solid #339; border-style: outset; 
+						visibility:hidden; background-color:#66C}
+
+/* file path information inserted in the display: */
+.fileinfo{ 
+	font-size: 8pt; 
+	color: black; 
+	border: 1px solid black;
+	display: block;
+	position: fixed;
+	top: 0px;
+	right: 0;
+}
+
+/* result (text) of the code execution: */
+.stdout{ color : darkgreen; font-family: monospace;}
+.stderr{ color : darkred;  font-family: monospace;}
+.error_info{ color : blue; font-family: monospace;}
+
+/* div containing all terminal output except for doctests */
+pre.term_out {
+	background-color: #f0f0dd;
+	color: blue;
+	font-family: monospace;
+	min-height: 20px;
+}
+/* div containing doctest results */
+pre.doctest_out {
+	background-color: #f0f0dd;
+	color: darkred;
+	font-family: monospace;
+	min-height: 20px;
+}
+/*****
+* Crunchy Frog Interpreter: 
+*****/
+.interp_output_container  {
+    font: 10pt monospace;
+    color:darkgreen; 
+		background-color: #f5f5ec;
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera 4 - 6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+}
+.stdin {  /* interpreter prompt */
+		font: 10pt monospace;
+		color: blue;
+}
+.interp_input { /* user input */
+    font: 10pt monospace;
+    width: 90%;
+		border: 3px solid #C0C0CC;
+		background-color: #eeffee;
+}
+.interp_tipbar {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 50%;  
+    border: 2px outset #DDCCBB;
+    background-color: #FFEEDD;
+    font: 9pt monospace;
+    margin: 0;
+    padding: 4px;
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera 4 - 6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+    display: none;  /* will appear only when needed */
+		z-index:11;
+}
+
+/* the following class is used in some reference pages */
+table.summary{
+    border-collapse: separate;
+    background-color: #f5f5dc;
+    border-width: 1px 1px 1px 1px;
+    border-spacing: 1px;
+    border-style: outset outset outset outset;
+    border-color: gray gray gray gray;
+		}
+table.summary th {
+	border-width: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+	border-style: inset inset inset inset;
+	border-color: gray gray gray gray;
+}
+table.summary td {
+	border-width: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+	border-style: inset inset inset inset;
+	border-color: gray gray gray gray;
+}
+
