@@ -39,6 +39,7 @@ class VLAMPage(object):
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
         self.url = url
+        self.convert_all_links()
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
         self.textareas = []
@@ -134,6 +135,30 @@ class VLAMPage(object):
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
+    def convert_all_links(self):
+        """looks for any attribute anywhere in the document, called
+           'src' or 'href' and converts it if it's a relative link -
+            absolute links (starting with http://) are left alone.
+            In future this might be user-configurable, the user could be able
+            to specify whether or not external links are loaded as vlam
+            It might also be desirable if tutorial writers could specify
+            a preference too.
+        """
+        for elem in self.tree.getiterator():
+            if 'src' in elem.attrib:
+                e = elem.attrib['src']
+                if not 'http://' in e:
+                    elem.attrib['src'] = '/load_local?path=' +\
+                           urllib.quote_plus(os.path.join(self.url, e))
+            elif 'href' in elem.attrib:
+                e = elem.attrib['href']
+                if not 'http://' in e:
+                    if e.startswith('#'):
+                        pass # the browser will handle these "as is"
+                    else:
+                        elem.attrib['href'] = '/load_local?path=' +\
+                           urllib.quote_plus(os.path.join(self.url, e))
+
 ###================
 
 def addLanguageSelect(parent, text):
@@ -225,7 +250,6 @@ def addVLAM(parent, id):
     input33 = et.SubElement(fs3, 'input', type='radio', name=id,
                             value="no-copy")
     input33.text = "no-copy"
-
 
     button = et.SubElement(parent, 'button')
     button.text = id

@@ -34,7 +34,7 @@ class VLAMPage(object):
     """Encapsulates a page containing VLAM"""
     #for locally unique IDs
     __ID = -1
-    
+
     def __init__(self, filehandle, url, external_flag=False, local_flag=False):
         """all you have to give it is a file handle to read from and an url."""
         print "filehandle = ", filehandle
@@ -47,7 +47,7 @@ class VLAMPage(object):
         self.url = url
         self.colourizer = colourize.Colourizer()
         # If self.external_flag or self.local_flag is True, which means
-        # that the original page was loaded via an input box 
+        # that the original page was loaded via an input box
         # (/load_local or /load_external)
         # all links in the page are converted to use the same
         self.external_flag = external_flag
@@ -108,12 +108,12 @@ class VLAMPage(object):
         # on the toolbar do not work with Firefox 2.0. This has been checked
         # with the example included in the EditArea distribution. Instead,
         # we will use the custom controls; these have to be included as
-        # buttons appearing below the textarea. 
+        # buttons appearing below the textarea.
         js.text = """
 editAreaLoader.init({
 id: %s,
 font_size: "11",
-allow_resize: "both", 
+allow_resize: "both",
 allow_toggle: true,
 language: "%s",
 toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
@@ -164,8 +164,8 @@ obj.style.visibility = "visible";
 
     def process_span(self, span):
         """Span can be used for:
-           1. hiding comments, 
-           2. requesting to load local or remote Crunchy tutorials, or 
+           1. hiding comments,
+           2. requesting to load local or remote Crunchy tutorials, or
            3. providing a language selection.
         """
         for attrib in span.attrib.items():
@@ -250,36 +250,36 @@ obj.style.visibility = "visible";
         """Substitutes an editor for elem.  It is used for 'editor', 'doctest',
            as well as 'interpreter to editor' options."""
         global DOCTESTS
-        id, text, elem = self.prepare_element(elem)       
+        id, text, elem = self.prepare_element(elem)
         pre = et.SubElement(elem, 'pre')
         textarea_text = self._apportion_code(pre, text)
         textarea_id = id+"_code"
         self.textareas.append('\"'+textarea_id+'\"')
-        
+
         rows, cols = self._get_size()
-        textarea = et.SubElement(elem, "textarea", rows=rows, cols=cols, 
+        textarea = et.SubElement(elem, "textarea", rows=rows, cols=cols,
                                  id=textarea_id)
         textarea.text = textarea_text
         hidden_load_id = 'hidden'+id+"_code"
         hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
         hidden_load.attrib['class'] = 'load_python'
         addLoadPython(hidden_load, hidden_load_id, textarea_id)
-        
+
         hidden_save_id = 'hidden_save'+id+"_code"
         hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
         hidden_save.attrib['class'] = 'save_python'
         addSavePython(hidden_save, hidden_save_id, textarea_id)
-        
+
         if 'external' in self.vlamcode:
             if not 'nointernal' in self.vlamcode:
-                btn = et.SubElement(elem, "button", 
+                btn = et.SubElement(elem, "button",
                                     onclick='exec_by_id("'+id+'")')
                 btn.text = _("Evaluate")
             if 'console' in self.vlamcode:
-                btn2 = et.SubElement(elem, "button", 
+                btn2 = et.SubElement(elem, "button",
                                      onclick='exec_external_console("'+id+'")')
             else:
-                btn2 = et.SubElement(elem, "button", 
+                btn2 = et.SubElement(elem, "button",
                                              onclick='exec_external("'+id+'")')
             btn2.text = _("Execute externally")
         else:
@@ -307,7 +307,7 @@ obj.style.visibility = "visible";
             id = "plot%s_%s"%(width, height) + id
             klass = 'plot'
             btn_text = _("Plot")
-        
+
         pre = et.SubElement(new_div, 'pre')
         textarea_text = self._apportion_code(pre, text)
         textarea_id = id+"_input"
@@ -316,18 +316,18 @@ obj.style.visibility = "visible";
         hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
         hidden_load.attrib['class'] = 'load_python'
         addLoadPython(hidden_load, hidden_load_id, textarea_id)
-        
+
         hidden_save_id = 'hidden_save'+id+"_input"
         hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
         hidden_save.attrib['class'] = 'save_python'
         addSavePython(hidden_save, hidden_save_id, textarea_id)
-                    
+
 
         addCanvas(new_div, width=width, height=height, id=id, klass=klass,
-                  btn_text=btn_text, rows=rows, cols=cols, 
+                  btn_text=btn_text, rows=rows, cols=cols,
                   textarea_id=textarea_id, textarea_text=textarea_text)
         return
-        
+
     def _get_size(self):
         ''' Extract the default size of the textarea'''
         if 'size' in self.vlamcode:
@@ -340,7 +340,7 @@ obj.style.visibility = "visible";
         else:
             rows, cols = 10, 80
         return str(rows), str(cols)
-    
+
     def _get_area(self):
         ''' Extract the drawing canvas dimensions'''
         if 'area' in self.vlamcode:
@@ -351,15 +351,15 @@ obj.style.visibility = "visible";
             except:
                 width, height = 400, 400
         else:
-            width, height = 400, 400    
+            width, height = 400, 400
         return str(width), str(height)
-    
+
     def _apportion_code(self, pre, code):
         '''Decide on what code (if any) to put in the pre element and
            in the textarea.'''
         if code:
             textarea_code = code
-            if 'no-copy' in self.vlamcode or 'doctest' in self.vlamcode: 
+            if 'no-copy' in self.vlamcode or 'doctest' in self.vlamcode:
                 self.style_code(pre, code)
                 textarea_code = '\n'
             elif 'interpreter' in self.vlamcode:
@@ -372,7 +372,7 @@ obj.style.visibility = "visible";
         else:
             textarea_code = '\n'
         return textarea_code
-        
+
     def get(self):
         """vlam file: serialise the tree and return it;
            simply returns the file content otherwise.
@@ -381,22 +381,22 @@ obj.style.visibility = "visible";
         fake_file.write(DTD + '\n')
         self.tree.write(fake_file)
         return fake_file.getvalue()
-    
+
     def get_base(self):
-        """retrieve the base that relative links are relative to and store it 
+        """retrieve the base that relative links are relative to and store it
            in self.base; see http://www.faqs.org/rfcs/rfc1808.html
-           In future this probably should check through the document to see if 
+           In future this probably should check through the document to see if
            the base has been redefined.
         """
         self.base = self.url
-        
+
     def convert_all_links(self):
-        """looks for any attribute anywhere in the document, called 
+        """looks for any attribute anywhere in the document, called
            'src' or 'href' and converts it if it's a relative link -
             absolute links (starting with http://) are left alone.
-            In future this might be user-configurable, the user could be able 
+            In future this might be user-configurable, the user could be able
             to specify whether or not external links are loaded as vlam
-            It might also be desirable if tutorial writers could specify 
+            It might also be desirable if tutorial writers could specify
             a preference too.
         """
         for elem in self.tree.getiterator():
@@ -407,7 +407,7 @@ obj.style.visibility = "visible";
             else:
                 raise # this should never happen
         return
-    
+
     def _convert_external_link(self, elem):
         '''Converts all relativelinks to html files to use the "/load_external"
            command and relative links to absolute ones; the browser can
@@ -437,7 +437,7 @@ obj.style.visibility = "visible";
                     elem.attrib['href'] = urlparse.urljoin(self.base, e)
 
     def _convert_local_link(self, elem):
-        '''Converts all links, except external links using "http://", 
+        '''Converts all links, except external links using "http://",
            to use the "/load_local" command.'''
         if 'src' in elem.attrib:
             e = elem.attrib['src']
@@ -468,7 +468,7 @@ obj.style.visibility = "visible";
                 new_lines.append(line[4:].rstrip())
                 self.lines_of_prompt.append(("&gt;&gt;&gt; ", linenumber))
                 linenumber += 1
-            elif line.rstrip() == ">>>": # tutorial writer may forget the 
+            elif line.rstrip() == ">>>": # tutorial writer may forget the
                                          # extra space for an empty line
                 new_lines.append('')
                 self.lines_of_prompt.append((">>> ", linenumber))
@@ -484,15 +484,15 @@ obj.style.visibility = "visible";
             else:
                 self.lines_of_prompt.append(('', line))
         self.python_code = '\n'.join(new_lines) + '\n'
-        return 
+        return
 
     def style_code(self, pre, code):
         '''Add css styling to Python code inside a <pre>.'''
             # wrap in a <span> so HTMLTreeBuilder can find root and use it.
-        
+
         if 'linenumber' in self.vlamcode:
             add_line = True
-            # the following is reset by self.colourizer; 
+            # the following is reset by self.colourizer;
             # do not attempt to use directly
             self.colourizer.outputLineNumber = True
             length = len("<span class='py_linenumber'>999 </span>")
@@ -509,7 +509,7 @@ obj.style.visibility = "visible";
                 for (pr, info) in self.lines_of_prompt:
                     if pr:
                         if add_line:
-                            newlines.append(lines[info][:length] + 
+                            newlines.append(lines[info][:length] +
                                             '<span class="py_prompt">' + pr +
                                   '</span>' + lines[info][length:])
                         else:
@@ -518,11 +518,11 @@ obj.style.visibility = "visible";
                     elif info:
                         info = self.colourizer.changeHTMLspecialCharacters(info)
                         if add_line:  # get the spacing right...
-                            newlines.append("<span class='py_linenumber'>    </span>" 
-                                           + '<span class="py_output">' + info + 
+                            newlines.append("<span class='py_linenumber'>    </span>"
+                                           + '<span class="py_output">' + info +
                                            '</span>')
                         else:
-                            newlines.append('<span class="py_output">' + info + 
+                            newlines.append('<span class="py_output">' + info +
                                         '</span>')
                 code = "<span>" + '\n'.join(newlines) + "</span>\n"
             except Exception, parsingErrorMessage:
@@ -561,16 +561,16 @@ def addLoadLocal(parent):
     '''
     name1 = 'browser_'
     name2 = 'submit_'
-    form1 = et.SubElement(parent, 'form', name=name1, 
+    form1 = et.SubElement(parent, 'form', name=name1,
                         onblur = "document.%s.path.value="%name2+\
                         "document.%s.filename.value"%name1)
-    input1 = et.SubElement(form1, 'input', type='file', 
+    input1 = et.SubElement(form1, 'input', type='file',
                  name='filename', size='80')
     br = et.SubElement(form1, 'br')
-    
+
     form2 = et.SubElement(parent, 'form', name=name2, method='get',
                 action=security.commands['/load_local'])
-    input2 = et.SubElement(form2, 'input', type='hidden', 
+    input2 = et.SubElement(form2, 'input', type='hidden',
                            name='path')
     input3 = et.SubElement(form2, 'input', type='submit',
              value=_('Load local tutorial'))
@@ -584,17 +584,17 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     filename = 'filename' + hidden_load_id
     path = 'path' + hidden_load_id
     br = et.SubElement(parent, 'br')
-    form1 = et.SubElement(parent, 'form', 
+    form1 = et.SubElement(parent, 'form',
                 onblur = "a=getElementById('%s');b=getElementById('%s');a.value=b.value"%(path, filename))
     input1 = et.SubElement(form1, 'input', type='file', id=filename, size='80')
     br = et.SubElement(form1, 'br')
-    
+
     form2 = et.SubElement(parent, 'form')
     input2 = et.SubElement(form2, 'input', type='hidden', id=path)
-    btn = et.SubElement(parent, 'button', 
+    btn = et.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.value;load_python_file('%s');"%(path, textarea_id))
     btn.text = _("Load Python file")
-    btn2 = et.SubElement(parent, 'button', 
+    btn2 = et.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.style.visibility='hidden';"%hidden_load_id)
     btn2.text = _("Cancel")
     return
@@ -609,17 +609,17 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     form1 = et.SubElement(parent, 'form')
     input1 = et.SubElement(form1, 'input', type='file', id=filename, size='80')
     br = et.SubElement(form1, 'br')
-    
+
     form2 = et.SubElement(parent, 'form')
     input2 = et.SubElement(form2, 'input', type='hidden', id=path)
-    btn = et.SubElement(parent, 'button', 
+    btn = et.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
         "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))
     btn.text = _("Save Python file")
-    btn2 = et.SubElement(parent, 'button', 
+    btn2 = et.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.style.visibility='hidden';"%hidden_save_id)
     btn2.text = _("Cancel")
-    btn3 = et.SubElement(parent, 'button', 
+    btn3 = et.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
         "c=getElementById('%s');path=c.value;save_and_run(path,'%s');"%(path, textarea_id))
     btn3.text = _("Save and Run")
@@ -637,12 +637,12 @@ def addLoadRemote(parent, url=''):
 
 def addLanguageSelect(parent, text):
     """Inserts an html selector for languages.
-        
+
        Language choice in option is a string of the form:
        'en, English; fr, Francais [; etc.]'
     """
     choices = text.split(";")
-    form = et.SubElement(parent, "form", method='get', 
+    form = et.SubElement(parent, "form", method='get',
                          action=security.commands["/select_language"])
     select = et.SubElement(form, "select")
     select.set("name", "language")
@@ -659,10 +659,10 @@ def addLanguageSelect(parent, text):
     return
 
 def addCanvas(parent, width='400', height='400', id='', klass='',
-                  btn_text='', rows='10', cols='80', 
+                  btn_text='', rows='10', cols='80',
                   textarea_id='', textarea_text='\n'):
     """ Insert the required elements for a drawing canvas."""
-    canvas = et.SubElement(parent, "canvas", width=width, 
+    canvas = et.SubElement(parent, "canvas", width=width,
                             height=height, id=id,)
     canvas.attrib['class'] = klass
     canvas.text = '\n'
@@ -670,7 +670,7 @@ def addCanvas(parent, width='400', height='400', id='', klass='',
     btn = et.SubElement(parent, "button", onclick='exec_canvas("'+id+'")')
     btn.text = btn_text
     br = et.SubElement(parent, "br")
-    textarea = et.SubElement(parent, "textarea", rows=rows,     
+    textarea = et.SubElement(parent, "textarea", rows=rows,
                              cols=cols, id=textarea_id)
     textarea.text = textarea_text
     return

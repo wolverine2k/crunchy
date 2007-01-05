@@ -240,17 +240,21 @@ def get_external_page(args):
 
 def get_local_page(args):
     """load an arbitrary local page into crunchy"""
-    # pages are encoded in utf-8; the info received is thus in that encoding.
-    # If the path contains "weird" characters, such as &eacute; we apparently
+    # pages are encoded in utf-8; the info received is sometimes in that encoding.
+    # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
-    path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
-    fullpath = pathname2url(path)
     try:
-        handle = urlopen('file://' + fullpath)
+        path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
+    except:
+        path = args['path']
+    if path.startswith('file://'):
+        path = path.replace('file://', '')
+    try:
+        handle = open(path)
     except:
         return 404
     if path.endswith('.html') or path.endswith('.htm'):
-        base = os.path.dirname(path)
+        base = 'file://'+ os.path.dirname(path)
         vlam = crunchyfier.VLAMPage(handle, base, local_flag=True)
         return vlam.get()
     else:
@@ -264,6 +268,8 @@ def get_python_file(args):
     """loads a local Python file; intended target should be
        an EditArea.
     """
+    # For reasons that puzzle me, this one does not need to be decoded
+    # from utf-8 and encoded in the default system encoding to work.
     path = pathname2url(args['path'])
     try:
         handle = urlopen('file://' + path)
