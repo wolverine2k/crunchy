@@ -40,7 +40,7 @@ class VLAMPage(object):
         print "filehandle = ", filehandle
         print "url=", url
         try:
-            self.tree = HTMLTreeBuilder.parse(filehandle)
+            self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
         self.tree = security.remove_unwanted(self.tree)
@@ -379,7 +379,7 @@ obj.style.visibility = "visible";
         """
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
-        self.tree.write(fake_file)
+        self.tree.write(fake_file, encoding='utf-8')
         return fake_file.getvalue()
 
     def get_base(self):

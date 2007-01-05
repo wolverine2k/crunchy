@@ -29,8 +29,13 @@ from element_tree import ElementTree
 # button, form, input: we only want Crunchy itself to create those
 # *frame*: we don't want hidden frames that could be playing tricks with the
 #          user (very remote possibility, but still.)
+# embed: as the name indicates, can be used to embed some unwanted objects.
+#
+#  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
+# time to find out about possible other security issues.
+#
 tag_black_list = ["script", 'button', 'form', 'frame', 'frameset', 'input',
-                    'iframe']
+                    'iframe', 'embed']
 
 # The following is not used currently
 #attribute_black_list = ["text/javascript"]
@@ -101,7 +106,7 @@ specific_allowed = {
     'link': ['charset', 'href', 'hreflang', 'type', 'rel', 'rev', 'media'],
     'map': ['shape', 'coords', 'href', 'nohref', 'alt'],
     # menu deprecated
-    'meta': ['name', 'content', 'http-equiv'], # could be stripped safely
+    'meta': ['name', 'content'], #  'http-equiv' can be a potential problem
     # noframes should not be needed
     'noscript' : [],   # should not be needed
     # object not allowed - preventing unwanted interactions
@@ -123,7 +128,7 @@ specific_allowed = {
     'style': ['type', 'media'],
     'sub': [],
     'sup': [],
-    'table': ['summary', 'align', 'width', 'bgcolor', 'frame', 'rules', 
+    'table': ['summary', 'align', 'width', 'bgcolor', 'frame', 'rules',
                 'border', 'cellspacing', 'cellpadding'],
     'tbody': ['align', 'char', 'charoff', 'valign'],
     'td': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
@@ -145,7 +150,7 @@ commands = {}
 js_memory_file = ''
 
 class SecureSession(object):
-    
+
     def __init__(self, root_dir, port):
         global js_memory_file
         self.root_dir = root_dir
@@ -153,10 +158,10 @@ class SecureSession(object):
         # to create unique names to javascript function that interact
         # with the Python server.  This way, if ever some outside javascript
         # code were to be able to affect the execution of a crunchy page,
-        # it would have to guess the unique functions name. 
+        # it would have to guess the unique functions name.
         # This may be an excessive precaution.
         self.session_id = str(port)+str(int(random.random()*1000000000))
-        js_infile = open(os.path.join(root_dir, 'src', 'javascript', 
+        js_infile = open(os.path.join(root_dir, 'src', 'javascript',
                                   'code_exec.js'), 'r')
         js_memory_file = StringIO()
         js_memory_file.write("var session_id = " + self.session_id + '\n')
@@ -164,7 +169,7 @@ class SecureSession(object):
         # We do a similar mapping to unique names within a session
         self.map_commands()
         return
-        
+
     def map_commands(self):
         commands['/'] = '/'  # safe; no need to add session_id
         request.pagemap[commands['/']] = server.get_index
@@ -205,7 +210,7 @@ class SecureSession(object):
         commands['/spawn'] = '/spawn' + self.session_id
         commands['/spawn_console'] = '/spawn_console' + self.session_id
         commands['/save_and_run'] = '/save_and_run' + self.session_id
-        return   
+        return
 
     def close(self):
         #remove the javascript file created for that session
@@ -214,11 +219,11 @@ class SecureSession(object):
         #
         #
         os.remove(os.path.join(self.root_dir, js_name))
-        
+
 def remove_unwanted(tree):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
-    
+
     for tag in tag_black_list:
         for element in tree.getiterator(tag):
             element.clear() # removes the text
@@ -229,8 +234,15 @@ def remove_unwanted(tree):
                 if attr[0].lower() not in specific_allowed[tag]:
                     del element.attrib[attr[0]]
                 elif attr[0].lower() == 'href':
-                    if urllib.unquote_plus(attr[1]).startswith("javascript:"):  
-                        del element.attrib[attr[0]]   
+                    if urllib.unquote_plus(attr[1]).startswith("javascript:"):
+                        del element.attrib[attr[0]]
+# Trying to prevent a XSS vulnerability through
+# <STYLE>BODY{-moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>
+            if tag == 'style':
+                text = element.text.lower().replace(' ', '')
+                if ':url(' in text:
+                    element.clear()
+                    element.tag = None
     __cleanup(tree.getroot(), lambda e: e.tag)
     return tree
 
@@ -253,5 +265,5 @@ def __cleanup(elem, filter):
                     elem.text += e.tail
         else:
             out.append(e)
-    elem[:] = out 
+    elem[:] = out
     return

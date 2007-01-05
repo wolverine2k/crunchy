@@ -35,7 +35,7 @@ class VLAMPage(object):
     def __init__(self, filehandle, url):
         """all you have to give it is a file path to read from."""
         try:
-            self.tree = HTMLTreeBuilder.parse(filehandle)
+            self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
         self.url = url
@@ -132,7 +132,7 @@ class VLAMPage(object):
         """
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
-        self.tree.write(fake_file)
+        self.tree.write(fake_file, encoding='utf-8')
         return fake_file.getvalue()
 
     def convert_all_links(self):
