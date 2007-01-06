@@ -36,6 +36,7 @@ class VLAMPage(object):
         """all you have to give it is a file path to read from."""
         try:
             self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
+            filehandle.close()
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
         self.url = url
@@ -49,6 +50,7 @@ class VLAMPage(object):
     def process_head(self):
         """set up <head>"""
         self.append_js_file("/src/javascript/custom_alert.js")
+        self.append_js_file("/src/javascript/chewy.js")
         self.insert_css("/src/css/default.css")
         self.insert_css("/src/css/custom_alert.css")
         for style in prefs.styles:
@@ -159,6 +161,14 @@ class VLAMPage(object):
                         elem.attrib['href'] = '/load_local?path=' +\
                            urllib.quote_plus(os.path.join(self.url, e))
 
+class VLAMUpdater(VLAMPage):
+    def __init__(self, filehandle, url, args):
+        self.args = args
+        VLAMPage.__init__(self, filehandle, url)
+
+    def process_pre(self, pre):
+        pre.attrib['title'] = self.args
+
 ###================
 
 def addLanguageSelect(parent, text):
@@ -250,7 +260,8 @@ def addVLAM(parent, id):
     input33 = et.SubElement(fs3, 'input', type='radio', name=id,
                             value="no-copy")
     input33.text = "no-copy"
-
-    button = et.SubElement(parent, 'button')
+    button = et.SubElement(parent, 'button', onclick="update();")
     button.text = id
+##    updater_link = et.SubElement(parent, 'a', href="/update?id=%s"%id)
+##    updater_link.text = id
     return

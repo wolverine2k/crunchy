@@ -16,6 +16,9 @@ prefs = configuration.UserPreferences()
 # The following variables is initialised in chewy.py
 server = None
 
+active_path = None
+active_base = None
+
 class ChewyRequestHandler(SimpleHTTPRequestHandler):
     '''handle HTTP requests'''
     pagemap = {}
@@ -26,11 +29,15 @@ class ChewyRequestHandler(SimpleHTTPRequestHandler):
                 "/": get_index,
                 "/exit": get_exit,
                 "/load_local": get_local_page,
-                "/select_language": get_language
+                "/select_language": get_language,
+                "/update": update_page
                 }
         path, argmap = self.process_GET_path(self.path)
         if path in self.pagemap:
             data = self.pagemap[path](argmap)
+            if path == "/update":
+                print "path in self.pagemap=", path
+                print "data = ", data
             if type(data) == type(200):
                 self.send_error(data)
             else:
@@ -119,6 +126,7 @@ def get_local_page(args):
     # pages are encoded in utf-8; the info received is sometimes in that encoding.
     # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
+    global active_path, active_base
     try:
         path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
     except:
@@ -132,9 +140,21 @@ def get_local_page(args):
     if path.endswith('.html') or path.endswith('.htm'):
         base = 'file://'+ os.path.dirname(path)
         vlam = transformer.VLAMPage(handle, base)
+        # we save the path and not the handle as we can't read twice
+        # from the same handle
+        active_path = path
+        active_base = base
         return vlam.get()
     else:
         return handle.read()
+
+def update_page(args):
+    '''test function for now '''
+    print "args=", args
+    global active_path, active_base
+    handle = open(active_path)
+    vlam = transformer.VLAMUpdater(handle, active_base, args['id'])
+    return vlam.get()
 
 def get_language(args):
     import configuration
