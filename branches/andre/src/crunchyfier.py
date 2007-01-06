@@ -123,7 +123,7 @@ load_callback:"my_load_file",
 save_callback:"my_save_file",
 display: "later",
 replace_tab_by_spaces:4,
-min_height: 150});"""%(id, prefs._editarea_lang)
+min_height: 150});"""%(id, prefs.editarea_language)
         self.head.append(js)
         return
 
@@ -271,7 +271,7 @@ obj.style.visibility = "visible";
         addSavePython(hidden_save, hidden_save_id, textarea_id)
 
         if 'external' in self.vlamcode:
-            if not 'nointernal' in self.vlamcode:
+            if not 'no-internal' in self.vlamcode:
                 btn = et.SubElement(elem, "button",
                                     onclick='exec_by_id("'+id+'")')
                 btn.text = _("Evaluate")

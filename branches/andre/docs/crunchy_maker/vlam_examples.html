@@ -29,8 +29,6 @@
 </ul></li>
 <li>Doctests
 <ul>
-	<li><a href="#doctest1">Styled doctest (code only)</a></li>
-	<li><a href="#doctest1a">Styled doctest (code only) with line numbers</a></li>
 	<li><a href="#doctest2">Styled doctest with sized editor</a></li>
 	<li><a href="#doctest2a">Styled doctest with sized editor and line numbers</a></li>
 </ul></li>
@@ -206,22 +204,6 @@ for i in range(11):
 print "Hello world!"
 </pre>
 
-<h2><a id="doctest1">Styled doctest (code only):</a><br/> 
-<code>&lt;pre title="none doctest"&gt;</code></h2>
-<pre title="none doctest">
-&gt;&gt;&gt; # Define the following function.
-&gt;&gt;&gt; print2()
-2
-</pre>
-
-<h2><a id="doctest1a">Styled doctest (code only) with line numbers:</a><br/> 
-<code>&lt;pre title="none doctest linenumber"&gt;</code></h2>
-<pre title="none doctest linenumber">
-&gt;&gt;&gt; # Define the following function.
-&gt;&gt;&gt; print2()
-2
-</pre>
-
 <h2><a id="doctest2">Styled doctest with sized editor:</a><br/> 
 <code>&lt;pre title="doctest size=(5, 60)"&gt;</code></h2>
 <pre title="doctest size=(5, 60)">
@@ -279,15 +261,15 @@ plot_function(math.sin)
 </pre>
 
 <h2><a id="external1">External application with console (Python interpreter)</a><br/> 
-<code>&lt;editor external nointernal console size=(4, 60)"&gt;</code></h2>
-<pre title="editor external nointernal console size=(4, 60)">
+<code>&lt;editor external no-internal console size=(4, 60)"&gt;</code></h2>
+<pre title="editor external no-internal console size=(4, 60)">
 import code
 code.interact()
 </pre>
 
 <h2><a id="external2">External application without console (Tkinter window)</a><br/> 
-<code>&lt;editor external nointernal"&gt;</code></h2>
-<pre title="editor external nointernal">
+<code>&lt;editor external no-internal"&gt;</code></h2>
+<pre title="editor external no-internal">
 from Tkinter import *
 root = Tk()
 w = Label(root, text="Crunchy!")

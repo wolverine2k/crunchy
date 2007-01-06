@@ -26,25 +26,23 @@ are attributes of the html tag "title".</p>
 <tr>
 	<td><code>none</code></td>
 	<td>Does not insert an interactive element; simply styles the code inside 
-	the &lt;pre&gt; element.<br/>
-	Can be used with: <code>interpreter, editor, doctest, canvas, plot</code>.
+	the &lt;pre&gt; element.
 	</td>
 </tr>
 <tr>
 	<td><code>editor</code></td>
-	<td>Inserts a &lt;textarea&gt; after the &lt;pre&gt; element.<br/>
+	<td>Inserts an editor after the &lt;pre&gt; element.<br/>
 	Can be used with: <code>interpreter</code>.</td>
 </tr>
 <tr>
 	<td><code>doctest</code></td>
 	<td>Treats the code inside the &lt;pre&gt; element as a python doctest to 
-	be executed together with the user-code inside the &lt;textarea&gt;.</td>
+	be executed together with the user-code inside the editor.</td>
 </tr>
 <tr>
 	<td><code>interpreter</code></td>
 	<td>Inserts a Python interpreter after the &lt;pre&gt; element, unless the 
-	attribute also contains <code>editor</code>.<br/>
-	Can be used with: <code>interpreter</code>.</td>
+	attribute also contains <code>editor</code>.</td>
 </tr>
 <tr>
 	<td><code>canvas</code></td>
@@ -59,8 +57,8 @@ are attributes of the html tag "title".</p>
 <tr>
 	<td><code>no-copy</code></td>
 	<td>Prevents the Python code inside the &lt;pre&gt; element from being
-	copied into the &lt;textarea&gt;.<br/>
-	Can be used with: <code>interpreter, editor, canvas, plot</code>.</td>
+	copied into the editor.<br/>
+	Can be used with: <code>interpreter</code> (if <code>editor</code> present), editor, canvas, plot</code>.</td>
 </tr>
 <tr>
 	<td><code>linenumber</code></td>
@@ -99,8 +97,8 @@ are attributes of the html tag "title".</p>
 </tr>
 
 <tr>
-	<td><code>nointernal</code></td>
-	<td><code>nointernal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window.<br/>
+	<td><code>no-internal</code></td>
+	<td><code>no-internal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window.<br/>
 	Can be used with: <code>editor</code>.</td>
 </tr>
 
@@ -140,7 +138,7 @@ code.</p>
 </dl>
 <h2><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
-<p><code>&lt;pre title="editor [size=(rows, cols)] [no-copy] [linenumber]"&gt;<br/>
+<p><code>&lt;pre title="editor [size=(rows, cols)] [no-copy] [linenumber] [external [console] [no-internal]]"&gt;<br/>
 <span class="py_keyword">print</span> "Hello world!"
 <br/>
 &lt;/pre&gt;</code><br/>
@@ -174,7 +172,7 @@ long.  To save on typing, an option is available to take a "fake interpreter
 session" reproduced within a Python tutorial and embed the code (stripped of 
 the Python prompts) within an editor.  The required markup to do so is (note 
 that the <code>[to]</code> has no effect other than making the intent clearer for the human reader):</p>
-<pre>&lt;pre title="interpreter [to] editor size=(h, w) [no-copy] [linenumber]"&gt;
+<pre>&lt;pre title="interpreter [to] editor [size=(rows, cols)] [no-copy] [linenumber]"&gt;
 &gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
 ...     <span class="py_keyword">print</span> "Hello world!"
 ... 
@@ -189,7 +187,7 @@ that the <code>[to]</code> has no effect other than making the intent clearer fo
     <span class="py_keyword">print</span> "Hello world!"
 </pre>
 <h2><a id="doctest">DocTest</a></h2>
-<p><code>&lt;pre title="editor [size=(rows, cols)]  
+<p><code>&lt;pre title="doctest [size=(rows, cols)]  
 [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
@@ -202,8 +200,6 @@ used as the doctest.</p>
     <span class="py_keyword">print</span> "Congratulations!"</pre>Is appended.</li>
 	<li>The code is executed in the same way as code from an editor textarea.</li>
 </ol>
-<p>Note that the semantics for doctests are identical to code editors except that the <code>no-copy</code> part has no 
-meaning.</p>
 <p>Doctests use the following CSS classes:</p>
 <dl>
 <dt>span.stdout</dt>
@@ -216,7 +212,7 @@ meaning.</p>
 
 
 <h2><a id="canvas_ref">Graphics: Canvas</a></h2>
-<p><code>&lt;pre title="canvas [size=(rows, cols)] [no-copy] [linenumber] [area=(width, height)] "&gt;<br/>
+<p><code>&lt;pre title="canvas [size=(rows, cols)] [no-copy] [no-pre] [linenumber] [area=(width, height)] "&gt;<br/>
 Optional Python code here<br/>
 &lt;/pre&gt;<br/>
 </code>
@@ -235,7 +231,7 @@ tested with Safari or other browsers.</p>
 
 <h2><a id="plot_ref">Graphics: Plot</a></h2>
 <p>Whereas <code>canvas</code> creates a pixel based drawing area, </p>
-<p><code>&lt;pre title="plot [size=(rows, cols)] [no-copy] [linenumber] [area=(width, height)] "&gt;<br/>
+<p><code>&lt;pre title="plot [size=(rows, cols)] [no-copy] [no-pre] [linenumber] [area=(width, height)] "&gt;<br/>
 Optional Python code here<br/>
 &lt;/pre&gt;<br/>
 </code>
@@ -253,15 +249,14 @@ colourize the Python code without actually inserting an interactive element.  Yo
 ...
 &lt;/pre&gt;
 </pre>
-<p>for editor and canvas, and:</p>
+<p>for editor, interpreter to editor, canvas and plot, and:</p>
 <pre>
-&lt;pre title="none object [linenumber]"&gt;
+&lt;pre title="none interpreter [linenumber]"&gt;
 ...
 &lt;/pre&gt;
 </pre>
-<p>with object replaced by one of "doctest" or "interpreter" (the two are
-equivalent) if the code represents an interactive session at the Python
-interpreter (which is what doctests are).
+<p>if the code represents an interactive session at the Python
+interpreter.
 </p>
 <p>The Python code is styled according to the following classes:</p>
 <dl>

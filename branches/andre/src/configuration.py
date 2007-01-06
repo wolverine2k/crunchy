@@ -17,7 +17,7 @@ class Borg(object):
         obj = object.__new__(cls, *a, **k)
         obj.__dict__ = cls._shared_state
         return obj
-    
+
 class UserPreferences(Borg):
     """Keeps track of user preferences such as:
     language: the preferred language;
@@ -42,7 +42,7 @@ class UserPreferences(Borg):
             self.user_file = os.path.join(self.user_dir, "crunchy.cfg")
             self.load()
         return
-    
+
     def create_path(self):
         '''Creates a path for Crunchy when none exists.'''
         try:
@@ -51,7 +51,7 @@ class UserPreferences(Borg):
             print "Could not create the user directory."
             self.user_dir = os.getcwd()  # use crunchy's a a default.
         return
-    
+
     def create_file(self):
         '''Creates a configuration file when none exist.'''
         self.config.add_section('preferences')
@@ -62,13 +62,13 @@ class UserPreferences(Borg):
         self.config.write(f)
         f.close()
         return
-    
+
     def set_preference(self, option, value):
         '''Set an individual preference option'''
         self.config.set('preferences', option, value)
         self.changed = True
         return
-    
+
     def load(self):
         '''Reads the configuration values and sets them for this session'''
         try:
@@ -80,7 +80,7 @@ class UserPreferences(Borg):
         self.language = self.config.get('preferences', 'language')
         self.changed = False
         return
-    
+
     def save(self):
         '''If necessary, saves the changed values.'''
         if self.changed:
@@ -89,7 +89,7 @@ class UserPreferences(Borg):
             f.close()
             self.changed = False
         return
-    
+
     #== the following are implemented as properties for transparent access
 
     def get_working_dir(self):
@@ -115,7 +115,7 @@ class UserPreferences(Borg):
         # choices for editarea
         translation.select(self._language)
         self._editarea_lang = translation.get_editarea_lang()
-        
+
         # more limited choices here.
         if self._language == "fr":
             self.home = "index_fr.html"
@@ -135,10 +135,14 @@ class UserPreferences(Borg):
         self._style = style
         self.set_preference('style', style)
         return
-    
+
+    def get_editarea_language(self):
+        return self._editarea_lang
+
     working_dir = property(get_working_dir, set_working_dir)
     language = property(get_language, set_language)
     style = property(get_style, set_style)
+    editarea_language = property(get_editarea_language)
 
     def extract_menu(self):
         filename = os.path.normpath(os.path.join(self.root_dir, self.home))

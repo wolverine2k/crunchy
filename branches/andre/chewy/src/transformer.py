@@ -23,7 +23,8 @@ from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
 #the DTD to use:
-DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
+DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
+'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
 
 DOCTESTS = {}
 
@@ -183,21 +184,99 @@ class VLAMUpdater(VLAMPage):
 ###================
 
 def analyze_vlam_code(vlam):
-    """ determine the type of interactive element assigned by a given
-        vlam code."""
-    interactive = '' # default value to return in case someone made an error
-    # in a file marked up "by hand".
+    """ Parse the vlam code to analyze its content.
+        The allowed values are:
+        1. none [interpreter] [linenumber]
+        2. interpreter [linenumber]
+        3. interpreter to editor [linenumber] [size=(rows, cols)] [no-copy]
+        4. editor [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                [external console [no-internal]] _or_ [external [no-internal]]
+        5. doctest [linenumber] [size=(rows, cols)]
+        6. canvas [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                                [area=(width, height)]
+        7. plot [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                                [area=(width, height)]
+    """
+    values = {
+    'interactive': '', # default values to return in case someone made an error
+    'linenumber': '',       # in a file marked up "by hand".
+    'size': '',
+    'area': '',
+    'execution': '',
+    'copied': '',
+    }
+    vlam = vlam.lower() # in case it was done by hand
 
     if 'none' in vlam:
-        interactive = 'none'
+        values['interactive'] = 'none'
+        if 'interpreter' in vlam:
+            values['linenumber'] = ' interpreter'
+        if 'linenumber' in vlam:
+            values['linenumber'] += ' linenumber'
     elif 'interpreter' in vlam and 'editor' in vlam:
-        interactive = 'interpreter to editor'
+        values['interactive'] = 'interpreter to editor'
+        if 'linenumber' in vlam:
+            values['linenumber'] = ' linenumber'
+        if 'size' in vlam:
+            rows, cols = _get_size(vlam)
+            values['size'] = {'rows':rows, 'cols':cols}
+        if 'no-copy' in vlam:
+            values['copied'] = 'no-copy'
     else:
         for choice in ['none', 'interpreter', 'editor', 'doctest',
                        'canvas', 'plot']:
             if choice in vlam:
-                interactive = choice
-    return interactive
+                values['interactive'] = choice
+                if 'linenumber' in vlam:
+                    values['linenumber'] = ' linenumber'
+                if choice not in ['none', 'interpreter']:
+                    if 'size' in vlam:
+                        rows, cols = _get_size(vlam)
+                        values['size'] = {'rows':rows, 'cols':cols}
+                if choice in ['canvas', 'plot']:
+                    if 'area' in vlam:
+                        width, height = _get_area(vlam)
+                        values['area'] = {'width':width, 'height':height}
+                if choice == 'editor':
+                    if 'external':
+                        values['execution'] = 'external'
+                        if 'console' in vlam:
+                            values['execution'] += ' console'
+                        if 'no-internal' in vlam:
+                            values['execution'] += ' no-internal'
+                if choice in ['editor', 'canvas', 'plot']:
+                    if 'no-copy' in vlam:
+                        values['copied'] = 'no-copy'
+                    elif 'no-pre' in vlam:
+                        values['copied'] = 'no-pre'
+
+    return values
+
+def _get_size(vlam):
+    ''' Extract the default size of the textarea'''
+    if 'size' in vlam:
+        try:
+            res = re.search(r'size\s*=\s*\((.+?),(.+?)\)', vlam)
+            rows = int(res.groups()[0])
+            cols = int(res.groups()[1])
+        except:
+            rows, cols = 10, 80
+    else:
+        rows, cols = 10, 80
+    return rows, cols
+
+def _get_area(vlam):
+    ''' Extract the drawing canvas dimensions'''
+    if 'area' in vlam:
+        try:
+            res = re.search(r'area=\((.+?),(.+?)\)', vlam)
+            width = int(res.groups()[0])
+            height = int(res.groups()[1])
+        except:
+            width, height = 400, 400
+    else:
+        width, height = 400, 400
+    return width, height
 
 
 def addLanguageSelect(parent, text):
@@ -229,76 +308,107 @@ def addVLAM(parent, id, pre_assigned):
     table.attrib["class"] = "vlam"
     tr = et.SubElement(table, 'tr')
     # first column: interactive elements
-    td1 = et.SubElement(tr, 'td')
-    form = et.SubElement(td1, 'form')
-    fs1 = et.SubElement(form, 'fieldset')
+    td1 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form1 = et.SubElement(td1, 'form')
+    fs1 = et.SubElement(form1, 'fieldset')
     legend1 = et.SubElement(fs1, 'legend')
     legend1.text = _("Interactive element")
     for type in ['none', 'interpreter', 'interpreter to editor',
                   'editor', 'doctest', 'canvas', 'plot']:
         inp = et.SubElement(fs1, 'input', type='radio', name=id,
-                              value='type')
+                              value=type)
         inp.text = type
-        if type == pre_assigned:
+        if type == pre_assigned['interactive']:
             inp.attrib['checked'] = 'checked'
         br = et.SubElement(fs1, 'br')
-##    input1 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="none", checked='')
-##    input1.text = "none"
-##    br = et.SubElement(fs1, 'br')
-##    input2 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="interpreter")
-##    input2.text = "interpreter"
-##    br = et.SubElement(fs1, 'br')
-##    input3 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="interpreter editor")
-##    input3.text = "interpreter to editor"
-##    br = et.SubElement(fs1, 'br')
-##    input4 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="editor")
-##    input4.text = "editor"
-##    br = et.SubElement(fs1, 'br')
-##    input5 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="doctest")
-##    input5.text = "doctest"
-##    br = et.SubElement(fs1, 'br')
-##    input6 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="canvas")
-##    input6.text = "canvas"
-##    br = et.SubElement(fs1, 'br')
-##    input7 = et.SubElement(fs1, 'input', type='radio', name=id,
-##                            value="plot")
-##    input7.text = "plot"
-    """
-    # 2nd column: line number choices
-    td2 = et.SubElement(tr, 'td')
-    fs2 = et.SubElement(td2, 'fieldset')
+    # 2nd column, top: line number choices
+    td2 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form2 = et.SubElement(td2, 'form')
+    fs2 = et.SubElement(form2, 'fieldset')
     legend2 = et.SubElement(fs2, 'legend')
-    legend2.text = _("Line numbers")
-    input21 = et.SubElement(fs2, 'input', type='radio', name=id,
-                            value="", checked='')
-    input21.text = "No linenumbers"
-    br = et.SubElement(fs2, 'br')
-    input22 = et.SubElement(fs2, 'input', type='radio', name=id,
-                            value="linenumber")
-    input22.text = "With linenumbers"
-    # 3rd column: code options
-    td3 = et.SubElement(tr, 'td')
-    fs3 = et.SubElement(td3, 'fieldset')
+    legend2.text = _("Optional line numbering")
+    for type in ['linenumber', 't', 'interpreter', 'interpreter linenumber']:
+        if type == 't':
+            note = et.SubElement(fs2, 'small')
+            note.text = _("If interactive element is none:")
+        else:
+            inp = et.SubElement(fs2, 'input', type='radio', name=id,
+                                  value=type)
+            inp.text = type
+            if type == pre_assigned['linenumber'].strip():
+                inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs2, 'br')
+    # 2nd column, bottom: size and area
+    form3 = et.SubElement(td2, 'form')
+    fs3 = et.SubElement(form3, 'fieldset')
     legend3 = et.SubElement(fs3, 'legend')
-    legend3.text = _("Code options")
-    input31 = et.SubElement(fs3, 'input', type='radio', name=id,
-                            value="", checked='')
-    input31.text = "Default"
+    legend3.text = _("Size")
+    note = et.SubElement(fs3, 'small')
+    note.text = _("Size of editor (if present)")
     br = et.SubElement(fs3, 'br')
-    input32 = et.SubElement(fs3, 'input', type='radio', name=id,
-                            value="no-pre")
-    input32.text = "no-pre"
+    for type in ['rows', 'cols']:
+        note = et.SubElement(fs3, 'tt')
+        note.text = type + ":"
+        inp = et.SubElement(fs3, 'input', type='text', name=id, value='')
+        if type in pre_assigned['size']:
+            inp.attrib['value'] = "%d"%pre_assigned['size'][type]
+        br = et.SubElement(fs3, 'br')
+    note = et.SubElement(fs3, 'small')
+    note.text = _("Drawing area (if present)")
     br = et.SubElement(fs3, 'br')
-    input33 = et.SubElement(fs3, 'input', type='radio', name=id,
-                            value="no-copy")
-    input33.text = "no-copy"
-    """
+    for type in ['width ', 'height']:  # extra space in 'width ' for alignment
+        note = et.SubElement(fs3, 'tt')
+        note.text = type + ":"
+        inp = et.SubElement(fs3, 'input', type='text', name=id, value='')
+        if type.strip() in pre_assigned['area']:
+            inp.attrib['value'] = "%d"%pre_assigned['area'][type.strip()]
+        br = et.SubElement(fs3, 'br')
+    # 3rd column, top: Code execution options
+    td4 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form4 = et.SubElement(td4, 'form')
+    fs4 = et.SubElement(form4, 'fieldset')
+    legend4 = et.SubElement(fs4, 'legend')
+    legend4.text = _("Code execution")
+    note = et.SubElement(fs4, 'small')
+    note.text = _("Optional values for editor only")
+    br = et.SubElement(fs4, 'br')
+    for type in ['external', 'external no-internal', 'external console',
+                 'external console no-internal']:
+        inp = et.SubElement(fs4, 'input', type='radio', name=id,
+                              value=type)
+        inp.text = type
+        if type == pre_assigned['execution']:
+            inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs4, 'br')
+    # 3rd column, bottom: Code copying options
+    form5 = et.SubElement(td4, 'form')
+    fs5 = et.SubElement(form5, 'fieldset')
+    legend5 = et.SubElement(fs5, 'legend')
+    legend5.text = _("Rarely used options")
+    note = et.SubElement(fs5, 'small')
+    note.text = _("Code not copied in editor")
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("- done automatically for doctest")
+    br = et.SubElement(fs5, 'br')
+    inp = et.SubElement(fs5, 'input', type='radio', name=id,
+                          value='no-copy')
+    inp.text = 'no-copy'
+    if 'no-copy' == pre_assigned['copied']:
+        inp.attrib['checked'] = 'checked'
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("Code not appearing in <pre>")
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("- incompatible with no-copy")
+    br = et.SubElement(fs5, 'br')
+    inp = et.SubElement(fs5, 'input', type='radio', name=id,
+                          value='no-pre')
+    inp.text = 'no-pre'
+    if 'no-pre' == pre_assigned['copied']:
+        inp.attrib['checked'] = 'checked'
+    br = et.SubElement(fs5, 'br')
     button = et.SubElement(parent, 'button', onclick="update();")
     button.text = id
     return
