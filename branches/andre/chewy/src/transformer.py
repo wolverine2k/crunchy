@@ -238,7 +238,7 @@ def analyze_vlam_code(vlam):
                         width, height = _get_area(vlam)
                         values['area'] = {'width':width, 'height':height}
                 if choice == 'editor':
-                    if 'external':
+                    if 'external' in vlam:
                         values['execution'] = 'external'
                         if 'console' in vlam:
                             values['execution'] += ' console'
@@ -249,7 +249,6 @@ def analyze_vlam_code(vlam):
                         values['copied'] = 'no-copy'
                     elif 'no-pre' in vlam:
                         values['copied'] = 'no-pre'
-
     return values
 
 def _get_size(vlam):
