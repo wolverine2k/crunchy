@@ -90,8 +90,14 @@ class VLAMPage(object):
         for span in self.body.getiterator("span"):
             self.process_span(span)
         for pre in self.body.getiterator('pre'):
+            # note: we need the uid information for updating *before* we
+            # start processing the pre, unlike in the original crunchy
+            # where the uid was assigned after.
+            self.__ID += 1
+            self.uid = 'code' + str(self.__ID)
             self.process_pre(pre)
         self.body.insert(0, prefs.menu)
+        self.body.append(update_button())
 
     def process_span(self, span):
         """Span can be used in Chewy for:
@@ -99,7 +105,7 @@ class VLAMPage(object):
         """
         for attrib in span.attrib.items():
             if attrib[0] == 'title':
-                id, text, div = self.prepare_element(span)
+                text, div = self.prepare_element(span)
                 if 'choose' in self.vlamcode and 'language' in self.vlamcode:
                     addLanguageSelect(div, text)
         return
@@ -112,7 +118,7 @@ class VLAMPage(object):
         else:
             title = ''
         assigned = analyze_vlam_code(title)
-        id, text, new_div = self.prepare_element(pre)
+        text, new_div = self.prepare_element(pre)
         heading = et.SubElement(new_div, 'h3')
         if title:
             heading.text = '<pre title="%s">'%title
@@ -120,24 +126,24 @@ class VLAMPage(object):
             heading.text = "<pre>"
         new_pre = et.SubElement(new_div, 'pre')
         new_pre.text = text
-        addVLAM(new_div, id, assigned)
+        addVLAM(new_div, self.uid, assigned)
         return
 
     def prepare_element(self, elem):
         '''Replaces an element by a <div> as a container
         '''
-        self.__ID += 1
-        id = 'code' + str(self.__ID)
         if elem.text:
             if elem.text.startswith("\n"):
                 elem.text = elem.text[1:]
         text = elem.text
         tail = elem.tail
+        original_tag = elem.tag
         elem.clear()
         elem.tail = tail
         elem.tag = 'div'
-        elem.attrib['id'] = id + "_container"
-        return id, text, elem
+        if original_tag == 'pre':
+            elem.attrib['id'] = self.uid + "_container"
+        return text, elem
 
     def get(self):
         """vlam file: serialise the tree and return it;
@@ -178,7 +184,11 @@ class VLAMUpdater(VLAMPage):
         VLAMPage.__init__(self, filehandle, url)
 
     def process_pre(self, pre):
-        pre.attrib['title'] = self.args
+        args = self.args.split(';')
+        # build a dict from alternating values (Thank you Python Cookbook)
+        changes = dict(zip(args[::2], args[1::2]))
+        if self.uid in changes:
+            pre.attrib['title'] = changes[self.uid]
         VLAMPage.process_pre(self, pre)
 
 ###================
@@ -301,7 +311,13 @@ def addLanguageSelect(parent, text):
     inp.set("class", "crunchy")
     return
 
-def addVLAM(parent, id, pre_assigned):
+def update_button():
+    button = et.Element('button', onclick="update();")
+    button.text = _("Update")
+    return button
+
+
+def addVLAM(parent, uid, pre_assigned):
     '''Intended to add the various vlam options under a <pre>'''
     table = et.SubElement(parent, 'table')
     table.attrib["class"] = "vlam"
@@ -314,7 +330,7 @@ def addVLAM(parent, id, pre_assigned):
     legend1.text = _("Interactive element")
     for type in ['none', 'interpreter', 'interpreter to editor',
                   'editor', 'doctest', 'canvas', 'plot']:
-        inp = et.SubElement(fs1, 'input', type='radio', name=id,
+        inp = et.SubElement(fs1, 'input', type='radio', name=uid,
                               value=type)
         inp.text = type
         if type == pre_assigned['interactive']:
@@ -331,7 +347,7 @@ def addVLAM(parent, id, pre_assigned):
             note = et.SubElement(fs2, 'small')
             note.text = _("If interactive element is none:")
         else:
-            inp = et.SubElement(fs2, 'input', type='radio', name=id,
+            inp = et.SubElement(fs2, 'input', type='radio', name=uid,
                                   value=type)
             inp.text = type
             if type == pre_assigned['linenumber'].strip():
@@ -348,7 +364,7 @@ def addVLAM(parent, id, pre_assigned):
     for type in ['rows', 'cols']:
         note = et.SubElement(fs3, 'tt')
         note.text = type + ":"
-        inp = et.SubElement(fs3, 'input', type='text', name=id, value='')
+        inp = et.SubElement(fs3, 'input', type='text', name=uid, value='')
         if type in pre_assigned['size']:
             inp.attrib['value'] = "%d"%pre_assigned['size'][type]
         br = et.SubElement(fs3, 'br')
@@ -358,7 +374,7 @@ def addVLAM(parent, id, pre_assigned):
     for type in ['width ', 'height']:  # extra space in 'width ' for alignment
         note = et.SubElement(fs3, 'tt')
         note.text = type + ":"
-        inp = et.SubElement(fs3, 'input', type='text', name=id, value='')
+        inp = et.SubElement(fs3, 'input', type='text', name=uid, value='')
         if type.strip() in pre_assigned['area']:
             inp.attrib['value'] = "%d"%pre_assigned['area'][type.strip()]
         br = et.SubElement(fs3, 'br')
@@ -373,7 +389,7 @@ def addVLAM(parent, id, pre_assigned):
     br = et.SubElement(fs4, 'br')
     for type in ['external', 'external no-internal', 'external console',
                  'external console no-internal']:
-        inp = et.SubElement(fs4, 'input', type='radio', name=id,
+        inp = et.SubElement(fs4, 'input', type='radio', name=uid,
                               value=type)
         inp.text = type
         if type == pre_assigned['execution']:
@@ -390,7 +406,7 @@ def addVLAM(parent, id, pre_assigned):
     note = et.SubElement(fs5, 'small')
     note.text = _("- done automatically for doctest")
     br = et.SubElement(fs5, 'br')
-    inp = et.SubElement(fs5, 'input', type='radio', name=id,
+    inp = et.SubElement(fs5, 'input', type='radio', name=uid,
                           value='no-copy')
     inp.text = 'no-copy'
     if 'no-copy' == pre_assigned['copied']:
@@ -402,12 +418,13 @@ def addVLAM(parent, id, pre_assigned):
     note = et.SubElement(fs5, 'small')
     note.text = _("- incompatible with no-copy")
     br = et.SubElement(fs5, 'br')
-    inp = et.SubElement(fs5, 'input', type='radio', name=id,
+    inp = et.SubElement(fs5, 'input', type='radio', name=uid,
                           value='no-pre')
     inp.text = 'no-pre'
     if 'no-pre' == pre_assigned['copied']:
         inp.attrib['checked'] = 'checked'
     br = et.SubElement(fs5, 'br')
-    button = et.SubElement(parent, 'button', onclick="update();")
-    button.text = id
+    #button = et.SubElement(parent, 'button', onclick="update();")
+    button = et.SubElement(parent, 'button', onclick="record('%s');"%uid)
+    button.text = _("Record changes")
     return

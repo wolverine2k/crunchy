@@ -15,7 +15,7 @@ caused by insertion of malicious javascript code within a web page.
 import os
 import random
 import urllib
-from StringIO import StringIO
+from cStringIO import StringIO
 # crunchy modules
 import configuration
 import server

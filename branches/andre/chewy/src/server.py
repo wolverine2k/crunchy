@@ -35,9 +35,6 @@ class ChewyRequestHandler(SimpleHTTPRequestHandler):
         path, argmap = self.process_GET_path(self.path)
         if path in self.pagemap:
             data = self.pagemap[path](argmap)
-            if path == "/update":
-                print "path in self.pagemap=", path
-                print "data = ", data
             if type(data) == type(200):
                 self.send_error(data)
             else:
@@ -150,10 +147,9 @@ def get_local_page(args):
 
 def update_page(args):
     '''test function for now '''
-    print "args=", args
     global active_path, active_base
     handle = open(active_path)
-    vlam = transformer.VLAMUpdater(handle, active_base, args['id'])
+    vlam = transformer.VLAMUpdater(handle, active_base, args['changed'])
     return vlam.get()
 
 def get_language(args):

@@ -26,13 +26,17 @@ function get_http()
     }
     return h;
 };
+var changes = '';
+function record(id){
+changes += id + ';interpreter to editor;';
+}
 
-function update()
+function update(id)
 {
+//alert('booh');
 //alert(location.href);
-location.href="/update?id=test code";
+location.href="/update?changed="+changes;
 
-//document.write(location.href);
 }
 /*    h = get_http();
     h.onreadystatechange = function()

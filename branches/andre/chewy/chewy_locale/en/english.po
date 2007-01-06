@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-04 19:12-0400\n"
+"PO-Revision-Date: 2007-01-06 19:02-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -55,11 +55,67 @@ msgstr "This occurred while trying to process the tree for %s. "
 msgid "The files processed so far are %s. "
 msgstr "The files processed so far are %s. "
 
-#: src/transformer.py:175
-msgid "Load local tutorial"
-msgstr "Load local tutorial"
-
-#: src/transformer.py:199
+#: src/transformer.py:310
 msgid "Submit language choice"
 msgstr "Submit language choice"
+
+#: src/transformer.py:316
+msgid "Update"
+msgstr "Update"
+
+#: src/transformer.py:330
+msgid "Interactive element"
+msgstr "Interactive element"
+
+#: src/transformer.py:344
+msgid "Optional line numbering"
+msgstr "Optional line numbering"
+
+#: src/transformer.py:348
+msgid "If interactive element is none:"
+msgstr "If interactive element is none:"
+
+#: src/transformer.py:360
+msgid "Size"
+msgstr "Size"
+
+#: src/transformer.py:362
+msgid "Size of editor (if present)"
+msgstr "Size of editor (if present)"
+
+#: src/transformer.py:372
+msgid "Drawing area (if present)"
+msgstr "Drawing area (if present)"
+
+#: src/transformer.py:386
+msgid "Code execution"
+msgstr "Code execution"
+
+#: src/transformer.py:388
+msgid "Optional values for editor only"
+msgstr "Optional values for editor only"
+
+#: src/transformer.py:402
+msgid "Rarely used options"
+msgstr "Rarely used options"
+
+#: src/transformer.py:404
+msgid "Code not copied in editor"
+msgstr "Code not copied in editor"
+
+#: src/transformer.py:407
+msgid "- done automatically for doctest"
+msgstr "- done automatically for doctest"
+
+#: src/transformer.py:416
+msgid "Code not appearing in <pre>"
+msgstr "Code not appearing in <pre>"
+
+#: src/transformer.py:419
+msgid "- incompatible with no-copy"
+msgstr "- incompatible with no-copy"
+
+#: src/transformer.py:429
+msgid "Record changes"
+msgstr "Record changes"
 
