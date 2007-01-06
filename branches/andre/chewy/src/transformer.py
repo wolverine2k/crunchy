@@ -106,10 +106,20 @@ class VLAMPage(object):
     def process_pre(self, pre):
         """process a pre element and insert the required html controls
            to select the appropriate vlam options"""
+        if 'title' in pre.attrib:
+            title = pre.attrib['title']
+        else:
+            title = ''
+        assigned = analyze_vlam_code(title)
         id, text, new_div = self.prepare_element(pre)
+        heading = et.SubElement(new_div, 'h3')
+        if title:
+            heading.text = '<pre title="%s">'%title
+        else:
+            heading.text = "<pre>"
         new_pre = et.SubElement(new_div, 'pre')
         new_pre.text = text
-        addVLAM(new_div, id)
+        addVLAM(new_div, id, assigned)
         return
 
     def prepare_element(self, elem):
@@ -168,8 +178,27 @@ class VLAMUpdater(VLAMPage):
 
     def process_pre(self, pre):
         pre.attrib['title'] = self.args
+        VLAMPage.process_pre(self, pre)
 
 ###================
+
+def analyze_vlam_code(vlam):
+    """ determine the type of interactive element assigned by a given
+        vlam code."""
+    interactive = '' # default value to return in case someone made an error
+    # in a file marked up "by hand".
+
+    if 'none' in vlam:
+        interactive = 'none'
+    elif 'interpreter' in vlam and 'editor' in vlam:
+        interactive = 'interpreter to editor'
+    else:
+        for choice in ['none', 'interpreter', 'editor', 'doctest',
+                       'canvas', 'plot']:
+            if choice in vlam:
+                interactive = choice
+    return interactive
+
 
 def addLanguageSelect(parent, text):
     """Inserts an html selector for languages.
@@ -194,44 +223,53 @@ def addLanguageSelect(parent, text):
     inp.set("class", "crunchy")
     return
 
-def addVLAM(parent, id):
+def addVLAM(parent, id, pre_assigned):
     '''Intended to add the various vlam options under a <pre>'''
-    form = et.SubElement(parent, 'form')
-    table = et.SubElement(form, 'table')
+    table = et.SubElement(parent, 'table')
     table.attrib["class"] = "vlam"
     tr = et.SubElement(table, 'tr')
     # first column: interactive elements
     td1 = et.SubElement(tr, 'td')
-    fs1 = et.SubElement(td1, 'fieldset')
+    form = et.SubElement(td1, 'form')
+    fs1 = et.SubElement(form, 'fieldset')
     legend1 = et.SubElement(fs1, 'legend')
-    legend1.text = _("Interactive elements")
-    input1 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="none", checked='')
-    input1.text = "none"
-    br = et.SubElement(fs1, 'br')
-    input2 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="interpreter")
-    input2.text = "interpreter"
-    br = et.SubElement(fs1, 'br')
-    input3 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="interpreter editor")
-    input3.text = "interpreter to editor"
-    br = et.SubElement(fs1, 'br')
-    input4 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="editor")
-    input4.text = "editor"
-    br = et.SubElement(fs1, 'br')
-    input5 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="doctest")
-    input5.text = "doctest"
-    br = et.SubElement(fs1, 'br')
-    input6 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="canvas")
-    input6.text = "canvas"
-    br = et.SubElement(fs1, 'br')
-    input7 = et.SubElement(fs1, 'input', type='radio', name=id,
-                            value="plot")
-    input7.text = "plot"
+    legend1.text = _("Interactive element")
+    for type in ['none', 'interpreter', 'interpreter to editor',
+                  'editor', 'doctest', 'canvas', 'plot']:
+        inp = et.SubElement(fs1, 'input', type='radio', name=id,
+                              value='type')
+        inp.text = type
+        if type == pre_assigned:
+            inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs1, 'br')
+##    input1 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="none", checked='')
+##    input1.text = "none"
+##    br = et.SubElement(fs1, 'br')
+##    input2 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="interpreter")
+##    input2.text = "interpreter"
+##    br = et.SubElement(fs1, 'br')
+##    input3 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="interpreter editor")
+##    input3.text = "interpreter to editor"
+##    br = et.SubElement(fs1, 'br')
+##    input4 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="editor")
+##    input4.text = "editor"
+##    br = et.SubElement(fs1, 'br')
+##    input5 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="doctest")
+##    input5.text = "doctest"
+##    br = et.SubElement(fs1, 'br')
+##    input6 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="canvas")
+##    input6.text = "canvas"
+##    br = et.SubElement(fs1, 'br')
+##    input7 = et.SubElement(fs1, 'input', type='radio', name=id,
+##                            value="plot")
+##    input7.text = "plot"
+    """
     # 2nd column: line number choices
     td2 = et.SubElement(tr, 'td')
     fs2 = et.SubElement(td2, 'fieldset')
@@ -260,8 +298,7 @@ def addVLAM(parent, id):
     input33 = et.SubElement(fs3, 'input', type='radio', name=id,
                             value="no-copy")
     input33.text = "no-copy"
+    """
     button = et.SubElement(parent, 'button', onclick="update();")
     button.text = id
-##    updater_link = et.SubElement(parent, 'a', href="/update?id=%s"%id)
-##    updater_link.text = id
     return
