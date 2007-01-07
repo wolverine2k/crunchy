@@ -11,11 +11,11 @@ HTTPrepl:
 CrunchyInterpreter:
     Class which provides a Python interpreter used to run code from
     an "editor" or from a "doctest".
-    
+
 exec_external:
     Function used to run code as a separate external process.
     This is most useful for running GUI based programs.
-    
+
 exec_graphics:
     Function used to process graphics (draw or plot) scripts.
     Could probably be rewritten to use CrunchyInterpreter.
@@ -53,11 +53,13 @@ class Singleton(object):
         return cls._inst
 
 class HTTPrepl(Singleton):
-   
+    global myRawInput
     def __init__(self):
         self.locals = {}
+        self.locals['raw_input'] = myRawInput
+        self.locals['input'] = myInput
         self.buffer = []
-   
+
     def push(self, line):
         """Push 'line' and return exec results (None if more input needed)."""
         if line == "help":
@@ -78,9 +80,9 @@ class HTTPrepl(Singleton):
         res = self.execute(code)
         if not res:
             return ''
-        else: 
+        else:
             return res
-   
+
     def execute(self, code):
         """Execute the given code in self.locals and return any stdout/sterr."""
         out = StringIO()
@@ -100,7 +102,7 @@ class HTTPrepl(Singleton):
         out.close()
         result = result.decode(sys.getdefaultencoding()).encode('utf-8')
         return result
-   
+
     def dir(self, line):
         """Examine a partial line and provide attr list of final expr."""
         line = re.split(r"\s", line)[-1].strip()
@@ -113,7 +115,7 @@ class HTTPrepl(Singleton):
         except:
             return []
         return result
-   
+
     def doc(self, line):
         """Examine a partial line and provide sig+doc of final expr."""
         line = re.split(r"\s", line)[-1].strip()
@@ -136,7 +138,7 @@ class HTTPrepl(Singleton):
                 return None
         except:
             return _('%s is not defined yet')%line
-       
+
         if args and args[0] == 'self':
             args.pop(0)
         missing = object()
@@ -155,6 +157,55 @@ class HTTPrepl(Singleton):
         doc = getattr(result, "__doc__", "") or ""
         return "%s(%s)\n%s" % (line, ", ".join(arglist), doc)
 
+def myInput(text):
+    return eval(myRawInput(text))
+
+def myRawInput(text):
+    '''A gui based raw_input() substitute'''
+    # First wxPython since the output looks better.
+    try:
+        import wx
+        class MainWindow(wx.Frame):
+            def __init__(self):
+                global user_response
+                wx.Frame.__init__(self, None, wx.ID_ANY, 'Test')
+                alert = wx.TextEntryDialog(self, text,
+                                        _('raw_input() request'), '')
+                if alert.ShowModal() == wx.ID_OK:
+                    user_response = alert.GetValue()
+                alert.Destroy()
+                self.Close()
+        class Application(wx.App):
+            def OnInit(self):
+                myMainWindow = MainWindow()
+                self.SetTopWindow(myMainWindow)
+                return True
+        myApp = Application()
+        myApp.MainLoop()
+        return user_response
+    except:
+        pass
+    # Next Tkinter which should be installed
+    try:
+        import Tkinter
+        root = Tkinter.Tk(_('raw_input() request'))
+        entry = Tkinter.Entry(root)
+        text = Tkinter.Label(root, text=text)
+        text.pack()
+        entry.pack()
+        def get_answer():
+            global user_response
+            user_response = entry.get()
+            root.destroy()
+        button = Tkinter.Button(root, text="Ok", command=get_answer)
+        button.pack()
+        root.mainloop()
+        return user_response
+    except:
+        pass
+    return _("To use raw_input() or input(), you need either Tkinter or wxPython.")
+
+
 def escape(data):
     """Escape &, <, >  and \n in a string, making it suitable for
        embedding in HTML."""
@@ -165,10 +216,10 @@ def escape(data):
     data = data.replace('\n', '<br/>')
     data = data.decode(sys.getdefaultencoding()).encode('utf-8')
     return data
-    
+
 class CrunchyInterpreter(threading.Thread):
-    """Run python source asynchronously and parse the standard 
-        python error output to make it friendlier.  Also, helps 
+    """Run python source asynchronously and parse the standard
+        python error output to make it friendlier.  Also, helps
         with the isolation of sessions.
     """
     def __init__(self, code, name, symbols = {}, doctest=False):
@@ -178,7 +229,7 @@ class CrunchyInterpreter(threading.Thread):
         self.name = name
         self.symbols = dict(symbols, **sound.all_sounds)
         self._doctest = doctest
-        
+
     def run(self):
         """run the code, redirecting stdout and returning the string representing the output
         """
@@ -196,7 +247,7 @@ class CrunchyInterpreter(threading.Thread):
             exec self.ccode in self.symbols
         except:
             sys.stderr.write(errors.get_traceback(self.code))
-            
+
     def get(self):
         global success
         str1 = sys.stdout.get_by_id(self.name)
@@ -264,7 +315,7 @@ def run_doctest(code, doctestname):
        doctests to be tested by the doctest module from the standard
        library.
     '''
-    doctest = utilities.fixLineEnding('\n"""\n' + 
+    doctest = utilities.fixLineEnding('\n"""\n' +
                                  crunchyfier.DOCTESTS[doctestname] + '\n"""\n')
     code += '''
 import sys
@@ -277,15 +328,15 @@ print analyse(_x)
 '''
     runner = DocTestRunner()
     parser = DocTestParser()
-    symbols = {'__parser': parser, 
-                '__runner': runner, 
+    symbols = {'__parser': parser,
+                '__runner': runner,
                 '__teststring': doctest,
                 'analyse': analyse_doctest_result}
 
     i = CrunchyInterpreter(code, doctestname, symbols, True)
     i.start()
     return
-    
+
 def analyse_doctest_result(x):
     """Determines the message to give based on the number of failures."""
     global success
@@ -314,10 +365,10 @@ def analyse_doctest_result(x):
 
 def exec_external(code, console=False, path=None):
     """execute code in an external process
-    currently works under: 
+    currently works under:
         * Windows NT (tested)
         * GNOME (tested)  [January 2nd change untested]
-    This also needs to be implemented for OS X, KDE 
+    This also needs to be implemented for OS X, KDE
     and some form of linux fallback (xterm?)
     """
     if path is None:
@@ -328,12 +379,12 @@ def exec_external(code, console=False, path=None):
             fname = path
     elif os.name == 'nt':
         target_dir, fname = os.path.split(path)
-        current_dir = os.getcwd() 
-                                  
+        current_dir = os.getcwd()
+
     filename = open(path, 'w')
     filename.write(code)
     filename.close()
-        
+
     if os.name == 'nt':
         os.chdir(target_dir) # change dir so as to deal with paths that
                              # include spaces
@@ -344,7 +395,7 @@ def exec_external(code, console=False, path=None):
         os.chdir(current_dir)
     elif os.name == 'posix':
         try:
-            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', 
+            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal',
                                 '-x', 'python', '%s'%path)
         except:
             raise NotImplementedError
@@ -374,7 +425,7 @@ def exec_graphics(id, code):
         height = int(res.groups()[1])
     else:
         width, height = 400, 400
-    
+
     if 'plot' in id:
         __g = graphics.Plot(width, height)
         __dict =  { _('set_line_color'): __g.set_line_colour, # for those used
@@ -382,7 +433,7 @@ def exec_graphics(id, code):
                 _('color'): __g.set_line_colour,   # simpler
                 _('colour'): __g.set_line_colour,
                 _('x_range'): __g.set_xrange,
-                _('y_range'): __g.set_yrange, 
+                _('y_range'): __g.set_yrange,
                 _('x_axis'): __g.x_axis,
                 _('y_axis'): __g.y_axis,
                 _('prepare_graph'): __g.prepare_graph,
