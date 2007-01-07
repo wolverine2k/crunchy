@@ -27,12 +27,13 @@ function get_http()
     return h;
 };
 var changes = '';
-function record(id){
-changes += id + ';interpreter to editor;';
+function record(id, new_vlam){
+changes += id + ';' + new_vlam + ';';
 }
 
-function update(id)
+function update()
 {
+alert('changes done: ' + changes);
 //alert('booh');
 //alert(location.href);
 location.href="/update?changed="+changes;
@@ -67,3 +68,4 @@ location.href="/update?changed="+changes;
     h.open("GET", "/update?path=dummy", true);
 		h.send('');
 };*/
+

@@ -120,10 +120,11 @@ class VLAMPage(object):
         assigned = analyze_vlam_code(title)
         text, new_div = self.prepare_element(pre)
         heading = et.SubElement(new_div, 'h3')
+        heading.attrib['class'] = "warning"
         if title:
-            heading.text = '<pre title="%s">'%title
+            heading.text = '%s <pre title="%s">'%(_("Previous value"), title)
         else:
-            heading.text = "<pre>"
+            heading.text = "%s <pre>"%_("Previous value")
         new_pre = et.SubElement(new_div, 'pre')
         new_pre.text = text
         addVLAM(new_div, self.uid, assigned)
@@ -184,9 +185,13 @@ class VLAMUpdater(VLAMPage):
         VLAMPage.__init__(self, filehandle, url)
 
     def process_pre(self, pre):
-        args = self.args.split(';')
+        info = self.args.split(';')
+        # Decoding the "=" sign encoding we used in addVLAM()
+        for index, item in enumerate(info):
+            if '_EQ_' in item:
+                info[index] = item.replace('_EQ_', '=')
         # build a dict from alternating values (Thank you Python Cookbook)
-        changes = dict(zip(args[::2], args[1::2]))
+        changes = dict(zip(info[::2], info[1::2]))
         if self.uid in changes:
             pre.attrib['title'] = changes[self.uid]
         VLAMPage.process_pre(self, pre)
@@ -319,26 +324,36 @@ def update_button():
 
 def addVLAM(parent, uid, pre_assigned):
     '''Intended to add the various vlam options under a <pre>'''
+    js_changes = 'var vlam="";' # will be used to record a local
+                                # javascript function to record changes
     table = et.SubElement(parent, 'table')
     table.attrib["class"] = "vlam"
     tr = et.SubElement(table, 'tr')
     # first column: interactive elements
     td1 = et.SubElement(tr, 'td', style='vertical-align:top;')
-    form1 = et.SubElement(td1, 'form')
+    form_name = uid + '_form1'
+    form1 = et.SubElement(td1, 'form', name=form_name)
     fs1 = et.SubElement(form1, 'fieldset')
     legend1 = et.SubElement(fs1, 'legend')
     legend1.text = _("Interactive element")
     for type in ['none', 'interpreter', 'interpreter to editor',
                   'editor', 'doctest', 'canvas', 'plot']:
-        inp = et.SubElement(fs1, 'input', type='radio', name=uid,
-                              value=type)
+        inp = et.SubElement(fs1, 'input', type='radio', name='radios',
+                            value=type)
         inp.text = type
         if type == pre_assigned['interactive']:
             inp.attrib['checked'] = 'checked'
         br = et.SubElement(fs1, 'br')
+    # Note: can not embed "<" as a javascript character; hence use "!="
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
     # 2nd column, top: line number choices
     td2 = et.SubElement(tr, 'td', style='vertical-align:top;')
-    form2 = et.SubElement(td2, 'form')
+    form_name = uid + '_form2'
+    form2 = et.SubElement(td2, 'form', name=form_name)
     fs2 = et.SubElement(form2, 'fieldset')
     legend2 = et.SubElement(fs2, 'legend')
     legend2.text = _("Optional line numbering")
@@ -347,14 +362,20 @@ def addVLAM(parent, uid, pre_assigned):
             note = et.SubElement(fs2, 'small')
             note.text = _("If interactive element is none:")
         else:
-            inp = et.SubElement(fs2, 'input', type='radio', name=uid,
-                                  value=type)
+            inp = et.SubElement(fs2, 'input', type='radio', name='radios',
+                                value=type)
             inp.text = type
             if type == pre_assigned['linenumber'].strip():
                 inp.attrib['checked'] = 'checked'
         br = et.SubElement(fs2, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
     # 2nd column, bottom: size and area
-    form3 = et.SubElement(td2, 'form')
+    form_name = uid + '_form3'
+    form3 = et.SubElement(td2, 'form', name=form_name)
     fs3 = et.SubElement(form3, 'fieldset')
     legend3 = et.SubElement(fs3, 'legend')
     legend3.text = _("Size")
@@ -364,7 +385,8 @@ def addVLAM(parent, uid, pre_assigned):
     for type in ['rows', 'cols']:
         note = et.SubElement(fs3, 'tt')
         note.text = type + ":"
-        inp = et.SubElement(fs3, 'input', type='text', name=uid, value='')
+        inp = et.SubElement(fs3, 'input', type='text', value='',
+                            name=type)
         if type in pre_assigned['size']:
             inp.attrib['value'] = "%d"%pre_assigned['size'][type]
         br = et.SubElement(fs3, 'br')
@@ -374,13 +396,39 @@ def addVLAM(parent, uid, pre_assigned):
     for type in ['width ', 'height']:  # extra space in 'width ' for alignment
         note = et.SubElement(fs3, 'tt')
         note.text = type + ":"
-        inp = et.SubElement(fs3, 'input', type='text', name=uid, value='')
+        inp = et.SubElement(fs3, 'input', type='text', value='',
+                            name=type.strip())
         if type.strip() in pre_assigned['area']:
             inp.attrib['value'] = "%d"%pre_assigned['area'][type.strip()]
         br = et.SubElement(fs3, 'br')
+    rows = ''
+    cols = ''
+    width = ''
+    height = ''
+    if pre_assigned['size']:
+        rows = str(pre_assigned['size']['rows'])
+        cols = str(pre_assigned['size']['cols'])
+    if pre_assigned['area']:
+        width = str(pre_assigned['area']['width'])
+        height = str(pre_assigned['area']['height'])
+    # WARNING: apparently can't use "width" or "height" as variable in js.
+    # WARNING: when the changes are passed, the presence of an "=" sign is
+    # taken to mean that a dict is being passed.  So, we "encode" it as "_EQ_"
+    js_changes += """
+rows='%s'; cols='%s'; _width='%s'; _height='%s';
+if (document.%s.rows.value != rows || document.%s.cols.value != cols){
+    vlam += ' size_EQ_('+document.%s.rows.value+','+document.%s.cols.value+')';
+    };
+if (document.%s.width.value != _width || document.%s.height.value != _height){
+    vlam += ' area_EQ_('+document.%s.width.value+','+document.%s.height.value+')';
+    };
+"""%(rows, cols, width, height,
+        form_name, form_name, form_name, form_name,
+        form_name, form_name, form_name, form_name)
     # 3rd column, top: Code execution options
     td4 = et.SubElement(tr, 'td', style='vertical-align:top;')
-    form4 = et.SubElement(td4, 'form')
+    form_name = uid + '_form4'
+    form4 = et.SubElement(td4, 'form', name=form_name)
     fs4 = et.SubElement(form4, 'fieldset')
     legend4 = et.SubElement(fs4, 'legend')
     legend4.text = _("Code execution")
@@ -389,14 +437,20 @@ def addVLAM(parent, uid, pre_assigned):
     br = et.SubElement(fs4, 'br')
     for type in ['external', 'external no-internal', 'external console',
                  'external console no-internal']:
-        inp = et.SubElement(fs4, 'input', type='radio', name=uid,
+        inp = et.SubElement(fs4, 'input', type='radio', name='radios',
                               value=type)
         inp.text = type
         if type == pre_assigned['execution']:
             inp.attrib['checked'] = 'checked'
         br = et.SubElement(fs4, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
     # 3rd column, bottom: Code copying options
-    form5 = et.SubElement(td4, 'form')
+    form_name = uid + '_form5'
+    form5 = et.SubElement(td4, 'form', name=form_name)
     fs5 = et.SubElement(form5, 'fieldset')
     legend5 = et.SubElement(fs5, 'legend')
     legend5.text = _("Rarely used options")
@@ -406,8 +460,8 @@ def addVLAM(parent, uid, pre_assigned):
     note = et.SubElement(fs5, 'small')
     note.text = _("- done automatically for doctest")
     br = et.SubElement(fs5, 'br')
-    inp = et.SubElement(fs5, 'input', type='radio', name=uid,
-                          value='no-copy')
+    inp = et.SubElement(fs5, 'input', type='radio', name='radios',
+                        value='no-copy')
     inp.text = 'no-copy'
     if 'no-copy' == pre_assigned['copied']:
         inp.attrib['checked'] = 'checked'
@@ -418,13 +472,19 @@ def addVLAM(parent, uid, pre_assigned):
     note = et.SubElement(fs5, 'small')
     note.text = _("- incompatible with no-copy")
     br = et.SubElement(fs5, 'br')
-    inp = et.SubElement(fs5, 'input', type='radio', name=uid,
-                          value='no-pre')
+    inp = et.SubElement(fs5, 'input', type='radio', name='radios',
+                        value='no-pre')
     inp.text = 'no-pre'
     if 'no-pre' == pre_assigned['copied']:
         inp.attrib['checked'] = 'checked'
     br = et.SubElement(fs5, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
     #button = et.SubElement(parent, 'button', onclick="update();")
-    button = et.SubElement(parent, 'button', onclick="record('%s');"%uid)
+    button = et.SubElement(parent, 'button',
+                onclick="%s record('%s', vlam);"%(js_changes, uid))
     button.text = _("Record changes")
     return
