@@ -157,11 +157,32 @@ class HTTPrepl(Singleton):
         doc = getattr(result, "__doc__", "") or ""
         return "%s(%s)\n%s" % (line, ", ".join(arglist), doc)
 
-def myInput(text):
-    return eval(myRawInput(text))
+def myInput(text=''):
+    '''
+    input([prompt]) -> unicode string
 
-def myRawInput(text):
-    '''A gui based raw_input() substitute'''
+    Crunchy's input() is a GUI based substitute to the normal
+    built-in function raw_input().  It requires that either
+    wxPython (default) or Tkinter be present.  Unlike the
+    built-in input() function, it does not evaluate the string
+    as a Python expression.
+
+    Reads a string from a dialog window. The prompt string,
+    if given, appears as a label in the dialog window.
+    '''
+    return myRawInput(text)
+
+def myRawInput(text=''):
+    '''
+    raw_input([prompt]) -> unicode string
+
+    Crunchy's raw_input() is a GUI based substitute to the normal
+    built-in function.  It requires that either wxPython (default)
+    or Tkinter be present.
+
+    Reads a string from a dialog window. The prompt string, if given,
+    appears as a label in the dialog window.
+    '''
     # First wxPython since the output looks better.
     try:
         import wx
