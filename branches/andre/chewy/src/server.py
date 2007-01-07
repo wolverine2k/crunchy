@@ -43,19 +43,28 @@ class ChewyRequestHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(data)
                 self.wfile.flush()
                 self.wfile.close()
-        else:    #OK, we didn't recognise it, assume its in the local filesystem:
-            #NOTE: this is undocumented - risky? works with Python 2.4
-            #we can't use SimpleHTTPRequestHandler.send_head because it sends an inaccurate "Content-Length" header
+        else:  #OK, we didn't recognise it, assume its in the local filesystem:
+            # NOTE: this is undocumented - risky? works with Python 2.4
+            # we can't use SimpleHTTPRequestHandler.send_head because,
+            # apparently, it sends an inaccurate "Content-Length" header
             path = self.translate_path(self.path)
             ext = os.path.splitext(path)[1]
-            if ext in ['.htm', '.html', ".lore"]:    #treat it as a VLAM page, even if it contains no VLAM, we can still style it
+            if ext in ['.htm', '.html', ".lore"]: #treat it as a VLAM page,
+                       # even if it contains no VLAM, we can still style it
                 try:
                     handle = open(path, 'r')
                 except IOError, info:
                     self.send_data(errors.IOError_error_dialog(info))
                     return
                 try:
-                    page = transformer.VLAMPage(handle, 'file://' + path)
+                    # the following is to prevent the Update button from
+                    # appearing on the language choice page
+                    choose_language = True
+                    partial_path = os.path.join("src", "html", "options")
+                    if partial_path in path:
+                        choose_language = False # actually, it's the opposite!
+                    page = transformer.VLAMPage(handle, 'file://' + path,
+                                                update=choose_language)
                 except errors.HTMLTreeBuilderError, e:
                     self.send_data(errors.HTMLTreeBuilder_error_dialog(e))
                     return
@@ -157,5 +166,5 @@ def get_language(args):
     prefs = configuration.UserPreferences()
     prefs.language = args['language']
     handle = open(prefs.options)
-    vlam = transformer.VLAMPage(handle, prefs.options)
+    vlam = transformer.VLAMPage(handle, prefs.options, update=False)
     return vlam.get()

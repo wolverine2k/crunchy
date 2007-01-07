@@ -53,7 +53,18 @@ canvas.plot { border: solid blue 2px; }
 	top: 0px;
 	right: 0;
 }
-
+/* button to record changes in chewy */
+button.recorder{
+  display:block;
+  z-index:22;
+  position:fixed;
+  bottom:10px;
+  right:0;
+	background-color:darkred;;
+	color: white;
+	background-image:none;
+}
+button.recorder:hover{background-color:yellow; color:black;}
 /* result (text) of the code execution: */
 .stdout{ color : darkgreen; font-family: monospace;}
 .stderr{ color : darkred;  font-family: monospace;}

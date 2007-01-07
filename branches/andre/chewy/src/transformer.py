@@ -33,7 +33,7 @@ class VLAMPage(object):
     #for locally unique IDs
     __ID = -1
 
-    def __init__(self, filehandle, url):
+    def __init__(self, filehandle, url, update=True):
         """all you have to give it is a file path to read from."""
         try:
             self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
@@ -41,6 +41,8 @@ class VLAMPage(object):
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
         self.url = url
+        self.update = update
+        print "self.update=", self.update
         self.convert_all_links()
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
@@ -97,7 +99,8 @@ class VLAMPage(object):
             self.uid = 'code' + str(self.__ID)
             self.process_pre(pre)
         self.body.insert(0, prefs.menu)
-        self.body.append(update_button())
+        if self.update:
+            self.body.append(update_button())
 
     def process_span(self, span):
         """Span can be used in Chewy for:
@@ -105,8 +108,9 @@ class VLAMPage(object):
         """
         for attrib in span.attrib.items():
             if attrib[0] == 'title':
+                vlam = span.attrib['title']
                 text, div = self.prepare_element(span)
-                if 'choose' in self.vlamcode and 'language' in self.vlamcode:
+                if 'choose' in vlam and 'language' in vlam:
                     addLanguageSelect(div, text)
         return
 
@@ -318,6 +322,7 @@ def addLanguageSelect(parent, text):
 
 def update_button():
     button = et.Element('button', onclick="update();")
+    button.attrib['class']='recorder'
     button.text = _("Update")
     return button
 
