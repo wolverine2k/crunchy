@@ -31,11 +31,17 @@ from element_tree import ElementTree
 #          user (very remote possibility, but still.)
 # embed: as the name indicates, can be used to embed some unwanted objects.
 #
+# Also, all the tags that are noted as "deprecated" in the specific_allowed
+# list are going to be put on the tag_black_list just to make sure
+# we take care of them.
+#
 #  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
 # time to find out about possible other security issues.
 #
 tag_black_list = ["script", 'button', 'form', 'frame', 'frameset', 'input',
-                    'iframe', 'embed']
+                    'iframe', 'embed', 'applet', 'isindex', 'menu',
+                    'noframes', 'object', 'optgroup', 'option', 'param', 's',
+                    'select', 'textarea']
 
 # The following is not used currently
 #attribute_black_list = ["text/javascript"]
@@ -74,7 +80,7 @@ specific_allowed = {
     'dd': [],
     'del': ['cite', 'datetime'],
     'dfn': [],
-    # dir is deprecated
+    # dir is deprecated - but listed in common_allowed
     'div': ['align'],
     'dl': [],
     'dt': [],
