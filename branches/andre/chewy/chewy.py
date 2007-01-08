@@ -54,11 +54,9 @@ def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     if openbrowser:
         webbrowser.open('http://' + host + ':' + str(port) + filename)
     print 'Crunchy Server: serving up interactive tutorials on port %s' % port
-    try:
-        while server.still_serving:
-            server.handle_request()
-    finally:
-        session.close()
+    while server.still_serving:
+        server.handle_request()
+
 
 # Do something useful if we're launching as an applet:
 if __name__ == '__main__':

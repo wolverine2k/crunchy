@@ -354,6 +354,8 @@ def addLanguageSelect(parent, text):
     return
 
 def update_button():
+    '''Inserts a button on a page used to update the entire page, based
+       on previously recorded changes.'''
     button = et.Element('button', onclick="update();")
     button.attrib['class']='recorder'
     button.text = _("Update")

@@ -178,7 +178,7 @@ class SecureSession(object):
 
     def map_commands(self):
         commands['/'] = '/'  # safe; no need to add session_id
-        request.pagemap[commands['/']] = server.get_index
+        request.pagemap[commands['/']] = server.get_crunchy_index
         #
         commands['/exit'] = '/exit' # safe; no need to add session_id
         request.pagemap[commands['/exit']] = server.get_exit
@@ -221,9 +221,7 @@ class SecureSession(object):
     def close(self):
         #remove the javascript file created for that session
         #
-        # Note: this is not the correct path anymore...
-        #
-        #
+        # Note: There is no javascript created on disk anymore
         os.remove(os.path.join(self.root_dir, js_name))
 
 def remove_unwanted(tree):

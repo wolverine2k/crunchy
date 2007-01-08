@@ -113,10 +113,10 @@ class UserPreferences(Borg):
         self.set_preference('language', lang)
         translation.select(self._language)
         if self._language == "fr":
-            self.home = "index_fr.html"
+            self.home = "src/html/chewy_index_fr.html"
             self.options = "src/html/options_fr.html"
         else: # English is the default
-            self.home = "index.html"
+            self.home = "src/html/chewy_index.html"
             self.options = "src/html/options.html"
             self._language = "en"
         self.extract_menu()

@@ -183,12 +183,12 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
         else:
             self.send_error(404, self.path)
 
-def get_index(dummy):
+def get_crunchy_index(dummy):
     '''Default page displayed to user.'''
     if prefs._language == 'fr':
-        return open("index_fr.html").read()
+        return open("src/html/crunchy_index_fr.html").read()
     else: # default is English
-        return open("index.html").read()
+        return open("src/html/crunchy_index.html").read()
 
 def get_exit(dummy):
     """
@@ -200,7 +200,7 @@ def get_exit(dummy):
     server.still_serving = False
     return """
     <html><head><title>Crunchy is done!</title></head>
-    <body>You may close the browser window (or tab).</body></html>"""
+    <body><h1>You may close the browser window (or tab).</h1></body></html>"""
 
 def get_push(args):
     '''the push part of the ajax interpreter, uses POST

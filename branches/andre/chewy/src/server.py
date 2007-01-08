@@ -28,7 +28,7 @@ class ChewyRequestHandler(SimpleHTTPRequestHandler):
         '''handle a GET request, called by methods in SimpleHTTPRequestHandler'''
         if self.pagemap == {}:
             self.pagemap = {
-                "/": get_index,
+                "/": get_chewy_index,
                 "/exit": get_exit,
                 "/load_local": get_local_page,
                 "/select_language": get_language,
@@ -115,19 +115,19 @@ class ChewyRequestHandler(SimpleHTTPRequestHandler):
         '''Handles a POST request, called by methods in SimpleHTTPRequestHandler'''
         self.send_error(404, self.path) # not implemented yet!
 
-def get_index(dummy):
+def get_chewy_index(dummy):
     '''Default page displayed to user.'''
     if prefs._language == 'fr':
-        path = "index_fr.html"
+        path = "src/html/chewy_index_fr.html"
     else: # default is English
-        path = "index.html"
+        path = "src/html/chewy_index.html"
     return open(path).read()
 
 def get_exit(dummy):
     server.still_serving = False
     return """
-    <html><head><title>Chewy is done!</title></head>
-    <body>You may close the browser window (or tab).</body></html>"""
+    <html><head><title>Done!</title></head>
+    <body><h1>You may close the browser window (or tab).</h1></body></html>"""
 
 def get_local_page(args):
     """load an arbitrary local page into chewy"""
