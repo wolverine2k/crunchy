@@ -82,7 +82,6 @@ class VLAMPage(object):
         self.head.append(js)
         return
 
-
     def process_body(self):
         """set up <body>"""
         fileinfo = et.Element("span")
@@ -183,12 +182,15 @@ class VLAMPage(object):
                         elem.attrib['href'] = '/load_local?path=' +\
                            urllib.quote_plus(os.path.join(self.url, e))
 
-class VLAMUpdater(VLAMPage):
+class HTMLUpdater(object):
     def __init__(self, filehandle, url, args):
         self.args = args
-        VLAMPage.__init__(self, filehandle, url)
-
-    def process_pre(self, pre):
+        self.__ID = -1
+        try:
+            self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
+            filehandle.close()
+        except Exception, info:
+            raise errors.HTMLTreeBuilderError(url, info)
         info = self.args.split(';')
         # Decoding the "=" sign encoding we used in addVLAM()
         for index, item in enumerate(info):
@@ -196,9 +198,24 @@ class VLAMUpdater(VLAMPage):
                 info[index] = item.replace('_EQ_', '=')
         # build a dict from alternating values (Thank you Python Cookbook)
         changes = dict(zip(info[::2], info[1::2]))
-        if self.uid in changes:
-            pre.attrib['title'] = changes[self.uid]
-        VLAMPage.process_pre(self, pre)
+        for pre in self.tree.getiterator('pre'):
+            # note: we need the uid information for updating *before* we
+            # start processing the pre, unlike in the original crunchy
+            # where the uid was assigned after.
+            self.__ID += 1
+            self.uid = 'code' + str(self.__ID)
+            if self.uid in changes:
+                pre.attrib['title'] = reconstruct_vlam(changes[self.uid])
+        return
+
+    def get(self):
+        """vlam file: serialise the tree and return it;
+           simply returns the file content otherwise.
+        """
+        fake_file = StringIO()
+        fake_file.write(DTD + '\n')
+        self.tree.write(fake_file, encoding='utf-8')
+        return fake_file.getvalue()
 
 ###================
 
@@ -258,17 +275,33 @@ def analyze_vlam_code(vlam):
                         values['area'] = {'width':width, 'height':height}
                 if choice == 'editor':
                     if 'external' in vlam:
-                        values['execution'] = 'external'
+                        values['execution'] = ' external'
                         if 'console' in vlam:
                             values['execution'] += ' console'
                         if 'no-internal' in vlam:
                             values['execution'] += ' no-internal'
                 if choice in ['editor', 'canvas', 'plot']:
                     if 'no-copy' in vlam:
-                        values['copied'] = 'no-copy'
+                        values['copied'] = ' no-copy'
                     elif 'no-pre' in vlam:
-                        values['copied'] = 'no-pre'
+                        values['copied'] = ' no-pre'
     return values
+
+def reconstruct_vlam(new_vlam):
+    ''' Reconstruct a sensible string as some of the options recorded
+        may be irrevant.
+    '''
+    values = analyze_vlam_code(new_vlam)
+    print "values = ", values
+    vlam = values['interactive'] + values['linenumber']
+    if 'rows' in values['size']:
+        vlam += ' size=(' + str(values['size']['rows']) + ', ' + \
+                            str(values['size']['cols']) + ')'
+    if 'width' in values['area']:
+        vlam += ' area=(' + str(values['area']['width']) + ', ' + \
+                            str(values['area']['height']) + ')'
+    vlam += values['execution'] + values['copied']
+    return vlam
 
 def _get_size(vlam):
     ''' Extract the default size of the textarea'''
@@ -331,6 +364,10 @@ def addVLAM(parent, uid, pre_assigned):
     '''Intended to add the various vlam options under a <pre>'''
     js_changes = 'var vlam="";' # will be used to record a local
                                 # javascript function to record changes
+    # note: button is inserted here; its complete parameters are
+    # determined at the end of this function.
+    button = et.SubElement(parent, 'button', id='myButton'+uid)
+    button.text = _("Record changes")
     table = et.SubElement(parent, 'table')
     table.attrib["class"] = "vlam"
     tr = et.SubElement(table, 'tr')
@@ -362,7 +399,7 @@ def addVLAM(parent, uid, pre_assigned):
     fs2 = et.SubElement(form2, 'fieldset')
     legend2 = et.SubElement(fs2, 'legend')
     legend2.text = _("Optional line numbering")
-    for type in ['linenumber', 't', 'interpreter', 'interpreter linenumber']:
+    for type in [' linenumber', 't', ' interpreter', ' interpreter linenumber']:
         if type == 't':
             note = et.SubElement(fs2, 'small')
             note.text = _("If interactive element is none:")
@@ -370,7 +407,7 @@ def addVLAM(parent, uid, pre_assigned):
             inp = et.SubElement(fs2, 'input', type='radio', name='radios',
                                 value=type)
             inp.text = type
-            if type == pre_assigned['linenumber'].strip():
+            if type == pre_assigned['linenumber']:
                 inp.attrib['checked'] = 'checked'
         br = et.SubElement(fs2, 'br')
     js_changes += """
@@ -421,10 +458,12 @@ def addVLAM(parent, uid, pre_assigned):
     # taken to mean that a dict is being passed.  So, we "encode" it as "_EQ_"
     js_changes += """
 rows='%s'; cols='%s'; _width='%s'; _height='%s';
-if (document.%s.rows.value != rows || document.%s.cols.value != cols){
+if (document.%s.rows.value != rows || document.%s.cols.value != cols ||
+    rows != '' || cols != ''){
     vlam += ' size_EQ_('+document.%s.rows.value+','+document.%s.cols.value+')';
     };
-if (document.%s.width.value != _width || document.%s.height.value != _height){
+if (document.%s.width.value != _width || document.%s.height.value != _height ||
+    _width != '' || _height != ''){
     vlam += ' area_EQ_('+document.%s.width.value+','+document.%s.height.value+')';
     };
 """%(rows, cols, width, height,
@@ -440,8 +479,8 @@ if (document.%s.width.value != _width || document.%s.height.value != _height){
     note = et.SubElement(fs4, 'small')
     note.text = _("Optional values for editor only")
     br = et.SubElement(fs4, 'br')
-    for type in ['external', 'external no-internal', 'external console',
-                 'external console no-internal']:
+    for type in [' external', ' external no-internal', ' external console',
+                 ' external console no-internal']:
         inp = et.SubElement(fs4, 'input', type='radio', name='radios',
                               value=type)
         inp.text = type
@@ -468,7 +507,7 @@ if (document.%s.width.value != _width || document.%s.height.value != _height){
     inp = et.SubElement(fs5, 'input', type='radio', name='radios',
                         value='no-copy')
     inp.text = 'no-copy'
-    if 'no-copy' == pre_assigned['copied']:
+    if ' no-copy' == pre_assigned['copied']:
         inp.attrib['checked'] = 'checked'
     br = et.SubElement(fs5, 'br')
     note = et.SubElement(fs5, 'small')
@@ -480,7 +519,7 @@ if (document.%s.width.value != _width || document.%s.height.value != _height){
     inp = et.SubElement(fs5, 'input', type='radio', name='radios',
                         value='no-pre')
     inp.text = 'no-pre'
-    if 'no-pre' == pre_assigned['copied']:
+    if ' no-pre' == pre_assigned['copied']:
         inp.attrib['checked'] = 'checked'
     br = et.SubElement(fs5, 'br')
     js_changes += """
@@ -488,8 +527,6 @@ if (document.%s.width.value != _width || document.%s.height.value != _height){
         if (document.%s.radios[i].checked){
             vlam += ' '+document.%s.radios[i].value;}
         };"""%(form_name, form_name, form_name)
-    #button = et.SubElement(parent, 'button', onclick="update();")
-    button = et.SubElement(parent, 'button',
-                onclick="%s record('%s', vlam);"%(js_changes, uid))
-    button.text = _("Record changes")
+    # We now have all the information we need for the button
+    button.attrib['onclick'] = "%s record('%s', vlam);"%(js_changes, uid)
     return

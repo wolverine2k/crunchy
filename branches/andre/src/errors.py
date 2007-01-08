@@ -1,7 +1,7 @@
 '''
 errors.py
 
-Handle errors produced while running Crunchy Frog, as well as Python 
+Handle errors produced while running Crunchy Frog, as well as Python
 tracebacks, displaying the result to the user in a friendly way.
 At present, this is just a very basic module.  These will eventually
 be translated to other languages.
@@ -21,7 +21,7 @@ def get_traceback(code):
     ex_line = code.splitlines(True)[ex_lineno - 1]
     return _(u"Error on line %s:\n%s%s\n")%(ex_lineno, ex_line, ex_val)
 
-        
+
 def get_syntax_error(code):
     """
     print out a syntax error
@@ -54,7 +54,7 @@ def get_syntax_error(code):
 #This code could be "improved" by doing a custom "Crunchy Frog" alert, perhaps
 # using something like the code on http://slayeroffice.com/code/custom_alert/
 
-## Note: because css files often contain "%", we can't use them to build 
+## Note: because css files often contain "%", we can't use them to build
 # a string that will then be formatted with " %s ..."%param
 # as the "%" in the css file will cause an error. This is why we
 # use a simple concatenation to build the error message string in
@@ -120,9 +120,9 @@ class HTMLTreeBuilderError(CrunchyError):
         self.path = path.replace("\\", '/')
     def __str__(self):
         return _("Error in processing %s: %s") %(self.path, self.info)
-    
+
 def HTMLTreeBuilder_error_dialog(e):
-    mesg = _("The file '%s' has some html errors in it: %s.")%(e.path, 
+    mesg = _("The file '%s' has some html errors in it: %s.")%(e.path,
               e.info) + _("  It can not be displayed.")
     return begin_javascript_alert + mesg + end_javascript_alert
 

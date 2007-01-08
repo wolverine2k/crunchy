@@ -249,6 +249,8 @@ class CrunchyInterpreter(threading.Thread):
         interpreters[name] = self
         self.name = name
         self.symbols = dict(symbols, **sound.all_sounds)
+        self.symbols['input'] = self.myInput
+        self.symbols['raw_input'] = self.myInput
         self._doctest = doctest
 
     def run(self):
@@ -331,6 +333,11 @@ class CrunchyInterpreter(threading.Thread):
                 new_mesg.append("-"*70)
         return '\n'.join(new_mesg), exception_found
 
+    def myInput(self, text=''):
+        info = "input() and raw_input() are not handled when code is"\
+                " evaluated by editor."
+        raise errors.PythonExecutionError, info
+
 def run_doctest(code, doctestname):
     '''Executes some Python code treated as a module accompanied by some
        doctests to be tested by the doctest module from the standard
@@ -380,9 +387,6 @@ def analyse_doctest_result(x):
             return _("Your code failed all (%d) tests.")%total
         else:
             return _("Your code failed %s out of %s tests.")%(failures, total)
-
-
-
 
 def exec_external(code, console=False, path=None):
     """execute code in an external process

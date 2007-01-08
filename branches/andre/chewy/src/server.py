@@ -18,6 +18,8 @@ server = None
 
 active_path = None
 active_base = None
+not_saved = True
+new_path = None
 
 class ChewyRequestHandler(SimpleHTTPRequestHandler):
     '''handle HTTP requests'''
@@ -132,7 +134,7 @@ def get_local_page(args):
     # pages are encoded in utf-8; the info received is sometimes in that encoding.
     # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
-    global active_path, active_base
+    global active_path, active_base, not_saved
     try:
         path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
     except:
@@ -148,17 +150,35 @@ def get_local_page(args):
         vlam = transformer.VLAMPage(handle, base)
         # we save the path and not the handle as we can't read twice
         # from the same handle
-        active_path = path
-        active_base = base
+        if path != active_path:    # new file
+            not_saved = True
+            active_path = path
+            active_base = base
         return vlam.get()
     else:
         return handle.read()
 
 def update_page(args):
     '''test function for now '''
-    global active_path, active_base
-    handle = open(active_path)
-    vlam = transformer.VLAMUpdater(handle, active_base, args['changed'])
+    global active_path, active_base, not_saved, new_path
+    # save the file with a new name
+    if not_saved:
+        new_path = active_path.replace(".htm", "_new.htm")
+        old = open(active_path)
+        new = open(new_path, 'w')
+        new.write(old.read())
+        new.close()
+        not_saved = False
+    # now work with the new file
+    # first, update it
+    handle = open(new_path)
+    vlam1 = transformer.HTMLUpdater(handle, active_base, args['changed'])
+    saved_changes = open(new_path, 'w')
+    saved_changes.write(vlam1.get())
+    saved_changes.close()
+    # now work with the new file, ready to update it again.
+    handle = open(new_path)
+    vlam = transformer.VLAMPage(handle, active_base)
     return vlam.get()
 
 def get_language(args):

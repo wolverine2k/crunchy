@@ -23,7 +23,7 @@ try:
     print "Succesfully imported psyco"
 except ImportError:
     pass
-    
+
 # globally defined objects
 sys.stdout = src.utilities.ThreadStream(sys.stdout)
 sys.stderr = src.utilities.ThreadStream(sys.stderr)
@@ -47,7 +47,7 @@ def find_port(start):
 def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     """
     Run Crunchy Frog
-    
+
     By default it serves on the first free port on above 5555 on 127.0.0.1,
     and opens a browser window to display the URL http://127.0.0.1:port/
     """
@@ -61,13 +61,9 @@ def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     if openbrowser:
         webbrowser.open('http://' + host + ':' + str(port) + filename)
     print 'Crunchy Server: serving up interactive tutorials on port %s' % port
-    try:
-        while server.still_serving:
-            server.handle_request()
-    finally:
-        session.close()
+    while server.still_serving:
+        server.handle_request()
 
-# Do something useful if we're launching as an applet:
 if __name__ == '__main__':
     syshost = '127.0.0.1'
     # usage: python crunchy.py [port [start_webbrowser]]
@@ -76,7 +72,7 @@ if __name__ == '__main__':
         start_webbrowser = False
         if len(sys.argv) > 2:
             if sys.argv[2] == "True":
-                start_webbrowser = True 
+                start_webbrowser = True
     else:
         start_webbrowser = True
     run(host=syshost, openbrowser=start_webbrowser)
