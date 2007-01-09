@@ -2,7 +2,7 @@ Proposed reorganization of crunchy code
 
 See at the end for idea about easier "vlam-ization"
 
-Andre Roberge, December 26
+Andre Roberge, January 9, 2006
 
 =======================================================
 
@@ -60,7 +60,7 @@ menu_extractor.py
 Currently, simple function to read in a menu (in an html file) and use
 it throughout a session as the default menu for crunchy.
 
-Should be incorporated in some other module
+Should be incorporated in some other module [DONE]
 
 =============================================
 
@@ -73,7 +73,6 @@ src/crunchyfier.py
 src/errors.py
 src/graphics.py
 src/interpreters.py
-src/menu_extractor.py ---- to be changed/ added to vlam_elements
 src/security.py
 src/server.py
 src/sound.py
@@ -118,9 +117,9 @@ use.  Changes that are done by adapt_for_crunchy are:  [DONE]
 
 To do:
 
-* Make it possible to save a file
+* Make it possible to save a file [DONE]
 
-* Make it possible to load a file
+* Make it possible to load a file [DONE]
 
 ============================================
 Easier "vlam-ization"
@@ -135,19 +134,19 @@ to transform plain html tutorial into crunchy-ready one. Here's
 how I envisage it:
 
 1. Upon starting, maker would initiate a web-server and launch
-firefox with a welcome page.
+firefox with a welcome page. [DONE]
 2. The welcoming page would contain a "browser" form which
-would let the user choose a local html file to load.
+would let the user choose a local html file to load. [DONE]
 3. When loaded, the html file would be processed and displayed
-so that above every <pre> tag, an html "dropdown selector" 
+so that above every <pre> tag, an html "dropdown selector"  [DONE]
 would be inserted whose content would be the various vlam options.
    3. a) additional "dropdown selectors" could be inserted for
    vlam options such as "size" (rows and cols, for <textarea>) 
-   and area (width and height, for <canvas>).
+   and area (width and height, for <canvas>).[DONE, but mostly with radio buttons]
 4. The user would go down the page and make the appropriate
-choice for each <pre> element.
+choice for each <pre> element. [DONE]
 5. Upon reaching the bottom of the page, the user could
-press a button that would create the new file.
+press a button that would create the new file. [DONE]
   5. a) Alternatively, the user could press a "preview" button 
   which would launch crunchy and display the processed
   file into a separate Firefox tab.

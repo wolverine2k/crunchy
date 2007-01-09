@@ -278,7 +278,9 @@ def get_python_file(args):
     return handle.read()
 
 def get_language(args):
-    import configuration
+    '''Present the user with a page that give a choice of language
+       to use for menus and dialogs.
+    '''
     prefs = configuration.UserPreferences()
     prefs.language = args['language']
     handle = open(prefs.options)

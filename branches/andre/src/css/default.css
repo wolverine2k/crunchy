@@ -138,4 +138,10 @@ table.summary td {
 	border-style: inset inset inset inset;
 	border-color: gray gray gray gray;
 }
+/* attach an image to all marked-up pre tags;
+see http://www.hunlock.com/blogs/Attach_icons_to_anything_with_CSS.
+*/
+pre[title]{
+padding-top:20px;
+background: url(python_crunchy.png) no-repeat top left;}
 
