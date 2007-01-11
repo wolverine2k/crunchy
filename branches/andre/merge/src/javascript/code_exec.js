@@ -50,7 +50,7 @@ function load_python_file(obj_id)
                 {
                 case 200:
 										editAreaLoader.setValue(obj_id, h.responseText);
-										var obj = document.getElementById('hidden'+obj_id);
+										var obj = document.getElementById('hidden_load'+obj_id);
 										obj.style.visibility = "hidden";
                     break;
                 case 12029:

@@ -6,6 +6,7 @@ html page with interactive (and other) elements added.
 
 '''
 # Python standard library modules
+import mimetools
 import os
 import os.path
 import re
@@ -26,35 +27,112 @@ from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
 #the DTD to use:
-DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
-
+DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
+'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
 DOCTESTS = {}
 
-class VLAMPage(object):
-    """Encapsulates a page containing VLAM"""
-    #for locally unique IDs
-    __ID = -1
+# Some javascript code
+editAreaLoader = """
+editAreaLoader.init({
+id: %s,
+font_size: "11",
+allow_resize: "both",
+allow_toggle: true,
+language: "%s",
+toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
+syntax: "python",
+start_highlight: true,
+load_callback:"my_load_file",
+save_callback:"my_save_file",
+display: "later",
+replace_tab_by_spaces:4,
+min_height: 150});"""
 
-    def __init__(self, filehandle, url, external_flag=False, local_flag=False):
+editArea_load_and_save = """
+function my_load_file(id){
+var obj = document.getElementById('hidden_load'+id);
+obj.style.visibility = "visible";
+}
+function my_save_file(id){
+var obj = document.getElementById('hidden_save'+id);
+obj.style.visibility = "visible";
+}
+"""
+
+
+class TreeBuilder(object):
+    """Base class used to build a tree from a filehandle pointing to a
+       well formed html file.
+    """
+    def __init__(self, filehandle, url):
         """all you have to give it is a file handle to read from and an url."""
-        print "filehandle = ", filehandle
-        print "url=", url
         try:
-            self.tree = HTMLTreeBuilder.parse(filehandle, encoding='utf-8')
+            # We let HTMLTreeBuilder figure out the encoding on its own
+            # as it can do it very well.  This does create one limitation:
+            # the encoding has to be an ascii-compatible encoding.
+            self.tree = HTMLTreeBuilder.parse(filehandle)
         except Exception, info:
             raise errors.HTMLTreeBuilderError(url, info)
-        self.tree = security.remove_unwanted(self.tree)
+        # We retrieve the encoding so that we can use it if needed
+        # when interacting between an html page and the local file system.
+        # This will also allow us to reinsert it when writing the file,
+        # if needed
+        self.get_encoding()
         self.url = url
-        self.colourizer = colourize.Colourizer()
+        # unique id for interactive elements
+        self._ID = -1
+        return
+
+    def get_encoding(self):
+        """retrieves the encoding from a well-formed tree;
+           assumes iso-8859-1 if none found.
+        """
+        self.encoding = 'iso-8859-1'
+        for meta in self.tree.getiterator("meta"):
+            http_equiv = content = None
+            for attrib in meta.attrib.items():
+                if attrib[0] == 'http-equiv':
+                    http_equiv = attrib[1]
+                elif attrib[0] == 'content':
+                    content = attrib[1]
+            if http_equiv == "content-type" and content:
+            # use mimetools to parse the http header
+            # (copied from HTMLTreeBuilder)
+                header = mimetools.Message(
+                    StringIO.StringIO("%s: %s\n\n" % (http_equiv, content))
+                    )
+                encoding = header.getparam("charset")
+                if encoding:
+                    self.encoding = encoding
+        return
+
+    def get(self):
+        """vlam file: serialise the tree and return it;
+           simply returns the file content otherwise.
+        """
+        fake_file = StringIO()
+        fake_file.write(DTD + '\n')
+        self.tree.write(fake_file, encoding=self.encoding)
+        return fake_file.getvalue()
+
+class VLAMPage(TreeBuilder):
+    """Encapsulates a page containing VLAM"""
+    def __init__(self, filehandle, url, external_flag=False, local_flag=False):
+        TreeBuilder.__init__(self, filehandle, url)
+
+        # The security module removes all kinds of potential security holes
+        # including some meta tags with an 'http-equiv' attribute.
+        self.tree = security.remove_unwanted(self.tree)
+        self.get_base()
         # If self.external_flag or self.local_flag is True, which means
         # that the original page was loaded via an input box
         # (/load_local or /load_external)
         # all links in the page are converted to use the same
         self.external_flag = external_flag
         self.local_flag = local_flag
-        self.get_base()
         if self.external_flag or self.local_flag:
             self.convert_all_links()
+        self.colourizer = colourize.Colourizer()
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
         self.textareas = []
@@ -76,9 +154,10 @@ class VLAMPage(object):
         self.insert_css("/src/css/custom_alert.css")
         for style in prefs.styles:
             self.head.append(style)
+        # reinsert the encoding information that was removed.
         meta_lang = et.Element("meta")
         meta_lang.set("http-equiv", "Content-Type")
-        meta_lang.set("content", "text/html; charset=utf-8")
+        meta_lang.set("content", "text/html; charset=%s"%self.encoding)
         self.head.append(meta_lang)
         return
 
@@ -104,26 +183,8 @@ class VLAMPage(object):
         '''Appends a js script for each editarea/textarea'''
         js = et.Element("script")
         js.set("type", "text/javascript")
-        # unfortunately, it appears that the load (and possibly save) options
-        # on the toolbar do not work with Firefox 2.0. This has been checked
-        # with the example included in the EditArea distribution. Instead,
-        # we will use the custom controls; these have to be included as
-        # buttons appearing below the textarea.
-        js.text = """
-editAreaLoader.init({
-id: %s,
-font_size: "11",
-allow_resize: "both",
-allow_toggle: true,
-language: "%s",
-toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
-syntax: "python",
-start_highlight: true,
-load_callback:"my_load_file",
-save_callback:"my_save_file",
-display: "later",
-replace_tab_by_spaces:4,
-min_height: 150});"""%(id, prefs.editarea_language)
+        # editAreaLoader is defined near the top of this file
+        js.text = editAreaLoader%(id, prefs.editarea_language)
         self.head.append(js)
         return
 
@@ -135,19 +196,10 @@ min_height: 150});"""%(id, prefs.editarea_language)
         '''
         js = et.Element("script")
         js.set("type", "text/javascript")
-        js.text = """
-function my_load_file(id){
-var obj = document.getElementById('hidden'+id);
-obj.style.visibility = "visible";
-}
-function my_save_file(id){
-var obj = document.getElementById('hidden_save'+id);
-obj.style.visibility = "visible";
-}
-"""
+        # editArea_load_and_save is defined near the top of this file
+        js.text = editArea_load_and_save
         self.head.append(js)
         return
-
 
     def process_body(self):
         """set up <body>"""
@@ -210,8 +262,8 @@ obj.style.visibility = "visible";
     def prepare_element(self, elem):
         '''Common code for all vlam elements using the "title" tag.
         '''
-        self.__ID += 1
-        id = 'code' + str(self.__ID)
+        self._ID += 1
+        id = 'code' + str(self._ID)
         if elem.text:
             if elem.text.startswith("\n"):
                 elem.text = elem.text[1:]
@@ -260,15 +312,7 @@ obj.style.visibility = "visible";
         textarea = et.SubElement(elem, "textarea", rows=rows, cols=cols,
                                  id=textarea_id)
         textarea.text = textarea_text
-        hidden_load_id = 'hidden'+id+"_code"
-        hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
-        hidden_load.attrib['class'] = 'load_python'
-        addLoadPython(hidden_load, hidden_load_id, textarea_id)
-
-        hidden_save_id = 'hidden_save'+id+"_code"
-        hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
-        hidden_save.attrib['class'] = 'save_python'
-        addSavePython(hidden_save, hidden_save_id, textarea_id)
+        add_hidden_load_and_save(elem, id, textarea_id, "_code")
 
         if 'external' in self.vlamcode:
             if not 'no-internal' in self.vlamcode:
@@ -312,16 +356,7 @@ obj.style.visibility = "visible";
         textarea_text = self._apportion_code(pre, text)
         textarea_id = id+"_input"
         self.textareas.append('\"'+textarea_id+'\"')
-        hidden_load_id = 'hidden'+id+"_input"
-        hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
-        hidden_load.attrib['class'] = 'load_python'
-        addLoadPython(hidden_load, hidden_load_id, textarea_id)
-
-        hidden_save_id = 'hidden_save'+id+"_input"
-        hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
-        hidden_save.attrib['class'] = 'save_python'
-        addSavePython(hidden_save, hidden_save_id, textarea_id)
-
+        add_hidden_load_and_save(elem, id, textarea_id, "_input")
 
         addCanvas(new_div, width=width, height=height, id=id, klass=klass,
                   btn_text=btn_text, rows=rows, cols=cols,
@@ -373,20 +408,12 @@ obj.style.visibility = "visible";
             textarea_code = '\n'
         return textarea_code
 
-    def get(self):
-        """vlam file: serialise the tree and return it;
-           simply returns the file content otherwise.
-        """
-        fake_file = StringIO()
-        fake_file.write(DTD + '\n')
-        self.tree.write(fake_file, encoding='utf-8')
-        return fake_file.getvalue()
-
     def get_base(self):
         """retrieve the base that relative links are relative to and store it
-           in self.base; see http://www.faqs.org/rfcs/rfc1808.html
-           In future this probably should check through the document to see if
-           the base has been redefined.
+           in self.base; see http://www.faqs.org/rfcs/rfc1808.html, in
+           particular 10.  Appendix - Embedding the Base URL in HTML documents
+           In future this probably should check through the document
+           to see if the base has been redefined.
         """
         self.base = self.url
 
@@ -547,13 +574,152 @@ obj.style.visibility = "visible";
         inp.close()
         self.colourizer.reset()
 
+####=== Additions from chewy
+
+class HTMLUpdater(TreeBuilder):
+    def __init__(self, filehandle, url, args):
+        TreeBuilder.__init__(self, filehandle, url)
+        self.args = args
+        info = self.args.split(';')
+        # Decoding the "=" sign encoding we used in addVLAM()
+        for index, item in enumerate(info):
+            if '_EQ_' in item:
+                info[index] = item.replace('_EQ_', '=')
+        # build a dict from alternating values (Thank you Python Cookbook)
+        changes = dict(zip(info[::2], info[1::2]))
+        for pre in self.tree.getiterator('pre'):
+            # note: we need the uid information for updating *before* we
+            # start processing the pre, unlike in the original crunchy
+            # where the uid was assigned after.
+            self._ID += 1
+            self.uid = 'code' + str(self._ID)
+            if self.uid in changes:
+                pre.attrib['title'] = reconstruct_vlam(changes[self.uid])
+        return
+
+
 ###================
+
+def analyze_vlam_code(vlam):
+    """ Parse the vlam code to analyze its content.
+        The allowed values are:
+        1. none [interpreter] [linenumber]
+        2. interpreter [linenumber]
+        3. interpreter to editor [linenumber] [size=(rows, cols)] [no-copy]
+        4. editor [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                [external console [no-internal]] _or_ [external [no-internal]]
+        5. doctest [linenumber] [size=(rows, cols)]
+        6. canvas [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                                [area=(width, height)]
+        7. plot [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
+                                [area=(width, height)]
+    """
+    values = {
+    'interactive': '', # default values to return in case someone made an error
+    'linenumber': '',       # in a file marked up "by hand".
+    'size': '',
+    'area': '',
+    'execution': '',
+    'copied': ''
+    }
+    vlam = vlam.lower() # in case it was done by hand
+
+    if 'none' in vlam:
+        values['interactive'] = 'none'
+        if 'interpreter' in vlam:
+            values['linenumber'] = ' interpreter'
+        if 'linenumber' in vlam:
+            values['linenumber'] += ' linenumber'
+    elif 'interpreter' in vlam and 'editor' in vlam:
+        values['interactive'] = 'interpreter to editor'
+        if 'linenumber' in vlam:
+            values['linenumber'] = ' linenumber'
+        if 'size' in vlam:
+            rows, cols = _get_size(vlam)
+            values['size'] = {'rows':rows, 'cols':cols}
+        if 'no-copy' in vlam:
+            values['copied'] = 'no-copy'
+    else:
+        for choice in ['none', 'interpreter', 'editor', 'doctest',
+                       'canvas', 'plot']:
+            if choice in vlam:
+                values['interactive'] = choice
+                if 'linenumber' in vlam:
+                    values['linenumber'] = ' linenumber'
+                if choice not in ['none', 'interpreter']:
+                    if 'size' in vlam:
+                        rows, cols = _get_size(vlam)
+                        values['size'] = {'rows':rows, 'cols':cols}
+                if choice in ['canvas', 'plot']:
+                    if 'area' in vlam:
+                        width, height = _get_area(vlam)
+                        values['area'] = {'width':width, 'height':height}
+                if choice == 'editor':
+                    if 'external' in vlam:
+                        values['execution'] = ' external'
+                        if 'console' in vlam:
+                            values['execution'] += ' console'
+                        if 'no-internal' in vlam:
+                            values['execution'] += ' no-internal'
+                if choice in ['editor', 'canvas', 'plot']:
+                    if 'no-copy' in vlam:
+                        values['copied'] = ' no-copy'
+                    elif 'no-pre' in vlam:
+                        values['copied'] = ' no-pre'
+    return values
+
+def reconstruct_vlam(new_vlam):
+    ''' Reconstruct a sensible string as some of the options recorded
+        may be irrelevant.
+    '''
+    values = analyze_vlam_code(new_vlam)
+    print "values = ", values
+    vlam = values['interactive'] + values['linenumber']
+    if 'rows' in values['size']:
+        vlam += ' size=(' + str(values['size']['rows']) + ', ' + \
+                            str(values['size']['cols']) + ')'
+    if 'width' in values['area']:
+        vlam += ' area=(' + str(values['area']['width']) + ', ' + \
+                            str(values['area']['height']) + ')'
+    vlam += values['execution'] + values['copied']
+    return vlam
+
+def _get_size(vlam):
+    ''' Extract the default size of the textarea'''
+    if 'size' in vlam:
+        try:
+            res = re.search(r'size\s*=\s*\((.+?),(.+?)\)', vlam)
+            rows = int(res.groups()[0])
+            cols = int(res.groups()[1])
+        except:
+            rows, cols = 10, 80
+    else:
+        rows, cols = 10, 80
+    return rows, cols
+
+def _get_area(vlam):
+    ''' Extract the drawing canvas dimensions'''
+    if 'area' in vlam:
+        try:
+            res = re.search(r'area=\((.+?),(.+?)\)', vlam)
+            width = int(res.groups()[0])
+            height = int(res.groups()[1])
+        except:
+            width, height = 400, 400
+    else:
+        width, height = 400, 400
+    return width, height
+
+
+
+####== end addtions from chewy
+
+####================
 #
 # The following are functions used to insert various "vlam elements".
 # These are purely ElementTree constructions, without any "vlam logic"
 # They are introduced as a possible first step to refactor them into
 # separate classes.
-###================
 
 
 def addLoadLocal(parent):
@@ -675,3 +841,198 @@ def addCanvas(parent, width='400', height='400', id='', klass='',
     textarea.text = textarea_text
     return
 
+def add_hidden_load_and_save(elem, id, textarea_id, id_string):
+    hidden_load_id = 'hidden_load' + id + id_string
+    hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
+    hidden_load.attrib['class'] = 'load_python'
+    addLoadPython(hidden_load, hidden_load_id, textarea_id)
+
+    hidden_save_id = 'hidden_save' + id + id_string
+    hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
+    hidden_save.attrib['class'] = 'save_python'
+    addSavePython(hidden_save, hidden_save_id, textarea_id)
+    return
+
+####== Chewy additions
+
+def update_button():
+    '''Inserts a button on a page used to update the entire page, based
+       on previously recorded changes.'''
+    button = et.Element('button', onclick="update();")
+    button.attrib['class']='recorder'
+    button.text = _("Update")
+    return button
+
+
+def addVLAM(parent, uid, pre_assigned):
+    '''Intended to add the various vlam options under a <pre>'''
+    js_changes = 'var vlam="";' # will be used to record a local
+                                # javascript function to record changes
+    # note: button is inserted here; its complete parameters are
+    # determined at the end of this function.
+    button = et.SubElement(parent, 'button', id='myButton'+uid)
+    button.text = _("Record changes")
+    table = et.SubElement(parent, 'table')
+    table.attrib["class"] = "vlam"
+    tr = et.SubElement(table, 'tr')
+    # first column: interactive elements
+    td1 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form_name = uid + '_form1'
+    form1 = et.SubElement(td1, 'form', name=form_name)
+    fs1 = et.SubElement(form1, 'fieldset')
+    legend1 = et.SubElement(fs1, 'legend')
+    legend1.text = _("Interactive element")
+    for type in ['none', 'interpreter', 'interpreter to editor',
+                  'editor', 'doctest', 'canvas', 'plot']:
+        inp = et.SubElement(fs1, 'input', type='radio', name='radios',
+                            value=type)
+        inp.text = type
+        if type == pre_assigned['interactive']:
+            inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs1, 'br')
+    # Note: can not embed "<" as a javascript character; hence use "!="
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
+    # 2nd column, top: line number choices
+    td2 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form_name = uid + '_form2'
+    form2 = et.SubElement(td2, 'form', name=form_name)
+    fs2 = et.SubElement(form2, 'fieldset')
+    legend2 = et.SubElement(fs2, 'legend')
+    legend2.text = _("Optional line numbering")
+    for type in [' linenumber', 't', ' interpreter', ' interpreter linenumber']:
+        if type == 't':
+            note = et.SubElement(fs2, 'small')
+            note.text = _("If interactive element is none:")
+        else:
+            inp = et.SubElement(fs2, 'input', type='radio', name='radios',
+                                value=type)
+            inp.text = type
+            if type == pre_assigned['linenumber']:
+                inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs2, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
+    # 2nd column, bottom: size and area
+    form_name = uid + '_form3'
+    form3 = et.SubElement(td2, 'form', name=form_name)
+    fs3 = et.SubElement(form3, 'fieldset')
+    legend3 = et.SubElement(fs3, 'legend')
+    legend3.text = _("Size")
+    note = et.SubElement(fs3, 'small')
+    note.text = _("Size of editor (if present)")
+    br = et.SubElement(fs3, 'br')
+    for type in ['rows', 'cols']:
+        note = et.SubElement(fs3, 'tt')
+        note.text = type + ":"
+        inp = et.SubElement(fs3, 'input', type='text', value='',
+                            name=type)
+        if type in pre_assigned['size']:
+            inp.attrib['value'] = "%d"%pre_assigned['size'][type]
+        br = et.SubElement(fs3, 'br')
+    note = et.SubElement(fs3, 'small')
+    note.text = _("Drawing area (if present)")
+    br = et.SubElement(fs3, 'br')
+    for type in ['width ', 'height']:  # extra space in 'width ' for alignment
+        note = et.SubElement(fs3, 'tt')
+        note.text = type + ":"
+        inp = et.SubElement(fs3, 'input', type='text', value='',
+                            name=type.strip())
+        if type.strip() in pre_assigned['area']:
+            inp.attrib['value'] = "%d"%pre_assigned['area'][type.strip()]
+        br = et.SubElement(fs3, 'br')
+    rows = ''
+    cols = ''
+    width = ''
+    height = ''
+    if pre_assigned['size']:
+        rows = str(pre_assigned['size']['rows'])
+        cols = str(pre_assigned['size']['cols'])
+    if pre_assigned['area']:
+        width = str(pre_assigned['area']['width'])
+        height = str(pre_assigned['area']['height'])
+    # WARNING: apparently can't use "width" (and perhaps "height")
+    # as variable in js.
+    # WARNING: when the changes are passed, the presence of an "=" sign is
+    # taken to mean that a dict is being passed.  So, we "encode" it as "_EQ_"
+    js_changes += """
+    rows='%s'; cols='%s'; _width='%s'; _height='%s';
+    if (document.%s.rows.value != rows || document.%s.cols.value != cols ||
+        rows != '' || cols != ''){
+    vlam += ' size_EQ_('+document.%s.rows.value+','+document.%s.cols.value+')';
+    };
+    if (document.%s.width.value != _width ||
+        document.%s.height.value != _height ||
+        _width != '' || _height != ''){
+    vlam += ' area_EQ_('+document.%s.width.value+','+document.%s.height.value+')';
+    };
+    """%(rows, cols, width, height,
+        form_name, form_name, form_name, form_name,
+        form_name, form_name, form_name, form_name)
+    # 3rd column, top: Code execution options
+    td4 = et.SubElement(tr, 'td', style='vertical-align:top;')
+    form_name = uid + '_form4'
+    form4 = et.SubElement(td4, 'form', name=form_name)
+    fs4 = et.SubElement(form4, 'fieldset')
+    legend4 = et.SubElement(fs4, 'legend')
+    legend4.text = _("Code execution")
+    note = et.SubElement(fs4, 'small')
+    note.text = _("Optional values for editor only")
+    br = et.SubElement(fs4, 'br')
+    for type in [' external', ' external no-internal', ' external console',
+                 ' external console no-internal']:
+        inp = et.SubElement(fs4, 'input', type='radio', name='radios',
+                              value=type)
+        inp.text = type
+        if type == pre_assigned['execution']:
+            inp.attrib['checked'] = 'checked'
+        br = et.SubElement(fs4, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
+    # 3rd column, bottom: Code copying options
+    form_name = uid + '_form5'
+    form5 = et.SubElement(td4, 'form', name=form_name)
+    fs5 = et.SubElement(form5, 'fieldset')
+    legend5 = et.SubElement(fs5, 'legend')
+    legend5.text = _("Rarely used options")
+    note = et.SubElement(fs5, 'small')
+    note.text = _("Code not copied in editor")
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("- done automatically for doctest")
+    br = et.SubElement(fs5, 'br')
+    inp = et.SubElement(fs5, 'input', type='radio', name='radios',
+                        value='no-copy')
+    inp.text = 'no-copy'
+    if ' no-copy' == pre_assigned['copied']:
+        inp.attrib['checked'] = 'checked'
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("Code not appearing in <pre>")
+    br = et.SubElement(fs5, 'br')
+    note = et.SubElement(fs5, 'small')
+    note.text = _("- incompatible with no-copy")
+    br = et.SubElement(fs5, 'br')
+    inp = et.SubElement(fs5, 'input', type='radio', name='radios',
+                        value='no-pre')
+    inp.text = 'no-pre'
+    if ' no-pre' == pre_assigned['copied']:
+        inp.attrib['checked'] = 'checked'
+    br = et.SubElement(fs5, 'br')
+    js_changes += """
+    for (i=0; i!=document.%s.radios.length;i++){
+        if (document.%s.radios[i].checked){
+            vlam += ' '+document.%s.radios[i].value;}
+        };"""%(form_name, form_name, form_name)
+    # We now have all the information we need for the button
+    button.attrib['onclick'] = "%s record('%s', vlam);"%(js_changes, uid)
+    return
