@@ -1,0 +1,18 @@
+/* This file complements menu.css, where the "mechanics" is implemented.
+We'll go with fairly bold colours here. */
+#menu a {
+	color:white;
+	border-top:1px solid white;
+}
+#menu a:hover { background:red; color:black}
+.menuitem a { background:blue}
+.menuitem ul a { background:green}
+.menuitem ul ul a { background:purple}
+/* we could keep adding more and more styling for lower levels e.g.:
+.menuitem ul ul ul a { background:orange} */
+
+input.crunchy {background-color: indigo; color: white;}
+input.crunchy:hover {background-color:white; color:indigo}
+
+button {background-color: indigo; color: white; }
+button:hover{background-color:white; color:indigo}
