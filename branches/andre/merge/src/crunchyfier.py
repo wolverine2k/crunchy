@@ -112,7 +112,10 @@ class TreeBuilder(object):
         """
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
-        self.tree.write(fake_file, encoding=self.encoding)
+        # use the "private" _write() instead of write() as the latter
+        # will add a redundant <xml ...> statement unless the
+        # encoding is utf-8 or ascii.
+        self.tree._write(fake_file, self.tree._root, self.encoding, {})
         return fake_file.getvalue()
 
 class VLAMPage(TreeBuilder):
@@ -217,7 +220,8 @@ class VLAMPage(TreeBuilder):
     def process_span(self, span):
         """Span can be used for:
            1. hiding comments,
-           2. requesting to load local or remote Crunchy tutorials, or
+           2. requesting to load local or remote Crunchy tutorials,
+              possibly for editing them (only local ones), or
            3. providing a language selection.
         """
         for attrib in span.attrib.items():
@@ -239,25 +243,38 @@ class VLAMPage(TreeBuilder):
                         addLoadRemote(div, text)
                 elif 'choose' in self.vlamcode and 'language' in self.vlamcode:
                     addLanguageSelect(div, text)
+                elif 'edit' in self.vlamcode and 'tutorial' in self.vlamcode:
+                    addLoadForEdit(div, text)
         return
 
     def process_pre(self, pre):
         """process a pre element and decide what to do with it"""
-        for attrib in pre.attrib.items():
-            if attrib[0] == 'title':
-                if 'none' in attrib[1]: # no interactive element
-                    self.vlamcode = pre.attrib['title'].lower()
-                    if pre.text.startswith('\n'):
-                        pre.text = pre.text[1:]
-                    self.style_code(pre, pre.text)
-                elif 'editor' in attrib[1]: # includes "interpreter to editor"
-                    self.substitute_editor(pre)
-                elif 'interpreter' in attrib[1]:
-                    self.substitute_interpreter(pre)
-                elif 'doctest' in attrib[1]:
-                    self.substitute_editor(pre)
-                elif 'canvas' in attrib[1] or 'plot' in attrib[1]:
-                    self.substitute_canvas(pre)
+        if 'title' not in pre.attrib:
+            id, text, new_div = self.prepare_element(pre)
+            title = ''
+            pre_heading = "%s <pre>"%_("Previous value")
+            assigned = analyze_vlam_code(title)
+            new_pre = et.SubElement(new_div, 'pre')
+            new_pre.text = text
+        else:
+            title = pre.attrib['title'].lower()
+            assigned = analyze_vlam_code(title)
+            id, text, new_div = self.prepare_element(pre)
+            self.python_code = text
+            pre_heading = '%s <pre title="%s">'%(_("Previous value"), title)
+            self.vlamcode = title# reconstruct(title)
+            if 'none' in assigned['interactive']: # no interactive element
+                self.style_code(pre, pre.text)
+            elif 'editor' in assigned['interactive']: # includes "interpreter to editor"
+                self.substitute_editor(new_div, id, text)
+            elif 'interpreter' in assigned['interactive']:
+                self.substitute_interpreter(new_div, id, text)
+            elif 'doctest' in assigned['interactive']:
+                self.substitute_editor(new_div, id, text)
+            elif 'canvas' in assigned['interactive'] or\
+                 'plot' in assigned['interactive']:
+                self.substitute_canvas(new_div, id, text)
+        addVLAM(new_div, id, assigned, pre_heading)
 
     def prepare_element(self, elem):
         '''Common code for all vlam elements using the "title" tag.
@@ -269,17 +286,21 @@ class VLAMPage(TreeBuilder):
                 elem.text = elem.text[1:]
         text = elem.text
         tail = elem.tail
-        self.vlamcode = elem.attrib['title'].lower()
+        # new from chewy
+        if 'title' in elem.attrib:
+            self.vlamcode = elem.attrib['title'].lower()
         elem.clear()
         elem.tail = tail
         elem.tag = 'div'
         elem.attrib['id'] = id + "_container"
+        # temporary Kludge for chewy
+        self.new_div = elem
+        self.uid = id
         return id, text, elem
 
-    def substitute_interpreter(self, elem):
+    def substitute_interpreter(self, elem, id, text):
         """substitute an interpreter for elem"""
         #self.interpreter_present = True
-        id, text, elem = self.prepare_element(elem)
         elem.attrib['class'] = "interpreter"
         #container for the example code:
         pre = et.SubElement(elem, 'pre')
@@ -298,11 +319,11 @@ class VLAMPage(TreeBuilder):
         tipbar.attrib['class'] = "interp_tipbar"
         tipbar.text = " "
 
-    def substitute_editor(self, elem):
+    def substitute_editor(self, elem, id, text):
         """Substitutes an editor for elem.  It is used for 'editor', 'doctest',
            as well as 'interpreter to editor' options."""
         global DOCTESTS
-        id, text, elem = self.prepare_element(elem)
+
         pre = et.SubElement(elem, 'pre')
         textarea_text = self._apportion_code(pre, text)
         textarea_id = id+"_code"
@@ -338,9 +359,8 @@ class VLAMPage(TreeBuilder):
             out.attrib['class'] = 'doctest_out'
         return
 
-    def substitute_canvas(self, elem):
+    def substitute_canvas(self, new_div, id, text):
         """substitute a canvas for elem"""
-        id, text, new_div = self.prepare_element(elem)
         rows, cols = self._get_size()
         width, height = self._get_area()
         if 'canvas' in self.vlamcode:
@@ -356,7 +376,7 @@ class VLAMPage(TreeBuilder):
         textarea_text = self._apportion_code(pre, text)
         textarea_id = id+"_input"
         self.textareas.append('\"'+textarea_id+'\"')
-        add_hidden_load_and_save(elem, id, textarea_id, "_input")
+        add_hidden_load_and_save(new_div, id, textarea_id, "_input")
 
         addCanvas(new_div, width=width, height=height, id=id, klass=klass,
                   btn_text=btn_text, rows=rows, cols=cols,
@@ -486,6 +506,8 @@ class VLAMPage(TreeBuilder):
             are supposed to represent Python output."""
         self.lines_of_prompt = []
         new_lines = []
+        if not text:
+            return
         lines = text.split('\n')
         linenumber = 0
         for line in lines:
@@ -743,6 +765,28 @@ def addLoadLocal(parent):
     input3.attrib['class'] = 'crunchy'
     return
 
+def addLoadForEdit(parent):
+    '''Inserts the two forms required to browse for and load a local tutorial
+       for editing it (adding or changing interactive elements).
+    '''
+    name1 = 'edit_browser_'
+    name2 = 'submit_for_edition'
+    form1 = et.SubElement(parent, 'form', name=name1,
+                        onblur = "document.%s.path.value="%name2+\
+                        "document.%s.filename.value"%name1)
+    input1 = et.SubElement(form1, 'input', type='file',
+                 name='filename', size='80')
+    br = et.SubElement(form1, 'br')
+
+    form2 = et.SubElement(parent, 'form', name=name2, method='get',
+                action=security.commands['/edit_tutorial'])
+    input2 = et.SubElement(form2, 'input', type='hidden',
+                           name='path')
+    input3 = et.SubElement(form2, 'input', type='submit',
+             value=_('Edit tutorial'))
+    input3.attrib['class'] = 'crunchy'
+    return
+
 def addLoadPython(parent, hidden_load_id, textarea_id):
     '''Inserts the two forms required to browse for and load a local Python
        file.  This is intended to be used to load a file in the editor.
@@ -864,10 +908,15 @@ def update_button():
     return button
 
 
-def addVLAM(parent, uid, pre_assigned):
+def addVLAM(parent, uid, pre_assigned, current_pre_tag):
     '''Intended to add the various vlam options under a <pre>'''
     js_changes = 'var vlam="";' # will be used to record a local
                                 # javascript function to record changes
+    # we show, as a heading, the previously recorded <pre ...>
+    heading = et.SubElement(parent, 'h3')
+    heading.attrib['class'] = "pre_vlam"
+    heading.text = current_pre_tag
+    br = et.SubElement(parent, 'br')
     # note: button is inserted here; its complete parameters are
     # determined at the end of this function.
     button = et.SubElement(parent, 'button', id='myButton'+uid)

@@ -14,7 +14,8 @@ canvas.plot { border: solid blue 2px; }
 .warning{background-color: #FFD700; /*gold*/
          font-weight: bold; font-size: 1.2em;}
 .crunchy_comment{color:green; font-weight: bold;}
-
+h3.pre_vlam{background-color: #FFD700; /*gold*/
+         font-weight: bold; font-size: 1.2em; display:inline;}
 /* Basic Python Elements; color choice are chosen, if possible, to be
    consistent with those of the editor (EditArea); these are
 	 found in file python.js */
