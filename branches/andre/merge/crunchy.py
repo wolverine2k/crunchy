@@ -44,7 +44,7 @@ def find_port(start):
     testsock.close()
     return finalport
 
-def run(filename='', host='127.0.0.1', port=find_port(5555), openbrowser=True):
+def run(filename='index.html', host='127.0.0.1', port=find_port(5555), openbrowser=True):
     """
     Run Crunchy Frog
 

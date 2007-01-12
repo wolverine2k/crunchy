@@ -120,7 +120,8 @@ class TreeBuilder(object):
 
 class VLAMPage(TreeBuilder):
     """Encapsulates a page containing VLAM"""
-    def __init__(self, filehandle, url, external_flag=False, local_flag=False):
+    def __init__(self, filehandle, url, external_flag=False,
+                 local_flag=False, edit_flag=False):
         TreeBuilder.__init__(self, filehandle, url)
 
         # The security module removes all kinds of potential security holes
@@ -135,6 +136,9 @@ class VLAMPage(TreeBuilder):
         self.local_flag = local_flag
         if self.external_flag or self.local_flag:
             self.convert_all_links()
+        # Are we editing the content?
+        self.edit_flag = edit_flag
+        self.pre_present = False # True if there is a <pre> tag on the page
         self.colourizer = colourize.Colourizer()
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
@@ -216,6 +220,9 @@ class VLAMPage(TreeBuilder):
         for pre in self.body.getiterator('pre'):
             self.process_pre(pre)
         self.body.insert(0, prefs.menu)
+        if self.edit_flag and self.pre_present:
+            self.body.append(update_button())
+            print "appended update button"
 
     def process_span(self, span):
         """Span can be used for:
@@ -223,6 +230,8 @@ class VLAMPage(TreeBuilder):
            2. requesting to load local or remote Crunchy tutorials,
               possibly for editing them (only local ones), or
            3. providing a language selection.
+        Other than comments, at most only one element of each type should
+        appear on a given page.
         """
         for attrib in span.attrib.items():
             if attrib[0] == 'class':
@@ -249,32 +258,34 @@ class VLAMPage(TreeBuilder):
 
     def process_pre(self, pre):
         """process a pre element and decide what to do with it"""
+        self.pre_present = True
         if 'title' not in pre.attrib:
             id, text, new_div = self.prepare_element(pre)
             title = ''
             pre_heading = "%s <pre>"%_("Previous value")
-            assigned = analyze_vlam_code(title)
+            vlam_dict = analyze_vlam_code(title)
             new_pre = et.SubElement(new_div, 'pre')
             new_pre.text = text
         else:
             title = pre.attrib['title'].lower()
-            assigned = analyze_vlam_code(title)
+            vlam_dict = analyze_vlam_code(title)
             id, text, new_div = self.prepare_element(pre)
             self.python_code = text
             pre_heading = '%s <pre title="%s">'%(_("Previous value"), title)
             self.vlamcode = title# reconstruct(title)
-            if 'none' in assigned['interactive']: # no interactive element
-                self.style_code(pre, pre.text)
-            elif 'editor' in assigned['interactive']: # includes "interpreter to editor"
-                self.substitute_editor(new_div, id, text)
-            elif 'interpreter' in assigned['interactive']:
+            if 'none' in vlam_dict['interactive']: # no interactive element
+                self.substitute_none(new_div, id, text)
+            elif 'editor' in vlam_dict['interactive']: # includes "interpreter to editor"
+                self.substitute_editor(new_div, id, text, vlam_dict)
+            elif 'interpreter' in vlam_dict['interactive']:
                 self.substitute_interpreter(new_div, id, text)
-            elif 'doctest' in assigned['interactive']:
-                self.substitute_editor(new_div, id, text)
-            elif 'canvas' in assigned['interactive'] or\
-                 'plot' in assigned['interactive']:
-                self.substitute_canvas(new_div, id, text)
-        addVLAM(new_div, id, assigned, pre_heading)
+            elif 'doctest' in vlam_dict['interactive']:
+                self.substitute_editor(new_div, id, text, vlam_dict)
+            elif 'canvas' in vlam_dict['interactive'] or\
+                 'plot' in vlam_dict['interactive']:
+                self.substitute_canvas(new_div, id, text, vlam_dict)
+        if self.edit_flag:
+            addVLAM(new_div, id, vlam_dict, pre_heading)
 
     def prepare_element(self, elem):
         '''Common code for all vlam elements using the "title" tag.
@@ -293,10 +304,14 @@ class VLAMPage(TreeBuilder):
         elem.tail = tail
         elem.tag = 'div'
         elem.attrib['id'] = id + "_container"
-        # temporary Kludge for chewy
-        self.new_div = elem
-        self.uid = id
         return id, text, elem
+
+    def substitute_none(self, elem, id, text):
+        """simply style the code"""
+        #container for the code:
+        pre = et.SubElement(elem, 'pre')
+        if text:
+            self.style_code(pre, text)
 
     def substitute_interpreter(self, elem, id, text):
         """substitute an interpreter for elem"""
@@ -319,7 +334,7 @@ class VLAMPage(TreeBuilder):
         tipbar.attrib['class'] = "interp_tipbar"
         tipbar.text = " "
 
-    def substitute_editor(self, elem, id, text):
+    def substitute_editor(self, elem, id, text, vlam_dict):
         """Substitutes an editor for elem.  It is used for 'editor', 'doctest',
            as well as 'interpreter to editor' options."""
         global DOCTESTS
@@ -329,7 +344,12 @@ class VLAMPage(TreeBuilder):
         textarea_id = id+"_code"
         self.textareas.append('\"'+textarea_id+'\"')
 
-        rows, cols = self._get_size()
+        if 'rows' in vlam_dict['size']:
+            rows = vlam_dict['size']['rows']
+            cols = vlam_dict['size']['cols']
+        else:
+            rows, cols = _get_size('x')
+
         textarea = et.SubElement(elem, "textarea", rows=rows, cols=cols,
                                  id=textarea_id)
         textarea.text = textarea_text
@@ -359,10 +379,19 @@ class VLAMPage(TreeBuilder):
             out.attrib['class'] = 'doctest_out'
         return
 
-    def substitute_canvas(self, new_div, id, text):
+    def substitute_canvas(self, new_div, id, text, vlam_dict):
         """substitute a canvas for elem"""
-        rows, cols = self._get_size()
-        width, height = self._get_area()
+        if 'rows' in vlam_dict['size']:
+            rows = vlam_dict['size']['rows']
+            cols = vlam_dict['size']['cols']
+        else:
+            rows, cols = _get_size('x')
+        if 'width' in vlam_dict['area']:
+            width = vlam_dict['area']['width']
+            height = vlam_dict['area']['height']
+        else:
+            width, height = _get_area('x')
+
         if 'canvas' in self.vlamcode:
             id = "canvas%s_%s"%(width, height) + id
             klass = 'canvas'
@@ -382,32 +411,6 @@ class VLAMPage(TreeBuilder):
                   btn_text=btn_text, rows=rows, cols=cols,
                   textarea_id=textarea_id, textarea_text=textarea_text)
         return
-
-    def _get_size(self):
-        ''' Extract the default size of the textarea'''
-        if 'size' in self.vlamcode:
-            try:
-                res = re.search(r'size\s*=\s*\((.+?),(.+?)\)', self.vlamcode)
-                rows = int(res.groups()[0])
-                cols = int(res.groups()[1])
-            except:
-                rows, cols = 10, 80
-        else:
-            rows, cols = 10, 80
-        return str(rows), str(cols)
-
-    def _get_area(self):
-        ''' Extract the drawing canvas dimensions'''
-        if 'area' in self.vlamcode:
-            try:
-                res = re.search(r'area=\((.+?),(.+?)\)', self.vlamcode)
-                width = int(res.groups()[0])
-                height = int(res.groups()[1])
-            except:
-                width, height = 400, 400
-        else:
-            width, height = 400, 400
-        return str(width), str(height)
 
     def _apportion_code(self, pre, code):
         '''Decide on what code (if any) to put in the pre element and
@@ -610,13 +613,10 @@ class HTMLUpdater(TreeBuilder):
         # build a dict from alternating values (Thank you Python Cookbook)
         changes = dict(zip(info[::2], info[1::2]))
         for pre in self.tree.getiterator('pre'):
-            # note: we need the uid information for updating *before* we
-            # start processing the pre, unlike in the original crunchy
-            # where the uid was assigned after.
             self._ID += 1
-            self.uid = 'code' + str(self._ID)
-            if self.uid in changes:
-                pre.attrib['title'] = reconstruct_vlam(changes[self.uid])
+            uid = 'code' + str(self._ID)
+            if uid in changes:
+                pre.attrib['title'] = reconstruct_vlam(changes[uid])
         return
 
 
@@ -696,13 +696,15 @@ def reconstruct_vlam(new_vlam):
     '''
     values = analyze_vlam_code(new_vlam)
     print "values = ", values
-    vlam = values['interactive'] + values['linenumber']
+    vlam = values['interactive']
+    if '(remove)' not in values['linenumber']:
+        vlam += values['linenumber']
     if 'rows' in values['size']:
-        vlam += ' size=(' + str(values['size']['rows']) + ', ' + \
-                            str(values['size']['cols']) + ')'
+        vlam += ' size=(' + values['size']['rows'] + ', ' + \
+                            values['size']['cols'] + ')'
     if 'width' in values['area']:
-        vlam += ' area=(' + str(values['area']['width']) + ', ' + \
-                            str(values['area']['height']) + ')'
+        vlam += ' area=(' + values['area']['width'] + ', ' + \
+                            values['area']['height'] + ')'
     vlam += values['execution'] + values['copied']
     return vlam
 
@@ -717,7 +719,7 @@ def _get_size(vlam):
             rows, cols = 10, 80
     else:
         rows, cols = 10, 80
-    return rows, cols
+    return str(rows), str(cols)
 
 def _get_area(vlam):
     ''' Extract the drawing canvas dimensions'''
@@ -730,11 +732,11 @@ def _get_area(vlam):
             width, height = 400, 400
     else:
         width, height = 400, 400
-    return width, height
+    return str(width), str(height)
 
 
 
-####== end addtions from chewy
+####== end additions from chewy
 
 ####================
 #
@@ -765,7 +767,7 @@ def addLoadLocal(parent):
     input3.attrib['class'] = 'crunchy'
     return
 
-def addLoadForEdit(parent):
+def addLoadForEdit(parent, text):
     '''Inserts the two forms required to browse for and load a local tutorial
        for editing it (adding or changing interactive elements).
     '''
@@ -783,7 +785,7 @@ def addLoadForEdit(parent):
     input2 = et.SubElement(form2, 'input', type='hidden',
                            name='path')
     input3 = et.SubElement(form2, 'input', type='submit',
-             value=_('Edit tutorial'))
+             value=text)
     input3.attrib['class'] = 'crunchy'
     return
 
@@ -952,7 +954,8 @@ def addVLAM(parent, uid, pre_assigned, current_pre_tag):
     fs2 = et.SubElement(form2, 'fieldset')
     legend2 = et.SubElement(fs2, 'legend')
     legend2.text = _("Optional line numbering")
-    for type in [' linenumber', 't', ' interpreter', ' interpreter linenumber']:
+    for type in [' linenumber', '(remove)', 't', ' interpreter',
+                 ' interpreter linenumber']:
         if type == 't':
             note = et.SubElement(fs2, 'small')
             note.text = _("If interactive element is none:")
@@ -983,7 +986,7 @@ def addVLAM(parent, uid, pre_assigned, current_pre_tag):
         inp = et.SubElement(fs3, 'input', type='text', value='',
                             name=type)
         if type in pre_assigned['size']:
-            inp.attrib['value'] = "%d"%pre_assigned['size'][type]
+            inp.attrib['value'] = "%d"%int(pre_assigned['size'][type])
         br = et.SubElement(fs3, 'br')
     note = et.SubElement(fs3, 'small')
     note.text = _("Drawing area (if present)")
@@ -994,18 +997,18 @@ def addVLAM(parent, uid, pre_assigned, current_pre_tag):
         inp = et.SubElement(fs3, 'input', type='text', value='',
                             name=type.strip())
         if type.strip() in pre_assigned['area']:
-            inp.attrib['value'] = "%d"%pre_assigned['area'][type.strip()]
+            inp.attrib['value'] = "%d"%int(pre_assigned['area'][type.strip()])
         br = et.SubElement(fs3, 'br')
     rows = ''
     cols = ''
     width = ''
     height = ''
     if pre_assigned['size']:
-        rows = str(pre_assigned['size']['rows'])
-        cols = str(pre_assigned['size']['cols'])
+        rows = pre_assigned['size']['rows']
+        cols = pre_assigned['size']['cols']
     if pre_assigned['area']:
-        width = str(pre_assigned['area']['width'])
-        height = str(pre_assigned['area']['height'])
+        width = pre_assigned['area']['width']
+        height = pre_assigned['area']['height']
     # WARNING: apparently can't use "width" (and perhaps "height")
     # as variable in js.
     # WARNING: when the changes are passed, the presence of an "=" sign is

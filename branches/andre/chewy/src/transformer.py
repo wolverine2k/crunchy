@@ -289,7 +289,7 @@ def analyze_vlam_code(vlam):
 
 def reconstruct_vlam(new_vlam):
     ''' Reconstruct a sensible string as some of the options recorded
-        may be irrevant.
+        may be irrelevant.
     '''
     values = analyze_vlam_code(new_vlam)
     print "values = ", values

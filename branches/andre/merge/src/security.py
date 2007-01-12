@@ -192,6 +192,12 @@ class SecureSession(object):
         commands['/load_local'] = '/load_local' + self.session_id
         request.pagemap[commands['/load_local']] = server.get_local_page
         #
+        commands['/edit_tutorial'] = '/edit_tutorial'
+        request.pagemap[commands['/edit_tutorial']] = server.get_page_for_editing
+        #
+        commands['/update'] = '/update'  # safe; no need to add session_id
+        request.pagemap[commands['/update']] = server.get_update_page
+        #
         commands['/push'] = '/push' + self.session_id
         request.pagemap[commands['/push']] = server.get_push
         #
