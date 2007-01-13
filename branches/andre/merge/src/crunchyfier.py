@@ -20,7 +20,8 @@ import colourize
 import configuration
 prefs = configuration.UserPreferences()
 import security
-from translation import _
+import translation
+_ = translation._
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder
@@ -95,15 +96,16 @@ class TreeBuilder(object):
                     http_equiv = attrib[1]
                 elif attrib[0] == 'content':
                     content = attrib[1]
-            if http_equiv == "content-type" and content:
+            if http_equiv.lower() == "content-type" and content:
             # use mimetools to parse the http header
             # (copied from HTMLTreeBuilder)
                 header = mimetools.Message(
-                    StringIO.StringIO("%s: %s\n\n" % (http_equiv, content))
+                    StringIO("%s: %s\n\n" % (http_equiv, content))
                     )
                 encoding = header.getparam("charset")
                 if encoding:
                     self.encoding = encoding
+        translation.current_page_encoding = self.encoding
         return
 
     def get(self):
@@ -115,6 +117,9 @@ class TreeBuilder(object):
         # use the "private" _write() instead of write() as the latter
         # will add a redundant <xml ...> statement unless the
         # encoding is utf-8 or ascii.
+        print "self.encoding=", self.encoding
+        print "fake_file = ", fake_file
+        print "self.tree._root=", self.tree._root
         self.tree._write(fake_file, self.tree._root, self.encoding, {})
         return fake_file.getvalue()
 
@@ -599,8 +604,6 @@ class VLAMPage(TreeBuilder):
         inp.close()
         self.colourizer.reset()
 
-####=== Additions from chewy
-
 class HTMLUpdater(TreeBuilder):
     def __init__(self, filehandle, url, args):
         TreeBuilder.__init__(self, filehandle, url)
@@ -618,9 +621,6 @@ class HTMLUpdater(TreeBuilder):
             if uid in changes:
                 pre.attrib['title'] = reconstruct_vlam(changes[uid])
         return
-
-
-###================
 
 def analyze_vlam_code(vlam):
     """ Parse the vlam code to analyze its content.
@@ -734,17 +734,10 @@ def _get_area(vlam):
         width, height = 400, 400
     return str(width), str(height)
 
-
-
-####== end additions from chewy
-
-####================
-#
 # The following are functions used to insert various "vlam elements".
 # These are purely ElementTree constructions, without any "vlam logic"
 # They are introduced as a possible first step to refactor them into
 # separate classes.
-
 
 def addLoadLocal(parent):
     '''Inserts the two forms required to browse for and load a local tutorial.
@@ -898,8 +891,6 @@ def add_hidden_load_and_save(elem, id, textarea_id, id_string):
     hidden_save.attrib['class'] = 'save_python'
     addSavePython(hidden_save, hidden_save_id, textarea_id)
     return
-
-####== Chewy additions
 
 def update_button():
     '''Inserts a button on a page used to update the entire page, based

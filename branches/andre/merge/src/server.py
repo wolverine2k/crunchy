@@ -9,11 +9,12 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 from urllib2 import urlopen
 from urllib import pathname2url
 # crunchy modules
+import configuration
 import crunchyfier
 import errors
 import interpreters
 import security
-import configuration
+import translation
 prefs = configuration.UserPreferences()
 # The following variables are initialised in crunchy.py
 repl = None    # read-eval-print-loop: Python interpreter
@@ -248,7 +249,7 @@ def get_local_page(args):
     # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
     try:
-        path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
+        path = translation.translate_path(args['path'])
     except:
         path = args['path']
     if path.startswith('file://'):
@@ -295,7 +296,7 @@ def get_page_for_editing(args):
     # need to decode them into the expected local default.
     global active_path, active_base, not_saved
     try:
-        path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
+        path = translation.translate_path(args['path'])
     except:
         path = args['path']
     if path.startswith('file://'):
@@ -327,7 +328,8 @@ def get_python_file(args):
        an EditArea.
     """
     # For reasons that puzzle me, this one does not need to be decoded
-    # from utf-8 and encoded in the default system encoding to work.
+    # from the current html page encoding and encoded in the 
+    # default system encoding to work.
     path = pathname2url(args['path'])
     try:
         handle = urlopen('file://' + path)
