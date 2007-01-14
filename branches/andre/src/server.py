@@ -9,15 +9,20 @@ from SimpleHTTPServer import SimpleHTTPRequestHandler
 from urllib2 import urlopen
 from urllib import pathname2url
 # crunchy modules
+import configuration
 import crunchyfier
 import errors
 import interpreters
 import security
-import configuration
+import translation
 prefs = configuration.UserPreferences()
 # The following variables are initialised in crunchy.py
 repl = None    # read-eval-print-loop: Python interpreter
 server = None
+active_path = None
+active_base = None
+not_saved = True
+new_path = None
 
 class CrunchyRequestHandler(SimpleHTTPRequestHandler):
     '''handle HTTP requests'''
@@ -244,7 +249,7 @@ def get_local_page(args):
     # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
     try:
-        path = args['path'].decode('utf-8').encode(sys.getdefaultencoding())
+        path = translation.translate_path(args['path'])
     except:
         path = args['path']
     if path.startswith('file://'):
@@ -260,6 +265,60 @@ def get_local_page(args):
     else:
         return handle.read()
 
+def get_update_page(args):
+    '''test function for now '''
+    global active_path, active_base, not_saved, new_path
+    # save the file with a new name
+    if not_saved:
+        new_path = active_path.replace(".htm", "_new.htm")
+        old = open(active_path)
+        new = open(new_path, 'w')
+        new.write(old.read())
+        new.close()
+        not_saved = False
+    # now work with the new file
+    # first, update it
+    handle = open(new_path)
+    vlam1 = crunchyfier.HTMLUpdater(handle, active_base, args['changed'])
+    saved_changes = open(new_path, 'w')
+    saved_changes.write(vlam1.get())
+    saved_changes.close()
+    # now work with the new file, ready to update it again.
+    handle = open(new_path)
+    vlam = crunchyfier.VLAMPage(handle, active_base, edit_flag=True,
+                local_flag=True)
+    return vlam.get()
+
+def get_page_for_editing(args):
+    """load an arbitrary local page into chewy"""
+    # pages are encoded in utf-8; the info received is sometimes in that encoding.
+    # If the path contains "weird" characters, such as &eacute; we may
+    # need to decode them into the expected local default.
+    global active_path, active_base, not_saved
+    try:
+        path = translation.translate_path(args['path'])
+    except:
+        path = args['path']
+    if path.startswith('file://'):
+        path = path.replace('file://', '')
+    try:
+        handle = open(path)
+    except:
+        return 404
+    if path.endswith('.html') or path.endswith('.htm'):
+        base = 'file://'+ os.path.dirname(path)
+        vlam = crunchyfier.VLAMPage(handle, base, edit_flag=True,
+                local_flag=True)
+        # we save the path and not the handle as we can't read twice
+        # from the same handle
+        if path != active_path:    # new file
+            not_saved = True
+            active_path = path
+            active_base = base
+        return vlam.get()
+    else:
+        return handle.read()
+
 def get_user_js(args):
     """loads a user-constructed javascript into crunchy"""
     return security.js_memory_file.getvalue()
@@ -269,7 +328,8 @@ def get_python_file(args):
        an EditArea.
     """
     # For reasons that puzzle me, this one does not need to be decoded
-    # from utf-8 and encoded in the default system encoding to work.
+    # from the current html page encoding and encoded in the 
+    # default system encoding to work.
     path = pathname2url(args['path'])
     try:
         handle = urlopen('file://' + path)

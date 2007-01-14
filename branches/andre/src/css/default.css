@@ -15,6 +15,9 @@ canvas.plot { border: solid blue 2px; }
          font-weight: bold; font-size: 1.2em;}
 .crunchy_comment{color:green; font-weight: bold;}
 
+.pre_vlam{background-color: #FFD700; /*gold*/
+         font-weight: bold; font-size: 1.2em; display:inline;}
+
 /* Basic Python Elements; color choice are chosen, if possible, to be
    consistent with those of the editor (EditArea); these are
 	 found in file python.js */
@@ -53,6 +56,23 @@ canvas.plot { border: solid blue 2px; }
 	top: 0px;
 	right: 0;
 }
+
+/* button to record changes in chewy */
+button.recorder{
+  display:block;
+  z-index:22;
+  position:fixed;
+  bottom:10px;
+  right:0;
+	background-color:darkred;;
+	color: white;
+	background-image:none;
+}
+button.recorder:hover{background-color:yellow; color:black;}
+/* result (text) of the code execution: */
+.stdout{ color : darkgreen; font-family: monospace;}
+.stderr{ color : darkred;  font-family: monospace;}
+.error_info{ color : blue; font-family: monospace;}
 
 /* result (text) of the code execution: */
 .stdout{ color : darkgreen; font-family: monospace;}

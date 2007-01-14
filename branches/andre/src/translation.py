@@ -1,17 +1,17 @@
 # translation.py
 
 # Note: the base directory is called "crunchy_locale" instead of "locale".
-# If a directory named "locale" exists, wxPython assumes it uses the
-# standard 'gettext' approach and expects some standard functions to
-# be defined - which they are not in this customized version.
 
 import os
+import sys
 
 home = None # home is defined properly in preferences
 
 english = {}
 french = {}
 _editarea_lang = 'en' # default
+_system_encoding = sys.getdefaultencoding()
+current_page_encoding = None  # obtained from crunchyfier.py as of Jan. 2007
 
 def select(lang):
     global _selected, _editarea_lang
@@ -34,27 +34,39 @@ def select(lang):
             english = build_dict(filename)
         _selected = english
 
-
 def get_editarea_lang():
     global _editarea_lang
     return _editarea_lang
 
 def _(message):
+    ''' translate a message, taking care of encoding issues if needed.'''
+    global _language_file_encoding
     message = message.replace("\n","")  # message is a key in a dict
     if message in _selected:
-        return _selected[message]
+        if current_page_encoding == _language_file_encoding:
+            return _selected[message]
+        else:
+    # Note: _selected[] has already been decoded from _language_file_encoding
+            return _selected[message].encode(current_page_encoding)
     else:
         return message # returns untranslated one as default
 
 def build_dict(filename):
+    global _language_file_encoding
     translation = {}
     """This function creates a Python dict from a simple standard .po file."""
     lines = open(filename).readlines()
     header = True
     msgid = False
     msgstr = False
+    # currently (January 2007), both language files (English and French)
+    # have been set up in poedit with utf-8 as the default encoding.
+    # In the future, as other languages are added by contributors,
+    # we might want to extract the real encoding used instead of assuming
+    # it is utf-8.
+    _language_file_encoding = "utf-8"
     for line in lines:
-        line = line.decode("utf-8") # encoding that was chosen with poedit;
+        line = line.decode(_language_file_encoding)
         if header:       # may need to be adapted to extract the information
             if line.startswith("#"): header = False # from the .po file
         else:
@@ -78,3 +90,15 @@ def build_dict(filename):
                 msgid = False
                 msgstr = False
     return translation
+
+def translate_path(path):
+    '''
+       When a path is obtained from an <input type='file'>, it is encoded
+       according to the html page settings.  When the file is retrieved
+       from the local system, it is assumed to be encoded according to the 
+       default system encoding.  This function changes the encoding
+       appropriately if required.
+    '''
+    if current_page_encoding == _system_encoding:
+        return path
+    return path.decode(current_page_encoding).encode(_system_encoding)
