@@ -50,7 +50,7 @@ function load_python_file(obj_id)
                 {
                 case 200:
 										editAreaLoader.setValue(obj_id, h.responseText);
-										var obj = document.getElementById('hidden'+obj_id);
+										var obj = document.getElementById('hidden_load'+obj_id);
 										obj.style.visibility = "hidden";
                     break;
                 case 12029:
@@ -397,7 +397,7 @@ function interp_dir(interp_id) {
     h.send(null);
 };
 
-//----------------------------------------------------------------------------------
+//---------------------------------------------------------------------
 
 function exec_external(id)
 {
@@ -413,3 +413,19 @@ function exec_external_console(id)
 	h.open("POST", "/spawn_console"+session_id, true);
   h.send(editAreaLoader.getValue(id + "_code"));
 };
+// used with chewy: record changes for individual elements
+var changes = '';
+function record(id, new_vlam){
+document.getElementById('myButton'+id).innerHTML +=' - ok';
+changes += id + ';' + new_vlam + ';';
+}
+// used with chewy: record all the changes done on a given page
+function update()
+{
+if (changes == ''){
+alert("No changes have been recorded!");
+}
+else{
+location.href="/update?changed="+changes;
+}
+}
