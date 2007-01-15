@@ -16,13 +16,13 @@ current_page_encoding = None  # obtained from crunchyfier.py as of Jan. 2007
 def select(lang):
     global _selected, _editarea_lang
     global english, french
-    
+
     print "selected language in translation.py is :", lang
-    if lang in ['en', 'fr', 'pt', 'pl', 'ja', 'it', 'dk', 'de']:
+    if lang in ['en', 'fr', 'pt', 'pl', 'ja', 'it', 'dk', 'de', 'nl']:
         _editarea_lang = lang
     else:
         _editarea_lang = 'en'
-    
+
     if lang == 'fr':
         if french == {}:
             filename = os.path.join(home, "crunchy_locale", "fr", "french.po")
@@ -95,7 +95,7 @@ def translate_path(path):
     '''
        When a path is obtained from an <input type='file'>, it is encoded
        according to the html page settings.  When the file is retrieved
-       from the local system, it is assumed to be encoded according to the 
+       from the local system, it is assumed to be encoded according to the
        default system encoding.  This function changes the encoding
        appropriately if required.
     '''

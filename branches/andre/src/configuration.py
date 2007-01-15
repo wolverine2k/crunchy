@@ -105,7 +105,7 @@ class UserPreferences(Borg):
 
     def set_language(self, lang):
         if self._language is not None:
-            if self._language == lang:
+            if self._language == lang and self._editarea_lang == lang:
                 return
             else:
                 self.changed = True
