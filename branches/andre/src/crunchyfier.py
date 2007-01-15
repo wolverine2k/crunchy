@@ -96,15 +96,16 @@ class TreeBuilder(object):
                     http_equiv = attrib[1]
                 elif attrib[0] == 'content':
                     content = attrib[1]
-            if http_equiv.lower() == "content-type" and content:
-            # use mimetools to parse the http header
-            # (copied from HTMLTreeBuilder)
-                header = mimetools.Message(
-                    StringIO("%s: %s\n\n" % (http_equiv, content))
-                    )
-                encoding = header.getparam("charset")
-                if encoding:
-                    self.encoding = encoding
+            if http_equiv is not None:
+                if http_equiv.lower() == "content-type" and content:
+                # use mimetools to parse the http header
+                # (copied from HTMLTreeBuilder)
+                    header = mimetools.Message(
+                        StringIO("%s: %s\n\n" % (http_equiv, content))
+                        )
+                    encoding = header.getparam("charset")
+                    if encoding:
+                        self.encoding = encoding
         translation.current_page_encoding = self.encoding
         return
 
