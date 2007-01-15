@@ -163,7 +163,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             # a separator where we check to make sure the path recreated
             # is of the correct length - but it probably would be an overkill.
             info = data.split("_::EOF::_")
-            path = info[0].decode('utf-8')
+            path = info[0].decode(translation.current_page_encoding)
             path = path.encode(sys.getdefaultencoding())
             #path = info[0].encode(sys.getdefaultencoding())
             #print "path = ", path
@@ -177,7 +177,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
             # save file first
             data = self.rfile.read(int(self.headers["Content-Length"]))
             info = data.split("_::EOF::_")
-            path = info[0].decode('utf-8')
+            path = info[0].decode(translation.current_page_encoding)
             path = path.encode(sys.getdefaultencoding())
             #filename = open(path, 'w')
             content = '_::EOF::_'.join(info[1:])
@@ -194,15 +194,11 @@ def get_crunchy_index(dummy):
 
 def get_exit(dummy):
     """
-    Firefox does not allow a Window to be closed using javascript unless it
-    had been opened by a javascript script.  So, we fool it by "reopening" a
-    window within it via a script, and close this "new" window.
-    Internet Explorer will ask for a confirmation to close the window.
+    set up the flag for the server to quit and present an "exit" page, inviting
+    the user to close the window.
     """
     server.still_serving = False
-    return """
-    <html><head><title>Crunchy is done!</title></head>
-    <body><h1>You may close the browser window (or tab).</h1></body></html>"""
+    return open(prefs.exit).read()
 
 def get_push(args):
     '''the push part of the ajax interpreter, uses POST
@@ -242,7 +238,8 @@ def get_external_page(args):
 
 def get_local_page(args):
     """load an arbitrary local page into crunchy"""
-    # pages are encoded in utf-8; the info received is sometimes in that encoding.
+    # pages are often encoded in a character set (e.g. utf-8) different from
+    # the local default; the info received is sometimes in that encoding.
     # If the path contains "weird" characters, such as &eacute; we may
     # need to decode them into the expected local default.
     try:

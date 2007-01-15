@@ -15,6 +15,7 @@
 <li><a href="#canvas_ref">Graphics: Canvas</a></li>
 <li><a href="#plot_ref">Graphics: Plot</a></li>
 <li><a href="#crunchy">"Crunchy Only" markup</a></li>
+<li><a href="#advanced">Advanced options</a></li>
 </ul>
 <p>A description of these follows the "Crunchy attributes" section.</p>
 <p>If you prefer, you can also look at a file with <a href="/docs/crunchy_maker/vlam_examples.html">VLAM examples</a>.</p>
@@ -270,12 +271,13 @@ interpreter.
 <dt>span.py_prompt</dt>
 <dt>span.py_output</dt>
 </dl>
-<p>One can prevent the addition of the default "Quit Crunchy Frog" buttons on a given page by writing <br/><br/>
-<code>
-&lt;meta name="vlam" content="quit=false <em>etc.</em>"&gt;
-</code><br/><br/>
- in the <code>&lt;head&gt;</code> section of the html page.</p>
-<p>Comments, normally hidden when viewing the page directly by a browser, but revealed when viewed using Crunchy Frog can be created as follows:<br/><br/>
+<h2><a id="advanced">Advanced options</a></h2>
+<p>Some "advanced" options require hand-coding and should rarely be used by
+tutorial writers. All of them are based on the use of specially marked-up
+<code>&lt;span&gt;</code> tags.</p>
+<h3>Comments</h3>
+<p>Comments, normally hidden when viewing the page directly by a browser, but
+revealed when viewed using Crunchy Frog can be created as follows:<br/><br/>
 <code>&lt;span class="vlam_comment" style="display: none"</code>&gt;
 <br/>
 <em>This sentence is normally hidden but will be revealed by Crunchy Frog.</em><br />
@@ -285,6 +287,25 @@ interpreter.
 <dl>
 <dt>p.crunchy_comment</dt>
 </dl>
+<h3>Language selection</h3>
+<p>If one wants to insert a language selection "object" in a page, rather
+than having the user going to through the menu, all that is
+required is to write:</br>
+<code>&lt;span title="choose language"&gt;</code> <em>button label</em> <code>&lt;/span&gt;</code></p>
+<h3>Fetching a local tutorial</h3>
+<p>If one wants to insert a "browser" object to load a local tutorial,
+all that is required is to write:</br>
+<code>&lt;span title="load local"&gt;</code> <em>space</em> <code>&lt;/span&gt;</code></p>
+<h3>Fetching a remote tutorial</h3>
+<p>If one wants to insert a input box to load a remote tutorial,
+all that is required is to write:</br>
+<code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
+<h3>Fetching a local tutorial to edit it</h3>
+<p>If one wants to insert a "browser" object to load a local tutorial and
+edit it to insert interactive elements,
+all that is required is to write:</br>
+<code>&lt;span title="edit tutorial"&gt;</code> <em>space</em> <code>&lt;/span&gt;</code></p>
+
 
 </body>
 </html>

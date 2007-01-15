@@ -118,9 +118,11 @@ class UserPreferences(Borg):
 
         # more limited choices here.
         if self._language == "fr":
+            self.exit = "src/html/exit_fr.html"
             self.home = "src/html/crunchy_index_fr.html"
             self.options = "src/html/options_fr.html"
         else: # English is the default
+            self.exit = "src/html/exit.html"
             self.home = "src/html/crunchy_index.html"
             self.options = "src/html/options.html"
             self._language = "en"

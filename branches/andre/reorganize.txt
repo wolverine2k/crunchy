@@ -2,7 +2,7 @@ Proposed reorganization of crunchy code
 
 See at the end for idea about easier "vlam-ization"
 
-Andre Roberge, January 9, 2006
+Andre Roberge, January 15, 2006
 
 =======================================================
 
@@ -150,3 +150,57 @@ press a button that would create the new file. [DONE]
   5. a) Alternatively, the user could press a "preview" button 
   which would launch crunchy and display the processed
   file into a separate Firefox tab.
+======
+
+To do:
+
+1. run external scripts from user .crunchy directory if possible first
+(unless the file has been saved somewhere else), if not, run it from
+temp/ directory in crunchy's path.  
+1a. Verify that, if file has been saved, subsequent runs are from
+the saved directory - if possible.  - Perhaps instead,
+add note to "save and run" menu explaining that doing save and
+run, execute the file where it was saved, whereas doing them
+separately runs a copy of the file from the default directory.
+
+2. combine js files and remove comments
+
+3. document load external, etc.
+
+4. acknowledge effbot [DONE]
+
+5. write how-to
+
+6. move options under help [DONE]
+
+7. rewrite menu placement using javascript; add button
+to hide and show menu - this will be especially useful in editor
+fullscreen mode.
+
+8. add possibility to specify preferred style
+8a. try to add one more style
+8b. ask about style contributions in announcement.
+
+9. add example with using crunchy about raw_input().  Add second
+interpreter on page, and explain how values are shared on a
+given page, but not when leaving that page.
+
+10. Check polling time in javascript; perhaps change from 0.5sec to
+0.2 sec for faster apparent results.?
+
+11. Check that "root dir" is imported appropriately in case crunchy
+is installed.
+
+12. Look into packaging as an egg.
+
+13. proofread faq ("primitive editor" among others).
+
+14. Translate exit page. [DONE]
+
+15. In server.py, there are at least two hard-coded "utf-8"; replace
+by appropriate variable.  [DONE]
+
+16. Add document about what's needed for doing a translation.
+16a. Ask about more translations in announcement.
+
+17. Move Pycon presentation to Python tutorial index page.
