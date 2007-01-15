@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-03 20:10-0400\n"
+"PO-Revision-Date: 2007-01-14 23:29-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -11,281 +11,355 @@ msgstr ""
 "X-Poedit-Language: English\n"
 "X-Poedit-Country: CANADA\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
-"X-Poedit-Basepath: c:\\Documents and Settings\\André\\My Documents\\branches\\andre\n"
+"X-Poedit-Basepath: c:\\Documents and Settings\\André\\My Documents\\crunchy\\branches\\andre\n"
 "X-Poedit-SearchPath-0: src\n"
 
-#: src/crunchyfier.py:272
-#: src/crunchyfier.py:282
+#: src/crunchyfier.py:268
+#: src/crunchyfier.py:277
+msgid "Previous value"
+msgstr ""
+
+#: src/crunchyfier.py:365
+#: src/crunchyfier.py:375
 msgid "Evaluate"
 msgstr ""
 
-#: src/crunchyfier.py:279
+#: src/crunchyfier.py:372
 msgid "Execute externally"
 msgstr ""
 
-#: src/crunchyfier.py:300
+#: src/crunchyfier.py:401
 msgid "Draw"
 msgstr ""
 
-#: src/crunchyfier.py:304
+#: src/crunchyfier.py:405
 msgid "Plot"
 msgstr ""
 
-#: src/crunchyfier.py:571
+#: src/crunchyfier.py:757
 msgid "Load local tutorial"
 msgstr ""
 
-#: src/crunchyfier.py:591
+#: src/crunchyfier.py:799
 msgid "Load Python file"
 msgstr ""
 
-#: src/crunchyfier.py:594
-#: src/crunchyfier.py:616
+#: src/crunchyfier.py:802
+#: src/crunchyfier.py:824
 msgid "Cancel"
 msgstr ""
 
-#: src/crunchyfier.py:613
+#: src/crunchyfier.py:821
 msgid "Save Python file"
 msgstr ""
 
-#: src/crunchyfier.py:620
+#: src/crunchyfier.py:828
 msgid "Save and Run"
 msgstr ""
 
-#: src/crunchyfier.py:629
+#: src/crunchyfier.py:837
 msgid "Load remote tutorial"
 msgstr ""
 
-#: src/crunchyfier.py:652
+#: src/crunchyfier.py:860
 msgid "Submit language choice"
 msgstr ""
 
-#: src/errors.py:22
+#: src/crunchyfier.py:898
+msgid "Update"
+msgstr ""
+
+#: src/crunchyfier.py:914
+msgid "Record changes"
+msgstr ""
+
+#: src/crunchyfier.py:924
+msgid "Interactive element"
+msgstr ""
+
+#: src/crunchyfier.py:945
+msgid "Optional line numbering"
+msgstr ""
+
+#: src/crunchyfier.py:950
+msgid "If interactive element is none:"
+msgstr ""
+
+#: src/crunchyfier.py:968
+msgid "Size"
+msgstr ""
+
+#: src/crunchyfier.py:970
+msgid "Size of editor (if present)"
+msgstr ""
+
+#: src/crunchyfier.py:981
+msgid "Drawing area (if present)"
+msgstr ""
+
+#: src/crunchyfier.py:1025
+msgid "Code execution"
+msgstr ""
+
+#: src/crunchyfier.py:1027
+msgid "Optional values for editor only"
+msgstr ""
+
+#: src/crunchyfier.py:1047
+msgid "Rarely used options"
+msgstr ""
+
+#: src/crunchyfier.py:1049
+msgid "Code not copied in editor"
+msgstr ""
+
+#: src/crunchyfier.py:1052
+msgid "- done automatically for doctest"
+msgstr ""
+
+#: src/crunchyfier.py:1061
+msgid "Code not appearing in <pre>"
+msgstr ""
+
+#: src/crunchyfier.py:1064
+msgid "- incompatible with no-copy"
+msgstr ""
+
+#: src/errors.py:21
 #, python-format
 msgid ""
 "Error on line %s:\n"
 "%s%s\n"
 msgstr ""
 
-#: src/errors.py:122
+#: src/errors.py:120
 #, python-format
 msgid "Error in processing %s: %s"
 msgstr ""
 
-#: src/errors.py:125
+#: src/errors.py:123
 #, python-format
 msgid "The file '%s' has some html errors in it: %s."
 msgstr ""
 
-#: src/errors.py:126
+#: src/errors.py:124
 msgid "  It can not be displayed."
 msgstr ""
 
-#: src/errors.py:133
+#: src/errors.py:131
 #, python-format
 msgid "Canvas error: %s is an invalid colour."
 msgstr ""
 
-#: src/errors.py:136
+#: src/errors.py:134
 #, python-format
 msgid "Canvas error.  Python info: %s."
 msgstr ""
 
-#: src/errors.py:140
+#: src/errors.py:138
 #, python-format
 msgid "Python execution error.  Info: %s."
 msgstr ""
 
-#: src/errors.py:144
+#: src/errors.py:142
 #, python-format
 msgid ""
 "Parsing error occurred in the following Python code.\n"
 "Info: %s."
 msgstr ""
 
-#: src/errors.py:153
-#: src/errors.py:159
+#: src/errors.py:151
+#: src/errors.py:157
 #, python-format
 msgid "Unexpected error in %s. "
 msgstr ""
 
-#: src/errors.py:154
+#: src/errors.py:152
 #, python-format
 msgid "This occurred while trying to open %s. "
 msgstr ""
 
-#: src/errors.py:155
-#: src/errors.py:162
+#: src/errors.py:153
+#: src/errors.py:160
 #, python-format
 msgid "The information given by Python is: %s."
 msgstr ""
 
-#: src/errors.py:160
+#: src/errors.py:158
 #, python-format
 msgid "This occurred while trying to process the tree for %s. "
 msgstr ""
 
-#: src/errors.py:161
+#: src/errors.py:159
 #, python-format
 msgid "The files processed so far are %s. "
 msgstr ""
 
-#: src/errors.py:166
+#: src/errors.py:164
 #, python-format
 msgid "Unrecognized argument in Tutorials.get(): %s. "
 msgstr ""
 
-#: src/errors.py:167
+#: src/errors.py:165
 msgid "This should never happen - and has not happened since the last bug fix!"
 msgstr ""
 
-#: src/errors.py:168
+#: src/errors.py:166
 msgid " Please contact the developpers with a copy of the html file "
 msgstr ""
 
-#: src/errors.py:169
+#: src/errors.py:167
 msgid "that caused this problem, and a description of what was done."
 msgstr ""
 
-#: src/interpreters.py:65
+#: src/interpreters.py:66
 msgid "Type help(object) for help about object."
 msgstr ""
 
-#: src/interpreters.py:67
+#: src/interpreters.py:68
 msgid "You cannot call help() without an argument."
 msgstr ""
 
-#: src/interpreters.py:138
+#: src/interpreters.py:140
 #, python-format
 msgid "%s is not defined yet"
 msgstr ""
 
-#: src/interpreters.py:209
+#: src/interpreters.py:194
+#: src/interpreters.py:212
+msgid "raw_input() request"
+msgstr ""
+
+#: src/interpreters.py:227
+msgid "To use raw_input() or input(), you need either Tkinter or wxPython."
+msgstr ""
+
+#: src/interpreters.py:286
 msgid "Follow this link if you want to know more about exceptions."
 msgstr ""
 
-#: src/interpreters.py:244
+#: src/interpreters.py:321
 msgid "The following example failed:"
 msgstr ""
 
-#: src/interpreters.py:246
+#: src/interpreters.py:323
 msgid "The expected result was:"
 msgstr ""
 
-#: src/interpreters.py:248
+#: src/interpreters.py:325
 msgid "The result obtained was:"
 msgstr ""
 
-#: src/interpreters.py:250
+#: src/interpreters.py:327
 msgid "An exception was raised:"
 msgstr ""
 
-#: src/interpreters.py:295
+#: src/interpreters.py:377
 msgid "There was no test to satisfy."
 msgstr ""
 
-#: src/interpreters.py:298
+#: src/interpreters.py:380
 msgid "Congratulation, your code passed the test!"
 msgstr ""
 
-#: src/interpreters.py:300
+#: src/interpreters.py:382
 msgid "You code failed the test."
 msgstr ""
 
-#: src/interpreters.py:303
+#: src/interpreters.py:385
 #, python-format
 msgid "Congratulation, your code passed all (%d) tests!"
 msgstr ""
 
-#: src/interpreters.py:305
+#: src/interpreters.py:387
 #, python-format
 msgid "Your code failed all (%d) tests."
 msgstr ""
 
-#: src/interpreters.py:307
+#: src/interpreters.py:389
 #, python-format
 msgid "Your code failed %s out of %s tests."
 msgstr ""
 
-#: src/interpreters.py:377
-#: src/interpreters.py:396
+#: src/interpreters.py:456
+#: src/interpreters.py:475
 msgid "set_line_color"
 msgstr ""
 
-#: src/interpreters.py:378
-#: src/interpreters.py:397
+#: src/interpreters.py:457
+#: src/interpreters.py:476
 msgid "set_line_colour"
 msgstr ""
 
-#: src/interpreters.py:379
+#: src/interpreters.py:458
 msgid "color"
 msgstr ""
 
-#: src/interpreters.py:380
+#: src/interpreters.py:459
 msgid "colour"
 msgstr ""
 
-#: src/interpreters.py:381
+#: src/interpreters.py:460
 msgid "x_range"
 msgstr ""
 
-#: src/interpreters.py:382
+#: src/interpreters.py:461
 msgid "y_range"
 msgstr ""
 
-#: src/interpreters.py:383
+#: src/interpreters.py:462
 msgid "x_axis"
 msgstr ""
 
-#: src/interpreters.py:384
+#: src/interpreters.py:463
 msgid "y_axis"
 msgstr ""
 
-#: src/interpreters.py:385
+#: src/interpreters.py:464
 msgid "prepare_graph"
 msgstr ""
 
-#: src/interpreters.py:386
+#: src/interpreters.py:465
 msgid "plot_function"
 msgstr ""
 
-#: src/interpreters.py:390
+#: src/interpreters.py:469
 msgid "circle"
 msgstr ""
 
-#: src/interpreters.py:391
+#: src/interpreters.py:470
 msgid "filled_circle"
 msgstr ""
 
-#: src/interpreters.py:392
+#: src/interpreters.py:471
 msgid "filled_rectangle"
 msgstr ""
 
-#: src/interpreters.py:393
+#: src/interpreters.py:472
 msgid "filled_triangle"
 msgstr ""
 
-#: src/interpreters.py:394
+#: src/interpreters.py:473
 msgid "line"
 msgstr ""
 
-#: src/interpreters.py:395
+#: src/interpreters.py:474
 msgid "rectangle"
 msgstr ""
 
-#: src/interpreters.py:398
+#: src/interpreters.py:477
 msgid "set_fill_color"
 msgstr ""
 
-#: src/interpreters.py:399
+#: src/interpreters.py:478
 msgid "set_fill_colour"
 msgstr ""
 
-#: src/interpreters.py:400
+#: src/interpreters.py:479
 msgid "triangle"
 msgstr ""
 
-#: src/interpreters.py:401
+#: src/interpreters.py:480
 msgid "point"
 msgstr ""
 

@@ -190,10 +190,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
 
 def get_crunchy_index(dummy):
     '''Default page displayed to user.'''
-    if prefs._language == 'fr':
-        return open("src/html/crunchy_index_fr.html").read()
-    else: # default is English
-        return open("src/html/crunchy_index.html").read()
+    return open(prefs.home).read()
 
 def get_exit(dummy):
     """
@@ -328,7 +325,7 @@ def get_python_file(args):
        an EditArea.
     """
     # For reasons that puzzle me, this one does not need to be decoded
-    # from the current html page encoding and encoded in the 
+    # from the current html page encoding and encoded in the
     # default system encoding to work.
     path = pathname2url(args['path'])
     try:
