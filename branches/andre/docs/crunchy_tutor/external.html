@@ -89,8 +89,9 @@ size = width, height = 320, 240
 speed = [3, 3]
 black = 0, 0, 0
 screen = pygame.display.set_mode(size)
-ball = pygame.image.load("temp/small_boing.png")
-ballrect = ball.get_rect()
+surf = pygame.Surface((50, 50))
+ball = pygame.draw.circle(surf, (255,0,0), (25, 25), 25, 0)
+ballrect = surf.get_rect()
 while True:
     for event in pygame.event.get():
        if event.type == pygame.QUIT: sys.exit()
@@ -101,8 +102,8 @@ while True:
         speed[1] = -speed[1]
     clock.tick(30)
     screen.fill(black)
-    screen.blit(ball, ballrect)
-    pygame.display.flip()
+    screen.blit(surf, ballrect)
+    pygame.display.flip()	
 </pre>
 </div>
 </body>

@@ -155,17 +155,15 @@ press a button that would create the new file. [DONE]
 To do:
 
 1. run external scripts from user .crunchy directory if possible first
-(unless the file has been saved somewhere else), if not, run it from
-temp/ directory in crunchy's path.  
-1a. Verify that, if file has been saved, subsequent runs are from
-the saved directory - if possible.  - Perhaps instead,
-add note to "save and run" menu explaining that doing save and
+(unless the file has been saved somewhere else)[DONE]
+
+1a. Add note to "save and run" menu explaining that doing save and
 run, execute the file where it was saved, whereas doing them
-separately runs a copy of the file from the default directory.
+separately runs a copy of the file from the default directory. [DONE]
 
 2. combine js files and remove comments
 
-3. document load external, etc.
+3. document load external, etc. [DONE]
 
 4. acknowledge effbot [DONE]
 

@@ -814,6 +814,9 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     br = et.SubElement(form1, 'br')
 
     form2 = et.SubElement(parent, 'form')
+    form2.text = _("If you do not use")+\
+                _(" 'Save and Run'")+\
+            _("Python will use a temporary file when evaluating the script.")
     input2 = et.SubElement(form2, 'input', type='hidden', id=path)
     btn = et.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+

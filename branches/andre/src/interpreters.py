@@ -392,19 +392,15 @@ def exec_external(code, console=False, path=None):
     """execute code in an external process
     currently works under:
         * Windows NT (tested)
-        * GNOME (tested)  [January 2nd change untested]
+        * GNOME (tested)  [January 2nd and 15th change untested]
     This also needs to be implemented for OS X, KDE
     and some form of linux fallback (xterm?)
     """
     if path is None:
-        path = os.path.join("temp", "temp.py")
-        if os.name == 'nt':
-            current_dir = os.getcwd()
-            target_dir = current_dir
-            fname = path
-    elif os.name == 'nt':
-        target_dir, fname = os.path.split(path)
+        path = os.path.join(os.path.expanduser("~"), ".crunchy", "temp.py")
+    if os.name == 'nt':
         current_dir = os.getcwd()
+        target_dir, fname = os.path.split(path)
 
     filename = open(path, 'w')
     filename.write(code)

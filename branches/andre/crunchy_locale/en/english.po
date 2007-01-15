@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-14 23:30-0400\n"
+"PO-Revision-Date: 2007-01-15 18:30-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -45,83 +45,95 @@ msgid "Load Python file"
 msgstr "Load Python file"
 
 #: src/crunchyfier.py:802
-#: src/crunchyfier.py:824
+#: src/crunchyfier.py:827
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/crunchyfier.py:821
+#: src/crunchyfier.py:817
+msgid "If you do not use"
+msgstr "If you do not use"
+
+#: src/crunchyfier.py:818
+msgid " 'Save and Run'"
+msgstr " 'Save and Run'"
+
+#: src/crunchyfier.py:819
+msgid "Python will use a temporary file when evaluating the script."
+msgstr "Python will use a temporary file when evaluating the script."
+
+#: src/crunchyfier.py:824
 msgid "Save Python file"
 msgstr "Save Python file"
 
-#: src/crunchyfier.py:828
+#: src/crunchyfier.py:831
 msgid "Save and Run"
 msgstr "Save and Run"
 
-#: src/crunchyfier.py:837
+#: src/crunchyfier.py:840
 msgid "Load remote tutorial"
 msgstr "Load remote tutorial"
 
-#: src/crunchyfier.py:860
+#: src/crunchyfier.py:863
 msgid "Submit language choice"
 msgstr "Submit language choice"
 
-#: src/crunchyfier.py:898
+#: src/crunchyfier.py:901
 msgid "Update"
 msgstr "Update"
 
-#: src/crunchyfier.py:914
+#: src/crunchyfier.py:917
 msgid "Record changes"
 msgstr "Record changes"
 
-#: src/crunchyfier.py:924
+#: src/crunchyfier.py:927
 msgid "Interactive element"
 msgstr "Interactive element"
 
-#: src/crunchyfier.py:945
+#: src/crunchyfier.py:948
 msgid "Optional line numbering"
 msgstr "Optional line numbering"
 
-#: src/crunchyfier.py:950
+#: src/crunchyfier.py:953
 msgid "If interactive element is none:"
 msgstr "If interactive element is none:"
 
-#: src/crunchyfier.py:968
+#: src/crunchyfier.py:971
 msgid "Size"
 msgstr "Size"
 
-#: src/crunchyfier.py:970
+#: src/crunchyfier.py:973
 msgid "Size of editor (if present)"
 msgstr "Size of editor (if present)"
 
-#: src/crunchyfier.py:981
+#: src/crunchyfier.py:984
 msgid "Drawing area (if present)"
 msgstr "Drawing area (if present)"
 
-#: src/crunchyfier.py:1025
+#: src/crunchyfier.py:1028
 msgid "Code execution"
 msgstr "Code execution"
 
-#: src/crunchyfier.py:1027
+#: src/crunchyfier.py:1030
 msgid "Optional values for editor only"
 msgstr "Optional values for editor only"
 
-#: src/crunchyfier.py:1047
+#: src/crunchyfier.py:1050
 msgid "Rarely used options"
 msgstr "Rarely used options"
 
-#: src/crunchyfier.py:1049
+#: src/crunchyfier.py:1052
 msgid "Code not copied in editor"
 msgstr "Code not copied in editor"
 
-#: src/crunchyfier.py:1052
+#: src/crunchyfier.py:1055
 msgid "- done automatically for doctest"
 msgstr "- done automatically for doctest"
 
-#: src/crunchyfier.py:1061
+#: src/crunchyfier.py:1064
 msgid "Code not appearing in <pre>"
 msgstr "Code not appearing in <pre>"
 
-#: src/crunchyfier.py:1064
+#: src/crunchyfier.py:1067
 msgid "- incompatible with no-copy"
 msgstr "- incompatible with no-copy"
 
