@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Crunchy Frog FAQ</title>
+<title>Crunchy FAQ</title>
 </head>
 <body>
 <p>
@@ -16,18 +16,20 @@ tutorial page?</a></li>
 </ul>
 </p>
 
-<div class="question" id="crunchy1">What is Crunchy Frog?</div>
-<div class="answer"><p><em>Crunchy Frog is an </em>HTTP Proxy Server<em>, i.e. an application that
-requests html pages, processes them, and displays them inside a browser window.</em>
-In more practical terms, Crunchy Frog transforms a normal looking html page 
+<div class="question" id="crunchy1">What is Crunchy?</div>
+<div class="answer"><p><em>Crunchy is an </em>HTTP Proxy Server<em>,
+i.e. an application that requests html pages, processes them, and displays
+them inside a browser window.</em>
+In more practical terms, Crunchy transforms a normal looking html page 
 into an interactive Python session.  Currently, it can insert any number of the following interactive objects within a single html page:
 <ul>
 <li>A Python interpreter.</li>
-<li>A very primitive editor in which you can write some code and have it
+<li>An editor in which you can write some code and have it
 executed by Python.</li>
 <li>A special editor mode that automatically runs some pre-defined doctests on the code.</li>
-<li>A simple (non-interactive) graphics interface.</li>
-<li>A simple cross-platform sound API, accessible from any code executed in Crunchy.</li>
+<li>Two simple (non-interactive) graphics interfaces, one used for
+drawing shapes, the other for plotting mathematical functions.</li>
+<li>A special editor mode that runs script externally.</li>
 </ul>
 </p></div>
 
@@ -36,12 +38,13 @@ executed by Python.</li>
 compliant way of encoding information in html files.  There are currently 
 three different types of markup we use:
 <ul>
-<li><code>&lt;meta name="vlam" content="..."&gt;</code></li>
 <li><code>&lt;pre title="some vlam commands"&gt;</code></li>
+<li><code>&lt;span title="some special vlam commands"&gt;</code></li>
 <li><code>&lt;span class="vlam_comment" style="display: none"&gt;</code>
 </li>
 </ul>
-More information can be found <a href="vlam_summary.html">here.</a></p>
+More information can be found 
+<a href="../crunchy_maker/vlam_summary.html">here.</a></p>
 </div>
 <br/>
 
@@ -53,7 +56,8 @@ that VLAM should be (and is) as non-disruptive as possible to your web-coding ex
 [
 &lt;!ATTLIST div vlam CDATA "none"&gt;
 ]&gt;</div>
-<p>But sadly this breaks Firefox (yes, we've filed a bug...).</p>
+<p>But sadly this breaks Firefox, at least version 1.5 
+(yes, we've filed a bug...).</p>
 </div>
 
 <div class="question" id="support1">What exactly is/is not supported on each platform?</div>
@@ -65,11 +69,15 @@ there are some features that are specific to a smaller set of platforms.</p>
 <li>*nix using OSS.</li>
 <li>Windows: Using the built-in winsound API.</li>
 </ul>
-<p>In addition, it should be noted that by modern browser we mean Firefox. At present Crunchy Frog is only developed and
+<p>The interpreter mode supports the Python <code>raw_input()</code> provided
+that at least one of Tkinter or wxPython is installed.  <code>input()</code>
+is defined to be equivalent to <code>raw_input()</code> within the Crunchy
+interpreter.</p>
+<p>In addition, it should be noted that by modern browser we mean Firefox. At present Crunchy is only developed and
 tested on Firefox.  We have tried it with both Internet Explorer and Opera,
 but it does not work. If anyone is willing to help in any way, let it be by
 testing or, perhaps, by helping us figuring out how to make it work with IE or Opera (meaning: working with javascript), or testing it with some other
-browsers, or writing Crunchy Frog compatible Python tutorials, please get in touch.</p>
+browsers, or writing Crunchy compatible Python tutorials, please get in touch.</p>
 </div>
 
 <div class="question" id="run_external1">Can I start Crunchy with my own starting 
@@ -78,7 +86,7 @@ tutorial page?</div>
 point by creating a Python script containing the following two lines:</p>
 <pre title="none">
 import crunchy
-crunchy.run("full_path/tutorial.html")
+crunchy.run("full_path/tutorial_name.html")
 </pre>
 </div>
 

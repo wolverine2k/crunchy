@@ -161,13 +161,15 @@ To do:
 run, execute the file where it was saved, whereas doing them
 separately runs a copy of the file from the default directory. [DONE]
 
-2. combine js files and remove comments
+2. combine js files and remove comments [NOT DONE, on purpose, after
+more thoughts on the topic - one js fileis loaded in two 
+places.]
 
 3. document load external, etc. [DONE]
 
 4. acknowledge effbot [DONE]
 
-5. write how-to
+5. write how-to [DONE]
 
 6. move options under help [DONE]
 
@@ -181,17 +183,17 @@ fullscreen mode.
 
 9. add example with using crunchy about raw_input().  Add second
 interpreter on page, and explain how values are shared on a
-given page, but not when leaving that page.
+given page, but not when leaving that page. [DONE, mostly]
 
 10. Check polling time in javascript; perhaps change from 0.5sec to
-0.2 sec for faster apparent results.?
+0.2 sec for faster apparent results.? [DONE]
 
 11. Check that "root dir" is imported appropriately in case crunchy
 is installed.
 
 12. Look into packaging as an egg.
 
-13. proofread faq ("primitive editor" among others).
+13. proofread faq ("primitive editor" among others). [DONE]
 
 14. Translate exit page. [DONE]
 
@@ -202,3 +204,6 @@ by appropriate variable.  [DONE]
 16a. Ask about more translations in announcement.
 
 17. Move Pycon presentation to Python tutorial index page.
+
+Note to announcement: the interpreter now supports input() and raw_input()
+(they are defined to be equivalent).

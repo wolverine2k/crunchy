@@ -235,12 +235,12 @@ function exec_canvas(canvas_id)
 };
 
 /*------------------------------- interpreter-------------------------------- */
-
-function interp_trapkeys(event, interp_id){
+// "waiting" is a translatable string passed as a variable.
+function interp_trapkeys(event, interp_id, waiting){
 	switch(event.keyCode){
 		case 13:
 			hide_tipbar(interp_id);
-			interp_push(interp_id);
+			interp_push(interp_id, waiting);
 			break;
 		case 48: 	//close )
 		case 8:    // backspace
@@ -256,7 +256,7 @@ function interp_trapkeys(event, interp_id){
 	};
 };
 
-function interp_push(interp_id){
+function interp_push(interp_id, waiting){
 	input = document.getElementById(interp_id+"_input");
 	outputcont = document.getElementById(interp_id+"_output_container");
 	prompt = document.getElementById(interp_id+"_prompt");
@@ -272,7 +272,7 @@ function interp_push(interp_id){
 	outputcont.appendChild(br);
 	output = document.createElement("div");
 	output.setAttribute("class", "interp_output");
-	output.textContent = "waiting...";
+	output.textContent = waiting;
 	outputcont.appendChild(output);
 	data = input.value;	
 	input.value = "";

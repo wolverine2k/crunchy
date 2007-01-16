@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-15 18:30-0400\n"
+"PO-Revision-Date: 2007-01-15 21:04-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: Andre Roberge, Johannes Woolard <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -19,121 +19,125 @@ msgstr ""
 msgid "Previous value"
 msgstr "Previous value"
 
-#: src/crunchyfier.py:365
-#: src/crunchyfier.py:375
+#: src/crunchyfier.py:334
+msgid "Waiting..."
+msgstr "Waiting..."
+
+#: src/crunchyfier.py:366
+#: src/crunchyfier.py:376
 msgid "Evaluate"
 msgstr "Evaluate"
 
-#: src/crunchyfier.py:372
+#: src/crunchyfier.py:373
 msgid "Execute externally"
 msgstr "Execute externally"
 
-#: src/crunchyfier.py:401
+#: src/crunchyfier.py:402
 msgid "Draw"
 msgstr "Draw"
 
-#: src/crunchyfier.py:405
+#: src/crunchyfier.py:406
 msgid "Plot"
 msgstr "Plot"
 
-#: src/crunchyfier.py:757
+#: src/crunchyfier.py:758
 msgid "Load local tutorial"
 msgstr "Load local tutorial"
 
-#: src/crunchyfier.py:799
+#: src/crunchyfier.py:800
 msgid "Load Python file"
 msgstr "Load Python file"
 
-#: src/crunchyfier.py:802
-#: src/crunchyfier.py:827
+#: src/crunchyfier.py:803
+#: src/crunchyfier.py:828
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/crunchyfier.py:817
+#: src/crunchyfier.py:818
 msgid "If you do not use"
 msgstr "If you do not use"
 
-#: src/crunchyfier.py:818
+#: src/crunchyfier.py:819
 msgid " 'Save and Run'"
 msgstr " 'Save and Run'"
 
-#: src/crunchyfier.py:819
+#: src/crunchyfier.py:820
 msgid "Python will use a temporary file when evaluating the script."
 msgstr "Python will use a temporary file when evaluating the script."
 
-#: src/crunchyfier.py:824
+#: src/crunchyfier.py:825
 msgid "Save Python file"
 msgstr "Save Python file"
 
-#: src/crunchyfier.py:831
+#: src/crunchyfier.py:832
 msgid "Save and Run"
 msgstr "Save and Run"
 
-#: src/crunchyfier.py:840
+#: src/crunchyfier.py:841
 msgid "Load remote tutorial"
 msgstr "Load remote tutorial"
 
-#: src/crunchyfier.py:863
+#: src/crunchyfier.py:864
 msgid "Submit language choice"
 msgstr "Submit language choice"
 
-#: src/crunchyfier.py:901
+#: src/crunchyfier.py:902
 msgid "Update"
 msgstr "Update"
 
-#: src/crunchyfier.py:917
+#: src/crunchyfier.py:918
 msgid "Record changes"
 msgstr "Record changes"
 
-#: src/crunchyfier.py:927
+#: src/crunchyfier.py:928
 msgid "Interactive element"
 msgstr "Interactive element"
 
-#: src/crunchyfier.py:948
+#: src/crunchyfier.py:949
 msgid "Optional line numbering"
 msgstr "Optional line numbering"
 
-#: src/crunchyfier.py:953
+#: src/crunchyfier.py:954
 msgid "If interactive element is none:"
 msgstr "If interactive element is none:"
 
-#: src/crunchyfier.py:971
+#: src/crunchyfier.py:972
 msgid "Size"
 msgstr "Size"
 
-#: src/crunchyfier.py:973
+#: src/crunchyfier.py:974
 msgid "Size of editor (if present)"
 msgstr "Size of editor (if present)"
 
-#: src/crunchyfier.py:984
+#: src/crunchyfier.py:985
 msgid "Drawing area (if present)"
 msgstr "Drawing area (if present)"
 
-#: src/crunchyfier.py:1028
+#: src/crunchyfier.py:1029
 msgid "Code execution"
 msgstr "Code execution"
 
-#: src/crunchyfier.py:1030
+#: src/crunchyfier.py:1031
 msgid "Optional values for editor only"
 msgstr "Optional values for editor only"
 
-#: src/crunchyfier.py:1050
+#: src/crunchyfier.py:1051
 msgid "Rarely used options"
 msgstr "Rarely used options"
 
-#: src/crunchyfier.py:1052
+#: src/crunchyfier.py:1053
 msgid "Code not copied in editor"
 msgstr "Code not copied in editor"
 
-#: src/crunchyfier.py:1055
+#: src/crunchyfier.py:1056
 msgid "- done automatically for doctest"
 msgstr "- done automatically for doctest"
 
-#: src/crunchyfier.py:1064
+#: src/crunchyfier.py:1065
 msgid "Code not appearing in <pre>"
 msgstr "Code not appearing in <pre>"
 
-#: src/crunchyfier.py:1067
+#: src/crunchyfier.py:1068
 msgid "- incompatible with no-copy"
 msgstr "- incompatible with no-copy"
 
@@ -297,85 +301,85 @@ msgstr "Your code failed all (%d) tests."
 msgid "Your code failed %s out of %s tests."
 msgstr "Your code failed %s out of %s tests."
 
-#: src/interpreters.py:456
-#: src/interpreters.py:475
+#: src/interpreters.py:452
+#: src/interpreters.py:471
 msgid "set_line_color"
 msgstr "set_line_color"
 
-#: src/interpreters.py:457
-#: src/interpreters.py:476
+#: src/interpreters.py:453
+#: src/interpreters.py:472
 msgid "set_line_colour"
 msgstr "set_line_colour"
 
-#: src/interpreters.py:458
+#: src/interpreters.py:454
 msgid "color"
 msgstr "color"
 
-#: src/interpreters.py:459
+#: src/interpreters.py:455
 msgid "colour"
 msgstr "colour"
 
-#: src/interpreters.py:460
+#: src/interpreters.py:456
 msgid "x_range"
 msgstr "x_range"
 
-#: src/interpreters.py:461
+#: src/interpreters.py:457
 msgid "y_range"
 msgstr "y_range"
 
-#: src/interpreters.py:462
+#: src/interpreters.py:458
 msgid "x_axis"
 msgstr "x_axis"
 
-#: src/interpreters.py:463
+#: src/interpreters.py:459
 msgid "y_axis"
 msgstr "y_axis"
 
-#: src/interpreters.py:464
+#: src/interpreters.py:460
 msgid "prepare_graph"
 msgstr "prepare_graph"
 
-#: src/interpreters.py:465
+#: src/interpreters.py:461
 msgid "plot_function"
 msgstr "plot_function"
 
-#: src/interpreters.py:469
+#: src/interpreters.py:465
 msgid "circle"
 msgstr "circle"
 
-#: src/interpreters.py:470
+#: src/interpreters.py:466
 msgid "filled_circle"
 msgstr "filled_circle"
 
-#: src/interpreters.py:471
+#: src/interpreters.py:467
 msgid "filled_rectangle"
 msgstr "filled_rectangle"
 
-#: src/interpreters.py:472
+#: src/interpreters.py:468
 msgid "filled_triangle"
 msgstr "filled_triangle"
 
-#: src/interpreters.py:473
+#: src/interpreters.py:469
 msgid "line"
 msgstr "line"
 
-#: src/interpreters.py:474
+#: src/interpreters.py:470
 msgid "rectangle"
 msgstr "rectangle"
 
-#: src/interpreters.py:477
+#: src/interpreters.py:473
 msgid "set_fill_color"
 msgstr "set_fill_color"
 
-#: src/interpreters.py:478
+#: src/interpreters.py:474
 msgid "set_fill_colour"
 msgstr "set_fill_colour"
 
-#: src/interpreters.py:479
+#: src/interpreters.py:475
 msgid "triangle"
 msgstr "triangle"
 
-#: src/interpreters.py:480
+#: src/interpreters.py:476
 msgid "point"
 msgstr "point"
 
