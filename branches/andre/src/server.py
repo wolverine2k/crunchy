@@ -134,7 +134,6 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
 
         elif self.path.startswith(security.commands['/rawio']):
             bufname = self.path.split('?')[1]
-            print bufname
             if bufname in interpreters.interpreters:
                 i = interpreters.interpreters[bufname]
                 #print self.headers
@@ -190,7 +189,7 @@ class CrunchyRequestHandler(SimpleHTTPRequestHandler):
 
 def get_crunchy_index(dummy):
     '''Default page displayed to user.'''
-    return open(prefs.home).read()
+    return prefs.index#open(prefs.home).read()
 
 def get_exit(dummy):
     """
@@ -337,6 +336,15 @@ def get_language(args):
     '''
     prefs = configuration.UserPreferences()
     prefs.language = args['language']
+    handle = open(prefs.options)
+    vlam = crunchyfier.VLAMPage(handle, prefs.options)
+    return vlam.get()
+
+def get_style(args):
+    '''Present the user with a page that give a choice of page style.
+    '''
+    prefs = configuration.UserPreferences()
+    prefs.style = args['style']
     handle = open(prefs.options)
     vlam = crunchyfier.VLAMPage(handle, prefs.options)
     return vlam.get()

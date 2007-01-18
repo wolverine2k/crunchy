@@ -4,19 +4,22 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Menus test</title>
-<link href="/src/css/menu.css" rel="stylesheet" type="text/css">
-<!-- Alternative styles; first one chosen as default -->
-<link href="/src/css/gradient1.css" title="Colour gradients (earth tones)" rel="stylesheet" type="text/css">
-<link href="/src/css/bold.css" title="Bold colours" rel="alternative stylesheet" type="text/css">
-<link href="/src/css/b-w.css" title="Black and white" rel="alternative stylesheet" type="text/css">
-<link href="/src/css/default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div> <!-- leave this div here. -->
-<!-- Important: because of the way we float items to the right, we have to
- construct the menu from the rightmost item going left.-->
+<div> <!-- leave this div here; used to extract menu -->
 <ul id="menu">
-	<li class="menuitem"><a href="/exit">Quit Crunchy</a></li>
+  <li class="menuitem"><a href="/">Home</a></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Tutorials</a>
+	<ul class="submenu">
+		<li><a href="/docs/crunchy_tutor/index.html">Using Crunchy</a></li>
+		<li><a href="/docs/Python_tutorials/index.html">Python tutorials</a></li>
+		<li><a href="#" class="right_arrow">Making Crunchy tutorials</a>
+		<ul class="subsubmenu">    
+			<li><a href="/docs/crunchy_maker/howto.html">How to...</a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_summary.html">VLAM summary</a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_examples.html">VLAM examples</a></li>
+		</ul></li>
+	</ul></li>
 	<li class="menuitem"><a href="#" class="down_arrow">Help</a>
 	<ul class="submenu">
 		<li><a href="/docs/reference/faq.html">FAQ</a></li>
@@ -31,18 +34,7 @@
   	<li><a href="/src/html/options.html">Options</a></li>
 		<li><a href="/docs/reference/about.html">About</a></li>
 	</ul></li>
-	<li class="menuitem"><a href="#" class="down_arrow">Tutorials</a>
-	<ul class="submenu">
-		<li><a href="/docs/crunchy_tutor/index.html">Using Crunchy</a></li>
-		<li><a href="/docs/Python_tutorials/index.html">Python tutorials</a></li>
-		<li><a href="#" class="right_arrow">Making Crunchy tutorials</a>
-		<ul class="subsubmenu">    
-			<li><a href="/docs/crunchy_maker/howto.html">How to...</a></li>    
-			<li><a href="/docs/crunchy_maker/vlam_summary.html">VLAM summary</a></li>    
-			<li><a href="/docs/crunchy_maker/vlam_examples.html">VLAM examples</a></li>
-		</ul></li>
-	</ul></li>
-<li class="menuitem"><a href="/">Home</a></li>
+  <li class="menuitem"><a href="/exit">Quit Crunchy</a></li>
 </ul>
 <br /> <!-- This br will, within a div, will ensure that the menu does not
 				hide the page content -->
@@ -62,10 +54,8 @@ your own interactive tutorial, look under the menu "Tutorials",
 "Making Crunchy Tutorials" for the "How to" document.</li>
 </ul>
 <h2>Trivia</h2>
-<p>You can change the page style using Firefox (menu: View --&gt; Page Style).  
-Note that, if you do not want to use the default style, you will have to
-set your style choice for every page that is viewed.  In the future, you will 
-be able to set your preferred option, and Crunchy will remember it.</p>
+<p>You can change the page style using Firefox (menu: View --&gt; Page Style) ; this will work for the current page only.  If you prefer, you can use
+the options submenu (under "Help") to set a preferred page style.</p>
 <p>If you are viewing this page without using Crunchy, then the menu above
 (shown as a list of links) will not be working.  You can use <a href="../../docs/crunchy_tutor/index.html">this link</a>
 to go through the "Using Crunchy" tutorial; unfortunately, this will give you 

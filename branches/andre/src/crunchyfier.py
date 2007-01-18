@@ -22,6 +22,7 @@ prefs = configuration.UserPreferences()
 import security
 import translation
 _ = translation._
+import src.css.styles as Styles
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder
@@ -162,6 +163,7 @@ class VLAMPage(TreeBuilder):
             self.add_editarea_add_callbacks()
         self.insert_css("/src/css/default.css")
         self.insert_css("/src/css/custom_alert.css")
+        self.insert_css("/src/css/menu.css")
         for style in prefs.styles:
             self.head.append(style)
         # reinsert the encoding information that was removed.
@@ -225,7 +227,6 @@ class VLAMPage(TreeBuilder):
         self.body.insert(0, prefs.menu)
         if self.edit_flag and self.pre_present:
             self.body.append(update_button())
-            print "appended update button"
 
     def process_span(self, span):
         """Span can be used for:
@@ -255,6 +256,8 @@ class VLAMPage(TreeBuilder):
                         addLoadRemote(div, text)
                 elif 'choose' in self.vlamcode and 'language' in self.vlamcode:
                     addLanguageSelect(div, text)
+                elif 'choose' in self.vlamcode and 'style' in self.vlamcode:
+                    addStyleSelect(div)
                 elif 'edit' in self.vlamcode and 'tutorial' in self.vlamcode:
                     addLoadForEdit(div, text)
         return
@@ -694,7 +697,6 @@ def reconstruct_vlam(new_vlam):
         may be irrelevant.
     '''
     values = analyze_vlam_code(new_vlam)
-    print "values = ", values
     vlam = values['interactive']
     if '(remove)' not in values['linenumber']:
         vlam += values['linenumber']
@@ -862,6 +864,24 @@ def addLanguageSelect(parent, text):
     inp = et.SubElement(form, "input")
     inp.set("type", "submit")
     inp.set("value", _("Submit language choice"))
+    inp.set("class", "crunchy")
+    return
+
+def addStyleSelect(parent):
+    """Inserts an html selector for style sheet.
+    """
+    form = et.SubElement(parent, "form", method='get',
+                         action=security.commands["/select_style"])
+    select = et.SubElement(form, "select")
+    select.set("name", "style")
+    for style in Styles.all_styles:
+        opt = et.SubElement(select, "option")
+        opt.set("value", style[0])
+        opt.text = style[1]
+    br = et.SubElement(form, "br")
+    inp = et.SubElement(form, "input")
+    inp.set("type", "submit")
+    inp.set("value", _("Submit style choice"))
     inp.set("class", "crunchy")
     return
 

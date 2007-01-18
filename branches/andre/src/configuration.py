@@ -3,10 +3,16 @@
     In future we should provides a GUI for changing the preferences.
 """
 
+from StringIO import StringIO
 import os
 from ConfigParser import SafeConfigParser
 from element_tree import HTMLTreeBuilder
+from element_tree import ElementTree as et
 import translation
+import src.css.styles as styles
+
+DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
+'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
 
 class Borg(object):
     """From the 2nd edition of the Python cookbook.
@@ -32,13 +38,15 @@ class UserPreferences(Borg):
             self.__initialised = True
             self.root_dir = root_dir
             translation.home = root_dir
-            self.styles = []
             self.menu = None
+            self.home = None
             self.config = SafeConfigParser()
             self.changed = False
             self.user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
             if not os.path.exists(self.user_dir):  # first time ever
                 self.create_path()
+                self._style = None
+                self.compile_styles()
             self.user_file = os.path.join(self.user_dir, "crunchy.cfg")
             self.load()
         return
@@ -136,6 +144,11 @@ class UserPreferences(Borg):
     def set_style(self, style):
         self._style = style
         self.set_preference('style', style)
+        self.compile_styles()
+        # update home page after style change
+        if self.home:  # not defined initially - so we don't need to update!
+            self.extract_menu()
+            self.save()
         return
 
     def get_editarea_language(self):
@@ -152,14 +165,41 @@ class UserPreferences(Borg):
             tree = HTMLTreeBuilder.parse(filename)
         except Exception, info:
             print info
-        head = tree.find("head")
+        # extract menu for use in other files
         body = tree.find("body")
         self.menu = body.find(".//div")
-        for link in head.findall('.//link'):
-            self.styles.append(link)
-        body.clear()
-        head.clear()
-        body.insert(0, self.menu)
-        for link in self.styles:
-            head.insert(0, link)
+        # create an index file with proper styles
+        head = tree.find("head")
+        for style in self.styles:
+            head.append(style)
+        css = et.Element("link")
+        css.set("rel", "stylesheet")
+        css.set("href", "/src/css/menu.css")
+        css.set("type", "text/css")
+        head.append(css)
+        fake_file = StringIO()
+        fake_file.write(DTD + '\n')
+        tree.write(fake_file)
+        self.index = fake_file.getvalue()
         return
+
+    def compile_styles(self):
+        self.styles = []
+        for style, title in styles.all_styles:
+            if style == self._style: # append preferred one first
+                css = et.Element("link")
+                css.set("rel", "stylesheet")
+                css.set("href", '/src/css/%s'%style)
+                css.set("title", '%s'%title)
+                css.set("type", "text/css")
+                self.styles.append(css)
+                break
+        for style, title in styles.all_styles:
+            if style != self._style: # append others
+                css = et.Element("link")
+                css.set("rel", "alternative stylesheet")
+                css.set("href", '/src/css/%s'%style)
+                css.set("title", '%s'%title)
+                css.set("type", "text/css")
+                self.styles.append(css)
+

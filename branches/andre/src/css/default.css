@@ -37,14 +37,14 @@ canvas.plot { border: solid blue 2px; }
 
 /* Load and save python forms. These are in a fixed position
    the screen so that they can be seen even when the editor is
-	 in fullscreen mode. */
+	 in fullscreen mode.  z-index of editarea when toggled is 9999 */
 
-.load_python{position:fixed; top:100px; z-index:99;
-            border:4px solid #063; border-style: outset; 
-						visibility:hidden; background-color:#696}
-.save_python{position:fixed; top:200px; z-index:99;
+.load_python{position:fixed; top:100px; z-index:99999;
             border:4px solid #339; border-style: outset; 
 						visibility:hidden; background-color:#66C}
+.save_python{position:fixed; top:200px; z-index:99999;
+            border:4px solid #063; border-style: outset; 
+						visibility:hidden; background-color:#696}
 
 /* file path information inserted in the display: */
 .fileinfo{ 
@@ -158,10 +158,5 @@ table.summary td {
 	border-style: inset inset inset inset;
 	border-color: gray gray gray gray;
 }
-/* attach an image to all marked-up pre tags;
-see http://www.hunlock.com/blogs/Attach_icons_to_anything_with_CSS.
-*/
-pre[title]{
-padding-top:20px;
-background: url(python_crunchy.png) no-repeat top left;}
+
 

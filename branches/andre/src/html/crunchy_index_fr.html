@@ -3,20 +3,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<title>Menus test</title>
-<link href="/src/css/menu.css" rel="stylesheet" type="text/css">
-<!-- Alternative styles; first one chosen as default -->
-<link href="/src/css/gradient1.css" title="Colour gradients (earth tones)" rel="stylesheet" type="text/css">
-<link href="/src/css/bold.css" title="Bold colours" rel="alternative stylesheet" type="text/css">
-<link href="/src/css/b-w.css" title="Black and white" rel="alternative stylesheet" type="text/css">
-<link href="/src/css/default.css" rel="stylesheet" type="text/css">
+<title>Index fran&ccedil;ais</title>
 </head>
 <body>
 <div> <!-- leave this div here. -->
 <!-- Important: because of the way we float items to the right, we have to
  construct the menu from the rightmost item going left.-->
 <ul id="menu">
-	<li class="menuitem"><a href="/exit">Quittez Crunchy</a></li>
+  <li class="menuitem"><a href="/">Maison</a></li>
+	<li class="menuitem"><a href="#" class="down_arrow">Didacticiels</a>
+	<ul class="submenu">
+  	<li><a href="/docs/crunchy_tutor/index.html">Utiliser Crunchy</a></li>
+		<li><a href="/docs/python_tutorials/index.html">Didacticiels Python</a></li>
+		<li><a href="#" class="right_arrow">Cr&eacute;ation de didacticiel</a>
+		<ul class="subsubmenu">    
+			<li><a href="/docs/crunchy_maker/howto.html">How to...</a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_summary.html">Sommaire VLAM </a></li>    
+			<li><a href="/docs/crunchy_maker/vlam_examples.html">Exemples VLAM</a></li>
+		</ul></li>
+	</ul></li>
 	<li class="menuitem"><a href="#" class="down_arrow">Aide</a>
 	<ul class="submenu">
 		<li><a href="/docs/reference/faq.html">FAQ</a></li>
@@ -31,18 +36,7 @@
   	<li><a href="/src/html/options_fr.html">Options</a></li>
 		<li><a href="/docs/reference/about.html">A propos</a></li>
 	</ul></li>
-	<li class="menuitem"><a href="#" class="down_arrow">Didacticiels</a>
-	<ul class="submenu">
-  	<li><a href="/docs/crunchy_tutor/index.html">Utiliser Crunchy</a></li>
-		<li><a href="/docs/python_tutorials/index.html">Didacticiels Python</a></li>
-		<li><a href="#" class="right_arrow">Cr&eacute;ation de didacticiel</a>
-		<ul class="subsubmenu">    
-			<li><a href="/docs/crunchy_maker/howto.html">How to...</a></li>    
-			<li><a href="/docs/crunchy_maker/vlam_summary.html">Sommaire VLAM </a></li>    
-			<li><a href="/docs/crunchy_maker/vlam_examples.html">Exemples VLAM</a></li>
-		</ul></li>
-	</ul></li>
-<li class="menuitem"><a href="/">Maison</a></li>
+	<li class="menuitem"><a href="/exit">Quittez Crunchy</a></li>
 </ul>
 <br /> <!-- This br will, within a div, will ensure that the menu does not
 				hide the page content -->
@@ -52,9 +46,8 @@
 à cette page. "Quittez Crunchy" fermera la page ou la fenêtre du fureteur en 
 plus de terminer le programme lui-même.</p>
 <p>Vous pouvez changer le style de la page à partir du menu de Firefox.  
-Notez que, si vous changer le style, vous devrez le refaire pour chaque page 
-que vous visiterez.  À l'avenir, nous prévoyons inclure une option vous 
-permettant de faire un choix global pour le style choisi.</p>
+Notez que si vous changer le style ainsi, vous devrez le refaire pour chaque page 
+que vous visiterez.  Si vous pr&eacute;f&eacute;rez un changement plus permanent, vous pouvez choisir "Option" sous le menu "Aide".</p>
 <p>Si vous désirez en savoir plus sur ce que Crunchy peut faire, sélectionner 
 le didacticiel "Utiliser Crunchy" (en anglais seulement).
 </p>

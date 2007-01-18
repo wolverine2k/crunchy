@@ -215,6 +215,9 @@ class SecureSession(object):
         commands['/select_language'] = '/select_language' + self.session_id
         request.pagemap[commands['/select_language']] = server.get_language
         #
+        commands['/select_style'] = '/select_style' + self.session_id
+        request.pagemap[commands['/select_style']] = server.get_style
+        #
         commands['/doctest'] = '/doctest' + self.session_id
         commands['/execute'] = '/execute' + self.session_id
         commands['/rawio'] = '/rawio' + self.session_id

@@ -175,7 +175,7 @@ places.]
 
 7. rewrite menu placement using javascript; add button
 to hide and show menu - this will be especially useful in editor
-fullscreen mode.
+fullscreen mode. [No need to do anymore]
 
 8. add possibility to specify preferred style
 8a. try to add one more style
@@ -203,7 +203,8 @@ by appropriate variable.  [DONE]
 16. Add document about what's needed for doing a translation.
 16a. Ask about more translations in announcement.
 
-17. Move Pycon presentation to Python tutorial index page.
+17. Move Pycon presentation to Python tutorial index page. [DONE]
 
 Note to announcement: the interpreter now supports input() and raw_input()
-(they are defined to be equivalent).
+(they are defined to be equivalent) - but that the implementation will change
+in a future release so as not to depend on Tkinter or wxPython.

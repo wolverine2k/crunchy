@@ -3,9 +3,7 @@ This should be common to all css menu styles.
 The styling options (colours, background) are to be introduced in separate files.*/
 #menu {
 	position:fixed; 
-	top:10; /* chosen so that icon for the editor are not hidden when 
-        	 * it is displayed in fullscreen mode */
-	right:3%;    
+	top:0;  
 	z-index: 10;
 	list-style-type:none;
 	font:100%/1 sans-serif;
@@ -15,7 +13,7 @@ The styling options (colours, background) are to be introduced in separate files
 	width:10em;  /* kept in sync with values below. */ 
 	height:1.4em;
 	display:block;
-	float:right;
+	float:left;
 	overflow:hidden;
 }
 .menuitem ul {
