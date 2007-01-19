@@ -1,5 +1,5 @@
 #summary Documentation for src/widgets.py
-#labels Phase-Implementation,Featured
+#labels Phase-Implementation
 = Introduction =
 
 I'm writing this mainly to test this wiki.
