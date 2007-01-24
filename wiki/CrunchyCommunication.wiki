@@ -31,7 +31,7 @@ From then on, whenever the */helloworld* page is requested, the string `"Hello W
 The CrunchyHTTPRequest objects have the following methods and attributes:
 
   * *send_response(response_code)*
-    Begins a HTTP response. The most useful response codes are 200 (OK), 404 (File not Found) and 500 (Internal Eerver Error).
+    Begins a HTTP response. The most useful response codes are 200 (OK), 404 (File not Found) and 500 (Internal Eerver Error) (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1)
   * *end_headers()*
     Ends the HTTP header block. Once this has been called, data can be written to the client.
   * *wfile*
@@ -71,8 +71,18 @@ The responses to */comet* have a specific form. A complete response looks like:
 {{{
 Response = Response-Type SP Channel-Id CR Data
 
-Response-Type = "STDOUT" | "STDERR" | "STOP"
+Response-Type = "STDOUT" | "STDERR" | "STOP" | "RESET"
 }}}
 where `Channel` is some integer (as a string) and `Data` is the response data.
 
-Future additions to `Channel` will include `"JSCODE"` (for the canvas) and `"POPUP"` for notifications of error states in Crunchy (although of course there won't be any).
+Future additions to response types will include `"JSCODE"` (for the canvas) and `"POPUP"` for notifications of error states in Crunchy (although of course there won't be any).
+
+The meanings of the response types are as follows:
+  * *STDOUT*: data is raw (standard) output to be appended to the output of the IO elemnt denoted by Channel-Id.
+  * *STDERR*: Is similar, but for stderr output.
+  * *STOP*: Indicates that ouput has ended, tells the client to disable input for that element.
+  * *RESET*: tells the client to reset the given IO Element.
+  * *JSCODE*: Will execute the given Javascript code within the page. *Not Implemented*
+  * *POPUP*: Will display a popup (possibly just using alert()) to give status information to the user. *Not Implemented*
+
+
