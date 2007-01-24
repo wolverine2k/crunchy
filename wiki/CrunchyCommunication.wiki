@@ -49,7 +49,7 @@ Crunchy uses two custom urls for internal communication: */comet* for server->cl
 
 === /post ===
 
-This is very simple - it is opened as a POST method, with just one argument (*uid*)  to indicate which element the data is coming from.
+This is very simple - it is opened as a POST method, with just one argument (*uid*)  to indicate which element the data is coming from. The data for the request is embedded in the body.
 
 *Example request:*
 {{{
@@ -68,9 +68,11 @@ HTTP/1.0 200 (OK)
 This is used for communication from the server. The client opens a */comet* request and the server responds when there is data to be sent. When the client has received a response it immediately opens a new request which will hang until the server responds and so on...
 
 The responses to */comet* have a specific form. A complete response looks like:
-
+{{{
 Response = Response-Type SP Channel-Id CR Data
 
-Response-Type = STDOUT | STDERR 
+Response-Type = "STDOUT" | "STDERR" | "STOP"
+}}}
+where `Channel` is some integer (as a string) and `Data` is the response data.
 
-unfinished...
+Future additions to `Channel` will include `"JSCODE"` (for the canvas) and `"POPUP"` for notifications of error states in Crunchy (although of course there won't be any).
