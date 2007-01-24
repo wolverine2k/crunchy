@@ -60,8 +60,8 @@ test data
 *And response*:
 {{{
 HTTP/1.0 200 (OK)
-
 }}}
+(And yes, the response is correct, because Crunchy uses only HTTP/1.0)
 
 === /comet ===
 
@@ -84,5 +84,4 @@ The meanings of the response types are as follows:
   * *RESET*: tells the client to reset the given IO Element.
   * *JSCODE*: Will execute the given Javascript code within the page. *Not Implemented*
   * *POPUP*: Will display a popup (possibly just using alert()) to give status information to the user. *Not Implemented*
-
 
