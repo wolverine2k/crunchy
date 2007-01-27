@@ -177,7 +177,7 @@ places.]
 to hide and show menu - this will be especially useful in editor
 fullscreen mode. [No need to do anymore]
 
-8. add possibility to specify preferred style
+8. add possibility to specify preferred style  [DONE]
 8a. try to add one more style
 8b. ask about style contributions in announcement.
 

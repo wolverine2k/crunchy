@@ -7,7 +7,9 @@
 <h1>VLAM summary</h1>
 <p>Very Little Aditional Markup is the system used by Crunchy Frog to describe its interactive elements.
  VLAM is essentially just an extended set of attributes for some common HTML tags. Any .htm or .html file loaded through Crunchy Frog
- will have its VLAM code processed. Here's what it can describe:</p>
+ will have its VLAM code processed. <em>Note that, because of some active
+development into a new (and better) way of communicating between the Crunchy and Firefox, some of the following, as indicated below, may become obsolete
+and no longer needed before version 1.0.</em> Here's what VLAM can describe:</p>
 <ul>
 <li><a href="#interpreter">Interpreter</a></li>
 <li><a href="#editor">Code editor</a></li>
@@ -48,12 +50,12 @@ are attributes of the html tag "title".</p>
 <tr>
 	<td><code>canvas</code></td>
 	<td>Inserts a &lt;canvas&gt; for pixel-based drawing after the &lt;pre&gt; 
-	element.</td>
+	element. <em>May become obsolete before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>plot</code></td>
 	<td>Inserts a &lt;canvas&gt; used for plotting functions after the 
-	&lt;pre&gt; element.</td>
+	&lt;pre&gt; element. <em>May become obsolete before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>no-copy</code></td>
@@ -77,7 +79,7 @@ are attributes of the html tag "title".</p>
 	<td><code>area = (width, height)</code></td>
 	<td>Set the size of the drawing &lt;canvas&gt; (canvas or plot); the 
 	default is a square region, 400 pixels in size.<br/>
-	Can be used with: <code>canvas, plot</code>.</td>
+	Can be used with: <code>canvas, plot</code>. <em>May become obsolete before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>no-pre</code></td>
@@ -94,13 +96,13 @@ are attributes of the html tag "title".</p>
 <tr>
 	<td><code>external</code></td>
 	<td><code>external</code> tells Python to spawn a new process, as an external application.<br/>
-	Can be used with: <code>editor</code>.</td>
+	Can be used with: <code>editor</code>. <em>May become obsolete before version 1.0</em></td>
 </tr>
 
 <tr>
 	<td><code>no-internal</code></td>
 	<td><code>no-internal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window.<br/>
-	Can be used with: <code>editor</code>.</td>
+	Can be used with: <code>editor</code>. <em>May become obsolete before version 1.0</em></td>
 </tr>
 
 <tr>
@@ -110,7 +112,7 @@ process using a new console/terminal.  This can be used for launching an
 external Python interpreter.  However, this might not be desired if one wants 
 to launch a GUI based app. Note that this option only has an effect for 
 programs using Windows (and not *nix).<br/>
-	Can be used with: <code>editor</code>.</td>
+	Can be used with: <code>editor</code>. <em>May become obsolete before version 1.0</em></td>
 </tr>
 
 </table>
