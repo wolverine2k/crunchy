@@ -5,6 +5,7 @@ import webbrowser
 
 import http_serve
 import cometIO
+from http_path import handle_default
 
 interpreter = """
 import code
@@ -26,16 +27,7 @@ def find_port(start):
     testsock.close()
     return finalport
 
-
-def handle_default(request):
-    ''' Returns the default test_page.'''
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.write(test_page)
-
 cometIO.do_exec(interpreter, "0")
-
-test_page = open("comet_index.html").read()
 
 port = find_port(8002)
 

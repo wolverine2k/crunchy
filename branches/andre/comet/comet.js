@@ -61,14 +61,14 @@ function push_keys(event, uid){
     if(event.keyCode != 13) return;
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
-    i = new XMLHttpRequest()
+    var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
 };
 
 function exec_code(uid){
     code = document.getElementById("code_"+uid).value;
-    j = new XMLHttpRequest();
+    var j = new XMLHttpRequest();
     j.open("POST", "/exec?uid="+uid, false);
     j.send(code);
 };
