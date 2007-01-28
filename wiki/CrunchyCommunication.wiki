@@ -86,13 +86,3 @@ The meanings of the response types are as follows:
   * *RESET*: tells the client to reset the given IO Element.
   * *JSCODE*: Will execute the given Javascript code within the page. *Not Implemented*
   * *POPUP*: Will display a popup (possibly just using alert()) to give status information to the user. *Not Implemented*
-
-=== /init ===
-
-*/init* is called to initialise things. Depending on the value of the *action* argument, different Crunchy objects can be initialised.
-
-Here are the possible values that action can take:
-  * *page*: Called once for each page, used to get a unique page ID that identifies this pages IO to crunchy. responseText will contain a pageid to use in all calls to */comet*.
-  * *interpreter*: Called to initialise an interpreter. Each call will create a new interpreter back-end. Return code is the UID of the new interpreter.
-  * *execute*: Called to initialise an execution environment. The body of the request should contain the code to be executed. Return code is the UID of the new execution environment.
-and more...
