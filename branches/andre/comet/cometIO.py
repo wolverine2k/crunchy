@@ -28,7 +28,7 @@ input_lock = threading.RLock()
 output_queue = CQueue()
 
 def do_exec(code, uid):
-    """exec code in a new thread (and isolated environment), returning a 
+    """exec code in a new thread (and isolated environment), returning a
     unique IO stream identifier"""
     global event_table, output_lock, event_lock, input_lock, input_table
     t = interpreter.Interpreter(code, uid)
@@ -44,7 +44,7 @@ def do_exec(code, uid):
 
 def exec_callback(request):
     do_exec(request.data, request.args["uid"])
-    
+
 def push_input(request):
     """for now assumes that the thread (uid) is redirected"""
     global event_lock, event_table, input_lock, input_table, output_queue
@@ -60,7 +60,7 @@ def push_input(request):
     event_lock.release()
     request.send_response(200)
     request.end_headers()
-    
+
 def comet(request):
     """does output for a whole load of processes at once"""
     global output_queue
@@ -72,21 +72,21 @@ def comet(request):
     request.wfile.write(data.tag+" "+data.channel+"\n")
     request.wfile.write(data.data)
     request.wfile.flush()
-    
-        
+
+
 class ThreadedBuffer(object):
     """Split output acording to calling thread"""
     def __init__(self, out_buf=None, in_buf=None, buf_class="STDOUT"):
         """Initialise the object,
         out_buf is the default output stream, in_buf is input
-        buf_class is a class to apply to the output - redirected output can be 
+        buf_class is a class to apply to the output - redirected output can be
         put in an html <span /> elemnt with class=buf_class.
         Interestingly, having two threads with the same uids shouldn't break anything :)
         """
         self.default_out = out_buf
         self.default_in = in_buf
         self.buf_class = buf_class
-        
+
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
         global output_queue, thread_lock, thread_set
@@ -96,7 +96,7 @@ class ThreadedBuffer(object):
         thread_set.add(uid)
         thread_lock.release()
         output_queue.put(QBL("","RESET", uid))
-        
+
     def unregister_thread(self):
         """
         Uregister the current thread.
@@ -120,7 +120,7 @@ class ThreadedBuffer(object):
         event_table[uid].set()
         event_lock.release()
         output_queue.put(QBL("","STOP", uid))
-        
+
     def write(self, data):
         """write some data"""
         global output_queue
@@ -129,12 +129,12 @@ class ThreadedBuffer(object):
             output_queue.put(QBLM(data, self.buf_class, uid))
         else:
             self.default_out.write(data)
-        
+
     def read(self, length=0):
         """len is ignored, N.B. this function is rarely, if ever, used - and is untested"""
         global input_lock, input_table
         uid = threading.currentThread().getName()
-        if self.__redirect(uid): 
+        if self.__redirect(uid):
             input_lock.acquire()
             #read the data
             data = input_table[uid]
@@ -144,12 +144,12 @@ class ThreadedBuffer(object):
         else:
             data = self.default_in.read()
         return data
-        
+
     def readline(self, length=0):
         """len is ignored, can block, complex and oft-used, needs a doctest"""
         global input_lock, input_table, event_table, event_lock
         uid = threading.currentThread().getName()
-        if self.__redirect(uid): 
+        if self.__redirect(uid):
             #get the event:
             event_lock.acquire()
             event = event_table[uid]
@@ -170,7 +170,7 @@ class ThreadedBuffer(object):
         else:
             data = self.default_in.readline()
         return data
-        
+
     def __redirect(self, uid):
         """decide if the thread with uid uid should be redirected"""
         global thread_lock, thread_set
@@ -178,7 +178,7 @@ class ThreadedBuffer(object):
         t = uid in thread_set
         thread_lock.release()
         return t
-        
+
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="STDOUT")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="STDERR")

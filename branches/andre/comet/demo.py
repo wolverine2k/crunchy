@@ -7,12 +7,6 @@ import http_serve
 import cometIO
 from http_path import handle_default
 
-interpreter = """
-import code
-t = code.InteractiveConsole()
-t.interact()
-"""
-
 def find_port(start):
     """finds the first free port on 127.0.0.1 starting at start"""
     finalport = None
@@ -27,7 +21,8 @@ def find_port(start):
     testsock.close()
     return finalport
 
-cometIO.do_exec(interpreter, "0")
+cometIO.do_exec("interpreter", "0")
+cometIO.do_exec("interpreter", "2")
 
 port = find_port(8002)
 

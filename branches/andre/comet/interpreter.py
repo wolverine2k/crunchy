@@ -1,4 +1,6 @@
-import threading, sys
+import threading
+import sys
+import code
 
 class Interpreter(threading.Thread):
     """Run python source asynchronously and parse the standard
@@ -18,16 +20,32 @@ class Interpreter(threading.Thread):
         sys.stdin.register_thread(self.name)
         sys.stdout.register_thread(self.name)
         sys.stderr.register_thread(self.name)
-        try:
-            self.ccode = compile(self.code, "crunchy_exec", 'exec')
-        except:
-            raise
-        if not self.ccode:    #code does nothing
-            return
-        try:
-            exec self.ccode in self.symbols
-        except:
-            raise
+        if self.code == "interpreter":
+            v = sys.version.split(" ")[0]
+            t = crunchyConsole()
+            t.interact('Crunchy interpreter; Python version %s'%v)
+        else:
+            try:
+                self.ccode = compile(self.code, "crunchy_exec", 'exec')
+            except:
+                raise
+            if not self.ccode:    #code does nothing
+                return
+            try:
+                exec self.ccode in self.symbols
+            except:
+                raise
         sys.stdin.unregister_thread()
         sys.stdout.unregister_thread()
         sys.stderr.unregister_thread()
+
+class Borg(object):
+    _shared_state = {}
+    def __new__(cls, *a, **k):
+        obj = object.__new__(cls, *a, **k)
+        obj.__dict__ = cls._shared_state
+        return obj
+
+class crunchyConsole(Borg, code.InteractiveConsole):
+    def __init__(self):
+        code.InteractiveConsole.__init__(self)
