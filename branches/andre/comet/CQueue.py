@@ -6,59 +6,49 @@ If two subseququent items can be combined, they will be
 from time import sleep
 from threading import RLock, Event
 
-class Queueable(object):
-    """abstract base class for all queueable objects"""
+class SingleOutput(object):
+    """Mergeable Queues"""
     def __init__(self, data, tag, channel):
         self.data = data
         self.tag = tag
         self.channel = channel
-    def merge(self, next):
-        """merge this queue element with the next one, returns true if successful"""
-        return False
-    def __repr__(self):
-        return self.data
-class QueueableMergeable(Queueable):
-    """mergable text things to queue"""
-    def merge(self, next):
-        if (type(next) is QueueableMergeable) and (next.tag == self.tag) and (next.channel == self.channel):
-            self.data += next.data
+
+    def can_merge(self, other):
+        if other.data and (other.tag == self.tag) and (other.channel == self.channel):
             return True
         else:
             return False
 
 
-class CQueue(object):
+class OutputQueue(object):
     """implemented using python lists"""
     def __init__(self):
-        self.data = []
+        self.queues = []
         self.lock = RLock()
-        self.get_event = Event()
-    def size(self):
-        """only approximately right"""
-        return len(self.data)
-        
+        self.event = Event()
+
     def get(self):
-        """always blocks until new data available, multiple clients will 
+        """always blocks until new data available, multiple clients will
         be handled in a non-det order"""
         while True:
-            self.get_event.clear()
+            self.event.clear()
             self.lock.acquire()
-            if len(self.data) > 0:
-                t = self.data[0]
-                del self.data[0]
+            if len(self.queues) > 0:
+                t = self.queues[0]
+                del self.queues[0]
                 self.lock.release()
                 return t
             self.lock.release()
-            self.get_event.wait()
-            #sleep(0.5)
+            self.event.wait()
 
-    def put(self, t):
+    def put(self, output):
         self.lock.acquire()
-        if len(self.data) > 0:
-            if not self.data[-1].merge(t):
-                self.data.append(t)
+        if len(self.queues) > 0:
+            if self.queues[-1].can_merge(output):
+                self.queues[-1].data += output.data
+            else:
+                self.queues.append(output)
         else:
-            
-            self.data.append(t)
+            self.queues.append(output)
         self.lock.release()
-        self.get_event.set()
+        self.event.set()

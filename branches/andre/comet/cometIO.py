@@ -1,15 +1,11 @@
 """
 do some asynch IO
-queue_data() is used to queue up input
 """
 
 import threading
 import interpreter
 import sys
-from CQueue import CQueue, Queueable, QueueableMergeable
-
-QBL = Queueable
-QBLM = QueueableMergeable
+import CQueue
 
 # a set of active thread uids:
 thread_set = set()
@@ -23,9 +19,12 @@ event_lock = threading.RLock()
 input_table = {}
 input_lock = threading.RLock()
 
-# an output queue of pairs of (type, channel, data)
-# type is on of "STDOUT", "STDERR", "STDIN", "STOP", "RESET"
-output_queue = CQueue()
+# an output queue of pairs of (data, type, channel)
+# type is one of "STDOUT", "STDERR", "STDIN", "STOP", "RESET"
+output_queue = CQueue.OutputQueue()
+
+SingleOutput = CQueue.SingleOutput
+
 
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment), returning a
@@ -53,7 +52,7 @@ def push_input(request):
     input_lock.acquire()
     input_table[uid] += request.data
     input_lock.release()
-    output_queue.put(QBLM(request.data, "STDIN", uid))
+    output_queue.put(SingleOutput(request.data, "STDIN", uid))
     #fire the event:
     event_lock.acquire()
     event_table[uid].set()
@@ -95,7 +94,7 @@ class ThreadedBuffer(object):
         thread_lock.acquire()
         thread_set.add(uid)
         thread_lock.release()
-        output_queue.put(QBL("","RESET", uid))
+        output_queue.put(SingleOutput("","RESET", uid))
 
     def unregister_thread(self):
         """
@@ -119,14 +118,14 @@ class ThreadedBuffer(object):
         event_lock.acquire()
         event_table[uid].set()
         event_lock.release()
-        output_queue.put(QBL("","STOP", uid))
+        output_queue.put(SingleOutput("","STOP", uid))
 
     def write(self, data):
         """write some data"""
         global output_queue
         uid = threading.currentThread().getName()
         if self.__redirect(uid):
-            output_queue.put(QBLM(data, self.buf_class, uid))
+            output_queue.put(SingleOutput(data, self.buf_class, uid))
         else:
             self.default_out.write(data)
 
