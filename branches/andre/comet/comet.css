@@ -1,0 +1,19 @@
+/* Comet basic style.  To be improved upon. */
+body {max-width:800px;}
+
+.stdout {
+    color: blue;
+}
+
+.stderr {
+    color: red;
+}
+
+.input {
+    display: none;
+		width: 90%;
+}
+
+.output{
+    display:inline;
+}
