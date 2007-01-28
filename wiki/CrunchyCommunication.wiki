@@ -31,7 +31,7 @@ From then on, whenever the */helloworld* page is requested, the string `"Hello W
 The CrunchyHTTPRequest objects have the following methods and attributes:
 
   * *send_response(response_code)*
-    Begins a HTTP response. The most useful response codes are 200 (OK), 404 (File not Found) and 500 (Internal Eerver Error) (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1)
+    Begins a HTTP response. The most useful response codes are 200 (OK), 404 (File not Found) and 500 (Internal Server Error) (see http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1.1)
   * *end_headers()*
     Ends the HTTP header block. Once this has been called, data can be written to the client.
   * *wfile*
@@ -67,6 +67,8 @@ HTTP/1.0 200 (OK)
 
 This is used for communication from the server. The client opens a */comet* request and the server responds when there is data to be sent. When the client has received a response it immediately opens a new request which will hang until the server responds and so on...
 
+*/comet* requests should specify a unique page id when they are fired off. ie. the full path will be something like: */comet?page=0*. This is to facilitate multiple pages connecting. These unique IDs are acquired by a call to /page_init.
+
 The responses to */comet* have a specific form. A complete response looks like:
 {{{
 Response = Response-Type SP Channel-Id CR Data
@@ -84,4 +86,3 @@ The meanings of the response types are as follows:
   * *RESET*: tells the client to reset the given IO Element.
   * *JSCODE*: Will execute the given Javascript code within the page. *Not Implemented*
   * *POPUP*: Will display a popup (possibly just using alert()) to give status information to the user. *Not Implemented*
-
