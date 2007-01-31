@@ -1,3 +1,4 @@
+#labels Featured
 a place to suggest and submit code examples for crunchy to use.
 
 = Introduction =
@@ -10,8 +11,8 @@ This might be superfluous, but I thought it would be nice to have somewhere to s
 
 === The Midpoint-Line Algorithm ===
 
-A short introduction to the Midpoint-Line Algorithm, showing off the graphics Canvas.
-
+A short introduction to the Midpoint-Line (Bresenham's) Algorithm, showing off the graphics Canvas.
+See http://en.wikipedia.org/wiki/Bresenham%27s_algorithm
 == Sound ==
 
 == Other ==
