@@ -13,6 +13,8 @@ This might be superfluous, but I thought it would be nice to have somewhere to s
 
 A short introduction to the Midpoint-Line (Bresenham's) Algorithm, showing off the graphics Canvas.
 See http://en.wikipedia.org/wiki/Bresenham%27s_algorithm
+
+This would be an example of crunchy in a more pure CS setting, not strictly a python one.
 == Sound ==
 _no examples yet_
 == Other ==
