@@ -1,0 +1,17 @@
+a place to suggest and submit code examples for crunchy to use.
+
+= Introduction =
+This might be superfluous, but I thought it would be nice to have somewhere to suggest and keep track of new code examples for crunchy.
+
+
+= Examples =
+
+== Graphics ==
+
+=== The Midpoint-Line Algorithm ===
+
+A short introduction to the Midpoint-Line Algorithm, showing off the graphics Canvas.
+
+== Sound ==
+
+== Other ==
