@@ -1,4 +1,3 @@
-#labels Featured
 An overview of the new COMET based communication framework for crunchy.
 
 = Introduction =
