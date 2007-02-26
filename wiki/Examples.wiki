@@ -1,4 +1,3 @@
-#labels Featured
 a place to suggest and submit code examples for crunchy to use.
 
 = Introduction =
