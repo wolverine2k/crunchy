@@ -31,4 +31,6 @@ Crunchy will be automagically opened in a new Firefox tab.
 
 == Experiencing Crunchy ==
 
-By this point you should have a working version of Crunchy up and running. There are a few things you could do now, but I suggest having a look at the Using Crunchy section in the Tutorials menu.
+By this point you should have a working version of Crunchy up and running. There are a few things you could do now, but I suggest having a look at the _Using Crunchy_ section in the _Tutorials_ menu.
+
+If you're interested in creating Crunchy Compatible tutorials, take a at _Tutorials_ -> _Making Crunchy Tutorials_ -> _How to..._ in the menu.
