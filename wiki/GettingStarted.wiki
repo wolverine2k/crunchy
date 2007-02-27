@@ -2,13 +2,33 @@
 How to get started using Crunchy
 
 = Introduction =
+This is a short guide to starting out with Crunchy, feel free to add suggestions and comments along the way.
 
-I'm going to write a short guide to getting started with Crunchy and developing new tutorials here. Please contribute...
+== Installation ==
 
-== Windows ==
+Before you can use Crunchy, you need to download and install it. This is very simple because Crunchy doesn't need any Administrator/root privileges to run or install.
 
-todo
+First you need to download the latest version of Crunchy, you can find it under the downloads tab above.
 
-== Ubuntu Linux ==
+From here on in he procedures are slightly different for Windows and Linux, so I'll describe them separately.
 
-todo
+=== Windows ===
+
+Can someone write this please?
+
+=== Ubuntu Linux ===
+
+Ubuntu already comes with suitable versions of Python and Firefox installed, so you can proceed straight to installing Crunchy itself. This is really very simple, all you need to do is extract all the files in the archive you downloaded to some directory (I just used my home directory).
+
+Because of a bug in Ubuntu's version of Python you have to open Fireox before starting Crunchy: do so now.
+
+Open a terminal and navigate to the directory you extracted Crunchy into, then run the following command:
+{{{
+$ python crunchy.py
+}}}
+
+Crunchy will be automagically opened in a new Firefox tab.
+
+== Experiencing Crunchy ==
+
+By this point you should have a working version of Crunchy up and running. There are a few things you could do now, but I suggest having a look at the Using Crunchy section in the Tutorials menu.
