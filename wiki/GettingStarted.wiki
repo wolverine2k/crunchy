@@ -2,7 +2,7 @@
 How to get started using Crunchy
 
 = Introduction =
-This is a short guide to starting out with Crunchy, feel free to add suggestions and comments along the way.
+Here is a short guide to starting out with Crunchy, feel free to add suggestions and comments along the way. This is based on Crunchy version 0.8a.
 
 == Installation ==
 
@@ -14,9 +14,12 @@ From here on in he procedures are slightly different for Windows and Linux, so I
 
 === Windows ===
 
-Can someone write this please?
+Before you can use Crunchy on Windows, you will need to install [http://www.mozilla.com/ Firefox] and [http://python.org/ Python].
+
+Once you have those dependencies, extract the Crunchy zip file into some convenient directory. Use Explorer to navigate to that directory and go into the _crunchy_ sub-directory. Now all you need to do is double click on _crunchy.py_ and Crunchy will load and open a new browser window.
 
 === Ubuntu Linux ===
+Note: These instructions should be more or less correct for all **nix systems.
 
 Ubuntu already comes with suitable versions of Python and Firefox installed, so you can proceed straight to installing Crunchy itself. This is really very simple, all you need to do is extract all the files in the archive you downloaded to some directory (I just used my home directory).
 
@@ -34,3 +37,4 @@ Crunchy will be automagically opened in a new Firefox tab.
 By this point you should have a working version of Crunchy up and running. There are a few things you could do now, but I suggest having a look at the _Using Crunchy_ section in the _Tutorials_ menu.
 
 If you're interested in creating Crunchy Compatible tutorials, take a at _Tutorials_ -> _Making Crunchy Tutorials_ -> _How to..._ in the menu.
+
