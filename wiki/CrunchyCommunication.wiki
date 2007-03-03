@@ -83,5 +83,5 @@ The meanings of the response types are as follows:
   * *STDERR*: Is similar, but for stderr output.
   * *STOP*: Indicates that ouput has ended, tells the client to disable input for that element.
   * *RESET*: tells the client to reset the given IO Element.
-  * *JSCODE*: Will execute the given Javascript code within the page. *Not Implemented*
+  * *JSCODE*: Will execute the given Javascript code within the page.
   * *POPUP*: Will display a popup (possibly just using alert()) to give status information to the user. *Not Implemented*
