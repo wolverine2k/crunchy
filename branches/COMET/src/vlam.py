@@ -29,6 +29,8 @@ def uidgen():
     return data
 
 class CrunchyPage(object):
+    # hander is string -> string -> handler function
+    handlers = {}
     def __init__(self, filehandle):
         self.tree = HTMLTreeBuilder.parse(filehandle)
         self.head = self.tree.find("head")
@@ -65,24 +67,11 @@ class CrunchyPage(object):
             
     def process_body(self):
         self.body.attrib["onload"] = 'runOutput("0")'
-        for pre in self.body.getiterator('pre'):
-            print "found pre"
-            self.process_pre(pre)
-            
-    def process_pre(self, pre):
-        if "title" in pre.attrib:
-            if pre.attrib["title"] == "interpreter":
-                #pre is to become an interpreter
-                pre.tag = "span"
-                uid = self.insert_interpreter()
-                self.insert_output(pre, uid)
-                
-                
-            elif pre.attrib["title"] == "editor":
-                #pre is to become an editor
-                pre.tag = "span"
-                uid = self.insert_editor(pre)
-                self.insert_output(pre, uid)
+        for tag in CrunchyPage.handlers:
+            for elem in self.body.getiterator(tag):
+                if "title" in elem.attrib:
+                    if elem.attrib["title"] in CrunchyPage.handlers[tag]:
+                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, uidgen())
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,
@@ -103,26 +92,6 @@ class CrunchyPage(object):
         canvas.attrib["height"] = "400"
         canvas.attrib["class"] = "crunchy_canvas"
         canvas.text = "You need a browser that supports &lt;canvas&gt; for this to work"
-        
-    def insert_interpreter(self):
-        """inserts an interpreter (actually the js code to initialise an interpreter)"""
-        uid = uidgen()
-        self.add_js_code('init_interp("%s");' % uid)
-        return uid
-        
-    def insert_editor(self, elem):
-        uid = uidgen()
-        inp = et.SubElement(elem, "textarea")
-        inp.attrib["rows"] = "10"
-        inp.attrib["cols"] = "80"
-        inp.attrib["id"] = "code_" + uid
-        inp.text = "\n"
-        et.SubElement(elem, "br")
-        btn = et.SubElement(elem, "button")
-        btn.attrib["onclick"] = "exec_code('%s')" % uid
-        btn.text = "Execute"
-        et.SubElement(elem, "br")
-        return uid
         
     def read(self):
         fake_file = StringIO()

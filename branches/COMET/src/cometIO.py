@@ -43,9 +43,6 @@ def do_exec(code, uid):
     event_table[uid]=threading.Event()
     event_lock.release()
     t.start()
-
-def exec_callback(request):
-    do_exec(request.data, request.args["uid"])
     
 def push_input(request):
     """for now assumes that the thread (uid) is redirected"""

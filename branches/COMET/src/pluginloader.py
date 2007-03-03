@@ -9,8 +9,9 @@ from CrunchyPlugin import CrunchyPlugin
 imported_plugin_classes = []
 instantiated_plugins = []
 
-def init_plugin_system(plugins):
+def init_plugin_system(server, plugins):
     """load the plugins"""
+    CrunchyPlugin.server = server
     if not "plugins/" in sys.path:
         sys.path.insert(0, "plugins/")
     for plugin in plugins:
