@@ -49,7 +49,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         argstring = ""
         if self.path.find("?") > -1:
             realpath, argstring = self.path.split("?")
-        self.path = realpath
+        self.path = urllib.unquote(realpath)
         self.args = {}
         if argstring:
             arg = []
