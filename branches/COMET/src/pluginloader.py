@@ -4,25 +4,28 @@ pluginloader.py: Loading plugins
 
 import sys
 import os
-
-class CrunchyPlugin(object):
-    """superclass for all Crunchy Plugins"""
-    pass
+from CrunchyPlugin import CrunchyPlugin
     
-imported_plugins = []
- 
-def register_plugin(plugin):
-    global imported_plugins
-    imported_plugins.append(plugin)
-        
+imported_plugin_classes = []
+instantiated_plugins = []
 
 def init_plugin_system(plugins):
+    """load the plugins"""
     if not "plugins/" in sys.path:
         sys.path.insert(0, "plugins/")
     for plugin in plugins:
-        __import__ (plugin, None, None, [''])
-    
+        mod = __import__ (plugin, globals())
+        for name in dir(mod):
+            obj = getattr(mod, name)
+            try:
+                if CrunchyPlugin in obj.__bases__:
+                    imported_plugin_classes.append(obj)
+            except AttributeError:
+                pass
+    for plugin in imported_plugin_classes:
+        instantiated_plugins.append(plugin())
+
+
 
 if __name__ == "__main__":
-    init_plugin_system(["testplugins","test"])
-    print imported_plugins
+    init_plugin_system(["testplugins"])
