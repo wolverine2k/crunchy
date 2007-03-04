@@ -52,7 +52,7 @@ Now we want our plugin to do something useful... The simplest part of the API is
 
 Go ahead and create a new plugin class:
 {{{
-class HelloHTTP(CruchyPlugin):
+class HelloHTTP(CrunchyPlugin):
 }}}
 
 We need to create a custom http request handling method:
