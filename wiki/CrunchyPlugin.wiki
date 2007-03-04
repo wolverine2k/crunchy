@@ -1,9 +1,11 @@
 #labels Phase-Design
-Documentation for the Crunchy Plugin System *Note: This does not apply to the current 0.8a release*
+Documentation for the Demo Crunchy Plugin System *Note: This does not apply to the current 0.8a release*
 
 Updated 4 March '07
 
 = The Crunchy Architecture =
+
+This describes my proposed plugin system, at the moment it is mainly just a set of ideas that have been sketchily implemented.
 
 Crunchy has a two-tier architecture, it is a set of plugins running on a core which provides certain basic services.
 
@@ -15,6 +17,7 @@ The following basic services are supplied by the Crunchy core:
   * HTTP Serving
   * AJAX/COMET based communication with the page
   * Code execution (with a matching IO widget for the UI)
+  * Python Syntax Highlighting (Not yet implemented)
 
 = The Plugin API =
 
