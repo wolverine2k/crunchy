@@ -1,13 +1,18 @@
 Documentation for the Crunchy Plugin API *This does not apply to the current 0.8a release*
 
+Correct as of the Morning of the 5th of March '07.
+
 = Introduction =
 
 Crunchy is turning into a web framework with plugins.  These plugins handle almost all of the Crunchy-specific work, so the core application could easily be adapted for other uses (although it really is pretty basic).
 
+Some things I'm thinking of adding: 
+  * A way of knowing what services a plugin provides and what services it requires without registering it.
+  * Using the above to determine loading order. This would be wonderfully complicated and technical and great fun :)
+  
 = CrunchyPlugin =
 
 This is the base class for all plugins.
-
 
 It has the following methods:
 
@@ -81,11 +86,13 @@ Executes some code in a new thread. Uses `uid` as the IO redirection ID (see Cru
 
 == register_service(self, function) ==
 
-*This must not be overriden by subclasses*
+*This must not be overriden by any subclasses*
 
 Creates a new service. Services are functions accessible from all plugins.
 
 `function` should be a callable object. Once registered it will be available to all plugins by calling `self.service_name()` where `service_name` is function.__name__.
+
+*Note:* While it is currently possible to override all the methods described in this documentation, it is *NOT* recommended. In future it will probably be disallowed.
 
 Example:
 {{{
@@ -112,10 +119,49 @@ For now this is more or less a SimpleHTTPRequestHandler object, but in future it
 
 #todo: design a proper API for this
 
+Here are some instance variables:
+
+== path ==
+
+A String containing the path of the http request.
+
+== args ==
+
+A dict containing any arguments that were encodeed in the URL.
+
+== data ==
+
+A string containing any data sent in the body of the request, only really relevant to POST requests.
+
+And some useful methods:
+
+== send_response(code) ==
+
+Begins an HTTP response. Sends off the `code` as the HTTP response code.
+
+== end_headers() ==
+
+Ends the HTTP header block and readies the connection for data to be sent.
+
+== wfile.write(data) ==
+
+Writes data to the connection.
+
+*Note:* This will definately change in future to just `write()` or `write_data()`.
+
+Example:
+{{{
+def custom_http_handler(request):
+    print request.path
+    request.send_respoonse(200)
+    request.end_headers()
+    request.wfile.write("Hello!")
+}}}
+
 = CrunchyPage =
 
 This is the object used to parse and store the state of a VLAM page.
 
-It is currently not at all developer friendly.
+It is currently not at all developer friendly or documentable (I'm still in the process of moving stuff out of here and into plugins).
 
 #todo: get a proper API in here too.
