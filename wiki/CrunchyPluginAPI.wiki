@@ -1,0 +1,121 @@
+Documentation for the Crunchy Plugin API *This does not apply to the current 0.8a release*
+
+= Introduction =
+
+Crunchy is turning into a web framework with plugins.  These plugins handle almost all of the Crunchy-specific work, so the core application could easily be adapted for other uses (although it really is pretty basic).
+
+= CrunchyPlugin =
+
+This is the base class for all plugins.
+
+
+It has the following methods:
+
+== __init__(self) ==
+
+*This must not be overridden by any subclasses.*
+
+Provides general plugin initialisation. Calls the `register()` method.
+
+== register(self) ==
+
+*This must be overriden by all sublasses.*
+
+Provides plugin-specific initialisation.
+
+Example:
+{{{
+class MyPlugin(CrunchyPlugin):
+    def register(self):
+        print "registering..."
+}}}
+
+== register_http_handler(self, pattern, handler) ==
+
+*This should not be overriden by subclasses*
+
+Used to register a custom handler for an http path.
+
+If `pattern` is `None` then handler will be registered as the default handler (which handles all otherwise unmatched paths). Otherwise `pattern` should be a string containing the path to match.
+
+`handler` should be a callable object that takes one argument: A CrunchyRequest object (see below).
+
+{{{
+class MyPlugin(CrunchyPlugin):
+    def register(self):
+        self.register_http_handler("/mypath", self.mypath_handler)
+    def mypath_handler(self, request):
+        print "handling /mypage"
+}}}
+
+== register_vlam_handler(self, elem_type, option, handler) ==
+
+*This should not be overriden by subclasses*
+
+Used to register a custom handler for an VLAM element.
+
+`elem_type` and `option` should be Strings. `elem_type` should match the tag of the html object and `option` should match the value of its type attribute.
+
+`handler` should be a callable object that takes three arguments: A CrunchyPage object (see below), an elementtree.Element object and a unique string ID (uid).
+
+Example:
+{{{
+class MyPlugin(CrunchyPlugin):
+    def register(self):
+        self.register_vlam_handler("pre", "editor", self.insert_editor)
+    def insert_editor(self, page, elem, uid):
+        print "inserting an editor..."
+}}}
+
+== create_vlam_page(self, filehandle) ==
+
+*This should not be overriden by subclasses*
+
+Creates (and returns) a CrunchyPage object from filehandle. CrunchyPage objects should not be created directly but via this factory function.
+
+== exec_code(self, uid) ==
+
+*This should not be overriden by subclasses*
+
+Executes some code in a new thread. Uses `uid` as the IO redirection ID (see CrunchyCommunication).
+
+== register_service(self, function) ==
+
+*This must not be overriden by subclasses*
+
+Creates a new service. Services are functions accessible from all plugins.
+
+`function` should be a callable object. Once registered it will be available to all plugins by calling `self.service_name()` where `service_name` is function.__name__.
+
+Example:
+{{{
+class ServiceTest(CrunchyPlugin):
+    """tests the custom service functionality"""
+    def register(self):
+        self.register_service(ServiceTest.test_service)
+        self.register_http_handler("/service_test", self.test_http)
+        
+    def test_http(self, rq):
+        rq.send_response(200)
+        rq.end_headers()
+        rq.wfile.write(self.test_service({"test_key1":1}))
+        
+    def test_service(self, arg):
+        return str(arg)
+}}}
+
+= CrunchyRequest =
+
+This is the object passed to custom http handlers (see above).
+
+For now this is more or less a SimpleHTTPRequestHandler object, but in future it will become more customised and deveoper friendly.
+
+#todo: design a proper API for this
+
+= CrunchyPage =
+
+This is the object used to parse and store the state of a VLAM page.
+
+It is currently not at all developer friendly.
+
+#todo: get a proper API in here too.
