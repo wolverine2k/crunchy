@@ -39,3 +39,10 @@ class CrunchyPlugin(object):
     def exec_code(self, code, uid):
         """execute some code in a given uid"""
         cometIO.do_exec(code, uid)
+        
+    def register_service(self, function):
+        """Register a new service, takes a callable object.
+        Once a service is registered it will be available to all plugins by calling
+        self.service_name(), where service_name = function.__name__
+        """
+        setattr(CrunchyPlugin, function.__name__, function)
