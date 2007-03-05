@@ -11,7 +11,8 @@ Some things I'm thinking of adding:
   * Using the above to determine loading order. This would be wonderfully complicated and technical and great fun :)
 
 Here is a diagram explaining what happens when a normal VLAM page is created:
-http://mar05a.imghost.us/cYDe.png
+
+http://mar05b.imghost.us/SYwO.png
 
 = CrunchyPlugin =
 
