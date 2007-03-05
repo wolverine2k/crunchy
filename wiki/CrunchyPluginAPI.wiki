@@ -9,7 +9,10 @@ Crunchy is turning into a web framework with plugins.  These plugins handle almo
 Some things I'm thinking of adding: 
   * A way of knowing what services a plugin provides and what services it requires without registering it.
   * Using the above to determine loading order. This would be wonderfully complicated and technical and great fun :)
-  
+
+Here is a diagram explaining what happens when a normal VLAM page is created:
+http://mar05a.imghost.us/cYDe.png
+
 = CrunchyPlugin =
 
 This is the base class for all plugins.
