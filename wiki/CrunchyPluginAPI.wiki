@@ -1,6 +1,6 @@
 Documentation for the Crunchy Plugin API *This does not apply to the current 0.8a release*
 
-Correct as of the Morning of the 5th of March '07.
+*Note: This is no longer in sync with the latest SVN head*
 
 = Introduction =
 
