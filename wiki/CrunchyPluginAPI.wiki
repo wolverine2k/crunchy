@@ -6,42 +6,40 @@ Documentation for the Crunchy Plugin API *This does not apply to the current 0.8
 
 Crunchy is turning into a web framework with plugins.  These plugins handle almost all of the Crunchy-specific work, so the core application could easily be adapted for other uses (although it really is pretty basic).
 
-Some things I'm thinking of adding: 
-  * A way of knowing what services a plugin provides and what services it requires without registering it.
-  * Using the above to determine loading order. This would be wonderfully complicated and technical and great fun :)
+== What is a plugin? ==
 
-Here is a diagram explaining what happens when a normal VLAM page is created:
+A plugin is a .py file in the src/plugins directory which contains at least a register() function. A plugin can optionally specify a set of services it provides and another set of services that it requires. Plugins will be registered in an order that guarantees all required services to be available at registration time.
 
-http://mar05b.imghost.us/SYwO.png
+=== Contents of a plugin module ====
 
-= CrunchyPlugin =
-
-This is the base class for all plugins.
-
-It has the following methods:
-
-== __init__(self) ==
-
-*This must not be overridden by any subclasses.*
-
-Provides general plugin initialisation. Calls the `register()` method.
-
-== register(self) ==
-
-*This must be overriden by all sublasses.*
-
-Provides plugin-specific initialisation.
-
-Example:
+There are only three elements of a plugin module specified by the API:
+  * `register()` is a function used to register the plugin. Plugins should not perform any initialisation until this is called and all services specified in `provides` must be available after this is called.
+  * `requires` is a set of services required by this plugin.
+  * `provides` is another set of services that this plugin provides.
+  
+Example plugin file:
 {{{
-class MyPlugin(CrunchyPlugin):
-    def register(self):
-        print "registering..."
+# import the API:
+from CrunchyPlugin import *
+
+provides = set(["http_hello"])
+requires = set()
+
+def register():
+    """Go ahead and register the plugin"""
+    register_http_handler(None, hello_handler)
+    
+...
 }}}
+= The `CrunchyPlugin` Module =
 
-== register_http_handler(self, pattern, handler) ==
+This contains virtually all of the API.
 
-*This should not be overriden by subclasses*
+*Note: Whereas the API used to be object-oriented, this was overkill and it is now just plain procedural.*
+
+The `CrunchyPlugin` module provides the following functions:
+
+== register_http_handler(pattern, handler) ==
 
 Used to register a custom handler for an http path.
 
@@ -50,16 +48,14 @@ If `pattern` is `None` then handler will be registered as the default handler (w
 `handler` should be a callable object that takes one argument: A CrunchyRequest object (see below).
 
 {{{
-class MyPlugin(CrunchyPlugin):
-    def register(self):
-        self.register_http_handler("/mypath", self.mypath_handler)
-    def mypath_handler(self, request):
-        print "handling /mypage"
+def register():
+    register_http_handler("/mypath", mypath_handler)
+    
+def mypath_handler(request):
+    print "handling /mypage"
 }}}
 
-== register_vlam_handler(self, elem_type, option, handler) ==
-
-*This should not be overriden by subclasses*
+== register_vlam_handler(elem_type, option, handler) ==
 
 Used to register a custom handler for an VLAM element.
 
@@ -69,50 +65,42 @@ Used to register a custom handler for an VLAM element.
 
 Example:
 {{{
-class MyPlugin(CrunchyPlugin):
-    def register(self):
-        self.register_vlam_handler("pre", "editor", self.insert_editor)
-    def insert_editor(self, page, elem, uid):
-        print "inserting an editor..."
+def register(self):
+    register_vlam_handler("pre", "editor", self.insert_editor)
+    
+def insert_editor(page, elem, uid):
+    print "inserting an editor..."
 }}}
 
-== create_vlam_page(self, filehandle) ==
-
-*This should not be overriden by subclasses*
+== create_vlam_page(filehandle) ==
 
 Creates (and returns) a CrunchyPage object from filehandle. CrunchyPage objects should not be created directly but via this factory function.
 
-== exec_code(self, uid) ==
+Basically this is used to kick-start the parsing of a VLAM file.
 
-*This should not be overriden by subclasses*
+== exec_code(uid) ==
 
 Executes some code in a new thread. Uses `uid` as the IO redirection ID (see CrunchyCommunication).
 
-== register_service(self, function) ==
+== register_service(function, servicename) ==
 
-*This must not be overriden by any subclasses*
+Creates a new service. Services are functions accessible from all plugins as CrunchyPlugins.services.servicename().
 
-Creates a new service. Services are functions accessible from all plugins.
-
-`function` should be a callable object. Once registered it will be available to all plugins by calling `self.service_name()` where `service_name` is function.__name__.
-
-*Note:* While it is currently possible to override all the methods described in this documentation, it is *NOT* recommended. In future it will probably be disallowed.
+`function` should be a callable object. 
 
 Example:
 {{{
-class ServiceTest(CrunchyPlugin):
-    """tests the custom service functionality"""
-    def register(self):
-        self.register_service(ServiceTest.test_service)
-        self.register_http_handler("/service_test", self.test_http)
-        
-    def test_http(self, rq):
-        rq.send_response(200)
-        rq.end_headers()
-        rq.wfile.write(self.test_service({"test_key1":1}))
-        
-    def test_service(self, arg):
-        return str(arg)
+def register():
+    register_service(test_service)
+    register_http_handler("/service_test", test_http)
+    
+def test_http(rq):
+    rq.send_response(200)
+    rq.end_headers()
+    rq.wfile.write(services.test_service({"test_key_1":1}))
+    
+def test_service(arg):
+    return str(arg)
 }}}
 
 = CrunchyRequest =
