@@ -1,12 +1,12 @@
 """This plugin handles all execution requests on /exec"""
 
-from CrunchyPlugin import CrunchyPlugin
+from CrunchyPlugin import *
 
-class ExecPlugin(CrunchyPlugin):
-    def register(self):
-        self.register_http_handler("/exec", self.handler)
+
+def register():
+    register_http_handler("/exec", exec_handler)
         
-    def handler(self, request):
-        """handle an execution request"""
-        print "executing..."
-        self.exec_code(request.data, request.args["uid"])
+def exec_handler(request):
+    """handle an execution request"""
+    print "executing..."
+    exec_code(request.data, request.args["uid"])

@@ -4,62 +4,62 @@ from imp import find_module
 from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 
-from CrunchyPlugin import CrunchyPlugin
+from CrunchyPlugin import *
 
-class DefaultLoader(CrunchyPlugin):
-    def register(self):
-        self.register_http_handler(None, self.handler)
+
+def register():
+    register_http_handler(None, handler)
     
-    def path_to_filedata(self, path, root):
-        """
-        Given a path, finds the matching file and returns a read-only reference 
-        to it. If the path specifies a directory and does not have a trailing slash
-        (ie. /example instead of /example/) this function will return none, the 
-        browser should then be redirected to the same path with a trailing /.
-        Root is the fully qualified path to server root.
-        Paths containing .. will return an error message.
-        POSIX version, should work in Windows.
-        """
-        if path.find("/../") != -1:
+def path_to_filedata(path, root):
+    """
+    Given a path, finds the matching file and returns a read-only reference 
+    to it. If the path specifies a directory and does not have a trailing slash
+    (ie. /example instead of /example/) this function will return none, the 
+    browser should then be redirected to the same path with a trailing /.
+    Root is the fully qualified path to server root.
+    Paths containing .. will return an error message.
+    POSIX version, should work in Windows.
+    """
+    if path.find("/../") != -1:
+        return error_page(path)
+    npath = normpath(join(root, normpath(path[1:])))
+    if isdir(npath):
+        if path[-1] != "/":
+            return None
+        else:
+            return get_directory(npath)
+    else:
+        try:
+            if npath.endswith(".html") or npath.endswith(".htm"):
+                return create_vlam_page(open(npath)).read()
+            return open(npath).read()
+        except IOError:
             return error_page(path)
-        npath = normpath(join(root, normpath(path[1:])))
-        if isdir(npath):
-            if path[-1] != "/":
-                return None
-            else:
-                return self.get_directory(npath)
-        else:
-            try:
-                if npath.endswith(".html") or npath.endswith(".htm"):
-                    return self.create_vlam_page(open(npath)).read()
-                return open(npath).read()
-            except IOError:
-                return error_page(path)
-            
-    def handler(self, request):
-        """the actual handler"""
-        data = self.path_to_filedata(request.path, root_path)
-        if data == None:
-            request.send_response(301)
-            request.send_header("Location", request.path + "/")
-            request.end_headers()
-        else:
-            request.send_response(200)
-            request.end_headers()
-            request.wfile.write(data)
-            
-    def get_directory(self, npath):
-        childs = listdir(npath)
-        childs = childs[:]
-        annotate(npath, childs)
-        for i in default_pages:
-            if i in childs:
-                return self.path_to_filedata("/"+i, npath)
-        tstring = ""
-        for child in childs:
-            tstring += '<li><a href="%s">%s</a></li>' % (child, child)
-        return dir_list_page % tstring
-    
+        
+def handler(request):
+    """the actual handler"""
+    data = path_to_filedata(request.path, root_path)
+    if data == None:
+        request.send_response(301)
+        request.send_header("Location", request.path + "/")
+        request.end_headers()
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write(data)
+        
+def get_directory(npath):
+    childs = listdir(npath)
+    childs = childs[:]
+    annotate(npath, childs)
+    for i in default_pages:
+        if i in childs:
+            return path_to_filedata("/"+i, npath)
+    tstring = ""
+    for child in childs:
+        tstring += '<li><a href="%s">%s</a></li>' % (child, child)
+    return dir_list_page % tstring
+
 root_path = dirname(find_module("crunchy")[1])
 
 print "Root path is %s" % root_path
