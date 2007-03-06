@@ -28,6 +28,6 @@ if __name__=="__main__":
     server = http_serve.MyHTTPServer(('127.0.0.1', port), http_serve.HTTPRequestHandler)
     server.register_handler(cometIO.push_input, "/input")
     server.register_handler(cometIO.comet, "/comet")
-    pluginloader.init_plugin_system(server, ["vlam_doctest","testplugins","handle_default","execution","vlam_elements"])
+    pluginloader.init_plugin_system(server, ["vlam_doctest","vlam_editor","testplugins","handle_default","execution","vlam_interpreter"])
     webbrowser.open('http://127.0.0.1:' + str(port) + '/')
     server.serve_forever()

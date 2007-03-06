@@ -1,15 +1,14 @@
-"""A plugin that handles all the VLAM elements"""
-
 from CrunchyPlugin import *
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
+provides = set(["editor_subwidget"])
+
 
 def register():
     register_vlam_handler("pre", "editor", insert_editor)
-    register_vlam_handler("pre", "interpreter", insert_interpreter)
     register_service(insert_editor_subwidget, "insert_editor_subwidget")
         
 def insert_editor_subwidget(elem, uid, code="\n"):
@@ -31,9 +30,3 @@ def insert_editor(page, elem, uid):
     btn.text = "Execute"
     et.SubElement(elem, "br")
     page.insert_output(elem, uid)
-        
-def insert_interpreter(page, elem, uid):
-    """inserts an interpreter (actually the js code to initialise an interpreter)"""
-    page.add_js_code('init_interp("%s");' % uid)
-    page.insert_output(elem, uid)
-    

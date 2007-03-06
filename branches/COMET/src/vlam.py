@@ -14,6 +14,8 @@ import md5
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
+from cometIO import add_output_queue
+
 def uidgen():
     """a moderately decent uid generator,
     see http://aspn.activestate.python.com/ASPN/Cookbook/Python/Recipe/213761
@@ -32,6 +34,8 @@ class CrunchyPage(object):
     # hander is string -> string -> handler function
     handlers = {}
     def __init__(self, filehandle):
+        self.pageid = uidgen()
+        add_output_queue(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
@@ -66,12 +70,12 @@ class CrunchyPage(object):
         self.head.append(js)
             
     def process_body(self):
-        self.body.attrib["onload"] = 'runOutput("0")'
+        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         for tag in CrunchyPage.handlers:
             for elem in self.body.getiterator(tag):
                 if "title" in elem.attrib:
                     if elem.attrib["title"] in CrunchyPage.handlers[tag]:
-                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, uidgen())
+                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, self.pageid + ":" + uidgen())
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,

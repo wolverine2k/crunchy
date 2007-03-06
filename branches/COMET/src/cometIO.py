@@ -25,9 +25,13 @@ event_lock = threading.RLock()
 input_table = {}
 input_lock = threading.RLock()
 
-# an output queue of pairs of (type, channel, data)
+# output queues of pairs of (type, channel, data)
 # type is on of "STDOUT", "STDERR", "STDIN", "STOP", "RESET"
-output_queue = CQueue()
+# indexed by pageid
+output_queues = {}
+
+def add_output_queue(pageid):
+    output_queues[pageid] = CQueue()
 
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment), returning a 
@@ -46,13 +50,14 @@ def do_exec(code, uid):
     
 def push_input(request):
     """for now assumes that the thread (uid) is redirected"""
-    global event_lock, event_table, input_lock, input_table, output_queue
+    global event_lock, event_table, input_lock, input_table, output_queues
     uid = request.args["uid"]
+    pageid = uid.split(":")[0]
     #push the data
     input_lock.acquire()
     input_table[uid] += request.data
     input_lock.release()
-    output_queue.put(QBLM(request.data, "STDIN", uid))
+    output_queues[pageid].put(QBLM(request.data, "STDIN", uid))
     #fire the event:
     event_lock.acquire()
     event_table[uid].set()
@@ -62,9 +67,10 @@ def push_input(request):
     
 def comet(request):
     """does output for a whole load of processes at once"""
-    global output_queue
+    global output_queues
+    pageid = request.args["pageid"]
     #wait for some data
-    data = output_queue.get()
+    data = output_queues[pageid].get()
     # OK, data found
     request.send_response(200)
     request.end_headers()
@@ -88,13 +94,14 @@ class ThreadedBuffer(object):
         
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
-        global output_queue, thread_lock, thread_set
+        global output_queues, thread_lock, thread_set
+        pageid = uid.split(":")[0]
         mythread = threading.currentThread()
         mythread.setName(uid)
         thread_lock.acquire()
         thread_set.add(uid)
         thread_lock.release()
-        output_queue.put(QBL("","RESET", uid))
+        output_queues[pageid].put(QBL("","RESET", uid))
         
     def unregister_thread(self):
         """
@@ -104,11 +111,12 @@ class ThreadedBuffer(object):
         Assumes that no more input will be written specifically for this thread.
         In future IO for this thread will go via the defaults.
         """
-        global output_queue, input_lock, input_table, thread_lock, thread_set, event_lock, event_table
+        global output_queues, input_lock, input_table, thread_lock, thread_set, event_lock, event_table
         uid = threading.currentThread().getName()
         if not self.__redirect(uid):
             return
         uid = threading.currentThread().getName()
+        pageid = uid.split(":")[0]
         input_lock.acquire()
         del input_table[uid]
         input_lock.release()
@@ -118,14 +126,15 @@ class ThreadedBuffer(object):
         event_lock.acquire()
         event_table[uid].set()
         event_lock.release()
-        output_queue.put(QBL("","STOP", uid))
+        output_queues[pageid].put(QBL("","STOP", uid))
         
     def write(self, data):
         """write some data"""
-        global output_queue
+        global output_queues
         uid = threading.currentThread().getName()
+        pageid = uid.split(":")[0]
         if self.__redirect(uid):
-            output_queue.put(QBLM(data, self.buf_class, uid))
+            output_queues[pageid].put(QBLM(data, self.buf_class, uid))
         else:
             self.default_out.write(data)
         

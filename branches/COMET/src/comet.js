@@ -58,7 +58,7 @@ function runOutput(channel)
             }
         }
     };
-    h.open("GET", "/comet?channel="+channel, true);
+    h.open("GET", "/comet?pageid="+channel, true);
     h.send("");
 };
 

@@ -7,6 +7,7 @@ from dircache import listdir, annotate
 from CrunchyPlugin import *
 
 
+
 def register():
     register_http_handler(None, handler)
     

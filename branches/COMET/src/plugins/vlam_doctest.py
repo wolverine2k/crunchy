@@ -14,6 +14,9 @@ from CrunchyPlugin import *
 from element_tree import ElementTree
 et = ElementTree
 
+# we depend on the editor subwidget being provided by other plugins
+requires =  set(["editor_subwidget"])
+
 #we need to index doctest code by element uid:
 doctests = {}
 
