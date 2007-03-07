@@ -39,7 +39,7 @@ def init_plugin_system(server, plugins):
     """load the plugins"""
     CrunchyPlugin.server = server
     if not "plugins/" in sys.path:
-        sys.path.insert(0, "plugins/")
+        sys.path.insert(0, "plugins")
     imported_plugins = []
     print "Importing plugins"
     for plugin in plugins:
