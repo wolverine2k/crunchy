@@ -4,7 +4,7 @@ from CrunchyPlugin import *
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
-provides = set(["editor_subwidget"])
+provides = set(["editor_subwidget", "io_subwidget"])
 
 
 def register():
@@ -29,4 +29,4 @@ def insert_editor(page, elem, uid):
     btn.attrib["onclick"] = "exec_code('%s')" % uid
     btn.text = "Execute"
     et.SubElement(elem, "br")
-    page.insert_output(elem, uid)
+    services.insert_io_subwidget(page, elem, uid)

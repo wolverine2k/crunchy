@@ -1,16 +1,12 @@
 """
-do some asynch IO
-queue_data() is used to queue up input
+does some asynch IO
+
 """
 
 import threading
 import interpreter
 import sys
-from CQueue import CQueue, Queueable, QueueableMergeable
-
-QBL = Queueable
-QBLM = QueueableMergeable
-
+from CQueue import CQueue
 
 
 # a set of active thread uids:
@@ -25,13 +21,17 @@ event_lock = threading.RLock()
 input_table = {}
 input_lock = threading.RLock()
 
-# output queues of pairs of (type, channel, data)
-# type is on of "STDOUT", "STDERR", "STDIN", "STOP", "RESET"
-# indexed by pageid
+# output queues indexed by pageid
 output_queues = {}
 
 def add_output_queue(pageid):
     output_queues[pageid] = CQueue()
+
+def pack_output(css_class, uid, data):
+    """pack some data in suitable javascript to display it on a page"""
+    pdata = data.replace("\n", "\\n")
+    pdata = pdata.replace('"', '&#34;')
+    return """document.getElementById("out_%s").innerHTML += "<span class='%s'>%s</span>";""" % (uid, css_class, pdata)
 
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment), returning a 
@@ -57,7 +57,7 @@ def push_input(request):
     input_lock.acquire()
     input_table[uid] += request.data
     input_lock.release()
-    output_queues[pageid].put(QBLM(request.data, "STDIN", uid))
+    output_queues[pageid].put(pack_output("stdin", uid, request.data))
     #fire the event:
     event_lock.acquire()
     event_table[uid].set()
@@ -74,8 +74,7 @@ def comet(request):
     # OK, data found
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(data.tag+" "+data.channel+"\n")
-    request.wfile.write(data.data)
+    request.wfile.write(data)
     request.wfile.flush()
     
 
@@ -85,7 +84,7 @@ class ThreadedBuffer(object):
         """Initialise the object,
         out_buf is the default output stream, in_buf is input
         buf_class is a class to apply to the output - redirected output can be 
-        put in an html <span /> elemnt with class=buf_class.
+        put in an html <span /> element with class=buf_class.
         Interestingly, having two threads with the same uids shouldn't break anything :)
         """
         self.default_out = out_buf
@@ -101,7 +100,8 @@ class ThreadedBuffer(object):
         thread_lock.acquire()
         thread_set.add(uid)
         thread_lock.release()
-        output_queues[pageid].put(QBL("","RESET", uid))
+        # clear the output:
+        output_queues[pageid].put("""document.getElementById("in_%s").style.display="inline";""" % uid)
         
     def unregister_thread(self):
         """
@@ -126,7 +126,7 @@ class ThreadedBuffer(object):
         event_lock.acquire()
         event_table[uid].set()
         event_lock.release()
-        output_queues[pageid].put(QBL("","STOP", uid))
+        output_queues[pageid].put(reset_js % (uid, uid, uid))
         
     def write(self, data):
         """write some data"""
@@ -134,12 +134,12 @@ class ThreadedBuffer(object):
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
         if self.__redirect(uid):
-            output_queues[pageid].put(QBLM(data, self.buf_class, uid))
+            output_queues[pageid].put(pack_output(self.buf_class, uid, data))
         else:
             self.default_out.write(data)
         
     def read(self, length=0):
-        """len is ignored, N.B. this function is rarely, if ever, used - and is untested"""
+        """len is ignored, N.B. this function is rarely, if ever, used - and is probably untested"""
         global input_lock, input_table
         uid = threading.currentThread().getName()
         if self.__redirect(uid): 
@@ -188,5 +188,11 @@ class ThreadedBuffer(object):
         return t
         
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
-sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="STDOUT")
-sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="STDERR")
+sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
+sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
+
+reset_js = """
+document.getElementById("in_%s").style.display="inline";
+document.getElementById("out_%s").innerHTML="";
+document.getElementById("canvas_%s").style.display="none";
+"""

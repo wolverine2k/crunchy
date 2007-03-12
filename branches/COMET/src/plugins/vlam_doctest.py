@@ -15,7 +15,7 @@ from element_tree import ElementTree
 et = ElementTree
 
 # we depend on the editor subwidget being provided by other plugins
-requires =  set(["editor_subwidget"])
+requires =  set(["editor_subwidget","io_subwidget"])
 
 #we need to index doctest code by element uid:
 doctests = {}
@@ -64,8 +64,8 @@ def doctest_widget_callback(page, elem, uid):
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     et.SubElement(elem, "br")
-    # and an output subwidget (this needs to go into services:
-    page.insert_output(elem, uid)
+    # and an output subwidget:
+    services.insert_io_subwidget(page, elem, uid)
 
 # we need some javascript in the page:
 doctest_jscode= """

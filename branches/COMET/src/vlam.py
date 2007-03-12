@@ -1,6 +1,7 @@
 """
 perform vlam substitution
-right now this supports a tiny subset of the complete VLAM syntax
+
+sets up the page and calls appropriate plugins
 """
 
 from StringIO import StringIO
@@ -31,7 +32,7 @@ def uidgen():
     return data
 
 class CrunchyPage(object):
-    # hander is string -> string -> handler function
+    # handlers ::  string -> string -> handler function (sorry, haskell notation)
     handlers = {}
     def __init__(self, filehandle):
         self.pageid = uidgen()
@@ -44,8 +45,8 @@ class CrunchyPage(object):
         
     def process_head(self):
         self.load_css("/comet.css")
-        self.load_js("/comet.js")
-        self.load_js("/graphics.js")
+        #self.load_js("/comet.js")
+        self.add_js_code(comet_js)
         
     def load_css(self, filename):
         '''Inserts a css file in the <head>.'''
@@ -104,3 +105,35 @@ class CrunchyPage(object):
         # encoding is utf-8 or ascii.
         self.tree.write(fake_file)
         return fake_file.getvalue()
+
+comet_js = """
+function runOutput(channel)
+{
+    var h = new XMLHttpRequest();
+    h.onreadystatechange = function(){
+        if (h.readyState == 4) 
+        {
+            try
+            {
+                var status = h.status;
+            }
+            catch(e)
+            {
+                var status = "NO HTTP RESPONSE";
+            }
+            switch (status)
+            {
+            case 200:
+                //alert(h.responseText);
+                eval(h.responseText);
+                runOutput(channel);
+                break;
+            default:
+                //alert("Output seems to have finished");
+            }
+        }
+    };
+    h.open("GET", "/comet?pageid="+channel, true);
+    h.send("");
+};
+"""
