@@ -1,0 +1,23 @@
+= Introduction =
+
+If you have reached this page, chances are that you are familiar with Google's Summer of Code (SoC).  One of us (Johannes) was a Summer of Code sponsored student working on Crunchy last summer while the other (André) was officially the mentor.  In practice, it became an exciting collaboration for both of us.
+
+Prior to submitting a proposal for working on Crunchy as a SoC project, you should have at least tried Crunchy.  We suggest that you go through the "Using Crunchy" tutorial (which should take less than 10 minutes) and perhaps the "Making Crunchy Tutorials" (how to...).
+
+If you are adventurous, you might want to have a look at the existing code.  Note that as of March 18, we are in the process of rewriting the code in a more modular fashion, using "plugins".  We hope to conclude this before the beginning of the SoC 2007 so that the projects will be based on the new (simpler) infrastructure.
+
+
+Currently, there are virtually no existing unit tests for the Crunchy code.  Some unit tests will be added during the upcoming rewriting but it is unlikely that we will get complete coverage.  A SoC proposal may include a component dealing with improving the existing project by writing unit tests for it.
+
+= SoC ideas =
+
+The following are some ideas of varying complexity.  Some are suitable for a full project; others are shorter ones, doable in a few days by someone familiar with Crunchy and Python:
+  * Implementing rur-ple [http://rur-ple.sf.net] within Crunchy; this might be too ambitious for a SoC project.
+  * Having the option to use unittest instead of doctest as an interactive element.
+  * Session login (with possible automated emailing of log to teacher)
+  * Timed doctests.
+  * ReST-to-"Crunchy-ready-html" tool; (or wiki syntax support instead of ReST)
+  * Adapting the livewires package as a Crunchy tutorial
+  * Implementing a matplotlib (or gnuplot?) plugin for Crunchy
+
+
