@@ -13,13 +13,13 @@ Currently, there are virtually no existing unit tests for the Crunchy code.  Som
 = SoC ideas =
 
 The following are some ideas of varying complexity.  Some are suitable for a full project; others are shorter ones, doable in a few days by someone familiar with Crunchy and Python (and, possibly, a bit of Javascript):
-  * Having the option to use unittest instead of doctest as an interactive element.
-  * Session logging (with possible automated emailing of log to teacher)
-  * Timed doctests (with the "Evaluate button" appearing only for a fixed amount of time).
-  * ReST-to-"Crunchy-ready-html" tool; (or wiki syntax support instead of ReST)
+  * Having the option to use unittest instead of doctest as an interactive element (would be a simple plugin, no more than 2 weeks).
+  * Session logging (with possible automated emailing of log to teacher).
+  * Timed doctests (with the "Evaluate button" appearing only for a fixed amount of time) (should be a relatively simple change to the doctest plugin).
+  * ReST-to-"Crunchy-ready-html" tool, or wiki syntax support instead of ReST (Probably one of the more complex ideas here).
   * Adapting the livewires package as a Crunchy tutorial
-  * Implementing a matplotlib (or gnuplot?) plugin for Crunchy
-  * Improving Crunchy cross-browser support (currently only Firefox is fully supported)
+  * Implementing a matplotlib (or gnuplot?) plugin for Crunchy (This would showcase Crunchy's abilities wonderfully).
+  * Improving Crunchy cross-browser support (currently only Firefox 2.0 is fully supported) (This would require a lot of obscure javascript and CSS knowledge, but shouldn't be too complex if you know what you're doing).
   * Adapting the official Python tutorial for inclusion in Crunchy (this is a short project)
   * Implementing rur-ple [http://rur-ple.sf.net] within Crunchy; this *might* be too ambitious for a SoC project.
 
