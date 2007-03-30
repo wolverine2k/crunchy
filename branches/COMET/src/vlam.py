@@ -15,7 +15,7 @@ import md5
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
-from cometIO import add_output_queue
+from cometIO import register_new_page
 
 def uidgen():
     """a moderately decent uid generator,
@@ -36,7 +36,7 @@ class CrunchyPage(object):
     handlers = {}
     def __init__(self, filehandle):
         self.pageid = uidgen()
-        add_output_queue(self.pageid)
+        register_new_page(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")

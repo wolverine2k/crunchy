@@ -4,11 +4,12 @@ At present Crunchy can only be started from here, as a script.
 
 import socket
 import webbrowser
+import sys
 
 import http_serve
 import cometIO
 import pluginloader
-
+    
 def find_port(start):
     """finds the first free port on 127.0.0.1 starting at start"""
     finalport = None
@@ -32,3 +33,5 @@ if __name__=="__main__":
     pluginloader.init_plugin_system(server, ["io_widget", "handle_remote", "vlam_doctest", "vlam_editor", "testplugins", "handle_default", "execution", "vlam_interpreter"])
     webbrowser.open('http://127.0.0.1:' + str(port) + '/')
     server.serve_forever()
+    
+print "exiting the bad way"
