@@ -17,4 +17,4 @@ This would be an example of crunchy in a more pure CS setting, not strictly a py
 == Sound ==
 _no examples yet_
 == Other ==
-_no examples yet_
+I'm about to write a short tutorial on Binomial and Fibonacci Heaps - this will be pure CS, with very little practical application...
