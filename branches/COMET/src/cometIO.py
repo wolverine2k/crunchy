@@ -9,7 +9,9 @@ import interpreter
 import sys
 
 class StringBuffer(object):
-    """A thread safe buffer used to queue up strings that can be appended together"""
+    """A thread safe buffer used to queue up strings that can be appended 
+    together, I've left this in a separate class because it might one day be
+    useful someplace else"""
     def __init__(self):
         self.lock = threading.RLock()
         self.event = threading.Event()
@@ -18,6 +20,7 @@ class StringBuffer(object):
         """get the current contents of the buffer, if the buffer is empty, this
         always blocks until data is available.
         Multiple clients are handled in no particular order"""
+        #print "entering get"
         while True:
             self.event.clear()
             self.lock.acquire()
@@ -30,6 +33,7 @@ class StringBuffer(object):
             self.event.wait()
     def getline(self):
         """basically does the job of readline"""
+        #print "entering getline"
         while True:
                 self.event.clear()
                 self.lock.acquire()
@@ -46,12 +50,34 @@ class StringBuffer(object):
         """put some data into the buffer"""
         self.lock.acquire()
         self.data += data
-        self.lock.release()
         self.event.set()
+        self.lock.release()
+
+
+class CrunchyIOBuffer(StringBuffer):
+    """A version optimised for crunchy IO"""
+    def __init__(self):
+        StringBuffer.__init__(self)
+        self.lastwasOutput = False
+    def put_output(self, data, uid):
+        """put some output into the pipe"""
+        pdata = data.replace('"', '&#34;')
+        pdata = data.replace("\n", "\\n")
+        self.lock.acquire()
+        if self.lastwasOutput:
+            self.data = self.data[:-2] + '"%s";' % (uid, pdata)
+        else:
+            self.put("""document.getElementById("out_%s").innerHTML += "%s";""" % (uid, pdata))
+        self.lastwasOutput = True
+        self.lock.release()
+    def put(self, data):
+        """an updated version of put"""
+        self.lastwasOutput = False
+        StringBuffer.put(sel, data)
         
-# there is one StringBuffer for output per page:
+# there is one CrunchyIOBuffer for output per page:
 output_buffers = {}
-# and one per input widget:
+# and one StringBuffer per input widget:
 input_buffers = {}
 
 def comet(request):
@@ -75,14 +101,6 @@ def write_js(pageid, jscode):
     """write some javascript to a page"""
     data = output_buffers[pageid].put(jscode)
     
-def pack_output(css_class, uid, data):
-    """pack some data in suitable javascript to display it on a page,
-    Needs lots of work to encode lots more characters!
-    """
-    pdata = data.replace("\n", "\\n")
-    pdata = pdata.replace('"', '&#34;')
-    return """document.getElementById("out_%s").innerHTML += "<span class='%s'>%s</span>";""" % (uid, css_class, pdata)
-
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment), returning a 
     unique IO stream identifier,
@@ -96,9 +114,9 @@ def push_input(request):
     """An http request handler to deal with stdin"""
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
-    input_buffers[uid].put(request.data)
     # echo back to output:
-    output_buffers[pageid].put(pack_output("stdin", uid, request.data))
+    output_buffers[pageid].put_output('<span class="stdin">' + request.data + "</span>")
+    input_buffers[uid].put(request.data)
     request.send_response(200)
     request.end_headers()
     
