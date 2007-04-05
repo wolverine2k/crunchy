@@ -74,9 +74,9 @@ class CrunchyPage(object):
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         for tag in CrunchyPage.handlers:
             for elem in self.body.getiterator(tag):
-                if "title" in elem.attrib:
-                    if elem.attrib["title"] in CrunchyPage.handlers[tag]:
-                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, self.pageid + ":" + uidgen())
+                if "crunchy:widget" in elem.attrib:
+                    if elem.attrib["crunchy:widget"] in CrunchyPage.handlers[tag]:
+                        CrunchyPage.handlers[tag][elem.attrib["crunchy:widget"]](self, elem, self.pageid + ":" + uidgen())
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,

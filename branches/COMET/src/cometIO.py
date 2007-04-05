@@ -194,7 +194,7 @@ class ThreadedBuffer(object):
         self.default_out.write(data)
         
 def debug_msg(data):
-    """write a debug message"""
+    """write a debug message, debug messages always appear on stderr"""
     if debug_enabled:
         sys.stderr.default_write(data + "\n")
 

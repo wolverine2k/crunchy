@@ -26,7 +26,7 @@ def find_port(start):
 
 if __name__=="__main__":
     port = find_port(8002)
-    print port
+    print "Serving on port %s." % port
     server = http_serve.MyHTTPServer(('127.0.0.1', port), http_serve.HTTPRequestHandler)
     server.register_handler(cometIO.push_input, "/input")
     server.register_handler(cometIO.comet, "/comet")

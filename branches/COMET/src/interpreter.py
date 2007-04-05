@@ -1,5 +1,6 @@
 import threading, sys
 from code import InteractiveConsole
+from traceback import print_exc
 
 interp_code = """
 BorgConsole().interact()
@@ -23,18 +24,22 @@ class Interpreter(threading.Thread):
         sys.stdout.register_thread(self.channel)
         sys.stderr.register_thread(self.channel)
         try:
-            self.ccode = compile(self.code, "crunchy_exec", 'exec')
-        except:
-            raise
-        if not self.ccode:    #code does nothing
-            return
-        try:
-            exec self.ccode in self.symbols
-        except:
-            raise
-        sys.stdin.unregister_thread()
-        sys.stdout.unregister_thread()
-        sys.stderr.unregister_thread()
+            try:
+                self.ccode = compile(self.code, "crunchy_exec", 'exec')
+            except:
+                print_exc()
+                raise
+            if not self.ccode:    #code does nothing
+                return
+            try:
+                exec self.ccode in self.symbols
+            except:
+                print_exc()
+                raise
+        finally:
+            sys.stdin.unregister_thread()
+            sys.stdout.unregister_thread()
+            sys.stderr.unregister_thread()
     
 
 class BorgConsole(InteractiveConsole):
