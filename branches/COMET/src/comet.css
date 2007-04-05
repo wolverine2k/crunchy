@@ -13,6 +13,7 @@ body {max-width:800px;}
     display: none;
 	width: 90%;
     font: 10pt monospace;
+    border-width: 1px;
 }
 
 .output{

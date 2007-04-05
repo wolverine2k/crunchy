@@ -8,6 +8,8 @@ import threading
 import interpreter
 import sys
 
+debug_enabled = False
+
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended 
     together, I've left this in a separate class because it might one day be
@@ -20,7 +22,7 @@ class StringBuffer(object):
         """get the current contents of the buffer, if the buffer is empty, this
         always blocks until data is available.
         Multiple clients are handled in no particular order"""
-        #print "entering get"
+        debug_msg("entering StringBuffer.get")
         while True:
             self.event.clear()
             self.lock.acquire()
@@ -28,12 +30,13 @@ class StringBuffer(object):
                 t = self.data
                 self.data = ""
                 self.lock.release()
+                debug_msg("leaving StringBuffer.get: " + t)
                 return t
             self.lock.release()
             self.event.wait()
     def getline(self):
         """basically does the job of readline"""
-        #print "entering getline"
+        debug_msg("entering StringBuffer.get")
         while True:
                 self.event.clear()
                 self.lock.acquire()
@@ -42,12 +45,14 @@ class StringBuffer(object):
                     # we have a complete line, do something with it
                     self.data = data_t[1]
                     self.lock.release()
+                    debug_msg("leaving StringBuffer.getline: " + data_t[0])
                     return data_t[0] + "\n"
                 # no luck:
                 self.lock.release()
                 self.event.wait()
     def put(self, data):
         """put some data into the buffer"""
+        debug_msg("entering StringBuffer.put: " + data)
         self.lock.acquire()
         self.data += data
         self.event.set()
@@ -56,25 +61,18 @@ class StringBuffer(object):
 
 class CrunchyIOBuffer(StringBuffer):
     """A version optimised for crunchy IO"""
-    def __init__(self):
-        StringBuffer.__init__(self)
-        self.lastwasOutput = False
     def put_output(self, data, uid):
         """put some output into the pipe"""
-        pdata = data.replace('"', '&#34;')
+        data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         self.lock.acquire()
-        if self.lastwasOutput:
-            self.data = self.data[:-2] + '"%s";' % (uid, pdata)
+        if self.data.endswith('";//output\n'):
+            self.data = self.data[:-11] + '%s";//output\n' % (pdata)
+            self.event.set()
         else:
-            self.put("""document.getElementById("out_%s").innerHTML += "%s";""" % (uid, pdata))
-        self.lastwasOutput = True
+            self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
         self.lock.release()
-    def put(self, data):
-        """an updated version of put"""
-        self.lastwasOutput = False
-        StringBuffer.put(sel, data)
-        
+    
 # there is one CrunchyIOBuffer for output per page:
 output_buffers = {}
 # and one StringBuffer per input widget:
@@ -95,7 +93,7 @@ def comet(request):
 
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
-    output_buffers[pageid] = StringBuffer()
+    output_buffers[pageid] = CrunchyIOBuffer()
     
 def write_js(pageid, jscode):
     """write some javascript to a page"""
@@ -115,7 +113,7 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # echo back to output:
-    output_buffers[pageid].put_output('<span class="stdin">' + request.data + "</span>")
+    output_buffers[pageid].put_output("<span class='stdin'>" + request.data + "</span>", uid)
     input_buffers[uid].put(request.data)
     request.send_response(200)
     request.end_headers()
@@ -139,8 +137,8 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-        # clear the output:
-        output_buffers[pageid].put("""document.getElementById("in_%s").style.display="inline";""" % uid)
+        # display the input box and reset the output:
+        output_buffers[pageid].put(reset_js % (uid, uid, uid))
         
     def unregister_thread(self):
         """
@@ -154,14 +152,16 @@ class ThreadedBuffer(object):
             return
         pageid = uid.split(":")[0]
         del input_buffers[uid]
-        output_buffers[pageid].put(reset_js % (uid, uid, uid))
+        # hide the input box:
+        output_buffers[pageid].put("""document.getElementById("in_%s").style.display="none";""" % uid)
+        
         
     def write(self, data):
         """write some data"""
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
         if self.__redirect(uid):
-            output_buffers[pageid].put(pack_output(self.buf_class, uid, data))
+            output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data)
         
@@ -188,7 +188,16 @@ class ThreadedBuffer(object):
         """decide if the thread with uid uid should be redirected"""
         t = uid in input_buffers
         return t
+    
+    def default_write(self, data):
+        """write to the default output"""
+        self.default_out.write(data)
         
+def debug_msg(data):
+    """write a debug message"""
+    if debug_enabled:
+        sys.stderr.default_write(data + "\n")
+
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
