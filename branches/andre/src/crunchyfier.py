@@ -334,7 +334,7 @@ class VLAMPage(TreeBuilder):
         prompt.attrib['class'] = "stdin"
         prompt.text = ">>> "
         input = et.SubElement(elem, "input", type="text", id=id+"_input",
-               onkeyup='interp_trapkeys(event, "'+id+'","%s")'%_("Waiting..."))
+               onkeypress='interp_trapkeys(event, "'+id+'","%s")'%_("Waiting..."))
         input.attrib['class'] = "interp_input"
         interpreters.interps[id] = interpreters.HTTPrepl()
         tipbar = et.SubElement(self.body, "div", id=id+"_tipbar")
