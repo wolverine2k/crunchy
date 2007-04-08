@@ -20,7 +20,6 @@ input_table = {}
 input_lock = threading.RLock()
 
 # an output queue of pairs of (data, type, channel)
-# type is one of "STDOUT", "STDERR", "STDIN", "STOP", "RESET"
 output_queue = CQueue.OutputQueue()
 
 SingleOutput = CQueue.SingleOutput

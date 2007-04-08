@@ -89,21 +89,37 @@ the explanations given will appear puzzling.</p>
 <p>You have been warned.</p>
 </div>
 <p class="topic">Outline</p>
-<p class="subtopic">Easy Creation of <u><em>Interactive</em></u> Tutorials</p>
+<p class="subtopic"><u><em>Interactive</em></u> Tutorials</p>
 <p class="subtopic">VLAM Philosophy</p>
-<p class="subtopic">Basic Interactive Elements</p>
+<p class="subtopic">Basic Interactive Elements in details</p>
 <p class="subtopic">Doctest as a Teaching Tool </p>
 <p class="subtopic">Running External Programs</p>
+<p class="subtopic">Easy creation of interactive tutorials</p>
+<p class="subtopic">Preview of the new Crunchy</p>
 <p class="topic">Acknowledgement</p>
 <p class="subtopic">Johannes Woolard and Google's Summer of Code 2006</p>
+
+<p class="subtopic">Robert Brewer (interpreter)</p>
 <div class="notes">
 <p>Crunchy has greatly benefited from Google's Summer of Code 2006
 initiative.  This has allowed Johannes Woolard to join the project; he
 very quickly made essential contributions to the project and I gladly
 welcomed him as an equal co-developer of this project.</p>
 </div>
+<p class="topic">Interactive</p>
+<p class="subtopic">Code execution within the browser</p>
+<p class="subtopic">Code modification within the browser</p>
+
+<p class="topic">Interactive elements</p>
+<p class="subtopic">Python interpreter</p>
+<p class="subtopic">Editor</p>
+<p class="subtopic">Drawing canvas</p>
+<p class="subtopic">Doctests</p>
 
 <p class="topic">VLAM philosophy</p>
+<p class="subtopic">W3C compliant html tutorial</p>
+<p class="subtopic"><small>- Fredrik Lundh (ElementTree)</small></p>
+<p class="subtopic">Very Little Added Markup</p>
 <div class="notes">
 <p>
 VLAM stands for Very Little Additional Markup, or VLAM.  The idea
@@ -166,44 +182,12 @@ def gcd(a, b):
 
 <div class="notes">
 <p>
-One can also number lines of code using the following VLAM option.</p>
-</div>
-<p class="topic">Styled code with line numbers:<br/> 
-<code class="vlam">&lt;pre title="none linenumber"&gt;</code></p>
-<pre title="none linenumber">
-# Python is cool.
-
-def gcd(a, b):
-    while a:
-        a, b = b%a, a
-    return b
-
-# line numbering alignment should be good until 999
-</pre>
-
-<div class="notes">
-<p>
 The basic interactive element in Python is the interpreter prompt.  
 Before we show how to introduce it with Crunchy, we first illustrate
 the code styling option available for interactive sessions.
 </div>
 
-<p class="topic">Styled interpreter (code only): <br/>
-<code class="vlam">&lt;pre title="none interpreter"&gt;</code></p>
-<pre title="none interpreter">
-&gt;&gt;&gt; print "Hello world!"
-Hello world!
-&gt;&gt;&gt; for i in range(11):
-...     print i,
-...
-0 1 2 3 4 5 6 7 8 9 10
-</pre>
 
-<div class="notes">
-<p>
-A line numbering option (for input only) is also available.
-</p>
-</div>
 
 <p class="topic">Styled interpreter (code only) with line numbers:<br/>
 <code class="vlam">&lt;pre title="none interpreter linenumber"&gt;</code></p>
@@ -226,6 +210,7 @@ element within a browser (Firefox) window using Crunchy.
 <code class="vlam">&lt;pre title="interpreter"&gt;</code></p>
 <pre title="interpreter">
 &gt;&gt;&gt; # Interpreter inspired by Robert Brewer
+&gt;&gt;&gt;
 &gt;&gt;&gt; print "Hello world!"
 Hello world!
 &gt;&gt;&gt; print a
@@ -250,6 +235,7 @@ all interpreter prompt will share the same values.
 ...     print i,
 ... 
 0 1 2 3 4 5 6 7 8 9 10
+&gt;&gt;&gt; print input("How old are you?")
 </pre>
 <br class="vspace"/>
 <div class="notes">
@@ -273,25 +259,16 @@ an option exists to take the simulated interpreter input and put it in
 a textarea for editing and interpretation by Python.</p>
 </div>
 <p class="topic">Styled interpreter to editor:<br/>
-<code class="vlam">&lt;pre title="interpreter editor size=(4, 40)"&gt;</code></p>
+<code class="vlam">&lt;pre title="interpreter editor size=(4, 40)"&gt;</code>
+</p>
+<p class="subtopic"><small> - Christophe Dolivet (EditArea)</small></p>
+
 <pre title="interpreter editor size=(4, 40)">
 &gt;&gt;&gt; a = 3
 &gt;&gt;&gt; print a
 3
 </pre>
-<div class="notes">
-<p>Of course, the option of adding line numbers is also available.</p>
-</div>
-<p class="topic">Styled interpreter to editor with line numbers:<br/>
-<code class="vlam">&lt;pre title="interpreter editor linenumber"&gt;</code></p>
-<pre title="interpreter editor linenumber">
-&gt;&gt;&gt; for i in range(11):
-...     print i,
-... 
-0 1 2 3 4 5 6 7 8 9 10
-&gt;&gt;&gt; print "Hello world!"
-Hello world!
-</pre>
+
 <div class="notes">
 <p>While the Python interpreter is very useful, most code is written
 in an editor. You can try to experiment, modifying and executing
