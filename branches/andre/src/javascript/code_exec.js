@@ -252,7 +252,20 @@ function interp_trapkeys(event, interp_id, waiting){
         case 190:  // period "."
             interp_dir(interp_id);
             break;
-    
+            // attempting to solve problem on Mac
+        case 0:
+            switch(event.charCode){
+                case 40: // open paren "("
+                    interp_doc_mac(interp_id);
+                    break;
+                case 41: // close )
+                    hide_tipbar(interp_id);
+                    break;
+                case 46:  // period "."
+                    interp_dir_mac(interp_id);
+                    break;
+                };
+            break;
 	};
 };
 
@@ -359,10 +372,83 @@ function interp_doc(interp_id) {
     h.send(null);
 };
 
+function interp_doc_mac(interp_id) {
+    input = document.getElementById(interp_id+"_input");  
+    data = input.value + "(";
+    tipbar = document.getElementById(interp_id+"_tipbar");
+    hide_tipbar(interp_id);
+   
+    h = get_http();
+    h.onreadystatechange = function() {
+        if (h.readyState == 4) {
+            try {
+                var status = h.status;
+            } catch(e) {
+                var status = "NO HTTP RESPONSE";
+            }
+            switch (status) {
+                case 200:
+                    tipbar.appendChild(document.createTextNode(h.responseText));
+                    show_tipbar(interp_id);
+                    input.focus();
+                    break;
+                // Internet Explorer might return 1223 for 204
+                case 1223:
+                case 204:
+                    // No tips available
+                    break;
+                case 12029:
+                    // Internet Explorer client could not connect to server
+                    status = "NO HTTP RESPONSE";
+                default:
+                    alert(status + "\n" + h.responseText, false);
+            }
+        }
+    }
+    h.open("GET", "/doc"+session_id+"?name="+interp_id+"&line=" + encodeURIComponent(data), true);
+    h.send(null);
+};
+
 function interp_dir(interp_id) {
     input = document.getElementById(interp_id+"_input");
 	 end = input.selectionEnd;    
     data = input.value.substring(0, end);
+    tipbar = document.getElementById(interp_id+"_tipbar");
+    hide_tipbar(interp_id);
+   
+    h = get_http();
+    h.onreadystatechange = function() {
+        if (h.readyState == 4) {
+            try {
+                var status = h.status;
+            } catch(e) {
+                var status = "NO HTTP RESPONSE";
+            }
+            switch (status) {
+                case 200:
+                    tipbar.appendChild(document.createTextNode(h.responseText));
+                    show_tipbar(interp_id);
+                    input.focus();
+                    break;
+                // Internet Explorer might return 1223 for 204
+                case 1223:
+                case 204:
+                    // No tips available
+                    break;
+                case 12029:
+                    // Internet Explorer client could not connect to server
+                    status = "NO HTTP RESPONSE";
+                default:
+                    alert(status + "\n" + h.responseText, false);
+            }
+        }
+    }
+    h.open("GET", "/dir"+session_id+"?name="+interp_id+"&line=" + encodeURIComponent(data), true);
+    h.send(null);
+};
+function interp_dir_mac(interp_id) {
+    input = document.getElementById(interp_id+"_input");    
+    data = input.value + ".";
     tipbar = document.getElementById(interp_id+"_tipbar");
     hide_tipbar(interp_id);
    
