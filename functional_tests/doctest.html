@@ -15,7 +15,7 @@
 ['Piglet']
 
 </pre>
-<p>This should generate a syntax error:</p>
+<p>This should generate a syntax error if using a version of Python older than 2.5:</p>
 <pre>
 class Animal():
     pass
@@ -34,6 +34,11 @@ class Animal:
     def addFriend(self, friend):
         self.friends.append(friend)
 </pre>
+<h2>Bugs</h2>
+<ul>
+  <li>There are no known bugs specific to doctests.</li>
+</ul>
+
 <p><a href="index.html">Back to the test index</a></p>
 </body>
 </html>

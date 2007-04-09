@@ -28,13 +28,13 @@ output is as expected:</p>
 [0, 1, 2, 3, 4]
 &gt;&gt;&gt; # auto-indent (use backspace to create the blank line at the end): 
 &gt;&gt;&gt; for y in range(5):
-&gt;&gt;&gt;     print y,
-&gt;&gt;&gt; 
+...     print y,
+... 
 0 1 2 3 4
 </pre>
 
-<p>Here are a few examples of error handling:</p>
-<pre title="interpreter">
+<p>Here are a few more examples (with added linenumbers):</p>
+<pre title="interpreter linenumber">
 &gt;&gt;&gt; # undefined variable
 &gt;&gt;&gt; print a
 Error on line 1:
@@ -62,9 +62,9 @@ that it results in non W3C compliant code - and Crunchy (i.e. the
 elementtree handler) chokes on it, and displays a blank page.  This should be fixed.</li>
 <li>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
 not processed properly.  The suggested behaviour at this point would be to 
-1. convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
+[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
 into <code>\n</code> and 
-2. to strip the remaining html markup.</li>
+[2.] to strip the remaining html markup.</li>
 <li>Comments and linenumbers apparently don't mix properly (overlapping
 <code>&lt;span&gt;</code> sometimes result in a small interpreter prompt
 (i.e. in the same font size as the linenumber).</li>
@@ -73,7 +73,7 @@ The following should result in an error message, but there's simply no
 output given.
 <pre title="interpreter">
 &gt;&gt;&gt; for i in range(4):
-&gt;&gt;&gt;   print a  # undefined variable
+...     print a  # undefined variable
 </pre>
 
 </li>
