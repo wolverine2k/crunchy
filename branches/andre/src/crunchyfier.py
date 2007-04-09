@@ -37,6 +37,7 @@ DOCTESTS = {}
 editAreaLoader = """
 editAreaLoader.init({
 id: %s,
+browsers: "all",
 font_size: "11",
 allow_resize: "both",
 allow_toggle: true,
