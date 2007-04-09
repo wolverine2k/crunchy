@@ -1,0 +1,1654 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<link rel="STYLESHEET" href="howto.css" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="aesop" content="information">
+<meta name="description" content="Regular Expression HOWTO">
+<meta name="keywords" content="regex">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="vlam" content="regular expression">
+<title>Regular Expression HOWTO</title>
+</head>
+<body>
+<br/>
+<div class="navigation">
+<table align="center" cellpadding="0" cellspacing="2" width="100%">
+<tbody>
+<tr>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td align="center" width="100%">Regular Expression HOWTO</td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+</tr>
+</tbody>
+</table>
+<br>
+<hr></div>
+<!--End of Navigation Panel-->
+<div class="titlepage">
+<center>
+<h1>Regular Expression HOWTO</h1>
+<p><b><font size="+2">A.M. Kuchling</font></b></p>
+<p><span class="email">amk@amk.ca</span></p>
+</center>
+</div>
+<h3>Abstract:</h3>
+<div class="ABSTRACT">This document is an introductory tutorial to using
+regular expressions in Python with the <tt class="module">re</tt> module. It
+provides a gentler introduction than the corresponding section in the Library
+Reference. <span class="vlam_comment" style="display: none">If you see this
+comment, it is because you are looking at this tutorial using Crunchy Frog.
+Thanks to Crunchy Frog, you will be able to try out the various examples
+(beginning in section 3) as you are reading this tutorial. Enjoy!</span>
+<p>This document is available from <a class="url" href=
+"http://www.amk.ca/python/howto">http://www.amk.ca/python/howto</a>.</p>
+</div>
+<p><br>
+<br></p>
+<h2><a name="SECTION000100000000000000000" id=
+"SECTION000100000000000000000">Contents</a></h2>
+<!--Table of Contents-->
+<ul class="TofC">
+<li><a href="regex.html">1 Introduction</a></li>
+<li><a href="regex.html#SECTION000300000000000000000">2 Simple Patterns</a>
+<ul>
+<li><a href="regex.html#SECTION000310000000000000000">2.1 Matching
+Characters</a></li>
+<li><a href="regex.html#SECTION000320000000000000000">2.2 Repeating
+Things</a></li>
+</ul>
+</li>
+<li><a href="regex.html#SECTION000400000000000000000">3 Using Regular
+Expressions</a>
+<ul>
+<li><a href="regex.html#SECTION000410000000000000000">3.1 Compiling Regular
+Expressions</a></li>
+<li><a href="regex.html#SECTION000420000000000000000">3.2 The Backslash
+Plague</a></li>
+<li><a href="regex.html#SECTION000430000000000000000">3.3 Performing
+Matches</a></li>
+<li><a href="regex.html#SECTION000440000000000000000">3.4 Module-Level
+Functions</a></li>
+<li><a href="regex.html#SECTION000450000000000000000">3.5 Compilation
+Flags</a></li>
+</ul>
+</li>
+<li><a href="regex.html#SECTION000500000000000000000">4 More Pattern
+Power</a>
+<ul>
+<li><a href="regex.html#SECTION000510000000000000000">4.1 More
+Metacharacters</a></li>
+<li><a href="regex.html#SECTION000520000000000000000">4.2 Grouping</a></li>
+<li><a href="regex.html#SECTION000530000000000000000">4.3 Non-capturing and
+Named Groups</a></li>
+<li><a href="regex.html#SECTION000540000000000000000">4.4 Lookahead
+Assertions</a></li>
+</ul>
+</li>
+<li><a href="regex.html#SECTION000600000000000000000">5 Modifying Strings</a>
+<ul>
+<li><a href="regex.html#SECTION000610000000000000000">5.1 Splitting
+Strings</a></li>
+<li><a href="regex.html#SECTION000620000000000000000">5.2 Search and
+Replace</a></li>
+</ul>
+</li>
+<li><a href="regex.html#SECTION000700000000000000000">6 Common Problems</a>
+<ul>
+<li><a href="regex.html#SECTION000710000000000000000">6.1 Use String
+Methods</a></li>
+<li><a href="regex.html#SECTION000720000000000000000">6.2 match() versus
+search()</a></li>
+<li><a href="regex.html#SECTION000730000000000000000">6.3 Greedy versus
+Non-Greedy</a></li>
+<li><a href="regex.html#SECTION000740000000000000000">6.4 Not Using
+re.VERBOSE</a></li>
+</ul>
+</li>
+<li><a href="regex.html#SECTION000800000000000000000">7 Feedback</a></li>
+<li><a href="regex.html#SECTION000900000000000000000">About this document
+...</a></li>
+</ul>
+<!--End of Table of Contents-->
+<h1><a name="SECTION000200000000000000000" id=
+"SECTION000200000000000000000">1 Introduction</a></h1>
+<p>The <tt class="module">re</tt> module was added in Python 1.5, and
+provides Perl-style regular expression patterns. Earlier versions of Python
+came with the <tt class="module">regex</tt> module, which provides
+Emacs-style patterns. Emacs-style patterns are slightly less readable and
+don't provide as many features, so there's not much reason to use the
+<tt class="module">regex</tt> module when writing new code, though you might
+encounter old code that uses it.</p>
+<p>Regular expressions (or REs) are essentially a tiny, highly specialized
+programming language embedded inside Python and made available through the
+<tt class="module">re</tt> module. Using this little language, you specify
+the rules for the set of possible strings that you want to match; this set
+might contain English sentences, or e-mail addresses, or TeX commands, or
+anything you like. You can then ask questions such as ``Does this string
+match the pattern?'', or ``Is there a match for the pattern anywhere in this
+string?''. You can also use REs to modify a string or to split it apart in
+various ways.</p>
+<p>Regular expression patterns are compiled into a series of bytecodes which
+are then executed by a matching engine written in C. For advanced use, it may
+be necessary to pay careful attention to how the engine will execute a given
+RE, and write the RE in a certain way in order to produce bytecode that runs
+faster. Optimization isn't covered in this document, because it requires that
+you have a good understanding of the matching engine's internals.</p>
+<p>The regular expression language is relatively small and restricted, so not
+all possible string processing tasks can be done using regular expressions.
+There are also tasks that <i>can</i> be done with regular expressions, but
+the expressions turn out to be very complicated. In these cases, you may be
+better off writing Python code to do the processing; while Python code will
+be slower than an elaborate regular expression, it will also probably be more
+understandable.</p>
+<h1><a name="SECTION000300000000000000000" id=
+"SECTION000300000000000000000">2 Simple Patterns</a></h1>
+<p>We'll start by learning about the simplest possible regular expressions.
+Since regular expressions are used to operate on strings, we'll begin with
+the most common task: matching characters.</p>
+<p>For a detailed explanation of the computer science underlying regular
+expressions (deterministic and non-deterministic finite automata), you can
+refer to almost any textbook on writing compilers.</p>
+<h2><a name="SECTION000310000000000000000" id=
+"SECTION000310000000000000000">2.1 Matching Characters</a></h2>
+<p>Most letters and characters will simply match themselves. For example, the
+regular expression <tt class="regexp">test</tt> will match the string
+"<tt class="samp">test</tt>" exactly. (You can enable a case-insensitive mode
+that would let this RE match "<tt class="samp">Test</tt>" or "<tt class=
+"samp">TEST</tt>" as well; more about this later.)</p>
+<p>There are exceptions to this rule; some characters are special, and don't
+match themselves. Instead, they signal that some out-of-the-ordinary thing
+should be matched, or they affect other portions of the RE by repeating them.
+Much of this document is devoted to discussing various metacharacters and
+what they do.</p>
+<p>Here's a complete list of the metacharacters; their meanings will be
+discussed in the rest of this HOWTO.</p>
+<div class="verbatim">
+<pre>
+. ^ $ * + ? { [ ] \ | ( )
+</pre></div>
+<p>The first metacharacters we'll look at are "<tt class="samp">[</tt>" and
+"<tt class="samp">]</tt>". They're used for specifying a character class,
+which is a set of characters that you wish to match. Characters can be listed
+individually, or a range of characters can be indicated by giving two
+characters and separating them by a "<tt class="character">-</tt>". For
+example, <tt class="regexp">[abc]</tt> will match any of the characters
+"<tt class="samp">a</tt>", "<tt class="samp">b</tt>", or "<tt class=
+"samp">c</tt>"; this is the same as <tt class="regexp">[a-c]</tt>, which uses
+a range to express the same set of characters. If you wanted to match only
+lowercase letters, your RE would be <tt class="regexp">[a-z]</tt>.</p>
+<p>Metacharacters are not active inside classes. For example, <tt class=
+"regexp">[akm$]</tt> will match any of the characters "<tt class=
+"character">a</tt>", "<tt class="character">k</tt>", "<tt class=
+"character">m</tt>", or "<tt class="character">$</tt>"; "<tt class=
+"character">$</tt>" is usually a metacharacter, but inside a character class
+it's stripped of its special nature.</p>
+<p>You can match the characters not within a range by <i class=
+"dfn">complementing</i> the set. This is indicated by including a "<tt class=
+"character">^</tt>" as the first character of the class; "<tt class=
+"character">^</tt>" elsewhere will simply match the "<tt class=
+"character">^</tt>" character. For example, <code>[^5]</code> will match any
+character except "<tt class="character">5</tt>".</p>
+<p>Perhaps the most important metacharacter is the backslash, "<tt class=
+"samp">\</tt>". As in Python string literals, the backslash can be followed
+by various characters to signal various special sequences. It's also used to
+escape all the metacharacters so you can still match them in patterns; for
+example, if you need to match a "<tt class="samp">[</tt>" or "<tt class=
+"samp">\</tt>", you can precede them with a backslash to remove their special
+meaning: <tt class="regexp">\[</tt> or <tt class="regexp">\\</tt>.</p>
+<p>Some of the special sequences beginning with "<tt class=
+"character">\</tt>" represent predefined sets of characters that are often
+useful, such as the set of digits, the set of letters, or the set of anything
+that isn't whitespace. The following predefined special sequences are
+available:</p>
+<dl compact="compact">
+<dt><code>\d</code></dt>
+<dd>Matches any decimal digit; this is equivalent to the class <tt class=
+"regexp">[0-9]</tt>.</dd>
+<dt><code>\D</code></dt>
+<dd>Matches any non-digit character; this is equivalent to the class
+<code>[^0-9]</code>.</dd>
+<dt><code>\s</code></dt>
+<dd>Matches any whitespace character; this is equivalent to the class
+<tt class="regexp">[ \t\n\r\f\v]</tt>.</dd>
+<dt><code>\S</code></dt>
+<dd>Matches any non-whitespace character; this is equivalent to the class
+<code>[^ \t\n\r\f\v]</code>.</dd>
+<dt><code>\w</code></dt>
+<dd>Matches any alphanumeric character; this is equivalent to the class
+<tt class="regexp">[a-zA-Z0-9_]</tt>.</dd>
+<dt><code>\W</code></dt>
+<dd>Matches any non-alphanumeric character; this is equivalent to the class
+<code>[^a-zA-Z0-9_]</code>.</dd>
+</dl>
+<p>These sequences can be included inside a character class. For example,
+<tt class="regexp">[\s,.]</tt> is a character class that will match any
+whitespace character, or "<tt class="character">,</tt>" or "<tt class=
+"character">.</tt>".</p>
+<p>The final metacharacter in this section is <tt class="regexp">.</tt>. It
+matches anything except a newline character, and there's an alternate mode
+(<code>re.DOTALL</code>) where it will match even a newline. "<tt class=
+"character">.</tt>" is often used where you want to match ``any
+character''.</p>
+<h2><a name="SECTION000320000000000000000" id=
+"SECTION000320000000000000000">2.2 Repeating Things</a></h2>
+<p>Being able to match varying sets of characters is the first thing regular
+expressions can do that isn't already possible with the methods available on
+strings. However, if that was the only additional capability of regexes, they
+wouldn't be much of an advance. Another capability is that you can specify
+that portions of the RE must be repeated a certain number of times.</p>
+<p>The first metacharacter for repeating things that we'll look at is
+<tt class="regexp">*</tt>. <tt class="regexp">*</tt> doesn't match the
+literal character "<tt class="samp">*</tt>"; instead, it specifies that the
+previous character can be matched zero or more times, instead of exactly
+once.</p>
+<p>For example, <tt class="regexp">ca*t</tt> will match "<tt class=
+"samp">ct</tt>" (0 "<tt class="samp">a</tt>"characters), "<tt class=
+"samp">cat</tt>" (1 "<tt class="samp">a</tt>"), "<tt class="samp">caaat</tt>"
+(3 "<tt class="samp">a</tt>"characters), and so forth. The RE engine has
+various internal limitations stemming from the size of C's <code>int</code>
+type, that will prevent it from matching over 2 billion "<tt class=
+"samp">a</tt>" characters; you probably don't have enough memory to construct
+a string that large, so you shouldn't run into that limit.</p>
+<p>Repetitions such as <tt class="regexp">*</tt> are <i class=
+"dfn">greedy</i>; when repeating a RE, the matching engine will try to repeat
+it as many times as possible. If later portions of the pattern don't match,
+the matching engine will then back up and try again with few repetitions.</p>
+<p>A step-by-step example will make this more obvious. Let's consider the
+expression <tt class="regexp">a[bcd]*b</tt>. This matches the letter
+"<tt class="character">a</tt>", zero or more letters from the class
+<code>[bcd]</code>, and finally ends with a "<tt class="character">b</tt>".
+Now imagine matching this RE against the string "<tt class=
+"samp">abcbd</tt>".</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Step</b> </th>
+<th align="left"><b>Matched</b> </th>
+<th align="left"><b>Explanation</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline">1</td>
+<td align="left"><code>a</code></td>
+<td align="left">The <tt class="regexp">a</tt> in the RE matches.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">2</td>
+<td align="left"><code>abcbd</code></td>
+<td align="left">The engine matches <tt class="regexp">[bcd]*</tt>, going as
+far as it can, which is to the end of the string.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">3</td>
+<td align="left"><i>Failure</i></td>
+<td align="left">The engine tries to match <tt class="regexp">b</tt>, but the
+current position is at the end of the string, so it fails.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">4</td>
+<td align="left"><code>abcb</code></td>
+<td align="left">Back up, so that <tt class="regexp">[bcd]*</tt> matches one
+less character.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">5</td>
+<td align="left"><i>Failure</i></td>
+<td align="left">Try <tt class="regexp">b</tt> again, but the current
+position is at the last character, which is a "<tt class=
+"character">d</tt>".</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">6</td>
+<td align="left"><code>abc</code></td>
+<td align="left">Back up again, so that <tt class="regexp">[bcd]*</tt> is
+only matching "<tt class="samp">bc</tt>".</td>
+</tr>
+<tr>
+<td align="center" valign="baseline">6</td>
+<td align="left"><code>abcb</code></td>
+<td align="left">Try <tt class="regexp">b</tt> again. This time but the
+character at the current position is "<tt class="character">b</tt>", so it
+succeeds.</td>
+</tr>
+</tbody>
+</table>
+<p>The end of the RE has now been reached, and it has matched "<tt class=
+"samp">abcb</tt>". This demonstrates how the matching engine goes as far as
+it can at first, and if no match is found it will then progressively back up
+and retry the rest of the RE again and again. It will back up until it has
+tried zero matches for <tt class="regexp">[bcd]*</tt>, and if that
+subsequently fails, the engine will conclude that the string doesn't match
+the RE at all.</p>
+<p>Another repeating metacharacter is <tt class="regexp">+</tt>, which
+matches one or more times. Pay careful attention to the difference between
+<tt class="regexp">*</tt> and <tt class="regexp">+</tt>; <tt class=
+"regexp">*</tt> matches <i>zero</i> or more times, so whatever's being
+repeated may not be present at all, while <tt class="regexp">+</tt> requires
+at least <i>one</i> occurrence. To use a similar example, <tt class=
+"regexp">ca+t</tt> will match "<tt class="samp">cat</tt>" (1 "<tt class=
+"samp">a</tt>"), "<tt class="samp">caaat</tt>" (3 "<tt class=
+"samp">a</tt>"'s), but won't match "<tt class="samp">ct</tt>".</p>
+<p>There are two more repeating qualifiers. The question mark character,
+<tt class="regexp">?</tt>, matches either once or zero times; you can think
+of it as marking something as being optional. For example, <tt class=
+"regexp">home-?brew</tt> matches either "<tt class="samp">homebrew</tt>" or
+"<tt class="samp">home-brew</tt>".</p>
+<p>The most complicated repeated qualifier is <tt class=
+"regexp">{<var>m</var>,<var>n</var>}</tt>, where <var>m</var> and
+<var>n</var> are decimal integers. This qualifier means there must be at
+least <var>m</var> repetitions, and at most <var>n</var>. For example,
+<tt class="regexp">a/{1,3}b</tt> will match "<tt class="samp">a/b</tt>",
+"<tt class="samp">a//b</tt>", and "<tt class="samp">a///b</tt>". It won't
+match "<tt class="samp">ab</tt>", which has no slashes, or "<tt class=
+"samp">a////b</tt>", which has four.</p>
+<p>You can omit either <var>m</var> or <var>n</var>; in that case, a
+reasonable value is assumed for the missing value. Omitting <var>m</var> is
+interpreted as a lower limit of 0, while omitting <var>n</var> results in an
+upper bound of infinity -- actually, the 2 billion limit mentioned earlier,
+but that might as well be infinity.</p>
+<p>Readers of a reductionist bent may notice that the three other qualifiers
+can all be expressed using this notation. <tt class="regexp">{0,}</tt> is the
+same as <tt class="regexp">*</tt>, <tt class="regexp">{1,}</tt> is equivalent
+to <tt class="regexp">+</tt>, and <tt class="regexp">{0,1}</tt> is the same
+as <tt class="regexp">?</tt>. It's better to use <tt class="regexp">*</tt>,
+<tt class="regexp">+</tt>, or <tt class="regexp">?</tt> when you can, simply
+because they're shorter and easier to read.</p>
+<h1><a name="SECTION000400000000000000000" id=
+"SECTION000400000000000000000">3 Using Regular Expressions</a></h1>
+<p>Now that we've looked at some simple regular expressions, how do we
+actually use them in Python? The <tt class="module">re</tt> module provides
+an interface to the regular expression engine, allowing you to compile REs
+into objects and then perform matches with them.</p>
+<h2><a name="SECTION000410000000000000000" id=
+"SECTION000410000000000000000">3.1 Compiling Regular Expressions</a></h2>
+<p>Regular expressions are compiled into <tt class="class">RegexObject</tt>
+instances, which have methods for various operations such as searching for
+pattern matches or performing string substitutions.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; import re
+&gt;&gt;&gt; p = re.compile('ab*')
+&gt;&gt;&gt; print p
+&lt;re.RegexObject instance at 80b4150&gt;
+</pre></div>
+<p><tt class="function">re.compile()</tt> also accepts an optional
+<var>flags</var> argument, used to enable various special features and syntax
+variations. We'll go over the available settings later, but for now a single
+example will do:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('ab*', re.IGNORECASE)
+</pre></div>
+<p>The RE is passed to <tt class="function">re.compile()</tt> as a string.
+REs are handled as strings because regular expressions aren't part of the
+core Python language, and no special syntax was created for expressing them.
+(There are applications that don't need REs at all, so there's no need to
+bloat the language specification by including them.) Instead, the <tt class=
+"module">re</tt> module is simply a C extension module included with Python,
+just like the <tt class="module">socket</tt> or <tt class="module">zlib</tt>
+module.</p>
+<p>Putting REs in strings keeps the Python language simpler, but has one
+disadvantage which is the topic of the next section.</p>
+<h2><a name="SECTION000420000000000000000" id=
+"SECTION000420000000000000000">3.2 The Backslash Plague</a></h2>
+<p>As stated earlier, regular expressions use the backslash character
+("<tt class="character">\</tt>") to indicate special forms or to allow
+special characters to be used without invoking their special meaning. This
+conflicts with Python's usage of the same character for the same purpose in
+string literals.</p>
+<p>Let's say you want to write a RE that matches the string "<tt class=
+"samp">\section</tt>", which might be found in a <span class=
+"logo,LaTeX">L<sup><small>A</small></sup>T<small>E</small>X</span> file. To
+figure out what to write in the program code, start with the desired string
+to be matched. Next, you must escape any backslashes and other metacharacters
+by preceding them with a backslash, resulting in the string "<tt class=
+"samp">\\section</tt>". The resulting string that must be passed to
+<tt class="function">re.compile()</tt> must be <code>\\section</code>.
+However, to express this as a Python string literal, both backslashes must be
+escaped <i>again</i>.</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Characters</b> </th>
+<th align="left"><b>Stage</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><code>\section</code></td>
+<td align="left">Text string to be matched</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>\\section</code></td>
+<td align="left">Escaped backslash for <tt class=
+"function">re.compile</tt></td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>"\\\\section"</code></td>
+<td align="left">Escaped backslashes for a string literal</td>
+</tr>
+</tbody>
+</table>
+<p>In short, to match a literal backslash, one has to write
+<code>'\\\\'</code> as the RE string, because the regular expression must be
+"<tt class="samp">\\</tt>", and each backslash must be expressed as
+"<tt class="samp">\\</tt>" inside a regular Python string literal. In REs
+that feature backslashes repeatedly, this leads to lots of repeated
+backslashes and makes the resulting strings difficult to understand.</p>
+<p>The solution is to use Python's raw string notation for regular
+expressions; backslashes are not handled in any special way in a string
+literal prefixed with "<tt class="character">r</tt>", so <code>r"\n"</code>
+is a two-character string containing "<tt class="character">\</tt>" and
+"<tt class="character">n</tt>", while <code>"\n"</code> is a one-character
+string containing a newline. Frequently regular expressions will be expressed
+in Python code using this raw string notation.</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Regular String</b> </th>
+<th align="center"><b>Raw string</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><code>"ab*"</code></td>
+<td align="center"><code>r"ab*"</code></td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>"\\\\section"</code></td>
+<td align="center"><code>r"\\section"</code></td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>"\\w+\\s+\\1"</code></td>
+<td align="center"><code>r"\w+\s+\1"</code></td>
+</tr>
+</tbody>
+</table>
+<h2><a name="SECTION000430000000000000000" id=
+"SECTION000430000000000000000">3.3 Performing Matches</a></h2>
+<p>Once you have an object representing a compiled regular expression, what
+do you do with it? <tt class="class">RegexObject</tt> instances have several
+methods and attributes. Only the most significant ones will be covered here;
+consult <a class="ulink" href=
+"http://www.python.org/doc/lib/module-re.html">the Library Reference</a> for
+a complete listing.</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Method/Attribute</b> </th>
+<th align="left"><b>Purpose</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><code>match()</code></td>
+<td align="left">Determine if the RE matches at the beginning of the
+string.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>search()</code></td>
+<td align="left">Scan through a string, looking for any location where this
+RE matches.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>findall()</code></td>
+<td align="left">Find all substrings where the RE matches, and returns them
+as a list.</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>finditer()</code></td>
+<td align="left">Find all substrings where the RE matches, and returns them
+as an iterator.</td>
+</tr>
+</tbody>
+</table>
+<p><tt class="method">match()</tt> and <tt class="method">search()</tt>
+return <code>None</code> if no match can be found. If they're successful, a
+<code>MatchObject</code> instance is returned, containing information about
+the match: where it starts and ends, the substring it matched, and more.</p>
+<p>You can learn about this by interactively experimenting with the
+<tt class="module">re</tt> module. If you have Tkinter available, you may
+also want to look at <span class="file">Tools/scripts/redemo.py</span>, a
+demonstration program included with the Python distribution. It allows you to
+enter REs and strings, and displays whether the RE matches or fails.
+<span class="file">redemo.py</span> can be quite useful when trying to debug
+a complicated RE. Phil Schwartz's <a class="ulink" href=
+"http://kodos.sourceforge.net/">Kodos</a> is also an interactive tool for
+developing and testing RE patterns. This HOWTO will use the standard Python
+interpreter for its examples.</p>
+<p>First, run the Python interpreter, import the <tt class="module">re</tt>
+module, and compile a RE: </p>
+<span class="vlam_comment" style=
+"display: none">Crunchy comment: if you have already imported the module re
+earlier, you don't need to import it again.</span>
+<div class="verbatim">
+<pre title="interpreter">
+Python 2.2.2 (#1, Feb 10 2003, 12:57:01)
+&gt;&gt;&gt; import re
+&gt;&gt;&gt; p = re.compile('[a-z]+')
+&gt;&gt;&gt; p
+&lt;_sre.SRE_Pattern object at 80c3c28&gt;
+</pre></div>
+<p>Now, you can try matching various strings against the RE <tt class=
+"regexp">[a-z]+</tt>. An empty string shouldn't match at all, since
+<tt class="regexp">+</tt> means 'one or more repetitions'. <tt class=
+"method">match()</tt> should return <code>None</code> in this case, which
+will cause the interpreter to print no output. You can explicitly print the
+result of <tt class="method">match()</tt> to make this clear.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p.match("")
+&gt;&gt;&gt; print p.match("")
+None
+</pre></div>
+<p>Now, let's try it on a string that it should match, such as "<tt class=
+"samp">tempo</tt>". In this case, <tt class="method">match()</tt> will return
+a <tt class="class">MatchObject</tt>, so you should store the result in a
+variable for later use.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; m = p.match( 'tempo')
+&gt;&gt;&gt; print m
+&lt;_sre.SRE_Match object at 80c4f68&gt;
+</pre></div>
+<p>Now you can query the <tt class="class">MatchObject</tt> for information
+about the matching string. <tt class="class">MatchObject</tt> instances also
+have several methods and attributes; the most important ones are:</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Method/Attribute</b> </th>
+<th align="left"><b>Purpose</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><code>group()</code></td>
+<td align="left">Return the string matched by the RE</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>start()</code></td>
+<td align="left">Return the starting position of the match</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>end()</code></td>
+<td align="left">Return the ending position of the match</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>span()</code></td>
+<td align="left">Return a tuple containing the (start, end) positions of the
+match</td>
+</tr>
+</tbody>
+</table>
+<p>Trying these methods will soon clarify their meaning:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; m.group()
+'tempo'
+&gt;&gt;&gt; m.start(), m.end()
+(0, 5)
+&gt;&gt;&gt; m.span()
+(0, 5)
+</pre></div>
+<p><tt class="method">group()</tt> returns the substring that was matched by
+the RE. <tt class="method">start()</tt> and <tt class="method">end()</tt>
+return the starting and ending index of the match. <tt class=
+"method">span()</tt> returns both start and end indexes in a single tuple.
+Since the <tt class="method">match</tt> method only checks if the RE matches
+at the start of a string, <tt class="method">start()</tt> will always be
+zero. However, the <tt class="method">search</tt> method of <tt class=
+"class">RegexObject</tt> instances scans through the string, so the match may
+not start at zero in that case.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print p.match('::: message')
+None
+&gt;&gt;&gt; m = p.search('::: message') ; print m
+&lt;re.MatchObject instance at 80c9650&gt;
+&gt;&gt;&gt; m.group()
+'message'
+&gt;&gt;&gt; m.span()
+(4, 11)
+</pre></div>
+<p>In actual programs, the most common style is to store the <tt class=
+"class">MatchObject</tt> in a variable, and then check if it was
+<code>None</code>. This usually looks like:</p>
+<div class="verbatim">
+<pre>
+p = re.compile( ... )
+m = p.match( 'string goes here' )
+if m:
+    print 'Match found: ', m.group()
+else:
+    print 'No match'
+</pre></div>
+<p>Two <tt class="class">RegexObject</tt> methods return all of the matches
+for a pattern. <tt class="method">findall()</tt> returns a list of matching
+strings:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('\d+')
+&gt;&gt;&gt; p.findall('12 drummers drumming, 11 pipers piping, 10 lords a-leaping')
+['12', '11', '10']
+</pre></div>
+<p><tt class="method">findall()</tt> has to create the entire list before it
+can be returned as the result. In Python 2.2, the <tt class=
+"method">finditer()</tt> method is also available, returning a sequence of
+<tt class="class">MatchObject</tt> instances as an iterator.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; iterator = p.finditer('12 drummers drumming, 11 ... 10 ...')
+&gt;&gt;&gt; iterator
+&lt;callable-iterator object at 0x401833ac&gt;
+&gt;&gt;&gt; for match in iterator:
+...     print match.span()
+...
+(0, 2)
+(22, 24)
+(29, 31)
+</pre></div>
+<h2><a name="SECTION000440000000000000000" id=
+"SECTION000440000000000000000">3.4 Module-Level Functions</a></h2>
+<p>You don't have to produce a <tt class="class">RegexObject</tt> and call
+its methods; the <tt class="module">re</tt> module also provides top-level
+functions called <tt class="function">match()</tt>, <tt class=
+"function">search()</tt>, <tt class="function">sub()</tt>, and so forth.
+These functions take the same arguments as the corresponding <tt class=
+"class">RegexObject</tt> method, with the RE string added as the first
+argument, and still return either <code>None</code> or a <tt class=
+"class">MatchObject</tt> instance.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.match(r'From\s+', 'Fromage amk')
+None
+&gt;&gt;&gt; re.match(r'From\s+', 'From amk Thu May 14 19:12:10 1998')
+&lt;re.MatchObject instance at 80c5978&gt;
+</pre></div>
+<p>Under the hood, these functions simply produce a <tt class=
+"class">RegexObject</tt> for you and call the appropriate method on it. They
+also store the compiled object in a cache, so future calls using the same RE
+are faster.</p>
+<p>Should you use these module-level functions, or should you get the
+<tt class="class">RegexObject</tt> and call its methods yourself? That choice
+depends on how frequently the RE will be used, and on your personal coding
+style. If a RE is being used at only one point in the code, then the module
+functions are probably more convenient. If a program contains a lot of
+regular expressions, or re-uses the same ones in several locations, then it
+might be worthwhile to collect all the definitions in one place, in a section
+of code that compiles all the REs ahead of time. To take an example from the
+standard library, here's an extract from <span class=
+"file">xmllib.py</span>:</p>
+<div class="verbatim">
+<pre title="interpreter">
+ref = re.compile( ... )
+entityref = re.compile( ... )
+charref = re.compile( ... )
+starttagopen = re.compile( ... )
+</pre></div>
+<p>I generally prefer to work with the compiled object, even for one-time
+uses, but few people will be as much of a purist about this as I am.</p>
+<h2><a name="SECTION000450000000000000000" id=
+"SECTION000450000000000000000">3.5 Compilation Flags</a></h2>
+<p>Compilation flags let you modify some aspects of how regular expressions
+work. Flags are available in the <tt class="module">re</tt> module under two
+names, a long name such as <tt class="constant">IGNORECASE</tt>, and a short,
+one-letter form such as <tt class="constant">I</tt>. (If you're familiar with
+Perl's pattern modifiers, the one-letter forms use the same letters; the
+short form of <tt class="constant">re.VERBOSE</tt> is <tt class=
+"constant">re.X</tt>, for example.) Multiple flags can be specified by
+bitwise OR-ing them; <code>re.I | re.M</code> sets both the <tt class=
+"constant">I</tt> and <tt class="constant">M</tt> flags, for example.</p>
+<p>Here's a table of the available flags, followed by a more detailed
+explanation of each one.</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Flag</b> </th>
+<th align="left"><b>Meaning</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><tt class="constant">DOTALL</tt>,
+<tt class="constant">S</tt></td>
+<td align="left">Make <tt class="regexp">.</tt> match any character,
+including newlines</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><tt class="constant">IGNORECASE</tt>,
+<tt class="constant">I</tt></td>
+<td align="left">Do case-insensitive matches</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><tt class="constant">LOCALE</tt>,
+<tt class="constant">L</tt></td>
+<td align="left">Do a locale-aware match</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><tt class="constant">MULTILINE</tt>,
+<tt class="constant">M</tt></td>
+<td align="left">Multi-line matching, affecting <tt class="regexp">^</tt> and
+<tt class="regexp">$</tt></td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><tt class="constant">VERBOSE</tt>,
+<tt class="constant">X</tt></td>
+<td align="left">Enable verbose REs, which can be organized more cleanly and
+understandably.</td>
+</tr>
+</tbody>
+</table>
+<dl>
+<dt><b><a name="l2h-1" id="l2h-1"><tt>I</tt></a></b></dt>
+<dt><b><a name="l2h-6" id="l2h-6"><tt>IGNORECASE</tt></a></b></dt>
+<dd>Perform case-insensitive matching; character class and literal strings
+will match letters by ignoring case. For example, <tt class=
+"regexp">[A-Z]</tt> will match lowercase letters, too, and <tt class=
+"regexp">Spam</tt> will match "<tt class="samp">Spam</tt>", "<tt class=
+"samp">spam</tt>", or "<tt class="samp">spAM</tt>". This lowercasing doesn't
+take the current locale into account; it will if you also set the <tt class=
+"constant">LOCALE</tt> flag.</dd>
+</dl>
+<dl>
+<dt><b><a name="l2h-2" id="l2h-2"><tt>L</tt></a></b></dt>
+<dt><b><a name="l2h-7" id="l2h-7"><tt>LOCALE</tt></a></b></dt>
+<dd>Make <tt class="regexp">\w</tt>, <tt class="regexp">\W</tt>, <tt class=
+"regexp">\b</tt>, and <tt class="regexp">\B</tt>, dependent on the current
+locale.
+<p>Locales are a feature of the C library intended to help in writing
+programs that take account of language differences. For example, if you're
+processing French text, you'd want to be able to write <tt class=
+"regexp">\w+</tt> to match words, but <tt class="regexp">\w</tt> only matches
+the character class <tt class="regexp">[A-Za-z]</tt>; it won't match "" or
+"". If your system is configured properly and a French locale is selected,
+certain C functions will tell the program that "" should also be considered a
+letter. Setting the <tt class="constant">LOCALE</tt> flag when compiling a
+regular expression will cause the resulting compiled object to use these C
+functions for <tt class="regexp">\w</tt>; this is slower, but also enables
+<tt class="regexp">\w+</tt> to match French words as you'd expect.</p>
+</dd>
+</dl>
+<dl>
+<dt><b><a name="l2h-3" id="l2h-3"><tt>M</tt></a></b></dt>
+<dt><b><a name="l2h-8" id="l2h-8"><tt>MULTILINE</tt></a></b></dt>
+<dd>(<tt class="regexp">^</tt> and <tt class="regexp">$</tt> haven't been
+explained yet; they'll be introduced in section <a href=
+"regex.html#more-metacharacters">4.1</a>.)
+<p>Usually <tt class="regexp">^</tt> matches only at the beginning of the
+string, and <tt class="regexp">$</tt> matches only at the end of the string
+and immediately before the newline (if any) at the end of the string. When
+this flag is specified, <tt class="regexp">^</tt> matches at the beginning of
+the string and at the beginning of each line within the string, immediately
+following each newline. Similarly, the <tt class="regexp">$</tt>
+metacharacter matches either at the end of the string and at the end of each
+line (immediately preceding each newline).</p>
+</dd>
+</dl>
+<dl>
+<dt><b><a name="l2h-4" id="l2h-4"><tt>S</tt></a></b></dt>
+<dt><b><a name="l2h-9" id="l2h-9"><tt>DOTALL</tt></a></b></dt>
+<dd>Makes the "<tt class="character">.</tt>" special character match any
+character at all, including a newline; without this flag, "<tt class=
+"character">.</tt>" will match anything <i>except</i> a newline.</dd>
+</dl>
+<dl>
+<dt><b><a name="l2h-5" id="l2h-5"><tt>X</tt></a></b></dt>
+<dt><b><a name="l2h-10" id="l2h-10"><tt>VERBOSE</tt></a></b></dt>
+<dd>This flag allows you to write regular expressions that are more readable
+by granting you more flexibility in how you can format them. When this flag
+has been specified, whitespace within the RE string is ignored, except when
+the whitespace is in a character class or preceded by an unescaped backslash;
+this lets you organize and indent the RE more clearly. It also enables you to
+put comments within a RE that will be ignored by the engine; comments are
+marked by a "<tt class="character">#</tt>" that's neither in a character
+class or preceded by an unescaped backslash.
+<p>For example, here's a RE that uses <tt class="constant">re.VERBOSE</tt>;
+see how much easier it is to read?</p>
+<div class="verbatim">
+<pre>
+charref = re.compile(r"""
+ &amp;[#]           # Start of a numeric entity reference
+ (
+   [0-9]+[^0-9]      # Decimal form
+   | 0[0-7]+[^0-7]   # Octal form
+   | x[0-9a-fA-F]+[^0-9a-fA-F] # Hexadecimal form
+ )
+""", re.VERBOSE)
+</pre></div>
+<p>Without the verbose setting, the RE would look like this:</p>
+<div class="verbatim">
+<pre>
+charref = re.compile("&amp;#([0-9]+[^0-9]"
+                     "|0[0-7]+[^0-7]"
+                     "|x[0-9a-fA-F]+[^0-9a-fA-F])")
+</pre></div>
+<p>In the above example, Python's automatic concatenation of string literals
+has been used to break up the RE into smaller pieces, but it's still more
+difficult to understand than the version using <tt class=
+"constant">re.VERBOSE</tt>.</p>
+</dd>
+</dl>
+<h1><a name="SECTION000500000000000000000" id=
+"SECTION000500000000000000000">4 More Pattern Power</a></h1>
+<p>So far we've only covered a part of the features of regular expressions.
+In this section, we'll cover some new metacharacters, and how to use groups
+to retrieve portions of the text that was matched.</p>
+<h2><a name="SECTION000510000000000000000" id=
+"SECTION000510000000000000000"> </a><br>
+4.1 More Metacharacters</h2>
+<p>There are some metacharacters that we haven't covered yet. Most of them
+will be covered in this section.</p>
+<p>Some of the remaining metacharacters to be discussed are <i class=
+"dfn">zero-width assertions</i>. They don't cause the engine to advance
+through the string; instead, they consume no characters at all, and simply
+succeed or fail. For example, <tt class="regexp">\b</tt> is an assertion that
+the current position is located at a word boundary; the position isn't
+changed by the <tt class="regexp">\b</tt> at all. This means that zero-width
+assertions should never be repeated, because if they match once at a given
+location, they can obviously be matched an infinite number of times.</p>
+<dl compact="compact">
+<dt><tt class="regexp">|</tt></dt>
+<dd>Alternation, or the ``or'' operator. If A and B are regular expressions,
+<tt class="regexp">A|B</tt> will match any string that matches either
+"<tt class="samp">A</tt>" or "<tt class="samp">B</tt>". <tt class=
+"regexp">|</tt> has very low precedence in order to make it work reasonably
+when you're alternating multi-character strings. <tt class=
+"regexp">Crow|Servo</tt> will match either "<tt class="samp">Crow</tt>" or
+"<tt class="samp">Servo</tt>", not "<tt class="samp">Cro</tt>", a "<tt class=
+"character">w</tt>" or an "<tt class="character">S</tt>", and "<tt class=
+"samp">ervo</tt>".
+<p>To match a literal "<tt class="character">|</tt>", use <tt class=
+"regexp">\|</tt>, or enclose it inside a character class, as in <tt class=
+"regexp">[|]</tt>.</p>
+</dd>
+<dt><tt class="regexp">^</tt></dt>
+<dd>Matches at the beginning of lines. Unless the <tt class=
+"constant">MULTILINE</tt> flag has been set, this will only match at the
+beginning of the string. In <tt class="constant">MULTILINE</tt> mode, this
+also matches immediately after each newline within the string.
+<p>For example, if you wish to match the word "<tt class="samp">From</tt>"
+only at the beginning of a line, the RE to use is <code>^From</code>.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.search('^From', 'From Here to Eternity')
+&lt;re.MatchObject instance at 80c1520&gt;
+&gt;&gt;&gt; print re.search('^From', 'Reciting From Memory')
+None
+</pre></div>
+</dd>
+<dt><tt class="regexp">$</tt></dt>
+<dd>Matches at the end of a line, which is defined as either the end of the
+string, or any location followed by a newline character.
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.search('}$', '{block}')
+&lt;re.MatchObject instance at 80adfa8&gt;
+&gt;&gt;&gt; print re.search('}$', '{block} ')
+None
+&gt;&gt;&gt; print re.search('}$', '{block}\n')
+&lt;re.MatchObject instance at 80adfa8&gt;
+</pre></div>
+<p>To match a literal "<tt class="character">$</tt>", use <tt class=
+"regexp">\$</tt> or enclose it inside a character class, as in <tt class=
+"regexp">[$]</tt>.</p>
+</dd>
+<dt><tt class="regexp">\A</tt></dt>
+<dd>Matches only at the start of the string. When not in <tt class=
+"constant">MULTILINE</tt> mode, <tt class="regexp">\A</tt> and <tt class=
+"regexp">^</tt> are effectively the same. In <tt class=
+"constant">MULTILINE</tt> mode, however, they're different; <tt class=
+"regexp">\A</tt> still matches only at the beginning of the string, but
+<tt class="regexp">^</tt> may match at any location inside the string that
+follows a newline character.</dd>
+<dt><tt class="regexp">\Z</tt></dt>
+<dd>Matches only at the end of the string.</dd>
+<dt><tt class="regexp">\b</tt></dt>
+<dd>Word boundary. This is a zero-width assertion that matches only at the
+beginning or end of a word. A word is defined as a sequence of alphanumeric
+characters, so the end of a word is indicated by whitespace or a
+non-alphanumeric character.
+<p>The following example matches "<tt class="samp">class</tt>" only when it's
+a complete word; it won't match when it's contained inside another word.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'\bclass\b')
+&gt;&gt;&gt; print p.search('no class at all')
+&lt;re.MatchObject instance at 80c8f28&gt;
+&gt;&gt;&gt; print p.search('the declassified algorithm')
+None
+&gt;&gt;&gt; print p.search('one subclass is')
+None
+</pre></div>
+<p>There are two subtleties you should remember when using this special
+sequence. First, this is the worst collision between Python's string literals
+and regular expression sequences. In Python's string literals, "<tt class=
+"samp">\b</tt>" is the backspace character, ASCII value 8. If you're not
+using raw strings, then Python will convert the "<tt class="samp">\b</tt>" to
+a backspace, and your RE won't match as you expect it to. The following
+example looks the same as our previous RE, but omits the "<tt class=
+"character">r</tt>" in front of the RE string.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('\bclass\b')
+&gt;&gt;&gt; print p.search('no class at all')
+None
+&gt;&gt;&gt; print p.search('\b' + 'class' + '\b')  
+&lt;re.MatchObject instance at 80c3ee0&gt;
+</pre></div>
+<p>Second, inside a character class, where there's no use for this assertion,
+<tt class="regexp">\b</tt> represents the backspace character, for
+compatibility with Python's string literals.</p>
+</dd>
+<dt><tt class="regexp">\B</tt></dt>
+<dd>Another zero-width assertion, this is the opposite of <tt class=
+"regexp">\b</tt>, only matching when the current position is not at a word
+boundary.</dd>
+</dl>
+<h2><a name="SECTION000520000000000000000" id=
+"SECTION000520000000000000000">4.2 Grouping</a></h2>
+<p>Frequently you need to obtain more information than just whether the RE
+matched or not. Regular expressions are often used to dissect strings by
+writing a RE divided into several subgroups which match different components
+of interest. For example, an RFC-822 header line is divided into a header
+name and a value, separated by a "<tt class="character">:</tt>". This can be
+handled by writing a regular expression which matches an entire header line,
+and has one group which matches the header name, and another group which
+matches the header's value.</p>
+<p>Groups are marked by the "<tt class="character">(</tt>", "<tt class=
+"character">)</tt>" metacharacters. "<tt class="character">(</tt>" and
+"<tt class="character">)</tt>" have much the same meaning as they do in
+mathematical expressions; they group together the expressions contained
+inside them. For example, you can repeat the contents of a group with a
+repeating qualifier, such as <tt class="regexp">*</tt>, <tt class=
+"regexp">+</tt>, <tt class="regexp">?</tt>, or <tt class=
+"regexp">{<var>m</var>,<var>n</var>}</tt>. For example, <tt class=
+"regexp">(ab)*</tt> will match zero or more repetitions of "<tt class=
+"samp">ab</tt>".</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('(ab)*')
+&gt;&gt;&gt; print p.match('ababababab').span()
+(0, 10)
+</pre></div>
+<p>Groups indicated with "<tt class="character">(</tt>", "<tt class=
+"character">)</tt>" also capture the starting and ending index of the text
+that they match; this can be retrieved by passing an argument to <tt class=
+"method">group()</tt>, <tt class="method">start()</tt>, <tt class=
+"method">end()</tt>, and <tt class="method">span()</tt>. Groups are numbered
+starting with 0. Group 0 is always present; it's the whole RE, so <tt class=
+"class">MatchObject</tt> methods all have group 0 as their default argument.
+Later we'll see how to express groups that don't capture the span of text
+that they match.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('(a)b')
+&gt;&gt;&gt; m = p.match('ab')
+&gt;&gt;&gt; m.group()
+'ab'
+&gt;&gt;&gt; m.group(0)
+'ab'
+</pre></div>
+<p>Subgroups are numbered from left to right, from 1 upward. Groups can be
+nested; to determine the number, just count the opening parenthesis
+characters, going from left to right.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('(a(b)c)d')
+&gt;&gt;&gt; m = p.match('abcd')
+&gt;&gt;&gt; m.group(0)
+'abcd'
+&gt;&gt;&gt; m.group(1)
+'abc'
+&gt;&gt;&gt; m.group(2)
+'b'
+</pre></div>
+<p><tt class="method">group()</tt> can be passed multiple group numbers at a
+time, in which case it will return a tuple containing the corresponding
+values for those groups.</p>
+<div class="verbatim">
+<pre title="interpreter">
+  
+&gt;&gt;&gt; m.group(2,1,2)
+('b', 'abc', 'b')
+</pre></div>
+<p>The <tt class="method">groups()</tt> method returns a tuple containing the
+strings for all the subgroups, from 1 up to however many there are.</p>
+<div class="verbatim">
+<pre title="interpreter">
+  
+&gt;&gt;&gt; m.groups()
+('abc', 'b')
+</pre></div>
+<p>Backreferences in a pattern allow you to specify that the contents of an
+earlier capturing group must also be found at the current location in the
+string. For example, <tt class="regexp">\1</tt> will succeed if the exact
+contents of group 1 can be found at the current position, and fails
+otherwise. Remember that Python's string literals also use a backslash
+followed by numbers to allow including arbitrary characters in a string, so
+be sure to use a raw string when incorporating backreferences in a RE.</p>
+<p>For example, the following RE detects doubled words in a string.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'(\b\w+)\s+\1')
+&gt;&gt;&gt; p.search('Paris in the the spring').group()
+'the the'
+</pre></div>
+<p>Backreferences like this aren't often useful for just searching through a
+string -- there are few text formats which repeat data in this way -- but
+you'll soon find out that they're <i>very</i> useful when performing string
+substitutions.</p>
+<h2><a name="SECTION000530000000000000000" id=
+"SECTION000530000000000000000">4.3 Non-capturing and Named Groups</a></h2>
+<p>Elaborate REs may use many groups, both to capture substrings of interest,
+and to group and structure the RE itself. In complex REs, it becomes
+difficult to keep track of the group numbers. There are two features which
+help with this problem. Both of them use a common syntax for regular
+expression extensions, so we'll look at that first.</p>
+<p>Perl 5 added several additional features to standard regular expressions,
+and the Python <tt class="module">re</tt> module supports most of them. It
+would have been difficult to choose new single-keystroke metacharacters or
+new special sequences beginning with "<tt class="samp">\</tt>" to represent
+the new features without making Perl's regular expressions confusingly
+different from standard REs. If you chose "<tt class="samp">&amp;</tt>" as a
+new metacharacter, for example, old expressions would be assuming that
+"<tt class="samp">&amp;</tt>" was a regular character and wouldn't have
+escaped it by writing <tt class="regexp">\&amp;</tt> or <tt class=
+"regexp">[&amp;]</tt>.</p>
+<p>The solution chosen by the Perl developers was to use <tt class=
+"regexp">(?...)</tt> as the extension syntax. "<tt class="samp">?</tt>"
+immediately after a parenthesis was a syntax error because the "<tt class=
+"samp">?</tt>" would have nothing to repeat, so this didn't introduce any
+compatibility problems. The characters immediately after the "<tt class=
+"samp">?</tt>" indicate what extension is being used, so <tt class=
+"regexp">(?=foo)</tt> is one thing (a positive lookahead assertion) and
+<tt class="regexp">(?:foo)</tt> is something else (a non-capturing group
+containing the subexpression <tt class="regexp">foo</tt>).</p>
+<p>Python adds an extension syntax to Perl's extension syntax. If the first
+character after the question mark is a "<tt class="samp">P</tt>", you know
+that it's an extension that's specific to Python. Currently there are two
+such extensions: <tt class="regexp">(?P&lt;<var>name</var>&gt;...)</tt>
+defines a named group, and <tt class="regexp">(?P=<var>name</var>)</tt> is a
+backreference to a named group. If future versions of Perl 5 add similar
+features using a different syntax, the <tt class="module">re</tt> module will
+be changed to support the new syntax, while preserving the Python-specific
+syntax for compatibility's sake.</p>
+<p>Now that we've looked at the general extension syntax, we can return to
+the features that simplify working with groups in complex REs. Since groups
+are numbered from left to right and a complex expression may use many groups,
+it can become difficult to keep track of the correct numbering, and modifying
+such a complex RE is annoying. Insert a new group near the beginning, and you
+change the numbers of everything that follows it.</p>
+<p>First, sometimes you'll want to use a group to collect a part of a regular
+expression, but aren't interested in retrieving the group's contents. You can
+make this fact explicit by using a non-capturing group: <tt class=
+"regexp">(?:...)</tt>, where you can put any other regular expression inside
+the parentheses.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; m = re.match("([abc])+", "abc")
+&gt;&gt;&gt; m.groups()
+('c',)
+&gt;&gt;&gt; m = re.match("(?:[abc])+", "abc")
+&gt;&gt;&gt; m.groups()
+()
+</pre></div>
+<p>Except for the fact that you can't retrieve the contents of what the group
+matched, a non-capturing group behaves exactly the same as a capturing group;
+you can put anything inside it, repeat it with a repetition metacharacter
+such as "<tt class="samp">*</tt>", and nest it within other groups (capturing
+or non-capturing). <tt class="regexp">(?:...)</tt> is particularly useful
+when modifying an existing group, since you can add new groups without
+changing how all the other groups are numbered. It should be mentioned that
+there's no performance difference in searching between capturing and
+non-capturing groups; neither form is any faster than the other.</p>
+<p>The second, and more significant, feature is named groups; instead of
+referring to them by numbers, groups can be referenced by a name.</p>
+<p>The syntax for a named group is one of the Python-specific extensions:
+<tt class="regexp">(?P&lt;<var>name</var>&gt;...)</tt>. <var>name</var> is,
+obviously, the name of the group. Except for associating a name with a group,
+named groups also behave identically to capturing groups. The <tt class=
+"class">MatchObject</tt> methods that deal with capturing groups all accept
+either integers, to refer to groups by number, or a string containing the
+group name. Named groups are still given numbers, so you can retrieve
+information about a group in two ways:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'(?P&lt;word&gt;\b\w+\b)')
+&gt;&gt;&gt; m = p.search( '(((( Lots of punctuation )))' )
+&gt;&gt;&gt; m.group('word')
+'Lots'
+&gt;&gt;&gt; m.group(1)
+'Lots'
+</pre></div>
+<p>Named groups are handy because they let you use easily-remembered names,
+instead of having to remember numbers. Here's an example RE from the
+<tt class="module">imaplib</tt> module:</p>
+<div class="verbatim">
+<pre>
+InternalDate = re.compile(r'INTERNALDATE "'
+        r'(?P&lt;day&gt;[ 123][0-9])-(?P&lt;mon&gt;[A-Z][a-z][a-z])-'
+   r'(?P&lt;year&gt;[0-9][0-9][0-9][0-9])'
+        r' (?P&lt;hour&gt;[0-9][0-9]):(?P&lt;min&gt;[0-9][0-9]):(?P&lt;sec&gt;[0-9][0-9])'
+        r' (?P&lt;zonen&gt;[-+])(?P&lt;zoneh&gt;[0-9][0-9])(?P&lt;zonem&gt;[0-9][0-9])'
+        r'"')
+</pre></div>
+<p>It's obviously much easier to retrieve <code>m.group('zonem')</code>,
+instead of having to remember to retrieve group 9.</p>
+<p>Since the syntax for backreferences, in an expression like <tt class=
+"regexp">(...)\1</tt>, refers to the number of the group there's naturally a
+variant that uses the group name instead of the number. This is also a Python
+extension: <tt class="regexp">(?P=<var>name</var>)</tt> indicates that the
+contents of the group called <var>name</var> should again be found at the
+current point. The regular expression for finding doubled words, <tt class=
+"regexp">(\b\w+)\s+\1</tt> can also be written as <tt class=
+"regexp">(?P&lt;word&gt;\b\w+)\s+(?P=word)</tt>:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'(?P&lt;word&gt;\b\w+)\s+(?P=word)')
+&gt;&gt;&gt; p.search('Paris in the the spring').group()
+'the the'
+</pre></div>
+<h2><a name="SECTION000540000000000000000" id=
+"SECTION000540000000000000000">4.4 Lookahead Assertions</a></h2>
+<p>Another zero-width assertion is the lookahead assertion. Lookahead
+assertions are available in both positive and negative form, and look like
+this:</p>
+<dl compact="compact">
+<dt><tt class="regexp">(?=...)</tt></dt>
+<dd>Positive lookahead assertion. This succeeds if the contained regular
+expression, represented here by <code>...</code>, successfully matches at the
+current location, and fails otherwise. But, once the contained expression has
+been tried, the matching engine doesn't advance at all; the rest of the
+pattern is tried right where the assertion started.</dd>
+<dt><tt class="regexp">(?!...)</tt></dt>
+<dd>Negative lookahead assertion. This is the opposite of the positive
+assertion; it succeeds if the contained expression <i>doesn't</i> match at
+the current position in the string.</dd>
+</dl>
+<p>An example will help make this concrete by demonstrating a case where a
+lookahead is useful. Consider a simple pattern to match a filename and split
+it apart into a base name and an extension, separated by a "<tt class=
+"samp">.</tt>". For example, in "<tt class="samp">news.rc</tt>", "<tt class=
+"samp">news</tt>"is the base name, and "<tt class="samp">rc</tt>" is the
+filename's extension.</p>
+<p>The pattern to match this is quite simple:</p>
+<p><tt class="regexp">.*[.].*$</tt></p>
+<p>Notice that the "<tt class="samp">.</tt>" needs to be treated specially
+because it's a metacharacter; I've put it inside a character class. Also
+notice the trailing <tt class="regexp">$</tt>; this is added to ensure that
+all the rest of the string must be included in the extension. This regular
+expression matches "<tt class="samp">foo.bar</tt>" and "<tt class=
+"samp">autoexec.bat</tt>" and "<tt class="samp">sendmail.cf</tt>" and
+"<tt class="samp">printers.conf</tt>".</p>
+<p>Now, consider complicating the problem a bit; what if you want to match
+filenames where the extension is not "<tt class="samp">bat</tt>"? Some
+incorrect attempts:</p>
+<p><code>.*[.][^b].*$</code></p>
+<p>The first attempt above tries to exclude "<tt class="samp">bat</tt>" by
+requiring that the first character of the extension is not a "<tt class=
+"samp">b</tt>". This is wrong, because the pattern also doesn't match
+"<tt class="samp">foo.bar</tt>".</p>
+<p><tt class="regexp">.*[.]([^b]..|.[^a].|..[^t])$</tt></p>
+<p>The expression gets messier when you try to patch up the first solution by
+requiring one of the following cases to match: the first character of the
+extension isn't "<tt class="samp">b</tt>"; the second character isn't
+"<tt class="samp">a</tt>"; or the third character isn't "<tt class=
+"samp">t</tt>". This accepts "<tt class="samp">foo.bar</tt>" and rejects
+"<tt class="samp">autoexec.bat</tt>", but it requires a three-letter
+extension and won't accept a filename with a two-letter extension such as
+"<tt class="samp">sendmail.cf</tt>". We'll complicate the pattern again in an
+effort to fix it.</p>
+<p><tt class="regexp">.*[.]([^b].?.?|.[^a]?.?|..?[^t]?)$</tt></p>
+<p>In the third attempt, the second and third letters are all made optional
+in order to allow matching extensions shorter than three characters, such as
+"<tt class="samp">sendmail.cf</tt>".</p>
+<p>The pattern's getting really complicated now, which makes it hard to read
+and understand. Worse, if the problem changes and you want to exclude both
+"<tt class="samp">bat</tt>" and "<tt class="samp">exe</tt>" as extensions,
+the pattern would get even more complicated and confusing.</p>
+<p>A negative lookahead cuts through all this:</p>
+<p><tt class="regexp">.*[.](?!bat$).*$</tt></p>
+<p>The lookahead means: if the expression <tt class="regexp">bat</tt> doesn't
+match at this point, try the rest of the pattern; if <tt class=
+"regexp">bat$</tt> does match, the whole pattern will fail. The trailing
+<tt class="regexp">$</tt> is required to ensure that something like
+"<tt class="samp">sample.batch</tt>", where the extension only starts with
+"<tt class="samp">bat</tt>", will be allowed.</p>
+<p>Excluding another filename extension is now easy; simply add it as an
+alternative inside the assertion. The following pattern excludes filenames
+that end in either "<tt class="samp">bat</tt>" or "<tt class=
+"samp">exe</tt>":</p>
+<p><tt class="regexp">.*[.](?!bat$|exe$).*$</tt></p>
+<h1><a name="SECTION000600000000000000000" id=
+"SECTION000600000000000000000">5 Modifying Strings</a></h1>
+<p>Up to this point, we've simply performed searches against a static string.
+Regular expressions are also commonly used to modify a string in various
+ways, using the following <tt class="class">RegexObject</tt> methods:</p>
+<table style="border-collapse: collapse;" align="center" border="1">
+<thead>
+<tr class="tableheader">
+<th align="center"><b>Method/Attribute</b> </th>
+<th align="left"><b>Purpose</b> </th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="center" valign="baseline"><code>split()</code></td>
+<td align="left">Split the string into a list, splitting it wherever the RE
+matches</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>sub()</code></td>
+<td align="left">Find all substrings where the RE matches, and replace them
+with a different string</td>
+</tr>
+<tr>
+<td align="center" valign="baseline"><code>subn()</code></td>
+<td align="left">Does the same thing as <tt class="method">sub()</tt>, but
+returns the new string and the number of replacements</td>
+</tr>
+</tbody>
+</table>
+<h2><a name="SECTION000610000000000000000" id=
+"SECTION000610000000000000000">5.1 Splitting Strings</a></h2>
+<p>The <tt class="method">split()</tt> method of a <tt class=
+"class">RegexObject</tt> splits a string apart wherever the RE matches,
+returning a list of the pieces. It's similar to the <tt class=
+"method">split()</tt> method of strings but provides much more generality in
+the delimiters that you can split by; <tt class="method">split()</tt> only
+supports splitting by whitespace or by a fixed string. As you'd expect,
+there's a module-level <tt class="function">re.split()</tt> function,
+too.</p>
+<dl>
+<dd>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr valign="baseline">
+<td><b><a name="l2h-11" id="l2h-11"><tt class=
+"method">split</tt></a></b>(</td>
+<td><var>string</var> <big>[</big><var>, maxsplit <code>=
+0</code></var><big>]</big>)</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dd>Split <var>string</var> by the matches of the regular expression. If
+capturing parentheses are used in the RE, then their contents will also be
+returned as part of the resulting list. If <var>maxsplit</var> is nonzero, at
+most <var>maxsplit</var> splits are performed.</dd>
+</dl>
+<p>You can limit the number of splits made, by passing a value for
+<var>maxsplit</var>. When <var>maxsplit</var> is nonzero, at most
+<var>maxsplit</var> splits will be made, and the remainder of the string is
+returned as the final element of the list. In the following example, the
+delimiter is any sequence of non-alphanumeric characters.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'\W+')
+&gt;&gt;&gt; p.split('This is a test, short and sweet, of split().')
+['This', 'is', 'a', 'test', 'short', 'and', 'sweet', 'of', 'split', '']
+&gt;&gt;&gt; p.split('This is a test, short and sweet, of split().', 3)
+['This', 'is', 'a', 'test, short and sweet, of split().']
+</pre></div>
+<p>Sometimes you're not only interested in what the text between delimiters
+is, but also need to know what the delimiter was. If capturing parentheses
+are used in the RE, then their values are also returned as part of the list.
+Compare the following calls:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile(r'\W+')
+&gt;&gt;&gt; p2 = re.compile(r'(\W+)')
+&gt;&gt;&gt; p.split('This... is a test.')
+['This', 'is', 'a', 'test', '']
+&gt;&gt;&gt; p2.split('This... is a test.')
+['This', '... ', 'is', ' ', 'a', ' ', 'test', '.', '']
+</pre></div>
+<p>The module-level function <tt class="function">re.split()</tt> adds the RE
+to be used as the first argument, but is otherwise the same.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; re.split('[\W]+', 'Words, words, words.')
+['Words', 'words', 'words', '']
+&gt;&gt;&gt; re.split('([\W]+)', 'Words, words, words.')
+['Words', ', ', 'words', ', ', 'words', '.', '']
+&gt;&gt;&gt; re.split('[\W]+', 'Words, words, words.', 1)
+['Words', 'words, words.']
+</pre></div>
+<h2><a name="SECTION000620000000000000000" id=
+"SECTION000620000000000000000">5.2 Search and Replace</a></h2>
+<p>Another common task is to find all the matches for a pattern, and replace
+them with a different string. The <tt class="method">sub()</tt> method takes
+a replacement value, which can be either a string or a function, and the
+string to be processed.</p>
+<dl>
+<dd>
+<table cellpadding="0" cellspacing="0">
+<tbody>
+<tr valign="baseline">
+<td><b><a name="l2h-12" id="l2h-12"><tt class=
+"method">sub</tt></a></b>(</td>
+<td><var>replacement, string</var><big>[</big><var>, count <code>=
+0</code></var><big>]</big>)</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dd>Returns the string obtained by replacing the leftmost non-overlapping
+occurrences of the RE in <var>string</var> by the replacement
+<var>replacement</var>. If the pattern isn't found, <var>string</var> is
+returned unchanged.
+<p>The optional argument <var>count</var> is the maximum number of pattern
+occurrences to be replaced; <var>count</var> must be a non-negative integer.
+The default value of 0 means to replace all occurrences.</p>
+</dd>
+</dl>
+<p>Here's a simple example of using the <tt class="method">sub()</tt> method.
+It replaces colour names with the word "<tt class="samp">colour</tt>":</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile( '(blue|white|red)')
+&gt;&gt;&gt; p.sub( 'colour', 'blue socks and red shoes')
+'colour socks and colour shoes'
+&gt;&gt;&gt; p.sub( 'colour', 'blue socks and red shoes', count=1)
+'colour socks and red shoes'
+</pre></div>
+<p>The <tt class="method">subn()</tt> method does the same work, but returns
+a 2-tuple containing the new string value and the number of replacements that
+were performed:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile( '(blue|white|red)')
+&gt;&gt;&gt; p.subn( 'colour', 'blue socks and red shoes')
+('colour socks and colour shoes', 2)
+&gt;&gt;&gt; p.subn( 'colour', 'no colours at all')
+('no colours at all', 0)
+</pre></div>
+<p>Empty matches are replaced only when they're not adjacent to a previous
+match.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('x*')
+&gt;&gt;&gt; p.sub('-', 'abxd')
+'-a-b-d-'
+</pre></div>
+<p>If <var>replacement</var> is a string, any backslash escapes in it are
+processed. That is, "<tt class="samp">\n</tt>" is converted to a single
+newline character, "<tt class="samp">\r</tt>" is converted to a carriage
+return, and so forth. Unknown escapes such as "<tt class="samp">\j</tt>" are
+left alone. Backreferences, such as "<tt class="samp">\6</tt>", are replaced
+with the substring matched by the corresponding group in the RE. This lets
+you incorporate portions of the original text in the resulting replacement
+string.</p>
+<p>This example matches the word "<tt class="samp">section</tt>" followed by
+a string enclosed in "<tt class="samp">{</tt>", "<tt class="samp">}</tt>",
+and changes "<tt class="samp">section</tt>" to "<tt class=
+"samp">subsection</tt>":</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('section{ ( [^}]* ) }', re.VERBOSE)
+&gt;&gt;&gt; p.sub(r'subsection{\1}','section{First} section{second}')
+'subsection{First} subsection{second}'
+</pre></div>
+<p>There's also a syntax for referring to named groups as defined by the
+<tt class="regexp">(?P&lt;name&gt;...)</tt> syntax. "<tt class=
+"samp">\g&lt;name&gt;</tt>" will use the substring matched by the group named
+"<tt class="samp">name</tt>", and "<tt class=
+"samp">\g&lt;<var>number</var>&gt;</tt>" uses the corresponding group number.
+"<tt class="samp">\g&lt;2&gt;</tt>" is therefore equivalent to "<tt class=
+"samp">\2</tt>", but isn't ambiguous in a replacement string such as
+"<tt class="samp">\g&lt;2&gt;0</tt>". ("<tt class="samp">\20</tt>" would be
+interpreted as a reference to group 20, not a reference to group 2 followed
+by the literal character "<tt class="character">0</tt>".) The following
+substitutions are all equivalent, but use all three variations of the
+replacement string.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; p = re.compile('section{ (?P&lt;name&gt; [^}]* ) }', re.VERBOSE)
+&gt;&gt;&gt; p.sub(r'subsection{\1}','section{First}')
+'subsection{First}'
+&gt;&gt;&gt; p.sub(r'subsection{\g&lt;1&gt;}','section{First}')
+'subsection{First}'
+&gt;&gt;&gt; p.sub(r'subsection{\g&lt;name&gt;}','section{First}')
+'subsection{First}'
+</pre></div>
+<p><var>replacement</var> can also be a function, which gives you even more
+control. If <var>replacement</var> is a function, the function is called for
+every non-overlapping occurrence of <var>pattern</var>. On each call, the
+function is passed a <tt class="class">MatchObject</tt> argument for the
+match and can use this information to compute the desired replacement string
+and return it.</p>
+<p>In the following example, the replacement function translates decimals
+into hexadecimal:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; def hexrepl( match ):
+...     "Return the hex string for a decimal number"
+...     value = int( match.group() )
+...     return hex(value)
+...
+&gt;&gt;&gt; p = re.compile(r'\d+')
+&gt;&gt;&gt; p.sub(hexrepl, 'Call 65490 for printing, 49152 for user code.')
+'Call 0xffd2 for printing, 0xc000 for user code.'
+</pre></div>
+<p>When using the module-level <tt class="function">re.sub()</tt> function,
+the pattern is passed as the first argument. The pattern may be a string or a
+<tt class="class">RegexObject</tt>; if you need to specify regular expression
+flags, you must either use a <tt class="class">RegexObject</tt> as the first
+parameter, or use embedded modifiers in the pattern, e.g. <code>sub("(?i)b+",
+"x", "bbbb BBBB")</code> returns <code>'x x'</code>.</p>
+<h1><a name="SECTION000700000000000000000" id=
+"SECTION000700000000000000000">6 Common Problems</a></h1>
+<p>Regular expressions are a powerful tool for some applications, but in some
+ways their behaviour isn't intuitive and at times they don't behave the way
+you may expect them to. This section will point out some of the most common
+pitfalls.</p>
+<h2><a name="SECTION000710000000000000000" id=
+"SECTION000710000000000000000">6.1 Use String Methods</a></h2>
+<p>Sometimes using the <tt class="module">re</tt> module is a mistake. If
+you're matching a fixed string, or a single character class, and you're not
+using any <tt class="module">re</tt> features such as the <tt class=
+"constant">IGNORECASE</tt> flag, then the full power of regular expressions
+may not be required. Strings have several methods for performing operations
+with fixed strings and they're usually much faster, because the
+implementation is a single small C loop that's been optimized for the
+purpose, instead of the large, more generalized regular expression
+engine.</p>
+<p>One example might be replacing a single fixed string with another one; for
+example, you might replace "<tt class="samp">word</tt>"with "<tt class=
+"samp">deed</tt>". <code>re.sub()</code> seems like the function to use for
+this, but consider the <tt class="method">replace()</tt> method. Note that
+<tt class="function">replace()</tt> will also replace "<tt class=
+"samp">word</tt>" inside words, turning "<tt class="samp">swordfish</tt>"
+into "<tt class="samp">sdeedfish</tt>", but the nave RE <tt class=
+"regexp">word</tt> would have done that, too. (To avoid performing the
+substitution on parts of words, the pattern would have to be <tt class=
+"regexp">\bword\b</tt>, in order to require that "<tt class="samp">word</tt>"
+have a word boundary on either side. This takes the job beyond <tt class=
+"method">replace</tt>'s abilities.)</p>
+<p>Another common task is deleting every occurrence of a single character
+from a string or replacing it with another single character. You might do
+this with something like <code>re.sub('\n', ' ', S)</code>, but <tt class=
+"method">translate()</tt> is capable of doing both tasks and will be faster
+that any regular expression operation can be.</p>
+<p>In short, before turning to the <tt class="module">re</tt> module,
+consider whether your problem can be solved with a faster and simpler string
+method.</p>
+<h2><a name="SECTION000720000000000000000" id=
+"SECTION000720000000000000000">6.2 match() versus search()</a></h2>
+<p>The <tt class="function">match()</tt> function only checks if the RE
+matches at the beginning of the string while <tt class=
+"function">search()</tt> will scan forward through the string for a match.
+It's important to keep this distinction in mind. Remember, <tt class=
+"function">match()</tt> will only report a successful match which will start
+at 0; if the match wouldn't start at zero, <tt class="function">match()</tt>
+will <i>not</i> report it.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.match('super', 'superstition').span()  
+(0, 5)
+&gt;&gt;&gt; print re.match('super', 'insuperable')    
+None
+</pre></div>
+<p>On the other hand, <tt class="function">search()</tt> will scan forward
+through the string, reporting the first match it finds.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.search('super', 'superstition').span()
+(0, 5)
+&gt;&gt;&gt; print re.search('super', 'insuperable').span()
+(2, 7)
+</pre></div>
+<p>Sometimes you'll be tempted to keep using <tt class=
+"function">re.match()</tt>, and just add <tt class="regexp">.*</tt> to the
+front of your RE. Resist this temptation and use <tt class=
+"function">re.search()</tt> instead. The regular expression compiler does
+some analysis of REs in order to speed up the process of looking for a match.
+One such analysis figures out what the first character of a match must be;
+for example, a pattern starting with <tt class="regexp">Crow</tt> must match
+starting with a "<tt class="character">C</tt>". The analysis lets the engine
+quickly scan through the string looking for the starting character, only
+trying the full match if a "<tt class="character">C</tt>" is found.</p>
+<p>Adding <tt class="regexp">.*</tt> defeats this optimization, requiring
+scanning to the end of the string and then backtracking to find a match for
+the rest of the RE. Use <tt class="function">re.search()</tt> instead.</p>
+<h2><a name="SECTION000730000000000000000" id=
+"SECTION000730000000000000000">6.3 Greedy versus Non-Greedy</a></h2>
+<p>When repeating a regular expression, as in <tt class="regexp">a*</tt>, the
+resulting action is to consume as much of the pattern as possible. This fact
+often bites you when you're trying to match a pair of balanced delimiters,
+such as the angle brackets surrounding an HTML tag. The nave pattern for
+matching a single HTML tag doesn't work because of the greedy nature of
+<tt class="regexp">.*</tt>.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; s = '&lt;html&gt;&lt;head&gt;&lt;title&gt;Title&lt;/title&gt;'
+&gt;&gt;&gt; len(s)
+32
+&gt;&gt;&gt; print re.match('&lt;.*&gt;', s).span()
+(0, 32)
+&gt;&gt;&gt; print re.match('&lt;.*&gt;', s).group()
+&lt;html&gt;&lt;head&gt;&lt;title&gt;Title&lt;/title&gt;
+</pre></div>
+<p>The RE matches the "<tt class="character">&lt;</tt>" in "<tt class=
+"samp">&lt;html&gt;</tt>", and the <tt class="regexp">.*</tt> consumes the
+rest of the string. There's still more left in the RE, though, and the
+<tt class="regexp">&gt;</tt> can't match at the end of the string, so the
+regular expression engine has to backtrack character by character until it
+finds a match for the <tt class="regexp">&gt;</tt>. The final match extends
+from the "<tt class="character">&lt;</tt>" in "<tt class=
+"samp">&lt;html&gt;</tt>"to the "<tt class="character">&gt;</tt>" in
+"<tt class="samp">&lt;/title&gt;</tt>", which isn't what you want.</p>
+<p>In this case, the solution is to use the non-greedy qualifiers <tt class=
+"regexp">*?</tt>, <tt class="regexp">+?</tt>, <tt class="regexp">??</tt>, or
+<tt class="regexp">{<var>m</var>,<var>n</var>}?</tt>, which match as
+<i>little</i> text as possible. In the above example, the "<tt class=
+"character">&gt;</tt>" is tried immediately after the first "<tt class=
+"character">&lt;</tt>" matches, and when it fails, the engine advances a
+character at a time, retrying the "<tt class="character">&gt;</tt>" at every
+step. This produces just the right result:</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; print re.match('&lt;.*?&gt;', s).group()
+&lt;html&gt;
+</pre></div>
+<p>(Note that parsing HTML or XML with regular expressions is painful.
+Quick-and-dirty patterns will handle common cases, but HTML and XML have
+special cases that will break the obvious regular expression; by the time
+you've written a regular expression that handles all of the possible cases,
+the patterns will be <i>very</i> complicated. Use an HTML or XML parser
+module for such tasks.)</p>
+<h2><a name="SECTION000740000000000000000" id=
+"SECTION000740000000000000000">6.4 Not Using re.VERBOSE</a></h2>
+<p>By now you've probably noticed that regular expressions are a very compact
+notation, but they're not terribly readable. REs of moderate complexity can
+become lengthy collections of backslashes, parentheses, and metacharacters,
+making them difficult to read and understand.</p>
+<p>For such REs, specifying the <code>re.VERBOSE</code> flag when compiling
+the regular expression can be helpful, because it allows you to format the
+regular expression more clearly.</p>
+<p>The <code>re.VERBOSE</code> flag has several effects. Whitespace in the
+regular expression that <i>isn't</i> inside a character class is ignored.
+This means that an expression such as <tt class="regexp">dog | cat</tt> is
+equivalent to the less readable <tt class="regexp">dog|cat</tt>, but
+<tt class="regexp">[a b]</tt> will still match the characters "<tt class=
+"character">a</tt>", "<tt class="character">b</tt>", or a space. In addition,
+you can also put comments inside a RE; comments extend from a "<tt class=
+"samp">#</tt>" character to the next newline. When used with triple-quoted
+strings, this enables REs to be formatted more neatly:</p>
+<div class="verbatim">
+<pre>
+pat = re.compile(r"""
+ \s*                 # Skip leading whitespace
+ (?P&lt;header&gt;[^:]+)   # Header name
+ \s* :               # Whitespace, and a colon
+ (?P&lt;value&gt;.*?)      # The header's value -- *? used to
+                     # lose the following trailing whitespace
+ \s*$                # Trailing whitespace to end-of-line
+""", re.VERBOSE)
+</pre></div>
+<p>This is far more readable than:</p>
+<div class="verbatim">
+<pre>
+pat = re.compile(r"\s*(?P&lt;header&gt;[^:]+)\s*:(?P&lt;value&gt;.*?)\s*$")
+</pre></div>
+<h1><a name="SECTION000800000000000000000" id=
+"SECTION000800000000000000000">7 Feedback</a></h1>
+<p>Regular expressions are a complicated topic. Did this document help you
+understand them? Were there parts that were unclear, or Problems you
+encountered that weren't covered here? If so, please send suggestions for
+improvements to the author.</p>
+<p>The most complete book on regular expressions is almost certainly Jeffrey
+Friedl's <em class="citetitle">Mastering Regular Expressions</em>, published
+by O'Reilly. Unfortunately, it exclusively concentrates on Perl and Java's
+flavours of regular expressions, and doesn't contain any Python material at
+all, so it won't be useful as a reference for programming in Python. (The
+first edition covered Python's now-obsolete <tt class="module">regex</tt>
+module, which won't help you much.) Consider checking it out from your
+library.</p>
+<h1><a name="SECTION000900000000000000000" id=
+"SECTION000900000000000000000">About this document ...</a></h1>
+<strong>Regular Expression HOWTO</strong>
+<p>This document was generated using the <a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+translator.</p>
+<span class="vlam_comment" style="display: none">It was later edited by hand,
+in just a few minutes, in order to make it compatible with Crunchy Frog. We
+would like to thank A.M. Kuchling for giving us permission to adapt this
+document and use it as an example of what Crunchy Frog can do.</span>
+<p><a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+is Copyright 1993, 1994, 1995, 1996, 1997, <a href=
+"http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</a>, Computer Based
+Learning Unit, University of Leeds, and Copyright ï©© 1997, 1998, <a href=
+"http://www.maths.mq.edu.au/%7Eross/">Ross Moore</a>, Mathematics Department,
+Macquarie University, Sydney.</p>
+<p>The application of <a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+to the Python documentation has been heavily tailored by Fred L. Drake, Jr.
+Original navigation icons were contributed by Christopher Petrilli.</p>
+<div class="navigation">
+<hr>
+<table align="center" cellpadding="0" cellspacing="2" width="100%">
+<tbody>
+<tr>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td align="center" width="100%">Regular Expression HOWTO</td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<span class="release-info">Release 0.05.</span></div>
+<!--End of Navigation Panel-->
+</body>
+</html>

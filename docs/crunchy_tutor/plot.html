@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Canvas - Plot</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+<link href="tutor.css" type="text/css" rel="stylesheet" />
+<link href="tutor_bw.css" title="Black and white"
+type="text/css" rel="stylesheet" />
+<link href="tutor_menu.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="maths.gif" class="titleimage"/>
+<span class="title">Plotting mathematical functions</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics: drawing</a>
+<a href="plot.html">Graphics: plotting</a>
+<a href="sound.html">Sound</a>
+<a href="external.html">External applications</a>
+</div>
+<div id="main">
+<h2>The plot thickens</h2>
+<p>In addition to drawing pictures, Crunchy allows you to plot mathematical functions (of one variable). 
+However, the drawing canvas and the plotting canvas are different; the first 
+one can be identified by its green border whereas the second is identified by 
+its blue border. We will see two examples of plots. The first is an example 
+of drawing two functions, one define by the user, the other from the math
+library.</p>
+<pre title="plot size=(10, 80) area=(300, 200)">
+from math import sin
+prepare_graph(x_range=(0, 20), y_range=(-2, 2))
+set_line_colour('red')
+def wave(x):
+  return sin(x)
+plot_function(sin)
+def simple(x):
+    return x/6.
+set_line_colour('green')
+plot_function(simple)
+</pre>
+<p>
+The second example will add some sound effects (a separate introduction to sound will follow.) Two pure tones will be played at the same time.  Because their frequencies are chosen to be very close, the sum of the two produces a beat pattern.  We will give a visual representation of this beat pattern by adding two sine functions.  
+</p>
+
+<pre title="plot area=(700, 400)">
+play_tones((440, 441), 4)
+from math import sin
+prepare_graph(x_range=(0, 90), y_range=(-2, 2))
+f1 = 5.
+f2 = 5.3
+def wave1(x):
+  return sin(f1*x)
+def wave2(x):
+  return sin(f2*x)
+def wave_sum(x):
+  return wave1(x) + wave2(x)
+set_line_colour('red')
+plot_function(wave1)
+set_line_colour('green')
+plot_function(wave2)
+set_line_colour('blue')
+plot_function(wave_sum)
+</pre>
+
+<p><small>The silence will be deafening on the <a href="sound.html">sound</a> page if you are not using Crunchy.</small></p>
+</div>
+</body>
+</html>
