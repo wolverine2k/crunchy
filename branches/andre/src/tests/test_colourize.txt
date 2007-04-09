@@ -1,0 +1,79 @@
+Colourize.py tests
+==================
+
+This file contains tests of styling Python code.  Unfortunately, the additional markup makes it near impossible
+to have short (<80 characters) output lines.
+
+We start by initializing a Colourizer instance, as is done in
+crunchyfier.py (version 0.8).  This is likely to change in a future version.
+
+    >>> import colourize
+    >>> styler = colourize.Colourizer()
+
+We now style a few code samples.  First, some straight Python code.
+
+    >>> code_sample1 = """print 'Hello world!'
+    ... for i in range(3):
+    ...     print i*i
+    ... class test_case(object):
+    ...     def __init__(self):
+    ...         pass
+    ... """
+    >>> print styler.parseListing(code_sample1)
+    <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>        </span><span class='py_keyword'>pass</span>
+    <BLANKLINE>
+
+Next, a similar code sample but with added comments. 
+Note that we also removed the last empty line.
+
+    >>> code_sample2 = """#First comment
+    ... print 'Hello world!'
+    ... for i in range(3):
+    ...     print i*i  # another comment
+    ... # yet another one
+    ... class test_case(object):
+    ...     def __init__(self):
+    ...         pass"""
+    >>> print styler.parseListing(code_sample2)
+    <span class='py_comment'>#First comment
+    </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span><span class='py_comment'>  # another comment</span>
+    <span class='py_comment'># yet another one
+    </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>        </span><span class='py_keyword'>pass</span>
+
+Note how the comments result in a </span> inserted at the beginning of the 
+next line.  This requires special consideration when styling code with
+interpreter prompts.
+
+Next, we redo the same tests, but this time with added line numbers.
+    >>> styler.outputLineNumber = True
+    >>> print styler.parseListing(code_sample1)
+    <span class='py_linenumber'>  1 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>  2 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  3 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_linenumber'>  4 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  5 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  6 </span><span>        </span><span class='py_keyword'>pass</span>
+    <span class='py_linenumber'>  7 </span>
+    >>> # The outputLineNumber option is currently automatically reset to be false at the end of a run
+    >>> styler.outputLineNumber = True
+    >>> print styler.parseListing(code_sample2)
+    <span class='py_linenumber'>  1 </span><span class='py_comment'>#First comment
+    </span><span class='py_linenumber'>  2 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>  3 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  4 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span><span class='py_comment'>  # another comment</span>
+    <span class='py_linenumber'>  5 </span><span class='py_comment'># yet another one
+    </span><span class='py_linenumber'>  6 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  7 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  8 </span><span>        </span><span class='py_keyword'>pass</span>
+
+Note again how the comments ending one line result in a </span> inserted at the beginning of the 
+next one.
