@@ -1,0 +1,112 @@
+'''
+a regex-based JavaScript code compression kludge
+'''
+import re
+
+class JSCompressor(object):
+
+    def __init__(self, compressionLevel=2, measureCompression=False):
+        '''
+        compressionLevel:
+            0 - no compression, script returned unchanged. For debugging only - try if you suspect that compression
+                alters your script
+            1 - Strip comments and empty lines, don't change line breaks and indentation (code remains readable)
+            2 - Additionally strip all insignificant whitespace (code will become quite unreadable)
+        measureCompression: append a comment stating the extent of compression
+        '''
+        self.compressionLevel = compressionLevel
+        self.measureCompression = measureCompression
+
+    # a bunch of regexes used in compression
+
+    # first, exempt string literals from compression by transient substitution
+    findLiterals = re.compile(r'(\'.*?(?<=[^\\])\')|(\".*?(?<=[^\\])\")')
+    stringMarker = '@s@t@r@'
+    backSubst = re.compile(stringMarker)        # put the string literals back in
+
+    mlc = re.compile(r'/\*.*?\*\/', re.DOTALL)  # remove multiline comments
+    slc = re.compile('\/\/.*')                  # remove single line comments
+
+    collapseWs = re.compile('(?<=\S)[ \t]+')    # collapse successive non-leading white space characters into one
+    squeeze = re.compile(
+        '''
+        \s+(?=[\}\]\)])     |       # remove whitespace including linebreaks preceding closing brackets or braces
+        (?<=[\{\;\,\(])\s+  |       # ... or following such
+        [ \t]+(?=\W)        |       # remove spaces or tabs preceding non-word characters
+        (?<=\W)[ \t]+               # ... or following such. This also will remove leading whitespace
+        '''
+        , re.DOTALL | re.VERBOSE)
+
+    def compress(self, script):
+        '''
+        perform compression and return compressed script
+        '''
+        if not self.compressionLevel:
+            return script
+
+        lengthBefore = len(script)
+        # first, substitute string literals by placeholders to prevent the regexes messing with them
+        literals = []
+
+        def insertMarker(mo):
+            literals.append(mo.group())
+            return self.stringMarker
+
+        script = self.findLiterals.sub(insertMarker, script)
+
+        # now, to the literal-free carcass, apply some kludgy regexes for deflation...
+        script = self.slc.sub('', script)       # remove single line comments
+        script = self.mlc.sub('\n', script)     # replace multiline comments by newlines
+        script = self.collapseWs.sub(' ', script)   # collapse multiple whitespace characters
+
+        # remove empty lines and trailing whitespace
+        script = '\n'.join([l.rstrip() for l in script.splitlines() if l.strip()])
+
+        if self.compressionLevel > 1:
+            script = self.squeeze.sub('', script)       # squeeze out any dispensible white space
+
+        # now back-substitute the string literals
+        literals.reverse()
+        script = self.backSubst.sub(lambda mo: literals.pop(), script)
+
+        if self.measureCompression:
+            lengthAfter = float(len(script))
+            squeezedBy = int(100*(1-lengthAfter/lengthBefore))
+            script += '\n// squeezed out %s' % squeezedBy + '%'
+
+        return script
+
+
+
+if __name__ == '__main__':
+    script = '''
+
+
+    /* this is a totally useless multiline comment,
+       surrounded by several superfluous line breaks
+     */
+
+
+    // and this is an equally important single line comment
+
+    sth = "this string contains '' quotes, space     and a // comment yet it will survive compression";
+
+    function wurst(){           // this is a great function
+        var hans = 33;
+    }
+
+    sthelse = 'and another useless string';
+
+    function hans(){            // another function
+        var   bill   =   66;    // successive spaces will be collapsed into one;
+        var bob = 77            // this line break will be preserved b/c of lacking semicolon
+        var george = 88;
+    }
+    '''
+
+    for x in range(3):
+        print '\ncompression level', x, ':\n--------------'
+        c = JSCompressor(compressionLevel=x, measureCompression=True)
+        cpr = c.compress(script)
+        print cpr
+        print 'length', len(cpr)

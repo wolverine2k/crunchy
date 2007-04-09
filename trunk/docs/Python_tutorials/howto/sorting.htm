@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<link rel="STYLESHEET" href="howto.css" type="text/css">
+<meta name="vlam" content="irrelevant">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="aesop" content="information">
+<meta name="description" content="Sorting Mini-HOWTO">
+<meta name="keywords" content="sorting">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<title>Sorting Mini-HOWTO</title>
+</head>
+<body>
+<br/>
+<div class="navigation">
+<table align="center" cellpadding="0" cellspacing="2" width="100%">
+<tbody>
+<tr>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td align="center" width="100%">Sorting Mini-HOWTO</td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+</tr>
+</tbody>
+</table>
+<br>
+<hr></div>
+<!--End of Navigation Panel-->
+<div class="titlepage">
+<center>
+<h1>Sorting Mini-HOWTO</h1>
+<p><b><font size="+2">Andrew Dalke</font></b></p>
+<p><span class="email">dalke@bioreason.com</span></p>
+</center>
+</div>
+<h3>Abstract:</h3>
+<div class="ABSTRACT">This document is a little tutorial showing a half dozen
+ways to sort a list with the built-in <tt class="method">sort()</tt> method.
+<p>This document is available from the Python HOWTO page at <a class="url"
+href=
+"http://www.python.org/doc/howto">http://www.python.org/doc/howto</a>.</p>
+</div>
+<span class="vlam_comment" style="display: none">If you see this comment,
+it is because you are looking at this tutorial using Crunchy Frog. Thanks to
+Crunchy Frog, you will be able to try out the various examples as you are
+reading this tutorial. Enjoy!</span>
+<p><br>
+<br></p>
+<h2><a name="SECTION000100000000000000000" id=
+"SECTION000100000000000000000">Contents</a></h2>
+<!--Table of Contents-->
+<ul class="TofC">
+<li><a href="#SECTION000200000000000000000">1 Sorting basic data
+types</a></li>
+<li><a href="#SECTION000300000000000000000">2 Comparing classes</a></li>
+<li><a href="#SECTION000400000000000000000">About this document ...</a></li>
+</ul>
+<!--End of Table of Contents-->
+<p>Python lists have a built-in <tt class="method">sort()</tt> method. There
+are many ways to use it to sort a list and there doesn't appear to be a
+single, central place in the various manuals describing them, so I'll do so
+here.</p>
+<h1><a name="SECTION000200000000000000000" id=
+"SECTION000200000000000000000">1 Sorting basic data types</a></h1>
+<p>A simple ascending sort is easy; just call the <tt class=
+"method">sort()</tt> method of a list.</p>
+<span class="vlam_comment" style="display: none">Crunchy Frog comment: try
+to reproduce the example below, using the embedded interpreter
+prompt.</span>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; a.sort()
+&gt;&gt;&gt; print a
+[1, 2, 3, 4, 5]
+</pre></div>
+<p>Sort takes an optional function which can be called for doing the
+comparisons. The default sort routine is equivalent to</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; a.sort(cmp)
+&gt;&gt;&gt; print a
+[1, 2, 3, 4, 5]
+</pre></div>
+<p>where <tt class="function">cmp</tt> is the built-in function which
+compares two objects, <code>x</code> and <code>y</code>, and returns -1, 0 or
+1 depending on whether <span class="MATH"><img src="img1.gif" alt="x&lt;y"
+align="middle" border="0" height="29" width="43"></span>, <span class=
+"MATH"><img src="img2.gif" alt="x==y" align="middle" border="0" height="29"
+width="55"></span>, or <span class="MATH"><img src="img3.gif" alt="x&gt;y"
+align="middle" border="0" height="29" width="43"></span>. During the course
+of the sort the relationships must stay the same for the final list to make
+sense.</p>
+<p>If you want, you can define your own function for the comparison. For
+integers (and numbers in general) we can do:</p>
+<span class="vlam_comment" style="display: none">Some examples, like the
+one below intended to to be tried at the interpreter prompt may be a bit too
+long to type. In order to avoid retyping, we've introduce an option (which
+did not exist before we attempted to adapt this document) to 1) take the
+formatted simulated interaction at the Python interpreter prompt, 2) remove
+the leading prompt [we assumed it was left justified] as well as the line
+simulating the Python output, and 3) copy the code in the "editor" box for
+easy interaction and modification.</span>
+<div class="verbatim">
+<pre title="interpreter to editor size=(6,80)">
+&gt;&gt;&gt; def numeric_compare(x, y):
+&gt;&gt;&gt;    return x-y
+&gt;&gt;&gt; 
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; a.sort(numeric_compare)
+&gt;&gt;&gt; print a
+[1, 2, 3, 4, 5]
+</pre></div>
+<p>By the way, this function won't work if result of the subtraction is out
+of range, as in <code>sys.maxint - (-1)</code>.</p>
+<p>Or, if you don't want to define a new named function you can create an
+anonymous one using <tt class="keyword">lambda</tt>, as in:</p>
+<span class="vlam_comment" style="display: none">Back to using the basic
+interpreter prompt, for comparison.</span>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; a.sort(lambda x, y: x-y)
+&gt;&gt;&gt; print a
+[1, 2, 3, 4, 5]
+</pre></div>
+<p>If you want the numbers sorted in reverse you can do</p>
+<div class="verbatim">
+<pre title="interpreter to editor size=(6,80)">
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; def reverse_numeric(x, y):
+&gt;&gt;&gt;     return y-x
+&gt;&gt;&gt; 
+&gt;&gt;&gt; a.sort(reverse_numeric)
+&gt;&gt;&gt; print a
+[5, 4, 3, 2, 1]
+</pre></div>
+<p>(a more general implementation could return <code>cmp(y,x)</code> or
+<code>-cmp(x,y)</code>).</p>
+<p>However, it's faster if Python doesn't have to call a function for every
+comparison, so if you want a reverse-sorted list of basic data types, do the
+forward sort first, then use the <tt class="method">reverse()</tt>
+method.</p>
+<div class="verbatim">
+<pre title="interpreter">
+&gt;&gt;&gt; a = [5, 2, 3, 1, 4]
+&gt;&gt;&gt; a.sort()
+&gt;&gt;&gt; a.reverse()
+&gt;&gt;&gt; print a
+[1, 2, 3, 4, 5]
+</pre></div>
+<p>Here's a case-insensitive string comparison using a <tt class=
+"keyword">lambda</tt> function:</p>
+<div class="verbatim">
+<pre title="interpreter to editor size=(6,80)">
+&gt;&gt;&gt; import string
+&gt;&gt;&gt; a = string.split("This is a test string from Andrew.")
+&gt;&gt;&gt; a.sort(lambda x, y: cmp(string.lower(x), string.lower(y)))
+&gt;&gt;&gt; print a
+['a', 'Andrew.', 'from', 'is', 'string', 'test', 'This']
+</pre></div>
+<p>This goes through the overhead of converting a word to lower case every
+time it must be compared. At times it may be faster to compute these once and
+use those values, and the following example shows how.</p>
+<span class="vlam_comment" style="display: none">Whereas each interpreter
+prompt is connected to a single Python session (so that, if you define a
+variable in one of them, you can use it in later in others), the Python
+"editor" start a new Python process each time you "evaluate" its content. 
+However, modules that were previously imported are "remembered". The
+example below will fail if you try it as is, without having tried the 
+previous one. If it does not work, you may have to insert an import statement 
+to solve the problem..</span>
+<div class="verbatim">
+<pre title="interpreter to editor size=(11,80)">
+&gt;&gt;&gt; words = string.split("This is a test string from Andrew.")
+&gt;&gt;&gt; offsets = []
+&gt;&gt;&gt; for i in range(len(words)):
+&gt;&gt;&gt;     offsets.append( (string.lower(words[i]), i) )
+&gt;&gt;&gt; 
+&gt;&gt;&gt; offsets.sort()
+&gt;&gt;&gt; new_words = []
+&gt;&gt;&gt; for dontcare, i in offsets:
+&gt;&gt;&gt;      new_words.append(words[i])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; print new_words
+</pre></div>
+<p>The <code>offsets</code> list is initialized to a tuple of the lower-case
+string and its position in the <code>words</code> list. It is then sorted.
+Python's sort method sorts tuples by comparing terms; given <code>x</code>
+and <code>y</code>, compare <code>x[0]</code> to <code>y[0]</code>, then
+<code>x[1]</code> to <code>y[1]</code>, etc. until there is a difference.</p>
+<p>The result is that the <code>offsets</code> list is ordered by its first
+term, and the second term can be used to figure out where the original data
+was stored. (The <code>for</code> loop assigns <code>dontcare</code> and
+<code>i</code> to the two fields of each term in the list, but we only need
+the index value.)</p>
+<p>Another way to implement this is to store the original data as the second
+term in the <code>offsets</code> list, as in:</p>
+<span class="vlam_comment" style="display: none">We've modified the next
+example from the original tutorial to include the proper import statement.
+We've done other similar changes when required, to make your Crunchy Frog
+experience more enjoyable.</span>
+<div class="verbatim">
+<pre title="interpreter to editor size=(11,80)">
+&gt;&gt;&gt; import string
+&gt;&gt;&gt; words = string.split("This is a test string from Andrew.")
+&gt;&gt;&gt; offsets = []
+&gt;&gt;&gt; for word in words:
+&gt;&gt;&gt;     offsets.append( (string.lower(word), word) )
+&gt;&gt;&gt; 
+&gt;&gt;&gt; offsets.sort()
+&gt;&gt;&gt; new_words = []
+&gt;&gt;&gt; for word in offsets:
+&gt;&gt;&gt;     new_words.append(word[1])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; print new_words
+</pre></div>
+<p>This isn't always appropriate because the second terms in the list (the
+word, in this example) will be compared when the first terms are the same. If
+this happens many times, then there will be the unneeded performance hit of
+comparing the two objects. This can be a large cost if most terms are the
+same and the objects define their own <tt class="method">__cmp__</tt> method,
+but there will still be some overhead to determine if <tt class=
+"method">__cmp__</tt> is defined.</p>
+<p>Still, for large lists, or for lists where the comparison information is
+expensive to calculate, the last two examples are likely to be the fastest
+way to sort a list. It will not work on weakly sorted data, like complex
+numbers, but if you don't know what that means, you probably don't need to
+worry about it.</p>
+<h1><a name="SECTION000300000000000000000" id=
+"SECTION000300000000000000000">2 Comparing classes</a></h1>
+<p>The comparison for two basic data types, like ints to ints or string to
+string, is built into Python and makes sense. There is a default way to
+compare class instances, but the default manner isn't usually very useful.
+You can define your own comparison with the <tt class="method">__cmp__</tt>
+method, as in:</p>
+<div class="verbatim">
+<pre title="interpreter to editor size=(12,80)">
+&gt;&gt;&gt; class Spam:
+&gt;&gt;&gt;     def __init__(self, spam, eggs):
+&gt;&gt;&gt;         self.spam = spam
+&gt;&gt;&gt;         self.eggs = eggs
+&gt;&gt;&gt;     def __cmp__(self, other):
+&gt;&gt;&gt;         return cmp(self.spam+self.eggs, other.spam+other.eggs)
+&gt;&gt;&gt;     def __str__(self):
+&gt;&gt;&gt;         return str(self.spam + self.eggs)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; a = [Spam(1, 4), Spam(9, 3), Spam(4,6)]
+&gt;&gt;&gt; a.sort()
+&gt;&gt;&gt; for spam in a:
+&gt;&gt;&gt;   print str(spam)
+5
+10
+12
+</pre></div>
+<p>Sometimes you may want to sort by a specific attribute of a class. If
+appropriate you should just define the <tt class="method">__cmp__</tt> method
+to compare those values, but you cannot do this if you want to compare
+between different attributes at different times. Instead, you'll need to go
+back to passing a comparison function to sort, as in:</p>
+<div class="verbatim">
+<pre title="interpreter to editor size=(15,80)">
+&gt;&gt;&gt; class Spam:
+&gt;&gt;&gt;     def __init__(self, spam, eggs):
+&gt;&gt;&gt;         self.spam = spam
+&gt;&gt;&gt;         self.eggs = eggs
+&gt;&gt;&gt;     def __cmp__(self, other):
+&gt;&gt;&gt;         return cmp(self.spam+self.eggs, other.spam+other.eggs)
+&gt;&gt;&gt;     def __str__(self):
+&gt;&gt;&gt;         return str(self.spam + self.eggs)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; a = [Spam(1, 4), Spam(9, 3), Spam(4,6)]
+&gt;&gt;&gt; a.sort(lambda x, y: cmp(x.eggs, y.eggs))
+&gt;&gt;&gt; for spam in a:
+&gt;&gt;&gt;   print spam.eggs, str(spam)
+3 12
+4 5
+6 10
+</pre></div>
+<p>If you want to compare two arbitrary attributes (and aren't overly
+concerned about performance) you can even define your own comparison function
+object. This uses the ability of a class instance to emulate an function by
+defining the <tt class="method">__call__</tt> method, as in:</p>
+<div class="verbatim">
+<pre title="interpreter to editor size=(15,80)">
+&gt;&gt;&gt; class Spam:
+&gt;&gt;&gt;     def __init__(self, spam, eggs):
+&gt;&gt;&gt;         self.spam = spam
+&gt;&gt;&gt;         self.eggs = eggs
+&gt;&gt;&gt;     def __cmp__(self, other):
+&gt;&gt;&gt;         return cmp(self.spam+self.eggs, other.spam+other.eggs)
+&gt;&gt;&gt;     def __str__(self):
+&gt;&gt;&gt;         return str(self.spam + self.eggs)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; class CmpAttr:
+&gt;&gt;&gt;     def __init__(self, attr):
+&gt;&gt;&gt;         self.attr = attr
+&gt;&gt;&gt;     def __call__(self, x, y):
+&gt;&gt;&gt;         return cmp(getattr(x, self.attr), getattr(y, self.attr))
+&gt;&gt;&gt; 
+&gt;&gt;&gt; a = [Spam(1, 4), Spam(9, 3), Spam(4,6)]
+&gt;&gt;&gt; a.sort(CmpAttr("spam"))  # sort by the "spam" attribute
+&gt;&gt;&gt; for spam in a:
+&gt;&gt;&gt;    print spam.spam, spam.eggs, str(spam)
+1 4 5
+4 6 10
+9 3 12
+
+&gt;&gt;&gt; a.sort(CmpAttr("eggs"))   # re-sort by the "eggs" attribute
+&gt;&gt;&gt; for spam in a:
+&gt;&gt;&gt;    print spam.spam, spam.eggs, str(spam)
+9 3 12
+1 4 5
+4 6 10
+</pre></div>
+<p>Of course, if you want a faster sort you can extract the attributes into
+an intermediate list and sort that list.</p>
+<p>So, there you have it; about a half-dozen different ways to define how to
+sort a list:</p>
+<ul>
+<li>sort using the default method</li>
+<li>sort using a comparison function</li>
+<li>reverse sort not using a comparison function</li>
+<li>sort on an intermediate list (two forms)</li>
+<li>sort using class defined __cmp__ method</li>
+<li>sort using a sort function object</li>
+</ul>
+<h1><a name="SECTION000400000000000000000" id=
+"SECTION000400000000000000000">About this document ...</a></h1>
+<strong>Sorting Mini-HOWTO</strong>
+<p>This document was generated using the <a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+translator.</p>
+<span class="vlam_comment" style="display: none">It was later edited by hand
+in order to make it compatible with Crunchy Frog. Doing so lead us to
+introduce a new VLAM option.</span>
+<p><a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+is Copyright 1993, 1994, 1995, 1996, 1997, <a href=
+"http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</a>, Computer Based
+Learning Unit, University of Leeds, and Copyright 1997, 1998, <a href=
+"http://www.maths.mq.edu.au/%7Eross/">Ross Moore</a>, Mathematics Department,
+Macquarie University, Sydney.</p>
+<p>The application of <a href=
+"http://saftsack.fs.uni-bayreuth.de/%7Elatex2ht/"><strong>LaTeX</strong>2<tt>HTML</tt></a>
+to the Python documentation has been heavily tailored by Fred L. Drake, Jr.
+Original navigation icons were contributed by Christopher Petrilli.</p>
+<div class="navigation">
+<hr>
+<table align="center" cellpadding="0" cellspacing="2" width="100%">
+<tbody>
+<tr>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td align="center" width="100%">Sorting Mini-HOWTO</td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+<td><img src="blank.gif" alt="" border="0" height="32" width="32"></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<span class="release-info">Release 0.01.</span></div>
+<!--End of Navigation Panel-->
+</body>
+</html>
