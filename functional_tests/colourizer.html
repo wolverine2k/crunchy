@@ -34,6 +34,18 @@ be given to the user.</p>
 for i in range(10:
     print i
 </pre>
+<p>In versions up to 0.8.1, comments and linenumbers apparently did not mix
+properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small interpreter prompt (i.e. in the same font size as the linenumber)].
+In the following example, all interpreter prompts should appear the same.
+In particular, compare the interpreter prompts on the first and second lines which used not to be the same font size. </p>
+<pre title="none interpreter linenumber">
+&gt;&gt;&gt; # Comment on the first line.
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; # Another comment.
+&gt;&gt;&gt; print "Hello World"
+</pre>
 
 <h2>Bugs</h2>
 <ul>
@@ -57,21 +69,7 @@ Here is how this example is processed by Crunchy:
 print "Hello world!"<br/>print "Crunchy rocks!"
 </pre>
 Note how everything after the <code>&lt;br/&gt;</code> disappears.
-
 </li>
-
-<li>Comments and linenumbers apparently don't mix properly [overlapping
-<code>&lt;span&gt;</code> sometimes result in a small interpreter prompt
-(i.e. in the same font size as the linenumber)]. Compare the size of the
-interpreter prompts on the first and second lines for example.
-<pre title="none interpreter linenumber">
-&gt;&gt;&gt; # Comment on the first line.
-&gt;&gt;&gt; for i in range(10):
-...    print i,
-&gt;&gt;&gt; print "Hello World"
-&gt;&gt;&gt; # Another comment.
-&gt;&gt;&gt; print "Hello World"
-</pre></li>
   <li> There is a bug with an editor (with line numbers) where a single empty line appears at the beginning, and a space is inserted before the first line of the output using Python 2.5 and Mac OS.
 <pre title="editor linenumber size=(4,50)">
 for i in range(5):

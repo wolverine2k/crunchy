@@ -554,7 +554,9 @@ class VLAMPage(TreeBuilder):
             # the following is reset by self.colourizer;
             # do not attempt to use directly
             self.colourizer.outputLineNumber = True
-            length = len("<span class='py_linenumber'>999 </span>")
+            bare_len = len("<span class='py_linenumber'>999 </span>")
+            span_len = len("<span><span class='py_linenumber'>999 </span>")
+            endspan_len = len("</span><span class='py_linenumber'>999 </span>")
         else:
             add_line = False
             self.colourizer.outputLineNumber = False
@@ -568,6 +570,16 @@ class VLAMPage(TreeBuilder):
                 for (pr, info) in self.lines_of_prompt:
                     if pr:
                         if add_line:
+                            #sometimes, a <span> or </span> gets prepended to
+                            # a line; we need to make sure that this does not
+                            # result in overlapping <span>s which makes the
+                            # prompt the same font size as the linenumber
+                            if lines[info].startswith("<span>"):
+                                length = span_length
+                            elif lines[info].startswith("</span>"):
+                                length = endspan_len
+                            else:
+                                length = bare_len
                             newlines.append(lines[info][:length] +
                                             '<span class="py_prompt">' + pr +
                                   '</span>' + lines[info][length:])
