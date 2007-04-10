@@ -20,7 +20,8 @@ We now style a few code samples.  First, some straight Python code.
     ...     def __init__(self):
     ...         pass
     ... """
-    >>> print styler.parseListing(code_sample1)
+    >>> styled_code1 = styler.parseListing(code_sample1)
+    >>> print styled_code1
     <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
@@ -28,6 +29,11 @@ We now style a few code samples.  First, some straight Python code.
     <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>        </span><span class='py_keyword'>pass</span>
     <BLANKLINE>
+
+We know that the generated work does the required processing as we have
+done some functional testing and looked at similar code displayed by
+a browser.  We will use such code samples from now on, assuming them
+to be correct, as we develop additional functionality.
 
 Next, a similar code sample but with added comments.
 Note that we also removed the last empty line.
@@ -40,7 +46,8 @@ Note that we also removed the last empty line.
     ... class test_case(object):
     ...     def __init__(self):
     ...         pass"""
-    >>> print styler.parseListing(code_sample2)
+    >>> styled_code2 = styler.parseListing(code_sample2)
+    >>> print styled_code2
     <span class='py_comment'>#First comment
     </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
@@ -56,7 +63,8 @@ interpreter prompts.
 
 Next, we redo the same tests, but this time with added line numbers.
     >>> styler.outputLineNumber = True
-    >>> print styler.parseListing(code_sample1)
+    >>> styled_code1a = styler.parseListing(code_sample1)
+    >>> print styled_code1a
     <span class='py_linenumber'>  1 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_linenumber'>  2 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span class='py_linenumber'>  3 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
@@ -66,7 +74,8 @@ Next, we redo the same tests, but this time with added line numbers.
     <span class='py_linenumber'>  7 </span>
     >>> # The outputLineNumber option is currently automatically reset to be false at the end of a run
     >>> styler.outputLineNumber = True
-    >>> print styler.parseListing(code_sample2)
+    >>> styled_code2a = styler.parseListing(code_sample2)
+    >>> print styled_code2a
     <span class='py_linenumber'>  1 </span><span class='py_comment'>#First comment
     </span><span class='py_linenumber'>  2 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_linenumber'>  3 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
@@ -82,35 +91,25 @@ next one.
 New stuff
 ========
 
-We'll use TDD to change colourize.py.
+We use TDD to change colourize.py.
 First, we define a new function that will be called, instead of calling an
 instance of the Colourizer class directly.
 
-    >>> print colourize.style(code_sample1)
-    <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
-    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
-    <span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span>        </span><span class='py_keyword'>pass</span>
-    <BLANKLINE>
+    >>> print styled_code1 == colourize.style(code_sample1)
+    True
 
 After adding a line numbering option, we can reproduce a second example.
 
-    >>> print colourize.style(code_sample1, line_numbering=True)
-    <span class='py_linenumber'>  1 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
-    <span class='py_linenumber'>  2 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span class='py_linenumber'>  3 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
-    <span class='py_linenumber'>  4 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span class='py_linenumber'>  5 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
-    <span class='py_linenumber'>  6 </span><span>        </span><span class='py_keyword'>pass</span>
-    <span class='py_linenumber'>  7 </span>
+    >>> print styled_code1a == colourize.style(code_sample1, line_numbering=True)
+    True
 
 Extracting code from an interpreter session.
 ===========================================
 
-Consider the following simulated interpreter sessions, to be embedded
-in an html page.
+Consider the following simulated interpreter sessions (using square brackets
+and commas to represent the prompt), to be embedded in an html page.
+
+]]] print "Hello world!"
 
     >>> code_sample3 = """&gt;&gt;&gt; print 'Hello world!'"""
     >>> python_code3, extracted3 = colourize.extract_code_from_interpreter(code_sample3)
@@ -118,6 +117,11 @@ in an html page.
     print 'Hello world!'
     >>> print extracted3
     [('&gt;&gt;&gt; ', 1)]
+
+]]] print "Hello world!"
+Hello world!
+]]] for i in range(3):
+,,,     print i*i
 
     >>> code_sample4 = """&gt;&gt;&gt; print 'Hello world!'
     ... Hello world!
@@ -157,10 +161,84 @@ conversion before removing all other markup.
     >>> print colourize.convert_br(fake_code5)
     a b c d e f<tag>
 
-to do next
-1. add back the prompt and output to styled code
-2. see that removing markup from output of 1 gives us back the original code
-3. check bug when a comment is on the last line (see functional tests)
-4. implement automatic detection of interpreter code
-5. remove all colourizer and related calls from crunchyfier.py
-6. remove option to specify interpreter (if 4. implemented successfully)
+Next, we define a function to add back the prompt and output to the
+styled code from a simulated interpreter session.  If we then strip html
+markup, we should recover the original code (assuming no markup was present).
+    >>> fully_styled3 = colourize.add_back_prompt_and_output(styled_code3, extracted3)
+    >>> print colourize.strip_html(fully_styled3) == code_sample3
+    True
+    >>> fully_styled4 = colourize.add_back_prompt_and_output(styled_code4, extracted4)
+    >>> print colourize.strip_html(fully_styled4) == code_sample4
+    True
+
+However, this does not mean that the fully_styled code was giving the right
+results.  We still need to test it.
+    >>> print fully_styled3
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    >>> print fully_styled4
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class="py_output">Hello world!</span>
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class="py_prompt">... </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+
+By inspection, we conclude that it does appear to be correct.
+
+In previous version, we noticed that there was a bug when a comment
+was inserted as the last line of an interpreter session.  We need to
+see if we have to take care of this in this version.
+
+    >>> end_comment6 = '''&gt;&gt;&gt; # this is a comment'''
+    >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
+    >>> print colourize.style(python_code6)
+    <span class='py_comment'># this is a comment</span>
+
+This looks ok; let us try a slightly longer example.
+    >>> end_comment7 = """&gt;&gt;&gt; print 'Hello world!'
+    ... Hello world!
+    ... &gt;&gt;&gt; for i in range(3):
+    ... ...     print i*i
+    ... &gt;&gt;&gt; # another comment."""
+    >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
+    >>> print colourize.style(python_code7)
+    <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_comment'># another comment.</span>
+
+Again, by inspection, this looks correct.
+
+We now proceed to implement a new feature, intended to automatically detect
+if a python code sample represents a simulated interpreter session.
+
+ASSUMPTION: we will assume, as has been the case so far, that any code will
+be aligned to the left i.e. that there is no extra spaces added at the
+beginning of each line (unlike the doctests examples embedded in this page).
+In the future, if it proves necessary, this condition could be relaxed,
+at the cost of some minor increase complexity of the code written so far.
+
+We consider the two simplest case first.
+    >>> sample1 = '''print "Hello world!"'''
+    >>> sample2 = '''&gt;&gt;&gt; print "Hello world!"'''
+    >>> print colourize.is_interpreter_session(sample1)
+    False
+    >>> print colourize.is_interpreter_session(sample2)
+    True
+
+We then consider two more cases, with blank lines inserted at the beginning:
+    >>> sample3 = '''\n\nprint "Hello world!"'''
+    >>> sample4 = '''   \n  \n&gt;&gt;&gt; print "Hello world!"'''
+    >>> print colourize.is_interpreter_session(sample3)
+    False
+    >>> print colourize.is_interpreter_session(sample4)
+    True
+
+We use this function inside colourize.py to proceed, reusing some
+examples introduced previously.  We know, from the tests around line 90+,
+that the new version still works with non-interpreter code.  We can use
+some previous examples from around line 167 to test the interpreter version.
+
+    >>> print colourize.style(code_sample3) == fully_styled3
+    True
+    >>> print colourize.style(code_sample4) == fully_styled4
+    True
+

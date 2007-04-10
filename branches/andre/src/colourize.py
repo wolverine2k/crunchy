@@ -231,7 +231,19 @@ def style(text, line_numbering=False):
     # remove any pre-existing markup
     text = convert_br(text)
     text = strip_html(text)
-    return colourizer.parseListing(text)
+    interpreter = is_interpreter_session(text)
+    if interpreter:
+        text, stripped = extract_code_from_interpreter(text)
+    try:
+        styled_code = colourizer.parseListing(text)
+        if interpreter:
+            styled_code = add_back_prompt_and_output(styled_code, stripped,
+                                                     line_numbering)
+        return styled_code
+    except Exception, parsingErrorMessage:
+        error_message = errors.parsing_error_dialog(parsingErrorMessage)
+        return "<span class='warning'>%s</span>\n<span>%s</span>"%(
+                                       error_message, text)
 
 def extract_code_from_interpreter(text):
     """ Strips fake interpreter prompts from html code meant to
@@ -289,3 +301,51 @@ def convert_br(text):
             return "" # ignore tags
         return text # leave as is
     return re.sub("(?s)<\s*[bB][rR]\s*/*\s*>", fixup, text)
+
+def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
+    '''adds back the interpreter prompt and simulated output to a
+       styled interpreter session.'''
+
+    newlines = []
+    lines = py_code.split('\n')
+
+    for (prompt, info) in stripped:
+        if prompt:
+            if line_numbering:
+                #sometimes, a <span> or </span> gets prepended to
+                # a line; we need to make sure that this does not
+                # result in overlapping <span>s which makes the
+                # prompt the same font size as the linenumber
+                if lines[info-1].startswith("<span>"):
+                    length = span_length
+                elif lines[info-1].startswith("</span>"):
+                    length = endspan_len
+                else:
+                    length = bare_len
+                newlines.append(lines[info-1][:length] +
+                                '<span class="py_prompt">' + prompt +
+                      '</span>' + lines[info-1][length:])
+            else:
+                newlines.append('<span class="py_prompt">' + prompt +
+                      '</span>' + lines[info-1])
+        elif info:
+            if line_numbering:  # get the spacing right...
+                newlines.append("<span class='py_linenumber'>    </span>"
+                               + '<span class="py_output">' + info +
+                               '</span>')
+            else:
+                newlines.append('<span class="py_output">' + info +
+                                '</span>')
+    return '\n'.join(newlines)
+
+def is_interpreter_session(py_code):
+    '''determine if the python code corresponds to a simulated
+       interpreter session'''
+    lines = py_code.split('\n')
+    for line in lines:
+        if line.strip():  # look for first non-blank line
+            if line.startswith("&gt;&gt;&gt; "):
+                return True
+            else:
+                return False
+
