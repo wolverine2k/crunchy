@@ -1,11 +1,12 @@
 Colourize.py tests
 ==================
 
-This file contains tests of styling Python code.  Unfortunately, the additional markup makes it near impossible
-to have short (<80 characters) output lines.
+This file contains tests of styling Python code.  Unfortunately, the
+additional markup makes it near impossible to have short (<80 characters)
+output lines.
 
 We start by initializing a Colourizer instance, as is done in
-crunchyfier.py (version 0.8).  This is likely to change in a future version.
+crunchyfier.py (version 0.8).
 
     >>> import colourize
     >>> styler = colourize.Colourizer()
@@ -28,7 +29,7 @@ We now style a few code samples.  First, some straight Python code.
     <span>        </span><span class='py_keyword'>pass</span>
     <BLANKLINE>
 
-Next, a similar code sample but with added comments. 
+Next, a similar code sample but with added comments.
 Note that we also removed the last empty line.
 
     >>> code_sample2 = """#First comment
@@ -49,7 +50,7 @@ Note that we also removed the last empty line.
     <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>        </span><span class='py_keyword'>pass</span>
 
-Note how the comments result in a </span> inserted at the beginning of the 
+Note how the comments result in a </span> inserted at the beginning of the
 next line.  This requires special consideration when styling code with
 interpreter prompts.
 
@@ -75,5 +76,91 @@ Next, we redo the same tests, but this time with added line numbers.
     <span class='py_linenumber'>  7 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span class='py_linenumber'>  8 </span><span>        </span><span class='py_keyword'>pass</span>
 
-Note again how the comments ending one line result in a </span> inserted at the beginning of the 
+Note again how the comments ending one line result in a </span> inserted at the beginning of the
 next one.
+
+New stuff
+========
+
+We'll use TDD to change colourize.py.
+First, we define a new function that will be called, instead of calling an
+instance of the Colourizer class directly.
+
+    >>> print colourize.style(code_sample1)
+    <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>        </span><span class='py_keyword'>pass</span>
+    <BLANKLINE>
+
+After adding a line numbering option, we can reproduce a second example.
+
+    >>> print colourize.style(code_sample1, line_numbering=True)
+    <span class='py_linenumber'>  1 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>  2 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  3 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_linenumber'>  4 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  5 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  6 </span><span>        </span><span class='py_keyword'>pass</span>
+    <span class='py_linenumber'>  7 </span>
+
+Extracting code from an interpreter session.
+===========================================
+
+Consider the following simulated interpreter sessions, to be embedded
+in an html page.
+
+    >>> code_sample3 = """&gt;&gt;&gt; print 'Hello world!'"""
+    >>> python_code3, extracted3 = colourize.extract_code_from_interpreter(code_sample3)
+    >>> print python_code3
+    print 'Hello world!'
+    >>> print extracted3
+    [('&gt;&gt;&gt; ', 1)]
+
+    >>> code_sample4 = """&gt;&gt;&gt; print 'Hello world!'
+    ... Hello world!
+    ... &gt;&gt;&gt; for i in range(3):
+    ... ...     print i*i"""
+    >>> python_code4, extracted4 = colourize.extract_code_from_interpreter(code_sample4)
+    >>> print python_code4
+    print 'Hello world!'
+    for i in range(3):
+        print i*i
+    >>> print extracted4
+    [('&gt;&gt;&gt; ', 1), ('', 'Hello world!'), ('&gt;&gt;&gt; ', 2), ('... ', 3)]
+
+We can style the code as before.
+    >>> styled_code3 = colourize.style(python_code3)
+    >>> styled_code4 = colourize.style(python_code4)
+
+Let us add a function to remove html markup.
+(I will base it on http://effbot.org/zone/re-sub.htm#strip-html)
+Such a function will be used in case we get a code sample, inside a <pre>,
+that would contain html markup.  For example, a tutorial writer may
+want to display her styled code on the web while also wanting it to
+be processed by Crunchy.  So, before Crunchy can do its markup, it would
+need to remove the existing one.
+
+    >>> stripped_code3 = colourize.strip_html(styled_code3)
+    >>> print stripped_code3 == python_code3
+    True
+    >>> stripped_code4 = colourize.strip_html(styled_code4)
+    >>> print stripped_code4 == python_code4
+    True
+
+However, if we have styled code, it might use <br/> instead of '\n' to
+indicate line breaks.  So, we need to make sure we make the appropriate
+conversion before removing all other markup.
+    >>> fake_code5 = 'a <br>b <br/>c <br />d <BR>e < BR / >f<tag>'
+    >>> print colourize.convert_br(fake_code5)
+    a b c d e f<tag>
+
+to do next
+1. add back the prompt and output to styled code
+2. see that removing markup from output of 1 gives us back the original code
+3. check bug when a comment is on the last line (see functional tests)
+4. implement automatic detection of interpreter code
+5. remove all colourizer and related calls from crunchyfier.py
+6. remove option to specify interpreter (if 4. implemented successfully)

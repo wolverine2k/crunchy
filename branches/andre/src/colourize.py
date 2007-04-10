@@ -6,21 +6,24 @@ This module can easily be used with programs other than crunchy; it is
 therefore strongly suggested to keep it separate.
 '''
 
-import token, tokenize, keyword
+import re
+import keyword
 import StringIO
+import token
+import tokenize
 
 # The following are introduced so as to be somewhat similar to EditArea
 reserved = ['True', 'False', 'None']
 """
 	builtins : see http://python.org/doc/current/lib/built-in-funcs.html
 """
-builtins = ['__import__', 'abs', 'basestring', 'bool', 'callable', 'chr', 'classmethod', 'cmp', 
-			'compile', 'complex', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'execfile', 
+builtins = ['__import__', 'abs', 'basestring', 'bool', 'callable', 'chr', 'classmethod', 'cmp',
+			'compile', 'complex', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'execfile',
 			'file', 'filter', 'float', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help',
 			'hex', 'id', 'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals',
 			'long', 'map', 'max', 'min', 'object', 'oct', 'open', 'ord', 'pow', 'property', 'range',
 			'raw_input', 'reduce', 'reload', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice',
-			'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'unichr', 'unicode', 
+			'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'unichr', 'unicode',
 			'vars', 'xrange', 'zip',
 			# Built-in constants: http://www.python.org/doc/2.4.1/lib/node35.html
 			#'False', 'True', 'None' have been included in 'reserved'
@@ -34,7 +37,7 @@ builtins = ['__import__', 'abs', 'basestring', 'bool', 'callable', 'chr', 'class
 			'UnboundlocalError', 'UnicodeError', 'UnicodeEncodeError', 'UnicodeDecodeError',
 			'UnicodeTranslateError', 'ValueError', 'WindowsError', 'ZeroDivisionError', 'Warning',
 			'UserWarning', 'DeprecationWarning', 'PendingDeprecationWarning', 'SyntaxWarning',
-			'RuntimeWarning', 'FutureWarning',		
+			'RuntimeWarning', 'FutureWarning',
 			# we will include the string methods as well
 			# http://python.org/doc/current/lib/string-methods.html
 			'capitalize', 'center', 'count', 'decode', 'encode', 'endswith', 'expandtabs',
@@ -83,7 +86,7 @@ class Colourizer(object):
     def __init__(self, linenumber=False):
         self.tokenString = ''
         self.reset(linenumber)
-        
+
     def reset(self, linenumber=False):
         self.beginLine, self.beginColumn = (0, 0)
         self.endOldLine, self.endOldColumn = (0, 0)
@@ -127,7 +130,7 @@ class Colourizer(object):
     def formatComment(self):
         self.tokenString = self.changeHTMLspecialCharacters(self.tokenString)
         return "<span class='py_comment'>"
-    
+
     def changeHTMLspecialCharacters(self, aString):
         aString = aString.replace('&', '&amp;')
         aString = aString.replace('<', '&lt;')
@@ -174,7 +177,7 @@ class Colourizer(object):
             beginSpan = self.formatOperator()
         else:
             beginSpan = "<span>"
-    
+
         if self.tokenString == '\n':
             htmlString = '\n'
         elif self.tokenString == '':
@@ -184,14 +187,14 @@ class Colourizer(object):
         return htmlString
 
     def processNewLine(self):
-        if self.lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]: 
+        if self.lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]:
             if self.outputLineNumber:
-                self.outp.write("<span class='py_linenumber'>%3d </span>" % self.beginLine) 
+                self.outp.write("<span class='py_linenumber'>%3d </span>" % self.beginLine)
         elif self.tokenType != tokenize.DEDENT:  # logical line continues
             self.outp.write("\n")
         else:
             pass  # end of file
-            
+
 # inp.readline reads a "logical" line;
 # the continuation character '\' is gobbled up.
     def parseListing(self, code):
@@ -206,17 +209,83 @@ class Colourizer(object):
             self.endOldLine, self.endOldColumn = self.endLine, self.endColumn
             self.endLine, self.endColumn = tok[3]
 
-            if self.tokenType == token.ENDMARKER:  
+            if self.tokenType == token.ENDMARKER:
                 break
             if self.beginLine != self.endOldLine:
                 self.processNewLine()
                 self.indent()
             else:
                 self.spaceToken()
-            self.outp.write("%s" % self.htmlFormat()) 
+            self.outp.write("%s" % self.htmlFormat())
         code = self.outp.getvalue()
         self.inp.close()
         self.outp.close()
         self.reset()
         return code
 
+# externally callable function
+
+def style(text, line_numbering=False):
+    colourizer = Colourizer()
+    colourizer.outputLineNumber = line_numbering
+    # remove any pre-existing markup
+    text = convert_br(text)
+    text = strip_html(text)
+    return colourizer.parseListing(text)
+
+def extract_code_from_interpreter(text):
+    """ Strips fake interpreter prompts from html code meant to
+        simulate a Python session, and remove lines without prompts, which
+        are supposed to represent Python output."""
+    stripped = [] # either the prompt + line number, or simulated output
+    # stripped is actually a list of tuples containing either
+    # (prompt, line_number_where_it_appears) or
+    # ('', simulated_output)
+    new_lines = [] # will contain the python code
+    if not text:
+        return
+    lines = text.split('\n')
+    linenumber = 1
+    for line in lines:
+        if line.endswith('\r'):
+            line = line[:-1]
+        if line.startswith("&gt;&gt;&gt; "):
+            new_lines.append(line[13:].rstrip())
+            stripped.append(("&gt;&gt;&gt; ", linenumber))
+            linenumber += 1
+        elif line.rstrip() == "&gt;&gt;&gt;": # tutorial writer may forget the
+                                     # extra space for an empty line
+            new_lines.append('')
+            stripped.append(("&gt;&gt;&gt; ", linenumber))
+            linenumber += 1
+        elif line.startswith("... "):
+            new_lines.append(line[4:].rstrip())
+            stripped.append(("... ", linenumber))
+            linenumber += 1
+        elif line.rstrip() == "...": # tutorial writer may forget the extra
+            new_lines.append('')     # space for an empty line
+            stripped.append(("... ", linenumber))
+            linenumber += 1
+        else: # append result of output instead
+            stripped.append(('', line))
+    python_code = '\n'.join(new_lines)
+    return python_code, stripped
+
+def strip_html(text):
+    '''removes all html markup; based on
+       http://effbot.org/zone/re-sub.htm#strip-html'''
+    def fixup(m):
+        text = m.group(0)
+        if text[:1] == "<":
+            return "" # ignore tags
+        return text # leave as is
+    return re.sub("(?s)<[^>]*>", fixup, text)
+
+def convert_br(text):
+    '''convert <br>, <br/>, <br />, < BR / >, etc., into "\n"'''
+    def fixup(m):
+        text = m.group(0)
+        if text[:1] == "<":
+            return "" # ignore tags
+        return text # leave as is
+    return re.sub("(?s)<\s*[bB][rR]\s*/*\s*>", fixup, text)
