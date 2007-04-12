@@ -6,11 +6,15 @@ This module can easily be used with programs other than crunchy; it is
 therefore strongly suggested to keep it separate.
 '''
 
+# stdlib modules
 import re
 import keyword
 import StringIO
 import token
 import tokenize
+
+# Crunchy modules
+from translation import _
 
 # The following are introduced so as to be somewhat similar to EditArea
 reserved = ['True', 'False', 'None']
@@ -226,24 +230,28 @@ class Colourizer(object):
 # externally callable function
 
 def style(text, line_numbering=False):
+    '''remove existing markup, prompts and output (if interpreter session)
+       and return code with html markup for styling as well as raw Python
+       code.'''
     colourizer = Colourizer()
     colourizer.outputLineNumber = line_numbering
     # remove any pre-existing markup
     text = convert_br(text)
-    text = strip_html(text)
-    interpreter = is_interpreter_session(text)
+    raw_code = strip_html(text)
+    raw_code = trim_empty_lines_from_end(raw_code)
+    interpreter = is_interpreter_session(raw_code)
     if interpreter:
-        text, stripped = extract_code_from_interpreter(text)
+        raw_code, stripped = extract_code_from_interpreter(raw_code)
     try:
-        styled_code = colourizer.parseListing(text)
+        styled_code = colourizer.parseListing(raw_code)
         if interpreter:
             styled_code = add_back_prompt_and_output(styled_code, stripped,
                                                      line_numbering)
-        return styled_code
+        return styled_code, raw_code
     except Exception, parsingErrorMessage:
-        error_message = errors.parsing_error_dialog(parsingErrorMessage)
+        error_message = parsing_error_dialog(parsingErrorMessage)
         return "<span class='warning'>%s</span>\n<span>%s</span>"%(
-                                       error_message, text)
+                                       error_message, raw_code), None
 
 def extract_code_from_interpreter(text):
     """ Strips fake interpreter prompts from html code meant to
@@ -305,9 +313,16 @@ def convert_br(text):
 def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
     '''adds back the interpreter prompt and simulated output to a
        styled interpreter session.'''
-
     newlines = []
     lines = py_code.split('\n')
+    # making some explicit definitions for clarity
+    if line_numbering:
+        line_info_len = len("<span class='py_linenumber'>    </span>")
+    else:
+        line_info_len = 0
+    span_len = len("<span>")
+    endspan_len = len("</span>")
+
 
     for (prompt, info) in stripped:
         if prompt:
@@ -317,11 +332,11 @@ def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
                 # result in overlapping <span>s which makes the
                 # prompt the same font size as the linenumber
                 if lines[info-1].startswith("<span>"):
-                    length = span_length
+                    length = span_length + line_info_len#pr_len
                 elif lines[info-1].startswith("</span>"):
-                    length = endspan_len
+                    length = endspan_len + line_info_len#pr_len
                 else:
-                    length = bare_len
+                    length = line_info_len#pr_len
                 newlines.append(lines[info-1][:length] +
                                 '<span class="py_prompt">' + prompt +
                       '</span>' + lines[info-1][length:])
@@ -348,4 +363,29 @@ def is_interpreter_session(py_code):
                 return True
             else:
                 return False
+
+def parsing_error_dialog(info):
+    '''Information given when the code colourizer fails.'''
+    return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
+
+def trim_empty_lines_from_end(text):
+    '''remove blank lines at beginning and end of code sample'''
+    lines = text.split('\n')
+##    if len(lines) == 1:
+##        return text
+    top = 0
+    for line in lines:
+        if line.strip():
+            break
+        else:
+            top += 1
+    bottom = 0
+    for line in lines[::-1]:
+        if line.strip():
+            break
+        else:
+            bottom += 1
+    if bottom == 0:
+        return '\n'.join(lines[top:])
+    return '\n'.join(lines[top:-bottom])
 

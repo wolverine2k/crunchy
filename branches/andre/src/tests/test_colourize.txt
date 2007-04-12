@@ -1,6 +1,10 @@
 Colourize.py tests
 ==================
 
+
+TODO: return styled_code, pure_code
+strip empty lines from top & bottom of code
+
 This file contains tests of styling Python code.  Unfortunately, the
 additional markup makes it near impossible to have short (<80 characters)
 output lines.
@@ -93,15 +97,31 @@ New stuff
 
 We use TDD to change colourize.py.
 First, we define a new function that will be called, instead of calling an
-instance of the Colourizer class directly.
+instance of the Colourizer class directly. This function will return both
+styled code (with html markup) and raw code (just straight Python code,
+with no simulated interpreter prompts, etc.).
+UPDATE: this function also strips empty lines; so to compare with the
+previous cases, we may need to add an extra line "\n" by hand.
 
-    >>> print styled_code1 == colourize.style(code_sample1)
+    >>> print styled_code1 == colourize.style(code_sample1)[0] + "\n"
     True
 
 After adding a line numbering option, we can reproduce a second example.
-
-    >>> print styled_code1a == colourize.style(code_sample1, line_numbering=True)
+(note: we cannot simply use the example with blankline for comparison;
+however, this does not mean that the code does not work as intended in this case,
+just that we deal with empty lines differently with the style() function as
+we do with the simple parseListing method)
+    >>> print styled_code2a == colourize.style(code_sample2, line_numbering=True)[0]
     True
+
+In principle, for the above two examples, the raw code should be identical
+to the input code.
+
+    >>> print code_sample1 == colourize.style(code_sample1)[1] + "\n"
+    True
+    >>> print code_sample2 == colourize.style(code_sample2, line_numbering=True)[1]
+    True
+
 
 Extracting code from an interpreter session.
 ===========================================
@@ -136,8 +156,19 @@ Hello world!
     [('&gt;&gt;&gt; ', 1), ('', 'Hello world!'), ('&gt;&gt;&gt; ', 2), ('... ', 3)]
 
 We can style the code as before.
-    >>> styled_code3 = colourize.style(python_code3)
-    >>> styled_code4 = colourize.style(python_code4)
+    >>> styled_code3 = colourize.style(python_code3)[0]
+    >>> styled_code4 = colourize.style(python_code4)[0]
+
+For future reference, we will document as tests here styling examples
+with line numbers added of the previous two cases.
+
+    >>> print colourize.style(code_sample3, True)[0]
+    <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    >>> print colourize.style(code_sample4, True)[0]
+    <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>    </span><span class="py_output">Hello world!</span>
+    <span class='py_linenumber'>  2 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  3 </span><span class="py_prompt">... </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
 
 Let us add a function to remove html markup.
 (I will base it on http://effbot.org/zone/re-sub.htm#strip-html)
@@ -189,7 +220,7 @@ see if we have to take care of this in this version.
 
     >>> end_comment6 = '''&gt;&gt;&gt; # this is a comment'''
     >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
-    >>> print colourize.style(python_code6)
+    >>> print colourize.style(python_code6)[0]
     <span class='py_comment'># this is a comment</span>
 
 This looks ok; let us try a slightly longer example.
@@ -199,7 +230,7 @@ This looks ok; let us try a slightly longer example.
     ... ...     print i*i
     ... &gt;&gt;&gt; # another comment."""
     >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
-    >>> print colourize.style(python_code7)
+    >>> print colourize.style(python_code7)[0]
     <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
@@ -233,12 +264,30 @@ We then consider two more cases, with blank lines inserted at the beginning:
     True
 
 We use this function inside colourize.py to proceed, reusing some
-examples introduced previously.  We know, from the tests around line 90+,
+examples introduced previously.  We know, from the tests done above,
 that the new version still works with non-interpreter code.  We can use
-some previous examples from around line 167 to test the interpreter version.
+some previous examples to test the interpreter version.
 
-    >>> print colourize.style(code_sample3) == fully_styled3
+    >>> print colourize.style(code_sample3)[0] == fully_styled3
     True
-    >>> print colourize.style(code_sample4) == fully_styled4
+    >>> print colourize.style(code_sample4)[0] == fully_styled4
     True
+
+Using this code with sample pages, we noted that sometimes blank lines
+were added either at the beginning and/or at the end of a code sample.
+As this can lead to too much blank vertical spaces inserted in html pages
+displayed by Crunchy, we will introduce a function which will be used to
+removed such lines.
+
+    >>> test_blank = '\n \r\n\n\r  \nline1\nline2 followed by blank line\n\nline3\n \n'
+    >>> print colourize.trim_empty_lines_from_end(test_blank)
+    line1
+    line2 followed by blank line
+    <BLANKLINE>
+    line3
+    >>> test_blank2 = 'line1\nline2'
+    >>> print colourize.trim_empty_lines_from_end(test_blank2)
+    line1
+    line2
+
 

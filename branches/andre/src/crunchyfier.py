@@ -276,7 +276,7 @@ class VLAMPage(TreeBuilder):
         else:
             title = pre.attrib['title'].lower()
             vlam_dict = analyze_vlam_code(title)
-            id, text, new_div = self.prepare_element(pre)
+            id, text, new_div = self.prepare_pre(pre)
             self.python_code = text
             pre_heading = '%s <pre title="%s">'%(_("Previous value"), title)
             self.vlamcode = title# reconstruct(title)
@@ -309,6 +309,23 @@ class VLAMPage(TreeBuilder):
             self.vlamcode = elem.attrib['title'].lower()
         elem.clear()
         elem.tail = tail
+        elem.tag = 'div'
+        elem.attrib['id'] = id + "_container"
+        return id, text, elem
+
+    def prepare_pre(self, elem):
+        '''Common code for all vlam elements using the "title" tag.
+        '''
+        self._ID += 1
+        id = 'code' + str(self._ID)
+        if elem.text:
+            if elem.text.startswith("\n"):
+                elem.text = elem.text[1:]
+        text = et.tostring(elem)
+        # new from chewy
+        if 'title' in elem.attrib:
+            self.vlamcode = elem.attrib['title'].lower()
+        elem.clear()
         elem.tag = 'div'
         elem.attrib['id'] = id + "_container"
         return id, text, elem
@@ -423,20 +440,17 @@ class VLAMPage(TreeBuilder):
     def _apportion_code(self, pre, code):
         '''Decide on what code (if any) to put in the pre element and
            in the textarea.'''
+        textarea_code = '\n'
         if code:
-            textarea_code = code
+            textarea_code = '\n'
             if 'no-copy' in self.vlamcode or 'doctest' in self.vlamcode:
                 self.style_code(pre, code)
-                textarea_code = '\n'
-            elif 'interpreter' in self.vlamcode:
-                self.style_code(pre, code)
-                textarea_code = self.python_code
-            elif 'no-pre' in self.vlamcode:
-                pre.text = '\n'
             else:
                 self.style_code(pre, code)
-        else:
-            textarea_code = '\n'
+                textarea_code = self.python_code
+                if 'no-pre' in self.vlamcode:
+                    pre.clear()
+                    pre.text = '\n'
         return textarea_code
 
     def get_base(self):
@@ -511,113 +525,22 @@ class VLAMPage(TreeBuilder):
                     elem.attrib['href'] = security.commands['/load_local'] +\
                        '?path=' + urllib.quote_plus(os.path.join(self.base, e))
 
-    def strip_prompts(self, text):
-        """ Strips fake interpreter prompts from html code meant to
-            simulate a Python session, and remove lines without prompts, which
-            are supposed to represent Python output."""
-        self.lines_of_prompt = []
-        new_lines = []
-        if not text:
-            return
-        lines = text.split('\n')
-        linenumber = 0
-        for line in lines:
-            if line.endswith('\r'):
-                line = line[:-1]
-            if line.startswith(">>> "):
-                new_lines.append(line[4:].rstrip())
-                self.lines_of_prompt.append(("&gt;&gt;&gt; ", linenumber))
-                linenumber += 1
-            elif line.rstrip() == ">>>": # tutorial writer may forget the
-                                         # extra space for an empty line
-                new_lines.append('')
-                self.lines_of_prompt.append((">>> ", linenumber))
-                linenumber += 1
-            elif line.startswith("... "):
-                new_lines.append(line[4:].rstrip())
-                self.lines_of_prompt.append(("... ", linenumber))
-                linenumber += 1
-            elif line.rstrip() == "...": # tutorial writer may forget the extra
-                new_lines.append('')     # space
-                self.lines_of_prompt.append(("... ", linenumber))
-                linenumber += 1
-            else:
-                self.lines_of_prompt.append(('', line))
-        self.python_code = '\n'.join(new_lines) + '\n'
-        return
-
     def style_code(self, pre, code):
         '''Add css styling to Python code inside a <pre>.'''
-            # wrap in a <span> so HTMLTreeBuilder can find root and use it.
-
         if 'linenumber' in self.vlamcode:
-            add_line = True
-            # the following is reset by self.colourizer;
-            # do not attempt to use directly
-            self.colourizer.outputLineNumber = True
-            bare_len = len("<span class='py_linenumber'>999 </span>")
-            span_len = len("<span><span class='py_linenumber'>999 </span>")
-            endspan_len = len("</span><span class='py_linenumber'>999 </span>")
+            line_numbering = True
         else:
-            add_line = False
-            self.colourizer.outputLineNumber = False
-
-        if 'interpreter' in self.vlamcode or 'doctest' in self.vlamcode:
-            newlines = []
-            self.strip_prompts(code) # will initialise self.python_code
-            try:
-                # the following may raise an exception
-                lines = self.colourizer.parseListing(self.python_code).split('\n')
-                for (pr, info) in self.lines_of_prompt:
-                    if pr:
-                        if add_line:
-                            #sometimes, a <span> or </span> gets prepended to
-                            # a line; we need to make sure that this does not
-                            # result in overlapping <span>s which makes the
-                            # prompt the same font size as the linenumber
-                            if lines[info].startswith("<span>"):
-                                length = span_length
-                            elif lines[info].startswith("</span>"):
-                                length = endspan_len
-                            else:
-                                length = bare_len
-                            newlines.append(lines[info][:length] +
-                                            '<span class="py_prompt">' + pr +
-                                  '</span>' + lines[info][length:])
-                        else:
-                            newlines.append('<span class="py_prompt">' + pr +
-                                  '</span>' + lines[info])
-                    elif info:
-                        info = self.colourizer.changeHTMLspecialCharacters(info)
-                        if add_line:  # get the spacing right...
-                            newlines.append("<span class='py_linenumber'>    </span>"
-                                           + '<span class="py_output">' + info +
-                                           '</span>')
-                        else:
-                            newlines.append('<span class="py_output">' + info +
-                                        '</span>')
-                code = "<span>" + '\n'.join(newlines) + "</span>\n"
-            except Exception, parsingErrorMessage:
-                error_message = errors.parsing_error_dialog(
-                                                          parsingErrorMessage)
-                code = "<span><span class='warning'>%s</span>\n%s</span>"%(
-                                               error_message, self.python_code)
-        else:
-            self.python_code = code
-            try:
-                code = "<span>" + self.colourizer.parseListing(code) + "</span>"
-            except Exception, parsingErrorMessage:
-                error_message = errors.parsing_error_dialog(
-                                                          parsingErrorMessage)
-                code = "<span><span class='warning'>%s</span>\n%s</span>"%(
-                                               error_message, self.python_code)
+            line_numbering = False
+        styled_code, self.python_code = colourize.style(code, line_numbering)
+        # wrap in a <span> so HTMLTreeBuilder can find root and use it.
+        code = "<span>%s</span>"%styled_code
         inp = StringIO(code)
         sub_tree = HTMLTreeBuilder.parse(inp)
         root = sub_tree.getroot()
         pre.clear()
         pre.append(root)
         inp.close()
-        self.colourizer.reset()
+
 
 class HTMLUpdater(TreeBuilder):
     def __init__(self, filehandle, url, args):

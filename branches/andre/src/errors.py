@@ -137,9 +137,7 @@ def python_error_dialog(info):
     '''General error dialog.  Sprinkle throughout.'''
     return _("Python execution error.  Info: %s.")%info
 
-def parsing_error_dialog(info):
-    '''Information given when the code colourizer fails.'''
-    return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
+
 
 ###================
 # The following are "unexpected" errors.  Typically, they are errors which
