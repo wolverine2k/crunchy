@@ -1,9 +1,5 @@
-Colourize.py tests
+colourize.py tests
 ==================
-
-
-TODO: return styled_code, pure_code
-strip empty lines from top & bottom of code
 
 This file contains tests of styling Python code.  Unfortunately, the
 additional markup makes it near impossible to have short (<80 characters)
