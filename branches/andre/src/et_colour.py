@@ -5,11 +5,12 @@ This simple module is designed to
 1. take as input an ElementTree Element corresponding to
    an html element (such as <pre> or <code>) containing some Python code;
    this Python code may already be marked up;
-2. pass the content of the Element (including any other markup present)
+2. identify if line numbering is required;
+3. pass the content of the Element (including any other markup present)
    as an "html string" (i.e. no longer an ElementTree Element)
    to colourize.py (which works with html - not ElementTree Elements)
    so that it can be styled appropriately;
-3. return the new marked up element, but wrapped inside a <span>.
+4. return the new marked up element, as well as the corresponding Python code.
 
 For example (using html notation), we could have as input
 <pre title="some value">
@@ -30,26 +31,25 @@ from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
 
-def style(elem, linenumber=False):
+def style(elem):
     '''style some Python code (adding html markup) if "title" attribute
     is present and return it inside the original html element
-    (<pre> or <code>, most likely) with attributes unchanged, all wrapped
-    in a <span> for further processing (like adding a code editor
-    as a subelement, etc.).  Any original markup inside the Python code
+    (<pre> or <code>, most likely) with attributes unchanged.
+    Any original markup inside the Python code
     will be lost, except that <br/> will have been converted into "\n"'''
     tag = elem.tag
-    text = extract_code(elem)
+    py_code = extract_code(elem)
     if 'title' in elem.attrib:
-        styled_code, py_code = colourize.style(text, linenumber)
+        linenumber=False
+        if 'linenumber' in elem.attrib['title']:
+            linenumber = True
+        styled_code = colourize.style(py_code, linenumber)
     else:
-        styled_code = text
-        py_code = text
+        styled_code = py_code
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
     new_elem = et.fromstring(new_html)
     new_elem.attrib = elem.attrib
-    span = et.Element("span")
-    span.append(new_elem)
-    return span, py_code
+    return new_elem, py_code
 
 
 def extract_code(elem):

@@ -22,9 +22,9 @@ Next, we introduce a series of tests of increasing complexity.
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    <span><pre>
+    <pre>
     print "Hello World!"
-    </pre></span>
+    </pre>
 
     >>> sample = '<pre title="junk">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
@@ -33,9 +33,9 @@ Next, we introduce a series of tests of increasing complexity.
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    <span><pre title="junk">
+    <pre title="junk">
     <span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
-    </pre></span>
+    </pre>
 
 In the following example, the order of the attributes is changed by
 ElementTree - at least in the version used for this test.
@@ -47,17 +47,17 @@ ElementTree - at least in the version used for this test.
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    <span><pre tag="other" title="junk">
+    <pre tag="other" title="junk">
     <span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
-    </pre></span>
+    </pre>
 
-    >>> sample = '<pre title="junk">print "Hello World!"</pre>'
+    >>> sample = '<pre title="junk linenumber">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
-    >>> wrapped_pre, py_code = et_colour.style(pre, linenumber=True)
+    >>> wrapped_pre, py_code = et_colour.style(pre)
     >>> styled = et.tostring(wrapped_pre)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    <span><pre title="junk">
+    <pre title="junk linenumber">
     <span class="py_linenumber">  1 </span><span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
-    </pre></span>
+    </pre>

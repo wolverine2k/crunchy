@@ -16,7 +16,7 @@ from StringIO import StringIO
 # crunchy modules
 import interpreters
 import errors
-import colourize
+import et_colour
 import configuration
 prefs = configuration.UserPreferences()
 import security
@@ -316,29 +316,41 @@ class VLAMPage(TreeBuilder):
         elem.attrib['id'] = id + "_container"
         return id, text, elem
 
+##    def prepare_pre(self, elem):
+##        '''Common code for all vlam elements using the "title" tag.
+##        '''
+##        self._ID += 1
+##        id = 'code' + str(self._ID)
+##        if elem.text:
+##            if elem.text.startswith("\n"):
+##                elem.text = elem.text[1:]
+##        text = et.tostring(elem)
+##        # new from chewy
+##        if 'title' in elem.attrib:
+##            self.vlamcode = elem.attrib['title'].lower()
+##        elem.clear()
+##        elem.tag = 'div'
+##        elem.attrib['id'] = id + "_container"
+##        return id, text, elem
+
     def prepare_pre(self, elem):
-        '''Common code for all vlam elements using the "title" tag.
-        '''
+        ''' New version '''
         self._ID += 1
         id = 'code' + str(self._ID)
-        if elem.text:
-            if elem.text.startswith("\n"):
-                elem.text = elem.text[1:]
-        text = et.tostring(elem)
         # new from chewy
         if 'title' in elem.attrib:
             self.vlamcode = elem.attrib['title'].lower()
-        elem.clear()
-        elem.tag = 'div'
-        elem.attrib['id'] = id + "_container"
-        return id, text, elem
+        new_elem = self.style_code(self, elem)
+        new_elem.attrib['id'] = id + "_container"
+        return id, new_elem
 
     def substitute_none(self, elem, id, text):
         """simply style the code"""
-        #container for the code:
-        pre = et.SubElement(elem, 'pre')
-        if text:
-            self.style_code(pre, text)
+        return # don't need anything in this new version
+##        #container for the code:
+##        pre = et.SubElement(elem, 'pre')
+##        if text:
+##            self.style_code(pre, text)
 
     def substitute_interpreter(self, elem, id, text):
         """substitute an interpreter for elem"""
@@ -528,21 +540,12 @@ class VLAMPage(TreeBuilder):
                     elem.attrib['href'] = security.commands['/load_local'] +\
                        '?path=' + urllib.quote_plus(os.path.join(self.base, e))
 
-    def style_code(self, pre, code):
-        '''Add css styling to Python code inside a <pre>.'''
-        if 'linenumber' in self.vlamcode:
-            line_numbering = True
-        else:
-            line_numbering = False
-        styled_code, self.python_code = colourize.style(code, line_numbering)
-        # wrap in a <span> so HTMLTreeBuilder can find root and use it.
-        code = "<span>%s</span>"%styled_code
-        inp = StringIO(code)
-        sub_tree = HTMLTreeBuilder.parse(inp)
-        root = sub_tree.getroot()
-        pre.clear()
-        pre.append(root)
-        inp.close()
+    def style_code(self, elem):
+        '''Add css styling to Python code inside a <pre> or <code>
+           element.  This new simplyfied function could possibly be
+           inlined - waiting for refactoring into plugins to decide.'''
+        elem, python_code = et_colour.style(elem)
+        return elem, python_code
 
 
 class HTMLUpdater(TreeBuilder):

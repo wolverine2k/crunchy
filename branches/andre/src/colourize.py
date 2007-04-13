@@ -230,15 +230,12 @@ class Colourizer(object):
 # externally callable function
 
 def style(text, line_numbering=False):
-    '''remove existing markup, prompts and output (if interpreter session)
+    '''remove prompts and output (if interpreter session)
        and return code with html markup for styling as well as raw Python
        code.'''
     colourizer = Colourizer()
     colourizer.outputLineNumber = line_numbering
-    # remove any pre-existing markup
-    text = convert_br(text)
-    raw_code = strip_html(text)
-    raw_code = trim_empty_lines_from_end(raw_code)
+    raw_code = trim_empty_lines_from_end(text)
     interpreter = is_interpreter_session(raw_code)
     if interpreter:
         raw_code, stripped = extract_code_from_interpreter(raw_code)
@@ -247,11 +244,11 @@ def style(text, line_numbering=False):
         if interpreter:
             styled_code = add_back_prompt_and_output(styled_code, stripped,
                                                      line_numbering)
-        return styled_code, raw_code
+        return styled_code
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
         return "<span class='warning'>%s</span>\n<span>%s</span>"%(
-                                       error_message, raw_code), None
+                                       error_message, raw_code)
 
 def extract_code_from_interpreter(text):
     """ Strips fake interpreter prompts from html code meant to
@@ -291,24 +288,6 @@ def extract_code_from_interpreter(text):
     python_code = '\n'.join(new_lines)
     return python_code, stripped
 
-def strip_html(text):
-    '''removes all html markup; based on
-       http://effbot.org/zone/re-sub.htm#strip-html'''
-    def fixup(m):
-        text = m.group(0)
-        if text[:1] == "<":
-            return "" # ignore tags
-        return text # leave as is
-    return re.sub("(?s)<[^>]*>", fixup, text)
-
-def convert_br(text):
-    '''convert <br>, <br/>, <br />, < BR / >, etc., into "\n"'''
-    def fixup(m):
-        text = m.group(0)
-        if text[:1] == "<":
-            return "" # ignore tags
-        return text # leave as is
-    return re.sub("(?s)<\s*[bB][rR]\s*/*\s*>", fixup, text)
 
 def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
     '''adds back the interpreter prompt and simulated output to a

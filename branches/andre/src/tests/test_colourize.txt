@@ -93,13 +93,11 @@ New stuff
 
 We use TDD to change colourize.py.
 First, we define a new function that will be called, instead of calling an
-instance of the Colourizer class directly. This function will return both
-styled code (with html markup) and raw code (just straight Python code,
-with no simulated interpreter prompts, etc.).
+instance of the Colourizer class directly.
 UPDATE: this function also strips empty lines; so to compare with the
 previous cases, we may need to add an extra line "\n" by hand.
 
-    >>> print styled_code1 == colourize.style(code_sample1)[0] + "\n"
+    >>> print styled_code1 == colourize.style(code_sample1) + "\n"
     True
 
 After adding a line numbering option, we can reproduce a second example.
@@ -107,16 +105,9 @@ After adding a line numbering option, we can reproduce a second example.
 however, this does not mean that the code does not work as intended in this case,
 just that we deal with empty lines differently with the style() function as
 we do with the simple parseListing method)
-    >>> print styled_code2a == colourize.style(code_sample2, line_numbering=True)[0]
+    >>> print styled_code2a == colourize.style(code_sample2, line_numbering=True)
     True
 
-In principle, for the above two examples, the raw code should be identical
-to the input code.
-
-    >>> print code_sample1 == colourize.style(code_sample1)[1] + "\n"
-    True
-    >>> print code_sample2 == colourize.style(code_sample2, line_numbering=True)[1]
-    True
 
 
 Extracting code from an interpreter session.
@@ -152,56 +143,26 @@ Hello world!
     [('&gt;&gt;&gt; ', 1), ('', 'Hello world!'), ('&gt;&gt;&gt; ', 2), ('... ', 3)]
 
 We can style the code as before.
-    >>> styled_code3 = colourize.style(python_code3)[0]
-    >>> styled_code4 = colourize.style(python_code4)[0]
+    >>> styled_code3 = colourize.style(python_code3)
+    >>> styled_code4 = colourize.style(python_code4)
 
 For future reference, we will document as tests here styling examples
 with line numbers added of the previous two cases.
 
-    >>> print colourize.style(code_sample3, True)[0]
+    >>> print colourize.style(code_sample3, True)
     <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
-    >>> print colourize.style(code_sample4, True)[0]
+    >>> print colourize.style(code_sample4, True)
     <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_linenumber'>    </span><span class="py_output">Hello world!</span>
     <span class='py_linenumber'>  2 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span class='py_linenumber'>  3 </span><span class="py_prompt">... </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
 
-Let us add a function to remove html markup.
-(I will base it on http://effbot.org/zone/re-sub.htm#strip-html)
-Such a function will be used in case we get a code sample, inside a <pre>,
-that would contain html markup.  For example, a tutorial writer may
-want to display her styled code on the web while also wanting it to
-be processed by Crunchy.  So, before Crunchy can do its markup, it would
-need to remove the existing one.
-
-    >>> stripped_code3 = colourize.strip_html(styled_code3)
-    >>> print stripped_code3 == python_code3
-    True
-    >>> stripped_code4 = colourize.strip_html(styled_code4)
-    >>> print stripped_code4 == python_code4
-    True
-
-However, if we have styled code, it might use <br/> instead of '\n' to
-indicate line breaks.  So, we need to make sure we make the appropriate
-conversion before removing all other markup.
-    >>> fake_code5 = 'a <br>b <br/>c <br />d <BR>e < BR / >f<tag>'
-    >>> print colourize.convert_br(fake_code5)
-    a b c d e f<tag>
-
 Next, we define a function to add back the prompt and output to the
-styled code from a simulated interpreter session.  If we then strip html
-markup, we should recover the original code (assuming no markup was present).
+styled code from a simulated interpreter session.
     >>> fully_styled3 = colourize.add_back_prompt_and_output(styled_code3, extracted3)
-    >>> print colourize.strip_html(fully_styled3) == code_sample3
-    True
-    >>> fully_styled4 = colourize.add_back_prompt_and_output(styled_code4, extracted4)
-    >>> print colourize.strip_html(fully_styled4) == code_sample4
-    True
-
-However, this does not mean that the fully_styled code was giving the right
-results.  We still need to test it.
     >>> print fully_styled3
     <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    >>> fully_styled4 = colourize.add_back_prompt_and_output(styled_code4, extracted4)
     >>> print fully_styled4
     <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class="py_output">Hello world!</span>
@@ -216,7 +177,7 @@ see if we have to take care of this in this version.
 
     >>> end_comment6 = '''&gt;&gt;&gt; # this is a comment'''
     >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
-    >>> print colourize.style(python_code6)[0]
+    >>> print colourize.style(python_code6)
     <span class='py_comment'># this is a comment</span>
 
 This looks ok; let us try a slightly longer example.
@@ -226,7 +187,7 @@ This looks ok; let us try a slightly longer example.
     ... ...     print i*i
     ... &gt;&gt;&gt; # another comment."""
     >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
-    >>> print colourize.style(python_code7)[0]
+    >>> print colourize.style(python_code7)
     <span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
@@ -252,11 +213,11 @@ We consider the two simplest case first.
     True
 
 We then consider two more cases, with blank lines inserted at the beginning:
-    >>> sample3 = '''\n\nprint "Hello world!"'''
-    >>> sample4 = '''   \n  \n&gt;&gt;&gt; print "Hello world!"'''
-    >>> print colourize.is_interpreter_session(sample3)
+    >>> sample7 = '''\n\nprint "Hello world!"'''
+    >>> sample8 = '''   \n  \n&gt;&gt;&gt; print "Hello world!"'''
+    >>> print colourize.is_interpreter_session(sample7)
     False
-    >>> print colourize.is_interpreter_session(sample4)
+    >>> print colourize.is_interpreter_session(sample8)
     True
 
 We use this function inside colourize.py to proceed, reusing some
@@ -264,9 +225,9 @@ examples introduced previously.  We know, from the tests done above,
 that the new version still works with non-interpreter code.  We can use
 some previous examples to test the interpreter version.
 
-    >>> print colourize.style(code_sample3)[0] == fully_styled3
+    >>> print colourize.style(code_sample3) == fully_styled3
     True
-    >>> print colourize.style(code_sample4)[0] == fully_styled4
+    >>> print colourize.style(code_sample4) == fully_styled4
     True
 
 Using this code with sample pages, we noted that sometimes blank lines
