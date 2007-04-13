@@ -34,8 +34,7 @@ are attributes of the html tag "title".</p>
 </tr>
 <tr>
 	<td><code>editor</code></td>
-	<td>Inserts an editor after the &lt;pre&gt; element.<br/>
-	Can be used with: <code>interpreter</code>.</td>
+	<td>Inserts an editor after the &lt;pre&gt; element.</td>
 </tr>
 <tr>
 	<td><code>doctest</code></td>
@@ -44,8 +43,7 @@ are attributes of the html tag "title".</p>
 </tr>
 <tr>
 	<td><code>interpreter</code></td>
-	<td>Inserts a Python interpreter after the &lt;pre&gt; element, unless the 
-	attribute also contains <code>editor</code>.</td>
+	<td>Inserts a Python interpreter after the &lt;pre&gt; element.</td>
 </tr>
 <tr>
 	<td><code>canvas</code></td>
@@ -61,7 +59,7 @@ are attributes of the html tag "title".</p>
 	<td><code>no-copy</code></td>
 	<td>Prevents the Python code inside the &lt;pre&gt; element from being
 	copied into the editor.<br/>
-	Can be used with: <code>interpreter</code> (if <code>editor</code> present),<code> editor, canvas, plot</code>.</td>
+	Can be used with: <code> editor, canvas, plot</code>.</td>
 </tr>
 <tr>
 	<td><code>linenumber</code></td>
@@ -85,7 +83,7 @@ are attributes of the html tag "title".</p>
 	<td><code>no-pre</code></td>
 	<td><code>no-pre</code> does not show the code inside the &lt;pre&gt; 
 	element, only inside the &lt;textarea&gt;.  Since this does not make sense 
-	for a doctest nor for an <code>interpreter to editor</code> option, or if 
+	for a doctest option or if 
 	<code>no-copy</code> is present, it is ignored in these cases.  A 
 	typical use of <code>no-pre</code> is to include a complete (long)
 	listing for execution at the end of a tutorial, after the main sections 
@@ -167,28 +165,6 @@ code.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2><a id="interpreter2">Interpreter to code editor</a></h2>
-<p>Quite often, Python tutorials are written with simulated sessions
-using the interpreter. When the examples are fairly short, this is a 
-convenient thing to do.  Sometimes however, the examples given are fairly 
-long.  To save on typing, an option is available to take a "fake interpreter 
-session" reproduced within a Python tutorial and embed the code (stripped of 
-the Python prompts) within an editor.  The required markup to do so is (note 
-that the <code>[to]</code> has no effect other than making the intent clearer for the human reader):</p>
-<pre>&lt;pre title="interpreter [to] editor [size=(rows, cols)] [no-copy] [linenumber]"&gt;
-&gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
-...     <span class="py_keyword">print</span> "Hello world!"
-... 
-"Hello world!"
-"Hello world!"
-"Hello world!"
-&lt;/pre&gt;
-</pre>
-<p>This option will create an editor box and, unless <code>no-copy</code> is present, copy lines of code beginning with either <code>&gt;&gt;&gt; </code> or <code>... </code> (but stripping the prompt), while skipping lines without the prompt. For the above example, the code included in the editor will be:</p>
-<pre>
-<span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
-    <span class="py_keyword">print</span> "Hello world!"
-</pre>
 <h2><a id="doctest">DocTest</a></h2>
 <p><code>&lt;pre title="doctest [size=(rows, cols)]  
 [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
