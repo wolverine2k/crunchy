@@ -50,12 +50,13 @@ In particular, compare the interpreter prompts on the first and second lines whi
 <h2>Bugs</h2>
 <ul>
 <li>An interpreter session that ends with a comment, as in:
-<pre>
+<pre title="none">
 &gt;&gt;&gt; # this last statement is a comment
 </pre>
-is currently processed by crunchy ("colourized") in such a way
-that it results in non W3C compliant code - and Crunchy (i.e. the
-elementtree handler) chokes on it, and displays a blank page.  This should be fixed.</li>
+used to be processed by crunchy ("colourized") in such a way
+that it resulted in non W3C compliant code - and Crunchy (i.e. the
+elementtree handler) chokeed on it, and displayed a blank page.  This has been fixed ... but, somehow,
+  this text that appears outside of the "pre" is taken to be part of it.</li>
 <li>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
 not processed properly.  The suggested behaviour at this point would be to 
 [1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
@@ -68,15 +69,22 @@ Here is how this example is processed by Crunchy:
 <pre title="none">
 print "Hello world!"<br/>print "Crunchy rocks!"
 </pre>
-Note how everything after the <code>&lt;br/&gt;</code> disappears.
+Note how the line break is lost ... and how this line is actually styled as code!?
 </li>
-  <li> There is a bug with an editor (with line numbers) where a single empty line appears at the beginning, and a space is inserted before the first line of the output using Python 2.5 and Mac OS.
-<pre title="editor linenumber size=(4,50)">
-for i in range(5):
-    print i,
-print "Hello World"
+<li>The following is another "bare pre" (&lt;pre&gt;) containing some marked up code, which is technically formatted properly.
+<pre>
+&gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
+...     <span class="py_keyword">print</span> "Hello world!"
+... 
+"Hello world!"
+"Hello world!"
+"Hello world!"
 </pre>
-This last bug will need to be investigated further but is certainly not a show-stopper at the moment.
+More of the same (2 lines of code; a simple for loop):
+<pre>
+<span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
+    <span class="py_keyword">print</span> "Hello world!"
+</pre>
 </li>
 </ul>
 <p><a href="index.html">Back to the test index</a></p>
