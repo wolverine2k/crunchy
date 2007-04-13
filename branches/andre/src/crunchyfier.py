@@ -267,12 +267,14 @@ class VLAMPage(TreeBuilder):
         """process a pre element and decide what to do with it"""
         self.pre_present = True
         if 'title' not in pre.attrib:
-            id, text, new_div = self.prepare_element(pre)
-            title = ''
-            pre_heading = "%s <pre>"%_("Previous value")
-            vlam_dict = analyze_vlam_code(title)
-            new_pre = et.SubElement(new_div, 'pre')
-            new_pre.text = text
+            if self.edit_flag:
+                id, text, new_div = self.prepare_element(pre)
+                title = ''
+                pre_heading = "%s <pre>"%_("Previous value")
+                vlam_dict = analyze_vlam_code(title)
+                new_pre = et.SubElement(new_div, 'pre')
+                new_pre.text = text
+                addVLAM(new_div, id, vlam_dict, pre_heading)
         else:
             title = pre.attrib['title'].lower()
             vlam_dict = analyze_vlam_code(title)
@@ -291,8 +293,8 @@ class VLAMPage(TreeBuilder):
             elif 'canvas' in vlam_dict['interactive'] or\
                  'plot' in vlam_dict['interactive']:
                 self.substitute_canvas(new_div, id, text, vlam_dict)
-        if self.edit_flag:
-            addVLAM(new_div, id, vlam_dict, pre_heading)
+            if self.edit_flag:
+                addVLAM(new_div, id, vlam_dict, pre_heading)
 
     def prepare_element(self, elem):
         '''Common code for all vlam elements using the "title" tag.
@@ -307,7 +309,8 @@ class VLAMPage(TreeBuilder):
         # new from chewy
         if 'title' in elem.attrib:
             self.vlamcode = elem.attrib['title'].lower()
-        elem.clear()
+        #elem.clear()
+        elem.text = ''
         elem.tail = tail
         elem.tag = 'div'
         elem.attrib['id'] = id + "_container"
