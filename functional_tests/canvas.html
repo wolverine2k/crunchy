@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="vlam" content="">
+<title>Code Editor Test</title></head>
+<body>
+<h1>Crunchy Frog Editor Test</h1>
+<p>Here's a canvas, try running the code supplied (should draw the mandelbrot set):</p>
+<pre title="canvas">
+def mandel(x, y, maxiter = 20):
+    c = complex(x, y)
+    z = complex(0, 0)
+    for k in range(maxiter):
+        z = z*z + c
+    if abs(z) < 2.0:
+        return True
+    else:
+        return False
+
+X = 100.0
+Y = 100.0
+for x in range(1,int(X)):
+    for y in range(1,int(Y)):
+        if mandel(x*3.0/X - 2.0, y*2.0/Y - 1.0):
+            point(3*x,3*y)
+</pre>
+<p>Actually, thats a terrible test; try this instead:</p>
+<pre title="no-pre canvas">
+circle((100, 100), 50)
+set_line_colour('red')   # Canadian/British spelling for "colour"
+circle((100, 100), 30)
+set_line_color('green')  # American spelling for "color"
+circle((100, 100), 10)
+
+filled_circle((200, 200), 50)
+set_fill_colour('yellow')
+filled_circle((200, 200), 40)
+
+width, height = 20, 10
+rectangle((10, 10), width, height)
+filled_rectangle((10, 25), width, height)
+
+set_line_colour('blue')
+line((40, 40), (50, 50))
+
+triangle((20, 300), (40, 310), (30, 290))
+set_fill_colour('salmon')
+filled_triangle((20, 320), (40, 330), (30, 300))
+
+set_line_colour('black')
+point(200, 200)
+</pre>
+<p>This is what it should look like (except that the dot in the middle of the yellow circle should be smaller):</p>
+<img src="test.png" width="402" height="403" border="0" alt="If you can't see this image, then image loading is broken!">
+<h2>Bugs</h2>
+<ul>
+  <li>Image loading is broken - at least when loading a tutorial via the
+"load tutorial" box, using the "/load_local" Crunchy method.</li>
+</ul>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

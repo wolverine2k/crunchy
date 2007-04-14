@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Colourizer Test</title></head>
+<body>
+<h1>Crunchy Frog Colourizer Test</h1>
+<p>The following code should be styled properly</p>
+<pre title="none">
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+<p>Another working example, this time with linenumbers.</p>
+<pre title="none linenumber">
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+<p>Yet another working example with a simulated interpreter code sample.</p>
+<pre title="none interpreter">
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+</pre>
+<p>Same as the previous one, but with some line numbers added.</p>
+<pre title="none interpreter linenumber">
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+</pre>
+<p>The following code should NOT be styled properly, and some warning should
+be given to the user.</p>
+<pre title="none">
+for i in range(10:
+    print i
+</pre>
+<p>In versions up to 0.8.1, comments and linenumbers apparently did not mix
+properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small interpreter prompt (i.e. in the same font size as the linenumber)].
+In the following example, all interpreter prompts should appear the same.
+In particular, compare the interpreter prompts on the first and second lines which used not to be the same font size. </p>
+<pre title="none interpreter linenumber">
+&gt;&gt;&gt; # Comment on the first line.
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; # Another comment.
+&gt;&gt;&gt; print "Hello World"
+</pre>
+
+<h2>Bugs</h2>
+<ul>
+<li>An interpreter session that ends with a comment, as in:
+<pre title="none">
+&gt;&gt;&gt; # this last statement is a comment
+</pre>
+used to be processed by crunchy ("colourized") in such a way
+that it resulted in non W3C compliant code - and Crunchy (i.e. the
+elementtree handler) chokeed on it, and displayed a blank page.  This has been fixed ... but, somehow,
+  this text that appears outside of the "pre" is taken to be part of it.</li>
+<li>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
+not processed properly.  The suggested behaviour at this point would be to 
+[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
+into <code>\n</code> and 
+[2.] to strip the remaining html markup.
+Here's an actual example using a <code>&lt;br/&gt;</code> rather than an "\n" character to separate lines of code.  The actual code we use inside a <code>&lt;pre&gt;</code> element is:<br/>
+<code>print "Hello world!"&lt;br/&gt;print "Crunchy rocks!"
+</code><br/>
+Here is how this example is processed by Crunchy:
+<pre title="none">
+print "Hello world!"<br/>print "Crunchy rocks!"
+</pre>
+Note how the line break is lost ... and how this line is actually styled as code!?
+</li>
+<li>The following is another "bare pre" (&lt;pre&gt;) containing some marked up code, which is technically formatted properly.
+<pre>
+&gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
+...     <span class="py_keyword">print</span> "Hello world!"
+... 
+"Hello world!"
+"Hello world!"
+"Hello world!"
+</pre>
+More of the same (2 lines of code; a simple for loop):
+<pre>
+<span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
+    <span class="py_keyword">print</span> "Hello world!"
+</pre>
+</li>
+</ul>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
