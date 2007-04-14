@@ -4,6 +4,9 @@ pluginloader.py: Loading plugins
 
 import sys
 import os
+from imp import find_module
+import os.path
+
 import CrunchyPlugin
 
 def gen_register_list(initial_list):
@@ -34,9 +37,15 @@ def gen_register_list(initial_list):
     return final_list
                     
                 
-        
-def init_plugin_system(server, plugins):
+
+def gen_plugin_list():
+    pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]), "plugins/")
+    pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
+    return pluginfiles
+
+def init_plugin_system(server):
     """load the plugins"""
+    plugins = gen_plugin_list()
     CrunchyPlugin.server = server
     if not "plugins/" in sys.path:
         sys.path.insert(0, "plugins")

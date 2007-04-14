@@ -1,4 +1,4 @@
-"""This plugin handles all execution requests on /exec"""
+"""This plugin handles all execution requests on /exec, ie. the standard execution method."""
 
 from CrunchyPlugin import *
 
