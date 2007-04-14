@@ -103,6 +103,16 @@ def test_service(arg):
     return str(arg)
 }}}
 
+== exec_js(pageid, code) ==
+
+Executes some javascript code in the page referred to by pageid.
+
+Example:
+{{{
+exec_js(pageid, 'alert("Hello World");')
+}}}
+This example will display a "Hello World" message box to the user.
+
 = CrunchyRequest =
 
 This is the object passed to custom http handlers (see above).
@@ -119,7 +129,7 @@ A String containing the path of the http request.
 
 == args ==
 
-A dict containing any arguments that were encodeed in the URL.
+A dict containing any arguments that were encoded in the URL.
 
 == data ==
 
