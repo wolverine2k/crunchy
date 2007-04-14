@@ -1,4 +1,5 @@
-"""The demo crunchy plugin API
+"""
+The demo crunchy plugin API
 """
 
 import vlam
@@ -6,7 +7,8 @@ import cometIO
 import PluginServices as services
 
 __all__=["register_http_handler", "register_vlam_handler",
-         "create_vlam_page", "exec_code", "register_service", "services"]
+         "create_vlam_page", "exec_code", "register_service", "services",
+         "exec_js"]
     
 def register_http_handler(pattern, handler):
     """Register a new http handler"""
@@ -36,3 +38,7 @@ def register_service(function, servicename):
     CrunchyPlugin.servicename()
     """
     setattr(services, servicename, function)
+
+def exec_js(pageid, jscode):
+    """execute some javascript in the page (NB: this is done asynchronously)"""
+    cometIO.write_js(pageid, jscode)

@@ -1,1 +1,1 @@
-"""A dummy module used for plugin services"""
+"""A dummy module used by plugin services, This is intentionally empty."""
