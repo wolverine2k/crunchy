@@ -61,7 +61,8 @@ def get_directory(npath):
         tstring += '<li><a href="%s">%s</a></li>' % (child, child)
     return dir_list_page % tstring
 
-root_path = dirname(find_module("crunchy")[1])
+# the root of the server is in a separate directory:
+root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
 
 print "Root path is %s" % root_path
 
@@ -76,10 +77,10 @@ Crunchy: Illegal path, page not found.
 </head>
 <body>
 <h1>Illegal Path, Page not Found</h1>
-<p>Crunchy cuould not open the page you requested. This could be for one of a 
+<p>Crunchy could not open the page you requested. This could be for one of a 
 number of reasons, including:</p>
 <ul>
-<li>The page doesn't exist</li>
+<li>The page doesn't exist.</li>
 <li>The path you requested was illegal, examples of illegal paths include those containg the .. path modifier.
 </ul>
 <p>The path you requested was: <b>%s</b></p>
