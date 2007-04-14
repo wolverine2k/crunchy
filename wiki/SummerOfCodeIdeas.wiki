@@ -1,4 +1,4 @@
-#labels Featured
+
 = Introduction =
 
 If you have reached this page, chances are that you are familiar with Google's Summer of Code (SoC).  One of us (Johannes) was a Summer of Code sponsored student working on Crunchy last summer while the other (André) was officially the mentor.  In practice, it became an exciting collaboration for both of us.

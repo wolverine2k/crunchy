@@ -1,6 +1,5 @@
 Documentation for the Crunchy Plugin API *This does not apply to the current 0.8a release*
 
-*Note: This is no longer in sync with the latest SVN head*
 
 = Introduction =
 
@@ -8,7 +7,7 @@ Crunchy is turning into a web framework with plugins.  These plugins handle almo
 
 == What is a plugin? ==
 
-A plugin is a .py file in the src/plugins directory which contains at least a register() function. A plugin can optionally specify a set of services it provides and another set of services that it requires. Plugins will be registered in an order that guarantees all required services to be available at registration time.
+A plugin is a .py file in the plugins directory which contains at least a register() function. A plugin can optionally specify a set of services it provides and another set of services that it requires. Plugins will be registered in an order that guarantees all required services to be available at registration time.
 
 === Contents of a plugin module ====
 
