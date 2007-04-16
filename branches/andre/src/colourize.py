@@ -87,16 +87,15 @@ stdlib = [	'__builtin__', '__future__', '__main__', '_winreg', 'aifc', 'AL', 'al
 
 class Colourizer(object):
 
-    def __init__(self, linenumber=False):
+    def __init__(self, offset=None):
         self.tokenString = ''
-        self.reset(linenumber)
-
-    def reset(self, linenumber=False):
         self.beginLine, self.beginColumn = (0, 0)
         self.endOldLine, self.endOldColumn = (0, 0)
         self.endLine, self.endColumn = (0, 0)
         self.tokenType = token.NEWLINE
-        self.outputLineNumber = linenumber
+        # if offset != None, we start to count the line numbers at
+        # 1 + offset
+        self.offset = offset
 
 #===== Keywords, numbers and operators ===
     def formatName(self, aWord):
@@ -143,14 +142,11 @@ class Colourizer(object):
 
     def formatMultiLineComment(self):
         self.tokenString = self.changeHTMLspecialCharacters(self.tokenString)
-        if self.outputLineNumber:
+        if self.offset is not None:
             temp_in = self.tokenString.split('\n')
-            line_num = self.beginLine
-            if line_num == 1:
-                prefix = "<span class='py_linenumber'>%3d </span>"%line_num
-            else:
-                prefix = ''
-            temp_out = prefix + temp_in[0]
+            line_num = self.beginLine + self.offset
+            #
+            prefix = "<span class='py_linenumber'>%3d </span>"%line_num
             for substring in temp_in[1:]:
                 line_num += 1
                 temp_out += "\n<span class='py_linenumber'>%3d </span>"%line_num \
@@ -192,8 +188,8 @@ class Colourizer(object):
 
     def processNewLine(self):
         if self.lastTokenType in [tokenize.COMMENT, tokenize.NEWLINE, tokenize.NL]:
-            if self.outputLineNumber:
-                self.outp.write("<span class='py_linenumber'>%3d </span>" % self.beginLine)
+            if self.offset is not None:
+                self.outp.write("<span class='py_linenumber'>%3d </span>" % (self.beginLine+self.offset))
         elif self.tokenType != tokenize.DEDENT:  # logical line continues
             self.outp.write("\n")
         else:
@@ -224,17 +220,16 @@ class Colourizer(object):
         code = self.outp.getvalue()
         self.inp.close()
         self.outp.close()
-        self.reset()
+        #self.reset()
         return code
 
 # externally callable function
 
-def style(text, line_numbering=False):
+def style(text, offset=None):
     '''remove prompts and output (if interpreter session)
        and return code with html markup for styling as well as raw Python
        code.'''
-    colourizer = Colourizer()
-    colourizer.outputLineNumber = line_numbering
+    colourizer = Colourizer(offset)
     raw_code = trim_empty_lines_from_end(text)
     interpreter = is_interpreter_session(raw_code)
     if interpreter:
@@ -243,7 +238,7 @@ def style(text, line_numbering=False):
         styled_code = colourizer.parseListing(raw_code)
         if interpreter:
             styled_code = add_back_prompt_and_output(styled_code, stripped,
-                                                     line_numbering)
+                                                     offset)
         return styled_code
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
@@ -289,13 +284,13 @@ def extract_code_from_interpreter(text):
     return python_code, stripped
 
 
-def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
+def add_back_prompt_and_output(py_code, stripped, offset=None):
     '''adds back the interpreter prompt and simulated output to a
        styled interpreter session.'''
     newlines = []
     lines = py_code.split('\n')
     # making some explicit definitions for clarity
-    if line_numbering:
+    if offset != -1:
         line_info_len = len("<span class='py_linenumber'>    </span>")
     else:
         line_info_len = 0
@@ -305,7 +300,7 @@ def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
 
     for (prompt, info) in stripped:
         if prompt:
-            if line_numbering:
+            if offset is not None:
                 #sometimes, a <span> or </span> gets prepended to
                 # a line; we need to make sure that this does not
                 # result in overlapping <span>s which makes the
@@ -323,7 +318,7 @@ def add_back_prompt_and_output(py_code, stripped, line_numbering=False):
                 newlines.append('<span class="py_prompt">' + prompt +
                       '</span>' + lines[info-1])
         elif info:
-            if line_numbering:  # get the spacing right...
+            if offset is not None:  # get the spacing right...
                 newlines.append("<span class='py_linenumber'>    </span>"
                                + '<span class="py_output">' + info +
                                '</span>')
@@ -350,8 +345,6 @@ def parsing_error_dialog(info):
 def trim_empty_lines_from_end(text):
     '''remove blank lines at beginning and end of code sample'''
     lines = text.split('\n')
-##    if len(lines) == 1:
-##        return text
     top = 0
     for line in lines:
         if line.strip():

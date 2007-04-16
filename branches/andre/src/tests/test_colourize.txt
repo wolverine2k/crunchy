@@ -46,6 +46,13 @@ Note that we also removed the last empty line.
     ... class test_case(object):
     ...     def __init__(self):
     ...         pass"""
+
+[[ Note that we need to re-initialize the Colourizer as a new instance.
+This was not needed for Crunchy version prior 0.8.2 as we used to call
+a reset() method after each styling (which is redundant with the new
+version that does not call Colourizer directly). ]]
+
+    >>> styler = colourize.Colourizer()
     >>> styled_code2 = styler.parseListing(code_sample2)
     >>> print styled_code2
     <span class='py_comment'>#First comment
@@ -62,7 +69,7 @@ next line.  This requires special consideration when styling code with
 interpreter prompts.
 
 Next, we redo the same tests, but this time with added line numbers.
-    >>> styler.outputLineNumber = True
+    >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code1a = styler.parseListing(code_sample1)
     >>> print styled_code1a
     <span class='py_linenumber'>  1 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
@@ -72,8 +79,8 @@ Next, we redo the same tests, but this time with added line numbers.
     <span class='py_linenumber'>  5 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span class='py_linenumber'>  6 </span><span>        </span><span class='py_keyword'>pass</span>
     <span class='py_linenumber'>  7 </span>
-    >>> # The outputLineNumber option is currently automatically reset to be false at the end of a run
-    >>> styler.outputLineNumber = True
+
+    >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code2a = styler.parseListing(code_sample2)
     >>> print styled_code2a
     <span class='py_linenumber'>  1 </span><span class='py_comment'>#First comment
@@ -87,6 +94,20 @@ Next, we redo the same tests, but this time with added line numbers.
 
 Note again how the comments ending one line result in a </span> inserted at the beginning of the
 next one.
+
+A final example that starts at line 11 (offset of 10)
+    >>> styler = colourize.Colourizer(offset=10)
+    >>> styled_code2b = styler.parseListing(code_sample2)
+    >>> print styled_code2b
+    <span class='py_linenumber'> 11 </span><span class='py_comment'>#First comment
+    </span><span class='py_linenumber'> 12 </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'> 13 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'> 14 </span><span>    </span><span class='py_keyword'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span><span class='py_comment'>  # another comment</span>
+    <span class='py_linenumber'> 15 </span><span class='py_comment'># yet another one
+    </span><span class='py_linenumber'> 16 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'> 17 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'> 18 </span><span>        </span><span class='py_keyword'>pass</span>
+
 
 New stuff
 ========
@@ -105,7 +126,7 @@ After adding a line numbering option, we can reproduce a second example.
 however, this does not mean that the code does not work as intended in this case,
 just that we deal with empty lines differently with the style() function as
 we do with the simple parseListing method)
-    >>> print styled_code2a == colourize.style(code_sample2, line_numbering=True)
+    >>> print styled_code2a == colourize.style(code_sample2, offset=0)
     True
 
 
@@ -149,9 +170,9 @@ We can style the code as before.
 For future reference, we will document as tests here styling examples
 with line numbers added of the previous two cases.
 
-    >>> print colourize.style(code_sample3, True)
-    <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
-    >>> print colourize.style(code_sample4, True)
+    >>> print colourize.style(code_sample3, offset=4)
+    <span class='py_linenumber'>  5 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
+    >>> print colourize.style(code_sample4, offset=0)
     <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_linenumber'>    </span><span class="py_output">Hello world!</span>
     <span class='py_linenumber'>  2 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
@@ -229,6 +250,10 @@ some previous examples to test the interpreter version.
     True
     >>> print colourize.style(code_sample4) == fully_styled4
     True
+
+In case we find a discrepancy, we compare with the expected result.
+    >>> print colourize.style(code_sample3)
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>print</span><span class='py_string'> 'Hello world!'</span>
 
 Using this code with sample pages, we noted that sometimes blank lines
 were added either at the beginning and/or at the end of a code sample.

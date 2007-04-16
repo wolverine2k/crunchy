@@ -13,6 +13,20 @@ a piece of html code, converting <br/> into "\n"
     b
     cd
 
+We also have a function to extract the value of the linenumber option if present.
+    >>> print et_colour.get_linenumber_offset("junk")
+    None
+    >>> print et_colour.get_linenumber_offset("linenumber")
+    0
+    >>> print et_colour.get_linenumber_offset("linenumber=4")
+    3
+    >>> print et_colour.get_linenumber_offset("linenumber =    22")
+    21
+    >>> print et_colour.get_linenumber_offset("linenumber  start =    24")
+    0
+    >>> print et_colour.get_linenumber_offset("LineNumber = 3")
+    2
+
 Next, we introduce a series of tests of increasing complexity.
 
     >>> sample = '<pre>print "Hello World!"</pre>'
@@ -51,13 +65,14 @@ ElementTree - at least in the version used for this test.
     <span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
     </pre>
 
-    >>> sample = '<pre title="junk linenumber">print "Hello World!"</pre>'
+    >>> sample = '<pre title="junk linenumber=2">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
     >>> wrapped_pre, py_code = et_colour.style(pre)
     >>> styled = et.tostring(wrapped_pre)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    <pre title="junk linenumber">
-    <span class="py_linenumber">  1 </span><span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
+    <pre title="junk linenumber=2">
+    <span class="py_linenumber">  2 </span><span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
     </pre>
+

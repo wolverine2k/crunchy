@@ -11,6 +11,7 @@ english = {}
 french = {}
 _editarea_lang = 'en' # default
 _system_encoding = sys.getdefaultencoding()
+_selected = english # default
 current_page_encoding = None  # obtained from crunchyfier.py as of Jan. 2007
 
 def select(lang):
