@@ -8,7 +8,7 @@ All the tests are asssumed to be located in the "tests" sub-directory.
 import doctest
 
 test_files = ["test_colourize.txt",
-              "test_et_colour.txt"
+              "test_s_styler.txt"
              ]
 
 for t in test_files:
