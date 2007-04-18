@@ -12,22 +12,22 @@ have to be redefined in an other one.</p>
 <p>The following is a sample interpreter session; verify that the
 output is as expected:</p>
 <pre title="interpreter">
-&gt;&gt;&gt; # simple evaluation:
-&gt;&gt;&gt; 7*6
+>>> # simple evaluation:
+>>> 7*6
 42
-&gt;&gt;&gt; # handling spaces:
-&gt;&gt;&gt; 7 * 6
+>>> # handling spaces:
+>>> 7 * 6
 42
-&gt;&gt;&gt; # assignment:
-&gt;&gt;&gt; x = 7*6
-&gt;&gt;&gt; print x
+>>> # assignment:
+>>> x = 7*6
+>>> print x
 42
-&gt;&gt;&gt; # tooltip; type slowly and observe the "popup tooltip"
-&gt;&gt;&gt; # appearing when typing "(" and disappearing with ")": 
-&gt;&gt;&gt; range(5)
+>>> # tooltip; type slowly and observe the "popup tooltip"
+>>> # appearing when typing "(" and disappearing with ")": 
+>>> range(5)
 [0, 1, 2, 3, 4]
-&gt;&gt;&gt; # auto-indent (use backspace to create the blank line at the end): 
-&gt;&gt;&gt; for y in range(5):
+>>> # auto-indent (use backspace to create the blank line at the end): 
+>>> for y in range(5):
 ...     print y,
 ... 
 0 1 2 3 4
@@ -35,18 +35,18 @@ output is as expected:</p>
 
 <p>Here are a few more examples (with added linenumbers):</p>
 <pre title="interpreter linenumber">
-&gt;&gt;&gt; # undefined variable
-&gt;&gt;&gt; print a
+>>> # undefined variable
+>>> print a
 Error on line 1:
  name 'a' is not defined
-&gt;&gt;&gt; # however, previously defined variables should be remembered
-&gt;&gt;&gt; print x
+>>> # however, previously defined variables should be remembered
+>>> print x
 42
-&gt;&gt;&gt; #the following should not actually exit, but instead catch the error; 
-&gt;&gt;&gt; # the error message could be improved upon!
-&gt;&gt;&gt; # also note that a tooltip appears when typing "."
-&gt;&gt;&gt; import sys
-&gt;&gt;&gt; sys.exit()
+>>> #the following should not actually exit, but instead catch the error; 
+>>> # the error message could be improved upon!
+>>> # also note that a tooltip appears when typing "."
+>>> import sys
+>>> sys.exit()
 Error on line 1:
 
 </pre>
@@ -55,11 +55,12 @@ Error on line 1:
 <ul>
 <li>Note that an interpreter session that ends with a comment, as in:
 <pre>
-&gt;&gt;&gt; # this last statement is a comment
+>>> # this last statement is a comment
 </pre>
 is currently processed by crunchy ("colourized") in such a way
 that it results in non W3C compliant code - and Crunchy (i.e. the
-elementtree handler) chokes on it, and displays a blank page.  This should be fixed.</li>
+elementtree handler) chokes on it, and displays a blank page.  This should be fixed. 
+(<a href="interpreter_comment_bug.html">Here is a page to test it</a>).</li>
 <li>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
 not processed properly.  The suggested behaviour at this point would be to 
 [1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
@@ -72,7 +73,7 @@ into <code>\n</code> and
 The following should result in an error message, but there's simply no 
 output given.
 <pre title="interpreter">
-&gt;&gt;&gt; for i in range(4):
+>>> for i in range(4):
 ...     print a  # undefined variable
 </pre>
 

@@ -5,32 +5,32 @@
 <body>
 <h1>Crunchy Frog Colourizer Test</h1>
 <p>The following code should be styled properly</p>
-<pre title="none">
+<pre title="py_code">
 for i in range(10):
     print i,
 print "Hello World"
 </pre>
 <p>Another working example, this time with linenumbers.</p>
-<pre title="none linenumber">
+<pre title="py_code linenumber">
 for i in range(10):
     print i,
 print "Hello World"
 </pre>
 <p>Yet another working example with a simulated interpreter code sample.</p>
-<pre title="none interpreter">
+<pre title="py_code">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
 &gt;&gt;&gt; print "Hello World"
 </pre>
 <p>Same as the previous one, but with some line numbers added.</p>
-<pre title="none interpreter linenumber">
+<pre title="py_code linenumber">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
 &gt;&gt;&gt; print "Hello World"
 </pre>
 <p>The following code should NOT be styled properly, and some warning should
 be given to the user.</p>
-<pre title="none">
+<pre title="py_code">
 for i in range(10:
     print i
 </pre>
@@ -38,7 +38,7 @@ for i in range(10:
 properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small interpreter prompt (i.e. in the same font size as the linenumber)].
 In the following example, all interpreter prompts should appear the same.
 In particular, compare the interpreter prompts on the first and second lines which used not to be the same font size. </p>
-<pre title="none interpreter linenumber">
+<pre title="py_code linenumber">
 &gt;&gt;&gt; # Comment on the first line.
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
@@ -50,7 +50,7 @@ In particular, compare the interpreter prompts on the first and second lines whi
 <h2>Bugs</h2>
 <ul>
 <li>An interpreter session that ends with a comment, as in:
-<pre title="none">
+<pre title="py_code">
 &gt;&gt;&gt; # this last statement is a comment
 </pre>
 used to be processed by crunchy ("colourized") in such a way
@@ -66,7 +66,7 @@ Here's an actual example using a <code>&lt;br/&gt;</code> rather than an "\n" ch
 <code>print "Hello world!"&lt;br/&gt;print "Crunchy rocks!"
 </code><br/>
 Here is how this example is processed by Crunchy:
-<pre title="none">
+<pre title="py_code">
 print "Hello world!"<br/>print "Crunchy rocks!"
 </pre>
 Note how the line break is lost ... and how this line is actually styled as code!?
