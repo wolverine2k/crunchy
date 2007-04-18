@@ -22,6 +22,9 @@ import tokenize
 # Crunchy modules
 #from translation import _
 
+def _(data):
+    return data
+
 from element_tree import ElementTree as et
 
 
