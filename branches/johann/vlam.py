@@ -17,19 +17,14 @@ et = ElementTree
 
 from cometIO import register_new_page
 
+count = 0
+
 def uidgen():
-    """a moderately decent uid generator,
-    see http://aspn.activestate.python.com/ASPN/Cookbook/Python/Recipe/213761
+    """an suid (session unique ID) generator
     """
-    t = long(time.time() * 1000)
-    r = long(random.random()*1000000000000000L)
-    try:
-        a = socket.gethostbyname(socket.gethostname())
-    except:
-        a = random.random()*1000000000000L
-    data = str(t) + str(r) + str(a)
-    data = md5.md5(data).hexdigest()
-    return data
+    global count
+    count += 1
+    return str(count)
 
 class CrunchyPage(object):
     # handlers ::  string -> string -> handler function (sorry, haskell notation)
@@ -73,7 +68,7 @@ class CrunchyPage(object):
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         for tag in CrunchyPage.handlers:
             for elem in self.body.getiterator(tag):
-                if "crunchy:widget" in elem.attrib:
+                if "title" in elem.attrib:
                     if elem.attrib["crunchy:widget"] in CrunchyPage.handlers[tag]:
                         CrunchyPage.handlers[tag][elem.attrib["crunchy:widget"]](self, elem, self.pageid + ":" + uidgen())
                 

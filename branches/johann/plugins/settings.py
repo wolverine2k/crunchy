@@ -1,7 +1,8 @@
 """A settings plugin - other plugins can register settings fields on startup.
 
 There will be a few different types of option:
-  * Text :: a text entry box.
+  * Text :: a one line text entry box.
+  * MultiText :: a multiline text entry box.
   * Boolean :: A tick-box.
   * Password :: obvious.
   * Choice :: Radio-buttons or dropdown list.
@@ -23,3 +24,4 @@ def setup_page(request):
 def register_settings_group(tabname, groupname, options, initvalue):
     """plugins use this to register a set of options"""
     pass
+

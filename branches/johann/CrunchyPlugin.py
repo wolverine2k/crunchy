@@ -12,7 +12,8 @@ __all__=["register_http_handler", "register_vlam_handler",
          "exec_js"]
     
 def register_http_handler(pattern, handler):
-    """Register a new http handler"""
+    """Register a new http handler, see http_serve.py for documentation on
+    the request object passed to http handlers."""
     if pattern is None:
         server.register_default_handler(handler)
     else:
@@ -20,7 +21,8 @@ def register_http_handler(pattern, handler):
         pass
         
 def register_vlam_handler(elem_type, option, handler):
-    """register a new vlam handler"""
+    """register a new vlam handler, see vlam.py for documentation on the
+    page object passed to vlam handlers"""
     if elem_type not in vlam.CrunchyPage.handlers:
         vlam.CrunchyPage.handlers[elem_type] = {}
     vlam.CrunchyPage.handlers[elem_type][option] = handler

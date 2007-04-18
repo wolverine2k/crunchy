@@ -11,3 +11,5 @@ def exec_handler(request):
     """handle an execution request"""
     print "executing..."
     exec_code(request.data, request.args["uid"])
+    request.send_response(200)
+    request.end_headers()

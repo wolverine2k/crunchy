@@ -33,8 +33,9 @@ def doctest_runner_callback(request):
     """Handles all execution of doctests. The request object will contain 
     all the data in the AJAX message sent from the browser."""
     code = request.data + (doctest_pycode % doctests[request.args["uid"]])
-    print code
     exec_code(code, request.args["uid"])
+    request.send_response(200)
+    request.end_headers()
     
 def doctest_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
