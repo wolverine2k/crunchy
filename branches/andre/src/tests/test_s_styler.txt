@@ -41,14 +41,6 @@ Next, a function to replace an ElementTree Element "in place".
     >>> print et.tostring(elem) == new # but with new content
     True
 
-Next, testing a function to make a copy of a dict
-    >>> old = {'a':1, 'b':['1'], 'c': {'d':'e'}}
-    >>> new = s_styler.duplicate_dict(old)
-    >>> print id(old) == id(new)  # different objects
-    False
-    >>> print repr(old) == repr(new) # same representation
-    True
-
 Next, we introduce a series of tests of increasing complexity.
 
     >>> sample = '<pre>print "Hello World!"</pre>'

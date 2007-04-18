@@ -57,7 +57,7 @@ def style(elem):
     tag = elem.tag
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
     new_elem = et.fromstring(new_html)
-    attrib = duplicate_dict(elem.attrib)
+    attrib = dict(elem.attrib) # copying
     replace_element(elem, new_elem)
     elem.attrib = attrib
     return py_code
@@ -84,7 +84,7 @@ def embed(embed_tag, elem):
     tag = elem.tag
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
     new_elem = et.fromstring(new_html)
-    attrib = duplicate_dict(elem.attrib)
+    attrib = dict(elem.attrib) # copying
     new_elem.attrib = attrib
     # create the container ...
     container = et.Element(embed_tag)
@@ -138,11 +138,3 @@ def replace_element(elem, replacement):
     elem.attrib = replacement.attrib
     elem[:] = replacement[:]
     return
-
-def duplicate_dict(old):
-    '''makes a shallow copy of a dict; appropriate to copy the attributes
-    of an ElementTree Element.'''
-    new = {}
-    for key in old:
-        new[key] = old[key]
-    return new

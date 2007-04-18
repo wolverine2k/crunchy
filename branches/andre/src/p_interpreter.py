@@ -23,7 +23,13 @@ js_crunchy = 'to be defined'
 js_chewy = {'code': 'to be defined', 'pre': 'to be defined'}
 
 def add_crunchy_markup(elem, uid=None):
-    '''add the html markup to style the code'''
+    '''add the html markup to style the code
+
+    For an interpreter, we have the styled Python code
+    followed by the output element followed by the Python
+    interpreter prompt (and input).  A tipbar is added for displaying
+    interactively result from help, etc.  A (hidden) canvas might be added
+    in a future version'''
     if elem.tag in html_tags:
         python_code = s_styler.embed('div', elem)
         elem.attrib['id'] = '%s_container'%uid
@@ -43,7 +49,7 @@ def add_crunchy_markup(elem, uid=None):
         #interpreters.interps[uid] = interpreters.HTTPrepl()
     else:
         raise Exception # needs to improve on this
-    return python_code # note that we are not usually interested in the actual code
+    return python_code # note that we are not usually interested in the actual code for an interpreter
 
 
 def add_chewy_markup(elem):
