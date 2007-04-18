@@ -1,6 +1,7 @@
 """
-The demo crunchy plugin API
+The crunchy plugin API
 """
+import threading
 
 import vlam
 import cometIO
@@ -42,3 +43,15 @@ def register_service(function, servicename):
 def exec_js(pageid, jscode):
     """execute some javascript in the page (NB: this is done asynchronously)"""
     cometIO.write_js(pageid, jscode)
+    
+def get_pageid():
+    """when executed from inside a 'user thread', returns the pageid of the page
+    from which the code is being executed.
+    """
+    return threading.currentThread().getName().split(":")[0]
+    
+def get_uid():
+    """when executed from inside a 'user thread', returns the uid of the widget
+    from which the code is being executed.
+    """
+    return threading.currentThread().getName()

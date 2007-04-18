@@ -45,7 +45,6 @@ class CrunchyPage(object):
         
     def process_head(self):
         self.load_css("/comet.css")
-        #self.load_js("/comet.js")
         self.add_js_code(comet_js)
         
     def load_css(self, filename):
