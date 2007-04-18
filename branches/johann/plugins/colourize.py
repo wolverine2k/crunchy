@@ -21,6 +21,10 @@ def _(x):
     return x
 
 # --- begin plugin code ---
+
+requires = set([])
+provides = set([])
+
 def register():
     pass
 

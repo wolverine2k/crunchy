@@ -15,7 +15,7 @@ from element_tree import ElementTree
 et = ElementTree
 
 # we depend on the editor subwidget being provided by other plugins
-requires =  set(["editor_subwidget","io_subwidget"])
+requires =  set(["editor_widget","io_widget"])
 
 #we need to index doctest code by element uid:
 doctests = {}

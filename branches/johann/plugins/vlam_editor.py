@@ -4,8 +4,8 @@ from CrunchyPlugin import *
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
-provides = set(["editor_subwidget"])
-
+provides = set(["editor_widget"])
+requires = set(["io_widget", "/exec"])
 
 def register():
     register_vlam_handler("pre", "editor", insert_editor)

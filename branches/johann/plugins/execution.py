@@ -2,10 +2,11 @@
 
 from CrunchyPlugin import *
 
+provides = set(["/exec"])
 
 def register():
     register_http_handler("/exec", exec_handler)
-        
+    
 def exec_handler(request):
     """handle an execution request"""
     print "executing..."

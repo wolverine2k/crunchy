@@ -2,7 +2,7 @@
 
 from CrunchyPlugin import *
 
-requires = set(["io_subwidget"])
+requires = set(["io_widget", "/exec"])
 
 def register():
     register_vlam_handler("pre", "interpreter", insert_interpreter)
