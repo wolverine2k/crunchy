@@ -7,11 +7,25 @@ requires = set(["io_widget", "/exec"])
 def register():
     register_vlam_handler("pre", "interpreter", insert_interpreter)
            
-def insert_interpreter(page, elem, uid):
+def insert_interpreter(page, elem, uid, vlam):
     """inserts an interpreter (actually the js code to initialise an interpreter)"""
     if not hasattr(page, "interp_included"):
         page.interp_included = True
         page.add_js_code(interp_js)
+    # 1) code styling
+    if "linenumber" in vlam:
+        offset = 0
+    else: 
+        offset = None
+    code, markup = services.style_pycode(elem, offset)
+    # 2) clear the element and get the code in
+    tail = elem.tail
+    elem.clear()
+    elem.tail = tail
+    elem.tag = "div"
+    if not "no-pre" in vlam:
+        elem.insert(0, markup)
+    # 3) and the output
     page.add_js_code('init_interp("%s");' % uid)
     services.insert_io_subwidget(page, elem, uid)
     

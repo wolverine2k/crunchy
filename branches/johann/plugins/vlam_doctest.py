@@ -15,7 +15,7 @@ from element_tree import ElementTree
 et = ElementTree
 
 # we depend on the editor subwidget being provided by other plugins
-requires =  set(["editor_widget","io_widget"])
+requires =  set(["editor_widget","io_widget", "style_pycode"])
 
 #we need to index doctest code by element uid:
 doctests = {}
@@ -37,15 +37,19 @@ def doctest_runner_callback(request):
     request.send_response(200)
     request.end_headers()
     
-def doctest_widget_callback(page, elem, uid):
+def doctest_widget_callback(page, elem, uid, vlam):
     """Handles embedding suitable code into the page in order to display and
     run doctests"""
     # first we need to make sure that the required javacript code is in the page:
     if not hasattr(page, "doctest_included"):
         page.doctest_included = True
         page.add_js_code(doctest_jscode)
-    #extract the doctest code:
-    doctestcode = elem.text
+    #extract the doctest code and style it:
+    if "linenumber" in vlam:
+        offset = 0
+    else: 
+        offset = None
+    doctestcode, markup = services.style_pycode(elem, offset)
     #and store it:
     doctests[uid] = doctestcode
     #reset the element:
@@ -54,8 +58,7 @@ def doctest_widget_callback(page, elem, uid):
     elem.tail = tail
     elem.tag = "div"
     # and insert the doctest code:
-    dtdisplay = et.SubElement(elem, "pre")
-    dtdisplay.text = doctestcode
+    elem.insert(0, markup)
     # call the insert_editor_subwidget service:
     services.insert_editor_subwidget(elem, uid)
     #some spacing:

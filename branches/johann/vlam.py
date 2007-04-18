@@ -27,7 +27,7 @@ def uidgen():
     return str(count)
 
 class CrunchyPage(object):
-    # handlers ::  string -> string -> handler function (sorry, haskell notation)
+    # handlers ::  string -> string -> handler function (sorry, a weird mix of haskell and OCaml notation in a python program :)
     handlers = {}
     pagehandlers = []
     def __init__(self, filehandle):
@@ -56,8 +56,9 @@ class CrunchyPage(object):
         for tag in CrunchyPage.handlers:
             for elem in self.body.getiterator(tag):
                 if "title" in elem.attrib:
-                    if elem.attrib["title"] in CrunchyPage.handlers[tag]:
-                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, self.pageid + ":" + uidgen())
+                    keyword = elem.attrib["title"].split(" ")[0]
+                    if keyword in CrunchyPage.handlers[tag]:
+                        CrunchyPage.handlers[tag][keyword](self, elem, self.pageid + ":" + uidgen(), elem.attrib["title"].lower())
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,

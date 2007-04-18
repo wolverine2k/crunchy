@@ -7,14 +7,21 @@ Crunchy COMET IO demo
 
 <body>
 <h1>The Crunchy Demo</h1>
-<p>For now, this is the only available code html. Test pages are coming soon.</p>
+<p>For now, this is the only available html. Test pages are coming soon.</p>
 <hr />
 <h2>An Interpreter</h2>
-<pre title="interpreter"></pre>
+<pre title="interpreter">
+>>> print "Hello World!"
+"Hello World!"
+</pre>
 
 <hr />
 <h2>An Editor</h2>
-<pre title="editor"></pre>
+<pre title="editor linenumber">
+# some sample code:
+for i in range(5):
+   print i,
+</pre>
 
 <hr />
 <h2>A Doctest</h2>
@@ -27,5 +34,15 @@ Crunchy COMET IO demo
 ['Piglet']
 </pre>
 
+<hr />
+<h2>Some styled python code</h2>
+<pre title="py_code">
+class Animal(object):
+    def __init__(self, name):
+        self.name = name
+        self.friends = []
+    def addFriend(self, friend):
+        self.friends.append(friend)
+</pre>
 </body>
 </html>
