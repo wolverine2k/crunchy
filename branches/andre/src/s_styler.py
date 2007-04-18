@@ -15,9 +15,7 @@ would not need to modify colourize.py - only this module.
 import re
 
 import colourize
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
+from element_tree import ElementTree as et
 
 def style(elem):
     '''style some Python code (adding html markup) if "title" attribute
@@ -48,13 +46,15 @@ def style(elem):
     <span class="py_keyword">print</span> <span class="string">"Hi!"</span>
     </pre>
     '''
-    tag = elem.tag
+    # styling
     py_code = extract_code(elem)
     if 'title' in elem.attrib:
         offset = get_linenumber_offset(elem.attrib['title'])
-        styled_code = colourize.style(py_code, offset)
+        styled_code, py_code = colourize.style(py_code, offset)
     else:
         styled_code = py_code
+    # re-creating element
+    tag = elem.tag
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
     new_elem = et.fromstring(new_html)
     attrib = duplicate_dict(elem.attrib)
@@ -62,6 +62,37 @@ def style(elem):
     elem.attrib = attrib
     return py_code
 
+def embed(embed_tag, elem):
+    '''style some Python code the same way that style() does it but,
+    in addition, embeds the element into a new html one which retains
+    the identity of the original one.  For instance, taking the same
+    example as the one used in style() above, if we had
+    embed_tag = div, the result would be
+
+    <div><pre title="some value">
+    <span class="py_keyword">print</span> <span class="string">"Hi!"</span>
+    </pre></div>
+    '''
+    # styling
+    py_code = extract_code(elem)
+    if 'title' in elem.attrib:
+        offset = get_linenumber_offset(elem.attrib['title'])
+        styled_code, py_code = colourize.style(py_code, offset)
+    else:
+        styled_code = py_code
+    # re-creating inside element (usually the pre)
+    tag = elem.tag
+    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    new_elem = et.fromstring(new_html)
+    attrib = duplicate_dict(elem.attrib)
+    new_elem.attrib = attrib
+    # create the container ...
+    container = et.Element(embed_tag)
+    # ... with the same identity as the original element
+    replace_element(elem, container)
+    # insert the recreated element in the new container
+    elem.append(new_elem)
+    return py_code
 
 def extract_code(elem):
     ''' extract all the text (Python code) from a marked up

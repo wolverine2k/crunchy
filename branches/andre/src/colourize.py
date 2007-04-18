@@ -239,7 +239,7 @@ def style(text, offset=None):
         if interpreter:
             styled_code = add_back_prompt_and_output(styled_code, stripped,
                                                      offset)
-        return styled_code
+        return styled_code, raw_code
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
         return "<span class='warning'>%s</span>\n<span>%s</span>"%(

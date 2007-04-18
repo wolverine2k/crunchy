@@ -98,3 +98,38 @@ ElementTree - at least in the version used for this test.
     <span class="py_linenumber">  2 </span><span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
     </pre>
 
+Introducing tests for a more complicated function of s_styler.py, that
+which embed an element, or series of element, inside another one that acts
+as a container.
+
+    >>> sample = '<a>original</a>'
+    >>> elem = et.fromstring(sample)
+    >>> elem_id = id(elem)
+    >>> pycode = s_styler.embed('b', elem)
+    >>> print et.tostring(elem)
+    <b><a>
+    original
+    </a></b>
+    >>> print elem_id == id(elem)
+    True
+
+    >>> sample = '<pre title="editor">print "Hello World!"</pre>'
+    >>> elem = et.fromstring(sample)
+    >>> pycode = s_styler.embed('div', elem)
+    >>> print et.tostring(elem)
+    <div><pre title="editor">
+    <span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
+    </pre></div>
+    >>> print pycode
+    print "Hello World!"
+
+    >>> sample = '<pre title="editor linenumber=3">print "Hello World!"</pre>'
+    >>> elem = et.fromstring(sample)
+    >>> pycode = s_styler.embed('div', elem)
+    >>> print et.tostring(elem)
+    <div><pre title="editor linenumber=3">
+    <span class="py_linenumber">  3 </span><span class="py_keyword">print</span><span class="py_string"> "Hello World!"</span>
+    </pre></div>
+
+
+
