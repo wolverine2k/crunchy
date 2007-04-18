@@ -29,48 +29,35 @@ def uidgen():
 class CrunchyPage(object):
     # handlers ::  string -> string -> handler function (sorry, haskell notation)
     handlers = {}
+    pagehandlers = []
     def __init__(self, filehandle):
         self.pageid = uidgen()
         register_new_page(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
-        self.process_head()
         self.process_body()
-        
-    def process_head(self):
-        self.load_css("/comet.css")
         self.add_js_code(comet_js)
-        
-    def load_css(self, filename):
-        '''Inserts a css file in the <head>.'''
-        css = et.Element("link")
-        css.set("rel", "stylesheet")
-        css.set("href", filename)
-        css.set("type", "text/css")
-        self.head.insert(0, css)
-        return
-    
-    def load_js(self, filename):    
-        js = et.Element("script")
-        js.set("src", filename)
-        js.set("type", "text/javascript")
-        js.text = "\n"  # easier to read source
-        self.head.append(js)
     
     def add_js_code(self, code):    
         js = et.Element("script")
         js.set("type", "text/javascript")
         js.text = code
         self.head.append(js)
-            
+    
+    def add_css_code(self, code):
+        css = et.Element("style")
+        css.set("type", "text/css")
+        css.text = code
+        self.head.insert(0, css)
+        
     def process_body(self):
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         for tag in CrunchyPage.handlers:
             for elem in self.body.getiterator(tag):
                 if "title" in elem.attrib:
-                    if elem.attrib["crunchy:widget"] in CrunchyPage.handlers[tag]:
-                        CrunchyPage.handlers[tag][elem.attrib["crunchy:widget"]](self, elem, self.pageid + ":" + uidgen())
+                    if elem.attrib["title"] in CrunchyPage.handlers[tag]:
+                        CrunchyPage.handlers[tag][elem.attrib["title"]](self, elem, self.pageid + ":" + uidgen())
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,

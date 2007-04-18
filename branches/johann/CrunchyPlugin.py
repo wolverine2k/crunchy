@@ -27,6 +27,10 @@ def register_vlam_handler(elem_type, option, handler):
         vlam.CrunchyPage.handlers[elem_type] = {}
     vlam.CrunchyPage.handlers[elem_type][option] = handler
     
+def register_page_handler(handler):
+    """register a callback that is called when each page is created"""
+    vlam.CrunchyPage.pagehandlers.append(handler)
+    
 def create_vlam_page(filehandle):
     """Create (and return) a VLAM page from filehandle"""
     return vlam.CrunchyPage(filehandle)

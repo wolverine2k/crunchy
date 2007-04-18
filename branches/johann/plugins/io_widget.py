@@ -20,6 +20,7 @@ def insert_io_subwidget(page, elem, uid):
     if not hasattr(page, "io_included"):
         page.io_included = True
         page.add_js_code(io_js)
+        page.add_css_code(io_css)
     output = et.SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
@@ -45,4 +46,34 @@ function push_keys(event, uid){
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
 };
+"""
+
+io_css = r"""
+
+.stdout {
+    color: blue;
+}
+
+.stderr {
+    color: red;
+}
+
+.input {
+    display: none;
+	width: 90%;
+    font: 10pt monospace;
+    border-width: 1px;
+}
+
+.output{
+    font: 10pt monospace;
+    color:darkgreen; 
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+}
+
+.crunchy_canvas{
+    display: none;
+}
 """
