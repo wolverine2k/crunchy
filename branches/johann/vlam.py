@@ -30,6 +30,7 @@ class CrunchyPage(object):
     # handlers ::  string -> string -> handler function (sorry, a weird mix of haskell and OCaml notation in a python program :)
     handlers = {}
     pagehandlers = []
+    null_handlers = {}
     def __init__(self, filehandle):
         self.pageid = uidgen()
         register_new_page(self.pageid)
@@ -66,6 +67,9 @@ class CrunchyPage(object):
                     keyword = elem.attrib["title"].split(" ")[0]
                     if keyword in CrunchyPage.handlers[tag]:
                         CrunchyPage.handlers[tag][keyword](self, elem, self.pageid + ":" + uidgen(), elem.attrib["title"].lower())
+        for tag in CrunchyPage.null_handlers:
+            for elem in self.body.getiterator(tag):
+                CrunchyPage.null_handlers[tag](self, elem, self.pageid + ":" + uidgen(), None)
                 
     def insert_output(self, elem, uid):
         """insert an output widget into elem, usable for editors and interpreters,

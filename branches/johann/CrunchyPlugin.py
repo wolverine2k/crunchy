@@ -24,6 +24,11 @@ def register_http_handler(pattern, handler):
 def register_vlam_handler(elem_type, option, handler):
     """register a new vlam handler, see vlam.py for documentation on the
     page object passed to vlam handlers"""
+    if option is None:
+        if elem_type in vlam.CrunchyPage.handlers:
+            return
+        else:
+            vlam.CrunchyPage.null_handlers[elem_type] = handler
     if elem_type not in vlam.CrunchyPage.handlers:
         vlam.CrunchyPage.handlers[elem_type] = {}
     vlam.CrunchyPage.handlers[elem_type][option] = handler
