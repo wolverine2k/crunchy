@@ -9,15 +9,15 @@ def register():
            
 def insert_interpreter(page, elem, uid, vlam):
     """inserts an interpreter (actually the js code to initialise an interpreter)"""
-    if not hasattr(page, "interp_included"):
-        page.interp_included = True
+    if not page.includes("interp_included"):
+        page.add_include("interp_included")
         page.add_js_code(interp_js)
     # 1) code styling
     if "linenumber" in vlam:
         offset = 0
     else: 
         offset = None
-    code, markup = services.style_pycode(elem, offset)
+    code, markup = services.style_pycode(page, elem, offset)
     # 2) clear the element and get the code in
     tail = elem.tail
     elem.clear()

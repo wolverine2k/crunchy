@@ -34,11 +34,18 @@ class CrunchyPage(object):
         self.pageid = uidgen()
         register_new_page(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
+        self.included = set([])
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
         self.process_body()
         self.add_js_code(comet_js)
+        
     
+    def add_include(self, include_str):
+        self.included.add(include_str)
+    def includes(self, include_str):
+        return include_str in self.included
+        
     def add_js_code(self, code):    
         js = et.Element("script")
         js.set("type", "text/javascript")

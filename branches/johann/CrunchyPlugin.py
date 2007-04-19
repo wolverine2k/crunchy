@@ -2,14 +2,15 @@
 The crunchy plugin API
 """
 import threading
-
+from os.path import dirname
+from imp import find_module
 import vlam
 import cometIO
 import PluginServices as services
 
 __all__=["register_http_handler", "register_vlam_handler",
          "create_vlam_page", "exec_code", "register_service", "services",
-         "exec_js"]
+         "exec_js", "get_uid", "get_pageid", "get_data_dir"]
     
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
@@ -61,3 +62,9 @@ def get_uid():
     from which the code is being executed.
     """
     return threading.currentThread().getName()
+
+def get_data_dir():
+    """return the data directory used by the current crunchy install,
+    for now this is always the crunchy base directory
+    """
+    return dirname(find_module("crunchy")[1])

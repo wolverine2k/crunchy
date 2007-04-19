@@ -17,8 +17,8 @@ def insert_io_subwidget(page, elem, uid):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
     """
-    if not hasattr(page, "io_included"):
-        page.io_included = True
+    if not page.includes("io_included"):
+        page.add_include("io_included")
         page.add_js_code(io_js)
         page.add_css_code(io_css)
     output = et.SubElement(elem, "span")

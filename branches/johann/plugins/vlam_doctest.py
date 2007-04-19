@@ -41,15 +41,15 @@ def doctest_widget_callback(page, elem, uid, vlam):
     """Handles embedding suitable code into the page in order to display and
     run doctests"""
     # first we need to make sure that the required javacript code is in the page:
-    if not hasattr(page, "doctest_included"):
-        page.doctest_included = True
+    if not page.includes("doctest_included"):
+        page.add_include("doctest_included")
         page.add_js_code(doctest_jscode)
     #extract the doctest code and style it:
     if "linenumber" in vlam:
         offset = 0
     else: 
         offset = None
-    doctestcode, markup = services.style_pycode(elem, offset)
+    doctestcode, markup = services.style_pycode(page, elem, offset)
     #and store it:
     doctests[uid] = doctestcode
     #reset the element:

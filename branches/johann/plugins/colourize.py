@@ -19,34 +19,40 @@ import StringIO
 import token
 import tokenize
 
-# Crunchy modules
-#from translation import _
-
-def _(data):
-    return data
-
 from element_tree import ElementTree as et
 
+_ = None
 
 #---------begin plugin specific---------------------
 from CrunchyPlugin import * 
 
 provides = set(["style_pycode"])
+requires = set(["translation"])
 
 def register():
+    global _
+    _ = services._
     register_vlam_handler("code", "py_code", plugin_style)
     register_vlam_handler("code", "python_code", plugin_style)
     register_vlam_handler("pre", "py_code", plugin_style)
     register_vlam_handler("pre", "python_code", plugin_style)
-    register_service(style, "style_pycode")
+    register_service(service_style, "style_pycode")
     
 def plugin_style(page, elem, uid, vlam):
-    if not hasattr(page, "colourize_included"):
-        page.colourize_included = True
+    if not page.includes("colourize_included"):
+        print "including style css"
+        page.add_include("colourize_included")
         page.add_css_code(style_css)
     code, markup = style(elem)
     replace_element(elem, markup)
     
+def service_style(page, elem, offset=None):
+    if not page.includes("colourize_included"):
+        print "including style css"
+        page.add_include("colourize_included")
+        page.add_css_code(style_css)
+    return style(elem, offset=None)
+
 style_css = r"""
 /* Basic Python Elements; color choice are chosen, if possible, to be
    consistent with those of the editor (EditArea); these are

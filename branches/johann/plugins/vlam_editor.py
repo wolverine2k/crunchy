@@ -24,8 +24,8 @@ def insert_editor_subwidget(elem, uid, code="\n"):
 def insert_editor(page, elem, uid, vlam):
     """handles the editor widget"""
     # first we need to make sure that the required javacript code is in the page:
-    if not hasattr(page, "exec_included"):
-        page.exec_included = True
+    if not page.includes("doctest_included"):
+        page.add_include("doctest_included")
         page.add_js_code(exec_jscode)
     # then we can go ahead and display everything:
     # 1) code styling
@@ -33,7 +33,7 @@ def insert_editor(page, elem, uid, vlam):
         offset = 0
     else: 
         offset = None
-    code, markup = services.style_pycode(elem, offset)
+    code, markup = services.style_pycode(page, elem, offset)
     # 2) clear the element and get the code in
     tail = elem.tail
     elem.clear()
