@@ -5,9 +5,13 @@ from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
 provides = set(["editor_widget"])
-requires = set(["io_widget", "/exec", "style_pycode"])
+requires = set(["io_widget", "/exec", "style_pycode", "translation"])
+
+_ = None
 
 def register():
+    global _
+    _ = services._
     register_vlam_handler("pre", "editor", insert_editor)
     register_service(insert_editor_subwidget, "insert_editor_subwidget")
         
@@ -53,6 +57,9 @@ def insert_editor(page, elem, uid, vlam):
     et.SubElement(elem, "br")
     # 5) and the output
     services.insert_io_subwidget(page, elem, uid)
+    # and a test of the localisation code, remove before release please:
+    t = et.SubElement(elem, "p")
+    t.text = _("This text should be translated: the current language is English (Default)")
     
 exec_jscode= """
 function exec_code(uid){

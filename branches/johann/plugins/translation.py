@@ -17,7 +17,7 @@ def register():
     try:
         current_locale = gettext.translation("crunchy", os.path.join(get_data_dir(), "translations/"))
     except IOError:
-        pass
+        print "No Language file found, not translating anything"
     register_service(_, "_")
     
 def _(message):

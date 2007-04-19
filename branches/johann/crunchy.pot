@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2007-04-19 12:51+BST\n"
+"POT-Creation-Date: 2007-04-19 16:44+BST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,4 +14,14 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
 
+
+#: plugins/colourize.py:492
+msgid ""
+"Parsing error occurred in the following Python code.\n"
+"Info: %s."
+msgstr ""
+
+#: plugins/vlam_editor.py:62
+msgid "This text should be translated: the current language is English (Default)"
+msgstr ""
 
