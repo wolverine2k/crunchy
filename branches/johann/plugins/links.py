@@ -27,7 +27,10 @@ def http_link_handler(request):
     """handle an http request"""
     pageid = request.args["pageid"]
     print "redirecting to: " + request.data
+    request.send_response(200)
+    request.end_headers()
     exec_js(pageid, """window.location="%s";""" % request.data)
+    
 
 
 handle_link_jscode = r"""

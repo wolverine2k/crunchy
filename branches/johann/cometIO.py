@@ -65,6 +65,7 @@ class CrunchyIOBuffer(StringBuffer):
         """put some output into the pipe"""
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
+        pdata = pdata.replace("\r", "\\r")
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)

@@ -172,6 +172,8 @@ def extract_code(elem):
             text += '\n'
         if e.tail:
             text += e.tail
+    # \r causes bugs!
+    text = text.replace("\r", "")
     return text
 
 def get_linenumber_offset(vlam):
@@ -431,6 +433,8 @@ def _style(text, offset=None):
         if interpreter:
             styled_code = add_back_prompt_and_output(styled_code, stripped,
                                                      offset)
+        # \r is unnecesary and causes bugs!
+        raw_code = raw_code.replace('\r', '')
         return styled_code, raw_code
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
