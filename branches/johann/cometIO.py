@@ -100,9 +100,7 @@ def write_js(pageid, jscode):
     data = output_buffers[pageid].put(jscode)
     
 def do_exec(code, uid):
-    """exec code in a new thread (and isolated environment), returning a 
-    unique IO stream identifier,
-    Needs to be moved to somewhere more appropriate
+    """exec code in a new thread (and isolated environment).
     """
     t = interpreter.Interpreter(code, uid)
     t.setDaemon(True)

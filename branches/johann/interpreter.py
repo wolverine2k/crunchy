@@ -32,7 +32,7 @@ class Interpreter(threading.Thread):
             if not self.ccode:    #code does nothing
                 return
             try:
-                exec self.ccode in self.symbols
+                exec self.ccode in self.symbols, {}
             except:
                 print_exc()
                 raise
