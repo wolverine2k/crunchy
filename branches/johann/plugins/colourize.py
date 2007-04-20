@@ -1,15 +1,13 @@
 '''colourize.py
 
-This simple module is a Crunchy service designed to style Python code
-contained inside a <pre> element and possibly insert the it into a more
-complicated html structure.
-
-The actual code styling is done by colourize.py.
+This module is a intended to style Python code
+contained inside a <pre> or a <code> element and possibly insert the it
+into a more complicated html structure.
 
 The current module assumes that html element have been parsed by
 ElementTree to become ElementTree Elements.
 If we replaced ElementTree by another parser (say, BeautifulSoup), we
-would not need to modify colourize.py - only this module.
+would only need to modify only parts of this module, as idenfied below.
 '''
 
 # stdlib modules
@@ -24,40 +22,70 @@ from element_tree import ElementTree as et
 _ = None
 
 #---------begin plugin specific---------------------
-from CrunchyPlugin import * 
+# All plugins should import the crunchy plugin API
+import CrunchyPlugin
 
+# The set of other "widgets/services" provided by this plugin
 provides = set(["style_pycode"])
 requires = set(["translation"])
 
 def register():
+    """The register() function is required for all plugins.
+       In this case, we need to register two types of 'actions':
+       1. a custom 'vlam handler' designed to tell Crunchy how to
+          interpret the special Crunchy markup with 4 different cases;
+       2. a custom service to style some code when requested by this or
+          another plugin.
+       And we need to update the translation function.
+       """
     global _
-    _ = services._
-    register_vlam_handler("code", "py_code", plugin_style)
-    register_vlam_handler("code", "python_code", plugin_style)
-    register_vlam_handler("pre", "py_code", plugin_style)
-    register_vlam_handler("pre", "python_code", plugin_style)
-    register_service(service_style, "style_pycode")
+    # 'py_code' or 'python_code' (both are equivalent) only appears inside
+    # <pre> or <code> elements, using the notation
+    # <pre title='py_code ...'>, etc.
+    CrunchyPlugin.register_vlam_handler("code", "py_code", plugin_style)
+    CrunchyPlugin.register_vlam_handler("code", "python_code", plugin_style)
+    CrunchyPlugin.register_vlam_handler("pre", "py_code", plugin_style)
+    CrunchyPlugin.register_vlam_handler("pre", "python_code", plugin_style)
+    # this plugin can style some Python code, returning both the styled
+    # code and either the extracted Python code ...
+    CrunchyPlugin.register_service(service_style, "style_pycode")
+    # ... or the simulated interactive session, usable as a doctest.
+    CrunchyPlugin.register_service(service_style_nostrip, "style_pycode_nostrip")
+    # and the translation function:
+    _ = CrunchyPlugin.services._
     
+
 def plugin_style(page, elem, uid, vlam):
+    '''Handles the vlam py_code elements'''
+    # first we need to make sure that the required css code is in the page:
     if not page.includes("colourize_included"):
-        print "including style css"
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    code, markup = style(elem)
+    # check if we are numbering lines:
+    if "linenumber" in vlam:
+        offset = 0
+    else:
+        offset = None
+    code, markup = style(elem, offset)
     replace_element(elem, markup)
-    
+
 def service_style(page, elem, offset=None):
     if not page.includes("colourize_included"):
-        print "including style css"
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    return style(elem, offset=None)
+    return style(elem, offset)
+    
+def service_style_nostrip(page, elem, offset=None):
+    if not page.includes("colourize_included"):
+        page.add_include("colourize_included")
+        page.add_css_code(style_css)
+    return nostrip_style(elem, offset)
 
 style_css = r"""
 /* Basic Python Elements; color choice are chosen, if possible, to be
    consistent with those of the editor (EditArea); these are
-	 found in file python.js */
-.py_keyword{color: #0000FF; /* blue */ 
+   found in file python.js of the EditArea distribution*/
+.py_keyword{color: #0000FF; /* blue */
             font-weight: bold;} /* EditArea does not support font-weight */
 .py_number{color: #000000;} /* EditArea does not recognize number; keep black.*/
 .py_comment{color: gray;}
@@ -73,29 +101,31 @@ style_css = r"""
 """
 #---------end plugin specific-------------------------
 
+#--------Begin ElementTree dependent part-------------
 
-def style(elem, offset=None):
-    """style some Python code (adding html markup) if "title" attribute
-    is present and return it inside the original html element
-    (<pre> or <code>, most likely) with attributes unchanged.
-    Any original markup inside the Python code
+def style(elem, offset):
+    """
+    style some Python code (adding html markup) and return it inside the
+    original html element (<pre> or <code>, most likely) with attributes
+    unchanged.  Any original markup inside the Python code
     will be removed, except that <br/> will have been converted into "\n".
 
-    To be more specific, style() does the following:
+    To be more specific, if 'title' is present, style() does the following:
     1. take as input an ElementTree Element corresponding to
        an html element (such as <pre> or <code>) containing some Python code;
        this Python code may already be marked up;
-    2. identify if line numbering is required and, if so, if line numbering
-       needs to start at a number different from 1;
-    3. pass the content of the Element (including any other markup present)
+    2. pass the content of the Element (including any other markup present)
        as an "html string" (i.e. no longer an ElementTree Element)
        to colourize.py so that it can be styled appropriately;
     4. return the new marked up element, as well as the corresponding
-       Python code.
+       Python code;
+    5. empty lines of code appearing either at the beginning or the
+       end of the <pre> or <code> element are removed
 
     For example (using html notation), we could have as input
     <pre title="some value">
     print <span class="some value">"Hi!"</span>
+
     </pre>
 
     and the corresponding output would be
@@ -103,14 +133,33 @@ def style(elem, offset=None):
     <span class="py_keyword">print</span> <span class="string">"Hi!"</span>
     </pre>
     """
-    # styling
     py_code = extract_code(elem)
+    # styling
     styled_code, py_code = _style(py_code, offset)
     # re-creating element
     tag = elem.tag
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
     new_elem = et.fromstring(new_html)
-    return (py_code, new_elem)
+    return py_code, new_elem
+
+def nostrip_style(elem, offset):
+    """performs exactly the same as style(elem) except that the python
+    code it returns is intended to be the exact copy of an original
+    interpreter session (stripped of any html markup).
+    It is intended to be used with 'doctest' - and any other similar
+    future plugin.  Note: we could have included this functionality
+    within style() by parsing elem.attrib['title'] for 'doctest',
+    but this would have prevented the creation of a doctest-like plugin
+    independently of changing the code for style().
+    """
+    py_code = extract_code(elem)
+    # styling
+    styled_code, dummy = _style(py_code, offset)
+    # re-creating element
+    tag = elem.tag
+    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    new_elem = et.fromstring(new_html)
+    return py_code, new_elem
 
 def extract_code(elem):
     """extract all the text (Python code) from a marked up
@@ -157,13 +206,8 @@ def replace_element(elem, replacement):
     elem[:] = replacement[:]
     return
 
-def duplicate_dict(old):
-    '''makes a shallow copy of a dict; appropriate to copy the attributes
-    of an ElementTree Element.'''
-    new = {}
-    for key in old:
-        new[key] = old[key]
-    return new
+#--------End ElementTree dependent part-------------
+# ===== The following code deals with regular html encoded content.
 
 # The following are introduced so as to be somewhat similar to EditArea
 reserved = ['True', 'False', 'None']
@@ -242,9 +286,8 @@ class Colourizer(object):
         self.endOldLine, self.endOldColumn = (0, 0)
         self.endLine, self.endColumn = (0, 0)
         self.tokenType = token.NEWLINE
-        # if offset != None, we start to count the line numbers at
-        # 1 + offset
         self.offset = offset
+    # if offset != None, we start to count the line numbers at 1 + offset
 
 #===== Keywords, numbers and operators ===
     def formatName(self, aWord):
@@ -410,13 +453,13 @@ def extract_code_from_interpreter(text):
     for line in lines:
         if line.endswith('\r'):
             line = line[:-1]
-        if line.startswith("&gt;&gt;&gt; "):
-            new_lines.append(line[13:].rstrip())
+        if line.startswith(">>> "):
+            new_lines.append(line[4:].rstrip())
             stripped.append(("&gt;&gt;&gt; ", linenumber))
             linenumber += 1
-        elif line.rstrip() == "&gt;&gt;&gt;": # tutorial writer may forget the
+        elif line.rstrip() == ">>>": # tutorial writer may forget the
                                      # extra space for an empty line
-            new_lines.append('')
+            new_lines.append(' ')
             stripped.append(("&gt;&gt;&gt; ", linenumber))
             linenumber += 1
         elif line.startswith("... "):
@@ -482,7 +525,7 @@ def is_interpreter_session(py_code):
     lines = py_code.split('\n')
     for line in lines:
         if line.strip():  # look for first non-blank line
-            if line.startswith("&gt;&gt;&gt; "):
+            if line.startswith(">>>"):
                 return True
             else:
                 return False
