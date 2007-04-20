@@ -18,7 +18,7 @@ from element_tree import ElementTree
 et = ElementTree
 
 # The set of other "widgets/services" required from other plugins
-requires =  set(["editor_widget", "io_widget", "style_doctest"])
+requires =  set(["editor_widget", "io_widget"])
 
 # each doctest code sample will be kept track via a uid used as a key.
 doctests = {}
