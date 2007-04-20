@@ -29,7 +29,7 @@ def http_link_handler(request):
     print "redirecting to: " + request.data
     request.send_response(200)
     request.end_headers()
-    exec_js(pageid, """window.location="%s";""" % request.data)
+    exec_js(pageid, """setTimeout('window.location="%s";', 100)""" % request.data)
     
 
 

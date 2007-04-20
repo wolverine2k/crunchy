@@ -68,10 +68,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         """the same as GET, we draw no distinction"""
         self.do_POST()
         
-def send_response(response_code, wfile):
-    """start a response"""
-    wfile.write(str(response_code) + "\n")
+    def send_response(self, code):
+        BaseHTTPRequestHandler.send_response(self, code)
+        self.send_header("Connection", "close")
 
-def end_headers(wfile):
-    """ends the headers of a request, ready to begin body"""
-    wfile.write("\n")
