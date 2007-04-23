@@ -31,16 +31,12 @@ def insert_interpreter(page, elem, uid, vlam):
     if not page.includes("interp_included"):
         page.add_include("interp_included")
         page.add_js_code(interp_js)
-    # then we check if line numbering as been specified
-    if "linenumber" in vlam:
-        offset = 1
-    else: offset = None
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem, offset)
+    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_doctest() method extracted all of the existing
