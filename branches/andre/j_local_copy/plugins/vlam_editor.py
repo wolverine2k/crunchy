@@ -51,13 +51,9 @@ def insert_editor(page, elem, uid, vlam):
     if not page.includes("exec_included"):
         page.add_include("exec_included")
         page.add_js_code(exec_jscode)
-    # then we check if line numbering as been specified
-    if "linenumber" in vlam:
-        offset = 1
-    else: offset = None
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem, offset)
+    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_doctest() method extracted all of the existing

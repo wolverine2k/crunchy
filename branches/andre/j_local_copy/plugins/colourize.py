@@ -53,7 +53,7 @@ def register():
     CrunchyPlugin.register_service(service_style_nostrip, "style_pycode_nostrip")
     # and the translation function:
     _ = CrunchyPlugin.services._
-    
+
 
 def plugin_style(page, elem, uid, vlam):
     '''Handles the vlam py_code elements'''
@@ -61,25 +61,20 @@ def plugin_style(page, elem, uid, vlam):
     if not page.includes("colourize_included"):
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    # check if we are numbering lines:
-    if "linenumber" in vlam:
-        offset = 0
-    else:
-        offset = None
-    code, markup = style(elem, offset)
+    code, markup = style(elem)
     replace_element(elem, markup)
 
-def service_style(page, elem, offset=None):
+def service_style(page, elem):
     if not page.includes("colourize_included"):
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    return style(elem, offset)
-    
-def service_style_nostrip(page, elem, offset=None):
+    return style(elem)
+
+def service_style_nostrip(page, elem):
     if not page.includes("colourize_included"):
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    return nostrip_style(elem, offset)
+    return nostrip_style(elem)
 
 style_css = r"""
 /* Basic Python Elements; color choice are chosen, if possible, to be
@@ -103,7 +98,7 @@ style_css = r"""
 
 #--------Begin ElementTree dependent part-------------
 
-def style(elem, offset):
+def style(elem):
     """
     style some Python code (adding html markup) and return it inside the
     original html element (<pre> or <code>, most likely) with attributes
@@ -134,15 +129,20 @@ def style(elem, offset):
     </pre>
     """
     py_code = extract_code(elem)
-    # styling
-    styled_code, py_code = _style(py_code, offset)
-    # re-creating element
-    tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-    new_elem = et.fromstring(new_html)
+    if 'title' in elem.attrib:
+        # styling
+        offset = get_linenumber_offset(elem.attrib['title'])
+        styled_code, py_code = _style(py_code, offset)
+        # re-creating element
+        tag = elem.tag
+        new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+        new_elem = et.fromstring(new_html)
+        new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
+    else:
+        new_elem = elem
     return py_code, new_elem
 
-def nostrip_style(elem, offset):
+def nostrip_style(elem):
     """performs exactly the same as style(elem) except that the python
     code it returns is intended to be the exact copy of an original
     interpreter session (stripped of any html markup).
@@ -153,13 +153,19 @@ def nostrip_style(elem, offset):
     independently of changing the code for style().
     """
     py_code = extract_code(elem)
-    # styling
-    styled_code, dummy = _style(py_code, offset)
-    # re-creating element
-    tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-    new_elem = et.fromstring(new_html)
+    if 'title' in elem.attrib:
+        # styling
+        offset = get_linenumber_offset(elem.attrib['title'])
+        styled_code, dummy = _style(py_code, offset)
+        # re-creating element
+        tag = elem.tag
+        new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+        new_elem = et.fromstring(new_html)
+        new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
+    else:
+        new_elem = elem
     return py_code, new_elem
+
 
 def extract_code(elem):
     """extract all the text (Python code) from a marked up
