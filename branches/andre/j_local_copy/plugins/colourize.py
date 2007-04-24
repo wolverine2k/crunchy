@@ -129,6 +129,7 @@ def style(elem):
     </pre>
     """
     py_code = extract_code(elem)
+    tail = elem.tail
     if 'title' in elem.attrib:
         # styling
         offset = get_linenumber_offset(elem.attrib['title'])
@@ -140,6 +141,7 @@ def style(elem):
         new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     else:
         new_elem = elem
+    new_elem.tail = tail
     return py_code, new_elem
 
 def nostrip_style(elem):
@@ -153,6 +155,7 @@ def nostrip_style(elem):
     independently of changing the code for style().
     """
     py_code = extract_code(elem)
+    tail = elem.tail
     if 'title' in elem.attrib:
         # styling
         offset = get_linenumber_offset(elem.attrib['title'])
@@ -164,6 +167,7 @@ def nostrip_style(elem):
         new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     else:
         new_elem = elem
+    new_elem.tail = tail
     return py_code, new_elem
 
 
@@ -445,7 +449,7 @@ def _style(text, offset=None):
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
         return "<span class='warning'>%s</span>\n<span>%s</span>"%(
-                                       error_message, raw_code)
+                                       error_message, raw_code), None
 
 def extract_code_from_interpreter(text):
     """ Strips fake interpreter prompts from html code meant to
