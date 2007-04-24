@@ -100,16 +100,6 @@ so far.
     >>> a_list = pl.gen_register_list(set_a)
     >>> test_ordering(a_list)
 
-Again, after it passes silently, we can visually inspect the final list.
-    >>> print a_list
-    [requires = set([])  provided = set(['G'])
-    , requires = set([])  provided = set(['C', 'B'])
-    , requires = set(['C', 'G'])  provided = set([])
-    , requires = set(['B'])  provided = set([])
-    , requires = set(['C', 'G'])  provided = set(['E', 'D', 'F'])
-    ]
-
-
 ================
 
 We use the self-testing function example included in pluginloader.py

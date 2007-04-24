@@ -378,3 +378,18 @@ Make sure we parse properly from html tree with a prompt included.
     <pre title="py_code">
     <span class="py_prompt">&gt;&gt;&gt; </span><span class="py_keyword">print</span><span class="py_string"> 'Hello!'</span>
     </pre>
+
+Testing with a <code> element that is followed by some text; this
+tests the proper handling of an Element's "tail".
+    >>> sample = """<html><body><p> An embedded code sample as in
+    ...            <code title="py_code">print 'Hi!'
+    ...            </code> with a tail.</p></body></html>"""
+    >>> tree = et.fromstring(sample)
+    >>> pre2 = tree.find(".//code")
+    >>> pycode, new_elem = colourize.style(pre2)
+    >>> print pycode
+    print 'Hi!'
+    >>> print et.tostring(new_elem)
+    <code title="py_code">
+    <span class="py_keyword">print</span><span class="py_string"> 'Hi!'</span>
+    </code> with a tail.
