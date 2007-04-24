@@ -51,7 +51,7 @@ We then define a few mock object that we will use in tests.
     >>> prov_b_c = Provides_Mock(['B', 'C'])
     >>> req_c_g_prov_d_e_f = Both_Mock(['D', 'E', 'F'], ['C', 'G'])
     >>> prov_g = Provides_Mock(['G'])
-    >>> req_g = Requires_Mock(['G'])
+    >>> req_g_c = Requires_Mock(['G', 'C'])
 
 
 The first test is one in which an object "b" is provided and required.
@@ -95,7 +95,7 @@ should should contain that one object.
 -------------------------------
 The final test in this series is one in which we add all objects created
 so far.
-    >>> set_a = set(); set_a.add(req_g); set_a.add(req_b)
+    >>> set_a = set(); set_a.add(req_g_c); set_a.add(req_b)
     >>> set_a.add(req_c_g_prov_d_e_f); set_a.add(prov_g); set_a.add(prov_b_c)
     >>> a_list = pl.gen_register_list(set_a)
     >>> test_ordering(a_list)
@@ -103,8 +103,8 @@ so far.
 Again, after it passes silently, we can visually inspect the final list.
     >>> print a_list
     [requires = set([])  provided = set(['G'])
-    , requires = set(['G'])  provided = set([])
     , requires = set([])  provided = set(['C', 'B'])
+    , requires = set(['C', 'G'])  provided = set([])
     , requires = set(['B'])  provided = set([])
     , requires = set(['C', 'G'])  provided = set(['E', 'D', 'F'])
     ]
