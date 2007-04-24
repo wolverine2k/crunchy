@@ -10,8 +10,22 @@ for i in range(10):
     print i,
 print "Hello World"
 </pre>
-<p>Another working example, this time with linenumbers.</p>
+<p>Another working example, this time with linenumbers starting at 1,
+by default.</p>
 <pre title="py_code linenumber">
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+<p>Same example, this time with linenumbers starting at 1 by explicit
+setting of starting value.</p>
+<pre title="py_code linenumber=1">
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+<p>Same example, this time with linenumbers starting at 100.</p>
+<pre title="py_code linenumber=100">
 for i in range(10):
     print i,
 print "Hello World"
@@ -22,8 +36,24 @@ print "Hello World"
 ...    print i,
 &gt;&gt;&gt; print "Hello World"
 </pre>
-<p>Same as the previous one, but with some line numbers added.</p>
+<p>Same as the previous one, but with some line numbers added,
+default starting value of 1.</p>
 <pre title="py_code linenumber">
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+</pre>
+<p>Same as the previous one, but with explicit choice for
+starting value of 1.  We also use <code>python_code</code> instead of
+<code>py_code</code> for vlam keyword.</p>
+<pre title="python_code linenumber=1">
+&gt;&gt;&gt; for i in range(10):
+...    print i,
+&gt;&gt;&gt; print "Hello World"
+</pre>
+<p>Same as the previous one, but with
+starting value of 100.</p>
+<pre title="py_code linenumber=1">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
 &gt;&gt;&gt; print "Hello World"
@@ -35,9 +65,11 @@ for i in range(10:
     print i
 </pre>
 <p>In versions up to 0.8.1, comments and linenumbers apparently did not mix
-properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small interpreter prompt (i.e. in the same font size as the linenumber)].
+properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small
+interpreter prompt (i.e. in the same font size as the linenumber)].
 In the following example, all interpreter prompts should appear the same.
-In particular, compare the interpreter prompts on the first and second lines which used not to be the same font size. </p>
+In particular, compare the interpreter prompts on the first and second lines
+which used not to be the same font size. </p>
 <pre title="py_code linenumber">
 &gt;&gt;&gt; # Comment on the first line.
 &gt;&gt;&gt; for i in range(10):
@@ -58,9 +90,9 @@ that it resulted in non W3C compliant code - and Crunchy (i.e. the
 elementtree handler) chokeed on it, and displayed a blank page.  This has been fixed ... but, somehow,
   this text that appears outside of the "pre" is taken to be part of it.</li>
 <li>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
-not processed properly.  The suggested behaviour at this point would be to 
-[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code> 
-into <code>\n</code> and 
+not processed properly.  The suggested behaviour at this point would be to
+[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code>
+into <code>\n</code> and
 [2.] to strip the remaining html markup.
 Here's an actual example using a <code>&lt;br/&gt;</code> rather than an "\n" character to separate lines of code.  The actual code we use inside a <code>&lt;pre&gt;</code> element is:<br/>
 <code>print "Hello world!"&lt;br/&gt;print "Crunchy rocks!"
@@ -75,7 +107,7 @@ Note how the line break is lost ... and how this line is actually styled as code
 <pre>
 &gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
 ...     <span class="py_keyword">print</span> "Hello world!"
-... 
+...
 "Hello world!"
 "Hello world!"
 "Hello world!"
