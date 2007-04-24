@@ -8,7 +8,8 @@ All the tests are asssumed to be located in the "tests" sub-directory.
 import doctest
 import os.path
 
-test_files = ["test_colourize.txt" ]
+test_files = ["test_colourize.txt",
+              "test_pluginloader.txt" ]
 
 for t in test_files:
    failure, nb_tests = doctest.testfile("tests" + os.path.sep + t)

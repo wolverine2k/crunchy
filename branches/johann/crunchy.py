@@ -24,7 +24,7 @@ def find_port(start):
     testsock.close()
     return finalport
 
-if __name__=="__main__":
+def run_crunchy():
     port = find_port(8002)
     print "Serving on port %s." % port
     server = http_serve.MyHTTPServer(('127.0.0.1', port), http_serve.HTTPRequestHandler)
@@ -33,5 +33,6 @@ if __name__=="__main__":
     pluginloader.init_plugin_system(server)
     webbrowser.open('http://127.0.0.1:' + str(port) + '/')
     server.serve_forever()
-    
-print "exiting the bad way"
+
+if __name__ == "__main__":
+    run_crunchy()

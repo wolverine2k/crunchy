@@ -10,8 +10,15 @@ import os.path
 import CrunchyPlugin
 
 def gen_register_list(initial_list):
-    """generates a registration ordering from the dependencies"""
-    print "Ordering plugins by dependencies"
+    """generates a registration ordering from the dependencies.
+
+    'Currently', plugins could be loaded in any order
+    without causing any problems.  However, as more plugins are written,
+    it could happen that some plugin would require (at loading time)
+    some services provided by others.
+    This function ensures that plugin will be loaded so as
+    to ensure that "required" plugins are loaded before "requiring" ones.
+    """
     final_list = []
     found_this_iter = True
     while (len(initial_list) > 0) and found_this_iter:
@@ -31,20 +38,17 @@ def gen_register_list(initial_list):
                 initial_list.remove(mod)
                 found_this_iter = True
                 break
-            
-    #by now final_list should have been constructed, go ahead and print initial list:
-    print initial_list
     return final_list
-                    
-                
 
 def gen_plugin_list():
+    '''looks for all python files in directory "plugins/", and assume
+    that they are all "plugins".'''
     pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]), "plugins/")
     pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
     return pluginfiles
 
 def init_plugin_system(server):
-    """load the plugins"""
+    """load the plugins and has them self-register."""
     plugins = gen_plugin_list()
     CrunchyPlugin.server = server
     if not "plugins/" in sys.path:
@@ -58,10 +62,9 @@ def init_plugin_system(server):
     print "Registering plugins"
     for mod in register_list:
         if hasattr(mod, "register"):
-            mod.register()
+            if server != ["testplugins"]:  # skip for self-testing
+                mod.register()
             print "  * Registered %s" % mod.__name__
-
-
 
 if __name__ == "__main__":
     init_plugin_system(["testplugins"])
