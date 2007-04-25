@@ -85,16 +85,13 @@ which used not to be the same font size. </p>
 </pre>
 used to be processed by crunchy ("colourized") in such a way
 that it resulted in non W3C compliant code - and Crunchy (i.e. the
-elementtree handler) chokeed on it, and displayed a blank page.  This has been fixed ... but, somehow,
-  this text that appears outside of the "pre" is taken to be part of it.</p>
+elementtree handler) chokeed on it, and displayed a blank page.
+This has been fixed.</p>
 
 <p>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
-not processed properly.  The suggested behaviour at this point would be to
+now processed properly.  The suggested behaviour at this point would be to
 <br/>
-[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code>
-into <code>\n</code> and
-<br/>[2.] to strip the remaining html markup.
-<br/>Here's an actual example using a <code>&lt;br/&gt;</code> rather than
+Here's an actual example using a <code>&lt;br/&gt;</code> rather than
 an "\n" character to separate lines of code.
 The actual code we use inside a <code>&lt;pre&gt;</code> element is:<br/>
 <code>print "Hello world!"&lt;br/&gt;print "Crunchy rocks!"
