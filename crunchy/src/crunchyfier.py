@@ -279,8 +279,10 @@ class VLAMPage(TreeBuilder):
             self.python_code = text
             pre_heading = '%s <pre title="%s">'%(_("Previous value"), title)
             self.vlamcode = title# reconstruct(title)
-            if 'none' in vlam_dict['interactive']: # no interactive element
-                self.substitute_none(new_div, id, text)
+            if 'py_code' in vlam_dict['interactive']: # no interactive element
+                self.substitute_py_code(new_div, id, text)
+            elif 'python_code' in vlam_dict['interactive']: # no interactive element
+                self.substitute_py_code(new_div, id, text)
             elif 'editor' in vlam_dict['interactive']: # includes "interpreter to editor"
                 self.substitute_editor(new_div, id, text, vlam_dict)
             elif 'interpreter' in vlam_dict['interactive']:
@@ -312,7 +314,7 @@ class VLAMPage(TreeBuilder):
         elem.attrib['id'] = id + "_container"
         return id, text, elem
 
-    def substitute_none(self, elem, id, text):
+    def substitute_py_code(self, elem, id, text):
         """simply style the code"""
         #container for the code:
         pre = et.SubElement(elem, 'pre')
@@ -627,7 +629,7 @@ class HTMLUpdater(TreeBuilder):
 def analyze_vlam_code(vlam):
     """ Parse the vlam code to analyze its content.
         The allowed values are:
-        1. none [interpreter] [linenumber]
+        1. py_code or python_code [interpreter] [linenumber]
         2. interpreter [linenumber]
         3. interpreter to editor [linenumber] [size=(rows, cols)] [no-copy]
         4. editor [linenumber] [size=(rows, cols)] [no-copy _or_ no-pre]
@@ -648,8 +650,8 @@ def analyze_vlam_code(vlam):
     }
     vlam = vlam.lower() # in case it was done by hand
 
-    if 'none' in vlam:
-        values['interactive'] = 'none'
+    if ('py_code' in vlam) or ('python_code' in vlam):
+        values['interactive'] = 'py_code'
         if 'interpreter' in vlam:
             values['linenumber'] = ' interpreter'
         if 'linenumber' in vlam:
@@ -664,13 +666,13 @@ def analyze_vlam_code(vlam):
         if 'no-copy' in vlam:
             values['copied'] = 'no-copy'
     else:
-        for choice in ['none', 'interpreter', 'editor', 'doctest',
+        for choice in ['py_code', 'interpreter', 'editor', 'doctest',
                        'canvas', 'plot']:
             if choice in vlam:
                 values['interactive'] = choice
                 if 'linenumber' in vlam:
                     values['linenumber'] = ' linenumber'
-                if choice not in ['none', 'interpreter']:
+                if choice not in ['py_code', 'interpreter']:
                     if 'size' in vlam:
                         rows, cols = _get_size(vlam)
                         values['size'] = {'rows':rows, 'cols':cols}
@@ -946,7 +948,7 @@ def addVLAM(parent, uid, pre_assigned, current_pre_tag):
     fs1 = et.SubElement(form1, 'fieldset')
     legend1 = et.SubElement(fs1, 'legend')
     legend1.text = _("Interactive element")
-    for type in ['none', 'interpreter', 'interpreter to editor',
+    for type in ['py_code', 'interpreter', 'interpreter to editor',
                   'editor', 'doctest', 'canvas', 'plot']:
         inp = et.SubElement(fs1, 'input', type='radio', name='radios',
                             value=type)
@@ -971,7 +973,7 @@ def addVLAM(parent, uid, pre_assigned, current_pre_tag):
                  ' interpreter linenumber']:
         if type == 't':
             note = et.SubElement(fs2, 'small')
-            note.text = _("If interactive element is none:")
+            note.text = _("If interactive element is py_code:")
         else:
             inp = et.SubElement(fs2, 'input', type='radio', name='radios',
                                 value=type)
