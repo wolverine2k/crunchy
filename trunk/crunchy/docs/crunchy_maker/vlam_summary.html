@@ -1,21 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Crunchy Frog VLAM</title>
+<title>Crunchy VLAM</title>
 </head>
 <body>
 <h1>VLAM summary</h1>
-<p>Very Little Aditional Markup is the system used by Crunchy Frog to describe its interactive elements.
- VLAM is essentially just an extended set of attributes for some common HTML tags. Any .htm or .html file loaded through Crunchy Frog
+<p>Very Little Aditional Markup is the system used by Crunchy to describe its interactive elements.
+ VLAM is essentially just an extended set of attributes for some common HTML tags. Any .htm or .html file loaded through Crunchy
  will have its VLAM code processed. <em>Note that, because of some active
 development into a new (and better) way of communicating between the Crunchy and Firefox, some of the following, as indicated below, may become obsolete
-and no longer needed before version 1.0.</em> Here's what VLAM can describe:</p>
+and no longer needed before version 1.0.</em> Here's what VLAM can describe as of version 0.8.2:</p>
 <ul>
 <li><a href="#interpreter">Interpreter</a></li>
 <li><a href="#editor">Code editor</a></li>
 <li><a href="#doctest">DocTest</a></li>
-<li><a href="#canvas_ref">Graphics: Canvas</a></li>
-<li><a href="#plot_ref">Graphics: Plot</a></li>
+<li><a href="#canvas_ref">Graphics: Canvas</a> - will become obsolete</li>
+<li><a href="#plot_ref">Graphics: Plot</a> - will become obsolete</li>
 <li><a href="#crunchy">"Crunchy Only" markup</a></li>
 <li><a href="#advanced">Advanced options</a></li>
 </ul>
@@ -27,7 +27,7 @@ and no longer needed before version 1.0.</em> Here's what VLAM can describe:</p>
 are attributes of the html tag "title".</p>
 <table summary="Cruncy attributes" class='summary'>
 <tr>
-	<td><code>none</code></td>
+	<td><code>py_code</code> or <code>python_code</code></td>
 	<td>Does not insert an interactive element; simply styles the code inside 
 	the &lt;pre&gt; element.
 	</td>
@@ -45,17 +45,17 @@ are attributes of the html tag "title".</p>
 <tr>
 	<td><code>interpreter</code></td>
 	<td>Inserts a Python interpreter after the &lt;pre&gt; element, unless the 
-	attribute also contains <code>editor</code>.</td>
+	attribute also contains <code>editor</code>.<em>As a styling option, will become obsolete before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>canvas</code></td>
 	<td>Inserts a &lt;canvas&gt; for pixel-based drawing after the &lt;pre&gt; 
-	element. <em>May become obsolete before version 1.0</em></td>
+	element. <em>Will become obsolete (redundant) before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>plot</code></td>
 	<td>Inserts a &lt;canvas&gt; used for plotting functions after the 
-	&lt;pre&gt; element. <em>May become obsolete before version 1.0</em></td>
+	&lt;pre&gt; element. <em>Will become obsolete (redundant) before version 1.0</em></td>
 </tr>
 <tr>
 	<td><code>no-copy</code></td>
@@ -67,7 +67,7 @@ are attributes of the html tag "title".</p>
 	<td><code>linenumber</code></td>
 	<td>Inserts line numbers before each code line inside the &lt;pre&gt; 
 	element.<br/>
-	Can be used with: <code>none, interpreter, editor, doctest, canvas, plot</code>.</td>
+	Can be used with: <code>py_code/python_code, interpreter, editor, doctest, canvas, plot</code>.</td>
 </tr>
 <tr>
 	<td><code>size = (rows, cols)</code></td>
@@ -227,7 +227,7 @@ code. Note that the code executed does not yield any printed output; only a
 drawing is created. The <code>area</code> specifies the size of the drawing area.</p>
 <p>IMPORTANT: the &lt;canvas&gt; element is only supported natively in 
 Firefox 1.5+, Opera and Safari, but not Internet Explorer.  
-Crunchy Frog (0.6) has been tested with Firefox 1.5+ (it works), Opera (it 
+Crunchy (0.6+) has been tested with Firefox 1.5+ (it works), Opera (it 
 mostly works) and Internet Explorer (it does not work), but it has not been 
 tested with Safari or other browsers.</p>
 
@@ -248,13 +248,13 @@ the "title" attribute contains a valid Python interactive element name
 (interpreter, doctest, editor, canvas).  Sometimes, you may want simply to 
 colourize the Python code without actually inserting an interactive element.  You can do so by writing:</p>
 <pre>
-&lt;pre title="none [linenumber]"&gt;
+&lt;pre title="py_code [linenumber]"&gt;
 ...
 &lt;/pre&gt;
 </pre>
 <p>for editor, interpreter to editor, canvas and plot, and:</p>
 <pre>
-&lt;pre title="none interpreter [linenumber]"&gt;
+&lt;pre title="py_code interpreter [linenumber]"&gt;
 ...
 &lt;/pre&gt;
 </pre>
