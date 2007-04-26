@@ -6,6 +6,8 @@ sets up the page and calls appropriate plugins
 
 from StringIO import StringIO
 
+import security
+
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
@@ -31,6 +33,9 @@ class CrunchyPage(object):
         self.pageid = uidgen()
         register_new_page(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
+        # The security module removes all kinds of potential security holes
+        # including some meta tags with an 'http-equiv' attribute.
+        self.tree = security.remove_unwanted(self.tree)
         self.included = set([])
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
