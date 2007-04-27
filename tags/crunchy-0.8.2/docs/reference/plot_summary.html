@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Frog Graphics (plot) reference</title>
+</head>
+<body>
+
+<h1>Graphics: plot summary</h1>
+<p>The following table is a very incomplete summary of available graphics (plot) commands.</p>
+<table summary="Available graphics commands" class='summary'>
+<tr><th colspan='2'>Available plot commands</th></tr>
+<tr>
+<td><code><strong>color</strong>(col)</code> <em>or</em><br/>
+<code><strong>colour</strong>(col)</code> <em>or</em><br/>
+<code><strong>set_line_color</strong>(col)</code> <em>or</em><br/>
+<code><strong>set_line_colour</strong>(col)</code>
+</td><td>Sets the default colour using a valid value given as a <b>string</b>. The longer names (<code>set_line_colo[u]r</code>) are 
+included for users who may already be used to that syntax from the
+graphics canvas.  The various options for specifying a color (<code>col</code>) are given in the table below.</td>
+</tr>
+
+<tr>
+<td> <code>prepare_graph(x_range,<br/> y_range, x_axis, y_axis)</code> </td>
+<td> Sets up the various scales and position of axis.  The default parameters are:<pre>x_range=(0, 400)
+y_range=(0, 400)
+x_axis='middle' (other allowed options are 'bottom' and 'top')
+y_axis='left' (other option: 'middle').</pre>
+</td>
+</tr>
+
+<tr>
+<td><code>x_range(x_min, x_max)</code>  </td>
+<td>Sets the horizontal scale for the plot. May not be needed if the appropriate values have been passed to <code>prepare_graph()</code>. </td>
+</tr>
+
+<tr>
+<td><code>y_range(y_min, y_max</code>)  </td>
+<td>Sets the vertical scale for the plot. May not be needed if the appropriate values have been passed to <code>prepare_graph()</code>. </td>
+</tr>
+
+<tr>
+<td><code>x_axis(pos)</code>  </td>
+<td>Sets the default location of the x-axis.  Possible values are
+<code>'middle'</code> (default), <code>'top'</code> or <code>'bottom'</code>.  May not be needed if the appropriate values have been passed to <code>prepare_graph()</code>. </td>
+</tr>
+
+<tr>
+<td><code>y_axis(pos)</code>  </td>
+<td>Sets the default location of the y-axis.  Possible values are
+<code>'left'</code> (default) and <code>'middle'</code>.  May not be needed if the appropriate values have been passed to <code>prepare_graph()</code>. </td>
+</tr>
+
+<tr>
+<td><code>plot_function(fn)</code>  </td>
+<td>Plots a function of one variable (fn) over the entire range of values for the graph.</td>
+</tr>
+
+</table>
+
+<br />
+
+<table summary="valid colours" class='summary'>
+<tr><th colspan='2'>Valid colours</th></tr>
+<tr><td><a href="named_colours.html">'named colour'</a></td><td>HTML colour name.</td></tr>
+<tr><td>'hex value'</td><td>Colours are defined using a hexadecimal notation for the combination of Red, Green, and Blue colour values (RGB). The lowest value that can be given to one basic colour is 0 (hex #00). The highest value is 255 (hex #FF or #ff; both upper and lower case letters are accepted).  See <a href="named_colours.html">named colours</a> for examples. </td></tr>
+<tr><td>'rgb(<em>red, green, blue</em>)'</td><td>Colours are defined using a decimal notation for the combination of Red, Green, and Blue colorr values (RGB). The lowest value that can be given to any one of the basic colour (<em>red</em>, <em>green</em>, or <em>blue</em>) is 0. The highest value is 255. </td></tr>
+<tr><td>'rgba(<em>red, green, blue, alpha</em>)'</td><td>Similar to rgb(<em>red</em>, <em>green</em>, or <em>blue</em>), but with the addition of a transparency parameter (<em>alpha</em>). The valid range of values is from 0.0 (fully transparent) to 1.0 (fully opaque). By default, this property is set to 1.0 (fully opaque). </td></tr>
+</table>
+
+</body>
+</html>
+

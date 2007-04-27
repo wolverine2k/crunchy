@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Sound</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+<link href="tutor.css" type="text/css" rel="stylesheet" />
+<link href="tutor_bw.css" title="Black and white"
+type="text/css" rel="stylesheet" />
+<link href="tutor_menu.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="argh.gif" class="titleimage"/>
+<span class="title">Crunching noises</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics: drawing</a>
+<a href="plot.html">Graphics: plotting</a>
+<a href="sound.html">Sound</a>
+<a href="external.html">External applications</a>
+</div>
+<div id="main">
+<p>Try running the code supplied: you should hear some sounds - assuming you 
+have speakers connected to your computer.  Note that you may have to wait a 
+while for processing.</p>
+<pre title="editor size=(2, 50)">
+play_song(yesterday)
+</pre>
+<p>If you are using Windows, and you want to have more immediate results in terms of sound output, at the cost of using the built-in system beep of lower quality, you can also try the option:</p>
+<pre title="editor size=(2, 50)">
+play_song(yesterday, True)
+</pre>
+<p>where <code>True</code> is a shortcut for <code>approximate=True</code>.  Note that this option is only available when one note (or tone) is played
+at a given time.</p>
+<p>You can use the simple sound module included with Crunchy to demonstrate the concept of beats:</p>
+<pre title="editor size=(3, 50)">
+play_tones((440, 441), 4)
+</pre>
+<p>as well as the concepts of harmonics (series) closely related to that of 
+musical instruments' <em>timbre</em>.
+<pre title="editor size=(5, 90)">
+play_harmonics(440, 3, (1,)) # pure tone
+play_harmonics(440, 3, (1, 0, 1./9, 0, 1./25, 0, 1./49)) # triangular
+play_harmonics(440, 3, (1, 0, 1./3, 0, 1./5, 0, 1./7)) # square
+play_harmonics(440, 3, (1, 1./2, 1./3, 1./4, 1./5, 1./6, 1./7)) # sawtooth
+</pre>
+<p>More details can be found in the <a href="../reference/sound_summary.html">Sound
+Reference.</a></p>
+</div>
+</body>
+</html>
