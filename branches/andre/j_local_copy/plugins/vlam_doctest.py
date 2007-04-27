@@ -36,8 +36,9 @@ def register():
     # 'doctest' only appears inside <pre> elements, using the notation
     # <pre title='doctest ...'>
     CrunchyPlugin.register_vlam_handler("pre", "doctest", doctest_widget_callback)
-    # By convention, the custom handler for "name" will be called via "/name"
-    CrunchyPlugin.register_http_handler("/doctest", doctest_runner_callback)
+    # By convention, the custom handler for "name" will be called via "/name"; for security, we add
+    # a random session id to the custom handler's name to be executed.
+    CrunchyPlugin.register_http_handler("/doctest%s"%CrunchyPlugin.session_random_id, doctest_runner_callback)
 
 
 def doctest_runner_callback(request):
@@ -87,15 +88,16 @@ def doctest_widget_callback(page, elem, uid, vlam):
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
 # we need some unique javascript in the page; note how the
-# "/doctest" handler mentioned above appears here.
+# "/doctest" handler mentioned above appears here, together with the
+# random session id.
 doctest_jscode= """
 function exec_doctest(uid){
     code = document.getElementById("code_"+uid).value;
     var j = new XMLHttpRequest();
-    j.open("POST", "/doctest?uid="+uid, false);
+    j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);
 };
-"""
+"""%CrunchyPlugin.session_random_id
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
 doctest_pycode = """

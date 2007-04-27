@@ -85,7 +85,7 @@ exec_jscode= """
 function exec_code(uid){
     code = document.getElementById("code_"+uid).value;
     var j = new XMLHttpRequest();
-    j.open("POST", "/exec?uid="+uid, false);
+    j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""
+"""%CrunchyPlugin.session_random_id

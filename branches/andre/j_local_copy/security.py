@@ -12,18 +12,11 @@ The purpose of this module is to prevents the automatic execution of Python code
 caused by insertion of malicious javascript code within a web page.
 '''
 
-# This module has been copied from the "old" Crunchy distribution.
-# Some features have been temporarily disabled (commented out) and will need to be
-# reimplemented.
-### Python standard library modules
-##import os
-##import random
+# Note: a 2nd layer of security is implemented through a random session
+# id generated in CrunchyPlugin.py
+
 import urllib
-##from cStringIO import StringIO
-### crunchy modules
-##import configuration
-##import server
-##request = server.CrunchyRequestHandler
+
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree
@@ -204,84 +197,3 @@ def __cleanup(elem, filter):
             out.append(e)
     elem[:] = out
     return
-
-##commands = {}
-##js_memory_file = ''
-##
-##class SecureSession(object):
-##
-##    def __init__(self, root_dir, port):
-##        global js_memory_file
-##        self.root_dir = root_dir
-##        # For security reason, we create a unique session ID and use this
-##        # to create unique names to javascript function that interact
-##        # with the Python server.  This way, if ever some outside javascript
-##        # code were to be able to affect the execution of a crunchy page,
-##        # it would have to guess the unique functions name.
-##        # This may be an excessive precaution.
-##        self.session_id = str(port)+str(int(random.random()*1000000000))
-##        js_infile = open(os.path.join(root_dir, 'src', 'javascript',
-##                                  'code_exec.js'), 'r')
-##        js_memory_file = StringIO()
-##        js_memory_file.write("var session_id = " + self.session_id + '\n')
-##        js_memory_file.write(js_infile.read())
-##        # We do a similar mapping to unique names within a session
-##        self.map_commands()
-##        return
-##
-##    def map_commands(self):
-##        commands['/'] = '/'  # safe; no need to add session_id
-##        request.pagemap[commands['/']] = server.get_crunchy_index
-##        #
-##        commands['/exit'] = '/exit' # safe; no need to add session_id
-##        request.pagemap[commands['/exit']] = server.get_exit
-##        #
-##        commands['/dir'] = '/dir' + self.session_id
-##        request.pagemap[commands['/dir']] = server.get_dir
-##        #
-##        commands['/doc'] = '/doc' + self.session_id
-##        request.pagemap[commands['/doc']] = server.get_doc
-##        #
-##        commands['/load_local'] = '/load_local' + self.session_id
-##        request.pagemap[commands['/load_local']] = server.get_local_page
-##        #
-##        commands['/edit_tutorial'] = '/edit_tutorial'
-##        request.pagemap[commands['/edit_tutorial']] = server.get_page_for_editing
-##        #
-##        commands['/update'] = '/update'  # safe; no need to add session_id
-##        request.pagemap[commands['/update']] = server.get_update_page
-##        #
-##        commands['/push'] = '/push' + self.session_id
-##        request.pagemap[commands['/push']] = server.get_push
-##        #
-##        commands['/load_external'] = '/load_external' + self.session_id
-##        request.pagemap[commands['/load_external']] = server.get_external_page
-##        #
-##        commands['/load_python'] = '/load_python' + self.session_id
-##        request.pagemap[commands['/load_python']] = server.get_python_file
-##        #
-##        commands['/save_python'] = '/save_python' + self.session_id
-##        #
-##        commands['/get_user_js'] = '/get_user_js' + self.session_id
-##        request.pagemap[commands['/get_user_js']] = server.get_user_js
-##        #
-##        commands['/select_language'] = '/select_language' + self.session_id
-##        request.pagemap[commands['/select_language']] = server.get_language
-##        #
-##        commands['/select_style'] = '/select_style' + self.session_id
-##        request.pagemap[commands['/select_style']] = server.get_style
-##        #
-##        commands['/doctest'] = '/doctest' + self.session_id
-##        commands['/execute'] = '/execute' + self.session_id
-##        commands['/rawio'] = '/rawio' + self.session_id
-##        commands['/canvas_exec'] = '/canvas_exec' + self.session_id
-##        commands['/spawn'] = '/spawn' + self.session_id
-##        commands['/spawn_console'] = '/spawn_console' + self.session_id
-##        commands['/save_and_run'] = '/save_and_run' + self.session_id
-##        return
-##
-##    def close(self):
-##        #remove the javascript file created for that session
-##        #
-##        # Note: There is no javascript created on disk anymore
-##        os.remove(os.path.join(self.root_dir, js_name))
