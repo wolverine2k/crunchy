@@ -49,10 +49,24 @@ class CrunchyPage(object):
         return include_str in self.included
 
     def add_js_code(self, code):
+        ''' includes some javascript code in the <head>.
+            This is the preferred method.'''
         js = et.Element("script")
         js.set("type", "text/javascript")
         js.text = code
         self.head.append(js)
+
+    def insert_js_file(self, filename):
+        '''Inserts a javascript file link in the <head>.
+           This should only be used for really big scripts
+           (like editarea); the preferred method is to add the
+           javascript code directly'''
+        js = et.Element("script")
+        js.set("src", filename)
+        js.set("type", "text/javascript")
+        js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
+        self.head.insert(0, js)
+        return
 
     def add_css_code(self, code):
         css = et.Element("style")
