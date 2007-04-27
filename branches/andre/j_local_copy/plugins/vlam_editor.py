@@ -80,7 +80,8 @@ def insert_editor(page, elem, uid, vlam):
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
 # we need some unique javascript in the page; note how the
-# "/exec" handler referred to above as a required service appears here.
+# "/exec" handler referred to above as a required service appears here,
+# with a random session id appended for security reasons.
 exec_jscode= """
 function exec_code(uid){
     code = document.getElementById("code_"+uid).value;
