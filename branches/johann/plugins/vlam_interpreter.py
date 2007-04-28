@@ -9,6 +9,8 @@ Crunchy plugin; it probably contains more comments than necessary
 for people familiar with the Crunchy plugin architecture.
 """
 
+import sys
+
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
@@ -54,9 +56,9 @@ def insert_interpreter(page, elem, uid, vlam):
 
 interp_js = r"""
 function init_interp(uid){
-    code = "import interpreter\ninterpreter.BorgConsole().interact()";
+    code = "import interpreter\ninterpreter.BorgConsole().interact('Crunchy interpreter (Python version %s)')";
     var j = new XMLHttpRequest();
-    j.open("POST", "/exec?uid="+uid, false);
+    j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""
+"""%((sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)

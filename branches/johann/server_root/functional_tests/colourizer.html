@@ -3,7 +3,14 @@
 <head>
 <title>Colourizer Test</title></head>
 <body>
-<h1>Crunchy Frog Colourizer Test</h1>
+<h1>Crunchy Colourizer Test</h1>
+<p>Here is the basic unstyled example we are using most often:</p>
+<pre>
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+
 <p>The following code should be styled properly</p>
 <pre title="py_code">
 for i in range(10):
@@ -85,16 +92,13 @@ which used not to be the same font size. </p>
 </pre>
 used to be processed by crunchy ("colourized") in such a way
 that it resulted in non W3C compliant code - and Crunchy (i.e. the
-elementtree handler) chokeed on it, and displayed a blank page.  This has been fixed ... but, somehow,
-  this text that appears outside of the "pre" is taken to be part of it.</p>
+elementtree handler) chokeed on it, and displayed a blank page.
+This has been fixed.</p>
 
 <p>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
-not processed properly.  The suggested behaviour at this point would be to
+now processed properly.  The suggested behaviour at this point would be to
 <br/>
-[1.] convert all <code>&lt;br&gt;</code> or <code>&lt;br/&gt;</code>
-into <code>\n</code> and
-<br/>[2.] to strip the remaining html markup.
-<br/>Here's an actual example using a <code>&lt;br/&gt;</code> rather than
+Here's an actual example using a <code>&lt;br/&gt;</code> rather than
 an "\n" character to separate lines of code.
 The actual code we use inside a <code>&lt;pre&gt;</code> element is:<br/>
 <code>print "Hello world!"&lt;br/&gt;print "Crunchy rocks!"
@@ -131,7 +135,11 @@ existing formatting removed, and new one added.)</p>
 as with fake interpreter prompt and line number starting at 999.
 <code title="python_code linenumber=999">&gt;&gt;&gt; print "Goodbye!"</code></p>
 <p>There used to be a missing part of a sentence between each code samples.
-This was a problem with a dropped "tail".</p>
+This was a problem with a dropped "ElementTree tail".</p>
+<h2>Bugs</h2>
+<ul>
+  <li>There are no known bugs.</li>
+</ul>
 <p><a href="index.html">Back to the test index</a></p>
 </body>
 </html>

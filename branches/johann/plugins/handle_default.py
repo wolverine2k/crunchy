@@ -10,12 +10,12 @@ from CrunchyPlugin import *
 
 def register():
     register_http_handler(None, handler)
-    
+
 def path_to_filedata(path, root):
     """
-    Given a path, finds the matching file and returns a read-only reference 
+    Given a path, finds the matching file and returns a read-only reference
     to it. If the path specifies a directory and does not have a trailing slash
-    (ie. /example instead of /example/) this function will return none, the 
+    (ie. /example instead of /example/) this function will return none, the
     browser should then be redirected to the same path with a trailing /.
     Root is the fully qualified path to server root.
     Paths containing .. will return an error message.
@@ -24,6 +24,7 @@ def path_to_filedata(path, root):
     if path.find("/../") != -1:
         return error_page(path)
     npath = normpath(join(root, normpath(path[1:])))
+    print "npath = ", npath
     if isdir(npath):
         if path[-1] != "/":
             return None
@@ -35,8 +36,9 @@ def path_to_filedata(path, root):
                 return create_vlam_page(open(npath)).read()
             return open(npath).read()
         except IOError:
+            print "can not open path = ", npath
             return error_page(path)
-        
+
 def handler(request):
     """the actual handler"""
     data = path_to_filedata(request.path, root_path)
@@ -48,7 +50,7 @@ def handler(request):
         request.send_response(200)
         request.end_headers()
         request.wfile.write(data)
-        
+
 def get_directory(npath):
     childs = listdir(npath)
     childs = childs[:]
@@ -77,11 +79,12 @@ Crunchy: Illegal path, page not found.
 </head>
 <body>
 <h1>Illegal Path, Page not Found</h1>
-<p>Crunchy could not open the page you requested. This could be for one of a 
+<p>Crunchy could not open the page you requested. This could be for one of a
 number of reasons, including:</p>
 <ul>
 <li>The page doesn't exist.</li>
 <li>The path you requested was illegal, examples of illegal paths include those containg the .. path modifier.
+</li>
 </ul>
 <p>The path you requested was: <b>%s</b></p>
 </body>

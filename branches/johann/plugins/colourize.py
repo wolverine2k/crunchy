@@ -93,6 +93,7 @@ style_css = r"""
 .py_linenumber{font-size: small; color: #666666;}
 .py_prompt{color:blue; }
 .py_output{color:darkgreen; background-color: #f0f0dd;}
+.py_warning{background-color:yellow; font-size: large; font-weight: bold;}
 """
 #---------end plugin specific-------------------------
 
@@ -319,6 +320,7 @@ class Colourizer(object):
         return "<span class='py_number'>"
 
     def formatOperator(self):
+        self.tokenString = self.changeHTMLspecialCharacters(self.tokenString)
         return "<span class='py_op'>"
 
 #========= Strings, including comments ====
@@ -448,7 +450,7 @@ def _style(text, offset=None):
         return styled_code, raw_code
     except Exception, parsingErrorMessage:
         error_message = parsing_error_dialog(parsingErrorMessage)
-        return "<span class='warning'>%s</span>\n<span>%s</span>"%(
+        return "<span class='py_warning'>%s</span>\n<span>%s</span>"%(
                                        error_message, raw_code), None
 
 def extract_code_from_interpreter(text):

@@ -19,7 +19,7 @@ et = ElementTree
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
 # The set of other "widgets/services" required from other plugins
-requires = set(["io_widget", "/exec", "style_pycode"])
+requires = set(["io_widget", "/exec", "style_pycode", "editarea"])
 
 def register():
     """The register() function is required for all plugins.
@@ -54,6 +54,7 @@ def insert_editor(page, elem, uid, vlam):
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)
+
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_doctest() method extracted all of the existing
@@ -76,16 +77,19 @@ def insert_editor(page, elem, uid, vlam):
     btn.attrib["onclick"] = "exec_code('%s')" % uid
     btn.text = "Execute"
     et.SubElement(elem, "br")
-    # finally, an output subwidget:
+    # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
+    # finally, we enable the fancy editor, EditArea
+    CrunchyPlugin.services.enable_editarea(page, uid)
 
 # we need some unique javascript in the page; note how the
-# "/exec" handler referred to above as a required service appears here.
+# "/exec" handler referred to above as a required service appears here,
+# with a random session id appended for security reasons.
 exec_jscode= """
 function exec_code(uid){
     code = document.getElementById("code_"+uid).value;
     var j = new XMLHttpRequest();
-    j.open("POST", "/exec?uid="+uid, false);
+    j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""
+"""%CrunchyPlugin.session_random_id
