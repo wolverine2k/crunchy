@@ -79,3 +79,6 @@ def get_data_dir():
     for now this is always the crunchy base directory
     """
     return dirname(find_module("crunchy")[1])
+
+def gen_uid():
+    return vlam.uidgen()

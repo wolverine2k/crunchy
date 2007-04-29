@@ -10,7 +10,7 @@ from SocketServer import ThreadingMixIn, TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sys import stderr
 import urllib
-
+from cgi import parse_qs
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     def __init__(self, addr, rqh):
@@ -45,24 +45,30 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
             
 class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        """handle an HTTP request"""
+        # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
         argstring = ""
+        self.args = {}
+        # if there is a ? in the path then there are some arguments, extract them and set the path
+        # to what it should be
         if self.path.find("?") > -1:
             realpath, argstring = self.path.split("?")
         self.path = urllib.unquote(realpath)
-        self.args = {}
-        if argstring:
-            arg = []
-            arglist = argstring.split('&')
-            for i in arglist:
-                arg = i.split('=')
-                val = ''
-                if len(arg) > 1:
-                    self.args[arg[0]] = urllib.unquote_plus(arg[1])
+        # parse any arguments there might be
+        self.args = parse_qs(argstring, True)
+        # extract any POSTDATA
         self.data = ""
         if "Content-Length" in self.headers:
             self.data = self.rfile.read(int(self.headers["Content-Length"]))
-        self.server.get_handler(realpath)(self)
+        # and run the handler
+        try:
+            self.server.get_handler(realpath)(self)
+        except e:
+            # if there is an error, say so
+            self.send_response(500)
+            self.end_headers()
+            self.wfile.write(str(e))
         
     def do_GET(self):
         """the same as GET, we draw no distinction"""
