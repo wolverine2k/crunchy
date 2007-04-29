@@ -10,7 +10,8 @@ from SocketServer import ThreadingMixIn, TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sys import stderr
 import urllib
-from cgi import parse_qs
+from traceback import format_exc
+
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     def __init__(self, addr, rqh):
@@ -56,7 +57,15 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             realpath, argstring = self.path.split("?")
         self.path = urllib.unquote(realpath)
         # parse any arguments there might be
-        self.args = parse_qs(argstring, True)
+        if argstring:
+            arg = []
+            arglist = argstring.split('&')
+            for i in arglist:
+                arg = i.split('=')
+                val = ''
+                if len(arg) > 1:
+                    self.args[arg[0]] = urllib.unquote_plus(arg[1])
+        print self.args
         # extract any POSTDATA
         self.data = ""
         if "Content-Length" in self.headers:
@@ -64,11 +73,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         # and run the handler
         try:
             self.server.get_handler(realpath)(self)
-        except e:
+        except:
             # if there is an error, say so
             self.send_response(500)
             self.end_headers()
-            self.wfile.write(str(e))
+            self.wfile.write(format_exc())
         
     def do_GET(self):
         """the same as GET, we draw no distinction"""

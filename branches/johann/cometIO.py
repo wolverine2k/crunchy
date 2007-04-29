@@ -98,7 +98,10 @@ def register_new_page(pageid):
     
 def write_js(pageid, jscode):
     """write some javascript to a page"""
-    data = output_buffers[pageid].put(jscode)
+    output_buffers[pageid].put(jscode)
+    
+def write_output(pageid, uid, output):
+    output_buffers[pageid].put_output(output, uid)
     
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment).

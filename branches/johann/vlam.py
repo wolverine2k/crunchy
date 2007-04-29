@@ -25,6 +25,7 @@ def uidgen():
 
 class CrunchyPage(object):
     # handlers ::  string -> string -> handler function
+    # pagehandlers :: 
     # (sorry, a weird mix of haskell and OCaml notation in a python program :)
     handlers = {}
     pagehandlers = []

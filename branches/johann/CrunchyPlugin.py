@@ -12,7 +12,8 @@ import PluginServices as services
 
 __all__=["register_http_handler", "register_vlam_handler",
          "create_vlam_page", "exec_code", "register_service", "services",
-         "exec_js", "get_uid", "get_pageid", "get_data_dir"]
+         "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
+         "gen_uid"]
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
@@ -62,6 +63,10 @@ def exec_js(pageid, jscode):
     """execute some javascript in the page (NB: this is done asynchronously)"""
     cometIO.write_js(pageid, jscode)
 
+def append_html(page_id, output_id, htmlcode):
+    """append some html to an IO widget"""
+    cometIO.write_output(page_id, output_id, htmlcode)
+    
 def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page
     from which the code is being executed.

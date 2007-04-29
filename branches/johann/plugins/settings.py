@@ -20,7 +20,7 @@ settings_groups = set([])
 
 def register():
     register_http_handler("/setup", setup_page)
-    register_service(register_settings_group, "register_settings_group")
+    #register_service(register_settings_group, "register_settings_group")
     
 def setup_page(request):
     """display the settings page"""
