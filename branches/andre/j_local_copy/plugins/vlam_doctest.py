@@ -18,7 +18,7 @@ from element_tree import ElementTree
 et = ElementTree
 
 # The set of other "widgets/services" required from other plugins
-requires =  set(["editor_widget", "io_widget"])
+requires =  set(["editor_widget", "io_widget", "editarea"])
 
 # each doctest code sample will be kept track via a uid used as a key.
 doctests = {}
@@ -76,7 +76,7 @@ def doctest_widget_callback(page, elem, uid, vlam):
     # We insert the styled doctest code inside this container element:
     elem.insert(0, markup)
     # call the insert_editor_subwidget service to insert an editor:
-    CrunchyPlugin.services.insert_editor_subwidget(elem, uid)
+    editor_id = CrunchyPlugin.services.insert_editor_subwidget(elem, uid)
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
@@ -84,8 +84,10 @@ def doctest_widget_callback(page, elem, uid, vlam):
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     et.SubElement(elem, "br")
-    # finally, an output subwidget:
+    # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
+    # finally, we enable the fancy editor, EditArea
+    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
 
 # we need some unique javascript in the page; note how the
 # "/doctest" handler mentioned above appears here, together with the

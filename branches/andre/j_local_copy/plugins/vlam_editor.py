@@ -42,8 +42,10 @@ def insert_editor_subwidget(elem, uid, code="\n"):
     inp = et.SubElement(elem, "textarea")
     inp.attrib["rows"] = "10"
     inp.attrib["cols"] = "80"
-    inp.attrib["id"] = "code_" + uid
+    editor_id = "code_" + uid
+    inp.attrib["id"] = editor_id
     inp.text = code
+    return editor_id
 
 def insert_editor(page, elem, uid, vlam):
     """handles the editor widget"""
@@ -69,7 +71,7 @@ def insert_editor(page, elem, uid, vlam):
         elem.insert(0, markup)
     elif "no-copy" in vlam:
         code = "\n"
-    CrunchyPlugin.services.insert_editor_subwidget(elem, uid, code)
+    editor_id = CrunchyPlugin.services.insert_editor_subwidget(elem, uid, code)
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
@@ -80,14 +82,14 @@ def insert_editor(page, elem, uid, vlam):
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
     # finally, we enable the fancy editor, EditArea
-    CrunchyPlugin.services.enable_editarea(page, uid)
+    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
 
 # we need some unique javascript in the page; note how the
 # "/exec" handler referred to above as a required service appears here,
 # with a random session id appended for security reasons.
 exec_jscode= """
 function exec_code(uid){
-    code = document.getElementById("code_"+uid).value;
+    code=editAreaLoader.getValue("code_"+uid)
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);

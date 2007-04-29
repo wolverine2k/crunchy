@@ -32,6 +32,8 @@ def gen_register_list(initial_list):
             pos = 0
             while pos < len(final_list):
                 capability_set.update(final_list[pos].provides)
+##                print "capabilities: ", capability_set
+##                print "required: ", mod.requires
                 pos += 1
             if mod.requires.issubset(capability_set):
                 final_list.insert(len(final_list), mod)
