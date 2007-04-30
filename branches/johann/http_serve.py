@@ -65,7 +65,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 val = ''
                 if len(arg) > 1:
                     self.args[arg[0]] = urllib.unquote_plus(arg[1])
-        print self.args
         # extract any POSTDATA
         self.data = ""
         if "Content-Length" in self.headers:

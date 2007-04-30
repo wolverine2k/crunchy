@@ -18,12 +18,10 @@ def html_link_handler(page, elem, uid, vlam):
     if not page.includes("handle_link_included"):
         page.add_js_code(handle_link_jscode)
         page.add_include("handle_link_included")
-    # temporary "fix"...  without this, we sometimes get KeyErrors; needs further investigation
-    if "href" in elem.attrib: # "fix"
+    if "href" in elem.attrib:
         href = elem.attrib["href"]
         elem.attrib["href"] = "#"
         elem.attrib["onclick"] = "handle_link('%s', '%s');return false;" % (href, uid.split(":")[0])
-
 
 def http_link_handler(request):
     """handle an http request"""
@@ -32,8 +30,6 @@ def http_link_handler(request):
     request.send_response(200)
     request.end_headers()
     exec_js(pageid, """setTimeout('window.location="%s";', 100)""" % request.data)
-
-
 
 handle_link_jscode = r"""
 function handle_link(url, pageid){

@@ -11,9 +11,6 @@ import CrunchyPlugin
 
 def gen_register_list(initial_list):
     """generates a registration ordering from the dependencies.
-
-    'Currently', plugins could be loaded in any order
-    without causing any problems.  However, as more plugins are written,
     it could happen that some plugin would require (at loading time)
     some services provided by others.
     This function ensures that plugin will be loaded so as

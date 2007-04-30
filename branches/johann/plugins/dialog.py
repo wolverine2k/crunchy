@@ -1,6 +1,6 @@
 """Create dialogs in HTML using simple python code
 
-inspired by Yusdi Santoso's WebLab - see:
+inspired by (and based on) Yusdi Santoso's WebLab - see:
 http://physics.ox.ac.uk/users/santoso/Software.WebLab.html
 
 This was initially based on Yusdi's version 0.0.4
@@ -23,7 +23,7 @@ dialogs = {}
 class Dialog(object):
     def __init__(self, title):
         global dialogs
-        self.buf = ""
+        self.buf = "<p>%s</p>" % title
         self.title = title
         self.uid = gen_uid()
         dialogs[self.uid] = self
@@ -31,7 +31,7 @@ class Dialog(object):
         self.event = threading.Event()
         
     def get_HTML(self):
-        return '<div>' + self.buf + '</div>'
+        return self.buf
     
     def add_label(self, text):
         self.buf += "<p>%s</p>" % text
@@ -61,9 +61,9 @@ def run_dialog(d):
     blocks execution until the dialog is finished."""
     io_id = get_uid()
     fid = "form_" + io_id
-    dialog_html = """<div id="%s">%s<p><button onclick="window.sendForm('%s')">%s</button></p></div>""" %(fid,d.get_HTML(), fid, "OK")
+    dialog_html = """<div id="%s">%s<p><button onclick="alert("hi")">%s</button></p></div>""" %(fid,d.get_HTML(), fid, "OK")
     append_html(get_pageid(), io_id, dialog_html)
-    exec_js(get_pageid(),dialog_js)
+    #exec_js(get_pageid(),dialog_js)
     d.event.wait()
     return d.data
 

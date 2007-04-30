@@ -92,7 +92,7 @@ def doctest_widget_callback(page, elem, uid, vlam):
 # random session id.
 doctest_jscode= """
 function exec_doctest(uid){
-    code = document.getElementById("code_"+uid).value;
+    code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);

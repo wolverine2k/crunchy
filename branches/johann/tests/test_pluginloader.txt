@@ -116,6 +116,7 @@ this test will be run.
     Root path is .../server_root/
     Registering plugins
       * Registered execution
+      * Registered editarea
       * Registered graphics
       * Registered handle_default
       * Registered handle_remote
