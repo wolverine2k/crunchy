@@ -132,7 +132,7 @@ def exec_external(code=None,  path=None):
                                 '-x', 'python', '%s'%path)
         except:
             try: # untested
-                os.spawnlp(os.P_NOWAIT, 'Konsole', 'Konsole',
+                os.spawnlp(os.P_NOWAIT, 'konsole', 'konsole',
                                 '-x', 'python', '%s'%path)
             except:
                 raise NotImplementedError
