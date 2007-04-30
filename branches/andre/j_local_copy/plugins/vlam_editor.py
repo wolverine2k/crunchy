@@ -89,7 +89,7 @@ def insert_editor(page, elem, uid, vlam):
 # with a random session id appended for security reasons.
 exec_jscode= """
 function exec_code(uid){
-    code=editAreaLoader.getValue("code_"+uid)
+    code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
