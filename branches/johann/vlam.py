@@ -40,7 +40,12 @@ class CrunchyPage(object):
         self.included = set([])
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
-        self.process_body()
+        # we have to check wether there is a body element
+        # because sometimes there is just a frameset elem.
+        if self.body:
+            self.process_body()
+        else:
+            print "No body, assuming frameset"
         self.add_js_code(comet_js)
 
     def add_include(self, include_str):

@@ -36,7 +36,7 @@ from element_tree import ElementTree
 #  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
 # time to find out about possible other security issues.
 #
-tag_black_list = ["script", 'button', 'form', 'frame', 'frameset', 'input',
+tag_black_list = ["script", 'button', 'form', 'input',
                     'iframe', 'embed', 'applet', 'isindex', 'menu',
                     'noframes', 'object', 'optgroup', 'option', 'param', 's',
                     'select', 'textarea']
