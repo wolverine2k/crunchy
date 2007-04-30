@@ -115,9 +115,9 @@ this test will be run.
     Importing plugins
     Root path is .../server_root/
     Registering plugins
-      * Registered editarea
       * Registered execution
       * Registered file_service
+      * Registered editarea
       * Registered graphics
       * Registered handle_default
       * Registered handle_remote
