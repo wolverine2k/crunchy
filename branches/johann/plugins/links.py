@@ -14,5 +14,5 @@ def LinkHandler(page, elem, uid, vlam):
     if "href" in elem.attrib:
         href = elem.attrib["href"]
         if href.startswith("http://"):
-            elem.attrib["href"] = "/remote?url=%s" % urllib.unquote_plus(href)
+            elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
         
