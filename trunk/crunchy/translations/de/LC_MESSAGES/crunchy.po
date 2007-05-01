@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-04-19 16:45+0100\n"
+"Last-Translator: Johannes Woolard <johannes.woolard@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+
+#: plugins/colourize.py:492
+msgid ""
+"Parsing error occurred in the following Python code.\n"
+"Info: %s."
+msgstr ""
+"Eine Parsefehler ist in der folgenden Python Quelltext vorgekommen: \n"
+"%s"
+
+#: plugins/vlam_editor.py:62
+msgid "This text should be translated: the current language is English (Default)"
+msgstr "Diese Text sollte übersetzt sein: Die aktuelle Sprache ist Deutsch."
+
