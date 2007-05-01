@@ -148,27 +148,27 @@ function load_python_file(obj_id)
 }
 function save_python_file(path, id)
 {
-	data = document.getElementById(id).value;
+    data = document.getElementById(id).value;
     var j = new XMLHttpRequest();
-	j.open("POST", "/save_file", true);
-	// Use an unlikely part of a filename (path) as a separator between file
-	// path and file content.
-	j.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
+    j.open("POST", "/save_file", true);
+    // Use an unlikely part of a filename (path) as a separator between file
+    // path and file content.
+    j.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
     var obj = document.getElementById('hidden_save'+id);
     obj.style.visibility = "hidden";
 };
 
 function save_and_run(path, id)
 {
-	data = document.getElementById(id).value;
-	var h = new XMLHttpRequest();
-	h.open("POST", "/save_and_run", true);
-	// Use an unlikely part of a filename (path) as a separator between file
-	// path and file content.
-	h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
+    data = document.getElementById(id).value;
+    var h = new XMLHttpRequest();
+    h.open("POST", "/save_and_run%s", true);
+    // Use an unlikely part of a filename (path) as a separator between file
+    // path and file content.
+    h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
   var obj = document.getElementById('hidden_save'+id);
-	obj.style.visibility = "hidden";
-};"""
+    obj.style.visibility = "hidden";
+};"""%CrunchyPlugin.session_random_id
 
 # Some javascript code
 editAreaLoader_js = """
