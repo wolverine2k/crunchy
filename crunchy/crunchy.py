@@ -31,7 +31,11 @@ def run_crunchy():
     server.register_handler(cometIO.push_input, "/input")
     server.register_handler(cometIO.comet, "/comet")
     pluginloader.init_plugin_system(server)
-    webbrowser.open('http://127.0.0.1:' + str(port) + '/')
+    _url = 'http://127.0.0.1:' + str(port) + '/'
+    webbrowser.open(_url)
+    # print this info so that, if the right browser does not open,
+    # the user can copy and paste the URL
+    print '\nCrunchy Server: serving up interactive tutorials at URL %s\n'%_url
     server.serve_forever()
 
 if __name__ == "__main__":
