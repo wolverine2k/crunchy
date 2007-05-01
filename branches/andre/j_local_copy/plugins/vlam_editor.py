@@ -19,7 +19,8 @@ et = ElementTree
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
 # The set of other "widgets/services" required from other plugins
-requires = set(["io_widget", "/exec", "style_pycode", "editarea"])
+requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
+               "editarea"])
 
 def register():
     """The register() function is required for all plugins.
@@ -75,17 +76,24 @@ def insert_editor(page, elem, uid, vlam):
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
-    btn = et.SubElement(elem, "button")
-    btn.attrib["onclick"] = "exec_code('%s')" % uid
-    btn.text = "Execute"
-    et.SubElement(elem, "br")
+    if not "no-internal" in vlam:
+        btn = et.SubElement(elem, "button")
+        btn.attrib["onclick"] = "exec_code('%s')" % uid
+        btn.text = "Execute"
+        et.SubElement(elem, "br")
+    if "external" in vlam:
+        btn = et.SubElement(elem, "button")
+        btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
+        btn.text = "Execute as external program"
+        et.SubElement(elem, "br")
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
     # finally, we enable the fancy editor, EditArea
     CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
 
 # we need some unique javascript in the page; note how the
-# "/exec" handler referred to above as a required service appears here,
+# "/exec"  and /run_external handlers referred to above as required
+# services appear here
 # with a random session id appended for security reasons.
 exec_jscode= """
 function exec_code(uid){
@@ -94,4 +102,10 @@ function exec_code(uid){
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%CrunchyPlugin.session_random_id
+function exec_code_externally(uid){
+    code=editAreaLoader.getValue("code_"+uid);
+    var j = new XMLHttpRequest();
+    j.open("POST", "/run_external%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(CrunchyPlugin.session_random_id, CrunchyPlugin.session_random_id)

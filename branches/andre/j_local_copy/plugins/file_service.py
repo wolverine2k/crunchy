@@ -12,7 +12,7 @@ import sys
 import CrunchyPlugin
 
 # The set of other "widgets/services" provided by this plugin
-provides = set(["/save_file", "/load_file", "/save_and_run"])
+provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
 def exec_handler(request):
     """handle an execution request"""
@@ -34,7 +34,10 @@ def register():
        """
     CrunchyPlugin.register_http_handler("/save_file", save_file_request_handler)
     CrunchyPlugin.register_http_handler("/load_file", load_file_request_handler)
-    CrunchyPlugin.register_http_handler("/save_and_run", save_and_run_request_handler)
+    CrunchyPlugin.register_http_handler("/save_and_run%s"%CrunchyPlugin.session_random_id,
+                                        save_and_run_request_handler)
+    CrunchyPlugin.register_http_handler("/run_external%s"%CrunchyPlugin.session_random_id,
+                                        run_external_request_handler)
     #CrunchyPlugin.register_service(save_file, "save_file")
     #CrunchyPlugin.register_service(read_file, "read_file")
 
@@ -62,8 +65,17 @@ def save_file_request_handler(request):
     return path
 
 def save_and_run_request_handler(request):
+    '''saves the code in a file in user specified directory and runs it
+       from there'''
     path = save_file_request_handler(request)
     exec_external(path=path)
+
+def run_external_request_handler(request):
+    '''saves the code in a default location and runs it from there'''
+    code = request.data
+    request.send_response(200)
+    request.end_headers()
+    exec_external(code=code)
 
 def load_file_request_handler(request):
     ''' reads a local file - most likely a Python file that will
@@ -98,18 +110,18 @@ def exec_external(code=None,  path=None):
     """execute code in an external process
     currently works under:
         * Windows NT (tested)
-        * GNOME (originally tested - but not since change)
+        * GNOME
         * OS X
-    This also needs to be implemented/texted for KDE
-    and some form of linux fallback (xterm?)
+    This also needs to be tested for KDE
+    and implemented some form of linux fallback (xterm?)
     """
     if path is None:
         path = os.path.join(os.path.expanduser("~"), ".crunchy", "temp.py")
-    if os.name == 'nt':
+    if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
 
-    if code is not None:  # used in old Crunchy
+    if code is not None:
         filename = open(path, 'w')
         filename.write(code)
         filename.close()
@@ -117,16 +129,12 @@ def exec_external(code=None,  path=None):
     if os.name == 'nt':
         os.chdir(target_dir) # change dir so as to deal with paths that
                              # include spaces
-        if console:
-            Popen(["cmd.exe", ('/c start python %s'%fname)])
-        else:
-            Popen(["cmd.exe", ('/c python %s'%fname)])
+        Popen(["cmd.exe", ('/c start python %s'%fname)])
         os.chdir(current_dir)
-    if sys.platform == 'darwin':  # a much more general method can be found
+    elif sys.platform == 'darwin':  # a much more general method can be found
                                  # in SPE, Stani's Python Editor - Child.py
-        pth, fn = os.path.split(path)
         activate = 'tell application "Terminal" to activate'
-        script = r"cd '\''/Users/andre/CrunchySVN/branches/andre'\'';python '\''test.py'\'';exit"
+        script = r"cd '\''%s'\'';python '\''%s'\'';exit"%(target_dir, fname)
         do_script = r'tell application "Terminal" to do script "%s"'%script
         command =  "osascript -e '%s';osascript -e '%s'"%(activate, do_script)
         os.popen(command)

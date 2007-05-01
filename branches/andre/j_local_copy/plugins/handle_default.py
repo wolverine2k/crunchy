@@ -24,7 +24,6 @@ def path_to_filedata(path, root):
     if path.find("/../") != -1:
         return error_page(path)
     npath = normpath(join(root, normpath(path[1:])))
-    print "npath = ", npath
     if isdir(npath):
         if path[-1] != "/":
             return None

@@ -68,7 +68,7 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
         onclick="c=getElementById('%s');path=c.value;load_python_file('%s');"%(path, textarea_id))
     btn.text = _("Load Python file")
     btn2 = et.SubElement(parent, 'button',
-        onclick="c=getElementById('%s');path=c.style.visibility='hidden';"%hidden_load_id)
+        onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_load_id)
     btn2.text = _("Cancel")
     return
 
@@ -91,7 +91,7 @@ def addSavePython(parent, hidden_save_id, textarea_id):
         "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))
     btn.text = _("Save Python file")
     btn2 = et.SubElement(parent, 'button',
-        onclick="c=getElementById('%s');path=c.style.visibility='hidden';"%hidden_save_id)
+        onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_save_id)
     btn2.text = _("Cancel")
     btn3 = et.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
@@ -103,10 +103,12 @@ def addSavePython(parent, hidden_save_id, textarea_id):
 editArea_load_and_save = """
 function my_load_file(id){
 var obj = document.getElementById('hidden_load'+id);
+obj.style.zIndex = 99999;
 obj.style.visibility = "visible";
 }
 function my_save_file(id){
 var obj = document.getElementById('hidden_save'+id);
+obj.style.zIndex = 99999;
 obj.style.visibility = "visible";
 }
 
@@ -134,6 +136,7 @@ function load_python_file(obj_id)
                     editAreaLoader.setValue(obj_id, h.responseText);
                     var obj = document.getElementById('hidden_load'+obj_id);
                     obj.style.visibility = "hidden";
+                    obj.style.zIndex = -1;
                     break;
                 case 12029:
                     //IE could not connect to server
@@ -156,19 +159,21 @@ function save_python_file(path, id)
 	j.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
     var obj = document.getElementById('hidden_save'+id);
     obj.style.visibility = "hidden";
+    obj.style.zIndex = -1;
 };
 
 function save_and_run(path, id)
 {
 	data = document.getElementById(id).value;
 	var h = new XMLHttpRequest();
-	h.open("POST", "/save_and_run", true);
+	h.open("POST", "/save_and_run%s", true);
 	// Use an unlikely part of a filename (path) as a separator between file
 	// path and file content.
 	h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
-  var obj = document.getElementById('hidden_save'+id);
+    var obj = document.getElementById('hidden_save'+id);
 	obj.style.visibility = "hidden";
-};"""
+    obj.style.zIndex = -1;
+};"""%CrunchyPlugin.session_random_id
 
 # Some javascript code
 editAreaLoader_js = """
@@ -193,10 +198,10 @@ load_save_css = """
     the screen so that they can be seen even when the editor is
     in fullscreen mode.  z-index of editarea when toggled is 9999 */
 
-.load_python{position:fixed; top:100px; z-index:99999;
+.load_python{position:fixed; top:100px; z-index:-1;
             border:4px solid #339; border-style: outset;
             visibility:hidden; background-color:#66C}
-.save_python{position:fixed; top:200px; z-index:99999;
+.save_python{position:fixed; top:200px; z-index:-1;
             border:4px solid #063; border-style: outset;
             visibility:hidden; background-color:#696}
 """
