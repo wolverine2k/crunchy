@@ -35,11 +35,10 @@ def register():
     CrunchyPlugin.register_vlam_handler("pre", "editor", insert_editor)
     CrunchyPlugin.register_service(insert_editor_subwidget, "insert_editor_subwidget")
 
-def insert_editor_subwidget(elem, uid, code="\n"):
+def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
     """
-    #### Note: this will need to be updated to include EditArea
     inp = et.SubElement(elem, "textarea")
     inp.attrib["rows"] = "10"
     inp.attrib["cols"] = "80"
@@ -48,6 +47,7 @@ def insert_editor_subwidget(elem, uid, code="\n"):
     if code == "":
         code = "\n"
     inp.text = code
+    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
     return editor_id
 
 def insert_editor(page, elem, uid, vlam):
@@ -74,7 +74,7 @@ def insert_editor(page, elem, uid, vlam):
         elem.insert(0, markup)
     elif "no-copy" in vlam:
         code = "\n"
-    editor_id = CrunchyPlugin.services.insert_editor_subwidget(elem, uid, code)
+    editor_id = CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
@@ -90,8 +90,8 @@ def insert_editor(page, elem, uid, vlam):
         et.SubElement(elem, "br")
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
-    # finally, we enable the fancy editor, EditArea
-    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
+
+    
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required

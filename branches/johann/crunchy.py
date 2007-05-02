@@ -9,7 +9,7 @@ import sys
 import http_serve
 import cometIO
 import pluginloader
-    
+
 def find_port(start):
     """finds the first free port on 127.0.0.1 starting at start"""
     finalport = None

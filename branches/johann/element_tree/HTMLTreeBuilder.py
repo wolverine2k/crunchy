@@ -12,16 +12,22 @@
 # 2004-12-02 fl   don't feed non-ASCII charrefs/entities as 8-bit strings
 # 2004-12-05 fl   don't feed non-ASCII CDATA as 8-bit strings
 #
+# 2005-05-02      Updated for Crunchy by Johannes Woolard
+#
 # Copyright (c) 1999-2004 by Fredrik Lundh.  All rights reserved.
 #
 # fredrik@pythonware.com
 # http://www.pythonware.com
 #
+# Updated portions Copyright (c) 2007 Johannes Woolard
+# johannes.wollard@gmail.com
+#
 # --------------------------------------------------------------------
 # The ElementTree toolkit is
 #
 # Copyright (c) 1999-2004 by Fredrik Lundh
-#
+# Copyright (c) 2007 by Johannes Woolard
+# 
 # By obtaining, using, and/or copying this software and/or its
 # associated documentation, you agree that you have read, understood,
 # and will comply with the following terms and conditions:
@@ -55,7 +61,7 @@ import mimetools, StringIO
 
 import ElementTree
 
-AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body"
+AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body"#, "div"
 IGNOREEND = "img", "hr", "meta", "link", "br"
 
 if sys.version[:3] == "1.5":
@@ -82,10 +88,13 @@ except ImportError:
 # <p>
 # The parser is relatively picky, and requires balanced tags for most
 # elements.  However, elements belonging to the following group are
-# automatically closed: P, LI, TR, TH, and TD.  In addition, the
+# automatically closed: P, LI, TR, TH, TD and DIV.  In addition, the
 # parser automatically inserts end tags immediately after the start
 # tag, and ignores any end tags for the following group: IMG, HR,
 # META, and LINK.
+#
+# Also, if an end tag is present but there data of an element has 0 length,
+# then its .text attribute will be an empty string
 #
 # @keyparam builder Optional builder object.  If omitted, the parser
 #     uses the standard <b>elementtree</b> builder.
@@ -157,10 +166,18 @@ class HTMLTreeBuilder(HTMLParser):
     def handle_endtag(self, tag):
         if tag in IGNOREEND:
             return
-        lasttag = self.__stack.pop()
-        if tag != lasttag and lasttag in AUTOCLOSE:
-            self.handle_endtag(lasttag)
-        self.__builder.end(tag)
+        if self.__stack:
+            lasttag = self.__stack.pop()
+        else:
+            return
+        # handle the case where lasttag was not properly closed:
+        if tag != lasttag:
+            # first we close lasttag
+            self.__builder.end(lasttag)
+            #if self.__stack[-1] == tag:
+            #    self.handle_endtag(tag)    
+        else:
+            self.__builder.end(tag)
 
     ##
     # (Internal) Handles character references.
@@ -207,7 +224,8 @@ class HTMLTreeBuilder(HTMLParser):
 
     def unknown_entityref(self, name):
         pass # ignore by default; override if necessary
-
+    
+        
 ##
 # An alias for the <b>HTMLTreeBuilder</b> class.
 
