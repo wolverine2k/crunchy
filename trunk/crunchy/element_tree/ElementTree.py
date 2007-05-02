@@ -696,7 +696,7 @@ class ElementTree:
                 for k, v in xmlns_items:
                     file.write(" %s=\"%s\"" % (_encode(k, encoding),
                                                _escape_attrib(v, encoding)))
-            if node.text or len(node):
+            if node.text != None or len(node):
                 file.write(">")
                 if node.text:
                     file.write(_escape_cdata(node.text, encoding))
@@ -1041,7 +1041,7 @@ class TreeBuilder:
         return self._last
 
     def _flush(self):
-        if self._data:
+        if self._data != None:
             if self._last is not None:
                 text = string.join(self._data, "")
                 if self._tail:
