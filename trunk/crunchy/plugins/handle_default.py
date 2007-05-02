@@ -32,7 +32,7 @@ def path_to_filedata(path, root):
     else:
         try:
             if npath.endswith(".html") or npath.endswith(".htm"):
-                return create_vlam_page(open(npath)).read()
+                return create_vlam_page(open(npath), path).read()
             return open(npath).read()
         except IOError:
             print "can not open path = ", npath

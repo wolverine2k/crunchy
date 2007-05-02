@@ -45,6 +45,8 @@ def insert_editor_subwidget(elem, uid, code="\n"):
     inp.attrib["cols"] = "80"
     editor_id = "code_" + uid
     inp.attrib["id"] = editor_id
+    if code == "":
+        code = "\n"
     inp.text = code
     return editor_id
 
