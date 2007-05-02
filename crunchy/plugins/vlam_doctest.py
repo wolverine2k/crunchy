@@ -76,7 +76,7 @@ def doctest_widget_callback(page, elem, uid, vlam):
     # We insert the styled doctest code inside this container element:
     elem.insert(0, markup)
     # call the insert_editor_subwidget service to insert an editor:
-    CrunchyPlugin.services.insert_editor_subwidget(elem, uid)
+    CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid)
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
