@@ -30,8 +30,10 @@ class CrunchyPage(object):
     handlers = {}
     pagehandlers = []
     null_handlers = {}
-    def __init__(self, filehandle):
+    def __init__(self, filehandle, url):
+        """url should be just a path if crunchy accesses the page locally, or the full URL if it is remote"""
         self.pageid = uidgen()
+        self.url = url
         register_new_page(self.pageid)
         self.tree = HTMLTreeBuilder.parse(filehandle)
         # The security module removes all kinds of potential security holes
@@ -40,10 +42,11 @@ class CrunchyPage(object):
         self.included = set([])
         self.head = self.tree.find("head")
         self.body = self.tree.find("body")
+        self.process_tags()
         # we have to check wether there is a body element
         # because sometimes there is just a frameset elem.
         if self.body:
-            self.process_body()
+            self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         else:
             print "No body, assuming frameset"
         self.add_js_code(comet_js)
@@ -80,10 +83,10 @@ class CrunchyPage(object):
         css.text = code
         self.head.insert(0, css)
 
-    def process_body(self):
-        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
+    def process_tags(self):
+        """process all the customised tags in the page"""
         for tag in CrunchyPage.handlers:
-            for elem in self.body.getiterator(tag):
+            for elem in self.tree.getiterator(tag):
                 if "title" in elem.attrib:
                     keyword = elem.attrib["title"].split(" ")[0]
                     if keyword in CrunchyPage.handlers[tag]:
@@ -91,7 +94,7 @@ class CrunchyPage(object):
                                          self.pageid + ":" + uidgen(),
                                          elem.attrib["title"].lower())
         for tag in CrunchyPage.null_handlers:
-            for elem in self.body.getiterator(tag):
+            for elem in self.tree.getiterator(tag):
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
                                                       ":" + uidgen(), None)
 
