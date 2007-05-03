@@ -48,7 +48,6 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
         code = "\n"
     inp.text = code
     CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
-    return editor_id
 
 def insert_editor(page, elem, uid, vlam):
     """handles the editor widget"""
@@ -74,7 +73,7 @@ def insert_editor(page, elem, uid, vlam):
         elem.insert(0, markup)
     elif "no-copy" in vlam:
         code = "\n"
-    editor_id = CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
+    CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
@@ -91,7 +90,7 @@ def insert_editor(page, elem, uid, vlam):
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
-    
+
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required
