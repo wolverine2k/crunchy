@@ -9,7 +9,8 @@ import doctest
 import os.path
 
 test_files = ["test_colourize.txt",
-              "test_pluginloader.txt" ]
+              "test_pluginloader.txt",
+              "test_file_service.txt" ]
 
 for t in test_files:
    failure, nb_tests = doctest.testfile("tests" + os.path.sep + t)

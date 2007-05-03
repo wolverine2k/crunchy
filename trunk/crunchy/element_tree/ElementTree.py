@@ -696,6 +696,7 @@ class ElementTree:
                 for k, v in xmlns_items:
                     file.write(" %s=\"%s\"" % (_encode(k, encoding),
                                                _escape_attrib(v, encoding)))
+            ### following line modified from original for Crunchy
             if node.text != None or len(node):
                 file.write(">")
                 if node.text:
@@ -1041,6 +1042,7 @@ class TreeBuilder:
         return self._last
 
     def _flush(self):
+        ### following line modified from original for Crunchy
         if self._data != None:
             if self._last is not None:
                 text = string.join(self._data, "")
