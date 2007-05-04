@@ -3,7 +3,7 @@
 <head>
 <title>Doctest Test</title></head>
 <body>
-<h1>Crunchy Frog Doctest Test</h1>
+<h1>Crunchy Doctest Test</h1>
 <p>Here's a Doctest box:</p>
 <pre title="doctest">
 
@@ -15,18 +15,19 @@
 ['Piglet']
 
 </pre>
+<p>Try entering some code in the editor above so that it satisfies the doctest.</p>
 <p>This should generate a syntax error if using a version of Python older than 2.5:</p>
-<pre>
+<pre title="py_code">
 class Animal():
     pass
 </pre>
 <p>This should compile but not satisfy the doctest:</p>
-<pre>
+<pre title="py_code">
 class Animal:
     pass
 </pre>
 <p>And this should work:</p>
-<pre>
+<pre title="py_code">
 class Animal:
     def __init__(self, name):
         self.name = name
