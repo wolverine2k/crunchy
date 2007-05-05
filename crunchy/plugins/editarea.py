@@ -11,15 +11,16 @@ from element_tree import ElementTree as et
 language = "en"
 
 # placeholder for future translation service...
-def _(data):
-    return data
+_ = None
 
 provides = set(["editarea"])
-requires = set(["/save_file", "/load_file"])
+requires = set(["/save_file", "/load_file", "translation"])
 
 def register():
+    global _
     CrunchyPlugin.register_service(enable_editarea, "enable_editarea")
-
+    _ = CrunchyPlugin.services._
+    
 def enable_editarea(page, elem, uid, textarea_id):
     """enables an editarea editor on a given element (textarea) of a page.
     """
