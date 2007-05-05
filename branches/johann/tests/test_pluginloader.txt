@@ -99,32 +99,3 @@ so far.
     >>> set_a.add(req_c_g_prov_d_e_f); set_a.add(prov_g); set_a.add(prov_b_c)
     >>> a_list = pl.gen_register_list(set_a)
     >>> test_ordering(a_list)
-
-================
-
-We use the self-testing function example included in pluginloader.py
-as a documentation test.  Note that the output for this test will have
-to be updated each time we add a new plugin.  It is meant as a test to
-ensure that the file would not have been edited by accident.
-
-Note that we use the ELLIPSIS directive for doctest, as we do not know
-what the actual path (2nd line of the output) would be used when
-this test will be run.
-
-    >>> pl.init_plugin_system(["testplugins"]) # doctest:+ELLIPSIS
-    Importing plugins
-    Root path is .../server_root/
-    Registering plugins
-      * Registered execution
-      * Registered editarea
-      * Registered graphics
-      * Registered handle_default
-      * Registered handle_remote
-      * Registered io_widget
-      * Registered links
-      * Registered settings
-      * Registered translation
-      * Registered colourize
-      * Registered vlam_editor
-      * Registered vlam_doctest
-      * Registered vlam_interpreter

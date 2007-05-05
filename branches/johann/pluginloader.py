@@ -11,7 +11,7 @@ import CrunchyPlugin
 
 def gen_register_list(initial_list):
     """generates a registration ordering from the dependencies.
-    it could happen that some plugin would require (at loading time)
+    It could happen that some plugin would require (at loading time)
     some services provided by others.
     This function ensures that plugin will be loaded so as
     to ensure that "required" plugins are loaded before "requiring" ones.

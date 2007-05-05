@@ -11,11 +11,16 @@ def register():
     # no callbacks to register or initialisation needed
     pass
 
-def init_graphics():
+def init_graphics(width=400, height=400, border_color='red'):
     uid = __cp.get_uid()
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").style.display = "block";
-                             document.getElementById("canvas_%s").getContext('2d').clearRect(0, 0, 400, 400);
-                          """ % (uid, uid))
+    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").width=%d;
+                    document.getElementById("canvas_%s").height=%d;
+                    document.getElementById("canvas_%s").style.display = "block";
+                    document.getElementById("canvas_%s").getContext('2d').clearRect(0, 0, %d, %d);
+                    """ % (uid, width, uid, height, uid, uid, width, height))
+    set_line_colour('%s'%border_color)
+    rectangle((0, 0), width, height)
+    set_line_colour('black')
 
 def set_line_colour(col):
     uid = __cp.get_uid()
