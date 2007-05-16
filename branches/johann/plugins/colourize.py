@@ -19,15 +19,14 @@ import tokenize
 
 from element_tree import ElementTree as et
 
-_ = None
-
 #---------begin plugin specific---------------------
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
+_ = CrunchyPlugin._
+
 # The set of other "widgets/services" provided by this plugin
 provides = set(["style_pycode"])
-requires = set(["translation"])
 
 def register():
     """The register() function is required for all plugins.
@@ -36,9 +35,7 @@ def register():
           interpret the special Crunchy markup with 4 different cases;
        2. a custom service to style some code when requested by this or
           another plugin.
-       And we need to update the translation function.
        """
-    global _
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.
@@ -51,8 +48,7 @@ def register():
     CrunchyPlugin.register_service(service_style, "style_pycode")
     # ... or the simulated interactive session, usable as a doctest.
     CrunchyPlugin.register_service(service_style_nostrip, "style_pycode_nostrip")
-    # and the translation function:
-    _ = CrunchyPlugin.services._
+
 
 
 def plugin_style(page, elem, uid, vlam):

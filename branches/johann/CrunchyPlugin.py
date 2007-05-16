@@ -9,11 +9,12 @@ import random
 import vlam
 import cometIO
 import PluginServices as services
+from translation import _
 
 __all__=["register_http_handler", "register_vlam_handler",
          "create_vlam_page", "exec_code", "register_service", "services",
          "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
-         "gen_uid"]
+         "gen_uid", "_"]
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.

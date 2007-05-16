@@ -4,23 +4,20 @@ simple textarea.
 
 import CrunchyPlugin
 
+_ = CrunchyPlugin._
+
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree as et
 
 # for now, this is just a default
 language = "en"
 
-# placeholder for future translation service...
-_ = None
-
 provides = set(["editarea"])
-requires = set(["/save_file", "/load_file", "translation"])
+requires = set(["/save_file", "/load_file"])
 
 def register():
-    global _
     CrunchyPlugin.register_service(enable_editarea, "enable_editarea")
-    _ = CrunchyPlugin.services._
-    
+
 def enable_editarea(page, elem, uid, textarea_id):
     """enables an editarea editor on a given element (textarea) of a page.
     """

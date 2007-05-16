@@ -6,14 +6,8 @@ from dircache import listdir, annotate
 
 from CrunchyPlugin import *
 
-requires = set(["translation"])
-
-_ = None
-
 def register():
-    global _
     register_http_handler(None, handler)
-    _ = services._
     
 def path_to_filedata(path, root):
     """

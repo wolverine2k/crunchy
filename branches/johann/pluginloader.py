@@ -35,6 +35,7 @@ def gen_register_list(initial_list):
                 initial_list.remove(mod)
                 found_this_iter = True
                 break
+    print initial_list
     return final_list
 
 def gen_plugin_list():
