@@ -37,7 +37,10 @@ def path_to_filedata(path, root):
         try:
             if npath.endswith(".html") or npath.endswith(".htm"):
                 return create_vlam_page(open(npath), path).read()
-            return open(npath).read()
+            # we need binary mode because otherwise the file doesn't get read properly on windows
+            fhandle = open(npath, mode="rb")
+            data = fhandle.read()
+            return data
         except IOError:
             print "can not open path = ", npath
             return error_page(path)
