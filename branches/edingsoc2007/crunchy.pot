@@ -1,0 +1,67 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2007-05-05 10:14+BST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: plugins/colourize.py:551
+msgid ""
+"Parsing error occurred in the following Python code.\n"
+"Info: %s."
+msgstr ""
+
+#: plugins/editarea.py:70
+msgid "Load Python file"
+msgstr ""
+
+#: plugins/editarea.py:73 plugins/editarea.py:96
+msgid "Cancel"
+msgstr ""
+
+#: plugins/editarea.py:88
+msgid "Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally."
+msgstr ""
+
+#: plugins/editarea.py:93
+msgid "Save Python file"
+msgstr ""
+
+#: plugins/editarea.py:100
+msgid "Save and Run"
+msgstr ""
+
+#: plugins/handle_default.py:67
+msgid "Directory Listing"
+msgstr ""
+
+#: plugins/handle_default.py:113
+msgid "Illegal path, page not found."
+msgstr ""
+
+#: plugins/handle_default.py:114
+msgid "Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"
+msgstr ""
+
+#: plugins/handle_default.py:115
+msgid "The page doesn't exist."
+msgstr ""
+
+#: plugins/handle_default.py:116
+msgid "The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."
+msgstr ""
+
+#: plugins/handle_default.py:117
+msgid "The path you requested was: "
+msgstr ""
+
