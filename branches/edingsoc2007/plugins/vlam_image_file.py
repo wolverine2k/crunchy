@@ -32,7 +32,8 @@ def register():
        """
     # 'editor' only appears inside <pre> elements, using the notation
     # <pre title='editor ...'>
-    CrunchyPlugin.register_vlam_handler("pre", "image_file", insert_image_file)
+    CrunchyPlugin.register_vlam_handler("pre", "image_file",
+                                            insert_image_file)
 
 def insert_image_file(page, elem, uid, vlam):
     """handles the editor widget"""
@@ -82,7 +83,7 @@ def insert_image_file(page, elem, uid, vlam):
     img.attrib['id'] = 'img_' + uid
     img.attrib['src'] = ''
     img.attrib['alt'] = 'The code above should create a file named ' +\
-                        img_fname
+                        img_fname + '.'
     et.SubElement(elem, "br")
     # we need some unique javascript in the page; note how the
     # "/exec" are referred to above as required
@@ -91,8 +92,9 @@ def insert_image_file(page, elem, uid, vlam):
 
     image_jscode = """
 function image_exec_code(uid){
+    var now = new Date();
+    img_path = "/working_images/%(img_fname)s?" + now.getTime();
     img = document.getElementById("img_"+uid);
-    img.src = "";
 
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
@@ -101,11 +103,12 @@ function image_exec_code(uid){
     j.send(code);
 
     // This is needed to reload the new image
-    j.open("GET", "/working_images/%(img_fname)s", false);
+    j.open("GET", img_path, false);
     j.send(null);
 
-    img.src = "/working_images/%(img_fname)s";
+    img.src = img_path;
     img.alt = "If you see this message, then the code above doesn't work.";
+    img.alt = img.alt + "  It should generate the file %(img_fname)s";
 };
 """
 
