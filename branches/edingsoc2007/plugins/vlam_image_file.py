@@ -19,8 +19,8 @@ et = ElementTree
 # The set of other "widgets/services" provided by this plugin
 provides = set(["image_file_widget"])
 # The set of other "widgets/services" required from other plugins
-requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
-               "editarea"])
+requires = set(["io_widget", "/exec", "style_pycode",
+               "editor_widget"])
 
 def register():
     """The register() function is required for all plugins.
@@ -34,27 +34,9 @@ def register():
     # <pre title='editor ...'>
     CrunchyPlugin.register_vlam_handler("pre", "image_file", insert_image_file)
 
-def insert_editor_subwidget(page, elem, uid, code="\n"):
-    """inserts an Elementtree that is an editor,
-    used to provide a basic insert_editor_subwidget service
-    """
-    inp = et.SubElement(elem, "textarea")
-    inp.attrib["rows"] = "10"
-    inp.attrib["cols"] = "80"
-    editor_id = "code_" + uid
-    inp.attrib["id"] = editor_id
-    if code == "":
-        code = "\n"
-    inp.text = code
-    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
-
 def insert_image_file(page, elem, uid, vlam):
     """handles the editor widget"""
-    # first we need to make sure that the required javacript code is in the page:
-    if not page.includes("image_included"):
-        page.add_include("image_included")
-        page.add_js_code(image_jscode)
-    # then we can go ahead and add html markup, extracting the Python
+    # We add html markup, extracting the Python
     # code to be executed in the process
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)
 
@@ -73,7 +55,7 @@ def insert_image_file(page, elem, uid, vlam):
     elif "no-copy" in vlam:
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
-    #some spacing:
+    # some spacing:
     et.SubElement(elem, "br")
     # the actual button used for code execution:
     btn = et.SubElement(elem, "button")
@@ -98,32 +80,36 @@ def insert_image_file(page, elem, uid, vlam):
     else:
         img = et.SubElement(elem, "img")
     img.attrib['id'] = 'img_' + uid
-    img.attrib['src'] = '/working_images/' + img_fname
+    img.attrib['src'] = ''
     img.attrib['alt'] = 'The code above should create a file named ' +\
                         img_fname
     et.SubElement(elem, "br")
+    # we need some unique javascript in the page; note how the
+    # "/exec" are referred to above as required
+    # services appear here
+    # with a random session id appended for security reasons.
 
-
-
-# we need some unique javascript in the page; note how the
-# "/exec"  and /run_external handlers referred to above as required
-# services appear here
-# with a random session id appended for security reasons.
-
-image_jscode = """
+    image_jscode = """
 function image_exec_code(uid){
+    img = document.getElementById("img_"+uid);
+    img.src = "";
+
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%(session_id)s?uid="+uid, false);
     code = '%(pre_code)s' + code + '%(post_code)s';
     j.send(code);
-    img = document.getElementById("img_"+uid);
-    img.src = img.src;
+
+    // This is needed to reload the new image
+    j.open("GET", "/working_images/%(img_fname)s", false);
+    j.send(null);
+
+    img.src = "/working_images/%(img_fname)s";
     img.alt = "If you see this message, then the code above doesn't work.";
 };
 """
 
-image_jscode = image_jscode%{
+    image_jscode = image_jscode%{
     "session_id": CrunchyPlugin.session_random_id,
 
     "pre_code":\
@@ -137,4 +123,11 @@ os.chdir("server_root/working_images")
 """
 os.chdir(__current)
 """.replace('\n', '\\n'),
+    "img_fname": img_fname,
 }
+
+    # At the end we need to make sure that the required javacript code is
+    # in the page.
+    if not page.includes("image_included"):
+        page.add_include("image_included")
+        page.add_js_code(image_jscode)
