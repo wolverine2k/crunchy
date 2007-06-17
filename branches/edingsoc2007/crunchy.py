@@ -25,6 +25,15 @@ def find_port(start):
     return finalport
 
 def run_crunchy():
+    # cleaning up the previous session(s)
+    import os
+    olddir = os.getcwd()
+    dir = 'server_root/working_images'
+    os.chdir(dir)
+    for fname in os.listdir('.'):
+        os.remove(fname)
+    os.chdir(olddir)
+
     port = find_port(8002)
     print "Serving on port %s." % port
     server = http_serve.MyHTTPServer(('127.0.0.1', port), http_serve.HTTPRequestHandler)
