@@ -31,6 +31,8 @@ def run_crunchy():
     dir = 'server_root/working_images'
     os.chdir(dir)
     for fname in os.listdir('.'):
+        if fname.startswith('.'):
+            continue
         os.remove(fname)
     os.chdir(olddir)
 

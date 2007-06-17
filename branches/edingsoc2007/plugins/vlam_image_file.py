@@ -119,7 +119,7 @@ function image_exec_code(uid){
     j.send(code);
     img = document.getElementById("img_"+uid);
     img.src = img.src;
-    img.alt = 'If you see this message, then the code above doesn't work.'
+    img.alt = "If you see this message, then the code above doesn't work.";
 };
 """
 
