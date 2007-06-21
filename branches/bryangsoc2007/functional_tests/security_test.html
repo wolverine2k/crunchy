@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Crunchy Security Test</title>
+<script>
+function security_breach1(){
+	alert("This is security breach #1");
+};
+
+alert("this is security breach #2");
+</script>
+</head>
+<body onload="alert('security breach #3')">
+<h1>The Crunchy Security tests</h1>
+<p>No javascript should survive on this page from the original document.</p>
+<script>document.write("security breach #4")</script>
+<a href="javascript:security_breach1()">Click Here!</a>
+<h2>Bugs</h2>
+<ul>
+  <li>There are no known security bugs.</li>
+</ul>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
