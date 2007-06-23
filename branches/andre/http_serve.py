@@ -1,8 +1,8 @@
 """
-serve HTTP in a beautiful threaded way, allowing requests to branch 
+serve HTTP in a beautiful threaded way, allowing requests to branch
 off into new threads and handling URL's automagically
 This was built for Crunchy - and it rocks!
-In some ways it is more restrictive than the default python HTTPserver - 
+In some ways it is more restrictive than the default python HTTPserver -
 for instance, it can only handle GET and POST requests.
 """
 
@@ -18,37 +18,41 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
         self.default_handler = None
         self.handler_table = {}
         HTTPServer.__init__(self, addr, rqh)
-        
+
     def register_default_handler(self, handler):
         """register a default handler"""
         self.default_handler = handler
-    
+
     def register_handler(self, handler, path):
         """
         register a handler function
         the function should be of the form: handler(request)
         """
         self.handler_table[path] = handler
-    
+
     def register_handler_instance(self, handlerinstance):
-        """register a handler class instance, 
+        """register a handler class instance,
         the instance functions should be of the form: class.handler(self, request)
         and should have as their docstring the path they want to handle
         """
         pass
-    
+
     def get_handler(self, path):
         """returns none if no handler registered"""
+        print "get_handler in http_serve.py; path = ", path
         if path in self.handler_table:
             return self.handler_table[path]
         else:
             return self.default_handler
-            
+
 class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
+
+        print "inside do_POST; realpath = ", realpath
+
         argstring = ""
         self.args = {}
         # if there is a ? in the path then there are some arguments, extract them and set the path
@@ -77,11 +81,12 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(format_exc())
-        
+
     def do_GET(self):
         """the same as GET, we draw no distinction"""
+        print "inside do_GET; self.path = ", self.path
         self.do_POST()
-        
+
     def send_response(self, code):
         BaseHTTPRequestHandler.send_response(self, code)
         self.send_header("Connection", "close")

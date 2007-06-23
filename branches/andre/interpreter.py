@@ -41,6 +41,7 @@ class Interpreter(threading.Thread):
             sys.stdin.unregister_thread()
             sys.stdout.unregister_thread()
             sys.stderr.unregister_thread()
+            print "finished run with channel=", self.channel
 
 
 class Borg(object):
@@ -69,4 +70,3 @@ class Borg(object):
 class BorgConsole(Borg, InteractiveConsole):
     def __init__(self):
         InteractiveConsole.__init__(self)
-

@@ -1,5 +1,5 @@
 """
-Handles all the Output - ie. is used to push javascript code 
+Handles all the Output - ie. is used to push javascript code
 to the page asynchronously.
 Also handles the redirection of stdin, stdout and stderr.
 """
@@ -11,7 +11,7 @@ import sys
 debug_enabled = False
 
 class StringBuffer(object):
-    """A thread safe buffer used to queue up strings that can be appended 
+    """A thread safe buffer used to queue up strings that can be appended
     together, I've left this in a separate class because it might one day be
     useful someplace else"""
     def __init__(self):
@@ -73,7 +73,7 @@ class CrunchyIOBuffer(StringBuffer):
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
         self.lock.release()
-    
+
 # there is one CrunchyIOBuffer for output per page:
 output_buffers = {}
 # and one StringBuffer per input widget:
@@ -95,21 +95,21 @@ def comet(request):
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
     output_buffers[pageid] = CrunchyIOBuffer()
-    
+
 def write_js(pageid, jscode):
     """write some javascript to a page"""
     output_buffers[pageid].put(jscode)
-    
+
 def write_output(pageid, uid, output):
     output_buffers[pageid].put_output(output, uid)
-    
+
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment).
     """
     t = interpreter.Interpreter(code, uid)
     t.setDaemon(True)
     t.start()
-    
+
 def push_input(request):
     """An http request handler to deal with stdin"""
     uid = request.args["uid"]
@@ -119,20 +119,20 @@ def push_input(request):
     input_buffers[uid].put(request.data)
     request.send_response(200)
     request.end_headers()
-    
+
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
     def __init__(self, out_buf=None, in_buf=None, buf_class="STDOUT"):
         """Initialise the object,
         out_buf is the default output stream, in_buf is input
-        buf_class is a class to apply to the output - redirected output can be 
+        buf_class is a class to apply to the output - redirected output can be
         put in an html <span /> element with class=buf_class.
         Interestingly, having two threads with the same uids shouldn't break anything :)
         """
         self.default_out = out_buf
         self.default_in = in_buf
         self.buf_class = buf_class
-        
+
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
         pageid = uid.split(":")[0]
@@ -141,7 +141,7 @@ class ThreadedBuffer(object):
         input_buffers[uid] = StringBuffer()
         # display the input box and reset the output:
         output_buffers[pageid].put(reset_js % (uid, uid, uid))
-        
+
     def unregister_thread(self):
         """
         Uregister the current thread.
@@ -156,8 +156,8 @@ class ThreadedBuffer(object):
         del input_buffers[uid]
         # hide the input box:
         output_buffers[pageid].put("""document.getElementById("in_%s").style.display="none";""" % uid)
-        
-        
+
+
     def write(self, data):
         """write some data"""
         uid = threading.currentThread().getName()
@@ -166,35 +166,35 @@ class ThreadedBuffer(object):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data)
-        
+
     def read(self, length=0):
         """len is ignored, N.B. this function is rarely, if ever, used - and is probably untested"""
         uid = threading.currentThread().getName()
-        if self.__redirect(uid): 
+        if self.__redirect(uid):
             #read the data
             data = input_buffers[uid].get()
         else:
             data = self.default_in.read()
         return data
-        
+
     def readline(self, length=0):
         """len is ignored, can block, complex and oft-used, needs a testcase"""
         uid = threading.currentThread().getName()
-        if self.__redirect(uid): 
+        if self.__redirect(uid):
             data = input_buffers[uid].getline()
         else:
             data = self.default_in.readline()
         return data
-        
+
     def __redirect(self, uid):
         """decide if the thread with uid uid should be redirected"""
         t = uid in input_buffers
         return t
-    
+
     def default_write(self, data):
         """write to the default output"""
         self.default_out.write(data)
-        
+
 def debug_msg(data):
     """write a debug message, debug messages always appear on stderr"""
     if debug_enabled:

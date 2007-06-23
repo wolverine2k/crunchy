@@ -11,7 +11,7 @@ def register():
     cp.register_vlam_handler("a", None, link_handler)
     cp.register_vlam_handler("img", None, src_handler)
     cp.register_vlam_handler("link", None, href_handler)
-    
+
 def link_handler(page, elem, uid, vlam):
     """convert remote links if necessary, need to deal with all links in remote pages"""
     if is_remote_url(page.url) and "href" in elem.attrib:
@@ -21,13 +21,14 @@ def link_handler(page, elem, uid, vlam):
         href = elem.attrib["href"]
         if "://" in href:
             elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
-        
+
 def src_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an src attribute"""
+    print "calling src_handler; src = ", elem.attrib["src"]
     if is_remote_url(page.url) and "src" in elem.attrib:
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
-        
+
 def href_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an href attribute"""
     print "link_handler"
@@ -38,3 +39,4 @@ def href_handler(page, elem, uid, vlam):
 def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")
+

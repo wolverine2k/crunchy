@@ -23,7 +23,16 @@ def path_to_filedata(path, root):
     """
     if path.find("/../") != -1:
         return error_page(path)
-    npath = normpath(join(root, normpath(path[1:])))
+    print "inside path_to_filedata; path = ", path
+    if path.startswith("/CrunchyTempDir"):
+        path = path.replace("/CrunchyTempDir", '')
+        npath = path
+        print "inside path_to_filedata:"
+        print "  path = ", path
+        print "  npath = ", npath
+        print "  ==="
+    else:
+        npath = normpath(join(root, normpath(path[1:])))
     if isdir(npath):
         if path[-1] != "/":
             return None
@@ -35,7 +44,7 @@ def path_to_filedata(path, root):
                 return create_vlam_page(open(npath), path).read()
             return open(npath).read()
         except IOError:
-            print "can not open path = ", npath
+            print "in path_to_filedata, can not open path = ", npath
             return error_page(path)
 
 def handler(request):
