@@ -13,7 +13,9 @@ alert("this is security breach #2");
 <h1>The Crunchy Security tests</h1>
 <p>No javascript should survive on this page from the original document.  If some did, you should have seen some "alerts" appearing, or the "Click here" text below should be an active link triggering an alert.</p>
 <script>document.write("security breach #4")</script>
-<a href="javascript:security_breach1()">Click Here!</a>
+<a href="javascript:security_breach1()">Click Here!</a><br>
+<a href="javas
+cript:alert(&quot;security breach #5&quot;)">Click Here!</a>
 <h2>Bugs</h2>
 <ul>
   <li>There are no known security bugs in the security model used for Crunchy. It consists of two main parts:
