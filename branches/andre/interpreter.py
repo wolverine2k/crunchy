@@ -2,19 +2,14 @@ import threading, sys
 from code import InteractiveConsole
 from traceback import print_exc
 
-interp_code = """
-BorgConsole().interact()
-"""
-
 class Interpreter(threading.Thread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = {}, doctest=False):
+    def __init__(self, code, channel, symbols = {}):
         threading.Thread.__init__(self)
         self.code = code
         self.channel = channel
-        self._doctest = doctest
         self.symbols = symbols
 
     def run(self):
