@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Image Test</title></head>
+<body>
+<h1>Image test</h1>
+<p>Quick test file to test loading image code.</p>
+<pre title="image_file foo.png">
+# assumes matplotlib is installed
+import pylab
+#pylab.clf() # clears the figure; useful for multiple runs
+pylab.plot([1,2,1])
+pylab.savefig('foo.png')
+</pre>
+
+<p>Another example to make sure that multiple images can be generated on a single page.</p>
+<pre title="image_file foo2.png">
+# assumes matplotlib is installed
+import pylab
+#pylab.clf() # clears the figure; useful for multiple runs
+pylab.plot([1,3,1])
+pylab.savefig('foo2.png')
+</pre>
+
+<p>This example has no image name specified; The code should
+be simply styled, and an error message should be written below.</p>
+<pre title="image_file">
+# assumes matplotlib is installed
+import pylab
+#pylab.clf() # clears the figure; useful for multiple runs
+pylab.plot([1,2,1])
+pylab.savefig('no_name.png')
+</pre>
+
+<h2>Bugs</h2>
+<ul>
+  <li>With these matplotlib example, we need to run the code twice to make an image appear or be redrawn properly.</li>
+<li>The image generated do not appear to be independent one from another; this would seem to indicate that, somehow, we have a single matplotlib (pylab) session working in both threads.</li>
+</ul>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
