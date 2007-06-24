@@ -24,14 +24,12 @@ def link_handler(page, elem, uid, vlam):
 
 def src_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an src attribute"""
-    print "calling src_handler; src = ", elem.attrib["src"]
     if is_remote_url(page.url) and "src" in elem.attrib:
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
 
 def href_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an href attribute"""
-    print "link_handler"
     if is_remote_url(page.url) and "href" in elem.attrib:
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])

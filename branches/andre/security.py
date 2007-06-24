@@ -164,7 +164,7 @@ def remove_unwanted(tree):
                 if attr[0].lower() not in specific_allowed[tag]:
                     del element.attrib[attr[0]]
                 elif attr[0].lower() == 'href':
-                    if urllib.unquote_plus(attr[1]).startswith("javascript:"):
+                    if urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","").startswith("javascript:"):
                         del element.attrib[attr[0]]
 # Trying to prevent a XSS vulnerability through
 # <STYLE>BODY{-moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>

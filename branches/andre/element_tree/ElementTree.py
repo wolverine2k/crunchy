@@ -1050,12 +1050,10 @@ class TreeBuilder:
             if self._last is not None:
                 text = string.join(self._data, "")
                 if self._tail:
-                    # remove the assertion for Crunchy, given the above change
-                    #assert self._last.tail is None, "internal error (tail)"
+                    assert self._last.tail is None, "internal error (tail)"
                     self._last.tail = text
                 else:
-                    # remove the assertion for Crunchy, given the above change
-                    #assert self._last.text is None, "internal error (text)"
+                    assert self._last.text is None, "internal error (text)"
                     self._last.text = text
             self._data = []
 

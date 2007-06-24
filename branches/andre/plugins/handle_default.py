@@ -6,8 +6,6 @@ from dircache import listdir, annotate
 
 from CrunchyPlugin import *
 
-
-
 def register():
     register_http_handler(None, handler)
 
@@ -23,14 +21,9 @@ def path_to_filedata(path, root):
     """
     if path.find("/../") != -1:
         return error_page(path)
-    print "inside path_to_filedata; path = ", path
     if path.startswith("/CrunchyTempDir"):
         path = path.replace("/CrunchyTempDir", '')
         npath = path
-        print "inside path_to_filedata:"
-        print "  path = ", path
-        print "  npath = ", npath
-        print "  ==="
     else:
         npath = normpath(join(root, normpath(path[1:])))
     if isdir(npath):
@@ -117,7 +110,3 @@ Crunchy: Directory Listing
 
 def error_page(path):
     return illegal_paths_page % path
-
-
-
-
