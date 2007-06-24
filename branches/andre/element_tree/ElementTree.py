@@ -1042,15 +1042,20 @@ class TreeBuilder:
         return self._last
 
     def _flush(self):
-        ### following line modified from original for Crunchy
+        ### following line modified from original for Crunchy so that it
+        ## can display some non-compliant sites better
         if self._data != None:
+        # original:
+        #if self._data:
             if self._last is not None:
                 text = string.join(self._data, "")
                 if self._tail:
-                    assert self._last.tail is None, "internal error (tail)"
+                    # remove the assertion for Crunchy, given the above change
+                    #assert self._last.tail is None, "internal error (tail)"
                     self._last.tail = text
                 else:
-                    assert self._last.text is None, "internal error (text)"
+                    # remove the assertion for Crunchy, given the above change
+                    #assert self._last.text is None, "internal error (text)"
                     self._last.text = text
             self._data = []
 
