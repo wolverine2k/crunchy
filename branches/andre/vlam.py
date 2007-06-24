@@ -9,7 +9,7 @@ from StringIO import StringIO
 import security
 
 # Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
+from element_tree import ElementTree, HTMLTreeBuilder, ElementSoup
 et = ElementTree
 
 from cometIO import register_new_page
@@ -35,7 +35,9 @@ class CrunchyPage(object):
         self.pageid = uidgen()
         self.url = url
         register_new_page(self.pageid)
-        self.tree = HTMLTreeBuilder.parse(filehandle)
+        #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
+        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+        self.tree = et.ElementTree(html)
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
         self.tree = security.remove_unwanted(self.tree)
@@ -99,6 +101,14 @@ class CrunchyPage(object):
                     print "null_handler in vlam.py; src=", elem.attrib["src"]
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
                                                       ":" + uidgen(), None)
+        # experimental stuff: trying to put in an interpreter by default
+        # if a bare <pre> is encountered.
+        for elem in self.tree.getiterator("pre"):
+            if "title" not in elem.attrib:
+                elem.attrib["title"] = "interpreter"
+                CrunchyPage.handlers["pre"]["interpreter"](self, elem,
+                                            self.pageid + ":" + uidgen(),
+                                            elem.attrib["title"])
 
     def read(self):
         fake_file = StringIO()

@@ -61,7 +61,7 @@ import mimetools, StringIO
 
 import ElementTree
 
-AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body"
+AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body", "input" # "input" added by a.r.
 IGNOREEND = "img", "hr", "meta", "link", "br"
 
 if sys.version[:3] == "1.5":
@@ -167,17 +167,23 @@ class HTMLTreeBuilder(HTMLParser):
     def handle_endtag(self, tag):
         if tag in IGNOREEND:
             return
-    #### Crunchy modified code begins
-        if self.__stack:
-            lasttag = self.__stack.pop()
-        else:
-            return
-        # handle the case where lasttag was not properly closed:
-        if tag != lasttag:
-            self.__builder.end(lasttag)
-        else:
-            self.__builder.end(tag)
-    #### Crunchy modified code ends
+        # original code ---
+        lasttag = self.__stack.pop()
+        if tag != lasttag and lasttag in AUTOCLOSE:
+            self.handle_endtag(lasttag)
+        self.__builder.end(tag)
+        # end of original code ---
+##        #### Crunchy alternative code begins
+##        if self.__stack:
+##            lasttag = self.__stack.pop()
+##        else:
+##            return
+##        # handle the case where lasttag was not properly closed:
+##        if tag != lasttag:
+##            self.__builder.end(lasttag)
+##        else:
+##            self.__builder.end(tag)
+##        #### Crunchy alternative code ends
 
     ##
     # (Internal) Handles character references.
