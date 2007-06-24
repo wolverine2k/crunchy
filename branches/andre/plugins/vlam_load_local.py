@@ -16,7 +16,7 @@ from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
 
 # The set of other "widgets/services" required from other plugins
-requires = set(["/remote"])
+requires = set(["/local"])
 
 def register():
     """The register() function is required for all plugins.
@@ -39,7 +39,7 @@ def insert_load_local(page, parent, uid, vlam):
     br = et.SubElement(form1, 'br')
 
     form2 = et.SubElement(parent, 'form', name=name2, method='get',
-                action='/remote')
+                action='/local')
     input2 = et.SubElement(form2, 'input', type='hidden', name='url')
     input3 = et.SubElement(form2, 'input', type='submit',
              value='Load local tutorial')

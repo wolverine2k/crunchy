@@ -30,9 +30,10 @@ class CrunchyPage(object):
     handlers = {}
     pagehandlers = []
     null_handlers = {}
-    def __init__(self, filehandle, url, remote=False):
+    def __init__(self, filehandle, url, remote=False, local=False):
         """url should be just a path if crunchy accesses the page locally, or the full URL if it is remote"""
-        self.is_remote = remote
+        self.is_remote = remote # True if remote tutorial, on the web
+        self.is_local = local  # True if local tutorial, not from the server root
         self.pageid = uidgen()
         self.url = url
         register_new_page(self.pageid)

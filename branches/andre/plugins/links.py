@@ -22,13 +22,19 @@ def link_handler(page, elem, uid, vlam):
         href = elem.attrib["href"]
         if "://" in href:
             elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+    if page.is_local and "href" in elem.attrib:
+        if "#" in elem.attrib["href"]:
+            return
+        if "://" not in elem.attrib["href"]:
+            href = urljoin(page.url, elem.attrib["href"])
+            elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
 
 def src_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an src attribute"""
     if is_remote_url(page.url) and "src" in elem.attrib:
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
-    elif page.is_remote: # this is how locally loaded tutorials are identified at the moment
+    elif page.is_local:
         local_dir = os.path.split(page.url)[0]
         elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
                                             local_dir, elem.attrib["src"])

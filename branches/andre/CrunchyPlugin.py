@@ -44,9 +44,9 @@ def register_page_handler(handler):
     """register a callback that is called when each page is created"""
     vlam.CrunchyPage.pagehandlers.append(handler)
 
-def create_vlam_page(filehandle, url, remote=False):
+def create_vlam_page(filehandle, url, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
-    return vlam.CrunchyPage(filehandle, url, remote=remote)
+    return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
 
 def exec_code(code, uid):
     """execute some code in a given uid"""
