@@ -6,6 +6,7 @@ import urllib
 
 import CrunchyPlugin as cp
 from urlparse import urljoin
+import os
 
 def register():
     cp.register_vlam_handler("a", None, link_handler)
@@ -27,7 +28,10 @@ def src_handler(page, elem, uid, vlam):
     if is_remote_url(page.url) and "src" in elem.attrib:
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
-
+    elif page.is_remote: # this is how locally loaded tutorials are identified at the moment
+        local_dir = os.path.split(page.url)[0]
+        elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
+                                            local_dir, elem.attrib["src"])
 def href_handler(page, elem, uid, vlam):
     """used in remote pages for elements that have an href attribute"""
     if is_remote_url(page.url) and "href" in elem.attrib:

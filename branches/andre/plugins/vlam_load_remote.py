@@ -29,7 +29,6 @@ def register():
     CrunchyPlugin.register_vlam_handler("span", "load_remote", insert_load_remote)
 
 def insert_load_remote(page, parent, uid, vlam):
-    print "parent.text = ", parent.text
     form = et.SubElement(parent, 'form', name='url', size='80', method='get',
                        action='/remote')
     input1 = et.SubElement(form, 'input', name='url', size='80',

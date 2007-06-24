@@ -24,6 +24,9 @@ def path_to_filedata(path, root):
     if path.startswith("/CrunchyTempDir"):
         path = path.replace("/CrunchyTempDir", '')
         npath = path
+    elif path.startswith("/CrunchyLocalFile"):
+        path = path.replace("/CrunchyLocalFile", '')
+        npath = path
     else:
         npath = normpath(join(root, normpath(path[1:])))
     if isdir(npath):

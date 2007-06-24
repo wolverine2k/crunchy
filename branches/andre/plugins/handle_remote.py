@@ -12,7 +12,7 @@ def register():
 
 def remote_loader(request):
     url = unquote_plus(request.args["url"])
-    page = create_vlam_page(urlopen(url), url)
+    page = create_vlam_page(urlopen(url), url, remote=True)
     request.send_response(200)
     request.end_headers()
     request.wfile.write(page.read())
