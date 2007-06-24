@@ -2,19 +2,14 @@ import threading, sys
 from code import InteractiveConsole
 from traceback import print_exc
 
-interp_code = """
-BorgConsole().interact()
-"""
-
 class Interpreter(threading.Thread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = {}, doctest=False):
+    def __init__(self, code, channel, symbols = {}):
         threading.Thread.__init__(self)
         self.code = code
         self.channel = channel
-        self._doctest = doctest
         self.symbols = symbols
 
     def run(self):
@@ -33,7 +28,13 @@ class Interpreter(threading.Thread):
             if not self.ccode:    #code does nothing
                 return
             try:
-                exec self.ccode in self.symbols, {}
+                exec self.ccode in self.symbols#, {}
+                # note: previously, the "local" directory used for exec
+                # was simply an empty directory.  However, this meant that
+                # module names imported outside a function definition
+                # were not available inside that function.  This is why
+                # we have commented out the {} as a reminder; self.symbols
+                # will be used for holding both global and local variables.
             except:
                 print_exc()
                 raise
@@ -41,6 +42,7 @@ class Interpreter(threading.Thread):
             sys.stdin.unregister_thread()
             sys.stdout.unregister_thread()
             sys.stderr.unregister_thread()
+            print "finished run with channel=", self.channel
 
 
 class Borg(object):
@@ -69,4 +71,3 @@ class Borg(object):
 class BorgConsole(Borg, InteractiveConsole):
     def __init__(self):
         InteractiveConsole.__init__(self)
-

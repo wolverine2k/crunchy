@@ -25,7 +25,7 @@ def uidgen():
 
 class CrunchyPage(object):
     # handlers ::  string -> string -> handler function
-    # pagehandlers :: 
+    # pagehandlers ::
     # (sorry, a weird mix of haskell and OCaml notation in a python program :)
     handlers = {}
     pagehandlers = []
@@ -95,6 +95,8 @@ class CrunchyPage(object):
                                          elem.attrib["title"].lower())
         for tag in CrunchyPage.null_handlers:
             for elem in self.tree.getiterator(tag):
+                if "src" in elem.attrib:
+                    print "null_handler in vlam.py; src=", elem.attrib["src"]
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
                                                       ":" + uidgen(), None)
 
