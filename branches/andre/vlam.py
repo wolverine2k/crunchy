@@ -13,6 +13,7 @@ from element_tree import ElementTree, HTMLTreeBuilder, ElementSoup
 et = ElementTree
 
 from cometIO import register_new_page
+import configuration
 
 count = 0
 
@@ -101,14 +102,16 @@ class CrunchyPage(object):
             for elem in self.tree.getiterator(tag):
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
                                                       ":" + uidgen(), None)
-        # experimental stuff: trying to put in an interpreter by default
-        # if a bare <pre> is encountered.
-        for elem in self.tree.getiterator("pre"):
-            if "title" not in elem.attrib:
-                elem.attrib["title"] = "interpreter"
-                CrunchyPage.handlers["pre"]["interpreter"](self, elem,
-                                            self.pageid + ":" + uidgen(),
-                                            elem.attrib["title"])
+        # Crunchy can treat <pre> that have no markup as though they
+        # are marked up with a default value
+        n_m = configuration.defaults.no_markup
+        if n_m != 'none':
+            for elem in self.tree.getiterator("pre"):
+                if "title" not in elem.attrib:
+                    elem.attrib["title"] = n_m
+                    CrunchyPage.handlers["pre"][n_m](self, elem,
+                                                self.pageid + ":" + uidgen(),
+                                                elem.attrib["title"])
 
     def read(self):
         fake_file = StringIO()

@@ -8,6 +8,8 @@ import threading
 import interpreter
 import sys
 
+import configuration
+
 debug_enabled = False
 
 class StringBuffer(object):
@@ -106,7 +108,11 @@ def write_output(pageid, uid, output):
 def do_exec(code, uid):
     """exec code in a new thread (and isolated environment).
     """
-    t = interpreter.Interpreter(code, uid)
+    # configuration.defaults._prefix = '_crunchy_' is the
+    # instance name that can be used to get/set the various
+    # configuration variables from within a user-written program.
+    symbols = { configuration.defaults._prefix : configuration.defaults}
+    t = interpreter.Interpreter(code, uid, symbols=symbols)
     t.setDaemon(True)
     t.start()
 

@@ -69,5 +69,5 @@ class Borg(object):
 # with Firefox, we have problems with code execution....
 
 class BorgConsole(Borg, InteractiveConsole):
-    def __init__(self):
-        InteractiveConsole.__init__(self)
+    def __init__(self, locals={}):
+        InteractiveConsole.__init__(self, locals)
