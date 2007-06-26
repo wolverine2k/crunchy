@@ -3,12 +3,10 @@ simple textarea.
 """
 
 import CrunchyPlugin
+import configuration
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree as et
-
-# for now, this is just a default
-language = "en"
 
 # placeholder for future translation service...
 def _(data):
@@ -34,7 +32,8 @@ def enable_editarea(page, elem, uid, textarea_id):
         page.add_include("hidden_load_and_save")
         page.add_css_code(load_save_css)
     # element specific code
-    page.add_js_code(editAreaLoader_js%(textarea_id, language))
+    page.add_js_code(editAreaLoader_js%(textarea_id,
+                                configuration.defaults.editarea_language))
     add_hidden_load_and_save(elem, uid, textarea_id)
     return
 

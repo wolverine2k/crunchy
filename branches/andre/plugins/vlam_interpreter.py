@@ -57,7 +57,7 @@ def insert_interpreter(page, elem, uid, vlam):
 
 prefix = configuration.defaults._prefix
 
-crunchy_help = "Type [print %s.help] for more information."%prefix
+crunchy_help = "Type %s.help for more information."%prefix
 interp_js = r"""
 function init_interp(uid){
     code = "import configuration\n";

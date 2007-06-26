@@ -2,13 +2,37 @@ import threading, sys
 from code import InteractiveConsole
 from traceback import print_exc
 
+def trim_empty_lines_from_end(text):
+    '''remove blank lines at beginning and end of code sample'''
+    # this is needed to prevent indentation error if a blank line
+    # with spaces at different levels is inserted at the end or beginning
+    # of some code to be executed.
+    # The same function is found in the plugin colourize.py - however
+    # we can't import it here.
+    lines = text.split('\n')
+    top = 0
+    for line in lines:
+        if line.strip():
+            break
+        else:
+            top += 1
+    bottom = 0
+    for line in lines[::-1]:
+        if line.strip():
+            break
+        else:
+            bottom += 1
+    if bottom == 0:
+        return '\n'.join(lines[top:])
+    return '\n'.join(lines[top:-bottom])
+
 class Interpreter(threading.Thread):
     """
     Run python source asynchronously
     """
     def __init__(self, code, channel, symbols = {}):
         threading.Thread.__init__(self)
-        self.code = code
+        self.code = trim_empty_lines_from_end(code)
         self.channel = channel
         self.symbols = symbols
 
