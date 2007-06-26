@@ -1,16 +1,12 @@
 """This plugin provides tooltips for interpreters"""
 
 import CrunchyPlugin
-
+import interpreter
+import re
 from element_tree import ElementTree
 et = ElementTree
 
-# these have yet to be implemented
 provides = set(["/dir","/doc"])
-
-# what to insert
-#<div class="interp_tipbar" id="code3_tipbar"> </div>
-# onkeypress="interp_trapkeys(event, &quot;code3&quot;,&quot;Waiting...&quot;)"
 
 def register():
     # register service, /dir, and /doc
@@ -19,15 +15,13 @@ def register():
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
 
 def insert_tooltip(page, elem, uid):
-    print 'called insert_tooltip'
-
     # add div for displaying the tooltip
     tipbar = et.SubElement(elem, "div")
     tipbar.attrib["id"] = "tipbar_" + uid
     tipbar.attrib["class"] = "interp_tipbar"
 
     if not page.includes("tooltip_included"):
-    	print 'tooltip_included'
+        print 'tooltip_included'
         page.add_include("tooltip_included")
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
@@ -35,24 +29,46 @@ def insert_tooltip(page, elem, uid):
         # move javascript into a seperate file perhaps?
         #page.insert_js_file("/tooltip/tooltip.js")
 
-        #append_html
-        #append_html(get_pageid(), io_id, dialog_html)
+def get_global_dir(line):
+    """Examine a partial line and provide attr list of final expr without self.locals."""
+    line = re.split(r"\s", line)[-1].strip()
+    # Support lines like "thing.attr" as "thing.", because the browser
+    # may not finish calculating the partial line until after the user
+    # has clicked on a few more keys.
+    line = ".".join(line.split(".")[:-1])
+    try:
+        result = eval("dir(%s)" % line, {})
+    except:
+        return []
+    return result
 
 def dir_handler(request):
-    # send dir response
-    content = "dir_response"
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.write(content)
-    request.wfile.flush()
+    # return tooltip function list (after typing '.')
+    #result = interpreters.interps[request.args['name']].dir(request.args["line"])
+    result = get_global_dir(request.args["amp;line"])
+    if result == None:
+        request.send_response(204)
+        request.end_headers()
+    else:
+        #have to convert the list to a string
+        result = repr(result)
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write(result)
+        request.wfile.flush()
 
 def doc_handler(request):
-    # send doc response
-    content = "doc_response"
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.write(content)
-    request.wfile.flush()
+    # return tooltip function definition (after typing '(')
+    #result = interpreters.interps[request.args['name']].doc(request.args["line"])
+    result = 'Requested '+request.args["amp;line"]
+    if not result:
+        request.send_response(204)
+        request.end_headers()
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write(result)
+        request.wfile.flush()
 
 # css
 tooltip_css = """
@@ -77,54 +93,106 @@ tooltip_css = """
 }
 """
 
+# THIS CODE IS COPIED FROM THE OLD INTERPRETERS.PY
+def dir(self, line):
+    """Examine a partial line and provide attr list of final expr."""
+    line = re.split(r"\s", line)[-1].strip()
+    # Support lines like "thing.attr" as "thing.", because the browser
+    # may not finish calculating the partial line until after the user
+    # has clicked on a few more keys.
+    line = ".".join(line.split(".")[:-1])
+    try:
+        result = eval("dir(%s)" % line, {}, self.locals)
+    except:
+        return []
+    return result
+
+def doc(self, line):
+    """Examine a partial line and provide sig+doc of final expr."""
+    line = re.split(r"\s", line)[-1].strip()
+    # Support lines like "func(text" as "func(", because the browser
+    # may not finish calculating the partial line until after the user
+    # has clicked on a few more keys.
+    line = "(".join(line.split("(")[:-1])
+    try:
+        result = eval(line, {}, self.locals)
+        try:
+            if isinstance(result, type):
+                func = result.__init__
+            else:
+                func = result
+            args, varargs, varkw, defaults = inspect.getargspec(func)
+        except TypeError:
+            if callable(result):
+                doc = getattr(result, "__doc__", "") or ""
+                return "%s\n\n%s" % (line, doc)
+            return None
+    except:
+        return _('%s is not defined yet')%line
+
+    if args and args[0] == 'self':
+        args.pop(0)
+    missing = object()
+    defaults = defaults or []
+    defaults = ([missing] * (len(args) - len(defaults))) + list(defaults)
+    arglist = []
+    for a, d in zip(args, defaults):
+        if d is missing:
+            arglist.append(a)
+        else:
+            arglist.append("%s=%s" % (a, d))
+    if varargs:
+        arglist.append("*%s" % varargs)
+    if varkw:
+        arglist.append("**%s" % varkw)
+    doc = getattr(result, "__doc__", "") or ""
+    return "%s(%s)\n%s" % (line, ", ".join(arglist), doc)
+
 # javascript code
 tooltip_js = """
 
 var session_id = "%s";
 
-/*------------------------------- interpreter-------------------------------- */
-// "waiting" is a translatable string passed as a variable.
-function interp_trapkeys(event, interp_id, waiting){
-    switch(event.keyCode){
-        case 13:
-            hide_tipbar(interp_id);
-            //interp_push(interp_id, waiting);
-            break;
-        case 48:    //close )
-        case 8:    // backspace
+/*------------------------------- tooltip -------------------------------- */
+
+function tooltip_display(event, interp_id, waiting) {
+    switch(event.keyCode) {
+    	// BUG: pressing 'escape' breaks crunchy interpreter
+        case 27:    // escape
+        case 13:    // enter
+        case 48:    // close )
+        case 8:     // backspace
           hide_tipbar(interp_id);
           break;
       case 57:  // open paren "("
-            interp_doc(interp_id);
+            tooltip_doc(interp_id);
             break;
         case 190:  // period "."
-            interp_dir(interp_id);
+            tooltip_dir(interp_id);
             break;
             // attempting to solve problem on Mac
         case 0:
-            switch(event.charCode){
+            switch(event.charCode) {
                 case 40: // open paren "("
-                    interp_doc_mac(interp_id);
+                    tooltip_doc_mac(interp_id);
                     break;
                 case 41: // close )
                     hide_tipbar(interp_id);
                     break;
                 case 46:  // period "."
-                    interp_dir_mac(interp_id);
+                    tooltip_dir_mac(interp_id);
                     break;
                 };
             break;
     };
 };
 
-// removed interp_push()
-
-function show_tipbar(interp_id){
+function show_tipbar(interp_id) {
     tipbar = document.getElementById("tipbar_"+interp_id);
     tipbar.style.display = "block";
 };
 
-function hide_tipbar(interp_id){
+function hide_tipbar(interp_id) {
     tipbar = document.getElementById("tipbar_"+interp_id);
     tipbar.style.display = "none";
     tipbar.innerHTML = " ";
@@ -169,7 +237,7 @@ function interp_doc(interp_id) {
     h.send(null);
 };
 
-function interp_doc_mac(interp_id) {
+function tooltip_doc_mac(interp_id) {
     input = document.getElementById("in_"+interp_id);
     data = input.value + "(";
     tipbar = document.getElementById("tipbar_"+interp_id);
@@ -206,7 +274,7 @@ function interp_doc_mac(interp_id) {
     h.send(null);
 };
 
-function interp_dir(interp_id) {
+function tooltip_dir(interp_id) {
     input = document.getElementById("in_"+interp_id);
     end = input.selectionEnd;    
     data = input.value.substring(0, end);
@@ -244,7 +312,7 @@ function interp_dir(interp_id) {
     h.send(null);
 };
 
-function interp_dir_mac(interp_id) {
+function tooltip_dir_mac(interp_id) {
     input = document.getElementById("in_"+interp_id);
     data = input.value + ".";
     tipbar = document.getElementById("tipbar_"+interp_id);

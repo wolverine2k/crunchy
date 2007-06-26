@@ -28,8 +28,7 @@ def insert_io_subwidget(page, elem, uid):
     inp = et.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'push_keys(event, "%s")' % uid
-    # onkeypress="interp_trapkeys(event, &quot;code3&quot;,&quot;Waiting...&quot;)"
-    inp.attrib["onkeypress"] = 'interp_trapkeys(event, "%s", "Waiting...")' % uid
+    inp.attrib["onkeypress"] = 'tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
     canvas = et.SubElement(elem, "canvas")
