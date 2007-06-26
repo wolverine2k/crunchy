@@ -28,6 +28,8 @@ def insert_io_subwidget(page, elem, uid):
     inp = et.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'push_keys(event, "%s")' % uid
+    # onkeypress="interp_trapkeys(event, &quot;code3&quot;,&quot;Waiting...&quot;)"
+    inp.attrib["onkeypress"] = 'interp_trapkeys(event, "%s", "Waiting...")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
     canvas = et.SubElement(elem, "canvas")
@@ -36,7 +38,7 @@ def insert_io_subwidget(page, elem, uid):
     canvas.attrib["height"] = "400"
     canvas.attrib["class"] = "crunchy_canvas"
     canvas.text = "You need a browser that supports &lt;canvas&gt; for this to work"
-    
+
 io_js = r"""
 function push_keys(event, uid){
     if(event.keyCode != 13) return;
@@ -60,7 +62,7 @@ io_css = r"""
 
 .input {
     display: none;
-	width: 90%;
+    width: 90%;
     font: 10pt monospace;
     border-width: 1px;
 }

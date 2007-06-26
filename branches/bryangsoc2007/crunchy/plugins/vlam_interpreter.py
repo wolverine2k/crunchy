@@ -54,6 +54,9 @@ def insert_interpreter(page, elem, uid, vlam):
     # finally, an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
+    # add tooltip
+    CrunchyPlugin.services.insert_tooltip(page, elem, uid)
+
 interp_js = r"""
 function init_interp(uid){
     code = "import interpreter\ninterpreter.BorgConsole().interact('Crunchy interpreter (Python version %s)')";
