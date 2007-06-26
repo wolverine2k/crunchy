@@ -6,6 +6,7 @@ import socket
 import webbrowser
 import sys
 
+import configuration
 import http_serve
 import cometIO
 import pluginloader
