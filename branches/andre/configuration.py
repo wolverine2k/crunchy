@@ -5,7 +5,20 @@
 """
 import os
 
-no_markup_allowed_valued = ["none", "editor", "interpreter", "python_code"]
+no_markup_allowed_values = ["none", "editor", "interpreter", "python_code",
+                    "image_file"]  # image_file needs an optional argument
+languages_allowed_values = ["en"]
+editarea_languages_allowed_values = ['de', # German
+                                     'dk', # Danish
+                                     'en', # English
+                                     'fr', # French
+                                     'hr', # Croatian
+                                     'it', # Italian
+                                     'ja', # Japanese
+                                     'nl', # Dutch
+                                     'pl', # Polish
+                                     'pt' # Portuguese
+                                    ]
 
 class Defaults(object):
     """
@@ -18,8 +31,10 @@ class Defaults(object):
 
     def __init__(self):
         self.set_dirs()
-        self._prefix = "_crunchy_"
+        self._prefix = "crunchy"
         self.__no_markup = "interpreter"
+        self.__language = 'en'
+        self.__editarea_language = 'en'
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
@@ -93,7 +108,7 @@ Here are the values of some variables currently used by Crunchy.
                 if v.__doc__ != 'help':
                     __help += "\n" + v.__doc__ + self._prefix + "." + k \
                              + " = '" + str(v.fget(self)) + "'"
-        return __help + "\n-\n"
+        return __help + "\n"
 
     help = property(get_help, None, None, 'help')
     #==============
@@ -105,16 +120,67 @@ Here are the values of some variables currently used by Crunchy.
         return self.__no_markup
 
     def set_nm(self, choice):
-        if choice in no_markup_allowed_valued:
-            self.__no_markup = choice
-        else:
+        ch = choice.strip().split(' ')
+        valid = False
+        if ch[0] in no_markup_allowed_values:
+            if ch[0] == 'image_file':
+                if len(ch) == 2: # valid filename needed, nothing else
+                    self.__no_markup = choice
+                    valid = True
+                else:  # no valid file name
+                    pass
+            else:
+                self.__no_markup = choice
+                valid = True
+        if not valid:
             print "Invalid choice for %s.no_markup"%self._prefix
-            print "The valid choices are: ", no_markup_allowed_valued
+            print "The valid choices are: ", no_markup_allowed_values
+            print 'or "image_file   file_name"'
             print "The current value is: ", self.__no_markup
 
     no_markup = property(get_nm, set_nm, None,
-        'The choices for "pre" tag without markup'+\
-        ' are %s\nThe current value is: '% no_markup_allowed_valued)
+        '  The choices for "pre" tag without markup' +\
+        ' are %s\n  '% no_markup_allowed_values +\
+        'This has no effect on pages containing any Crunchy markup.\n' +\
+        '  The current value is: ')
+    #==============
+
+    def get_language(self):
+        return self.__language
+
+    def set_language(self, choice):
+        if choice in languages_allowed_values:
+            self.__language = choice
+            print "language set to: " , choice
+            if choice in editarea_languages_allowed_values:
+                self.__editarea_language = choice
+                print "editarea_language also set to: " , choice
+            else:
+                print "Note: while this is a valid choice, this choice is " + \
+                       "not available for a language provided by editarea. " +\
+                "The language choice for editarea remains " +\
+                 self.__editarea_language
+        else:
+            print "Invalid choice for %s.language"%self._prefix
+            print "The valid choices are: ", languages_allowed_values
+
+    language = property(get_language, set_language, None,
+             'language (two-letter code) used by Crunchy: ')
+    #==============
+
+    def get_editarea_language(self):
+        return self.__editarea_language
+
+    def set_editarea_language(self, choice):
+        if choice in editarea_languages_allowed_values:
+            self.__editarea_language = choice
+            print "editarea_language set to: " , choice
+        else:
+            print "Invalid choice for %s.editarea_language"%self._prefix
+            print "The valid choices are: ", editarea_languages_allowed_values
+
+    editarea_language = property(get_editarea_language, set_editarea_language, None,
+             'editor "editarea" language (two-letter code) used by Crunchy: ')
     #==============
 
 defaults = Defaults()
