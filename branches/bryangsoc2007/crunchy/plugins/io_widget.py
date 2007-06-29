@@ -6,6 +6,7 @@ This is just the UI part, the communication code is defined in the core
 provides = set(["io_widget"])
 
 from CrunchyPlugin import *
+import CrunchyPlugin
 
 from element_tree import ElementTree, HTMLTreeBuilder
 et = ElementTree
@@ -36,18 +37,24 @@ def insert_io_subwidget(page, elem, uid):
     canvas.attrib["width"] = "400"
     canvas.attrib["height"] = "400"
     canvas.attrib["class"] = "crunchy_canvas"
-    canvas.text = "You need a browser that supports &lt;canvas&gt; for this to work"
+    canvas.text = "You need a browser that supports <canvas> for this to work"
 
 io_js = r"""
 function push_keys(event, uid){
     if(event.keyCode != 13) return;
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
+    if (data.substring(0,5) == "help(") {
+        var i = new XMLHttpRequest()
+        i.open("POST", "/help%s", true);
+        i.send(data + "\n");
+        return;
+    }
     var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
 };
-"""
+"""%CrunchyPlugin.session_random_id
 
 io_css = r"""
 

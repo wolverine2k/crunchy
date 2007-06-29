@@ -6,13 +6,14 @@ import re
 from element_tree import ElementTree
 et = ElementTree
 
-provides = set(["/dir","/doc"])
+provides = set(["/dir","/doc","/help"])
 
 def register():
     # register service, /dir, and /doc
     CrunchyPlugin.register_service(insert_tooltip, "insert_tooltip")
     CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
+    CrunchyPlugin.register_http_handler("/help%s"%CrunchyPlugin.session_random_id, help_handler)
 
 def insert_tooltip(page, elem, uid):
     # add div for displaying the tooltip
@@ -69,6 +70,13 @@ def doc_handler(request):
         request.end_headers()
         request.wfile.write(result)
         request.wfile.flush()
+
+def help_handler(request):
+    print "Request for " + request.data
+    request.send_response(200)
+    request.end_headers()
+    CrunchyPlugin.exec_js(CrunchyPlugin.get_pageid(), "alert('Help: "+request.data+"')")
+    request.flush()
 
 # css
 tooltip_css = """
@@ -157,9 +165,9 @@ var session_id = "%s";
 
 function tooltip_display(event, interp_id, waiting) {
     switch(event.keyCode) {
-    	// BUG: pressing 'escape' breaks crunchy interpreter
-        case 27:    // escape
+        // BUG: pressing 'escape' breaks crunchy interpreter
         case 13:    // enter
+        case 27:    // escape
         case 48:    // close )
         case 8:     // backspace
           hide_tipbar(interp_id);
