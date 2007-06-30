@@ -9,10 +9,11 @@ from StringIO import StringIO
 import security
 
 # Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
+from element_tree import ElementTree, HTMLTreeBuilder, ElementSoup
 et = ElementTree
 
 from cometIO import register_new_page
+import configuration
 
 count = 0
 
@@ -30,12 +31,16 @@ class CrunchyPage(object):
     handlers = {}
     pagehandlers = []
     null_handlers = {}
-    def __init__(self, filehandle, url):
+    def __init__(self, filehandle, url, remote=False, local=False):
         """url should be just a path if crunchy accesses the page locally, or the full URL if it is remote"""
+        self.is_remote = remote # True if remote tutorial, on the web
+        self.is_local = local  # True if local tutorial, not from the server root
         self.pageid = uidgen()
         self.url = url
         register_new_page(self.pageid)
-        self.tree = HTMLTreeBuilder.parse(filehandle)
+        #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
+        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+        self.tree = et.ElementTree(html)
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
         self.tree = security.remove_unwanted(self.tree)
@@ -85,9 +90,13 @@ class CrunchyPage(object):
 
     def process_tags(self):
         """process all the customised tags in the page"""
+
+        markup_not_present = True # keeps track to see if page has vlam
+
         for tag in CrunchyPage.handlers:
             for elem in self.tree.getiterator(tag):
                 if "title" in elem.attrib:
+                    markup_not_present = False
                     keyword = elem.attrib["title"].split(" ")[0]
                     if keyword in CrunchyPage.handlers[tag]:
                         CrunchyPage.handlers[tag][keyword](self, elem,
@@ -95,10 +104,25 @@ class CrunchyPage(object):
                                          elem.attrib["title"].lower())
         for tag in CrunchyPage.null_handlers:
             for elem in self.tree.getiterator(tag):
-                if "src" in elem.attrib:
-                    print "null_handler in vlam.py; src=", elem.attrib["src"]
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
                                                       ":" + uidgen(), None)
+        # Crunchy can treat <pre> that have no markup as though they
+        # are marked up with a default value
+        # We only do this on pages that have not been prepared for Crunchy
+        n_m = configuration.defaults.no_markup
+
+        if markup_not_present:
+            if n_m != 'none':
+                vlam = n_m   # full value
+                if n_m.startswith('image_file'): # image file has a filename
+                    n_m = 'image_file'  # extract just the type, like the others
+                for elem in self.tree.getiterator("pre"):
+                    if "title" not in elem.attrib:
+                        elem.attrib["title"] = vlam
+                        CrunchyPage.handlers["pre"][n_m](self, elem,
+                                                    self.pageid + ":" + uidgen(),
+                                                    elem.attrib["title"])
+        return
 
     def read(self):
         fake_file = StringIO()

@@ -39,7 +39,6 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 
     def get_handler(self, path):
         """returns none if no handler registered"""
-        print "get_handler in http_serve.py; path = ", path
         if path in self.handler_table:
             return self.handler_table[path]
         else:
@@ -50,9 +49,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
-
-        print "inside do_POST; realpath = ", realpath
-
         argstring = ""
         self.args = {}
         # if there is a ? in the path then there are some arguments, extract them and set the path
@@ -84,7 +80,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """the same as GET, we draw no distinction"""
-        print "inside do_GET; self.path = ", self.path
         self.do_POST()
 
     def send_response(self, code):

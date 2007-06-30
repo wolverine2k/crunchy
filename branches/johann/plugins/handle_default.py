@@ -21,14 +21,12 @@ def path_to_filedata(path, root):
     """
     if path.find("/../") != -1:
         return error_page(path)
-    print "inside path_to_filedata; path = ", path
     if path.startswith("/CrunchyTempDir"):
         path = path.replace("/CrunchyTempDir", '')
         npath = path
-        print "inside path_to_filedata:"
-        print "  path = ", path
-        print "  npath = ", npath
-        print "  ==="
+    elif path.startswith("/CrunchyLocalFile"):
+        path = path.replace("/CrunchyLocalFile", '')
+        npath = path
     else:
         npath = normpath(join(root, normpath(path[1:])))
     if isdir(npath):
@@ -119,7 +117,3 @@ def error_page(path):
                                  _("The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."),
                                  _("The path you requested was: "),
                                  path)
-
-
-
-

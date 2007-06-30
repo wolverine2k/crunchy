@@ -47,9 +47,9 @@ def register_page_handler(handler):
     """register a callback that is called when each page is created"""
     vlam.CrunchyPage.pagehandlers.append(handler)
 
-def create_vlam_page(filehandle, url):
+def create_vlam_page(filehandle, url, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
-    return vlam.CrunchyPage(filehandle, url)
+    return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
 
 def exec_code(code, uid):
     """execute some code in a given uid"""
@@ -69,7 +69,7 @@ def exec_js(pageid, jscode):
 def append_html(page_id, output_id, htmlcode):
     """append some html to an IO widget"""
     cometIO.write_output(page_id, output_id, htmlcode)
-    
+
 def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page
     from which the code is being executed.

@@ -134,7 +134,19 @@ def style(elem):
         # re-creating element
         tag = elem.tag
         new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-        new_elem = et.fromstring(new_html)
+        try:   # need to find a better way to deal with this
+            new_elem = et.fromstring(new_html)
+        except:
+            print "problem encountered in colourize.py with the following:"
+            try:
+                print new_html
+            except:
+                print "Sorry, could not write the code; encoding problem?"
+            message = "Crunchy says: Problem encountered in colourize.py."
+            message += "  ElementTree could not deal with the Python code. "
+            message += "  It is likely to be an encoding problem."
+            new_html = "<%s>\n%s\n</%s>"%(tag, message, tag)
+            new_elem = et.fromstring(new_html)
         new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     else:
         new_elem = elem
@@ -522,6 +534,7 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
                 newlines.append('<span class="py_prompt">' + prompt +
                       '</span>' + lines[info-1])
         elif info:
+            info = changeHTMLspecialCharacters(info)
             if offset is not None:  # get the spacing right...
                 newlines.append("<span class='py_linenumber'>    </span>"
                                + '<span class="py_output">' + info +
@@ -530,6 +543,12 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
                 newlines.append('<span class="py_output">' + info +
                                 '</span>')
     return '\n'.join(newlines)
+
+def changeHTMLspecialCharacters(aString):
+    aString = aString.replace('&', '&amp;')
+    aString = aString.replace('<', '&lt;')
+    aString = aString.replace('>', '&gt;')
+    return aString
 
 def is_interpreter_session(py_code):
     '''determine if the python code corresponds to a simulated
