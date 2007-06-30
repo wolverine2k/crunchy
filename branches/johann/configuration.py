@@ -4,12 +4,12 @@
     In future we should provide a GUI for changing the preferences.
 """
 import os
-import gettext
 
-languages_allowed_values = ["en"]
-gettext_lang = {}
-for lang in languages_allowed_values:
-   gettext_lang[lang] = gettext.translation('crunchy', './translations', languages=[lang])
+import translation
+
+_ = translation._
+
+translation.init_translation()
 
 editarea_languages_allowed_values = ['de', # German
                                      'dk', # Danish
@@ -42,7 +42,7 @@ class Defaults(object):
         self.__no_markup = "interpreter"
         self.__language = 'en'
         self.__editarea_language = 'en'
-        gettext_lang['en'].install(unicode=True)
+        translation.init_translation(self.__language)
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
@@ -160,6 +160,7 @@ Here are the values of some variables currently used by Crunchy.
     def set_language(self, choice):
         if choice in languages_allowed_values:
             self.__language = choice
+            translation.init_translation(self.__language)
             print _("language set to: ") , choice
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice

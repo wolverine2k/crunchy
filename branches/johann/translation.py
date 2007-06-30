@@ -1,4 +1,5 @@
-"""translation.py
+"""
+translation.py
 Translation infrastructure for Crunchy.
 """
 
@@ -8,10 +9,17 @@ from imp import find_module
 
 current_locale = None
 
-try:
-    current_locale = gettext.translation("crunchy", os.path.join(os.path.dirname(find_module("crunchy")[1]), "translations/"))
-except IOError:
-    print "No Language file found, not translating anything"
+def init_translation(lang=None):
+    try:
+        if lang:
+            try:
+                current_locale = gettext.translation("crunchy", os.path.join(os.path.dirname(find_module("crunchy")[1]), "translations/"),languages=[lang])
+            except:
+                init_translation()
+        else:
+            current_locale = gettext.translation("crunchy", os.path.join(os.path.dirname(find_module("crunchy")[1]), "translations/"))
+    except IOError:
+        print "No Language file found, not translating anything"
 
     
 def _(message):
