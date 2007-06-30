@@ -90,13 +90,9 @@ class CrunchyPage(object):
 
     def process_tags(self):
         """process all the customised tags in the page"""
-
-        markup_not_present = True # keeps track to see if page has vlam
-
         for tag in CrunchyPage.handlers:
             for elem in self.tree.getiterator(tag):
                 if "title" in elem.attrib:
-                    markup_not_present = False
                     keyword = elem.attrib["title"].split(" ")[0]
                     if keyword in CrunchyPage.handlers[tag]:
                         CrunchyPage.handlers[tag][keyword](self, elem,
@@ -110,18 +106,16 @@ class CrunchyPage(object):
         # are marked up with a default value
         # We only do this on pages that have not been prepared for Crunchy
         n_m = configuration.defaults.no_markup
-
-        if markup_not_present:
-            if n_m != 'none':
-                vlam = n_m   # full value
-                if n_m.startswith('image_file'): # image file has a filename
-                    n_m = 'image_file'  # extract just the type, like the others
-                for elem in self.tree.getiterator("pre"):
-                    if "title" not in elem.attrib:
-                        elem.attrib["title"] = vlam
-                        CrunchyPage.handlers["pre"][n_m](self, elem,
-                                                    self.pageid + ":" + uidgen(),
-                                                    elem.attrib["title"])
+        if n_m != 'none':
+            vlam = n_m   # full value
+            if n_m.startswith('image_file'): # image file has a filename
+                n_m = 'image_file'  # extract just the type, like the others
+            for elem in self.tree.getiterator("pre"):
+                if "title" not in elem.attrib:
+                    elem.attrib["title"] = vlam
+                    CrunchyPage.handlers["pre"][n_m](self, elem,
+                                                self.pageid + ":" + uidgen(),
+                                                elem.attrib["title"])
         return
 
     def read(self):
