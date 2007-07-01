@@ -13,7 +13,6 @@ import sys
 
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
-import configuration
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
@@ -55,19 +54,14 @@ def insert_interpreter(page, elem, uid, vlam):
     # finally, an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
-prefix = configuration.defaults._prefix
+    # add tooltip
+    CrunchyPlugin.services.insert_tooltip(page, elem, uid)
 
-crunchy_help = "Type %s.help for more information."%prefix
 interp_js = r"""
 function init_interp(uid){
-    code = "import configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import interpreter\n";
-    code += "interpreter.BorgConsole(locals).interact(\n";
-    code += "        'Crunchy interpreter (Python version %s). %s')";
+    code = "import interpreter\ninterpreter.BorgConsole().interact('Crunchy interpreter (Python version %s)')";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
-           CrunchyPlugin.session_random_id)
+"""%((sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
