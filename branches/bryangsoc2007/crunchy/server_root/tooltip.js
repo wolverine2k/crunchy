@@ -7,6 +7,17 @@ function display_help(uid, data) {
     i.send(data + "\n");
 }
 
+function hide_helpers() {
+    document.getElementById("help_menu").style.display = "none";
+    document.getElementById("help_menu_x").style.display = "none";
+    tipbars = document.getElementsByTagName("div");
+    for (tipbar in tipbars) {
+        if (tipbars[tipbar].className == "interp_tipbar") {
+            tipbars[tipbar].style.display = "none";
+        }
+    }
+}
+
 function tooltip_display(event, interp_id) {
     switch(event.keyCode) {
         // BUG: pressing 'escape' breaks crunchy interpreter
@@ -40,11 +51,15 @@ function tooltip_display(event, interp_id) {
 };
 
 function show_tipbar(interp_id) {
+    document.getElementById("help_menu").style.display = "none";
+    document.getElementById("help_menu_x").style.display = "block";
     tipbar = document.getElementById("tipbar_"+interp_id);
     tipbar.style.display = "block";
 };
 
 function hide_tipbar(interp_id) {
+    document.getElementById("help_menu").style.display = "none";
+    document.getElementById("help_menu_x").style.display = "none";
     tipbar = document.getElementById("tipbar_"+interp_id);
     tipbar.style.display = "none";
     tipbar.innerHTML = " ";
