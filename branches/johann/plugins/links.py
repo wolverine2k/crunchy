@@ -3,6 +3,7 @@ Rewrites links so that crunchy can access remote pages.
 """
 
 import urllib
+import re
 
 import CrunchyPlugin as cp
 from urlparse import urljoin
@@ -12,6 +13,7 @@ def register():
     cp.register_vlam_handler("a", None, link_handler)
     cp.register_vlam_handler("img", None, src_handler)
     cp.register_vlam_handler("link", None, href_handler)
+    cp.register_vlam_handler("style", None, style_handler)
 
 def link_handler(page, elem, uid, vlam):
     """convert remote links if necessary, need to deal with all links in remote pages"""
@@ -48,3 +50,11 @@ def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")
 
+css_import_re = re.compile('@import\s+"(.+?)"')
+
+def style_handler(page, elem, uid, vlam):
+    """replace @import statements in style elements"""
+    def css_import_replace(imp_match):
+        path = imp_match.group(1)
+        return '@import "%s"' % urljoin(page.url, path)
+    elem.text = css_import_re.sub(css_import_replace, elem.text)
