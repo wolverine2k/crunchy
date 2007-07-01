@@ -45,16 +45,14 @@ function push_keys(event, uid){
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
     if (data.substring(0,5) == "help(") {
-        var i = new XMLHttpRequest()
-        i.open("POST", "/help%s", true);
-        i.send(data + "\n");
+        display_help(uid, data);
         return;
     }
     var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
 };
-"""%CrunchyPlugin.session_random_id
+"""
 
 io_css = r"""
 
