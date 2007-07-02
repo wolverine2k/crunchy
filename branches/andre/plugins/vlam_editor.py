@@ -99,12 +99,18 @@ def insert_editor(page, elem, uid, vlam):
 exec_jscode= """
 function exec_code(uid){
     code=editAreaLoader.getValue("code_"+uid);
+    if (code == undefined) {
+        code = document.getElementById("code_"+uid).value;
+    }
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
 function exec_code_externally(uid){
     code=editAreaLoader.getValue("code_"+uid);
+    if (code == undefined) {
+        code = document.getElementById("code_"+uid).value;
+    }
     var j = new XMLHttpRequest();
     j.open("POST", "/run_external%s?uid="+uid, false);
     j.send(code);

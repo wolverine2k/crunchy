@@ -9,15 +9,18 @@ import random
 import vlam
 import cometIO
 import PluginServices as services
+import translation
 
 __all__=["register_http_handler", "register_vlam_handler",
          "create_vlam_page", "exec_code", "register_service", "services",
          "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
-         "gen_uid"]
+         "gen_uid", "_"]
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
 session_random_id = str(int(random.random()*1000000000))
+
+_ = translation._
 
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
@@ -87,3 +90,6 @@ def get_data_dir():
 
 def gen_uid():
     return vlam.uidgen()
+
+def get_locale():
+    return translation.current_locale

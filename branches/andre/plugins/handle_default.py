@@ -8,7 +8,7 @@ from CrunchyPlugin import *
 
 def register():
     register_http_handler(None, handler)
-
+    
 def path_to_filedata(path, root):
     """
     Given a path, finds the matching file and returns a read-only reference
@@ -65,7 +65,7 @@ def get_directory(npath):
     tstring = ""
     for child in childs:
         tstring += '<li><a href="%s">%s</a></li>' % (child, child)
-    return dir_list_page % tstring
+    return dir_list_page % (_("Directory Listing"), tstring)
 
 # the root of the server is in a separate directory:
 root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
@@ -78,19 +78,18 @@ illegal_paths_page = """
 <html>
 <head>
 <title>
-Crunchy: Illegal path, page not found.
+%s <!--Illegal path, page not found. -->
 </title>
 </head>
 <body>
-<h1>Illegal Path, Page not Found</h1>
-<p>Crunchy could not open the page you requested. This could be for one of a
-number of reasons, including:</p>
+<h1>%s<!--Illegal path, page not found. --></h1>
+<p>%s <!--Crunchy could not open the page you requested. This could be for one of anumber of reasons, including: --></p>
 <ul>
-<li>The page doesn't exist.</li>
-<li>The path you requested was illegal, examples of illegal paths include those containg the .. path modifier.
+<li>%s <!--The page doesn't exist. --></li>
+<li>%s<!--The path you requested was illegal, examples of illegal paths include those containg the .. path modifier.-->
 </li>
 </ul>
-<p>The path you requested was: <b>%s</b></p>
+<p>%s <!--The path you requested was:--> <b>%s<!--path--></b></p>
 </body>
 </html>
 """
@@ -99,7 +98,7 @@ dir_list_page = """
 <html>
 <head>
 <title>
-Crunchy: Directory Listing
+%s
 </title>
 </head>
 <body>
@@ -109,7 +108,12 @@ Crunchy: Directory Listing
 </ul>
 </body>
 </html>
-"""
+""" 
 
 def error_page(path):
-    return illegal_paths_page % path
+    return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
+                                 _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
+                                 _("The page doesn't exist."),
+                                 _("The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."),
+                                 _("The path you requested was: "),
+                                 path)

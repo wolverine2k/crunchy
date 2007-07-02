@@ -59,9 +59,22 @@ def insert_interpreter(page, elem, uid, vlam):
 
 interp_js = r"""
 function init_interp(uid){
-    code = "import interpreter\ninterpreter.BorgConsole().interact('Crunchy interpreter (Python version %s)')";
+    code = "import interpreter\nborg=interpreter.BorgConsole()";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: Borg Interpreter (Python version %s)"';
+    code += "')\nborg.interact('')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
 """%((sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
+
+
+##interp_js = r"""
+##function init_interp(uid){
+##    code = "import interpreter\ninterpreter.BorgConsole().interact('Crunchy interpreter (Python version %s)')";
+##    var j = new XMLHttpRequest();
+##    j.open("POST", "/exec%s?uid="+uid, false);
+##    j.send(code);
+##};
+##"""%((sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)

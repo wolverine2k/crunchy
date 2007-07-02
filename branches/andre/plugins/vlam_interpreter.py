@@ -55,8 +55,10 @@ def insert_interpreter(page, elem, uid, vlam):
     # finally, an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
-prefix = configuration.defaults._prefix
+    # add tooltip
+    CrunchyPlugin.services.insert_tooltip(page, elem, uid)
 
+prefix = configuration.defaults._prefix
 crunchy_help = "Type %s.help for more information."%prefix
 interp_js = r"""
 function init_interp(uid){
