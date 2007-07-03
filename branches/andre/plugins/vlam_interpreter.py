@@ -27,13 +27,25 @@ def register():
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
     CrunchyPlugin.register_vlam_handler("pre", "interpreter", insert_interpreter)
+    # just for fun, we define these
+    CrunchyPlugin.register_vlam_handler("pre", "borg", insert_interpreter)
+    CrunchyPlugin.register_vlam_handler("pre", "human", insert_interpreter)
 
 def insert_interpreter(page, elem, uid, vlam):
-    """inserts an interpreter (actually the js code to initialise an interpreter)"""
+    """inserts an interpreter (and the js code to initialise an interpreter)"""
+    if "isolated" in vlam or "human" in vlam:
+        borg = False
+    else:
+        borg = True
     # first we need to make sure that the required javacript code is in the page:
-    if not page.includes("interp_included"):
-        page.add_include("interp_included")
-        page.add_js_code(interp_js)
+    if borg:
+        if not page.includes("BorgInterpreter_included"):
+            page.add_include("BorgInterpreter_included")
+            page.add_js_code(BorgInterpreter_js)
+    else:
+        if not page.includes("SingleInterpreter_included"):
+            page.add_include("SingleInterpreter_included")
+            page.add_js_code(SingleInterpreter_js)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
@@ -51,7 +63,10 @@ def insert_interpreter(page, elem, uid, vlam):
     if not "no-pre" in vlam:
         elem.insert(0, markup)
     # the javascript code required to initialise this Python interpreter
-    page.add_js_code('init_interp("%s");' % uid)
+    if borg:
+        page.add_js_code('init_BorgInterpreter("%s");' % uid)
+    else:
+        page.add_js_code('init_SingleInterpreter("%s");' % uid)
     # finally, an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
@@ -60,13 +75,29 @@ def insert_interpreter(page, elem, uid, vlam):
 
 prefix = configuration.defaults._prefix
 crunchy_help = "Type %s.help for more information."%prefix
-interp_js = r"""
-function init_interp(uid){
+
+BorgInterpreter_js = r"""
+function init_BorgInterpreter(uid){
     code = "import configuration\n";
     code += "locals = {'%s': configuration.defaults}\n";
     code += "import interpreter\nborg=interpreter.BorgConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
+    code += "')\nborg.interact('')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+SingleInterpreter_js = r"""
+function init_SingleInterpreter(uid){
+    code = "import configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import interpreter\nborg=interpreter.SingleConsole(locals)";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: Isolated Interpreter (Python version %s). %s"';
     code += "')\nborg.interact('')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);

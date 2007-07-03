@@ -93,11 +93,12 @@ class CrunchyPage(object):
         for tag in CrunchyPage.handlers:
             for elem in self.tree.getiterator(tag):
                 if "title" in elem.attrib:
-                    keyword = elem.attrib["title"].split(" ")[0]
+                    vlam = elem.attrib["title"].lower()
+                    keyword = vlam.split(" ")[0]
                     if keyword in CrunchyPage.handlers[tag]:
                         CrunchyPage.handlers[tag][keyword](self, elem,
                                          self.pageid + ":" + uidgen(),
-                                         elem.attrib["title"].lower())
+                                         vlam)
         for tag in CrunchyPage.null_handlers:
             for elem in self.tree.getiterator(tag):
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +
@@ -105,7 +106,7 @@ class CrunchyPage(object):
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value
         # We only do this on pages that have not been prepared for Crunchy
-        n_m = configuration.defaults.no_markup
+        n_m = configuration.defaults.no_markup.lower()
         if n_m != 'none':
             vlam = n_m   # full value
             if n_m.startswith('image_file'): # image file has a filename

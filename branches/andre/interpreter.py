@@ -92,6 +92,17 @@ class Borg(object):
 # Unexplained bug?  When a page is opened in a new tab (ctrl-T)
 # with Firefox, we have problems with code execution....
 
-class BorgConsole(Borg, InteractiveConsole):
+# Note: In the future, I (andre) plan to have the two Crunchy consoles
+# derive from a more feature complete version of Interactive Console.
+# This is why, for now, SingleConsole is essentially the same
+# as Intereactive console
+
+class SingleConsole(InteractiveConsole):
+    '''SingleConsole are isolated one from another'''
     def __init__(self, locals={}):
         InteractiveConsole.__init__(self, locals)
+
+class BorgConsole(Borg, SingleConsole):
+    '''Every BorgConsole share a common state'''
+    def __init__(self, locals={}):
+        SingleConsole.__init__(self, locals)

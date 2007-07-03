@@ -37,8 +37,9 @@ output is as expected:</p>
 <pre title="interpreter linenumber">
 >>> # undefined variable
 >>> print a
-Error on line 1:
- name 'a' is not defined
+Traceback (most recent call last):
+  File "", line 1, in NameError:
+name 'a' is not defined
 >>> # however, previously defined variables should be remembered
 >>> print x
 42
@@ -50,6 +51,30 @@ Error on line 1:
 Error on line 1:
 
 </pre>
+
+<p>Here's one using an alternative, secret syntax.  Verify that it shares the same variables
+as the previous ones.</p>
+<pre title="Borg">
+>>> print x
+42
+</pre>
+
+<p>Here's one that should not share any variables with the previous ones.</p>
+<pre title="interpreter isolated">
+>>> print x
+Traceback (most recent call last):
+  File "", line 1, in NameError:
+name 'x' is not defined
+</pre>
+
+<p>Yet another isolated interpreter, using an alternative syntax.</p>
+<pre title="human">
+>>> print x
+Traceback (most recent call last):
+  File "", line 1, in NameError:
+name 'x' is not defined
+</pre>
+
 
 <h2>Bugs</h2>
 <ul>
