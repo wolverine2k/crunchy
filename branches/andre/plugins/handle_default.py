@@ -8,7 +8,7 @@ from CrunchyPlugin import *
 
 def register():
     register_http_handler(None, handler)
-    
+
 def path_to_filedata(path, root):
     """
     Given a path, finds the matching file and returns a read-only reference
@@ -38,7 +38,9 @@ def path_to_filedata(path, root):
         try:
             if npath.endswith(".html") or npath.endswith(".htm"):
                 return create_vlam_page(open(npath), path).read()
-            return open(npath).read()
+            # we need binary mode because otherwise the file may not get
+            # read properly on windows (e.g. for image files)
+            return open(npath, mode="rb").read()
         except IOError:
             print "in path_to_filedata, can not open path = ", npath
             return error_page(path)
@@ -108,7 +110,7 @@ dir_list_page = """
 </ul>
 </body>
 </html>
-""" 
+"""
 
 def error_page(path):
     return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),

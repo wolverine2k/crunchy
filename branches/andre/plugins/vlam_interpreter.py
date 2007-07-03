@@ -64,9 +64,10 @@ interp_js = r"""
 function init_interp(uid){
     code = "import configuration\n";
     code += "locals = {'%s': configuration.defaults}\n";
-    code += "import interpreter\n";
-    code += "interpreter.BorgConsole(locals).interact(\n";
-    code += "        'Crunchy interpreter (Python version %s). %s')";
+    code += "import interpreter\nborg=interpreter.BorgConsole(locals)";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
+    code += "')\nborg.interact('')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
