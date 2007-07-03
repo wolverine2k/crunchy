@@ -46,7 +46,7 @@ def insert_tooltip(page, elem, uid):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    line = re.split(r"\s", request.data)[-1].strip()
+    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
