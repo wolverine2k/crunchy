@@ -37,7 +37,9 @@ def run_crunchy():
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
     print '\nCrunchy Server: serving up interactive tutorials at URL %s\n'%_url
-    server.serve_forever()
+    server.still_serving = True
+    while server.still_serving:
+        server.handle_request()
 
 if __name__ == "__main__":
     run_crunchy()

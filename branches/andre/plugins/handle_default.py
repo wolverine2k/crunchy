@@ -19,6 +19,12 @@ def path_to_filedata(path, root):
     Paths containing .. will return an error message.
     POSIX version, should work in Windows.
     """
+    print "path = ", path
+    if path == "/exit":
+        import CrunchyPlugin
+        CrunchyPlugin.server.still_serving = False
+        exit_file = join(root_path, "exit_en.html")
+        return open(exit_file).read()
     if path.find("/../") != -1:
         return error_page(path)
     if path.startswith("/CrunchyTempDir"):

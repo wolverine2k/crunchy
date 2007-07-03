@@ -117,6 +117,8 @@ class CrunchyPage(object):
                     CrunchyPage.handlers["pre"][n_m](self, elem,
                                                 self.pageid + ":" + uidgen(),
                                                 elem.attrib["title"])
+        if "menu_included" not in self.included:
+            CrunchyPage.handlers["no_tag"]["menu"](self)
         return
 
     def read(self):
