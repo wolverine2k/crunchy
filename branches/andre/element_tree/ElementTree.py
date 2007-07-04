@@ -1044,9 +1044,9 @@ class TreeBuilder:
     def _flush(self):
         ### following line modified from original for Crunchy so that it
         ## can display some non-compliant sites better
-        #if self._data != None:
+        if self._data != None:
         # original:
-        if self._data:
+        #if self._data:
             if self._last is not None:
                 text = string.join(self._data, "")
                 if self._tail:
