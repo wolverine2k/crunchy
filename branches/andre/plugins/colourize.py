@@ -90,6 +90,7 @@ style_css = r"""
 .py_prompt{color:blue; }
 .py_output{color:darkgreen; background-color: #f0f0dd;}
 .py_warning{background-color:yellow; font-size: large; font-weight: bold;}
+.py_pre{text-align: left;}
 """
 #---------end plugin specific-------------------------
 
@@ -151,6 +152,7 @@ def style(elem):
     else:
         new_elem = elem
     new_elem.tail = tail
+    new_elem.attrib['class'] = 'py_pre'
     return py_code, new_elem
 
 def nostrip_style(elem):

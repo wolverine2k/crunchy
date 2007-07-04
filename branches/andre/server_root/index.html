@@ -1,86 +1,60 @@
 <html>
 <head>
 <title>
-Crunchy COMET IO demo
+Crunchy Python
 </title>
+<style>
+p{width: 800px;}
+</style>
 </head>
 
 <body>
-<h1> Welcome to Crunchy!</h1>
-<p>This is a preview version of the new Crunchy.  Crunchy has been re-written from the ground up (yet again!).  The current "stable" version is 0.8.2.  When this new version will be considered "stable", it will become version 0.9.</p>
-<p>This new version uses a new communication mode (Comet) between the browser and the Python backend server.  As a result, it is now possible to have long running user code (like animated pictures) updating the display while maintaining responsiveness.  This new version is also written with a plugin architecture making it very easy to add new functionality.</p>
-<p>Currently, there are no nice way to end the application; menus will have to be added together with a few other existing features from the "old" Crunchy that have not been ported yet.</p>
-<p><b>NEW!</b> Perhaps the most interesting development is the possibility of interacting with existing tutorials that have not been adapted for Crunchy.  This new version will insert a Python interpreter everywhere it encounters code inside a &lt;pre&gt; element with no Crunchy markup.  To test it, you can try to look at <a href="http://docs.python.org/tut/tut.html">the official Python tutorial</a>.
-<p>To find out more about this new version, you can look at various <a href="functional_tests">tests</a> that we use as we develop Crunchy.  Or, you can try to play with the few examples below.</p>
-<p><b>Enjoy!</b></p>
-<h2>Various examples</h2>
-<hr />
-<h2>An Interpreter</h2>
+<h1> Welcome to Crunchy! <img src="crunchy.png" alt="Crunchy Logo"/></h1>
+<p>This is a preview version of the new Crunchy.  
+Crunchy has been re-written from the ground up (yet again!).  
+The previous "stable" version is 0.8.2.  
+When this new version is considered "stable", it will become version 0.9
+with plans for the 1.0 release soon after.  Here are some suggestions as to how
+you can use Crunchy.</p>
+<h3>Python interpreter</h3>
+<p> The first thing you might want to try, is to use the embedded interpreter to write
+the standard first program.
+</p>
 <pre title="interpreter">
 >>> print "Hello World!"
 "Hello World!"
 </pre>
+<h3>Officially learning Python</h3>
+<p> After writing your first Python instructions, you might be interested in going through the 
+<a href="http://docs.python.org/tut/tut.html">the official Python tutorial</a>
+on the python.org website to learn more about Python.
+</p>
+<h3>Elsewhere on the planet</h3>
+<p>
+Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
+If you do so, you might want first 
+to enter <code title="py_code">crunchy.no_markup = "editor"</code> in the above interpreter prompt
+before loading up the blogs and possibly trying out some sample Python code you might
+find there.<p>
+<span title="load_remote">http://planet.python.org</span>
+<p>If the user has include some Python code inside an html <tt>&lt;pre&gt;</tt> element, Crunchy
+will recognize it and make sure you can try it out.  
+<em>Unfortunately, Crunchy sometimes does not do a very good job of processing and rendering
+<b>non W3C compliant</b> pages for display in the browser.</em> If you find such a page, complain
+to its creater, not to us! 
+If you do find a W3C compliant page
+that Crunchy does not interpret properly, then let us know.</p>
+<h3>Closer to home</h3>
+<p> What if you already have some Python tutorial (html documents) on your own computer
+and you would like to use Crunchy to go through them.  You can browse and load them here.</p>
+<span title="load_local"> </span>
+<h3>Testing, 1, 2, testing, ...</h3>
+<p>
+Finally, in the absence of real documentation for Crunchy, you might want to browse 
+the <a href="functional_tests">various tests</a> we include.  In doing so, if you notice a bug,
+please let us know.
+</p>
+<p><b>Enjoy!</b></p>
 
-<hr />
-<h2>An Editor</h2>
-<pre title="editor linenumber">
-# some sample code:
-for i in range(5):
-   print i,
-</pre>
-
-<hr />
-<h2>A Doctest</h2>
-<pre title="doctest">
->>> p = Animal('Pooh')
->>> p.name
-'Pooh'
->>> p.addFriend('Piglet')
->>> p.friends
-['Piglet']
-</pre>
-
-<hr />
-<h2>Some styled python code</h2>
-<pre title="py_code">
-class Animal(object):
-    def __init__(self, name):
-        self.name = name
-        self.friends = []
-    def addFriend(self, friend):
-        self.friends.append(friend)
-</pre>
-<h2>Dynamically displaying an image created by the user</h2>
-<pre title="image_file foo.png">
-# assumes matplotlib is installed
-import matplotlib.numerix as nx
-import pylab as p
-
-def boltzman(x, xmid, tau):
-    """
-    evaluate the boltzman function with midpoint xmid and time constant tau
-    over x
-    """
-    return 1. / (1. + nx.exp(-(x-xmid)/tau))
-
-def fill_below_intersection(x, S, Z):
-    """
-    fill the region below the intersection of S and Z
-    """
-    #find the intersection point
-    ind = nx.nonzero( nx.absolute(S-Z)==min(nx.absolute(S-Z)))[0]
-    # compute a new curve which we will fill below
-    Y = nx.zeros(S.shape, typecode=nx.Float)
-    Y[:ind] = S[:ind]  # Y is S up to the intersection
-    Y[ind:] = Z[ind:]  # and Z beyond it
-    p.fill(x, Y, facecolor='blue', alpha=0.5)
-
-x = nx.arange(-6, 6, .01)
-S = boltzman(x, 0, 1)
-Z = 1-boltzman(x, 0.5, 1)
-p.plot(x, S, x, Z, color='red', lw=2)
-fill_below_intersection(x, S, Z)
-p.savefig("foo.png")
-</pre>
 </body>
 </html>

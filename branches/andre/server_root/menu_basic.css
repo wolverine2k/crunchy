@@ -1,4 +1,4 @@
-#menucontainer
+#crunchy_menu_container
 {
 margin: 0 0 0 300px;
 padding: 0;
@@ -9,9 +9,9 @@ z-index: 10;
 }
 
 body
-{margin-top: 60px; /* keep in sync with menucontainer height */}
+{margin-top: 60px; /* keep in sync with crunchy_menu_container height */}
 
-#menucontainer ul
+#crunchy_menu_container ul
 {
 border: 0;
 margin: 0;
@@ -20,7 +20,7 @@ list-style-type: none;
 
 }
 
-#menucontainer ul li
+#crunchy_menu_container ul li
 {
 display: block;
 float: left;
@@ -29,7 +29,7 @@ padding: 0;
 margin: 0;
 }
 
-#menucontainer ul li a
+#crunchy_menu_container ul li a
 {
 background: #fff;
 width: 150px;
@@ -43,20 +43,20 @@ text-align: center;
 font: 45px sans-serif;
 }
 
-#menucontainer ul li a img
+#crunchy_menu_container ul li a img
 {
 color: #fe0;
 background: #fe0;
 border: 0;
 }
 
-#menucontainer ul li a:hover
+#crunchy_menu_container ul li a:hover
 {
 color: #fe0;
 background: #369;
 border: 1px solid #369;
 }
-#menucontainer ul li a:hover img
+#crunchy_menu_container ul li a:hover img
 {
 color: #369;
 background: #369;

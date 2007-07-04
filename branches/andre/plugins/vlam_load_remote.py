@@ -36,4 +36,5 @@ def insert_load_remote(page, parent, uid, vlam):
     input2 = et.SubElement(form, 'input', type='submit',
                            value='Load remote tutorial')
     input2.attrib['class'] = 'crunchy'
+    parent.text = ' '
 
