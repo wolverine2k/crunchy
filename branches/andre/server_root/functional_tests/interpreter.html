@@ -26,11 +26,6 @@ output is as expected:</p>
 >>> # appearing when typing "(" and disappearing with ")": 
 >>> range(5)
 [0, 1, 2, 3, 4]
->>> # auto-indent (use backspace to create the blank line at the end): 
->>> for y in range(5):
-...     print y,
-... 
-0 1 2 3 4
 </pre>
 
 <p>Here are a few more examples (with added linenumbers):</p>
@@ -38,8 +33,8 @@ output is as expected:</p>
 >>> # undefined variable
 >>> print a
 Traceback (most recent call last):
-  File "", line 1, in NameError:
-name 'a' is not defined
+  File "", line 1, in 
+NameError: name 'a' is not defined
 >>> # however, previously defined variables should be remembered
 >>> print x
 42
@@ -63,16 +58,16 @@ as the previous ones.</p>
 <pre title="interpreter isolated">
 >>> print x
 Traceback (most recent call last):
-  File "", line 1, in NameError:
-name 'x' is not defined
+  File "", line 1, in 
+NameError: name 'x' is not defined
 </pre>
 
 <p>Yet another isolated interpreter, using an alternative syntax.</p>
 <pre title="human">
 >>> print x
 Traceback (most recent call last):
-  File "", line 1, in NameError:
-name 'x' is not defined
+  File "", line 1, in
+NameError: name 'x' is not defined
 </pre>
 
 
@@ -80,7 +75,9 @@ name 'x' is not defined
 <ul>
 <li>The tooltip (mentioned above) does not work.</li>
 <li><code title="py_code">sys.exit()</code> instructions are not intercepted - they effectively kill the interpreter session.</li>
-<li>Auto-indent (which was implemented in the "old" Crunchy) is not working; it is not entirely clear if this is something that is really necessary since, without it, one does not need to use backspace to end a code block.
+<li>Auto-indent (which was implemented in the "old" Crunchy) is not working; 
+it is not entirely clear if this is something that is really necessary since, without it, 
+one does not need to use backspace to end a code block.
 </li>
 </ul>
 <p><a href="index.html">Back to the test index</a></p>

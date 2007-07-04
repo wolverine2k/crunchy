@@ -90,13 +90,13 @@ which used not to be the same font size. </p>
 <pre title="py_code">
 &gt;&gt;&gt; # this last statement is a comment
 </pre>
-used to be processed by crunchy ("colourized") in such a way
+used to be processed ("colourized") by Crunchy in such a way
 that it resulted in non W3C compliant code - and Crunchy (i.e. the
 elementtree handler) chokeed on it, and displayed a blank page.
 This has been fixed.</p>
 
 <p>Code inside a <code>&lt;pre&gt;</code> that contains html markup is
-now processed properly.  The suggested behaviour at this point would be to
+now processed properly.
 <br/>
 Here's an actual example using a <code>&lt;br/&gt;</code> rather than
 an "\n" character to separate lines of code.
@@ -109,9 +109,20 @@ print "Hello world!"<br/>print "Crunchy rocks!"
 </pre>
 <p>Both lines should appear as separate Python statements.
 </p>
-<p>The following is another "bare pre" (&lt;pre&gt;) containing some
+<p>The following is another "bare"  (&lt;pre&gt;) containing some
 pre-marked up code, which has been formatted "by hand".</p>
 <pre>
+&gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
+...     <span class="py_keyword">print</span> "Hello world!"
+...
+"Hello world!"
+"Hello world!"
+"Hello world!"
+</pre>
+<p>Crunchy overrides non-marked up (no vlam) elements by default, and inserts an interactive
+element ("interpreter" by default, which can be over-riden by a user's choice). We can
+specify that the original styling be retained by having the "no_vlam" option</p>
+<pre title="no_vlam">
 &gt;&gt;&gt; <span class="py_keyword">for</span> i <span class="py_keyword">in</span> range(3):
 ...     <span class="py_keyword">print</span> "Hello world!"
 ...

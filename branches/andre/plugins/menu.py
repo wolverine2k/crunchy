@@ -39,8 +39,9 @@ def insert_default_menu(page):
         menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
                                  "server_root", "menu_en.html")
         _default_menu, _css = extract_menu(menu_file)
-    page.body.insert(0, _default_menu)
-    page.head.insert(0, _css)
+    page.body.insert(0,_default_menu) # make sure it appears first -
+    # this is important for poorly formed tutorials (non-w3c compliant).
+    page.head.append(_css)
 
 
 def extract_menu(filename):
