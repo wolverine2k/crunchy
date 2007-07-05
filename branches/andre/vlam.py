@@ -15,6 +15,8 @@ et = ElementTree
 from cometIO import register_new_page
 import configuration
 
+DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
+'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
 count = 0
 
 def uidgen():
@@ -130,11 +132,13 @@ class CrunchyPage(object):
 
     def read(self):
         fake_file = StringIO()
+        fake_file.write(DTD + '\n')
         # May want to use the "private" _write() instead of write() as the
         # latter will add a redundant <xml ...> statement unless the
         # encoding is utf-8 or ascii.
         self.tree.write(fake_file)
         return fake_file.getvalue()
+
 
 comet_js = """
 function runOutput(channel)

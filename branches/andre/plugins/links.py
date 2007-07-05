@@ -45,7 +45,10 @@ def href_handler(page, elem, uid, vlam):
     if is_remote_url(page.url) and "href" in elem.attrib:
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
-
+    if page.is_local and "href" in elem.attrib:
+        local_dir = os.path.split(page.url)[0]
+        elem.attrib["href"] = "/CrunchyLocalFile" + os.path.join(
+                                            local_dir, elem.attrib["href"])
 def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")
