@@ -67,6 +67,7 @@ def insert_editor(page, elem, uid, vlam):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
+    elem.attrib["id"] = "div_"+uid
     # determine where the code should appear; we can't have both
     # no-pre and no-copy at the same time
     if not "no-pre" in vlam:

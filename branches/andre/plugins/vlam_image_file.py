@@ -46,6 +46,7 @@ def insert_image_file(page, elem, uid, vlam):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
+    elem.attrib["id"] = "div_"+uid
     # extracting the image file name
     img_fname = vlam.replace("image_file", "").replace("no-pre", "").replace("no-copy", "").replace(' ', '')
     if not img_fname:

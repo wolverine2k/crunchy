@@ -173,7 +173,7 @@ class HTMLTreeBuilder(HTMLParser):
             self.handle_endtag(lasttag)
         self.__builder.end(tag)
         # end of original code ---
-##        #### Crunchy alternative code begins
+        #### Crunchy alternative code begins
 ##        if self.__stack:
 ##            lasttag = self.__stack.pop()
 ##        else:
@@ -183,7 +183,7 @@ class HTMLTreeBuilder(HTMLParser):
 ##            self.__builder.end(lasttag)
 ##        else:
 ##            self.__builder.end(tag)
-##        #### Crunchy alternative code ends
+        #### Crunchy alternative code ends
 
     ##
     # (Internal) Handles character references.

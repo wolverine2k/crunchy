@@ -38,6 +38,7 @@ class CrunchyPage(object):
         self.pageid = uidgen()
         self.url = url
         register_new_page(self.pageid)
+        # "old" method using ElementTree directly
         #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
         html = ElementSoup.parse(filehandle, encoding = 'utf-8')
         self.tree = et.ElementTree(html)
@@ -46,7 +47,13 @@ class CrunchyPage(object):
         self.tree = security.remove_unwanted(self.tree)
         self.included = set([])
         self.head = self.tree.find("head")
+        if not self.head:
+            self.head = et.Element("head")
+            self.head.text = " "
+            html = self.tree.find("html")
+            html.insert(0, self.head)
         self.body = self.tree.find("body")
+        self.frameset = self.tree.find("frameset")
         self.process_tags()
         # we have to check wether there is a body element
         # because sometimes there is just a frameset elem.

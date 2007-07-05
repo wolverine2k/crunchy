@@ -7,12 +7,20 @@ import re
 
 import CrunchyPlugin as __cp
 
+created_uids = []
 def register():
     # no callbacks to register or initialisation needed
     pass
 
 def init_graphics(width=400, height=400, border_color='red'):
     uid = __cp.get_uid()
+    if uid not in created_uids: # dynamically create a canvas
+        created_uids.append(uid)
+        __cp.exec_js(__cp.get_pageid(), """var divCanvas = document.getElementById("div_%s");
+                        var newCanvas = document.createElement("canvas");
+                        newCanvas.setAttribute('id', 'canvas_%s')
+                        divCanvas.appendChild(newCanvas);
+        """%(uid, uid))
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").width=%d;
                     document.getElementById("canvas_%s").height=%d;
                     document.getElementById("canvas_%s").style.display = "block";

@@ -15,6 +15,10 @@ import sys
 import CrunchyPlugin
 import configuration
 
+# Third party modules - included in crunchy distribution
+from element_tree import ElementTree
+et = ElementTree
+
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
 
@@ -42,10 +46,12 @@ def insert_interpreter(page, elem, uid, vlam):
         if not page.includes("BorgInterpreter_included"):
             page.add_include("BorgInterpreter_included")
             page.add_js_code(BorgInterpreter_js)
+        page.add_js_code('init_BorgInterpreter("%s");' % uid)
     else:
         if not page.includes("SingleInterpreter_included"):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)
+        page.add_js_code('init_SingleInterpreter("%s");' % uid)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
@@ -60,18 +66,12 @@ def insert_interpreter(page, elem, uid, vlam):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    if not "no-pre" in vlam:
-        elem.insert(0, markup)
-    # the javascript code required to initialise this Python interpreter
-    if borg:
-        page.add_js_code('init_BorgInterpreter("%s");' % uid)
-    else:
-        page.add_js_code('init_SingleInterpreter("%s");' % uid)
-    # finally, an output subwidget:
+    elem.attrib["id"] = "div_"+uid
+    elem.insert(0, markup)
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
-
-    # add tooltip
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)
+    return
+
 
 prefix = configuration.defaults._prefix
 crunchy_help = "Type %s.help for more information."%prefix

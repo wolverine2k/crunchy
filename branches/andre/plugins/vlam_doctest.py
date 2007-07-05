@@ -73,6 +73,7 @@ def doctest_widget_callback(page, elem, uid, vlam):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
+    elem.attrib["id"] = "div_"+uid
     # We insert the styled doctest code inside this container element:
     elem.insert(0, markup)
     # call the insert_editor_subwidget service to insert an editor:

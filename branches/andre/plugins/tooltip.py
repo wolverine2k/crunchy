@@ -20,18 +20,17 @@ def register():
     CrunchyPlugin.register_http_handler("/help%s"%CrunchyPlugin.session_random_id, help_handler)
 
 def insert_tooltip(page, elem, uid):
-    # add div for displaying the tooltip
-    tipbar = et.SubElement(elem, "div")
+    # add span for displaying the tooltip - using div messes things up; avoid!
+    tipbar = et.SubElement(elem, "span")
     tipbar.attrib["id"] = "tipbar_" + uid
     tipbar.attrib["class"] = "interp_tipbar"
 
-    if not page.includes("tooltip_included"):
+    if not page.includes("tooltip_included") and page.body:
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
 
-        # add help div
         help_menu = et.Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
@@ -85,7 +84,7 @@ def doc_handler(request):
     request.end_headers()
     request.wfile.write(result)
     request.wfile.flush()
-    return 
+    return
 
 def help_handler(request):
     """Provide help documentation.
@@ -98,7 +97,7 @@ tooltip_css = """
     position: fixed;
     top: 10px;
     right: 10px;
-    width: 50%;  
+    width: 50%;
     border: 2px outset #DDCCBB;
     background-color: #FFEEDD;
     font: 9pt monospace;
@@ -118,7 +117,7 @@ tooltip_css = """
     position: fixed;
     top: 10px;
     right: 10px;
-    width: 50%;  
+    width: 50%;
     height: 50%;
     overflow:auto;
     border: 1px solid #000000;

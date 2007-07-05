@@ -9,7 +9,7 @@ z-index: 10;
 }
 
 body
-{margin-top: 60px; /* keep in sync with crunchy_menu_container height */}
+{margin-top: 50px; /* keep nearly (-10px) in sync with crunchy_menu_container height */}
 
 #crunchy_menu_container ul
 {

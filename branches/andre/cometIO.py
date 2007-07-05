@@ -146,7 +146,8 @@ class ThreadedBuffer(object):
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
         # display the input box and reset the output:
-        output_buffers[pageid].put(reset_js % (uid, uid, uid))
+        #output_buffers[pageid].put(reset_js % (uid, uid, uid))
+        output_buffers[pageid].put(reset_js % (uid, uid))#, uid))
 
     def unregister_thread(self):
         """
@@ -213,5 +214,8 @@ sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
 reset_js = """
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
+"""
+#
+"""
 document.getElementById("canvas_%s").style.display="none";
 """

@@ -13,7 +13,7 @@ et = ElementTree
 
 def register():
     register_service(insert_io_subwidget, "insert_io_subwidget")
-    
+
 def insert_io_subwidget(page, elem, uid):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
@@ -32,12 +32,6 @@ def insert_io_subwidget(page, elem, uid):
     inp.attrib["onkeypress"] = 'tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
-    canvas = et.SubElement(elem, "canvas")
-    canvas.attrib["id"] = "canvas_" + uid
-    canvas.attrib["width"] = "400"
-    canvas.attrib["height"] = "400"
-    canvas.attrib["class"] = "crunchy_canvas"
-    canvas.text = "You need a browser that supports <canvas> for this to work"
 
 io_js = r"""
 function push_keys(event, uid){
@@ -73,7 +67,7 @@ io_css = r"""
 
 .output{
     font: 10pt monospace;
-    color:darkgreen; 
+    color:darkgreen;
     white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
                             http://www.w3.org/TR/css3-text/#white-space */
