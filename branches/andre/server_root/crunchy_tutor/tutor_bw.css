@@ -40,6 +40,7 @@ html {
 	display: block;
 	font-weight: bold;
 	background: white;
+	margin-top: 1em;
 }
 #navbar a {
 	display: block;
@@ -81,6 +82,59 @@ html {
 	border-color: black;
 }
 
+p{max-width:800px;}
+div{max-width:800px;}
 
+table.summary {
+border:1px outset gray;
+border-collapse:separate;
+border-spacing:1px;
+}
+table.summary th, td {
+border:1px inset gray;
+padding:1px;
+}
+
+
+
+.question {
+	font-weight: bold;
+	}
+	
+.answer {
+	margin-left: 1em;
+	}
+	
+.code {
+	font-family: monospace;
+	margin: 1em;
+	padding: 1em;
+	border-style: dashed;
+	border-color: black;
+	border-width: 1px;
+	white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+   white-space: -pre-wrap; /* Opera 4 - 6 */
+   white-space: -o-pre-wrap; /* Opera 7 */
+   white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+   word-wrap: break-word; /* IE 5.5+ */
+}
+
+span.def {
+	font-weight: bold;
+	font-family: monospace;
+}
+span.notes {
+	color: gray;
+	font-family: sans-serif;
+}
+
+button {background-color: black; color: white; }
+button:hover{background-color: white; border-bottom-color: black; color:black;}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+}
 	
 

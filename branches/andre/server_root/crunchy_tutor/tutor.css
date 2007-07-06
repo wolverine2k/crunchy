@@ -27,7 +27,7 @@ html {
 /* --------------------------- navbar ------------------------------- */
 #navbar {
 	position: fixed;
-	top: 8em;
+	top: 6em;
 	left: 0;
 	width: 12em;
 	padding: 1em;
@@ -38,6 +38,7 @@ html {
 	display: block;
 	font-weight: bold;
 	background: white;
+	margin-top: 1em;
 }
 #navbar a {
 	display: block;

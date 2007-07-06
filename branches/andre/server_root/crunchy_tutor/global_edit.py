@@ -2,22 +2,12 @@
 
 import time
 
-files = ["index.html", "interpreter.html", "editor.html",
-"doctest.html", "canvas.html", "plot.html", "sound.html", "external.html"]
+files = ["welcome_en.html", "interpreter_en.html", "editor_en.html",
+"doctest_en.html", "canvas_en.html", "writing_en.html", "remote_en.html",
+"external_en.html", "images_en.html", "config_en.html"]
 
-'''
-<a href="index.html">Welcome</a>
-<a href="interpreter.html">Interpreter</a>
-<a href="editor.html">Editor</a>
-<a href="doctest.html">DocTest</a>
-<a href="canvas.html">Graphics: drawing</a>
-<a href="plot.html">Graphics: plotting</a>
-<a href="sound.html">Sound</a>
-<a href="external.html">External applications</a>
-'''
-
-original = '<a href="images.html">Image files</a>'
-replacement = '<a href="images.html">Image files</a>\n<a href="external.html">External applications</a>'
+original = 'index_en.html'
+replacement = 'welcome_en.html'
 
 for f in files:
     inp = open(f, "r")
