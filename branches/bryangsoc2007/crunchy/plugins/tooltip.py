@@ -10,18 +10,17 @@ et = ElementTree
 
 borg_console = interpreter.BorgConsole()
 
-provides = set(["/dir","/doc","/help"])
+provides = set(["/dir","/doc"])
 
 def register():
-    # register service, /dir, /doc, and /help
+    # register service, /dir and /doc
     CrunchyPlugin.register_service(insert_tooltip, "insert_tooltip")
     CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
-    CrunchyPlugin.register_http_handler("/help%s"%CrunchyPlugin.session_random_id, help_handler)
 
 def insert_tooltip(page, elem, uid):
-    # add div for displaying the tooltip
-    tipbar = et.SubElement(elem, "div")
+    # add span for displaying the tooltip - using div messes things up; avoid!
+    tipbar = et.SubElement(elem, "span")
     tipbar.attrib["id"] = "tipbar_" + uid
     tipbar.attrib["class"] = "interp_tipbar"
 
@@ -31,7 +30,6 @@ def insert_tooltip(page, elem, uid):
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
 
-        # add help div
         help_menu = et.Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
@@ -86,11 +84,6 @@ def doc_handler(request):
     request.wfile.write(result)
     request.wfile.flush()
     return 
-
-def help_handler(request):
-    """Provide help documentation.
-    Currently, it uses stdout. Ideally, it will use a scrollable iframe"""
-    push_input(request)
 
 # css
 tooltip_css = """
