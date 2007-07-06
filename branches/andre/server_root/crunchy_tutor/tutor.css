@@ -78,6 +78,21 @@ html {
 	border-width: 1px;
 	border-color: #369;
 }
+p{max-width:800px;}
+div{max-width:800px;}
+
+table.summary {
+background-color:#F5F5DC;
+border:1px outset gray;
+border-collapse:separate;
+border-spacing:1px;
+}
+table.summary th, td {
+border:1px inset gray;
+padding:1px;
+}
+
+
 
 .question {
 	font-weight: bold;
