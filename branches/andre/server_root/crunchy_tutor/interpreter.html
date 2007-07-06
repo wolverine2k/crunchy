@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Interpreter</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+<link href="tutor_bw.css" title="Black and white"type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="suprised.gif" class="titleimage"/>
+<span class="title">Prompting Python</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics</a>
+<a href="images.html">Image files</a>
+<a href="external.html">External applications</a>
+<a href="remote.html">Remote tutorials</a>
+<a href="writing.html">Writing tutorials</a>
+</div>
+<div id="main">
+<p>I am assuming that you are viewing this page while using Crunchy.  If not, all you will see is
+a somewhat traditional page with some black text in it.  Any reference to a Python interpreter
+that I make will seem rather odd.</p>
+<h3>An almost typical introduction to Python</h3>
+<p>I will not begin this introduction to Python the standard way, like it is done with all
+other languages, by asking you to write the traditional</p>
+<pre title="py_code">
+print "Hello World!"
+</pre>
+<p>No, this would just be too boring and neither worthy of Python nor of Crunchy.  Instead, I suggest
+that you type the following code in the interpreter prompt that appears just below it.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; answer = 211 // 5
+&gt;&gt;&gt; print answer
+</pre>
+<p>If you haven't made any mistake, Python will respond with <b>
+The Answer to The Ultimate Question Of Life, the Universe and Everything,</b>  <small>at least according to the Hitchhiker's Guide to the Galaxy.</small> 
+The Python interpreter you just used was actually inspired by and adapted from some great work by Robert Brewer. You may have also 
+noticed that the Python code was displayed in colour, with Python keywords in 
+blue, numbers in black, operators in reddish brown, etc., quite unlike the boring all
+black stuff of the original html page.</p>
+<p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; print answer
+</pre>
+<p>Yes, <tt>WE ARE THE BORG</tt>.  Crunchy's Borg interpreters all share the same state so that variables entered in one of them are known to all the other
+interpreters on the same page.  However, if you are in search of a bit of 
+individuality, you can try the same experiment again below.</p>
+<pre title="interpreter isolated">
+&gt;&gt;&gt; print answer
+</pre>
+<p>Python/Crunchy gave you an error message, as it did not know the answer
+to the ultimate question.  Generally, you should only see Borg type interpreters used in Crunchy.  However, you should keep in mind that there are other possibilities.</p>
+<p>After seeing these amazing feats, I am convinced that you will want to purchase Crunchy!</p>
+<blockquote><i> I'm not interested in your sales! I have to protect the general public!</i><br />
+<small>From the Monty Python's Crunchy Frog sketch.</small></blockquote>
+<p>Crunchy is not for sale: it is free software.  However, it is not designed for the "general public".  Using a Python interpreter on a computer can lead to unwanted results, depending on the code that is being executed. 
+[<code title="py_code">import os:</code> <span style="color:red">use with caution!</span>]  We can not be held responsible for any negative consequence of code you type in for Crunchy/Python to execute.</p>
+<h3>Slightly advanced stuff</h3>
+<p>Yes, it's ok to read on.  I am not going to introduce really super advanced stuff here.</p>
+<p>You can type in more than one line of code and interact with the interpreter in various ways.  In the example below, I have tried to show both what you should type in, and a preview of the response from Crunchy.  Try this example and notice how, at some point, a pop-up "help window" will appear at the top left.  You can make it go away by clicking on the <tt>X</tt> or simply keep on typing until it goes away on its own.</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; name = raw_input("What is your name?")  # note: use only ascii characters
+<span class="stdin">What is your name?</span>Your_name_should_appear_here
+&gt;&gt;&gt; print name
+Your_name_should_appear_here
+&gt;&gt;&gt; for i in range(4):
+...     print i
+... 
+0
+1
+2
+3
+</pre>
+<p>You now know enough to use the interpreter to learn about Python following a "real" Python tutorial.  You can either do this by go to the 
+<a href="http://docs.python.org/tut/tut.html">the official Python tutorial</a>
+on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.</p>
+<h3>Advanced stuff, for tutorial writers</h3>
+<p>introduction to vlam</p>
+<h3>Really, really advanced stuff, for tutorial writers</h3>
+<p>complete css styling information - move to making tutorials</p>
+</div>
+</body>
+</html>

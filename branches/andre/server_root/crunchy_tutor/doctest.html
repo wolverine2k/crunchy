@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy DocTest</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+
+<link href="tutor_bw.css" title="Black and white"type="text/css" rel="stylesheet" />
+
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="maths.gif" class="titleimage"/>
+<span class="title">Quiz time</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics</a>
+<a href="images.html">Image files</a>
+<a href="external.html">External applications</a>
+<a href="remote.html">Remote tutorials</a>
+<a href="writing.html">Writing tutorials</a>
+</div>
+<div id="main">
+<p>People that know about these things apparently say that you should test your code.  One method that is used in Python is known as DocTest.  I am sure you know about DocTests; if not, you probably should make a note to read a real Python tutorial.</p>
+<p>Jeff Elkner wrote on edu-sig that Python tutorials should perhaps be based around the use of DocTest.  Here's an example of what he meant: try your hand at writing <em>just enough code</em> to make the following DocTest pass.</p>
+<pre title="doctest size=(6, 80)">
+>>> p = Teacher()
+>>> p.name
+''
+>>> p.friends
+[]
+</pre>
+<p>After making a few (<em>ahem</em>) intentional mistakes to verify how
+friendly the error messages are, you will most certainly write the correct code to see what kind of congratulatory message you are going to get.  
+Afterwards try the next, slightly more difficult example.</p>
+<pre title="doctest size=(9, 80)">
+>>> p = Teacher('Jeff')
+>>> p.name
+'Jeff'
+>>> p.addFriend('Andre')
+>>> p.friends
+['Andre']
+</pre>
+<p>If you are using Crunchy, you realise that you can simply enter your code in the editor above, press the button, and see what happens.</p>
+<p>If you are not using Crunchy, and you still want to try your hand at this DocTest business, you have to:</p>
+<ul>
+<li>copy the above test in a file (which can be the same as your program);</li>
+<li>edit your program to add the desired code;</li>
+<li>look up the syntax to call up the appropriate method in the doctest module and feel like you are wasting too much time on something that should be much easier if life were fair.</li>
+</ul>  
+<p>Crunchy's ultimate goal is to make your life seem more fair.</p>
+<h3>Advanced stuff, for tutorial writers</h3>
+<p>introduction to vlam</p>
+</div>
+</body>
+</html>

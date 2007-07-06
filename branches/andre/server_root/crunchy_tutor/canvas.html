@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Canvas</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+
+<link href="tutor_bw.css" title="Black and white"type="text/css" rel="stylesheet" />
+
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="croak.gif" class="titleimage"/>
+<span class="title">Picasso's challenge</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="index.html">Welcome</a>
+<a href="interpreter.html">Interpreter</a>
+<a href="editor.html">Editor</a>
+<a href="doctest.html">DocTest</a>
+<a href="canvas.html">Graphics</a>
+<a href="images.html">Image files</a>
+<a href="external.html">External applications</a>
+<a href="remote.html">Remote tutorials</a>
+<a href="writing.html">Writing tutorials</a>
+</div>
+<div id="main">
+<h2>Picasso's challenge</h2>
+<p>Using Crunchy, you can draw the most incredible pictures. 
+ Try the following example; following the usual convention in computer graphics (but not in mathematics) the origin is at the top left corner.  
+The drawing will take place when you press the appropriate button; it is left as a challenge for you to find it.</p>
+<pre title="editor">
+import graphics
+graphics.init_graphics(300, 300)
+for i in range(50):
+   for j in range(50):
+       r = 255 - 5*i
+       g = 255 - 5*j
+       graphics.set_fill_color('rgb(%d, %d, 0)'%(r,g))
+       graphics.filled_rectangle((j*6, i*6), 6, 6)
+</pre>
+<p>
+Drawing only squares, however colorful, might be boring.  Instead, you could try the following; it includes <b>all</b> the canvas graphics commands currently supported by Crunchy (version 0.9).  
+</p>
+
+<pre title="editor">
+from graphics import *
+init_graphics()
+
+point(10, 10)
+point(100, 10)
+set_line_colour('red')  # Canadian/British spelling for "colour"
+line((11, 10), (99, 10))
+
+circle((100, 100), 50)
+set_line_color('blue') # American spelling for "color"
+circle((100, 100), 30)
+
+set_line_colour('#ff0000') # red
+triangle((200, 10), (240, 10), (220, 30))
+set_fill_colour('#00ff00') # green
+filled_triangle((200, 50), (240, 50), (220, 30))
+
+filled_circle((100, 200), 50)
+set_fill_colour('rgb(0, 0, 255)')  # blue
+filled_circle((100, 200), 40)
+
+width, height = 20, 10
+rectangle((150, 10), width, height)
+filled_rectangle((150, 25), width, height)
+
+set_fill_color('red')
+y = 300
+filled_circle((100, y), 40)
+for i in range(10):
+    r = 255-i*5
+    g = i*20
+    b = i*20
+    a = 0.5 - 0.04*i
+    set_fill_colour('rgba(%s, %s, %s, %s)'%(r, g, b, a))
+    x = 100 + 20*i
+    r = 40 + 10*i
+    filled_circle((x, y), r)
+</pre>
+
+<p>Rather than going straight to the next page, if you want, you can make a little detour and have a look at valid colour names used in Crunchy.</p>
+<a href="named_colours.html">Valid colour names</a>
+<p>using the interpreter</p>
+
+<h3>Advanced stuff</h3>
+<p>Simple animations</p>
+<h3>Graphics reference</h3>
+<p>list of all graphics commands</p>
+<h3>Advanced stuff, for tutorial writers</h3>
+<p>Surprise, there nothing special to do.  Every interactive object (interpreter and editor) can use the graphics.</p>
+</div>
+</body>
+</html>

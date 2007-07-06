@@ -126,7 +126,7 @@ editAreaLoader.load_syntax["python"] = {
 		'COMMENTS': 'color: #AAAAAA;'
 		,'QUOTESMARKS': 'color: #660066;'
 		,'KEYWORDS' : {
-			'reserved' : 'color: #0000FF;'
+			'reserved' : 'color: #336699;'
 			,'builtins' : 'color: #009900;'
 			,'stdlib' : 'color: #009900;'
 			,'special': 'color: #006666;'

@@ -215,7 +215,7 @@ reset_js = """
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 """
-#
-"""
-document.getElementById("canvas_%s").style.display="none";
-"""
+###
+##"""
+##document.getElementById("canvas_%s").style.display="none";
+##"""

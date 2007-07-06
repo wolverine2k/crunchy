@@ -269,7 +269,7 @@ i++){var but=this.advanced_buttons[i];
 if (but[0]==button_name){return this.get_button_html(but[0], but[1], but[2]);
 }}switch (button_name){case "*": case "return": return "<br />";
 case "|": case "separator": return '<img src="'+ this.baseURL +'images/spacer.gif" width="1" height="15" class="editAreaSeparatorLine">';
-case "select_font": html="<select id='area_font_size' onchange='javascript:editArea.execCommand(\"change_font_size\")'>" +"			<option value='-1'>{$font_size}</option>" +"			<option value='8'>8 pt</option>" +"			<option value='9'>9 pt</option>" +"			<option value='10'>10 pt</option>" +"			<option value='11'>11 pt</option>" +"			<option value='12'>12 pt</option>" +"			<option value='14'>14 pt</option>" +"			<option value='17'>17 pt</option>" +"			<option value='20'>20 pt</option>" +"			<option value='24'>24 pt</option>" +"			<option value='28'>28 pt</option>" +"		</select>";
+case "select_font": html="<select id='area_font_size' onchange='javascript:editArea.execCommand(\"change_font_size\")'>" +"			<option value='-1'>{$font_size}</option>" +"			<option value='8'>8 pt</option>" +"			<option value='9'>9 pt</option>" +"			<option value='10'>10 pt</option>" +"			<option value='11'>11 pt</option>" +"			<option value='12'>12 pt</option>" +"			<option value='14'>14 pt</option>" +"			<option value='17'>17 pt</option>" +"			<option value='20'>20 pt</option>" +"			<option value='24'>24 pt</option>" +"			<option value='28'>28 pt</option>" +"			<option value='32'>36 pt</option>" +"			<option value='36'>36 pt</option>" +"		</select>";
 return html;
 }return "<span id='tmp_tool_"+button_name+"'>["+button_name+"]</span>";
 };

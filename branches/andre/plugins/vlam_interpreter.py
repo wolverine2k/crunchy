@@ -97,7 +97,7 @@ function init_SingleInterpreter(uid){
     code += "locals = {'%s': configuration.defaults}\n";
     code += "import interpreter\nborg=interpreter.SingleConsole(locals)";
     code += "\nborg.push('print ";
-    code += '"Crunchy: Isolated Interpreter (Python version %s). %s"';
+    code += '"Crunchy: Individual Interpreter (Python version %s). %s"';
     code += "')\nborg.interact('')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);

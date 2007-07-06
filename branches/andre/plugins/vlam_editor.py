@@ -77,17 +77,23 @@ def insert_editor(page, elem, uid, vlam):
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
     et.SubElement(elem, "br")
-    # the actual button used for code execution:
-    if not "no-internal" in vlam:
-        btn = et.SubElement(elem, "button")
-        btn.attrib["onclick"] = "exec_code('%s')" % uid
-        btn.text = "Execute"
-        et.SubElement(elem, "br")
+    # the actual buttons used for code execution; we make sure the
+    # button for external execution, if required, appear first.
+    #
+    # note: as the code is written, it is possible that an execution
+    # button will NOT be included.  Perhaps the tutorial writer wants
+    # the user to only execute code from the "save and run" option
+    # of the editor...
     if "external" in vlam:
         btn = et.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = "Execute as external program"
-        et.SubElement(elem, "br")
+    if not "no-internal" in vlam:
+        btn = et.SubElement(elem, "button")
+        btn.attrib["onclick"] = "exec_code('%s')" % uid
+        btn.text = "Execute"
+    et.SubElement(elem, "br")
+
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 

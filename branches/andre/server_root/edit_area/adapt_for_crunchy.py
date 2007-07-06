@@ -14,9 +14,9 @@ with crunchy is the "full" version, which is a single file (approx 100kb)
 with comments and extra spaces removed - making it nearly impossible
 to read, and edit.
 
-adapt_for_crunchy inserts some line breaks to make edit_area_full 
+adapt_for_crunchy inserts some line breaks to make edit_area_full
 easier to read.  It also performs some changes such as changing
-the minimum height and adding larger font sizes as options for 
+the minimum height and adding larger font sizes as options for
 displaying on "slides".
 
 adapt_for_crunchy is *not* optimized for speed.  Still, it takes very
@@ -32,10 +32,10 @@ DQUOTE = '"'
 
 def break_into_lines(text):
     """
-       Breaks the text into lines; a new line begins after a semi-colon 
-       (not inside a string).  
-    
-       By uncommenting a few lines of code, it is possible to have strings 
+       Breaks the text into lines; a new line begins after a semi-colon
+       (not inside a string).
+
+       By uncommenting a few lines of code, it is possible to have strings
        begin on a new line.  This was thought to be useful in making the
        code easier to read, but proved unnecessary so far.
     """
@@ -90,7 +90,7 @@ def break_into_lines(text):
 ## obtained as pre-release from the author.
 ##
 ##def change_minimum_size(text):
-##    """ 
+##    """
 ##       Changes the minimum height for an EditArea since the default
 ##       is too small to be useful; it is also hard to resize if it
 ##       is the last element on a page.
@@ -125,7 +125,7 @@ def add_font_choices(text):
     """
        Adds larger font size choices, mostly to use when displaying
        EditArea on a 'slide'.  This was motivated by the desire to
-       demonstrate Crunchy (and EditArea) at Pycon 2007. 
+       demonstrate Crunchy (and EditArea) at Pycon 2007.
     """
     font_choice = "\"			<option value='%d'>%d pt</option>\" +"
     font14 = font_choice%(14, 14)
@@ -133,9 +133,12 @@ def add_font_choices(text):
     font20 = font_choice%(20, 20)
     font24 = font_choice%(24, 24)
     font28 = font_choice%(28, 28)
+    font32 = font_choice%(32, 36)
+    font36 = font_choice%(36, 36)
     for index, line in enumerate(text):
         if font14 in line:
-            line = line.replace(font14, font14+font17+font20+font24+font28)
+            line = line.replace(font14, font14+font17+font20+font24+font28+
+            font32+font36)
             text[index] = line
             return
     return

@@ -76,7 +76,7 @@ style_css = r"""
 /* Basic Python Elements; color choice are chosen, if possible, to be
    consistent with those of the editor (EditArea); these are
    found in file python.js of the EditArea distribution*/
-.py_keyword{color: #0000FF; /* blue */
+.py_keyword{color: #336699; /* blue */
             font-weight: bold;} /* EditArea does not support font-weight */
 .py_number{color: #000000;} /* EditArea does not recognize number; keep black.*/
 .py_comment{color: gray;}
