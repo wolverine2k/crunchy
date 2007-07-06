@@ -31,6 +31,8 @@ html {
 	left: 0;
 	width: 12em;
 	padding: 1em;
+	overflow: auto; /* this and the following value ensure that the menu will be scrollable */
+	bottom: 1%;     /* if it becomes too big to be displayed vertically. */
 }
 
 #navbar span.heading {
