@@ -1,12 +1,5 @@
 /*------------------------------- tooltip -------------------------------- */
 
-function display_help(uid, data) {
-    var i = new XMLHttpRequest()
-    i.open("POST", "/input?uid="+uid, true);
-    //i.open("POST", "/help"+session_id, true);
-    i.send(data + "\n");
-}
-
 function hide_helpers() {
     document.getElementById("help_menu").style.display = "none";
     document.getElementById("help_menu_x").style.display = "none";
@@ -19,42 +12,34 @@ function hide_helpers() {
 }
 
 function tooltip_display(event, interp_id) {
-    // safari
-    if (navigator.userAgent.indexOf("Safari") != -1) {
-        switch(event.charCode) {
-            case 13:    // enter
-            case 27:    // escape
-            case 41:    // close )
-            case 8:     // backspace
-                hide_tipbar(interp_id);
-                break;
-            case 40: // open paren "("
-                tooltip_doc_mac(interp_id);
-                break;
-            case 46:  // period "."
-                tooltip_dir_mac(interp_id);
-                break;
-        }
-    }
-
-    // other browsers
-    else {
-        switch(event.keyCode) {
-            case 13:    // enter
-            case 27:    // escape
-            case 48:    // close )
-            case 8:     // backspace
-                hide_tipbar(interp_id);
-                break;
-            case 57:  // open paren "("
-                tooltip_doc(interp_id);
-                break;
-            case 190:  // period "."
-                tooltip_dir(interp_id);
-                break;
-        }
-    }
-    return true;
+    switch(event.keyCode) {
+        case 13:    // enter
+        case 27:    // escape
+        case 48:    // close )
+        case 8:     // backspace
+          hide_tipbar(interp_id);
+          break;
+      case 57:  // open paren "("
+            tooltip_doc(interp_id);
+            break;
+        case 190:  // period "."
+            tooltip_dir(interp_id);
+            break;
+            // attempting to solve problem on Mac
+        case 0:
+            switch(event.charCode) {
+                case 40: // open paren "("
+                    tooltip_doc_mac(interp_id);
+                    break;
+                case 41: // close )
+                    hide_tipbar(interp_id);
+                    break;
+                case 46:  // period "."
+                    tooltip_dir_mac(interp_id);
+                    break;
+                };
+            break;
+    };
 };
 
 function show_tipbar(interp_id) {

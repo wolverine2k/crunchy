@@ -47,10 +47,6 @@ function push_keys(event, uid){
     if (event.keyCode != 13) return true;
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
-    if (data.substring(0,5) == "help(") {
-        display_help(uid, data);
-        return;
-    }
     var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");

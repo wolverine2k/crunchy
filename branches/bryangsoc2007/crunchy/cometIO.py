@@ -60,6 +60,8 @@ class StringBuffer(object):
 
 
 class CrunchyIOBuffer(StringBuffer):
+    help_flag = False
+
     """A version optimised for crunchy IO"""
     def put_output(self, data, uid):
         """put some output into the pipe"""
@@ -70,6 +72,10 @@ class CrunchyIOBuffer(StringBuffer):
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             self.event.set()
+        elif self.help_flag == True:
+            self.put(help_js)
+            self.put("""document.getElementById("help_menu").innerHTML = "%s";//output\n""" % (pdata))
+            self.help_flag = False
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
         self.lock.release()
@@ -116,7 +122,19 @@ def push_input(request):
     pageid = uid.split(":")[0]
     # echo back to output:
     output_buffers[pageid].put_output("<span class='stdin'>" + request.data + "</span>", uid)
-    input_buffers[uid].put(request.data)
+
+    # display help menu on a seperate div
+    if request.data.startswith("help("):
+        output_buffers[pageid].help_flag = True
+
+    # ipython style help
+    if request.data.rstrip().endswith("?"):
+        output_buffers[pageid].help_flag = True
+        help_str = "help(" + request.data.rstrip()[:-1] + ")\n"
+        input_buffers[uid].put(help_str)
+    else:
+        input_buffers[uid].put(request.data)
+
     request.send_response(200)
     request.end_headers()
     
@@ -208,4 +226,9 @@ reset_js = """
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 document.getElementById("canvas_%s").style.display="none";
+"""
+
+help_js = """
+document.getElementById("help_menu").style.display = "block";
+document.getElementById("help_menu_x").style.display = "block";
 """
