@@ -50,6 +50,7 @@ function push_keys(event, uid){
     var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
+
     return true;
 };
 """

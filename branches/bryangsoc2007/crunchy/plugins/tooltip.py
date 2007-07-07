@@ -19,16 +19,16 @@ def register():
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
 
 def insert_tooltip(page, elem, uid):
-    # add span for displaying the tooltip - using div messes things up; avoid!
-    tipbar = et.SubElement(elem, "span")
-    tipbar.attrib["id"] = "tipbar_" + uid
-    tipbar.attrib["class"] = "interp_tipbar"
-
     if not page.includes("tooltip_included"):
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
+
+        tooltip = et.Element("div")
+        tooltip.attrib["id"] = "tooltip"
+        tooltip.text = " "
+        page.body.append(tooltip)
 
         help_menu = et.Element("div")
         help_menu.attrib["id"] = "help_menu"
@@ -37,7 +37,7 @@ def insert_tooltip(page, elem, uid):
 
         help_menu_x = et.Element("div")
         help_menu_x.attrib["id"] = "help_menu_x"
-        help_menu_x.attrib["onclick"] = "hide_helpers()"
+        help_menu_x.attrib["onclick"] = "hide_help()"
         help_menu_x.text = "X"
         page.body.append(help_menu_x)
 
@@ -87,11 +87,12 @@ def doc_handler(request):
 
 # css
 tooltip_css = """
-.interp_tipbar {
+#tooltip {
     position: fixed;
     top: 10px;
     right: 10px;
     width: 50%;  
+    overflow:auto;
     border: 2px outset #DDCCBB;
     background-color: #FFEEDD;
     font: 9pt monospace;
@@ -105,7 +106,7 @@ tooltip_css = """
                             http://www.w3.org/TR/css3-text/#white-space */
     word-wrap: break-word; /* IE 5.5+ */
     display: none;  /* will appear only when needed */
-    z-index:11;
+    z-index:10;
 }
 #help_menu {
     position: fixed;
@@ -114,7 +115,7 @@ tooltip_css = """
     width: 50%;  
     height: 50%;
     overflow:auto;
-    border: 1px solid #000000;
+    border: 2px outset #DDCCBB;
     background-color: #FFEEDD;
     font: 9pt monospace;
     margin: 0;

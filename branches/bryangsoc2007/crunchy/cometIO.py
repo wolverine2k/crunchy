@@ -74,9 +74,11 @@ class CrunchyIOBuffer(StringBuffer):
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
-            self.put("""document.getElementById("help_menu").innerHTML = "%s";//output\n""" % (pdata))
+            self.put("""document.getElementById("help_menu").innerHTML = "%s";\n""" % (pdata))
             self.help_flag = False
         else:
+            # forces safari to re-focus on interpreter
+            self.put("""document.getElementById("in_%s").focus();""" % uid)
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
         self.lock.release()
     
