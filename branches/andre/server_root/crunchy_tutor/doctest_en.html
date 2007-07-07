@@ -64,7 +64,22 @@ are wasting too much time on something that should be much easier if life were f
 </ul>  
 <p>Crunchy's ultimate goal is to make your life seem more fair.</p>
 <h3>Advanced stuff, for tutorial writers</h3>
-<p>introduction to vlam</p>
+<p><code>&lt;pre title="doctest [size=(rows, cols)]  
+[linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
+between the <code>pre</code> tags is always placed before the textarea and 
+used as the doctest.</p>
+<p>Code entered into a doctest textarea added to the doctest and executed with
+the addition special code as follows:</p>
+<pre title="py_code">
+__teststring = "doctest + user code"
+from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
+__test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
+__x = __DocTestRunner().run(__test)
+print "Your code failed %%s out of %%s tests." %%(__x)
+</pre>
+<p>In the future, it is expected that a more meaningful message will be provided like it was
+done in previous versions of Crunchy.</p>
+
 </div>
 </body>
 </html>
