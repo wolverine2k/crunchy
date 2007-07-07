@@ -85,9 +85,18 @@ Your_name_should_appear_here
 <a href="http://docs.python.org/tut/tut_en.html">the official Python tutorial</a>
 on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.</p>
 <h3>Advanced stuff, for tutorial writers</h3>
-<p>introduction to vlam</p>
-<h3>Really, really advanced stuff, for tutorial writers</h3>
-<p>complete css styling information - move to making tutorials</p>
+<p>In order to instruct Crunchy to insert an interpreter below a Python code sample, one uses the <code>title</code> attribute as follows:</p>
+<p><code>&lt;pre title="interpreter [isolated] [linenumber [=starting_number]]"&gt;</code><br/>
+<code>Some Python code</code><br/>
+<code>&lt;/pre&gt;</code></p> <p> where the square brackets
+indicate optional arguments.  Any number of interpreter "prompts" can 
+appear within a page, and every interpreter prompt used in a given session 
+shares the same environment, unless the <code>isolated</code> argument is used.  
+Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others.</p>
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code; the line numbering will start at 1 unless a different starting value is given.</p>
+
 </div>
 </body>
 </html>

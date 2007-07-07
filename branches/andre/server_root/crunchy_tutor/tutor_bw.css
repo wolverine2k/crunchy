@@ -4,6 +4,7 @@ html {
 /* --------------------------- topbar ------------------------------- */
 #topbar {
 	width: 100%;
+	max-width: 1400px;  /* leave enough room for long title */
 	height: 4em;
 	left: 0;
 	border-bottom-style: dashed;
