@@ -15,10 +15,6 @@ import sys
 import CrunchyPlugin
 import configuration
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree
-et = ElementTree
-
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
 

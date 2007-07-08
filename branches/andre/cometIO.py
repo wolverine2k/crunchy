@@ -10,7 +10,7 @@ import sys
 
 import configuration
 
-debug_enabled = True
+debug_enabled = False
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -70,7 +70,7 @@ class CrunchyIOBuffer(StringBuffer):
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
-        #print "pdata = ", pdata
+        debug_msg("pdata = "+ pdata)
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)

@@ -12,10 +12,6 @@ import os
 import CrunchyPlugin
 from configuration import defaults
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
 # The set of "widgets/services" provided by this plugin
 provides = set(["image_file_widget"])
 # The set of other "widgets/services" required from other plugins
@@ -52,7 +48,7 @@ def insert_image_file(page, elem, uid, vlam):
     if not img_fname:
         # The user hasn't supplied the filename in the VLAM.
         elem.insert(0, markup)
-        message = et.SubElement(elem, "p")
+        message = CrunchyPlugin.SubElement(elem, "p")
         message.text = """
         The above code was supposed to be used to generate an image.
         However, Crunchy could not find a file name to save the image, so
@@ -68,7 +64,7 @@ def insert_image_file(page, elem, uid, vlam):
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     # some spacing:
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
 
     # The actual file name to be used is "mangled" by adding a prefix
     # that will be extracted later by Crunchy upon a GET call.  This is
@@ -77,25 +73,25 @@ def insert_image_file(page, elem, uid, vlam):
     image_fname =  "/CrunchyTempDir" +os.path.join(defaults.temp_dir, img_fname)
 
     # the actual button used for code execution:
-    btn = et.SubElement(elem, "button")
+    btn = CrunchyPlugin.SubElement(elem, "button")
     btn.attrib["onclick"] = "image_exec_code('%s', '%s')" % (uid, image_fname)
     btn.text = "Generate image"  # This will eventually need to be translated
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
     # Extension of the file; used for determining the filetype
     ext = img_fname.split('.')[-1]
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     if ext in ['svg', 'svgz']:  # currently untested
-        img = et.SubElement(elem, "iframe")
+        img = CrunchyPlugin.SubElement(elem, "iframe")
     else:
-        img = et.SubElement(elem, "img")
+        img = CrunchyPlugin.SubElement(elem, "img")
     img.attrib['id'] = 'img_' + uid
     img.attrib['src'] = ''
     img.attrib['alt'] = 'The code above should create a file named ' +\
                         img_fname + '.'
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     # we need some unique javascript in the page; note how the
     # "/exec" referred to above as a required service appears here
     # with a random session id appended for security reasons.

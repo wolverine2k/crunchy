@@ -13,16 +13,11 @@ for people familiar with the Crunchy plugin architecture.
 
 import CrunchyPlugin
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree
-et = ElementTree
-
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
 
 # each doctest code sample will be kept track via a uid used as a key.
 doctests = {}
-
 
 def register():
     """The register() function is required for all plugins.
@@ -79,12 +74,12 @@ def doctest_widget_callback(page, elem, uid, vlam):
     # call the insert_editor_subwidget service to insert an editor:
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid)
     #some spacing:
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     # the actual button used for code execution:
-    btn = et.SubElement(elem, "button")
+    btn = CrunchyPlugin.SubElement(elem, "button")
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     # finally, an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 

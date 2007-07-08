@@ -8,11 +8,9 @@ import os
 
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
-from element_tree import ElementTree, HTMLTreeBuilder
 
 _default_menu = None
 _css = None
-
 
 def register():
     """The register() function is required for all plugins.
@@ -56,7 +54,7 @@ def extract_menu(filename):
        whereas the css information is contained in the single
        <link> in that file.'''
     try:
-        tree = HTMLTreeBuilder.parse(filename)
+        tree = CrunchyPlugin.parse(filename)
     except Exception, info:
         print info
     # extract menu for use in other files

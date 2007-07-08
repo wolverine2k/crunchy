@@ -12,10 +12,6 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
 # The set of other "widgets/services" required from other plugins
@@ -39,7 +35,7 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
     """
-    inp = et.SubElement(elem, "textarea")
+    inp = CrunchyPlugin.SubElement(elem, "textarea")
     inp.attrib["rows"] = "10"
     inp.attrib["cols"] = "80"
     editor_id = "code_" + uid
@@ -76,7 +72,7 @@ def insert_editor(page, elem, uid, vlam):
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
     # button for external execution, if required, appear first.
     #
@@ -85,14 +81,14 @@ def insert_editor(page, elem, uid, vlam):
     # the user to only execute code from the "save and run" option
     # of the editor...
     if "external" in vlam:
-        btn = et.SubElement(elem, "button")
+        btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = "Execute as external program"
     if not "no-internal" in vlam:
-        btn = et.SubElement(elem, "button")
+        btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = "Execute"
-    et.SubElement(elem, "br")
+    CrunchyPlugin.SubElement(elem, "br")
 
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)

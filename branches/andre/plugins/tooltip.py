@@ -5,9 +5,6 @@ import interpreter
 import re
 import urllib
 
-from element_tree import ElementTree
-et = ElementTree
-
 borg_console = interpreter.BorgConsole()
 
 provides = set(["/dir","/doc"])
@@ -25,17 +22,17 @@ def insert_tooltip(page, elem, uid):
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
 
-        tooltip = et.Element("div")
+        tooltip = CrunchyPlugin.Element("div")
         tooltip.attrib["id"] = "tooltip"
         tooltip.text = " "
         page.body.append(tooltip)
 
-        help_menu = et.Element("div")
+        help_menu = CrunchyPlugin.Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
         page.body.append(help_menu)
 
-        help_menu_x = et.Element("div")
+        help_menu_x = CrunchyPlugin.Element("div")
         help_menu_x.attrib["id"] = "help_menu_x"
         help_menu_x.attrib["onclick"] = "hide_help()"
         help_menu_x.text = "X"
@@ -89,10 +86,10 @@ tooltip_css = """
 #tooltip {
     position: fixed;
     top: 10px;
-    right: 10px;
+    right: 20px;
     width: 50%;
     overflow:auto;
-    border: 4px outset black;
+    border: 4px outset #369;
     background-color: white;
     color: black;
     font: 9pt monospace;
@@ -111,11 +108,11 @@ tooltip_css = """
 #help_menu {
     position: fixed;
     top: 10px;
-    right: 10px;
+    right: 5px;
     width: 50%;
     height: 50%;
     overflow:auto;
-    border: 4px outset black;
+    border: 4px outset #369;
     background-color: white;
     color: black;
     font: 9pt monospace;
@@ -134,12 +131,12 @@ tooltip_css = """
 #help_menu_x {
     position: fixed;
     top: 15px;
-    right: 30px;
-    color: white;
+    right: 25px;
+    color: #fe0;
     background-color: #369;
     font: 14pt sans-serif;
     cursor: pointer;
-    padding: 1px;
+    padding: 4px 4px 0 4px;
     display: none;  /* will appear only when needed */
     z-index:12;
 }

@@ -8,9 +8,6 @@ provides = set(["io_widget"])
 from CrunchyPlugin import *
 import CrunchyPlugin
 
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
 def register():
     register_service(insert_io_subwidget, "insert_io_subwidget")
 
@@ -22,11 +19,11 @@ def insert_io_subwidget(page, elem, uid):
         page.add_include("io_included")
         page.add_js_code(io_js)
         page.add_css_code(io_css)
-    output = et.SubElement(elem, "span")
+    output = CrunchyPlugin.SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
     output.text = "\n"
-    inp = et.SubElement(elem, "input")
+    inp = CrunchyPlugin.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
     inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid

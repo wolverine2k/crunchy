@@ -11,10 +11,20 @@ import cometIO
 import PluginServices as services
 import translation
 
-__all__=["register_http_handler", "register_vlam_handler",
-         "create_vlam_page", "exec_code", "register_service", "services",
-         "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
-         "gen_uid", "_"]
+# Rather than having plugins import ElementTree if needed, we will expose
+# the required API through CrunchyPlugin.  This way, if we ever
+# use something else than ElementTree, we can avoid having to change
+# any working plugin, as long as we maintain the API here.
+from element_tree import ElementTree, HTMLTreeBuilder
+Element = ElementTree.Element
+SubElement = ElementTree.SubElement
+fromstring = ElementTree.fromstring
+parse = HTMLTreeBuilder.parse
+
+##__all__=["register_http_handler", "register_vlam_handler",
+##         "create_vlam_page", "exec_code", "register_service", "services",
+##         "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
+##         "gen_uid", "_"]
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.

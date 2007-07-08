@@ -11,10 +11,6 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
 # The set of other "widgets/services" required from other plugins
 requires = set(["/remote"])
 
@@ -29,11 +25,11 @@ def register():
     CrunchyPlugin.register_vlam_handler("span", "load_remote", insert_load_remote)
 
 def insert_load_remote(page, parent, uid, vlam):
-    form = et.SubElement(parent, 'form', name='url', size='80', method='get',
+    form = CrunchyPlugin.SubElement(parent, 'form', name='url', size='80', method='get',
                        action='/remote')
-    input1 = et.SubElement(form, 'input', name='url', size='80',
+    input1 = CrunchyPlugin.SubElement(form, 'input', name='url', size='80',
                            value=parent.text)
-    input2 = et.SubElement(form, 'input', type='submit',
+    input2 = CrunchyPlugin.SubElement(form, 'input', type='submit',
                            value='Load remote tutorial')
     input2.attrib['class'] = 'crunchy'
     parent.text = ' '

@@ -14,13 +14,6 @@ import CrunchyPlugin
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
-def exec_handler(request):
-    """handle an execution request"""
-    CrunchyPlugin.exec_code(request.data, request.args["uid"])
-    request.send_response(200)
-    request.end_headers()
-
-
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register three types of 'actions':
@@ -38,11 +31,10 @@ def register():
                                         save_and_run_request_handler)
     CrunchyPlugin.register_http_handler("/run_external%s"%CrunchyPlugin.session_random_id,
                                         run_external_request_handler)
-    #CrunchyPlugin.register_service(save_file, "save_file")
-    #CrunchyPlugin.register_service(read_file, "read_file")
-
 
 def save_file_request_handler(request):
+    '''extracts the path & the file content from the request and
+       saves the content in the path as indicated.'''
     data = request.data
     request.send_response(200)
     request.end_headers()

@@ -5,12 +5,7 @@ simple textarea.
 import CrunchyPlugin
 import configuration
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree as et
-
-# placeholder for future translation service...
-def _(data):
-    return data
+_ = CrunchyPlugin._
 
 provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])
@@ -39,12 +34,12 @@ def enable_editarea(page, elem, uid, textarea_id):
 
 def add_hidden_load_and_save(elem, id, textarea_id):
     hidden_load_id = 'hidden_load' + textarea_id
-    hidden_load = et.SubElement(elem, 'div', id=hidden_load_id)
+    hidden_load = CrunchyPlugin.SubElement(elem, 'div', id=hidden_load_id)
     hidden_load.attrib['class'] = 'load_python'
     addLoadPython(hidden_load, hidden_load_id, textarea_id)
 
     hidden_save_id = 'hidden_save' + textarea_id
-    hidden_save = et.SubElement(elem, 'div', id=hidden_save_id)
+    hidden_save = CrunchyPlugin.SubElement(elem, 'div', id=hidden_save_id)
     hidden_save.attrib['class'] = 'save_python'
     addSavePython(hidden_save, hidden_save_id, textarea_id)
     return
@@ -55,18 +50,18 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     '''
     filename = 'filename' + hidden_load_id
     path = 'path' + hidden_load_id
-    br = et.SubElement(parent, 'br')
-    form1 = et.SubElement(parent, 'form',
+    br = CrunchyPlugin.SubElement(parent, 'br')
+    form1 = CrunchyPlugin.SubElement(parent, 'form',
                 onblur = "a=getElementById('%s');b=getElementById('%s');a.value=b.value"%(path, filename))
-    input1 = et.SubElement(form1, 'input', type='file', id=filename, size='80')
-    br = et.SubElement(form1, 'br')
+    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
+    br = CrunchyPlugin.SubElement(form1, 'br')
 
-    form2 = et.SubElement(parent, 'form')
-    input2 = et.SubElement(form2, 'input', type='hidden', id=path)
-    btn = et.SubElement(parent, 'button',
+    form2 = CrunchyPlugin.SubElement(parent, 'form')
+    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
+    btn = CrunchyPlugin.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.value;load_python_file('%s');"%(path, textarea_id))
     btn.text = _("Load Python file")
-    btn2 = et.SubElement(parent, 'button',
+    btn2 = CrunchyPlugin.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_load_id)
     btn2.text = _("Cancel")
     return
@@ -77,22 +72,22 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     '''
     filename = 'filename' + hidden_save_id
     path = 'path' + hidden_save_id
-    br = et.SubElement(parent, 'br')
-    form1 = et.SubElement(parent, 'form')
-    input1 = et.SubElement(form1, 'input', type='file', id=filename, size='80')
-    br = et.SubElement(form1, 'br')
+    br = CrunchyPlugin.SubElement(parent, 'br')
+    form1 = CrunchyPlugin.SubElement(parent, 'form')
+    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
+    br = CrunchyPlugin.SubElement(form1, 'br')
 
-    form2 = et.SubElement(parent, 'form')
+    form2 = CrunchyPlugin.SubElement(parent, 'form')
     form2.text = _("Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally.")
-    input2 = et.SubElement(form2, 'input', type='hidden', id=path)
-    btn = et.SubElement(parent, 'button',
+    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
+    btn = CrunchyPlugin.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
         "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))
     btn.text = _("Save Python file")
-    btn2 = et.SubElement(parent, 'button',
+    btn2 = CrunchyPlugin.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_save_id)
     btn2.text = _("Cancel")
-    btn3 = et.SubElement(parent, 'button',
+    btn3 = CrunchyPlugin.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
         "c=getElementById('%s');path=c.value;save_and_run(path,'%s');"%(path, textarea_id))
     btn3.text = _("Save and Run")

@@ -11,10 +11,6 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder
-et = ElementTree
-
 # The set of other "widgets/services" required from other plugins
 requires = set(["/local"])
 
@@ -31,16 +27,16 @@ def register():
 def insert_load_local(page, parent, uid, vlam):
     name1 = 'browser_'
     name2 = 'submit_'
-    form1 = et.SubElement(parent, 'form', name=name1,
+    form1 = CrunchyPlugin.SubElement(parent, 'form', name=name1,
                         onblur = "document.%s.url.value="%name2+\
                         "document.%s.filename.value"%name1)
-    input1 = et.SubElement(form1, 'input', type='file',
+    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file',
                  name='filename', size='80')
-    br = et.SubElement(form1, 'br')
+    br = CrunchyPlugin.SubElement(form1, 'br')
 
-    form2 = et.SubElement(parent, 'form', name=name2, method='get',
+    form2 = CrunchyPlugin.SubElement(parent, 'form', name=name2, method='get',
                 action='/local')
-    input2 = et.SubElement(form2, 'input', type='hidden', name='url')
-    input3 = et.SubElement(form2, 'input', type='submit',
+    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', name='url')
+    input3 = CrunchyPlugin.SubElement(form2, 'input', type='submit',
              value='Load local tutorial')
     input3.attrib['class'] = 'crunchy'
