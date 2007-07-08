@@ -139,7 +139,6 @@ class CrunchyPage(object):
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
-
 comet_js = """
 function runOutput(channel)
 {
@@ -159,18 +158,7 @@ function runOutput(channel)
             {
             case 200:
                 //alert(h.responseText);
-                resText = h.responseText;
-                if (resText.indexOf("Help on") != -1) {
-                    // parse out the uid and replace with help_menu
-                    start = resText.indexOf("getElementById(\\"out_") + 16;
-                    end = resText.indexOf('"', start);
-                    uid = resText.substring(start, end);
-                    resText = resText.replace(uid, "help_menu");
-                    document.getElementById("help_menu").innerHTML = "";
-                    document.getElementById("help_menu").style.display = "block";
-                    document.getElementById("help_menu_x").style.display = "block";
-                }
-                eval(resText);
+                eval(h.responseText);
                 runOutput(channel);
                 break;
             default:

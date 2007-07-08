@@ -10,26 +10,25 @@ et = ElementTree
 
 borg_console = interpreter.BorgConsole()
 
-provides = set(["/dir","/doc","/help"])
+provides = set(["/dir","/doc"])
 
 def register():
-    # register service, /dir, /doc, and /help
+    # register service, /dir and /doc
     CrunchyPlugin.register_service(insert_tooltip, "insert_tooltip")
     CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
-    CrunchyPlugin.register_http_handler("/help%s"%CrunchyPlugin.session_random_id, help_handler)
 
 def insert_tooltip(page, elem, uid):
-    # add span for displaying the tooltip - using div messes things up; avoid!
-    tipbar = et.SubElement(elem, "span")
-    tipbar.attrib["id"] = "tipbar_" + uid
-    tipbar.attrib["class"] = "interp_tipbar"
-
     if not page.includes("tooltip_included") and page.body:
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
+
+        tooltip = et.Element("div")
+        tooltip.attrib["id"] = "tooltip"
+        tooltip.text = " "
+        page.body.append(tooltip)
 
         help_menu = et.Element("div")
         help_menu.attrib["id"] = "help_menu"
@@ -38,14 +37,13 @@ def insert_tooltip(page, elem, uid):
 
         help_menu_x = et.Element("div")
         help_menu_x.attrib["id"] = "help_menu_x"
-        help_menu_x.attrib["onclick"] = "hide_helpers()"
+        help_menu_x.attrib["onclick"] = "hide_help()"
         help_menu_x.text = "X"
         page.body.append(help_menu_x)
 
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
-
-    line = re.split(r"\s", request.data)[-1].strip()
+    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
@@ -86,20 +84,17 @@ def doc_handler(request):
     request.wfile.flush()
     return
 
-def help_handler(request):
-    """Provide help documentation.
-    Currently, it uses stdout. Ideally, it will use a scrollable iframe"""
-    push_input(request)
-
 # css
 tooltip_css = """
-.interp_tipbar {
+#tooltip {
     position: fixed;
     top: 10px;
     right: 10px;
     width: 50%;
-    border: 2px outset #DDCCBB;
-    background-color: #FFEEDD;
+    overflow:auto;
+    border: 4px outset black;
+    background-color: white;
+    color: black;
     font: 9pt monospace;
     margin: 0;
     padding: 4px;
@@ -120,8 +115,9 @@ tooltip_css = """
     width: 50%;
     height: 50%;
     overflow:auto;
-    border: 1px solid #000000;
-    background-color: #FFEEDD;
+    border: 4px outset black;
+    background-color: white;
+    color: black;
     font: 9pt monospace;
     margin: 0;
     padding: 4px;
@@ -139,11 +135,11 @@ tooltip_css = """
     position: fixed;
     top: 15px;
     right: 30px;
-    color: red;
-    background-color: #FFEEDD;
-    font: 12pt monospace;
+    color: white;
+    background-color: #369;
+    font: 14pt sans-serif;
     cursor: pointer;
-    padding: 0px;
+    padding: 1px;
     display: none;  /* will appear only when needed */
     z-index:12;
 }
@@ -151,7 +147,5 @@ tooltip_css = """
 
 # javascript code
 tooltip_js = """
-
 var session_id = "%s";
-
 """%CrunchyPlugin.session_random_id

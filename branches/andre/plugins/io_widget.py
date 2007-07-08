@@ -28,23 +28,24 @@ def insert_io_subwidget(page, elem, uid):
     output.text = "\n"
     inp = et.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
-    inp.attrib["onkeydown"] = 'push_keys(event, "%s")' % uid
-    inp.attrib["onkeypress"] = 'tooltip_display(event, "%s")' % uid
+    inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
+    inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
 
 io_js = r"""
 function push_keys(event, uid){
-    if(event.keyCode != 13) return;
+    // prevent Esc from breaking the interpreter
+    if (event.keyCode == 27) return false;
+
+    if (event.keyCode != 13) return true;
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
-    if (data.substring(0,5) == "help(") {
-        display_help(uid, data);
-        return;
-    }
     var i = new XMLHttpRequest()
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
+
+    return true;
 };
 """
 
