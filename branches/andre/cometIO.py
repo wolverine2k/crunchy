@@ -10,7 +10,7 @@ import sys
 
 import configuration
 
-debug_enabled = False
+debug_enabled = True
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -70,18 +70,17 @@ class CrunchyIOBuffer(StringBuffer):
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
+        #print "pdata = ", pdata
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
-            pdata = pdata.replace("stdout", "help_menu")
+            pdata = pdata.replace("stdout", "help_menu") # replacing css class
             self.put("""document.getElementById("help_menu").innerHTML = "%s";\n""" % (pdata))
             self.help_flag = False
         else:
-            # forces safari to re-focus on interpreter
-            self.put("""document.getElementById("in_%s").focus();""" % uid)
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
         self.lock.release()
 
