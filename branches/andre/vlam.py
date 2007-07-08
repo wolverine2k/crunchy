@@ -108,6 +108,13 @@ class CrunchyPage(object):
                         CrunchyPage.handlers[tag][keyword](self, elem,
                                          self.pageid + ":" + uidgen(),
                                          vlam)
+                else:
+                    for keyword in elem.attrib:
+                        if keyword in CrunchyPage.handlers[tag]:
+                            value = elem.attrib[keyword]
+                            if value in CrunchyPage.handlers[tag][keyword]:
+                                CrunchyPage.handlers[tag][keyword][value](
+                                self, elem.attrib)
         for tag in CrunchyPage.null_handlers:
             for elem in self.tree.getiterator(tag):
                 CrunchyPage.null_handlers[tag](self, elem, self.pageid +

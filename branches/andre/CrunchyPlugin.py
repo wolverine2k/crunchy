@@ -53,6 +53,15 @@ def register_vlam_handler(elem_type, option, handler):
         vlam.CrunchyPage.handlers[elem_type] = {}
     vlam.CrunchyPage.handlers[elem_type][option] = handler
 
+def register_tag_handler(tag, attribute, value, handler):
+    """register a new tag handler, a generalisation of vlam handlers
+       but for attributes other than 'title'."""
+    if tag not in vlam.CrunchyPage.handlers:
+        vlam.CrunchyPage.handlers[tag] = {}
+    if attribute not in vlam.CrunchyPage.handlers[tag]:
+        vlam.CrunchyPage.handlers[tag][attribute] = {}
+    vlam.CrunchyPage.handlers[tag][attribute][value] = handler
+
 def register_page_handler(handler):
     """register a callback that is called when each page is created"""
     vlam.CrunchyPage.pagehandlers.append(handler)

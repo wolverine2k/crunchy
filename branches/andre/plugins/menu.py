@@ -15,18 +15,29 @@ _css = None
 def register():
     """The register() function is required for all plugins.
        """
-    CrunchyPlugin.register_vlam_handler("meta", "menu", insert_special_menu)
+    CrunchyPlugin.register_tag_handler("meta", "name", "crunchy_menu", insert_special_menu)
     CrunchyPlugin.register_vlam_handler("no_tag", "menu", insert_default_menu)
 
-def insert_special_menu(page, dummy_elem, uid, vlam):
+def insert_special_menu(page, elem_attrib):
     '''inserts a menu different from the Crunchy default based.
        The instruction is contained in a <meta> element and includes the
        filename where the menu is defined.'''
-    raise NotImplementedError
-    # Reminder:
-    # When this function is implemented, we'll need to do the following.
-    if not page.includes("menu_included"):
-        page.add_include("menu_included")
+    if page.is_local:
+        local_path = os.path.split(page.url)[0]
+        menu_file = os.path.join(local_path, elem_attrib["content"])
+    elif page.is_remote:
+        raise NotImplementedError
+    else:
+        local_path = os.path.split(page.url)[0][1:]
+        menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
+                                 "server_root", local_path,
+                                 elem_attrib["content"])
+    menu, css = extract_menu(menu_file)
+    if page.body:
+        page.body.insert(0, menu)
+    if css is not None:
+        page.head.append(css)
+    page.add_include("menu_included")
 
 def insert_default_menu(page):
     """inserts the default Crunchy menu"""
