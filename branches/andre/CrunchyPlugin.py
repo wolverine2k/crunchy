@@ -51,6 +51,13 @@ def register_vlam_handler(elem_type, option, handler):
             vlam.CrunchyPage.null_handlers[elem_type] = handler
     if elem_type not in vlam.CrunchyPage.handlers:
         vlam.CrunchyPage.handlers[elem_type] = {}
+    if option in vlam.CrunchyPage.handlers[elem_type]:
+        print "FATAL ERROR"
+        print "vlam handler defined twice for"+\
+               " tag=%s, option=%s"%(elem_type, option)
+        print "handlers should be unique: a new plugin must have been"
+        print "created, that conflicts with an existing one."
+        raise
     vlam.CrunchyPage.handlers[elem_type][option] = handler
 
 def register_tag_handler(tag, attribute, value, handler):
@@ -60,6 +67,13 @@ def register_tag_handler(tag, attribute, value, handler):
         vlam.CrunchyPage.handlers[tag] = {}
     if attribute not in vlam.CrunchyPage.handlers[tag]:
         vlam.CrunchyPage.handlers[tag][attribute] = {}
+    if value in vlam.CrunchyPage.handlers[tag][attribute]:
+        print "FATAL ERROR"
+        print "vlam handler defined twice for"+\
+               " tag=%s, attribute=%s, value=%s"%(tag, attribute, value)
+        print "handlers should be unique: a new plugin must have been"
+        print "created, that conflicts with an existing one."
+        raise
     vlam.CrunchyPage.handlers[tag][attribute][value] = handler
 
 def register_page_handler(handler):

@@ -19,7 +19,6 @@ def path_to_filedata(path, root):
     Paths containing .. will return an error message.
     POSIX version, should work in Windows.
     """
-    print "path = ", path
     if path == "/exit":
         import CrunchyPlugin
         CrunchyPlugin.server.still_serving = False

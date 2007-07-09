@@ -69,7 +69,6 @@ def extract_menu(filename):
     except Exception, info:
         print info
     # extract menu for use in other files
-    #body = tree.find("body")
     menu = tree.find(".//div")
     #head = tree.find("head")
     css = tree.find(".//link")
