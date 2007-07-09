@@ -64,7 +64,7 @@ def insert_interpreter(page, elem, uid, vlam):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.insert(0, markup)
-    CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
+    CrunchyPlugin.services.insert_io_subwidget(page, elem, uid, borg=borg)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)
     return
 

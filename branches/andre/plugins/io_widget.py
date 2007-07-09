@@ -11,7 +11,7 @@ import CrunchyPlugin
 def register():
     register_service(insert_io_subwidget, "insert_io_subwidget")
 
-def insert_io_subwidget(page, elem, uid):
+def insert_io_subwidget(page, elem, uid, borg=False):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
     """
@@ -26,7 +26,8 @@ def insert_io_subwidget(page, elem, uid):
     inp = CrunchyPlugin.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
-    inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
+    if borg:
+        inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
 
