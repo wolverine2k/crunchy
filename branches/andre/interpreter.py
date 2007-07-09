@@ -1,6 +1,9 @@
 import threading, sys
-from code import InteractiveConsole
-from traceback import print_exc
+from code import InteractiveConsole, InteractiveInterpreter, softspace
+##from traceback import print_exc
+import sys
+import traceback
+from codeop import CommandCompiler, compile_command
 
 def trim_empty_lines_from_end(text):
     '''remove blank lines at beginning and end of code sample'''
@@ -47,7 +50,7 @@ class Interpreter(threading.Thread):
             try:
                 self.ccode = compile(self.code, "crunchy_exec", 'exec')
             except:
-                print_exc()
+                traceback.print_exc()
                 raise
             if not self.ccode:    #code does nothing
                 return
@@ -59,8 +62,11 @@ class Interpreter(threading.Thread):
                 # were not available inside that function.  This is why
                 # we have commented out the {} as a reminder; self.symbols
                 # will be used for holding both global and local variables.
+            except SystemExit:
+                print "Your program resulted in an attempt to exit."
+                traceback.print_exc()
             except:
-                print_exc()
+                traceback.print_exc()
                 raise
         finally:
             sys.stdin.unregister_thread()
@@ -68,6 +74,34 @@ class Interpreter(threading.Thread):
             sys.stderr.unregister_thread()
             print "finished run with channel=", self.channel
 
+def runcode(self, code):
+    """Execute a code object.
+
+    This is almost the same method as defined in
+    InteractiveInterpreter.
+
+    When an exception occurs, self.showtraceback() is called to
+    display a traceback.  The original code was such that all
+    exceptions were caught except SystemExit, which was reraised.
+    Here we treat it the same as others.
+
+    [From the original] A note about KeyboardInterrupt:
+    this exception may occur elsewhere in this code, and may not always
+    be caught.  The caller should be prepared to deal with it.
+
+    """
+    try:
+        exec code in self.locals
+# -- removed from the original:
+##        except SystemExit:
+##            raise
+    except:
+        self.showtraceback()
+    else:
+        if softspace(sys.stdout, 0):
+            print
+
+InteractiveInterpreter.runcode = runcode
 
 class Borg(object):
     '''Borg Idiom, from the Python Cookbook, 2nd Edition, p:273
@@ -88,14 +122,6 @@ class Borg(object):
 # (but do present the desired behaviour!!!!), request for new
 # pages are such that interpreters on new pages start with fresh
 # environments.
-
-# Unexplained bug?  When a page is opened in a new tab (ctrl-T)
-# with Firefox, we have problems with code execution....
-
-# Note: In the future, I (andre) plan to have the two Crunchy consoles
-# derive from a more feature complete version of Interactive Console.
-# This is why, for now, SingleConsole is essentially the same
-# as Intereactive console
 
 class SingleConsole(InteractiveConsole):
     '''SingleConsole are isolated one from another'''
