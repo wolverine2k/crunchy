@@ -5,11 +5,11 @@ from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
 import configuration
+import CrunchyPlugin as cp
 
-from CrunchyPlugin import *
 
 def register():
-    register_http_handler(None, handler)
+    cp.register_http_handler(None, handler)
 
 def path_to_filedata(path, root):
     """
@@ -22,8 +22,7 @@ def path_to_filedata(path, root):
     POSIX version, should work in Windows.
     """
     if path == "/exit":
-        import CrunchyPlugin
-        CrunchyPlugin.server.still_serving = False
+        cp.server.still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()
     if path.find("/../") != -1:
@@ -45,7 +44,7 @@ def path_to_filedata(path, root):
     else:
         try:
             if npath.endswith(".html") or npath.endswith(".htm"):
-                return create_vlam_page(open(npath), path).read()
+                return cp.create_vlam_page(open(npath), path).read()
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -70,6 +69,7 @@ def handler(request):
         request.wfile.write(data)
 
 def get_directory(npath):
+    _ = cp._
     childs = listdir(npath)
     childs = childs[:]
     annotate(npath, childs)
@@ -125,6 +125,7 @@ dir_list_page = """
 """
 
 def error_page(path):
+    _ = cp._
     return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
                                  _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
                                  _("The page doesn't exist."),

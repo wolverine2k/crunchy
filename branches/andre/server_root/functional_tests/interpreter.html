@@ -43,7 +43,9 @@ NameError: name 'a' is not defined
 >>> # also note that a tooltip appears when typing "."
 >>> import sys
 >>> sys.exit()
-Error on line 1:
+Traceback (most recent call last):
+  File "", line 1, in 
+SystemExit
 
 </pre>
 
@@ -73,8 +75,6 @@ NameError: name 'x' is not defined
 
 <h2>Bugs</h2>
 <ul>
-<li>The tooltip (mentioned above) does not work.</li>
-<li><code title="py_code">sys.exit()</code> instructions are not intercepted - they effectively kill the interpreter session.</li>
 <li>Auto-indent (which was implemented in the "old" Crunchy) is not working; 
 it is not entirely clear if this is something that is really necessary since, without it, 
 one does not need to use backspace to end a code block.
