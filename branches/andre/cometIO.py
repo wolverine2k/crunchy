@@ -113,7 +113,7 @@ def write_js(pageid, jscode):
 def write_output(pageid, uid, output):
     output_buffers[pageid].put_output(output, uid)
 
-def do_exec(code, uid):
+def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
     """
     # configuration.defaults._prefix = '_crunchy_' is the
@@ -121,7 +121,7 @@ def do_exec(code, uid):
     # configuration variables from within a user-written program.
     symbols = { configuration.defaults._prefix : configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
-    t = interpreter.Interpreter(code, uid, symbols=symbols)
+    t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
     t.setDaemon(True)
     t.start()
 

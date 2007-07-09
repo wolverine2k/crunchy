@@ -84,9 +84,9 @@ def create_vlam_page(filehandle, url, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
     return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
 
-def exec_code(code, uid):
+def exec_code(code, uid, doctest=False):
     """execute some code in a given uid"""
-    cometIO.do_exec(code, uid)
+    cometIO.do_exec(code, uid, doctest=doctest)
 
 def register_service(function, servicename):
     """Register a new service, takes a callable object.

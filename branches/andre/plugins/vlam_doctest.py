@@ -44,8 +44,7 @@ def doctest_runner_callback(request):
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
     code = request.data + (doctest_pycode % doctests[request.args["uid"]])
-    print request.data
-    CrunchyPlugin.exec_code(code, request.args["uid"])
+    CrunchyPlugin.exec_code(code, request.args["uid"], doctest=True)
     request.send_response(200)
     request.end_headers()
 
@@ -100,6 +99,8 @@ doctest_pycode = """
 __teststring = \"\"\"%s\"\"\"
 from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
 __test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
-__x = __DocTestRunner().run(__test)
-print "Your code failed %%s out of %%s tests." %%(__x)
+__x = __DocTestRunner().run(__test, out=doctest_out.write)
+doctest_out.write(__x)
 """
+
+#Note: information about doctest_out is found in interpreter.py

@@ -1,9 +1,10 @@
 import threading, sys
 from code import InteractiveConsole, InteractiveInterpreter, softspace
-##from traceback import print_exc
 import sys
 import traceback
 from codeop import CommandCompiler, compile_command
+
+from StringIO import StringIO
 
 def trim_empty_lines_from_end(text):
     '''remove blank lines at beginning and end of code sample'''
@@ -33,11 +34,15 @@ class Interpreter(threading.Thread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = {}):
+    def __init__(self, code, channel, symbols = {}, doctest=False):
         threading.Thread.__init__(self)
         self.code = trim_empty_lines_from_end(code)
         self.channel = channel
         self.symbols = symbols
+        self.doctest = doctest
+        if self.doctest:
+            self.doctest_out = StringIO()
+            self.symbols['doctest_out'] = self.doctest_out
 
     def run(self):
         """run the code, redirecting stdout, stderr, stdin and
@@ -69,10 +74,67 @@ class Interpreter(threading.Thread):
                 traceback.print_exc()
                 raise
         finally:
+            if self.doctest:
+                print simplify_doctest_error_message(
+                           self.doctest_out.getvalue())
             sys.stdin.unregister_thread()
             sys.stdout.unregister_thread()
             sys.stderr.unregister_thread()
             print "finished run with channel=", self.channel
+
+def _(msg):  # dummy for now
+    return msg
+
+def simplify_doctest_error_message(msg):
+
+    failures, total = eval( msg.split('\n')[-1])
+
+    if failures:
+        success = False
+    else:
+        success = True
+    if total == 0:
+        summary = _("There was no test to satisfy.")
+    elif total == 1:
+        if failures == 0:
+            summary = _("Congratulations, your code passed the test!")
+        else:
+            summary = _("You code failed the test.")
+    else:
+        if failures == 0:
+            summary = _("Congratulations, your code passed all (%d) tests!")%total
+        elif failures == total:
+            summary = _("Your code failed all (%d) tests.")%total
+        else:
+            summary = _("Your code failed %s out of %s tests.")%(failures, total)
+
+    if failures == 0:
+        return summary
+
+    stars = "*"*70  # doctest prints this before each failed test
+    failed = msg.split(stars)
+    new_mesg=[summary]
+    new_mesg.append("="*70)
+    exception_found = False
+    for fail in failed:
+        if fail: # ignore empty lines
+            lines = fail.split('\n')
+            for line in lines[2:-2]:
+                if line.startswith("Failed example:"):
+                    new_mesg.append(_("The following example failed:"))
+                elif line.startswith("Expected:"):
+                    new_mesg.append(_("The expected result was:"))
+                elif line.startswith("Got:"):
+                    new_mesg.append(_("The result obtained was:"))
+                elif line.startswith("Exception raised:"):
+                    new_mesg.append(_("An exception was raised:"))
+                    exception_found = True
+                    break
+                else:
+                    new_mesg.append(line)
+            new_mesg.append(lines[-2])
+            new_mesg.append("-"*70)
+    return '\n'.join(new_mesg)
 
 def runcode(self, code):
     """Execute a code object.
