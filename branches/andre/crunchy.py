@@ -6,10 +6,10 @@ import socket
 import webbrowser
 import sys
 
-import configuration
-import http_serve
-import cometIO
-import pluginloader
+import src.configuration as configuration
+import src.http_serve as http_serve
+import src.cometIO as cometIO
+import src.pluginloader as pluginloader
 
 def find_port(start):
     """finds the first free port on 127.0.0.1 starting at start"""
