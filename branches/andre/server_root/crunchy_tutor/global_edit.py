@@ -6,8 +6,8 @@ files = ["welcome_en.html", "interpreter_en.html", "editor_en.html",
 "doctest_en.html", "canvas_en.html", "writing_en.html", "remote_en.html",
 "external_en.html", "images_en.html", "config_en.html"]
 
-original = '<a href="/functional_tests">various tests</a>'
-replacement = '<a href="/functional_tests">Tests</a>'
+original = '<a href="welcome_en.html">Welcome</a>'
+replacement = '<a href="welcome_en.html">Begin tutorial</a>'
 
 for f in files:
     inp = open(f, "r")

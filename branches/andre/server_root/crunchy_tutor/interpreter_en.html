@@ -13,7 +13,7 @@
 </div>
 <div id="navbar">
 <span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Welcome</a>
+<a href="welcome_en.html">Begin tutorial</a>
 <a href="interpreter_en.html">Interpreter</a>
 <a href="editor_en.html">Editor</a>
 <a href="doctest_en.html">DocTest</a>
@@ -62,13 +62,13 @@ individuality, you can try the same experiment again below.</p>
 to the ultimate question.  Generally, you should only see Borg type interpreters used in Crunchy.  However, you should keep in mind that there are other possibilities.</p>
 <p>After seeing these amazing feats, I am convinced that you will want to purchase Crunchy!</p>
 <blockquote><i> I'm not interested in your sales! I have to protect the general public!</i><br />
-<small>From the Monty Python's Crunchy Frog sketch.</small></blockquote>
+<small>From the Monty Python Crunchy Frog sketch.</small></blockquote>
 <p>Crunchy is not for sale: it is free software.  However, it is not designed for the "general public".  Using a Python interpreter on a computer can lead to unwanted results, depending on the code that is being executed. 
 [<code title="py_code">import os:</code> <span style="color:red">use with caution!</span>]  We can not be held responsible for any negative consequence of code you type in for Crunchy/Python to execute.</p>
 <h3>Slightly advanced stuff</h3>
 <p>Yes, it's ok to read on.  I am not going to introduce really super advanced stuff here.</p>
 <p>You can type in more than one line of code and interact with the interpreter in various ways.  In the example below, I have tried to show both what you should type in, and a preview of the response from Crunchy.  Try this example and notice how, at some point, a pop-up "help window" will appear at the top left.  You can make it go away by clicking on the 
-<span style="font:sans-serif;">X</span> or simply keep on typing until it goes away on its own.</p>
+<span style="font:sans-serif;">X</span> or simply keep on typing until it goes away on its own, except for the last three examples.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; name = raw_input("What is your name?")  # note: use only ascii characters
 <span class="stdin">What is your name?</span>Your_name_should_appear_here
@@ -81,6 +81,10 @@ Your_name_should_appear_here
 1
 2
 3
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; help(sys)   # click on the X when you're finished reading
+&gt;&gt;&gt; sys?        # shortcut for help.
+&gt;&gt;&gt; sys.exit?
 </pre>
 <p>You now know enough to use the interpreter to learn about Python following a "real" Python tutorial.  You can either do this by go to the 
 <a href="http://docs.python.org/tut/tut_en.html">the official Python tutorial</a>
@@ -93,7 +97,7 @@ on the python.org site or continue to learn about Crunchy by clicking on the edi
 indicate optional arguments.  Any number of interpreter "prompts" can 
 appear within a page, and every interpreter prompt used in a given session 
 shares the same environment, unless the <code>isolated</code> argument is used.  
-Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others.</p>
+Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>
 <p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
 option is present, a line number will appear before each line of input
 code; the line numbering will start at 1 unless a different starting value is given.</p>

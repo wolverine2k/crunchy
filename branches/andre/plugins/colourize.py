@@ -88,7 +88,7 @@ style_css = r"""
 .py_special{color: #006666;} /* special method of the form __x__ */
 .py_linenumber{font-size: small; color: #666666;}
 .py_prompt{color:blue; }
-.py_output{color:darkgreen; background-color: #f0f0dd;}
+.py_output{color:blue;}
 .py_warning{background-color:yellow; font-size: large; font-weight: bold;}
 .py_pre{text-align: left;}
 """

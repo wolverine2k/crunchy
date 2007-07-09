@@ -44,8 +44,11 @@ def insert_image_file(page, elem, uid, vlam):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     # extracting the image file name
-    img_fname = vlam.replace("image_file", "").replace("no-pre", "").replace("no-copy", "").replace(' ', '')
-    if not img_fname:
+    stripped_vlam = vlam.strip()
+    args = stripped_vlam.split()
+    if len(args) >1:
+        img_fname = args[1]  # assume name is first argument
+    else:
         # The user hasn't supplied the filename in the VLAM.
         elem.insert(0, markup)
         message = CrunchyPlugin.SubElement(elem, "p")

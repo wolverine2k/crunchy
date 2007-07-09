@@ -15,7 +15,7 @@
 </div>
 <div id="navbar">
 <span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Welcome</a>
+<a href="welcome_en.html">Begin tutorial</a>
 <a href="interpreter_en.html">Interpreter</a>
 <a href="editor_en.html">Editor</a>
 <a href="doctest_en.html">DocTest</a>
@@ -71,14 +71,14 @@ used as the doctest.</p>
 <p>Code entered into a doctest textarea added to the doctest and executed with
 the addition special code as follows:</p>
 <pre title="py_code">
-__teststring = "doctest + user code"
+__teststring = \"\"\"%s\"\"\"
 from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
 __test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
-__x = __DocTestRunner().run(__test)
-print "Your code failed %%s out of %%s tests." %%(__x)
+__x = __DocTestRunner().run(__test, out=doctest_out.write)
+doctest_out.write(__x)
 </pre>
-<p>In the future, it is expected that a more meaningful message will be provided like it was
-done in previous versions of Crunchy.</p>
+<p>The output from the doctest result is further processed by Crunchy to make error messages a bit
+friendlier to beginners.</p>
 
 </div>
 </body>

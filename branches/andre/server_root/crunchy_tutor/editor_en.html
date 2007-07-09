@@ -13,7 +13,7 @@
 </div>
 <div id="navbar">
 <span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Welcome</a>
+<a href="welcome_en.html">Begin tutorial</a>
 <a href="interpreter_en.html">Interpreter</a>
 <a href="editor_en.html">Editor</a>
 <a href="doctest_en.html">DocTest</a>
@@ -28,7 +28,7 @@
 <a href="/functional_tests">Tests</a>
 </div>
 <div id="main">
-<p>Sometimes, you want to write Python code that is <i>*gasp*</i> worth saving.  In this case, rather than using the Python interpreter, you probably resort to your favourite editor which most likely allows you to run your Python code.  Start your favourite editor, and type in (or cut-and-paste) the following example, most of which has been shamelessly lifted from the official Python tutorial.</p>
+<p>Sometimes, you want to write Python code that is <i>*gasp*</i> worth saving.  In this case, rather than using the Python interpreter, you probably resort to your favourite editor which most likely allows you to run your Python code.  Normally, you would need to start your favourite editor, and type in (or cut-and-paste) the following example, most of which has been shamelessly lifted from the official Python tutorial.</p>
 <pre title="editor size=(8, 80)">
 for n in range(2, 10):
     for x in range(2, n):
@@ -39,16 +39,13 @@ for n in range(2, 10):
         print n, 'is a prime number'
 print a      # will raise an error
 </pre>
-<p>If you read this page using Crunchy and your favourite browser, you will see that a "text box" with a handy button is located just in between this paragraph and the piece of code above.  So, if you are using Crunchy, you don't need to use an editor to actually try the above <i> long</i> example. Furthermore, you will notice a check box labeled "Toggle editor". 
-If you click on it, you will see appear on the page a real editor, provided by Christophe Dolivet.  If you are interested in this editor, search for EditArea on the Internet.</p>
+<p>However, if you read this page using Crunchy and your favourite browser, you will see that a "text box" with a handy button is located just in between this paragraph and the piece of code above.  So, by Crunchy, you don't need to use an editor to actually try the above <i> long</i> example. Furthermore, you will notice a check box labeled "Toggle editor". 
+If you click on it, you will see appear on the page a real editor, provided by Christophe Dolivet.  If you are interested in this editor, search for EditArea on the Internet.  Once the editor is toggled, its size can be changed to fit better the code.  When toggled back to a simple textarea, it will retain its new size.</p>
 <p>If you do try the example, you will notice that "errors" (output from stderr) are printed in a different colour than "normal" stuff (output from stdout).</p>
-<p>If you are using Crunchy, you might want to try to type in some code in the other coding area provided just below.  
-Why?  Because you can, that's why!</p>
-<pre title="editor size=(12, 40)">
 
 </pre>
 <h3>Advanced stuff</h3>
-<p>If you click on the "Toggle editor" box, you will see a "real" editor appearing.
+<p>As mentioned above, if you click on the "Toggle editor" box, you will see a "real" editor appearing.
 Using this editor you can actually load Python files or save them. 
 One special feature (save and run) is the ability to save a program 
 in a specific location and have Python execute it from there.  
@@ -56,17 +53,14 @@ This is useful if you need your program needs access to some files (say, some im
 that are located at that location.</p>
 <h3>Advanced stuff, for tutorial writers</h3>
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
-the "save and run" feature is used.  This thread does not have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
+the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="editor [size=(rows, cols)] [no-copy] [no-pre] 
+&lt;pre title="editor [no-copy] [no-pre] 
             [linenumber [=start_number]] [external [no-internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
 adds a code editor (html &lt;textarea&gt;) to the current page.
-<p><code>size</code> describes the size of the textarea in characters 
-(height, width); if its not present the textarea
-defaults to 10 by 80 characters</p>
 <p>By default, Crunchy copies the contents of the <code>pre</code> in the original file
 into a new <code>pre</code> above the editor; however, this is prevented if 
 <code>no-pre</code> is present. 

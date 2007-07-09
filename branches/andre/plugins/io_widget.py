@@ -51,6 +51,7 @@ io_css = r"""
 
 .stdout {
     color: blue;
+    font-weight: normal;
 }
 
 .stderr {
@@ -59,13 +60,19 @@ io_css = r"""
 
 .input {
     display: none;
-    width: 90%;
-    font: 10pt monospace;
-    border-width: 1px;
+    width: 80%;
+    max-width: 800px;
+    font: 11pt monospace;
+    font-weight: bold;
+    border: solid 1px
+    border-width: 2px;
+    background-color: #eff;
+    border-color: #369;
 }
 
 .output{
     font: 10pt monospace;
+    font-weight: bold;
     color:darkgreen;
     white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
