@@ -17,11 +17,11 @@ import StringIO
 import token
 import tokenize
 
-from element_tree import ElementTree as et
+from src.element_tree import ElementTree as et
 
 #---------begin plugin specific---------------------
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 _ = CrunchyPlugin._
 

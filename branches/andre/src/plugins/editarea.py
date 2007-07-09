@@ -2,8 +2,8 @@
 simple textarea.
 """
 
-import CrunchyPlugin
-import configuration
+import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
 
 _ = CrunchyPlugin._
 

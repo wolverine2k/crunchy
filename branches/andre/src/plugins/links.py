@@ -4,11 +4,10 @@ Rewrites links so that crunchy can access remote pages.
 
 import urllib
 import re
-
-import CrunchyPlugin as cp
 from urlparse import urljoin
 import os
 
+import src.CrunchyPlugin as cp
 def register():
     cp.register_vlam_handler("a", None, link_handler)
     cp.register_vlam_handler("img", None, src_handler)

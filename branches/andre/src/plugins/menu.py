@@ -7,7 +7,7 @@ by tutorial writers using a custom meta declaration.
 import os
 
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 _default_menu = None
 _css = None

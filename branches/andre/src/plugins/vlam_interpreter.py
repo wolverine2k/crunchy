@@ -12,8 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 import sys
 
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
-import configuration
+import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
@@ -74,9 +74,9 @@ crunchy_help = "Type %s.help for more information."%prefix
 
 BorgInterpreter_js = r"""
 function init_BorgInterpreter(uid){
-    code = "import configuration\n";
+    code = "import src.configuration as configuration\n";
     code += "locals = {'%s': configuration.defaults}\n";
-    code += "import interpreter\nborg=interpreter.BorgConsole(locals)";
+    code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
     code += "')\nborg.interact('')\n";
@@ -89,9 +89,9 @@ function init_BorgInterpreter(uid){
 
 SingleInterpreter_js = r"""
 function init_SingleInterpreter(uid){
-    code = "import configuration\n";
+    code = "import src.configuration as configuration\n";
     code += "locals = {'%s': configuration.defaults}\n";
-    code += "import interpreter\nborg=interpreter.SingleConsole(locals)";
+    code += "import src.interpreter\nborg=src.interpreter.SingleConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: Individual Interpreter (Python version %s). %s"';
     code += "')\nborg.interact('')\n";

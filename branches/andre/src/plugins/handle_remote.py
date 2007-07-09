@@ -2,7 +2,7 @@
 Uses the /remote http request path.
 """
 
-from CrunchyPlugin import *
+from src.CrunchyPlugin import *
 from urllib import urlopen, unquote_plus
 
 provides = set(["/remote"])

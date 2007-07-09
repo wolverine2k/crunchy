@@ -40,7 +40,8 @@ def gen_register_list(initial_list):
 def gen_plugin_list():
     '''looks for all python files in directory "plugins/", and assume
     that they are all "plugins".'''
-    pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]), "plugins/")
+    pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]),
+                             "src", "plugins/")
     pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
     return pluginfiles
 
@@ -48,8 +49,8 @@ def init_plugin_system(server):
     """load the plugins and has them self-register."""
     plugins = gen_plugin_list()
     CrunchyPlugin.server = server
-    if not "plugins/" in sys.path:
-        sys.path.insert(0, "plugins")
+    if not "src/plugins/" in sys.path:
+        sys.path.insert(0, "src/plugins")
     imported_plugins = []
     print "Importing plugins"
     for plugin in plugins:

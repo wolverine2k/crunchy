@@ -1,6 +1,6 @@
 """This plugin handles all execution requests on /exec, ie. the standard execution method."""
 
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 # provides and require use the bare name ...
 provides = set(["/exec"])

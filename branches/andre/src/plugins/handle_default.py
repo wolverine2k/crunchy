@@ -4,8 +4,8 @@ from imp import find_module
 from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
-import configuration
-import CrunchyPlugin as cp
+import src.configuration as configuration
+import src.CrunchyPlugin as cp
 
 
 def register():

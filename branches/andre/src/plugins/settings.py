@@ -11,7 +11,7 @@ There will be a few different types of option:
 Settings will be saved and so be persistent between sessions.
 """
 
-from CrunchyPlugin import *
+from src.CrunchyPlugin import *
 
 provides = set(["settings"])
 
@@ -21,7 +21,7 @@ settings_groups = set([])
 def register():
     register_http_handler("/setup", setup_page)
     #register_service(register_settings_group, "register_settings_group")
-    
+
 def setup_page(request):
     """display the settings page"""
     pass

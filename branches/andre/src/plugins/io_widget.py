@@ -5,11 +5,11 @@ This is just the UI part, the communication code is defined in the core
 
 provides = set(["io_widget"])
 
-from CrunchyPlugin import *
-import CrunchyPlugin
+##from src.CrunchyPlugin import *
+import src.CrunchyPlugin as CrunchyPlugin
 
 def register():
-    register_service(insert_io_subwidget, "insert_io_subwidget")
+    CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
 
 def insert_io_subwidget(page, elem, uid, borg=False):
     """insert an output widget into elem, usable for editors and interpreters,

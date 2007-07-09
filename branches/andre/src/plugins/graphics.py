@@ -5,7 +5,7 @@ graphics.py
 import threading
 import re
 
-import CrunchyPlugin as __cp
+import src.CrunchyPlugin as __cp
 
 created_uids = []
 def register():

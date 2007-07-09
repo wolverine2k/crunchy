@@ -9,9 +9,9 @@ import os
 import sys
 
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
-import configuration
+import src.configuration as configuration
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])

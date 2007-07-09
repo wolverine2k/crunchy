@@ -9,8 +9,8 @@ example as to how to write a plugin.
 import os
 
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
-from configuration import defaults
+import src.CrunchyPlugin as CrunchyPlugin
+from src.configuration import defaults
 
 # The set of "widgets/services" provided by this plugin
 provides = set(["image_file_widget"])

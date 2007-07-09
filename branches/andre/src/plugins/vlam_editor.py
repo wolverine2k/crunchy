@@ -10,7 +10,7 @@ for people familiar with the Crunchy plugin architecture.
 """
 
 # All plugins should import the crunchy plugin API
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])

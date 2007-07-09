@@ -9,14 +9,14 @@ This was initially based on Yusdi's version 0.0.4
 import threading
 from cgi import parse_qs
 
-from CrunchyPlugin import *
+from src.CrunchyPlugin import *
 
 
 provides = set(["dialog"])
 
 def register():
     register_http_handler("/dialog", dialog_handler)
-    
+
 # all the registered dialogs:
 dialogs = {}
 
@@ -29,16 +29,16 @@ class Dialog(object):
         dialogs[self.uid] = self
         self.data = {}
         self.event = threading.Event()
-        
+
     def get_HTML(self):
         return self.buf
-    
+
     def add_label(self, text):
         self.buf += "<p>%s</p>" % text
-        
+
     def add_text_field(self, name, title, content):
         self.buf += '<p><label for="%s">%s</label><input type="text" name="%s" value = "%s" /></p>' % (name, title, name, content)
-        
+
     def add_selection_box(self, name, title, options, selectedOpt=None):
         self.buf += '<p><label for="%s">%s</label><select name="%s">' %(name, title, name)
         for opt in options:
@@ -47,7 +47,7 @@ class Dialog(object):
                 isSelected = "selected='1'"
             self.buf += "<option %s> %s</option>" % (isSelected, opt)
         self.buf += "</select></p>"
-        
+
 def dialog_handler(request):
     global dialogs
     if request.args["form_id"] not in dialogs:
@@ -55,7 +55,7 @@ def dialog_handler(request):
     data = parse_qs(request.data, True)
     dialogs[request.args["form_id"]].data = data
     dialogs[request.args["form_id"]].event.set()
-    
+
 def run_dialog(d):
     """runs a dialog in the current output widget and returns a dictionary of names:values,
     blocks execution until the dialog is finished."""

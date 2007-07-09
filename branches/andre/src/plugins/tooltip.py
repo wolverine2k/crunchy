@@ -1,9 +1,10 @@
 """This plugin provides tooltips for interpreters"""
 
-import CrunchyPlugin
-import interpreter
 import re
 import urllib
+
+import src.CrunchyPlugin as CrunchyPlugin
+import src.interpreter as interpreter
 
 borg_console = interpreter.BorgConsole()
 

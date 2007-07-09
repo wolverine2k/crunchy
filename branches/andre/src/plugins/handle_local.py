@@ -2,7 +2,7 @@
 Uses the /local http request path.
 """
 
-from CrunchyPlugin import *
+from src.CrunchyPlugin import *
 from urllib import unquote_plus
 
 provides = set(["/local"])
