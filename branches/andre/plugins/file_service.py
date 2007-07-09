@@ -11,6 +11,8 @@ import sys
 # All plugins should import the crunchy plugin API
 import CrunchyPlugin
 
+import configuration
+
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
@@ -72,9 +74,8 @@ def run_external_request_handler(request):
 def load_file_request_handler(request):
     ''' reads a local file - most likely a Python file that will
         be loaded in an EditArea embeded editor.'''
-    path = pathname2url(request.args['path'])
     try:
-        content = read_file(path)
+        content = read_file(request.args['path'])
     except:
         print "exception found"
         print "path=", path
@@ -108,7 +109,7 @@ def exec_external(code=None,  path=None):
     and implemented some form of linux fallback (xterm?)
     """
     if path is None:
-        path = os.path.join(os.path.expanduser("~"), ".crunchy", "temp.py")
+        path = os.path.join(configuration.defaults.temp_dir, "temp.py")
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)

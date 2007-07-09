@@ -70,7 +70,8 @@ def insert_image_file(page, elem, uid, vlam):
     # that will be extracted later by Crunchy upon a GET call.  This is
     # required as the directory where the file is saved will not
     # typically be reachable from the server root.
-    image_fname =  "/CrunchyTempDir" +os.path.join(defaults.temp_dir, img_fname)
+
+    image_fname = "/CrunchyTempDir" + img_fname
 
     # the actual button used for code execution:
     btn = CrunchyPlugin.SubElement(elem, "button")
@@ -102,48 +103,30 @@ def insert_image_file(page, elem, uid, vlam):
     image_jscode = """
 function image_exec_code(uid, image_path){
     // execute the code
-    code=editAreaLoader.getValue("code_"+uid);
+    code=editAreaLoader.getValue('code_'+uid);
     var j = new XMLHttpRequest();
-    j.open("POST", "/exec%(session_id)s?uid="+uid, false);
-    code = '%(pre_code)s' + code + '%(post_code)s';
-    j.send(code);
+    j.open("POST", "/run_external%(session_id)s?uid="+uid, false);
+    j.send(code)
     // now load newly created image; we append a random string as a
     // parameter (after a ?) to prevent the browser from loading a
     // previously cached image.
     var now = new Date();
-    img_path = image_path + "?" + now.getTime();
-    img = document.getElementById("img_"+uid);
+    img_path = image_path + '?' + now.getTime();
+    img = document.getElementById('img_'+uid);
     img.src = img_path;
-    img.alt = "Image file saved as " + image_path + ".";
-    img.alt = img.alt + "%(error_message)s";
+    img.alt = 'Image file saved as ' + image_path + '.';
+    img.alt = img.alt + '%(error_message)s';
     // We then reload the new image
-     j.open("GET", img_path, false);
+     j.open('GET', img_path, false);
      j.send(null);
 };
 """
-
-    # Before generating the image from the user written Python code,
-    # we change directory to the temporary directory where the image
-    # will be saved, and return to the current directory at the end.
-    # In order to do this, we use the following Python code
-    pre_code = """
-import os
-__current = os.getcwdu()
-os.chdir("%s")
-"""%(defaults.temp_dir)
-    pre_code = pre_code.replace('\n', '\\n')
-    #
-    post_code = """
-os.chdir(__current)
-""".replace('\n', '\\n')
 
     # Now replacing the parameter in the javascript code as mentioned above
     # and adding it to the page for each image, unlike many other plugins
     # where we only need to add the code once per page.
     image_jscode = image_jscode%{
     "session_id": CrunchyPlugin.session_random_id,
-    "pre_code": pre_code,
-    "post_code": post_code,
     "error_message": """
     If you see this message, then the image was
     not created or loaded properly. This sometimes happens when creating

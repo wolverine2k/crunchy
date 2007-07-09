@@ -119,7 +119,8 @@ def do_exec(code, uid):
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
-    symbols = { configuration.defaults._prefix : configuration.defaults}
+    symbols = { configuration.defaults._prefix : configuration.defaults,
+                'temp_dir': configuration.defaults.temp_dir}
     t = interpreter.Interpreter(code, uid, symbols=symbols)
     t.setDaemon(True)
     t.start()

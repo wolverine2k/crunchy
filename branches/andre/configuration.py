@@ -4,6 +4,7 @@
     In future we should provide a GUI for changing the preferences.
 """
 import os
+import sys
 
 import translation
 
@@ -49,6 +50,7 @@ class Defaults(object):
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         self.__temp_dir = os.path.join(self.__user_dir, "temp")
+        print "creating temp directory", self.__temp_dir
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
@@ -94,7 +96,7 @@ class Defaults(object):
     #==============
 
     def get_temp_dir(self):
-        return self.__temp_dir
+        return self.__temp_dir.decode(sys.getfilesystemencoding())
 
     temp_dir = property(get_temp_dir, None, None,
                        _("(Fixed) Temporary working directory: "))

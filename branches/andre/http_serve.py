@@ -11,6 +11,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from sys import stderr
 import urllib
 from traceback import format_exc
+import CrunchyPlugin
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -77,6 +78,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(format_exc())
+        if CrunchyPlugin.server.still_serving == False:
+            #sometimes the program does not exit; so force it...
+            import sys
+            sys.exit()
 
     def do_GET(self):
         """the same as GET, we draw no distinction"""

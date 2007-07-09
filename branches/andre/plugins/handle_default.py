@@ -3,6 +3,8 @@
 from imp import find_module
 from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
+import sys
+import configuration
 
 from CrunchyPlugin import *
 
@@ -27,13 +29,14 @@ def path_to_filedata(path, root):
     if path.find("/../") != -1:
         return error_page(path)
     if path.startswith("/CrunchyTempDir"):
-        path = path.replace("/CrunchyTempDir", '')
-        npath = path
+        fname = path.replace("/CrunchyTempDir", '')
+        npath = join(configuration.defaults.temp_dir, fname)
     elif path.startswith("/CrunchyLocalFile"):
         path = path.replace("/CrunchyLocalFile", '')
         npath = path
     else:
         npath = normpath(join(root, normpath(path[1:])))
+
     if isdir(npath):
         if path[-1] != "/":
             return None
@@ -47,8 +50,12 @@ def path_to_filedata(path, root):
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
         except IOError:
-            print "in path_to_filedata, can not open path = ", npath
-            return error_page(path)
+            try:
+                return open(npath.encode(sys.getfilesystemencoding()),
+                            mode="rb").read()
+            except IOError:
+                print "in path_to_filedata, can not open path = ", npath
+                return error_page(path)
 
 def handler(request):
     """the actual handler"""
