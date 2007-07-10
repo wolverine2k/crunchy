@@ -89,6 +89,14 @@ output_buffers = {}
 # and one StringBuffer per input widget:
 input_buffers = {}
 
+def changeHTMLspecialCharacters(aString):
+    ''' escaping special characters so that they are displayed properly
+        in browser.'''
+    aString = aString.replace('&', '&amp;')
+    aString = aString.replace('<', '&lt;')
+    aString = aString.replace('>', '&gt;')
+    return aString
+
 def comet(request):
     """An http path handler, called from the page - blocks until there is data
     to be sent.
@@ -130,7 +138,9 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # echo back to output:
-    output_buffers[pageid].put_output("<span class='stdin'>" + request.data + "</span>", uid)
+    in_to_browser = changeHTMLspecialCharacters(request.data)
+    output_buffers[pageid].put_output("<span class='stdin'>" +
+                                            in_to_browser + "</span>", uid)
 
     # display help menu on a seperate div
     if request.data.startswith("help("):
@@ -189,6 +199,7 @@ class ThreadedBuffer(object):
         """write some data"""
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
+        data = changeHTMLspecialCharacters(data)
         if self.__redirect(uid):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
