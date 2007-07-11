@@ -9,12 +9,12 @@ import os
 
 import src.CrunchyPlugin as cp
 def register():
-    cp.register_vlam_handler("a", None, link_handler)
-    cp.register_vlam_handler("img", None, src_handler)
-    cp.register_vlam_handler("link", None, href_handler)
-    cp.register_vlam_handler("style", None, style_handler)
+    cp.register_tag_handler("a", None, None, link_handler)
+    cp.register_tag_handler("img", None, None, src_handler)
+    cp.register_tag_handler("link", None, None, href_handler)
+    cp.register_tag_handler("style", None, None, style_handler)
 
-def link_handler(page, elem, uid, vlam):
+def link_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in remote pages"""
     if is_remote_url(page.url) and "href" in elem.attrib:
         if "://" not in elem.attrib["href"]:
@@ -30,7 +30,7 @@ def link_handler(page, elem, uid, vlam):
             href = urljoin(page.url, elem.attrib["href"])
             elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
 
-def src_handler(page, elem, uid, vlam):
+def src_handler(page, elem):
     """used in remote pages for elements that have an src attribute"""
     if is_remote_url(page.url) and "src" in elem.attrib:
         if "://" not in elem.attrib["src"]:
@@ -39,7 +39,7 @@ def src_handler(page, elem, uid, vlam):
         local_dir = os.path.split(page.url)[0]
         elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
                                             local_dir, elem.attrib["src"])
-def href_handler(page, elem, uid, vlam):
+def href_handler(page, elem):
     """used in remote pages for elements that have an href attribute"""
     if is_remote_url(page.url) and "href" in elem.attrib:
         if "://" not in elem.attrib["href"]:
@@ -54,7 +54,7 @@ def is_remote_url(url):
 
 css_import_re = re.compile('@import\s+"(.+?)"')
 
-def style_handler(page, elem, uid, vlam):
+def style_handler(page, elem):
     """replace @import statements in style elements"""
     def css_import_replace(imp_match):
         path = imp_match.group(1)

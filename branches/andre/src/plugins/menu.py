@@ -16,22 +16,22 @@ def register():
     """The register() function is required for all plugins.
        """
     CrunchyPlugin.register_tag_handler("meta", "name", "crunchy_menu", insert_special_menu)
-    CrunchyPlugin.register_vlam_handler("no_tag", "menu", insert_default_menu)
+    CrunchyPlugin.register_tag_handler("no_tag", "menu", None, insert_default_menu)
 
-def insert_special_menu(page, elem_attrib):
+def insert_special_menu(page, elem, dummy):
     '''inserts a menu different from the Crunchy default based.
        The instruction is contained in a <meta> element and includes the
        filename where the menu is defined.'''
     if page.is_local:
         local_path = os.path.split(page.url)[0]
-        menu_file = os.path.join(local_path, elem_attrib["content"])
+        menu_file = os.path.join(local_path, elem.attrib["content"])
     elif page.is_remote:
         raise NotImplementedError
     else:
         local_path = os.path.split(page.url)[0][1:]
         menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
                                  "server_root", local_path,
-                                 elem_attrib["content"])
+                                 elem.attrib["content"])
     menu, css = extract_menu(menu_file)
     if page.body:
         page.body.insert(0, menu)

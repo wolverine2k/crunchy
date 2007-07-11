@@ -21,11 +21,6 @@ SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
 parse = HTMLTreeBuilder.parse
 
-##__all__=["register_http_handler", "register_vlam_handler",
-##         "create_vlam_page", "exec_code", "register_service", "services",
-##         "exec_js", "get_uid", "get_pageid", "get_data_dir", "append_html",
-##         "gen_uid", "_"]
-
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
 session_random_id = str(int(random.random()*1000000000))
@@ -41,40 +36,69 @@ def register_http_handler(pattern, handler):
         server.register_handler(handler, pattern)
         pass
 
-def register_vlam_handler(elem_type, option, handler):
-    """register a new vlam handler, see vlam.py for documentation on the
-    page object passed to vlam handlers"""
-    if option is None:
-        if elem_type in vlam.CrunchyPage.handlers:
-            return
-        else:
-            vlam.CrunchyPage.null_handlers[elem_type] = handler
-    if elem_type not in vlam.CrunchyPage.handlers:
-        vlam.CrunchyPage.handlers[elem_type] = {}
-    if option in vlam.CrunchyPage.handlers[elem_type]:
-        print "FATAL ERROR"
-        print "vlam handler defined twice for"+\
-               " tag=%s, option=%s"%(elem_type, option)
-        print "handlers should be unique: a new plugin must have been"
-        print "created, that conflicts with an existing one."
-        raise
-    vlam.CrunchyPage.handlers[elem_type][option] = handler
+##def register_vlam_handler(elem_type, option, handler):
+##    """register a new vlam handler, see vlam.py for documentation on the
+##    page object passed to vlam handlers"""
+##    if option is None:
+##        if elem_type in vlam.CrunchyPage.handlers:
+##            return
+##        else:
+##            vlam.CrunchyPage.null_handlers[elem_type] = handler
+##    if elem_type not in vlam.CrunchyPage.handlers:
+##        vlam.CrunchyPage.handlers[elem_type] = {}
+##    if option in vlam.CrunchyPage.handlers[elem_type]:
+##        print "FATAL ERROR"
+##        print "vlam handler defined twice for"+\
+##               " tag=%s, option=%s"%(elem_type, option)
+##        print "handlers should be unique: a new plugin must have been"
+##        print "created, that conflicts with an existing one."
+##        raise
+##    vlam.CrunchyPage.handlers[elem_type][option] = handler
 
-def register_tag_handler(tag, attribute, value, handler):
+def register_tag_handler(tag, attribute, keyword, handler):
     """register a new tag handler, a generalisation of vlam handlers
        but for attributes other than 'title'."""
-    if tag not in vlam.CrunchyPage.handlers:
-        vlam.CrunchyPage.handlers[tag] = {}
-    if attribute not in vlam.CrunchyPage.handlers[tag]:
-        vlam.CrunchyPage.handlers[tag][attribute] = {}
-    if value in vlam.CrunchyPage.handlers[tag][attribute]:
-        print "FATAL ERROR"
-        print "vlam handler defined twice for"+\
-               " tag=%s, attribute=%s, value=%s"%(tag, attribute, value)
-        print "handlers should be unique: a new plugin must have been"
-        print "created, that conflicts with an existing one."
+    if keyword is None:
+        if attribute is None:  # example: for <a ...>
+            if tag in vlam.CrunchyPage.handlers1:
+                print """FATAL ERROR
+Attempting to define a null handler twice for the same
+tag: %s
+Handlers should be unique: a new plugin must have been"
+created, that conflicts with an existing one."""%tag
+                raise
+            else:
+                vlam.CrunchyPage.handlers1[tag] = handler
+                return
+        else:   # example "no_tag" (for default menu), with attribute "name"
+            if tag not in vlam.CrunchyPage.handlers2:
+                vlam.CrunchyPage.handlers2[tag] = {}
+                vlam.CrunchyPage.handlers2[tag][attribute] = handler
+                return
+            elif attribute not in vlam.CrunchyPage.handlers2[tag]:
+                vlam.CrunchyPage.handlers2[tag][attribute] = handler
+                return
+            else:
+                print """FATAL ERROR"
+Attempting to define a handler twice for the same combination
+tag: %s, option: %s
+Handlers should be unique: a new plugin must have been
+created, that conflicts with an existing one."""%(elem_type, option)
+                raise
+    # Dealing with case where tag, attribut and keyword are all defined.
+    if tag not in vlam.CrunchyPage.handlers3:
+        vlam.CrunchyPage.handlers3[tag] = {}
+    if attribute not in vlam.CrunchyPage.handlers3[tag]:
+        vlam.CrunchyPage.handlers3[tag][attribute] = {}
+    if keyword in vlam.CrunchyPage.handlers3[tag][attribute]:
+        print """FATAL ERROR"
+Attempting to define a handler twice for the same
+tag: %s, attribute: %s, keyword: %s
+Handlers should be unique: a new plugin must have been
+created, that conflicts with an existing one."""%(tag, attribute, keyword)
         raise
-    vlam.CrunchyPage.handlers[tag][attribute][value] = handler
+    vlam.CrunchyPage.handlers3[tag][attribute][keyword] = handler
+    return
 
 def register_page_handler(handler):
     """register a callback that is called when each page is created"""

@@ -30,10 +30,14 @@ def register():
        """
     # 'doctest' only appears inside <pre> elements, using the notation
     # <pre title='doctest ...'>
-    CrunchyPlugin.register_vlam_handler("pre", "doctest", doctest_widget_callback)
-    # By convention, the custom handler for "name" will be called via "/name"; for security, we add
-    # a random session id to the custom handler's name to be executed.
-    CrunchyPlugin.register_http_handler("/doctest%s"%CrunchyPlugin.session_random_id, doctest_runner_callback)
+    CrunchyPlugin.register_tag_handler("pre", "title", "doctest",
+                                          doctest_widget_callback)
+    # By convention, the custom handler for "name" will be called
+    # via "/name"; for security, we add a random session id
+    # to the custom handler's name to be executed.
+    CrunchyPlugin.register_http_handler(
+                         "/doctest%s"%CrunchyPlugin.session_random_id,
+                                       doctest_runner_callback)
 
 
 def doctest_runner_callback(request):
@@ -48,9 +52,10 @@ def doctest_runner_callback(request):
     request.send_response(200)
     request.end_headers()
 
-def doctest_widget_callback(page, elem, uid, vlam):
+def doctest_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
     run doctests"""
+    vlam = elem.attrib["title"]
     # first we need to make sure that the required javacript code is in the page:
     if not page.includes("doctest_included"):
         page.add_include("doctest_included")

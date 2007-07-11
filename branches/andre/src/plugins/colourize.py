@@ -40,10 +40,10 @@ def register():
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.
-    CrunchyPlugin.register_vlam_handler("code", "py_code", plugin_style)
-    CrunchyPlugin.register_vlam_handler("code", "python_code", plugin_style)
-    CrunchyPlugin.register_vlam_handler("pre", "py_code", plugin_style)
-    CrunchyPlugin.register_vlam_handler("pre", "python_code", plugin_style)
+    CrunchyPlugin.register_tag_handler("code", "title", "py_code", plugin_style)
+    CrunchyPlugin.register_tag_handler("code", "title", "python_code", plugin_style)
+    CrunchyPlugin.register_tag_handler("pre", "title", "py_code", plugin_style)
+    CrunchyPlugin.register_tag_handler("pre", "title", "python_code", plugin_style)
     # this plugin can style some Python code, returning both the styled
     # code and either the extracted Python code ...
     CrunchyPlugin.register_service(service_style, "style_pycode")
@@ -52,7 +52,7 @@ def register():
 
 
 
-def plugin_style(page, elem, uid, vlam):
+def plugin_style(page, elem, dummy_uid):
     '''Handles the vlam py_code elements'''
     # first we need to make sure that the required css code is in the page:
     if not page.includes("colourize_included"):

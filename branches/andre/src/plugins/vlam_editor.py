@@ -28,8 +28,10 @@ def register():
        """
     # 'editor' only appears inside <pre> elements, using the notation
     # <pre title='editor ...'>
-    CrunchyPlugin.register_vlam_handler("pre", "editor", insert_editor)
-    CrunchyPlugin.register_service(insert_editor_subwidget, "insert_editor_subwidget")
+    CrunchyPlugin.register_tag_handler("pre", "title", "editor",
+                                                        insert_editor)
+    CrunchyPlugin.register_service(insert_editor_subwidget,
+                                            "insert_editor_subwidget")
 
 def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
@@ -45,8 +47,9 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
     inp.text = code
     CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
 
-def insert_editor(page, elem, uid, vlam):
+def insert_editor(page, elem, uid):
     """handles the editor widget"""
+    vlam = elem.attrib["title"]
     # first we need to make sure that the required javacript code is in the page:
     if not page.includes("exec_included"):
         page.add_include("exec_included")

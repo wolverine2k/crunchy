@@ -22,9 +22,10 @@ def register():
        """
     # 'load_remote' only appears inside <span> elements, using the notation
     # <span title='load_remote'>
-    CrunchyPlugin.register_vlam_handler("span", "load_local", insert_load_local)
+    CrunchyPlugin.register_tag_handler("span", "title", "load_local",
+                                                 insert_load_local)
 
-def insert_load_local(page, parent, uid, vlam):
+def insert_load_local(page, parent, uid):
     name1 = 'browser_'
     name2 = 'submit_'
     form1 = CrunchyPlugin.SubElement(parent, 'form', name=name1,

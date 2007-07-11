@@ -26,14 +26,15 @@ def register():
        """
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
-    CrunchyPlugin.register_vlam_handler("pre", "interpreter", insert_interpreter)
-    # just for fun, we define these
-    CrunchyPlugin.register_vlam_handler("pre", "borg", insert_interpreter)
-    CrunchyPlugin.register_vlam_handler("pre", "human", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "interpreter", insert_interpreter)
+    # just for fun, we define these; they are case-sensitive.
+    CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
 
-def insert_interpreter(page, elem, uid, vlam):
+def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
-    if "isolated" in vlam or "human" in vlam:
+    vlam = elem.attrib["title"]
+    if "isolated" in vlam or "Human" in vlam:
         borg = False
     else:
         borg = True

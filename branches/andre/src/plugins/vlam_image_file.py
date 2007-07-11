@@ -25,11 +25,12 @@ def register():
        """
     # 'image_file' only appears inside <pre> elements, using the notation
     # <pre title='image_file ...'>
-    CrunchyPlugin.register_vlam_handler("pre", "image_file",
+    CrunchyPlugin.register_tag_handler("pre", "title", "image_file",
                                             insert_image_file)
 
-def insert_image_file(page, elem, uid, vlam):
+def insert_image_file(page, elem, uid):
     """handles the insert image file widget"""
+    vlam = elem.attrib["title"]
     # We add html markup, extracting the Python
     # code to be executed in the process
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)
@@ -42,7 +43,7 @@ def insert_image_file(page, elem, uid, vlam):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
+    elem.attrib["id"] = "div_" + uid
     # extracting the image file name
     stripped_vlam = vlam.strip()
     args = stripped_vlam.split()
