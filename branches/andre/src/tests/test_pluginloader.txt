@@ -2,7 +2,7 @@ pluginloader.py tests
 =====================
 
 This file contains a few tests for pluginloader.py.
-    >>> import pluginloader as pl
+    >>> import src.pluginloader as pl
 
 We begin by making a few mock modules that would provide services and
 require others.

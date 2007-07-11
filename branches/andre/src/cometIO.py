@@ -9,6 +9,7 @@ import interpreter
 import sys
 
 import configuration
+from utilities import changeHTMLspecialCharacters
 
 debug_enabled = False
 
@@ -88,14 +89,6 @@ class CrunchyIOBuffer(StringBuffer):
 output_buffers = {}
 # and one StringBuffer per input widget:
 input_buffers = {}
-
-def changeHTMLspecialCharacters(aString):
-    ''' escaping special characters so that they are displayed properly
-        in browser.'''
-    aString = aString.replace('&', '&amp;')
-    aString = aString.replace('<', '&lt;')
-    aString = aString.replace('>', '&gt;')
-    return aString
 
 def comet(request):
     """An http path handler, called from the page - blocks until there is data

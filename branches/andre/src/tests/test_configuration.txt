@@ -3,7 +3,7 @@ configuration.py tests
 
 This file contains tests of configuration options.
 
-    >>> from configuration import defaults
+    >>> from src.configuration import defaults
     >>> import os
     >>> home_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
     >>> print os.path.exists(home_dir)

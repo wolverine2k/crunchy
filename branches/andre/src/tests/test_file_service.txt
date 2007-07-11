@@ -2,7 +2,7 @@ file_service.py tests
 =============
 
 Testing saving and reading from a file.
-    >>> import plugins.file_service as fs
+    >>> import src.plugins.file_service as fs
     >>> import random, os
 
 Generate a totally random file.

@@ -18,6 +18,7 @@ import token
 import tokenize
 
 from src.element_tree import ElementTree as et
+from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 
 #---------begin plugin specific---------------------
 # All plugins should import the crunchy plugin API
@@ -546,12 +547,6 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
                                 '</span>')
     return '\n'.join(newlines)
 
-def changeHTMLspecialCharacters(aString):
-    aString = aString.replace('&', '&amp;')
-    aString = aString.replace('<', '&lt;')
-    aString = aString.replace('>', '&gt;')
-    return aString
-
 def is_interpreter_session(py_code):
     '''determine if the python code corresponds to a simulated
        interpreter session'''
@@ -567,22 +562,4 @@ def parsing_error_dialog(info):
     '''Information given when the code colourizer fails.'''
     return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
 
-def trim_empty_lines_from_end(text):
-    '''remove blank lines at beginning and end of code sample'''
-    lines = text.split('\n')
-    top = 0
-    for line in lines:
-        if line.strip():
-            break
-        else:
-            top += 1
-    bottom = 0
-    for line in lines[::-1]:
-        if line.strip():
-            break
-        else:
-            bottom += 1
-    if bottom == 0:
-        return '\n'.join(lines[top:])
-    return '\n'.join(lines[top:-bottom])
 
