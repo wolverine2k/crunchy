@@ -39,11 +39,14 @@ class Defaults(object):
 
     def __init__(self):
         self.set_dirs()
+        self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         self._prefix = "crunchy"
         self.__no_markup = "interpreter"
         self.__language = 'en'
         self.__editarea_language = 'en'
         translation.init_translation(self.__language)
+        self.logging_uids = {}  # {uid : name}  name is defined by tutorial writer
+        self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.

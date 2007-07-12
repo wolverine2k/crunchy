@@ -9,7 +9,7 @@ import interpreter
 import sys
 
 import configuration
-from utilities import changeHTMLspecialCharacters
+from utilities import changeHTMLspecialCharacters, log_session
 
 debug_enabled = False
 
@@ -39,7 +39,7 @@ class StringBuffer(object):
             self.event.wait()
     def getline(self):
         """basically does the job of readline"""
-        debug_msg("entering StringBuffer.get")
+        debug_msg("entering StringBuffer.getline")
         while True:
                 self.event.clear()
                 self.lock.acquire()
@@ -62,6 +62,7 @@ class StringBuffer(object):
         self.lock.release()
 
 
+
 class CrunchyIOBuffer(StringBuffer):
     """A version optimised for crunchy IO"""
     help_flag = False
@@ -75,6 +76,11 @@ class CrunchyIOBuffer(StringBuffer):
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
+            # Saving session; appending from below
+            if uid in configuration.defaults.logging_uids:
+                log_id = configuration.defaults.logging_uids[uid]
+                configuration.defaults.log[log_id].append(data)
+                log_session()
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
@@ -83,6 +89,11 @@ class CrunchyIOBuffer(StringBuffer):
             self.help_flag = False
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
+            # Saving session; first line...
+            if uid in configuration.defaults.logging_uids:
+                log_id = configuration.defaults.logging_uids[uid]
+                configuration.defaults.log[log_id].append(data)
+                log_session()
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
@@ -134,7 +145,6 @@ def push_input(request):
     in_to_browser = changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
-
     # display help menu on a seperate div
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
@@ -169,7 +179,6 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-
         output_buffers[pageid].put(reset_js % (uid, uid))
 
     def unregister_thread(self):
@@ -197,6 +206,11 @@ class ThreadedBuffer(object):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data)
+            # Saving session - attempting...
+            if uid in configuration.defaults.logging_uids:
+                log_id = configuration.defaults.logging_uids[uid]
+                configuration.defaults.log[log_id].append(data)
+                log_session()
 
     def read(self, length=0):
         """len is ignored, N.B. this function is rarely, if ever, used - and is probably untested"""

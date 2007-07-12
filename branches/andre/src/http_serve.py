@@ -57,6 +57,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if self.path.find("?") > -1:
             realpath, argstring = self.path.split("?")
         self.path = urllib.unquote(realpath)
+        if realpath.startswith("/generated_image"):
+            realpath = "/generated_image"
+            self.path = "/generated_image"
         # parse any arguments there might be
         if argstring:
             arg = []

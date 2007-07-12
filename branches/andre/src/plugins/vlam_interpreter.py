@@ -14,6 +14,7 @@ import sys
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
+from src.utilities import extract_log_id
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
@@ -38,6 +39,12 @@ def insert_interpreter(page, elem, uid):
         borg = False
     else:
         borg = True
+    log_id = extract_log_id(vlam)
+    if log_id:
+        log_id = log_id + "  <small>    (uid = %s)</small>"%uid
+        configuration.defaults.logging_uids[uid] = log_id
+        print "log_id = ", log_id
+
     # first we need to make sure that the required javacript code is in the page:
     if borg:
         if not page.includes("BorgInterpreter_included"):
@@ -55,6 +62,8 @@ def insert_interpreter(page, elem, uid):
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)
+    if log_id:
+        configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_doctest() method extracted all of the existing

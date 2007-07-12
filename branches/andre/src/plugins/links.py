@@ -37,8 +37,9 @@ def src_handler(page, elem):
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
-                                            local_dir, elem.attrib["src"])
+        elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["src"]))
+##        elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
+##                                            local_dir, elem.attrib["src"])
 def href_handler(page, elem):
     """used in remote pages for elements that have an href attribute"""
     if is_remote_url(page.url) and "href" in elem.attrib:
@@ -46,8 +47,9 @@ def href_handler(page, elem):
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local and "href" in elem.attrib:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/CrunchyLocalFile" + os.path.join(
-                                            local_dir, elem.attrib["href"])
+        elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
+##        elem.attrib["href"] = "/CrunchyLocalFile" + os.path.join(
+##                                            local_dir, elem.attrib["href"])
 def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")

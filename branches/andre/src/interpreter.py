@@ -6,7 +6,8 @@ from codeop import CommandCompiler, compile_command
 
 from StringIO import StringIO
 
-from utilities import trim_empty_lines_from_end
+from utilities import trim_empty_lines_from_end, log_session
+import configuration
 
 class Interpreter(threading.Thread):
     """
@@ -53,12 +54,28 @@ class Interpreter(threading.Thread):
                 raise
         finally:
             if self.doctest:
+                # attempting to log
+                if self.channel in configuration.defaults.logging_uids:
+                    code_lines = self.code.split("\n")
+                    user_code = []
+                    for line in code_lines:
+                        if line.startswith("__teststring"):
+                            break
+                        user_code.append(line)
+                    log_id = configuration.defaults.logging_uids[self.channel]
+                    if user_code:
+                        user_code = '\n'.join(user_code)
+                    else:
+                        user_code = "# no code entered by user\n"
+                    data = "<span class='stdin'>" + user_code + "</span>"
+                    configuration.defaults.log[log_id].append(data)
+                    log_session()
+                # proceed with regular output
                 print simplify_doctest_error_message(
                            self.doctest_out.getvalue())
             sys.stdin.unregister_thread()
             sys.stdout.unregister_thread()
             sys.stderr.unregister_thread()
-            print "finished run with channel=", self.channel
 
 def _(msg):  # dummy for now
     return msg

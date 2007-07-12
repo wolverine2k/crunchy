@@ -8,12 +8,12 @@ First, testing some log id.
     >>> fake_id2 = "id with space"
     >>> fake_id3 = "_id: with 8.66, _numbers123"
 
-    >>> fake_vlam1 = "interpreter log=(%s)"%fake_id1
-    >>> fake_vlam1a = "interpreter log = ( %s )"%fake_id1
-    >>> fake_vlam2 = "interpreter log=(%s)"%fake_id2
-    >>> fake_vlam2a = "interpreter log = ( %s )"%fake_id2
-    >>> fake_vlam3 = "interpreter log=(%s)"%fake_id3
-    >>> fake_vlam3a = "interpreter log = ( %s )  other = (dumb)"%fake_id3
+    >>> fake_vlam1 = "interpreter log_id=(%s)"%fake_id1
+    >>> fake_vlam1a = "interpreter log_id = ( %s )"%fake_id1
+    >>> fake_vlam2 = "interpreter log_id=(%s)"%fake_id2
+    >>> fake_vlam2a = "interpreter log_id = ( %s )"%fake_id2
+    >>> fake_vlam3 = "interpreter log_id=(%s)"%fake_id3
+    >>> fake_vlam3a = "interpreter log_id = ( %s )  other = (dumb)"%fake_id3
     
 Now, testing the extraction itself
     >>> print fake_id1 == utilities.extract_log_id(fake_vlam1)
@@ -26,10 +26,11 @@ Now, testing the extraction itself
     True
     >>> print fake_id3 == utilities.extract_log_id(fake_vlam3)
     True
-    >>> print fake_id3 == utilities.extract_log_id(fake_vlam3a, fake_id3)
+    >>> print fake_id3 == utilities.extract_log_id(fake_vlam3a)
     True
 
-It's probably a good idea to check at least one failing test as well
+It's probably a good idea to check at some failing tests as well
     >>> print fake_id2 == utilities.extract_log_id(fake_vlam1)
     False
-
+    >>> print utilities.extract_log_id("Move along, there is nothing here")
+    <BLANKLINE>
