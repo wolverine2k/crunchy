@@ -86,6 +86,7 @@ def insert_image_file(page, elem, uid):
     # Extension of the file; used for determining the filetype
     ext = img_fname.split('.')[-1]
     CrunchyPlugin.SubElement(elem, "br")
+    # KEEP .... as a reminder
 ##    if ext in ['svg', 'svgz']:  # currently untested
 ##        img = CrunchyPlugin.SubElement(elem, "iframe")
 ##    else:
@@ -101,29 +102,6 @@ def insert_image_file(page, elem, uid):
     # "/exec" referred to above as a required service appears here
     # with a random session id appended for security reasons.
     #
-
-
-##    image_jscode = """
-##function image_exec_code(uid, image_name){
-##    // execute the code
-##    code=editAreaLoader.getValue('code_'+uid);
-##    var j = new XMLHttpRequest();
-##    j.open("POST", "/run_external%(session_id)s?uid="+uid, false);
-##    j.send(code)
-##    // now load newly created image
-##    img = document.getElementById('img_'+uid);
-##    img.src = "/generated_image?url="+image_name;
-##    img.alt = 'Image file saved as ' + image_name + '.';
-##    img.alt = img.alt + '%(error_message)s';
-##};
-##"""%{
-##    "session_id": CrunchyPlugin.session_random_id,
-##    "error_message": """
-##    If you see this message, then the image was
-##    not created or loaded properly. This sometimes happens when creating
-##    a figure for the first time. Try reloading it or, if it does not work,
-##    generating the image again.
-##    """.replace('\n', '') }
 
 
     image_jscode = """
@@ -163,7 +141,8 @@ os.chdir(__current)
 function load_image(uid, image_name){
 var j = new XMLHttpRequest();
 img = document.getElementById('img_'+uid);
-img.src = "/generated_image?url="+image_name;
+var now = new Date();
+img.src = "/generated_image"+now.getTime()+"?url="+image_name;
 }
 """
 
