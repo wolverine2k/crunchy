@@ -59,6 +59,7 @@ begin_html ="""
 <head>
 <title>Crunchy Log</title>
 <style>
+p{width: 800px;}
 /* from colourize.py */
 .py_keyword{color: #336699; /* blue */
             font-weight: bold;} /* EditArea does not support font-weight */
@@ -94,6 +95,14 @@ begin_html ="""
 </head>
 <body>
 <h1>Crunchy Session Log</h1>
+<p>In what follows, the log_id is the name given by the tutorial writer
+to the element to be logged, the uid is the unique identifier given
+to an element on a page by Crunchy.  If the page gets reloaded, uid
+will change but not log_id.
+</p><p>By convention, original code from the page is styled using the
+Crunchy defaults, input from the user is in green, standard output in
+blue and standard error messages are in red.
+</p>
 """
 end_html ="""
 </body>
@@ -104,8 +113,9 @@ def log_session():
     f = open(configuration.defaults.log_filename, 'w')
     f.write(begin_html)
     for uid in configuration.defaults.logging_uids:
-        log_id = configuration.defaults.logging_uids[uid]
-        f.write("<h2>log_id = %s</h2>"%log_id)
+        log_id = configuration.defaults.logging_uids[uid][0]
+        vlam_type = configuration.defaults.logging_uids[uid][1]
+        f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
         content = ''.join(configuration.defaults.log[log_id])
         f.write("<pre>"+content+"</pre>")
     f.write(end_html)

@@ -45,7 +45,9 @@ class Defaults(object):
         self.__language = 'en'
         self.__editarea_language = 'en'
         translation.init_translation(self.__language)
-        self.logging_uids = {}  # {uid : name}  name is defined by tutorial writer
+        self.logging_uids = {}  # {uid : (name, type)}
+                               # name is defined by tutorial writer
+                               # type is one of 'interpreter', 'editor',...
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
 
     def set_dirs(self):

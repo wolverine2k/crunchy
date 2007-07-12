@@ -93,7 +93,7 @@ def insert_image_file(page, elem, uid):
 ##        img = CrunchyPlugin.SubElement(elem, "img")
     img = CrunchyPlugin.SubElement(elem, "img")
     img.attrib['id'] = 'img_' + uid
-    img.attrib['src'] = '%s'%img_fname
+    img.attrib['src'] = '/generated_image?url=%s'%img_fname
     img.attrib['alt'] = 'The code above should create a file named ' +\
                         img_fname + '.'
     CrunchyPlugin.SubElement(elem, "br")

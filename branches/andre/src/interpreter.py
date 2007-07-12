@@ -39,6 +39,26 @@ class Interpreter(threading.Thread):
             if not self.ccode:    #code does nothing
                 return
             try:
+                # logging the user input first, if required
+                if self.channel in configuration.defaults.logging_uids:
+                    vlam_type = configuration.defaults.logging_uids[self.channel][1]
+                    if vlam_type == 'editor':
+                        code_lines = self.code.split("\n")
+                        user_code = []
+                        for line in code_lines:
+                            if line.startswith("__teststring"):
+                                break
+                            user_code.append(line)
+                        log_id = configuration.defaults.logging_uids[self.channel][0]
+                        if user_code:
+                            user_code = '\n'.join(user_code)
+                            if not user_code.endswith('\n'):
+                                user_code += '\n'
+                        else:
+                            user_code = "# no code entered by user\n"
+                        data = "<span class='stdin'>" + user_code + "</span>"
+                        configuration.defaults.log[log_id].append(data)
+                        log_session()
                 exec self.ccode in self.symbols#, {}
                 # note: previously, the "local" directory used for exec
                 # was simply an empty directory.  However, this meant that
@@ -62,9 +82,11 @@ class Interpreter(threading.Thread):
                         if line.startswith("__teststring"):
                             break
                         user_code.append(line)
-                    log_id = configuration.defaults.logging_uids[self.channel]
+                    log_id = configuration.defaults.logging_uids[self.channel][0]
                     if user_code:
                         user_code = '\n'.join(user_code)
+                        if not user_code.endswith('\n'):
+                            user_code += '\n'
                     else:
                         user_code = "# no code entered by user\n"
                     data = "<span class='stdin'>" + user_code + "</span>"

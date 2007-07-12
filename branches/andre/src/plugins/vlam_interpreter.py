@@ -41,9 +41,8 @@ def insert_interpreter(page, elem, uid):
         borg = True
     log_id = extract_log_id(vlam)
     if log_id:
-        log_id = log_id + "  <small>    (uid = %s)</small>"%uid
-        configuration.defaults.logging_uids[uid] = log_id
-        print "log_id = ", log_id
+        t = 'interpreter'
+        configuration.defaults.logging_uids[uid] = (log_id, t)
 
     # first we need to make sure that the required javacript code is in the page:
     if borg:

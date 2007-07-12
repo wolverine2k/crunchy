@@ -78,7 +78,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             # Saving session; appending from below
             if uid in configuration.defaults.logging_uids:
-                log_id = configuration.defaults.logging_uids[uid]
+                log_id = configuration.defaults.logging_uids[uid][0]
                 configuration.defaults.log[log_id].append(data)
                 log_session()
             self.event.set()
@@ -91,7 +91,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
             # Saving session; first line...
             if uid in configuration.defaults.logging_uids:
-                log_id = configuration.defaults.logging_uids[uid]
+                log_id = configuration.defaults.logging_uids[uid][0]
                 configuration.defaults.log[log_id].append(data)
                 log_session()
         self.lock.release()
