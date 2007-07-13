@@ -5,7 +5,9 @@
 </head>
 <body>
 <h1>Session Logging Tests</h1>
-<p>This file is to be used to test for logging option</p>
+<p>This file is to be used to test for logging option.  Input/output from
+each of these is going to be written to an external file, crunchy_log.html,
+located in the user's home directory.</p>
 <p>First, a sample interpreter</p>
 <pre title="interpreter log_id=(interp)">
 >>> print "Borg"
@@ -26,17 +28,11 @@ editor
 >>> double(21)
 42
 </pre>
-<p>An image file</p>
-<pre title="image_file test.png log_id=( img )">
-import pylab
-pylab.plot([1,3,1])
-pylab.savefig('test.png')
-</pre>
 
 
 <h2>Bugs</h2>
 <ul>
-<li>Not implemented yet.
+<li>None noted yet
 </li>
 </ul>
 <p><a href="index.html">Back to the test index</a></p>

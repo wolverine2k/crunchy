@@ -61,3 +61,37 @@ border: 1px solid #369;
 color: #369;
 background: #369;
 }
+
+.notes{
+float: right;
+width: 30%;
+border: 1px solid #369;
+-moz-border-radius: 20px;
+padding: 0;
+margin:6px;
+background-color:#F8F8F0;
+}
+.notes h4{
+-moz-border-radius-topleft: 20px;
+-moz-border-radius-topright: 20px;
+text-align:center;
+padding: 3px;
+border-bottom:3px solid #FFBC29;
+font-weight: bold;
+margin-bottom: 8px;
+margin-top: 0;
+color: white;
+background-color: #369;
+}
+.notes p{
+color:#369;
+margin:6px;
+color:#125;
+padding: 5px 8px 5px 8px;
+}
+.notes ul{
+color:#369;
+margin: 12px;
+color:#125;
+padding: 5px 8px 5px 8px;
+}

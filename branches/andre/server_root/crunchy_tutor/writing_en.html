@@ -36,9 +36,13 @@ or module.  Congratulations, this is hard work.  If your tutorial was written in
 relevant Python code inside  <code>&lt;pre&gt;</code> elements, then Crunchy can be used
 to interact with it.  However, with just a tiny bit more work, you can make the interaction
 with Crunchy much richer.</p>
+<div class="notes">
+<h4>Note</h4>
+<p> This document has <b><em>not</em></b> been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.  Please, let us know if you do find any.
+</p>
+</div>
 
 <h3>Extremely Advanced Stuff</h3>
-<p style="color:red; font-size:small">Note: this document has not been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.</p>
 <p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
  VLAM is essentially just an extended set of attributes for some common HTML tags. 
  Any .htm or .html file loaded through Crunchy 
@@ -102,6 +106,14 @@ on the left for some actual examples.</p>
 	<td>Inserts line numbers before each code line inside the &lt;pre&gt; 
 	element. An optional starting number can be given.<br/>
 	Can be used with: <code>python_code, py_code, interpreter, editor, doctest, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>log_id = (some unique name)</code></td>
+	<td>Instructs Crunchy to log the input and the output obtained when interacting
+	with this element.  The result will be saved in the file crunchy.html located
+	in the user's home directory.<br/>
+	Can be used with: <code>interpreter, editor, doctest</code>.  No result is recorded
+	if the <code>external</code> option is used.</td>
 </tr>
 <tr>
 	<td><code>isolated</code></td>
