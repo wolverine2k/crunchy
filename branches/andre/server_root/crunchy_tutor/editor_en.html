@@ -39,18 +39,20 @@ for n in range(2, 10):
         print n, 'is a prime number'
 print a      # will raise an error
 </pre>
+<div class="notes">
+<h4>Save and run</h4>
+<p> Using the editor, you can click on the save program icon and will be given the possibility
+to save a program 
+in a specific location and have Python execute it from there.  
+This is useful if you need your program needs access to some files (say, some images for a game)
+that are located at that location.
+</p>
+</div>
 <p>However, if you read this page using Crunchy and your favourite browser, you will see that a "text box" with a handy button is located just in between this paragraph and the piece of code above.  So, by Crunchy, you don't need to use an editor to actually try the above <i> long</i> example. Furthermore, you will notice a check box labeled "Toggle editor". 
 If you click on it, you will see appear on the page a real editor, provided by Christophe Dolivet.  If you are interested in this editor, search for EditArea on the Internet.  Once the editor is toggled, its size can be changed to fit better the code.  When toggled back to a simple textarea, it will retain its new size.</p>
 <p>If you do try the example, you will notice that "errors" (output from stderr) are printed in a different colour than "normal" stuff (output from stdout).</p>
 
-</pre>
-<h3>Advanced stuff</h3>
-<p>As mentioned above, if you click on the "Toggle editor" box, you will see a "real" editor appearing.
-Using this editor you can actually load Python files or save them. 
-One special feature (save and run) is the ability to save a program 
-in a specific location and have Python execute it from there.  
-This is useful if you need your program needs access to some files (say, some images for a game)
-that are located at that location.</p>
+
 <h3>Advanced stuff, for tutorial writers</h3>
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
 the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
