@@ -50,7 +50,9 @@ def dir_handler(request):
         result = eval("dir(%s)" % line, {}, borg_console.__dict__['locals'])
         result = repr(result)
     except:
-        result = "Module or method not found."
+        request.send_response(204)
+        request.end_headers()
+        return
 
     # have to convert the list to a string
     request.send_response(200)
@@ -72,8 +74,11 @@ def doc_handler(request):
         if line in borg_console.__dict__['locals']['__builtins__']:
             result = "%s()\n %s"%(line, borg_console.__dict__['locals']['__builtins__'][line].__doc__)
         else:
-            result = "%s() not defined"%line
+            request.send_response(204)
+            request.end_headers()
+            return
     else:
+        # should not occur
         result = "builtins not defined in console yet."
 
     request.send_response(200)

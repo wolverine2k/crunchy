@@ -36,7 +36,7 @@ from element_tree import ElementTree
 #  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
 # time to find out about possible other security issues.
 #
-tag_black_list = ["script", 'button', 'form', 'input',
+tag_black_list = ["script", 'button', 'form', 'frameset', 'frame', 'input',
                     'iframe', 'embed', 'applet', 'isindex', 'menu',
                     'noframes', 'object', 'optgroup', 'option', 'param', 's',
                     'select', 'textarea']
@@ -164,13 +164,15 @@ def remove_unwanted(tree):
                 if attr[0].lower() not in specific_allowed[tag]:
                     del element.attrib[attr[0]]
                 elif attr[0].lower() == 'href':
-                    if urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","").startswith("javascript:"):
+                    testHREF = urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","")
+                    testHREF = testHREF.replace("\t","").lstrip().lower()
+                    if testHREF.startswith("javascript:"):
                         del element.attrib[attr[0]]
 # Trying to prevent a XSS vulnerability through
 # <STYLE>BODY{-moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>
             if tag == 'style':
                 text = element.text.lower().replace(' ', '')
-                if ':url(' in text:
+                if 'url(' in text:
                     element.clear()
                     element.tag = None
     __cleanup(tree.getroot(), lambda e: e.tag)
