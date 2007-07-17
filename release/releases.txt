@@ -1,0 +1,1 @@
+To create a windows release, modify the AppVerName, OutputBaseFilename, LicenseFile and Source variables in crunchy.iss. Run win32.bat, which creates a python executable with py2exe and copies the dist directory to ./dist, then runs the InnoSetup script.
