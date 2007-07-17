@@ -5,13 +5,12 @@ This is just the UI part, the communication code is defined in the core
 
 provides = set(["io_widget"])
 
-##from src.CrunchyPlugin import *
 import src.CrunchyPlugin as CrunchyPlugin
 
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
 
-def insert_io_subwidget(page, elem, uid, borg=False):
+def insert_io_subwidget(page, elem, uid, interp_kind=None):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
     """
@@ -26,7 +25,7 @@ def insert_io_subwidget(page, elem, uid, borg=False):
     inp = CrunchyPlugin.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
-    if borg:
+    if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
     inp.attrib["class"] = "input"
