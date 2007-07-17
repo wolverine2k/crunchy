@@ -31,16 +31,17 @@ def register():
     # just for fun, we define these; they are case-sensitive.
     CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
-    # new one for IPython!
-    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
     vlam = elem.attrib["title"]
     if "isolated" in vlam or "Human" in vlam:
         interp_kind = "isolated"
-    elif "ipython" in vlam:
-        interp_kind = "ipython"
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+##    elif "ipython" in vlam:
+##        interp_kind = "ipython"
     else:
         interp_kind = "borg"
     log_id = extract_log_id(vlam)
@@ -59,11 +60,12 @@ def insert_interpreter(page, elem, uid):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)
         page.add_js_code('init_SingleInterpreter("%s");' % uid)
-    else:
-        if not page.includes("IPythonInterpreter_included"):
-            page.add_include("IPythonInterpreter_included")
-            page.add_js_code(IPythonInterpreter_js)
-        page.add_js_code('init_IPythonInterpreter("%s");' % uid)
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+##    else:
+##        if not page.includes("IPythonInterpreter_included"):
+##            page.add_include("IPythonInterpreter_included")
+##            page.add_js_code(IPythonInterpreter_js)
+##        page.add_js_code('init_IPythonInterpreter("%s");' % uid)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
@@ -120,42 +122,25 @@ function init_SingleInterpreter(uid){
 """%(prefix, (sys.version.split(" ")[0]), crunchy_help,
            CrunchyPlugin.session_random_id)
 
-IPythonInterpreter_js = r"""
-function init_IPythonInterpreter(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\n";
-    code += "isolated=src.interpreter.SingleConsole(locals)\n";
-    code += "isolated.push('print ";
-    code += '"Crunchy: Attempting to load IPython shell"';
-    code += "')\n";
-    code += "isolated.push('from IPython.Shell import IPShellEmbed')\n";
-    code += "isolated.push('from IPython.Release import version as IPythonVersion')\n";
-    code += "isolated.push('" + 'ipshell = IPShellEmbed(["-colors", "NoColor"],';
-    code += '  banner="Crunchy IPython (Python version %s, IPython version %%s)"%%(';
-    code += "  IPythonVersion))')\n";
-    code += "isolated.push('ipshell()')\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, sys.version.split(" ")[0], CrunchyPlugin.session_random_id)
-
-##    code += "isolated.push('  print ";
-##    code += 'Cannot find IPython; will use normal interpreter instead")'\n;
-
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
 ##IPythonInterpreter_js = r"""
 ##function init_IPythonInterpreter(uid){
 ##    code = "import src.configuration as configuration\n";
 ##    code += "locals = {'%s': configuration.defaults}\n";
-##    code += "from IPython.Shell import IPShellEmbed\n";
-##    code += "ipshell = IPShellEmbed(user_ns=locals)\n";
-##    code += "ipshell()\n";
-##    //code += "import src.interpreter\nshell=src.interpreter.IPythonShell(locals)\n";
-##    //code += "shell()\n";
+##    code += "import src.interpreter\n";
+##    code += "isolated=src.interpreter.SingleConsole(locals)\n";
+##    code += "isolated.push('print ";
+##    code += '"Crunchy: Attempting to load IPython shell"';
+##    code += "')\n";
+##    code += "isolated.push('from IPython.Shell import IPShellEmbed')\n";
+##    code += "isolated.push('from IPython.Release import version as IPythonVersion')\n";
+##    code += "isolated.push('" + 'ipshell = IPShellEmbed(["-colors", "NoColor", "-sl", "100000"],';
+##    code += '  banner="Crunchy IPython (Python version %s, IPython version %%s)"%%(';
+##    code += "  IPythonVersion))')\n";
+##    code += "isolated.push('ipshell()')\n";
 ##    var j = new XMLHttpRequest();
 ##    j.open("POST", "/exec%s?uid="+uid, false);
 ##    j.send(code);
 ##};
-##"""%(prefix, CrunchyPlugin.session_random_id)
+##"""%(prefix, sys.version.split(" ")[0], CrunchyPlugin.session_random_id)

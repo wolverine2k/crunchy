@@ -24,8 +24,9 @@ editarea_languages_allowed_values = ['de', # German
                                      'pt' # Portuguese
                                     ]
 
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
-no_markup_allowed_values = ["none", "editor", "interpreter", "ipython",
+no_markup_allowed_values = ["none", "editor", "interpreter", #"ipython",
                     "python_code", "image_file"]  # image_file needs an optional argument
 
 class Defaults(object):
@@ -160,7 +161,7 @@ Here are the values of some variables currently used by Crunchy.
         if not valid:
             print _("Invalid choice for %s.no_markup")%self._prefix
             print _("The valid choices are: "), no_markup_allowed_values
-            print _('or "image_file   file_name"')
+            print _('with "image_file   file_name" as a required option.')
             print _("The current value is: "), self.__no_markup
 
     no_markup = property(get_nm, set_nm, None,

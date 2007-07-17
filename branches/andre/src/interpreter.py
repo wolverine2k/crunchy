@@ -34,9 +34,6 @@ class Interpreter(threading.Thread):
         sys.stdin.register_thread(self.channel)
         sys.stdout.register_thread(self.channel)
         sys.stderr.register_thread(self.channel)
-        # trying to inform IPython of the change...
-        self.symbols['sys.stderr'] = sys.stderr
-        self.symbols['sys.stdout'] = sys.stdout
         try:
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')

@@ -172,12 +172,14 @@ class ThreadedBuffer(object):
         self.default_out = out_buf
         self.default_in = in_buf
         self.buf_class = buf_class
-        # the following is defined as a dummy function to make IPython work.
-        self.encoding = 'utf-8'
-    # Trying to use IPython; defining dummy stuff for what it wants
-    def flush(self):
-        return
-    # end of IPython stuff
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+
+##        # the following is defined as a dummy function to make IPython work.
+##        self.encoding = 'utf-8'
+##    # Trying to use IPython; defining dummy stuff for what it wants
+##    def flush(self):
+##        return
+##    # end of IPython stuff
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""

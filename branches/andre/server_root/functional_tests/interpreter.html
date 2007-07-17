@@ -72,12 +72,12 @@ Traceback (most recent call last):
 NameError: name 'x' is not defined
 </pre>
 
-<p>An IPython shell</p>
+<p>An IPython shell - this used to work but it was found that IPython (0.8.1) interfered
+badly with Crunchy; once a shell was loaded, other interpreters (borg and isolated) became buggy; 
+also only the last Ipython shell on a page worked properly</p>
 <pre title="ipython">
->>> print x
-Traceback (most recent call last):
-  File "", line 1, in
-NameError: name 'x' is not defined
+>>> print 44
+44
 </pre>
 
 <h2>Bugs</h2>
