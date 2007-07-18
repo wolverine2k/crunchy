@@ -11,7 +11,7 @@ import sys
 import configuration
 from utilities import changeHTMLspecialCharacters, log_session
 
-debug_enabled = False
+debug_ids = []
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -25,7 +25,7 @@ class StringBuffer(object):
         """get the current contents of the buffer, if the buffer is empty, this
         always blocks until data is available.
         Multiple clients are handled in no particular order"""
-        debug_msg("entering StringBuffer.get")
+        debug_msg("entering StringBuffer.get", 1)
         while True:
             self.event.clear()
             self.lock.acquire()
@@ -33,34 +33,36 @@ class StringBuffer(object):
                 t = self.data
                 self.data = ""
                 self.lock.release()
-                debug_msg("leaving StringBuffer.get: " + t)
+                debug_msg("leaving StringBuffer.get: " + t, 1)
                 return t
             self.lock.release()
             self.event.wait()
-    def getline(self):
+
+    def getline(self, uid):
         """basically does the job of readline"""
-        debug_msg("entering StringBuffer.getline")
+        debug_msg("entering StringBuffer.getline", 2)
         while True:
-                self.event.clear()
-                self.lock.acquire()
-                data_t = self.data.split("\n", 1)
-                if len(data_t) > 1:
-                    # we have a complete line, do something with it
-                    self.data = data_t[1]
-                    self.lock.release()
-                    debug_msg("leaving StringBuffer.getline: " + data_t[0])
-                    return data_t[0] + "\n"
-                # no luck:
+            self.event.clear()
+            self.lock.acquire()
+            data_t = self.data.split("\n", 1)
+            if len(data_t) > 1:
+                # we have a complete line, do something with it
+                self.data = data_t[1]
                 self.lock.release()
-                self.event.wait()
+                debug_msg("leaving StringBuffer.getline: " + data_t[0] +
+                                                        "end_of_data", 2)
+                return uid, data_t[0] + "\n"
+            # no luck:
+            self.lock.release()
+            self.event.wait()
+
     def put(self, data):
         """put some data into the buffer"""
-        debug_msg("entering StringBuffer.put: " + data)
+        debug_msg("entering StringBuffer.put: " + data, 3)
         self.lock.acquire()
         self.data += data
         self.event.set()
         self.lock.release()
-
 
 
 class CrunchyIOBuffer(StringBuffer):
@@ -72,7 +74,7 @@ class CrunchyIOBuffer(StringBuffer):
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
-        debug_msg("pdata = "+ pdata)
+        debug_msg("pdata = "+ pdata, 4)
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
@@ -172,14 +174,6 @@ class ThreadedBuffer(object):
         self.default_out = out_buf
         self.default_in = in_buf
         self.buf_class = buf_class
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-
-##        # the following is defined as a dummy function to make IPython work.
-##        self.encoding = 'utf-8'
-##    # Trying to use IPython; defining dummy stuff for what it wants
-##    def flush(self):
-##        return
-##    # end of IPython stuff
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
@@ -232,11 +226,16 @@ class ThreadedBuffer(object):
 
     def readline(self, length=0):
         """len is ignored, can block, complex and oft-used, needs a testcase"""
+        # used by Interactive Console - raw_input(">>>")
         uid = threading.currentThread().getName()
+        new_id = "none"
+        debug_msg("entering readline, uid=%s"%uid, 7)
         if self.__redirect(uid):
-            data = input_buffers[uid].getline()
+            new_id, data = input_buffers[uid].getline(uid)
         else:
             data = self.default_in.readline()
+        debug_msg("leaving readline, uid=%s, new_id=%s\ndata=%s"%(uid,
+                                                           new_id, data), 7)
         return data
 
     def __redirect(self, uid):
@@ -248,9 +247,9 @@ class ThreadedBuffer(object):
         """write to the default output"""
         self.default_out.write(data)
 
-def debug_msg(data):
+def debug_msg(data, id=None):
     """write a debug message, debug messages always appear on stderr"""
-    if debug_enabled:
+    if id in debug_ids:
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
