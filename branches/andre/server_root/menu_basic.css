@@ -33,7 +33,7 @@ margin: 0;
 background: #fff;
 width: 150px;
 height: 54px;
-border: 2px solid #fe0;
+border: 2px solid #FFBC29;
 padding: 0;
 color: #369;
 text-decoration: none;
@@ -44,14 +44,13 @@ font: 50px sans-serif;
 
 #crunchy_menu_container ul li a img
 {
-/*color: #fe0;*/
 background: white;
 border: 2px solid white;
 }
 
 #crunchy_menu_container ul li a:hover
 {
-color: #fe0;
+color: #FFBC29;
 background: #369;
 border: 2px solid #369;
 }
