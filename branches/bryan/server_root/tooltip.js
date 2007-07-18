@@ -132,3 +132,46 @@ function tooltip_dir(interp_id, data) {
     h.open("POST", "/dir"+session_id+"?uid="+interp_id, true);
     h.send(encodeURIComponent(data));
 };
+
+function convertToEditArea(elm) {
+    theID = elm.id.substring(3);
+
+    newEditor = document.createElement('textarea');
+    newEditor.cols = "80";
+    newEditor.rows = "10";
+    newEditor.id = "code_" + theID
+    newEditor.value = elm.value;
+
+    newButton = document.createElement('button')
+    newButton.appendChild(document.createTextNode('Execute'));
+    newButton.onclick = function () { exec_code(theID) }
+
+    parentElm = elm.parentNode;
+    elm.style.display = 'none';
+    outputSpan = document.getElementById("out_"+theID);
+    outputSpan.innerHTML = "";
+    outputSpan.parentNode.insertBefore(newEditor, outputSpan);
+    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
+    outputSpan.parentNode.insertBefore(newButton, outputSpan);
+    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
+    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
+
+/*
+    // TODO: language is static
+    editAreaLoader.init({
+        id: theID,
+        font_size: "11",
+        allow_resize: "both",
+        allow_toggle: true,
+        language: "en",
+        toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
+        syntax: "python",
+        start_highlight: true,
+        load_callback:"my_load_file",
+        save_callback:"my_save_file",
+        display: "later",
+        replace_tab_by_spaces:4,
+        min_height: 150
+    });
+*/
+}

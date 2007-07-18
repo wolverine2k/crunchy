@@ -7,6 +7,11 @@ provides = set(["io_widget"])
 
 ##from src.CrunchyPlugin import *
 import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
+
+# for converting to edit area
+from editarea import editArea_load_and_save
+from vlam_editor import exec_jscode
 
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
@@ -19,6 +24,17 @@ def insert_io_subwidget(page, elem, uid, borg=False):
         page.add_include("io_included")
         page.add_js_code(io_js)
         page.add_css_code(io_css)
+
+    # needed for switching to edit area
+    if not page.includes("editarea_included"):
+        page.add_include("editarea_included")
+        page.add_js_code(editArea_load_and_save)
+        page.insert_js_file("/edit_area/edit_area_crunchy.js")
+
+    if not page.includes("exec_included"):
+        page.add_include("exec_included")
+        page.add_js_code(exec_jscode)
+
     output = CrunchyPlugin.SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
@@ -26,6 +42,7 @@ def insert_io_subwidget(page, elem, uid, borg=False):
     inp = CrunchyPlugin.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
+    inp.attrib["ondblclick"] = 'return convertToEditArea(this)'
     if borg:
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"

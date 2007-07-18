@@ -7,19 +7,22 @@ import webbrowser
 import sys
 import imp
 
-# import this so that py2exe knows to import modules that the plugins require
-import all_plugins
+"""Attempt to import all_plugins so that py2exe knows to
+import specific modules that are required by the plugins
+"""
+try:
+    import all_plugins
 
-# override the default find_module
-# TODO: make this specific to win32 with py2exe
-imp._find_module = imp.find_module
+    # override the default find_module, which is only used to determine path
+    imp._find_module = imp.find_module
+    def _find_module(name, path=None):
+        if name == "crunchy":
+            return ("","","")
+        return imp._find_module(name, path)
+    imp.find_module = _find_module
 
-def _find_module(name, path=None):
-    if name == "crunchy":
-        return ("","","")
-    return imp._find_module(name, path)
-
-imp.find_module = _find_module
+except:
+    pass
 
 import src.configuration as configuration
 import src.http_serve as http_serve

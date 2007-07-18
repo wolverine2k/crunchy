@@ -4,6 +4,7 @@ import py2exe
 
 import sys
 import os
+import shutil
 
 # write all_plugins.py -- contains an import for each plugin.py file
 # this is included so that py2exe knows which modules are required by the plugins
@@ -32,11 +33,9 @@ setup(console=["crunchy.py"],
                   ("src", glob.glob("src\\*.*")),
                   ("src/plugins", glob.glob("src\\plugins\\*.*"))]
 )
-
 os.remove("all_plugins.py")
 
-# TODO: Write the win32 release script in Python rather than a windows batch file
-#import shutil
-#shutil.copytree ("dist", "..\\..\\release\\win32")
-#shutil.rmtree ("dist", True)
-#shutil.rmtree ("build", True)
+shutil.rmtree ("..\\..\\release\\win32", True)
+shutil.copytree ("dist", "..\\..\\release\\win32")
+shutil.rmtree ("dist", True)
+shutil.rmtree ("build", True)
