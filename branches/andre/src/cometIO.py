@@ -201,6 +201,12 @@ class ThreadedBuffer(object):
 
     def write(self, data):
         """write some data"""
+        #
+        # Note: even though we create interpreters in separate threads
+        # identified by their uid, Borg interpreters share a common
+        # state.  As a result, if we have long running code in one
+        # Borg interpreter, there can be exchange of input or output between
+        # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
         data = changeHTMLspecialCharacters(data)
@@ -208,11 +214,6 @@ class ThreadedBuffer(object):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data)
-            # Saving session - attempting...
-            if uid in configuration.defaults.logging_uids:
-                log_id = configuration.defaults.logging_uids[uid]
-                configuration.defaults.log[log_id].append(data)
-                log_session()
 
     def read(self, length=0):
         """len is ignored, N.B. this function is rarely, if ever, used - and is probably untested"""

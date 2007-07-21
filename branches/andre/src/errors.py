@@ -14,24 +14,30 @@ from StringIO import StringIO
 def _(msg):  # dummy for now
     return msg
 
-def simplify_traceback(code):
+def simplify_traceback(code=None, filename= _("User's code")):
+    ''' inspired by simplifytraceback from the code module in the
+    standard library.
+    '''
     ex_type, ex_val, ex_trace = sys.exc_info()
     if ex_type is SyntaxError:
-        return simplify_syntax_error(code)
+        return simplify_syntax_error(code, filename=filename)
     ex_lineno = ex_trace.tb_next.tb_lineno
     if type is SystemExit:
         ex_value = _("Your program tried to exit Crunchy.")
-    # needs to be made more robust to take care of \n embedded in strings
-    ex_line = code.split('\n')[ex_lineno - 1]
+    if code is not None:
+        ex_line = code.split('\n')[ex_lineno - 1]
+    else:
+        #ex_line = "line of code"
+        dummy, dummy, dummy, ex_line = traceback.extract_tb(ex_trace)[2]
     return _("Error on line %s:\n%s\n%s: %s\n")%(ex_lineno, ex_line, ex_type.__name__, ex_val)
 
-def simplify_syntax_error(code):
+
+def simplify_syntax_error(code, filename = _("User's code")):
     """
     print out a syntax error
     closely based on showsyntaxerror from the code module
     in the standard library
     """
-    filename = _("User's code")
     type, value, sys.last_traceback = sys.exc_info()
     sys.last_type = type
     sys.last_value = value
@@ -46,7 +52,8 @@ def simplify_syntax_error(code):
             # Stuff in the right filename
             value = SyntaxError(msg, (filename, lineno, offset, line))
             sys.last_value = value
-    list = traceback.format_exception_only(type, value)
+    list = traceback.format_exception_only(type, value)[1:]
+    list.insert(0, _("Error on line %s:\n"%lineno))
     retval = StringIO()
     map(retval.write, list)
     return retval.getvalue()
