@@ -217,7 +217,7 @@ Here are the values of some variables currently used by Crunchy.
             print _("Crunchy will attempt to provide friendly error messages.")
         elif choice == False:
             self.__friendly = False
-            print _("Crunchy will use Python's default tracebacks.")
+            print _("Crunchy's error messages will be similar to Python's default tracebacks.")
         else:
             print _("friendly attribute must be set to True or False.")
 

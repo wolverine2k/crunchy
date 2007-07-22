@@ -116,7 +116,7 @@ class Interpreter(threading.Thread):
 # The following is a modified version of code.py that is found in
 # Pythons's standard library.  We leave much of the original
 # code and comments in this.
-
+#======
 # Inspired by similar code by Jeff Epler and Fredrik Lundh.
 
 def softspace(file, newvalue):
@@ -143,8 +143,7 @@ class InteractiveInterpreter(object):
     """
 
     def __init__(self, locals=None):
-        """Constructor.
-
+        """
         The optional 'locals' argument specifies the dictionary in
         which code will be executed; it defaults to a newly created
         dictionary with key "__name__" set to "__console__" and key
@@ -156,7 +155,7 @@ class InteractiveInterpreter(object):
         self.locals = locals
         self.compile = CommandCompiler()
 
-    def runsource(self, source, filename="<User's code>", symbol="single"):
+    def runsource(self, source, filename="User's code", symbol="single"):
         """Compile and run some source in the interpreter.
 
         Arguments are as for compile_command().
@@ -173,112 +172,40 @@ class InteractiveInterpreter(object):
 
         3) The input is complete; compile_command() returned a code
         object.  The code is executed by calling self.runcode() (which
-        also handles run-time exceptions, ##except for SystemExit).
-            ##Crunchy: handles also SystemExit i.e. ignore it...
+        also handles run-time exceptions).
 
-        The return value is True in case 2, False in the other cases (unless
-        an exception is raised).  The return value can be used to
+        The return value is True in case 2, False in the other cases
+        (unless an exception is raised).  The return value can be used to
         decide whether to use sys.ps1 or sys.ps2 to prompt the next
         line.
-
         """
-        ## Crunchy: save source for later reuse
-        self.source = source
         try:
             code = self.compile(source, filename, symbol)
         except (OverflowError, SyntaxError, ValueError):
-            # Case 1
-            if configuration.defaults.friendly:  # Crunchy
-                sys.stderr.write(errors.simplify_traceback(source, filename))
-            else: # normal
-                self.showsyntaxerror(filename)
+            sys.stderr.write(errors.simplify_traceback(source))
             return False
-
         if code is None:
-            # Case 2
             return True
-
-        # Case 3
-        self.runcode(code)
+        self.runcode(code, source)
         return False
 
-    def runcode(self, code):
+    def runcode(self, code, source):
         """Execute a code object.
 
-        When an exception occurs, self.showtraceback() is called to
-        display a traceback.  All exceptions are caught except
-        SystemExit, which is reraised.
+        When an exception occurs, errors.simplify_traceback() is called to
+        display a traceback.  All exceptions are caught.
 
         A note about KeyboardInterrupt: this exception may occur
         elsewhere in this code, and may not always be caught.  The
         caller should be prepared to deal with it.
-
         """
         try:
             exec code in self.locals
-        #Crunchy: let the error handler catch this
-        #except SystemExit:
-        #    raise
         except:
-            if configuration.defaults.friendly:  # Crunchy
-                sys.stderr.write(errors.simplify_traceback(self.source))
-            else: # normal case
-                self.showtraceback()
+            sys.stderr.write(errors.simplify_traceback(source))
         else:
             if softspace(sys.stdout, 0):
                 print
-
-    def showsyntaxerror(self, filename=None):
-        """Display the syntax error that just occurred.
-
-        This doesn't display a stack trace because there isn't one.
-
-        If a filename is given, it is stuffed in the exception instead
-        of what was there before (because Python's parser always uses
-        "<string>" when reading from a string).
-
-        The output is written by self.write(), below.
-
-        """
-        type, value, sys.last_traceback = sys.exc_info()
-        sys.last_type = type
-        sys.last_value = value
-        if filename and type is SyntaxError:
-            # Work hard to stuff the correct filename in the exception
-            try:
-                msg, (dummy_filename, lineno, offset, line) = value
-            except:
-                # Not the format we expect; leave it alone
-                pass
-            else:
-                # Stuff in the right filename
-                value = SyntaxError(msg, (filename, lineno, offset, line))
-                sys.last_value = value
-        list = traceback.format_exception_only(type, value)
-        map(self.write, list)
-
-    def showtraceback(self):
-        """Display the exception that just occurred.
-
-        We remove the first stack item because it is our own code.
-
-        The output is written by self.write(), below.
-
-        """
-        try:
-            type, value, tb = sys.exc_info()
-            sys.last_type = type
-            sys.last_value = value
-            sys.last_traceback = tb
-            tblist = traceback.extract_tb(tb)
-            del tblist[:1]
-            list = traceback.format_list(tblist)
-            if list:
-                list.insert(0, "Traceback (most recent call last):\n")
-            list[len(list):] = traceback.format_exception_only(type, value)
-        finally:
-            tblist = tb = None
-        map(self.write, list)
 
     def write(self, data):
         """Write a string.
@@ -288,7 +215,6 @@ class InteractiveInterpreter(object):
 
         """
         sys.stderr.write(data)
-
 
 class InteractiveConsole(InteractiveInterpreter):
     """Closely emulate the behavior of the interactive Python interpreter.
@@ -343,7 +269,7 @@ class InteractiveConsole(InteractiveInterpreter):
         else:
             self.write("%s\n" % str(banner))
         more = 0
-        while 1:
+        while True:
             try:
                 if more:
                     prompt = sys.ps2
@@ -393,6 +319,9 @@ class InteractiveConsole(InteractiveInterpreter):
         implementation.
 
         """
+        # Getting ahead of ourselves: ready for Python 3000 ;-)
+        if int(sys.version.split('.')[0]) > 2:
+            return input(prompt)
         return raw_input(prompt)
 
 #===== End of modified code.py ========

@@ -11,49 +11,70 @@ import sys
 import traceback
 from StringIO import StringIO
 
+import configuration
+
 def _(msg):  # dummy for now
     return msg
 
-def simplify_traceback(code=None, filename= _("User's code")):
+def simplify_traceback(code=None):
     ''' inspired by simplifytraceback from the code module in the
     standard library.
+    The first stack item because it is our own code; it is removed in
+    the standard traceback in the code module.
     '''
-    ex_type, ex_val, ex_trace = sys.exc_info()
+    ex_type, value, trace = sys.exc_info()
+    sys.last_type = ex_type
+    sys.last_traceback = trace
+    sys.last_value = value
+    try:
+        lineno = trace.tb_next.tb_lineno
+    except:
+        lineno = trace.tb_lineno
     if ex_type is SyntaxError:
-        return simplify_syntax_error(code, filename=filename)
-    ex_lineno = ex_trace.tb_next.tb_lineno
-    if type is SystemExit:
-        ex_value = _("Your program tried to exit Crunchy.")
-    if code is not None:
-        ex_line = code.split('\n')[ex_lineno - 1]
-    else:
-        #ex_line = "line of code"
-        dummy, dummy, dummy, ex_line = traceback.extract_tb(ex_trace)[2]
-    return _("Error on line %s:\n%s\n%s: %s\n")%(ex_lineno, ex_line, ex_type.__name__, ex_val)
+        return simplify_syntax_error(code, ex_type, value, trace, lineno)
+    if ex_type is SystemExit:
+        value = _("Your program tried to exit Crunchy.\n")
+    if configuration.defaults.friendly:
+        if code is not None:
+            code_line = code.split('\n')[lineno - 1]
+        else:
+            dummy_filename, dummy_line_number, dummy_function_name, \
+                                code_line = traceback.extract_tb(trace)[2]
+        return _("Error on line %s:\n%s\n%s: %s\n")%(lineno, code_line,
+                         ex_type.__name__, value)
+    else:   # from InteractiveInterpreter showtraceback in module code.py
+        tblist = traceback.extract_tb(trace)
+        del tblist[:1]
+        list = traceback.format_list(tblist)
+        if list:
+            list.insert(0, "Traceback (most recent call last):\n")
+        list[len(list):] = traceback.format_exception_only(ex_type, value)
+        retval = StringIO()
+        map(retval.write, list)
+        return retval.getvalue()
 
-
-def simplify_syntax_error(code, filename = _("User's code")):
+def simplify_syntax_error(code, ex_type, value, trace, lineno):
     """
     print out a syntax error
     closely based on showsyntaxerror from the code module
     in the standard library
     """
-    type, value, sys.last_traceback = sys.exc_info()
-    sys.last_type = type
-    sys.last_value = value
-    if filename and type is SyntaxError:
-        # Work hard to stuff the correct filename in the exception
-        try:
-            msg, (dummy_filename, lineno, offset, line) = value
-        except:
-            # Not the format we expect; leave it alone
-            pass
-        else:
-            # Stuff in the right filename
-            value = SyntaxError(msg, (filename, lineno, offset, line))
-            sys.last_value = value
-    list = traceback.format_exception_only(type, value)[1:]
-    list.insert(0, _("Error on line %s:\n"%lineno))
+    filename = _("User's code")  # will most likely not be used
+    # Work hard to stuff the correct filename in the exception
+    try:
+        msg, (filename, lineno, offset, line) = value
+    except:
+        # Not the format we expect; leave it alone
+        pass
+    else:
+        # Stuff in the right filename
+        value = SyntaxError(msg, (filename, lineno, offset, line))
+        sys.last_value = value
+    if configuration.defaults.friendly:  # ignore that filename stuff!
+        list = traceback.format_exception_only(ex_type, value)[1:]
+        list.insert(0, _("Error on line %s:\n"%lineno))
+    else:
+        list = traceback.format_exception_only(ex_type, value)
     retval = StringIO()
     map(retval.write, list)
     return retval.getvalue()
