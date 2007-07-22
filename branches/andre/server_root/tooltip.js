@@ -132,3 +132,52 @@ function tooltip_dir(interp_id, data) {
     h.open("POST", "/dir"+session_id+"?uid="+interp_id, true);
     h.send(encodeURIComponent(data));
 };
+
+function convertFromEditor(uid){
+
+    inp = document.getElementById("in_"+uid);
+    inp.style.display = 'inline';
+    parentElm = inp.parentNode;
+    outputSpan = document.getElementById("out_"+theID);
+    editor = document.getElementById("code_" + uid);
+    outputSpan.parentNode.removeChild(editor);
+    exec_button = document.getElementById("exec_but_"+uid);
+    outputSpan.parentNode.removeChild(exec_button);
+    copy_button = document.getElementById("copy_but_"+uid);
+    outputSpan.parentNode.removeChild(copy_button);
+};
+
+function convertToEditor(elm, exec_btn_label, copy_btn_label) {
+    theID = elm.id.substring(3);
+
+    newEditor = document.createElement('textarea');
+    newEditor.cols = "80";
+    newEditor.rows = "10";
+    newEditor.id = "code_" + theID;
+    newEditor.value = elm.value;
+
+    execButton = document.createElement('button');
+    execButton.appendChild(document.createTextNode(exec_btn_label));
+    execButton.onclick = function () { push_input(theID) };
+    execButton.id = "exec_but_" + theID;
+    
+    copyButton = document.createElement('button');
+    copyButton.appendChild(document.createTextNode(copy_btn_label));
+    copyButton.onclick = function () { copyCodeSample(theID) };
+    copyButton.id = "copy_but_" + theID;  
+
+    parentElm = elm.parentNode;
+    elm.style.display = 'none';
+    outputSpan = document.getElementById("out_"+theID);
+    // remove last prompt
+    outputSpan.parentNode.appendChild(newEditor);
+    outputSpan.parentNode.appendChild(document.createElement('br'));
+    outputSpan.parentNode.appendChild(execButton);
+    outputSpan.parentNode.appendChild(copyButton);
+};
+
+function copyCodeSample(uid){
+    editor = document.getElementById("code_"+ uid);
+    //sample = document.getElementById("code_sample_" +uid);
+    editor.value = document.getElementById("code_sample_" +uid).value;
+};

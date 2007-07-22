@@ -37,9 +37,10 @@ class Interpreter(threading.Thread):
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
-                sys.stderr.write(errors.simplify_traceback(self.code))
-                #traceback.print_exc()
-                raise
+                if configuration.defaults.friendly:
+                    sys.stderr.write(errors.simplify_traceback(self.code))
+                else:
+                    traceback.print_exc()
             if not self.ccode:    #code does nothing
                 return
             try:
@@ -65,16 +66,11 @@ class Interpreter(threading.Thread):
                 # were not available inside that function.  This is why
                 # we have commented out the {} as a reminder; self.symbols
                 # will be used for holding both global and local variables.
-            #except SystemExit:
-                #sys.stderr.write(errors.simplify_traceback(self.code))
-                #traceback.print_exc()
             except:
-                #print errors.simplify_traceback(self.code)
                 if configuration.defaults.friendly:
                     sys.stderr.write(errors.simplify_traceback(self.code))
                 else:
                     traceback.print_exc()
-                #raise
         finally:
             if self.doctest:
                 # attempting to log

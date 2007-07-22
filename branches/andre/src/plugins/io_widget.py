@@ -7,10 +7,17 @@ provides = set(["io_widget"])
 
 import src.CrunchyPlugin as CrunchyPlugin
 
+# for converting to edit area
+from editarea import editArea_load_and_save
+
+# dummy function for now
+def _(msg):
+    return msg
+
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
 
-def insert_io_subwidget(page, elem, uid, interp_kind=None):
+def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
     """
@@ -18,6 +25,17 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None):
         page.add_include("io_included")
         page.add_js_code(io_js)
         page.add_css_code(io_css)
+
+    if interp_kind is not None:
+        if not page.includes("push_input_included"):
+            page.add_include("push_input_included")
+            page.add_js_code(push_input)
+        # needed for switching to edit area; not currently working
+        if not page.includes("editarea_included"):
+            page.add_include("editarea_included")
+            page.add_js_code(editArea_load_and_save)
+            page.insert_js_file("/edit_area/edit_area_crunchy.js")
+
     output = CrunchyPlugin.SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
@@ -25,6 +43,13 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None):
     inp = CrunchyPlugin.SubElement(elem, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
+    if interp_kind is not None:
+        inp.attrib["ondblclick"] = "return convertToEditor(this,'%s', '%s')"\
+                                      %(_("Execute"), _("Copy code sample"))
+        code_sample = CrunchyPlugin.SubElement(elem, "textarea")
+        code_sample.attrib["id"] = "code_sample_" + uid
+        code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;'
+        code_sample.text = sample_code
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
@@ -42,6 +67,18 @@ function push_keys(event, uid){
     i.open("POST", "/input?uid="+uid, true);
     i.send(data + "\n");
 
+    return true;
+};
+"""
+
+push_input = r"""
+function push_input(uid){
+    data = document.getElementById("code_"+uid).value;
+    document.getElementById("in_"+uid).value = "";
+    var i = new XMLHttpRequest()
+    i.open("POST", "/input?uid="+uid, true);
+    i.send(data + "\n");
+    convertFromEditor(uid);
     return true;
 };
 """
