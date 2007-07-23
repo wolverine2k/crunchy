@@ -264,7 +264,7 @@ class InteractiveConsole(InteractiveInterpreter):
                         self.__class__.__name__))
         else:
             self.write("%s\n" % str(banner))
-        more = 0
+        more = False
         while True:
             try:
                 if more:
@@ -281,7 +281,7 @@ class InteractiveConsole(InteractiveInterpreter):
             except KeyboardInterrupt:
                 self.write("\nKeyboardInterrupt\n")
                 self.resetbuffer()
-                more = 0
+                more = False
 
     def push(self, line):
         """Push a line to the interpreter.

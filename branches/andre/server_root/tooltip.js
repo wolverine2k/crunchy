@@ -155,6 +155,7 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     newEditor.rows = "10";
     newEditor.id = "code_" + theID;
     newEditor.value = elm.value;
+    newEditor.style.backgroundColor = "#eff";
 
     execButton = document.createElement('button');
     execButton.appendChild(document.createTextNode(exec_btn_label));
