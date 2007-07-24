@@ -106,8 +106,6 @@ def insert_editor(page, elem, uid):
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
-
-
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required
 # services appear here

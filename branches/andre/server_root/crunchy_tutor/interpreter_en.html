@@ -99,17 +99,18 @@ Guido van Rossum
 </pre>
 <p>Instead of having only two lines of text, imagine we had 20 lines.  To reproduce this example would require lots of typing.
 Using some advanced feature of Crunchy, you can save yourself a fair bit of typing.
-Here is how: <b><em>double-click</em></b> inside the input "box" for the interpreter.
+Here is how: click on the image <img src="../editor.png"/> to the right of
+the interpreter.
 You should see appearing below it a larger box (an html textarea for those interested)
 with two buttons at the buttom.
 One button copies the code shown above (just the input - not the output) 
 inside the textarea, ready for editing or just executing.  
 The other button feeds the code to the interpreter. 
-Try it out!   You can double-click a number of times and repeat the experience as often as you want.
+Try it out!
 </p>
 <p>While this is a neat trick, there are a couple of caveats: Crunchy takes each line as though you had typed it yourself, one line at a time, in an interactive session.</p>
 <h4 style="color:red">Caveat #1 </h4>
-<p>Try the double-click, copy code and execute trick with the following.</p>
+<p>Try to click on the image, copy code and execute trick with the following.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; name = raw_input("Enter your name: ")
 &gt;&gt;&gt; print "YOUR NAME IS", name
@@ -121,12 +122,13 @@ Try it out!   You can double-click a number of times and repeat the experience a
 <p>As you should see, Crunchy had taken the second line as your answer to the first. 
 This is unlikely to be what you want.</p>
 <p><b>First lesson:</b> do not use <code title="py_code">input()</code> or 
-<code title="py_code">raw_input()</code> inside a box obtained by double-clicking
-on an interpreter.</p>
+<code title="py_code">raw_input()</code> inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
 
 <h4 style="color:red">Caveat #2 </h4>
-<p>Try again with the following example to double click, copy the code
-and execute it.  You will find that the interpreter will not be able to
+<p>Try again with the following example: click on the editor image, 
+copy the code and execute it.  
+You will find that the interpreter will not be able to
 handle the result and will effectively shut down.  Normally, you would have
 to reload the page to try again; however, I will give you another copy
 to work with just below.</p>
@@ -180,7 +182,8 @@ To avoid this problem, we need to have something with no empty lines.
 ...
 &gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
 </pre>
-<p><b>Second lesson:</b> beware of empty lines inside a box obtained by double-clicking on an interpreter.</p>
+<p><b>Second lesson:</b> beware of empty lines inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
 
 
 <h3>Advanced stuff, for tutorial writers</h3>

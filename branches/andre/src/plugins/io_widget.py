@@ -44,8 +44,13 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
     if interp_kind is not None:
-        inp.attrib["ondblclick"] = "return convertToEditor(this,'%s', '%s')"\
+        editor_link = CrunchyPlugin.SubElement(inp, "a")
+        editor_link.attrib["onclick"]= "return convertToEditor(this,'%s', '%s')"\
                                       %(_("Execute"), _("Copy code sample"))
+        editor_link.attrib["id"] = "ed_link_" + uid
+        image = CrunchyPlugin.SubElement(editor_link, 'img')
+        image.attrib["src"] = "/editor.png"
+        image.attrib["style"] = "border:0;padding:0;position:relative;top:12px;"
         code_sample = CrunchyPlugin.SubElement(elem, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
