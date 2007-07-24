@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''colourize.py
 
 This module is a intended to style Python code
@@ -16,6 +17,8 @@ import keyword
 import StringIO
 import token
 import tokenize
+import sys
+#import htmlentitydefs
 
 from src.element_tree import ElementTree as et
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
@@ -128,27 +131,34 @@ def style(elem):
     </pre>
     """
     py_code = extract_code(elem)
+
     tail = elem.tail
     if 'title' in elem.attrib:
         # styling
         offset = get_linenumber_offset(elem.attrib['title'])
         styled_code, py_code = _style(py_code, offset)
+
         # re-creating element
         tag = elem.tag
         new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
         try:   # need to find a better way to deal with this
             new_elem = et.fromstring(new_html)
         except:
-            print "problem encountered in colourize.py with the following:"
+            new_html = new_html.encode('utf-8')
             try:
-                print new_html
+                new_elem = et.fromstring(new_html)
             except:
-                print "Sorry, could not write the code; encoding problem?"
-            message = "Crunchy says: Problem encountered in colourize.py."
-            message += "  ElementTree could not deal with the Python code. "
-            message += "  It is likely to be an encoding problem."
-            new_html = "<%s>\n%s\n</%s>"%(tag, message, tag)
-            new_elem = et.fromstring(new_html)
+                print "problem encountered in colourize.py with the following:"
+                try:
+                    s = new_html.encode('utf-8')
+                    sys.__stderr__.write(s)
+                except:
+                    print "Sorry, could not write the code; encoding problem?"
+                message = "Crunchy says: Problem encountered in colourize.py."
+                message += "  ElementTree could not deal with the Python code. "
+                message += "  It is likely to be an encoding problem."
+                new_html = "<%s>\n%s\n</%s>"%(tag, message, tag)
+                new_elem = et.fromstring(new_html)
         new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     else:
         new_elem = elem
@@ -182,17 +192,50 @@ def nostrip_style(elem):
     new_elem.tail = tail
     return py_code, new_elem
 
+def convert_nbsp(text):
+    ''' Converts &nbsp; to a normal space.
+
+    '''
+    list_of_entities = []
+    for char in text:
+        if ord(char) > 128:
+            list_of_entities.append(char)
+    for char in list_of_entities:
+        try:
+            cr = repr(char.encode('latin-1')) # repr of &nbsp; would yield "'\xa0'"
+        except:
+            continue
+        if cr[1:-1] == "\xa0":
+##        cr = cr.replace("\\", '')
+##        cr = cr.replace("x", '')
+##        cr = cr[1:-1] # removing quotes
+##        cr = int(cr, 16)
+##        if cr == 160:
+            text = text.replace(char, ' ')
+            return text
+    return text
 
 def extract_code(elem):
     """extract all the text (Python code) from a marked up
     code sample encoded as an ElementTree structure, but converting
     <br/> into "\n"; inspired by F.Lundh's gettext() """
     text = elem.text or ""
+
+    for char in text:
+        if ord(char) > 128:
+            text = convert_nbsp(text)
+            break
+
     for e in elem:
         text += extract_code(e)
         if e.tag == 'br':
             text += '\n'
         if e.tail:
+            tail = e.tail
+            for char in tail:
+                if ord(char) > 128:
+                    tail = convert_nbsp(tail)
+                    break
             text += e.tail
     # \r causes bugs!
     text = text.replace("\r", "")

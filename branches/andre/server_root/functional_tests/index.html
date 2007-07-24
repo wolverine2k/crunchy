@@ -28,9 +28,6 @@ Existing bugs can (and should) be documented here as well.</p>
 <li><a href="menus.html">Alternate menu</a> from hard link (with css from server_root)
   <ul><li><a href="menus2.html">Alternate menu</a> from browsing local tutorial (with css 
   in location relative to this file.)</li></ul></li>
-<li><a href="logging.html">Session logging</a>  This is done as a test.  Only the output from the two interpreters
-the editor and the doctest are logged in the file crunchy_log.html, in the user's home directory.  This file
-is rewritten each time some new input to be logged is done; it can thus be viewed quasi-interactively.</li>
 <li><b>Sound:</b> The old Crunchy used to have some minimal sound support on Linux and Windows.
 However, this was not suitable for any serious demonstration and the sound capabilities
 are better provided by specialised libraries.</li>
@@ -39,6 +36,13 @@ are better provided by specialised libraries.</li>
 <ul>
 <li><a href="brokentree.html">Broken html tree</a>: The new (0.9+) version of Crunchy can now display pages with some errors in it; previously, when errors were found (such as missing closing tags) it was only displaying a blank page. Ideally, it Should display the original page with an error message (in a popup window?)  A previous version displayed a custom alert (on top of a blank page); somehow this is now broken - but is probably not the behaviour we wanted anyway.</li>
 <li><a href="does_not_exist.html">Non-existent file</a>: currently displays a custom page whose appearance could be improved upon (perhaps with images, in a humourous way) and which should be translated to the default language - when the i18n features are working.</li>
+</ul>
+
+<h2>Others</h2>
+<ul>
+<li><a href="ipython.html">IPython</a>: IPython is a fairly advanced replacement for the normal Python console.
+Unfortunately, it messes up Crunchy rather badly when used as an alternative shell.
+Assuming you have it installed on your system, to see it in action, execute the following code. </li>
 </ul>
 
 </body>

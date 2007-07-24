@@ -136,7 +136,7 @@ function init_SingleInterpreter(uid){
 ##    code += "')\n";
 ##    code += "isolated.push('from IPython.Shell import IPShellEmbed')\n";
 ##    code += "isolated.push('from IPython.Release import version as IPythonVersion')\n";
-##    code += "isolated.push('" + 'ipshell = IPShellEmbed(["-colors", "NoColor", "-sl", "100000"],';
+##    code += "isolated.push('" + 'ipshell = IPShellEmbed(["-colors", "NoColor"],';
 ##    code += '  banner="Crunchy IPython (Python version %s, IPython version %%s)"%%(';
 ##    code += "  IPythonVersion))')\n";
 ##    code += "isolated.push('ipshell()')\n";
