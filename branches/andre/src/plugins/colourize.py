@@ -192,46 +192,19 @@ def nostrip_style(elem):
     new_elem.tail = tail
     return py_code, new_elem
 
-def convert_nbsp(text):
-    ''' Converts &nbsp; to a normal space.
-    '''
-    list_of_entities = []
-    for char in text:
-        if ord(char) > 128:
-            list_of_entities.append(char)
-    for char in list_of_entities:
-        try:
-            cr = repr(char.encode('latin-1')) # repr of &nbsp; would yield "'\xa0'"
-        except:
-            continue   # ord(chr) > 255 - this is not &nbsp;
-        if cr[1:-1] == "\xa0":
-            text = text.replace(char, ' ')
-            return text
-    return text
-
 def extract_code(elem):
     """extract all the text (Python code) from a marked up
     code sample encoded as an ElementTree structure, but converting
-    <br/> into "\n", &nbsp; into " " and removing "\r" which are not
+    <br/> into "\n" and removing "\r" which are not
     expected in Python code; inspired by F.Lundh's gettext()
     """
     text = elem.text or ""
-
-    for char in text:
-        if ord(char) > 128:
-            text = convert_nbsp(text)
-            break
 
     for e in elem:
         text += extract_code(e)
         if e.tag == 'br':
             text += '\n'
         if e.tail:
-            tail = e.tail
-            for char in tail:
-                if ord(char) > 128:
-                    tail = convert_nbsp(tail)
-                    break
             text += e.tail
     # \r causes bugs!
     text = text.replace("\r", "")
