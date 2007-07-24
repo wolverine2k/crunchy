@@ -1,4 +1,4 @@
-cd ..\branches\bryan
+cd ..\branches\andre
 setup.py py2exe
 
 cd ..\..\release
