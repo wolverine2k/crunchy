@@ -135,9 +135,9 @@ function tooltip_dir(interp_id, data) {
 
 function convertFromEditor(uid){
 
-    inp = document.getElementById("in_"+uid);
-    inp.style.display = 'inline';
-    parentElm = inp.parentNode;
+    //inp = document.getElementById("in_"+uid);
+    //inp.style.display = 'inline';
+    //parentElm = inp.parentNode;
     outputSpan = document.getElementById("out_"+theID);
     editor = document.getElementById("code_" + uid);
     outputSpan.parentNode.removeChild(editor);
@@ -156,6 +156,7 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     newEditor.id = "code_" + theID;
     newEditor.value = elm.value;
     newEditor.style.backgroundColor = "#eff";
+    newEditor.style.fontWeight = "bold";
 
     execButton = document.createElement('button');
     execButton.appendChild(document.createTextNode(exec_btn_label));
@@ -167,8 +168,6 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     copyButton.onclick = function () { copyCodeSample(theID) };
     copyButton.id = "copy_but_" + theID;  
 
-    parentElm = elm.parentNode;
-    elm.style.display = 'none';
     outputSpan = document.getElementById("out_"+theID);
     // remove last prompt
     outputSpan.parentNode.appendChild(newEditor);
