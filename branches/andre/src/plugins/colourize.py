@@ -94,7 +94,7 @@ style_css = r"""
 .py_prompt{color:blue; }
 .py_output{color:blue;}
 .py_warning{background-color:yellow; font-size: large; font-weight: bold;}
-.py_pre{text-align: left;}
+.py_pre{text-align: left;font-size:12pt;}
 """
 #---------end plugin specific-------------------------
 
@@ -194,7 +194,6 @@ def nostrip_style(elem):
 
 def convert_nbsp(text):
     ''' Converts &nbsp; to a normal space.
-
     '''
     list_of_entities = []
     for char in text:
@@ -204,13 +203,8 @@ def convert_nbsp(text):
         try:
             cr = repr(char.encode('latin-1')) # repr of &nbsp; would yield "'\xa0'"
         except:
-            continue
+            continue   # ord(chr) > 255 - this is not &nbsp;
         if cr[1:-1] == "\xa0":
-##        cr = cr.replace("\\", '')
-##        cr = cr.replace("x", '')
-##        cr = cr[1:-1] # removing quotes
-##        cr = int(cr, 16)
-##        if cr == 160:
             text = text.replace(char, ' ')
             return text
     return text
@@ -218,7 +212,9 @@ def convert_nbsp(text):
 def extract_code(elem):
     """extract all the text (Python code) from a marked up
     code sample encoded as an ElementTree structure, but converting
-    <br/> into "\n"; inspired by F.Lundh's gettext() """
+    <br/> into "\n", &nbsp; into " " and removing "\r" which are not
+    expected in Python code; inspired by F.Lundh's gettext()
+    """
     text = elem.text or ""
 
     for char in text:
@@ -407,6 +403,7 @@ class Colourizer(object):
             line_num = self.beginLine + self.offset
             #
             prefix = "<span class='py_linenumber'>%3d </span>"%line_num
+            temp_out = temp_in[0]
             for substring in temp_in[1:]:
                 line_num += 1
                 temp_out += "\n<span class='py_linenumber'>%3d </span>"%line_num \
