@@ -27,15 +27,17 @@ parse = HTMLTreeBuilder.parse
 session_random_id = str(int(random.random()*1000000000))
 
 _ = translation._
+DEBUG = False
 
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
     the request object passed to http handlers."""
-    print "Registering http handler ", pattern
+    if DEBUG:
+        print "Registering http handler ", pattern
     if pattern is None:
         server.register_default_handler(handler)
     else:
-        server.register_handler(handler, pattern)
+        server.register_handler(pattern, handler)
         pass
 
 def register_tag_handler(tag, attribute, keyword, handler):

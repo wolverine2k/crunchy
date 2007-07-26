@@ -77,7 +77,8 @@ def get_directory(npath):
 # the root of the server is in a separate directory:
 root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
 
-print "Root path is %s" % root_path
+if cp.DEBUG:
+    print "Root path is %s" % root_path
 
 default_pages = ["index.htm", "index.html"]
 

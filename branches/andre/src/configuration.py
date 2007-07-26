@@ -23,6 +23,8 @@ editarea_languages_allowed_values = ['de', # German
                                      'pl', # Polish
                                      'pt' # Portuguese
                                     ]
+languages_allowed_values = ['en' # English
+                            ]
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
@@ -64,7 +66,6 @@ class Defaults(object):
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         self.__temp_dir = os.path.join(self.__user_dir, "temp")
-        print "creating temp directory", self.__temp_dir
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
