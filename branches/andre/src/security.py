@@ -171,11 +171,15 @@ def remove_unwanted(tree):
                     testHREF = testHREF.replace("\t","").lstrip().lower()
                     if testHREF.startswith("javascript:"):
                         del element.attrib[attr[0]]
+                elif attr[0].lower() == 'style':
+                    value = attr[1].lower().replace(' ', '').replace('\t', '')
+                    if 'url(' in value:
+                        del element.attrib[attr[0]]
 # Trying to prevent a XSS vulnerability through
 # <STYLE>BODY{-moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>
             if tag == 'style':
-                text = element.text.lower().replace(' ', '')
-                # Question: do we need to replace other kinds of spaces, such as \t?
+                text = element.text.lower().replace(' ', '').replace('\t', '')
+                # Does not appear to be needed to replace \t ... but better safe...
                 if 'url(' in text:
                     element.clear()
                     element.tag = None

