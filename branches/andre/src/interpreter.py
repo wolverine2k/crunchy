@@ -343,10 +343,35 @@ class Borg(object):
 # pages are such that interpreters on new pages start with fresh
 # environments.
 
+
+# The following is defined here, even though it is not a configuration
+# item per se.  However, since we import the configuration module
+# before starting the interpreter so as to load "defaults", we
+# include this one here as well to make it available to the
+# interpreter in an easy way.
+
+
+
 class SingleConsole(InteractiveConsole):
     '''SingleConsole are isolated one from another'''
     def __init__(self, locals={}, filename="Isolated console"):
-        InteractiveConsole.__init__(self, locals, filename=filename)
+        self.locals = locals
+        self.locals['restart'] = self.restart
+        InteractiveConsole.__init__(self, self.locals, filename=filename)
+
+    def restart(self, loc):
+        """Call this function as follows: restart(locals())
+
+           Used to restart an interpreter session, removing all variables
+           and functions introduced by the user, but leaving Crunchy specific
+           ones in."""
+        to_delete = set()
+        for x in loc:
+            if x not in ['__builtins__', 'crunchy', 'restart']:
+                to_delete.add(x)
+        for y in to_delete:
+            del loc[y]
+        return
 
 class BorgConsole(Borg, SingleConsole):
     '''Every BorgConsole share a common state'''
