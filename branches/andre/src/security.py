@@ -24,25 +24,22 @@ from element_tree import ElementTree
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
 # script: because we want to prevent unauthorised code execution
-# button, form, input: we only want Crunchy itself to create those
+# button, form, input, textarea: we only want Crunchy itself to create those
 # *frame*: we don't want hidden frames that could be playing tricks with the
 #          user (very remote possibility, but still.)
 # embed: as the name indicates, can be used to embed some unwanted objects.
 #
-# Also, all the tags that are noted as "deprecated" in the specific_allowed
-# list are going to be put on the tag_black_list just to make sure
-# we take care of them.
 #
 #  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
 # time to find out about possible other security issues.
 #
-tag_black_list = ["script", 'button', 'form', 'input',
-                    'iframe', 'embed', 'applet', 'isindex', 'menu',
-                    'noframes', 'object', 'optgroup', 'option', 'param', 's',
-                    'select', 'textarea']
+
 
 # The following is not used currently
 #attribute_black_list = ["text/javascript"]
+
+
+# NOTE: 'style' below could be problematic due to the "url(" problem
 
 # Almost all html tags can make use of these in a sensible way:
 common_allowed = ['class', 'dir', 'id', 'lang', 'style', 'title']
@@ -142,6 +139,7 @@ specific_allowed = {
     'th': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
             'align', 'char', 'charoff', 'valign'],
     'thead': ['align', 'char', 'charoff', 'valign'],
+    'title': [],
     'u': [], # deprecated ... but still used
     'ul': [],
     'var': []
@@ -154,23 +152,31 @@ def remove_unwanted(tree):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
 
-    for tag in tag_black_list:
+    unwanted = set()
+    for element in tree.getiterator():
+        if element.tag not in specific_allowed:
+            unwanted.add(element.tag)
+    for tag in unwanted:
         for element in tree.getiterator(tag):
             element.clear() # removes the text
             element.tag = None  # set up so that cleanup will remove it.
+
     for tag in specific_allowed:
         for element in tree.getiterator(tag):
             for attr in element.attrib.items():
                 if attr[0].lower() not in specific_allowed[tag]:
                     del element.attrib[attr[0]]
                 elif attr[0].lower() == 'href':
-                    if urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","").startswith("javascript:"):
+                    testHREF = urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","")
+                    testHREF = testHREF.replace("\t","").lstrip().lower()
+                    if testHREF.startswith("javascript:"):
                         del element.attrib[attr[0]]
 # Trying to prevent a XSS vulnerability through
 # <STYLE>BODY{-moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")}</STYLE>
             if tag == 'style':
                 text = element.text.lower().replace(' ', '')
-                if ':url(' in text:
+                # Question: do we need to replace other kinds of spaces, such as \t?
+                if 'url(' in text:
                     element.clear()
                     element.tag = None
     __cleanup(tree.getroot(), lambda e: e.tag)

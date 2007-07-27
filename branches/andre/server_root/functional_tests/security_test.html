@@ -2,20 +2,61 @@
 <head>
 <title>Crunchy Security Test</title>
 <script>
-function security_breach1(){
-	alert("This is security breach #1");
+// Many of these security tests have been taken from http://ha.ckers.org/xss.html
+function security_breach(){
+	alert("This is security breach");
 };
 
-alert("this is security breach #2");
+// Security Test #1
+alert("this is security breach #1");
 </script>
 </head>
+
+<!-- Security Test #2 -->
+<FRAMESET><FRAME SRC="http://crunchy.voxelz.net/xss.html"></FRAMESET>
+
+<!-- Security Test #3 -->
 <body onload="alert('security breach #3')">
+
 <h1>The Crunchy Security tests</h1>
-<p>No javascript should survive on this page from the original document.  If some did, you should have seen some "alerts" appearing, or the "Click here" text below should be an active link triggering an alert.</p>
+<p>No javascript should survive on this page from the original document.  If some did, you should have seen some "alerts" appearing, or you should see an active link below that will trigger an alert.</p>
+
+<!-- Security Test #4 -->
 <script>document.write("security breach #4")</script>
-<a href="javascript:security_breach1()">Click Here!</a><br>
+
+<!-- Security Test #5 -->
+<a href="javascript:security_breach5()">Security Test #5</a><br>
+
+<!-- Security Test #6 -->
 <a href="javas
-cript:alert(&quot;security breach #5&quot;)">Click Here!</a>
+cript:alert(&quot;security breach #6&quot;)">Security Test #6</a><br>
+
+<!-- Security Test #7 -->
+<a href=" javascript:alert(&quot;security breach #7&quot;)">Security Test #7</a><br>
+
+<!-- Security Test #8 -->
+<a href="JaVaScRiPt: alert(&quot;security breach #8&quot;);">Security Test #8</a><br>
+
+<!-- Security Test #9 -->
+<a href=JaVaScRiPt:alert('security_breach_#9')>Security Test #9</a><br>
+
+<!-- Security Test #10 -->
+<a href="jav	ascript:#*/;alert('security_breach_10')">Security Test #10</a><br>
+
+<!-- Security Test #11 -->
+<a href="&#106;Avascript:alert('security_breach_11')">Security Test #11</a><br>
+
+<!-- Security Test #12 -->
+<!--[if gte IE 4]>
+<SCRIPT>alert('security breach #12');</SCRIPT>
+<![endif]-->
+
+<!-- Security Test #13 -->
+<STYLE>BODY{-moz-binding:	url(" http://crunchy.voxelz.net/xssmoz.xml#xss")}</STYLE>
+
+<!-- Security Test #14 -->
+<SCRIPT/SRC="http://crunchy.voxelz.net/xss.js"></SCRIPT>
+
 <h2>Bugs</h2>
 <ul>
   <li>There are no known security bugs in the security model used for Crunchy. It consists of two main parts:
@@ -29,7 +70,6 @@ it is not clear that this second step is very useful.</li>
 </ul>
 </li>
 </ul>
-
 <p><a href="index.html">Back to the test index</a></p>
 </body>
 </html>
