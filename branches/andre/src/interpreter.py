@@ -1,3 +1,5 @@
+
+import inspect
 import threading, sys
 import sys
 import traceback
@@ -350,8 +352,6 @@ class Borg(object):
 # include this one here as well to make it available to the
 # interpreter in an easy way.
 
-
-
 class SingleConsole(InteractiveConsole):
     '''SingleConsole are isolated one from another'''
     def __init__(self, locals={}, filename="Isolated console"):
@@ -359,18 +359,22 @@ class SingleConsole(InteractiveConsole):
         self.locals['restart'] = self.restart
         InteractiveConsole.__init__(self, self.locals, filename=filename)
 
-    def restart(self, loc):
-        """Call this function as follows: restart(locals())
-
-           Used to restart an interpreter session, removing all variables
+    def restart(self):
+        """Used to restart an interpreter session, removing all variables
            and functions introduced by the user, but leaving Crunchy specific
            ones in."""
         to_delete = set()
+        loc = inspect.currentframe(1).f_locals # == locals() of the calling
+                                    # frame i.e. the interpreter session
+        # We can't iterate over a dict while changing its size; we do it
+        # in two steps; first identify the objects to be deleted while
+        # iterating over the dict; then iterate over a set while removing
+        # the objects in the dict.
         for x in loc:
             if x not in ['__builtins__', 'crunchy', 'restart']:
                 to_delete.add(x)
-        for y in to_delete:
-            del loc[y]
+        for x in to_delete:
+            del loc[x]
         return
 
 class BorgConsole(Borg, SingleConsole):
