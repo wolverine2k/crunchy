@@ -18,14 +18,30 @@ def register():
 def external_link(page, elem, *dummies):
     '''handler which totally ignores the link being passed to it, other than
     inserting an image to indicate it leads outside of Crunchy'''
-    elem.text += " "
+    if elem.tail:
+        elem.tail += " "
+    else:
+        elem.text += " "
     img = cp.SubElement(elem, "img")
     img.attrib['src'] = "/external_link.png"
+    img.attrib['style'] = "border:0;"
     return
 
 def link_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in remote pages"""
     if is_remote_url(page.url) and "href" in elem.attrib:
+        if "#" in elem.attrib["href"]:
+            if elem.attrib["href"].startswith("#"):
+                return
+            else:
+                # Python.org tutorial has internal links of the form
+                #   node#some_reference i.e. there is an extra prefix
+                splitted = elem.attrib["href"].split("#")
+                if page.url.endswith(splitted[0]): # remove extra prefix
+                    elem.attrib["href"] = "#" + splitted[1]
+                    return
+                else:  # remove trailing #... which Crunchy can't handle
+                    elem.attrib["href"] = splitted[0]
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if "href" in elem.attrib:

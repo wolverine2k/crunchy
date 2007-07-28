@@ -58,6 +58,7 @@ specific_allowed = {
     # applet deprecated
     'area': ['name', 'shape', 'coords', 'href', 'alt', 'nohref'],
     'b': [],
+    'basefont': [],
     'base': [],
     'bdo': [],
     'big': [],
@@ -75,7 +76,7 @@ specific_allowed = {
     'dd': [],
     'del': ['cite', 'datetime'],
     'dfn': [],
-    # dir is deprecated - but listed in common_allowed
+    # dir is deprecated - but listed in common_allowed (attribute)
     'div': ['align'],
     'dl': [],
     'dt': [],
@@ -108,7 +109,7 @@ specific_allowed = {
     'map': ['shape', 'coords', 'href', 'nohref', 'alt'],
     # menu deprecated
     'meta': ['name', 'content'], #  'http-equiv' can be a potential problem
-    # noframes should not be needed
+    'noframes': [],   # should not be needed
     'noscript' : [],   # should not be needed
     # object not allowed - preventing unwanted interactions
     'ol': ['start'],  # start is deprecated ... but replaced by ??
@@ -118,7 +119,7 @@ specific_allowed = {
     # param not needed: only for object
     'pre': [],
     'q': ['cite'],
-    # s deprecated
+    's': [],  # deprecated but harmless
     'samp': [],
     # script not allowed!
     # 'select': ['name', 'size', 'multiple'], # Keep???
@@ -142,6 +143,7 @@ specific_allowed = {
     'title': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
             'align', 'char', 'charoff', 'valign'],
     'tr': [],
+    'tt': [],
     'u': [], # deprecated ... but still used
     'ul': [],
     'var': []
