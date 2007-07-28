@@ -324,6 +324,28 @@ class InteractiveConsole(InteractiveInterpreter):
 
 #===== End of modified code.py ========
 
+class SingleConsole(InteractiveConsole):
+    '''SingleConsole are isolated one from another'''
+    def __init__(self, locals={}, filename="Isolated console"):
+        self.locals = locals
+        self.locals['restart'] = self.restart
+        InteractiveConsole.__init__(self, self.locals, filename=filename)
+
+    def restart(self):
+        """Used to restart an interpreter session, removing all variables
+           and functions introduced by the user, but leaving Crunchy specific
+           ones in."""
+        to_delete = set()
+        loc = inspect.currentframe(1).f_locals # == locals() of the calling
+                                    # frame i.e. the interpreter session
+        # We can't iterate over a dict while changing its size; however,
+        # we can use the keys() method which creates a list of keys
+        # and use that instead.
+        for x in loc.keys():
+            if x not in ['__builtins__', 'crunchy', 'restart']:
+                del loc[x]
+        return
+
 
 class Borg(object):
     '''Borg Idiom, from the Python Cookbook, 2nd Edition, p:273
@@ -344,38 +366,6 @@ class Borg(object):
 # (but do present the desired behaviour!!!!), request for new
 # pages are such that interpreters on new pages start with fresh
 # environments.
-
-
-# The following is defined here, even though it is not a configuration
-# item per se.  However, since we import the configuration module
-# before starting the interpreter so as to load "defaults", we
-# include this one here as well to make it available to the
-# interpreter in an easy way.
-
-class SingleConsole(InteractiveConsole):
-    '''SingleConsole are isolated one from another'''
-    def __init__(self, locals={}, filename="Isolated console"):
-        self.locals = locals
-        self.locals['restart'] = self.restart
-        InteractiveConsole.__init__(self, self.locals, filename=filename)
-
-    def restart(self):
-        """Used to restart an interpreter session, removing all variables
-           and functions introduced by the user, but leaving Crunchy specific
-           ones in."""
-        to_delete = set()
-        loc = inspect.currentframe(1).f_locals # == locals() of the calling
-                                    # frame i.e. the interpreter session
-        # We can't iterate over a dict while changing its size; we do it
-        # in two steps; first identify the objects to be deleted while
-        # iterating over the dict; then iterate over a set while removing
-        # the objects in the dict.
-        for x in loc:
-            if x not in ['__builtins__', 'crunchy', 'restart']:
-                to_delete.add(x)
-        for x in to_delete:
-            del loc[x]
-        return
 
 class BorgConsole(Borg, SingleConsole):
     '''Every BorgConsole share a common state'''

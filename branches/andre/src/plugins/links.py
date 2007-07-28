@@ -13,6 +13,11 @@ def register():
     cp.register_tag_handler("img", None, None, src_handler)
     cp.register_tag_handler("link", None, None, href_handler)
     cp.register_tag_handler("style", None, None, style_handler)
+    cp.register_tag_handler("a","title", "external_link", external_link)
+
+def external_link(*dummies):
+    '''handler which totally ignores the link being passed to it.'''
+    return
 
 def link_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in remote pages"""
@@ -38,8 +43,7 @@ def src_handler(page, elem):
     elif page.is_local:
         local_dir = os.path.split(page.url)[0]
         elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["src"]))
-##        elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
-##                                            local_dir, elem.attrib["src"])
+
 def href_handler(page, elem):
     """used in remote pages for elements that have an href attribute"""
     if is_remote_url(page.url) and "href" in elem.attrib:
@@ -48,8 +52,8 @@ def href_handler(page, elem):
     if page.is_local and "href" in elem.attrib:
         local_dir = os.path.split(page.url)[0]
         elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
-##        elem.attrib["href"] = "/CrunchyLocalFile" + os.path.join(
-##                                            local_dir, elem.attrib["href"])
+
+
 def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")

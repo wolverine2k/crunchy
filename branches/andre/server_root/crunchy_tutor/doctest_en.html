@@ -25,6 +25,7 @@
 <span class="heading">Advanced Topics</span>
 <a href="remote_en.html">Browsing</a>
 <a href="config_en.html">Configuring Crunchy</a>
+<a href="faq_en.html">FAQ, bugs, etc.</a>
 <a href="writing_en.html">Writing tutorials</a>
 <a href="/functional_tests">Tests</a>
 </div>
@@ -67,15 +68,6 @@ are wasting too much time on something that should be much easier if life were f
 [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
-<p>Code entered into a doctest textarea added to the doctest and executed with
-the addition special code as follows:</p>
-<pre title="py_code">
-__teststring = \"\"\"%s\"\"\"
-from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
-__test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
-__x = __DocTestRunner().run(__test, out=doctest_out.write)
-doctest_out.write(__x)
-</pre>
 <p>The output from the doctest result is further processed by Crunchy to make error messages a bit
 friendlier to beginners.</p>
 

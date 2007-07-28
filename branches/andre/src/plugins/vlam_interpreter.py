@@ -16,6 +16,9 @@ import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
 from src.utilities import extract_log_id
 
+def _(mesg):  # dummy for now
+    return mesg
+
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
 
@@ -91,7 +94,7 @@ def insert_interpreter(page, elem, uid):
 
 
 prefix = configuration.defaults._prefix
-crunchy_help = "Type %s.help for more information."%prefix
+crunchy_help = _("Type %s.help for more information."%prefix)
 
 BorgInterpreter_js = r"""
 function init_BorgInterpreter(uid){

@@ -38,8 +38,12 @@ def simplify_traceback(code=None):
         if code is not None:
             code_line = code.split('\n')[lineno - 1]
         else:
-            dummy_filename, dummy_line_number, dummy_function_name, \
+            try:
+                dummy_filename, dummy_line_number, dummy_function_name, \
                                 code_line = traceback.extract_tb(trace)[2]
+            except:
+                return _("Error on line %s:\n%s: %s\n")%(lineno,
+                         ex_type.__name__, value)
         return _("Error on line %s:\n%s\n%s: %s\n")%(lineno, code_line,
                          ex_type.__name__, value)
     else:   # from InteractiveInterpreter showtraceback in module code.py

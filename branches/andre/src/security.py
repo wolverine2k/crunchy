@@ -139,7 +139,9 @@ specific_allowed = {
     'th': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
             'align', 'char', 'charoff', 'valign'],
     'thead': ['align', 'char', 'charoff', 'valign'],
-    'title': [],
+    'title': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
+            'align', 'char', 'charoff', 'valign'],
+    'tr': [],
     'u': [], # deprecated ... but still used
     'ul': [],
     'var': []
