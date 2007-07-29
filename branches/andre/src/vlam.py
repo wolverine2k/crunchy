@@ -52,7 +52,7 @@ class CrunchyPage(object):
         self.tree = et.ElementTree(html)
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
-        self.tree = security.remove_unwanted(self.tree)
+        self.tree = security.remove_unwanted(self.tree, self)
         self.included = set([])
         self.head = self.tree.find("head")
         if not self.head:

@@ -60,6 +60,9 @@ class Defaults(object):
                                # name is defined by tutorial writer
                                # type is one of 'interpreter', 'editor',...
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
+        # The following variable can be reset by the user to False
+        # but this must be done explictly at each session
+        self.paranoid = True
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
