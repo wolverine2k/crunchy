@@ -56,10 +56,15 @@ def insert_editor(page, elem, uid):
     if log_id:
         t = 'editor'
         configuration.defaults.logging_uids[uid] = (log_id, t)
-    # first we need to make sure that the required javacript code is in the page:
-    if not page.includes("exec_included"):
-        page.add_include("exec_included")
-        page.add_js_code(exec_jscode)
+
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in configuration.defaults.security:
+        if not page.includes("exec_included"):
+            page.add_include("exec_included")
+            page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)

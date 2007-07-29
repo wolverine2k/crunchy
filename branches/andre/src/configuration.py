@@ -25,6 +25,12 @@ editarea_languages_allowed_values = ['de', # German
                                     ]
 languages_allowed_values = ['en' # English
                             ]
+security_allowed_values = [
+                        'trusted','display trusted',
+                        'normal', 'display normal',
+                        'severe', 'display severe',
+                        'paranoid', 'display paranoid'
+                            ]
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
@@ -41,6 +47,8 @@ class Defaults(object):
         language: language to use for feedback to user - and anything
             else that might have been translated.
         editarea_language: language used for ui of editarea
+        friendly: traceback settings
+        security: level of filtering of web pages.
 
     This class is instantiated [instance name: defaults] within this module.
     """
@@ -54,15 +62,14 @@ class Defaults(object):
         self.__language = 'en'
         self.__editarea_language = 'en'
         self.__friendly = True
+        self.__security = 'normal'
+
         # end of properties
         translation.init_translation(self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
                                # name is defined by tutorial writer
                                # type is one of 'interpreter', 'editor',...
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
-        # The following variable can be reset by the user to False
-        # but this must be done explictly at each session
-        self.paranoid = True
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
@@ -227,6 +234,22 @@ Here are the values of some variables currently used by Crunchy.
 
     friendly = property(get_friendly_traceback, set_friendly_traceback, None,
         _('"friendly" value currently used by Crunchy is: '))
+
+    #==============
+
+    def get_security(self):
+        return self.__security
+
+    def set_security(self, choice):
+        if choice in security_allowed_values:
+            self.__security = choice
+            print _("security set to: ") , choice
+        else:
+            print _("Invalid choice for %s.security")%self._prefix
+            print _("The valid choices are: "), security_allowed_values
+
+    security = property(get_security, set_security, None,
+        _('"security" level currently used by Crunchy is: '))
 
     #==============
 

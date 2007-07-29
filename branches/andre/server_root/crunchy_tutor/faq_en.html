@@ -69,7 +69,18 @@ Unfortunately, Crunchy sometimes does not do a very good job of processing and r
 <b>non W3C compliant</b> pages for display in the browser. If you find such a page, complain
 to its creator, not to us! 
 If you do find a W3C compliant page that Crunchy does not interpret properly, <em>then</em> 
-let us know.</p>
+let us know.  However, be aware that there are two reasons that may cause Crunchy
+not to display a W3C compliant page properly</p>
+<ul>
+<li>In its normal "paranoid" mode, Crunchy can filter out a lot of styling instructions
+that only <em>look</em> like they may open the door to some malicious javascript code.
+We make no apology for this: security trumps appearance in our books.
+</li>
+<li>Crunchy moves the body of a page down slightly so that its menu
+does not interfere with the rest of the material on the page when it is
+first loaded.  If a page contains absolutely position objects, then the relative
+positioning of certain elements may be off.</li>
+</ul>
 
 <a id="colours"> </a><br/>
 <h4>Look and Feel</h4>

@@ -40,6 +40,7 @@ Crunchy to execute.  Crunchy is just a tool that saves you the trouble of copyin
 code you find somewhere before trying it out on your computer.  <b>YOU</b> are responsible
 for asking Python to execute some code - not Crunchy's designers.</p>
 </div>
+
 <h3>Elsewhere on the planet</h3>
 <p>
 Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
@@ -61,6 +62,68 @@ other tests to use on our
 and you would like to use Crunchy to go through them.  You can first browse for them and then load 
 them from here.</p>
 <span title="load_local"> </span>
+
+<div class="notes">
+<h4>Crunchy is paranoid</h4>
+<p>
+Due to security concerns, every time you start Crunchy, it is set in a "paranoid" mode, 
+where it is very restrictive about the html code it lets filter through to your
+browser.  In particular, some style attributes and style sheets are prevented
+from loading as they could hide links to some hidden javascript instructions.
+</p>
+</div>
+<h3>Advanced stuff</h3>
+<p>
+Because Crunchy may prevent by default many styling instructions to be
+applied to web pages, their look may leave to be desired.
+If you trust the web sites you are visiting to be safe, or the same for the
+tutorials you might have downloaded, you might want to instruct Crunchy to be
+a little bit more permissive.  You can do this by entering the 
+following at an interpreter prompt.
+</p>
+<pre title="interpreter">
+&gt;&gt;&gt; crunchy.paranoid = False
+</pre>
+<p>A good example might be <a href="http://www.python.org">python.org</a>, a site that
+can most likely be trusted to be safe for Crunchy.  To see the difference between Crunchy's
+paranoid mode and its more trusting one, here's what you can do:
+</p>
+<ul>
+<li>Click on the above link to go the the python.org site.  Notice how much of the
+normal styling is gone.</li>
+<li>Use the browser back button to come back to this page; you will need to reload it
+to have access to the interpreter.</li>
+<li>Instruct Crunchy to be less paranoid as described above, and click on
+the python.org link again- the display should be a lot more similar to what
+you normally see when viewing the site with your browser.</li>
+</ul>
+<p>
+In its normal paranoid mode, Crunchy removes any styling information that contains
+the string "url(" as it can open the door to the introduction of some malicious 
+javascript code.  Such styling information
+can occur either as an attribute of any html tag, inside a &lt;style&gt; html element or, 
+perhaps more troublesome, via any style sheet requested by a &lt;link&gt; element.
+Such style sheet can in turn import other style sheets which can contain other
+problematic imports, etc.   Rather than trying to figure out if the various
+styling instructions are safe, Crunchy simply removes any that it finds which even look 
+like it might open the door to something unsafe, i.e. if they contain the
+string "url(", including those that have spaces between the "l" and the "(".</p>
+<p>In addition to looking for the string "url(" in styling instructions, Crunchy also
+look for any string (html entity) that starts with "&amp;#".  
+There should not be any good reason to
+use such encoded entities inside styling instructions.  However, there can be some
+bad reasons to do so as people that try to prevent cross-site scripting (XSS) have 
+found out.
+</p>
+<p>Even when you instruct Crunchy to be less paranoid, 
+it can still potentially filter out a lot
+of material from the pages it loads.  Any javascript instruction or script is removed.
+A number of html tag used to embed objects and initiate interactions with
+users are removed as well.  Those interested may want to have a look at security.py
+to see exactly what Crunchy does.
+</p>
+<p><b>If you are aware of any potential security holes, please let us know.</b></p>
 </div>
 </body>
+
 </html>

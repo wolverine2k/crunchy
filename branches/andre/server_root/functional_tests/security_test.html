@@ -1,16 +1,16 @@
 <html>
 <head>
-<!-- Security Test #1a -->
-<link href="security.css" rel="stylesheet" type="text/css" />
+<!-- Security Test moz4 -->
+<link href="alert.css" rel="stylesheet" type="text/css" />
 <title>Crunchy Security Test</title>
 <script>
 // Many of these security tests have been taken from http://ha.ckers.org/xss.html
 function security_breach(){
-	alert("This is security breach");
+	alert("This is security breach called from onload");
 };
 
 // Security Test #1
-alert("this is security breach #1");
+alert("this is security breach #1 from a <script>");
 </script>
 <!-- Security Test #12 -->
 <!--[if gte IE 4]>
@@ -24,7 +24,7 @@ alert("this is security breach #1");
 <STYLE type="text/css">BODY{-moz-binding:url	(" http://crunchy.voxelz.net/xssmoz.xml#xss")}</STYLE>
 
 <!-- Security Test #15 -->
-<SCRIPT/SRC="http://crunchy.voxelz.net/xss.js"></SCRIPT>
+<SCRIPT/SRC="functional_tests/alert.js"></SCRIPT>
 </head>
 
 <!-- Security Test #2 -->
@@ -75,8 +75,11 @@ commands on the html page;
 </li>
 <li> a "random session id" (found in CrunchyPlugin.py) that is appended to commands 
 (like /exec and /doctest) that enable communication between the browser and Crunchy's server.  
-This is done as a 2nd security layer in case we have overlooked some potential unsecure javascript code;
-it is not clear that this second step is very useful.</li>
+This is done as a 2nd security layer in case we have overlooked some potentially 
+unsecure javascript code.
+It is not clear how useful this second layer is: all it does is make
+it more difficult to write javascript code that will send python code to the server
+as it has to scan the page to identify the string to use.</li>
 </ul>
 </li>
 </ul>

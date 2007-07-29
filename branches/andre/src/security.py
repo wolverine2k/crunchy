@@ -27,6 +27,7 @@ from element_tree import ElementTree
 import configuration
 
 DEBUG = True
+DEBUG2 = False
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -45,10 +46,6 @@ DEBUG = True
 # The following is not used currently
 #attribute_black_list = ["text/javascript"]
 
-# NOTE: 'style' below could be problematic due to the "url(" problem
-
-# Almost all html tags can make use of these in a sensible way:
-common_allowed = ['class', 'dir', 'id', 'lang', 'style', 'title']
 
 # Rather than trying to find which attributes might be problematic (black list),
 # we create a database of allowed (safe) attributes which we know will not cause
@@ -57,7 +54,12 @@ common_allowed = ['class', 'dir', 'id', 'lang', 'style', 'title']
 # with possibly some new attributes introduced by a given browser which we
 # would not have foreseen.
 
-# {1} see also http://feedparser.org/docs/html-sanitization.html
+# To save on typing, we list here the common attributes
+# that almost all html tags can make use of in a sensible way:
+common_allowed = ['class', 'dir', 'id', 'lang', 'title']
+# note that we left out "style" which will be handled separately
+
+# index {1} below: see also http://feedparser.org/docs/html-sanitization.html
 specific_allowed = {
     'a': ['charset', 'type', 'name', 'href', 'hreflang', 'rel'],
     'abbr': [],
@@ -157,6 +159,66 @@ specific_allowed = {
     'var': []
     }
 
+# We now build lists of allowed combinations tag/attributes based
+# on the security level; we build separate dict since it needs
+# to be done only once and is easier to modify individually while
+# making sure we avoid accidental shared references.
+
+allowed_attributes = {}
+
+#- severe -
+severe = {}
+for key in specific_allowed:
+    severe[key] = []
+    for item in specific_allowed[key]:
+        severe[key].append(item)
+    for item in common_allowed:
+        severe[key].append(item)
+
+allowed_attributes['severe'] = severe
+allowed_attributes['display severe'] = severe
+
+
+# - normal
+normal = {}
+for key in specific_allowed:
+    normal[key] = []
+    for item in specific_allowed[key]:
+        normal[key].append(item)
+    for item in common_allowed:
+        normal[key].append(item)
+    normal[key].append('style')
+
+allowed_attributes['normal'] = normal
+allowed_attributes['display normal'] = normal
+
+# Currently, the only difference between "trusted" and "normal" is that we will
+# not scan for potentially troublesome style content in "trusted"
+
+# - trusted
+trusted = {}
+for key in specific_allowed:
+    trusted[key] = []
+    for item in specific_allowed[key]:
+        trusted[key].append(item)
+    for item in common_allowed:
+        trusted[key].append(item)
+    trusted[key].append('style')
+
+allowed_attributes['trusted'] = trusted
+allowed_attributes['display trusted'] = trusted
+
+# - paranoid -
+paranoid = {}
+for key in specific_allowed:
+    paranoid[key] = ['title']  # only harmless vlam-specific attribute
+
+paranoid['a'] = ['href', 'id'] # only items required for navigation
+
+allowed_attributes['paranoid'] = paranoid
+allowed_attributes['display paranoid'] = paranoid
+
+
 # Just like XSS vulnerability are possible through <style> or 'style' attrib
 # -moz-binding:url(" http://ha.ckers.org/xssmoz.xml#xss")
 # [see: http://ha.ckers.org/xss.html for reference], the same holes
@@ -167,60 +229,78 @@ specific_allowed = {
 # see also for example http://feedparser.org/docs/html-sanitization.html
 #
 # As a result, we will not allowed dangerous "substring" to appear
-# in style attributes or in style sheets.
+# in style attributes or in style sheets in "normal" security level;
+# styles are not permitted in "severe" or "paranoid".
 
 dangerous_strings = ['url(', '&#']
 
-for key in specific_allowed:
-    for item in common_allowed:
-        specific_allowed[key].append(item)
 
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
 
+    _allowed = allowed_attributes[configuration.defaults.security]
+
+# first, removing unwanted tags
     unwanted = set()
     for element in tree.getiterator():
-        if element.tag not in specific_allowed:
+        if element.tag not in _allowed:
             unwanted.add(element.tag)
     for tag in unwanted:
         for element in tree.getiterator(tag):
             element.clear() # removes the text
             element.tag = None  # set up so that cleanup will remove it.
+    if DEBUG:
+        print "These unwanted tags have been removed:"
+        print unwanted
 
-    for tag in specific_allowed:
+# next, removing unwanted attributes of allowed tags
+    unwanted = set()
+
+    for tag in _allowed:
         for element in tree.getiterator(tag):
 # Filtering for possible dangerous content in "styles..."
             if tag == "link":
-                if configuration.defaults.paranoid: # default is True
+                if not 'trusted' in configuration.defaults.security: # default is True
                     if not is_link_safe(element, page):
                         element.clear()
                         element.tag = None
                         continue
             for attr in element.attrib.items():
-                if attr[0].lower() not in specific_allowed[tag]:
+                if attr[0].lower() not in _allowed[tag]:
+                    if DEBUG:
+                        unwanted.add(attr[0])
                     del element.attrib[attr[0]]
                 elif attr[0].lower() == 'href':
                     testHREF = urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","")
                     testHREF = testHREF.replace("\t","").lstrip().lower()
                     if testHREF.startswith("javascript:"):
+                        if DEBUG:
+                            print "removing href = ", testHREF
                         del element.attrib[attr[0]]
 # Filtering for possible dangerous content in "styles..."
                 elif attr[0].lower() == 'style':
-                    if configuration.defaults.paranoid: # default is True
+                    if not 'trusted' in configuration.defaults.security: # default is True
                         value = attr[1].lower().replace(' ', '').replace('\t', '')
                         for x in dangerous_strings:
                             if x in value:
+                                if DEBUG:
+                                    unwanted.add(value)
                                 del element.attrib[attr[0]]
 # Filtering for possible dangerous content in "styles..."
             if tag == 'style':
-                if configuration.defaults.paranoid: # default is True
+                if not 'trusted' in configuration.defaults.security: # default is True
                     text = element.text.lower().replace(' ', '').replace('\t', '')
                     for x in dangerous_strings:
                         if x in text:
+                            if DEBUG:
+                                unwanted.add(value)
                             element.clear()
                             element.tag = None
     __cleanup(tree.getroot(), lambda e: e.tag)
+    if DEBUG:
+        print "These unwanted attributes have been removed:"
+        print unwanted
     return tree
 
 def __cleanup(elem, filter):
@@ -254,37 +334,37 @@ def is_link_safe(elem, page):
     #--  Only allow style files
     if "type" in elem.attrib:
         type = elem.attrib["type"]
-        if DEBUG:
+        if DEBUG2:
             print "type = ", type
         if type.lower() != "text/css":  # not a style sheet - eliminate
             return False
     else:
-        if DEBUG:
+        if DEBUG2:
             print "type not found."
         return False
     #--
     if "rel" in elem.attrib:
         rel = elem.attrib["rel"]
-        if DEBUG:
+        if DEBUG2:
             print "rel = ", rel
         if rel.lower() != "stylesheet":  # not a style sheet - eliminate
             return False
     else:
-        if DEBUG:
+        if DEBUG2:
             print "rel not found."
         return False
     #--
     if "href" in elem.attrib:
         href = elem.attrib["href"]
-        if DEBUG:
+        if DEBUG2:
             print "href = ", href
     else:         # no link to a style sheet: not a style sheet!
-        if DEBUG:
+        if DEBUG2:
             print "href not found."
         return False
     #--If we reach this point we have in principle a valid style sheet.
     link_url = find_url(url, href)
-    if DEBUG:
+    if DEBUG2:
         print "link url = ", link_url
     #--Scan for suspicious content
     suspicious = False
@@ -324,27 +404,27 @@ def find_url(url, href):
        (specified in a link element), returns
        the complete url of the child.'''
     if "://" in url:
-        if DEBUG:
+        if DEBUG2:
             print ":// found in url"
         return urlparse.urljoin(url, href)
     elif "://" in href:
-        if DEBUG:
+        if DEBUG2:
             print ":// found in href"
         return href
     elif href.startswith("/"):   # local css file from the root server
         return os.path.normpath(os.path.join(root_path, os.path.normpath(href[1:])))
     else:
         base, fname = os.path.split(url)
-        if DEBUG:
+        if DEBUG2:
             print "base path =", base
             print "root_path =", root_path
         href = os.path.normpath(os.path.join(base, os.path.normpath(href)))
         if href.startswith(root_path):
-            if DEBUG:
+            if DEBUG2:
                 print "href starts with rootpath"
                 print "href =", href
             return href
-        if DEBUG:
+        if DEBUG2:
             print "href does not start with rootpath"
             print "href =", href
         return os.path.normpath(os.path.join(root_path, href[1:]))
@@ -362,7 +442,7 @@ def open_local_file(url):
     try:
         return open(url, mode="r")
     except IOError:
-        if DEBUG:
+        if DEBUG2:
             print "opening the file without encoding did not work."
         try:
             return open(url.encode(sys.getfilesystemencoding()),

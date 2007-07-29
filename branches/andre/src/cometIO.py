@@ -130,9 +130,15 @@ def write_output(pageid, uid, output):
 def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
     """
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    if 'display' in configuration.defaults.security:
+        return
+
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
+
     symbols = { configuration.defaults._prefix : configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
     t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)

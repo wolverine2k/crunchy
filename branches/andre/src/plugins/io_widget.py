@@ -21,20 +21,27 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
     includes a canvas :-)
     """
-    if not page.includes("io_included"):
-        page.add_include("io_included")
-        page.add_js_code(io_js)
-        page.add_css_code(io_css)
 
-    if interp_kind is not None:
-        if not page.includes("push_input_included"):
-            page.add_include("push_input_included")
-            page.add_js_code(push_input)
-        # needed for switching to edit area; not currently working
-        if not page.includes("editarea_included"):
-            page.add_include("editarea_included")
-            page.add_js_code(editArea_load_and_save)
-            page.insert_js_file("/edit_area/edit_area_crunchy.js")
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in configuration.defaults.security:
+
+        if not page.includes("io_included"):
+            page.add_include("io_included")
+            page.add_js_code(io_js)
+            page.add_css_code(io_css)
+
+        if interp_kind is not None:
+            if not page.includes("push_input_included"):
+                page.add_include("push_input_included")
+                page.add_js_code(push_input)
+            # needed for switching to edit area; not currently working
+            if not page.includes("editarea_included"):
+                page.add_include("editarea_included")
+                page.add_js_code(editArea_load_and_save)
+                page.insert_js_file("/edit_area/edit_area_crunchy.js")
 
     output = CrunchyPlugin.SubElement(elem, "span")
     output.attrib["class"] = "output"

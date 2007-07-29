@@ -52,23 +52,29 @@ def insert_interpreter(page, elem, uid):
         t = 'interpreter'
         configuration.defaults.logging_uids[uid] = (log_id, t)
 
-    # first we need to make sure that the required javacript code is in the page:
-    if interp_kind == "borg":
-        if not page.includes("BorgInterpreter_included"):
-            page.add_include("BorgInterpreter_included")
-            page.add_js_code(BorgInterpreter_js)
-        page.add_js_code('init_BorgInterpreter("%s");' % uid)
-    elif interp_kind == "isolated":
-        if not page.includes("SingleInterpreter_included"):
-            page.add_include("SingleInterpreter_included")
-            page.add_js_code(SingleInterpreter_js)
-        page.add_js_code('init_SingleInterpreter("%s");' % uid)
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in configuration.defaults.security:
+
+        # first we need to make sure that the required javacript code is in the page:
+        if interp_kind == "borg":
+            if not page.includes("BorgInterpreter_included"):
+                page.add_include("BorgInterpreter_included")
+                page.add_js_code(BorgInterpreter_js)
+            page.add_js_code('init_BorgInterpreter("%s");' % uid)
+        elif interp_kind == "isolated":
+            if not page.includes("SingleInterpreter_included"):
+                page.add_include("SingleInterpreter_included")
+                page.add_js_code(SingleInterpreter_js)
+            page.add_js_code('init_SingleInterpreter("%s");' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-##    else:
-##        if not page.includes("IPythonInterpreter_included"):
-##            page.add_include("IPythonInterpreter_included")
-##            page.add_js_code(IPythonInterpreter_js)
-##        page.add_js_code('init_IPythonInterpreter("%s");' % uid)
+##        else:
+##          if not page.includes("IPythonInterpreter_included"):
+##              page.add_include("IPythonInterpreter_included")
+##              page.add_js_code(IPythonInterpreter_js)
+##          page.add_js_code('init_IPythonInterpreter("%s");' % uid)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
