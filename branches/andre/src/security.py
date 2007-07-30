@@ -169,11 +169,12 @@ allowed_attributes = {}
 #- severe -
 severe = {}
 for key in specific_allowed:
-    severe[key] = []
-    for item in specific_allowed[key]:
-        severe[key].append(item)
-    for item in common_allowed:
-        severe[key].append(item)
+    if key != 'link' and key != 'style' and key != 'meta':
+        severe[key] = []
+        for item in specific_allowed[key]:
+            severe[key].append(item)
+        for item in common_allowed:
+            severe[key].append(item)
 
 allowed_attributes['severe'] = severe
 allowed_attributes['display severe'] = severe
@@ -182,18 +183,17 @@ allowed_attributes['display severe'] = severe
 # - normal
 normal = {}
 for key in specific_allowed:
-    normal[key] = []
-    for item in specific_allowed[key]:
-        normal[key].append(item)
-    for item in common_allowed:
-        normal[key].append(item)
-    normal[key].append('style')
+    if key != 'meta':  # until we secure the menu plugin, exclude it.
+        normal[key] = []
+        for item in specific_allowed[key]:
+            normal[key].append(item)
+        for item in common_allowed:
+            normal[key].append(item)
+        normal[key].append('style')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal
 
-# Currently, the only difference between "trusted" and "normal" is that we will
-# not scan for potentially troublesome style content in "trusted"
 
 # - trusted
 trusted = {}
@@ -211,7 +211,8 @@ allowed_attributes['display trusted'] = trusted
 # - paranoid -
 paranoid = {}
 for key in specific_allowed:
-    paranoid[key] = ['title']  # only harmless vlam-specific attribute
+    if key != 'style' and key!= 'meta' and key != 'link':
+        paranoid[key] = ['title']  # only harmless vlam-specific attribute
 
 paranoid['a'] = ['href', 'id'] # only items required for navigation
 
@@ -294,7 +295,7 @@ def remove_unwanted(tree, page):
                     for x in dangerous_strings:
                         if x in text:
                             if DEBUG:
-                                unwanted.add(value)
+                                unwanted.add(text)
                             element.clear()
                             element.tag = None
     __cleanup(tree.getroot(), lambda e: e.tag)

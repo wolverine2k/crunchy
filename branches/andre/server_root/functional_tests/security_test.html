@@ -34,6 +34,7 @@ alert("this is security breach #1 from a <script>");
 <body onload="alert('security breach #3')">
 
 <h1>The Crunchy Security tests</h1>
+<p><b>More tests forthcoming ...</b></p>
 <p>No javascript should survive on this page from the original document.  If some did, you should 
 have seen some "alerts" appearing, or you should see an active link below that will 
 trigger an alert.</p>
@@ -69,7 +70,9 @@ cript:alert(&quot;security breach #6&quot;)">Security Test #6</a><br>
 
 <h2>Bugs</h2>
 <ul>
-  <li>There are no known security bugs in the security model used for Crunchy. It consists of two main parts:
+  <li>There are no known security bugs in the security model used for Crunchy, using
+  the 'normal', 'severe', or 'paranoid' levels. Crunchy's approach to security
+  consists of two main parts:
 <ul><li> a "script stripping" function (found in security.py), which removes any pre-existing javascript and other "unsafe" 
 commands on the html page; 
 </li>

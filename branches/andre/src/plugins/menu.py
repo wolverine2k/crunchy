@@ -16,8 +16,7 @@ _css = None
 def register():
     """The register() function is required for all plugins.
        """
-#-- disabled for now, until the security issue is sorted out.
-##    CrunchyPlugin.register_tag_handler("meta", "name", "crunchy_menu", insert_special_menu)
+    CrunchyPlugin.register_tag_handler("meta", "name", "crunchy_menu", insert_special_menu)
     CrunchyPlugin.register_tag_handler("no_tag", "menu", None, insert_default_menu)
 
 def insert_special_menu(page, elem, dummy):

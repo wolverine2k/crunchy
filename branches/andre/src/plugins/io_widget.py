@@ -6,6 +6,7 @@ This is just the UI part, the communication code is defined in the core
 provides = set(["io_widget"])
 
 import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
 
 # for converting to edit area
 from editarea import editArea_load_and_save
