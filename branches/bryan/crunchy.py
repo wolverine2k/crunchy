@@ -29,7 +29,7 @@ import src.http_serve as http_serve
 import src.cometIO as cometIO
 import src.pluginloader as pluginloader
 
-def find_port(start):
+def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
     finalport = None
     testsock = socket.socket()
@@ -43,18 +43,17 @@ def find_port(start):
     testsock.close()
     return finalport
 
-def run_crunchy():
-    port = find_port(8002)
-    print "Serving on port %s." % port
-    server = http_serve.MyHTTPServer(('127.0.0.1', port), http_serve.HTTPRequestHandler)
-    server.register_handler(cometIO.push_input, "/input")
-    server.register_handler(cometIO.comet, "/comet")
+def run_crunchy(host='127.0.0.1', port=None, url=None):
+    if port is None:
+        port = find_port()
+    server = http_serve.MyHTTPServer((host, port), http_serve.HTTPRequestHandler)
     pluginloader.init_plugin_system(server)
-    _url = 'http://127.0.0.1:' + str(port) + '/'
-    webbrowser.open(_url)
+    if url is None:
+        url = 'http://' + host + ':' + str(port) + '/'
+    webbrowser.open(url)
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
-    print '\nCrunchy Server: serving up interactive tutorials at URL %s\n'%_url
+    print '\nCrunchy Server: serving up interactive tutorials at URL %s\n'%url
     server.still_serving = True
     while server.still_serving:
         server.handle_request()

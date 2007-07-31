@@ -23,7 +23,10 @@
 <span class="heading">Advanced Topics</span>
 <a href="remote_en.html">Browsing</a>
 <a href="config_en.html">Configuring Crunchy</a>
+<a href="faq_en.html">FAQ, bugs, etc.</a>
+
 <a href="writing_en.html">Writing tutorials</a>
+
 <a href="/functional_tests">Tests</a>
 </div>
 <div id="main">
@@ -67,13 +70,17 @@ to the ultimate question.  Generally, you should only see Borg type interpreters
 [<code title="py_code">import os:</code> <span style="color:red">use with caution!</span>]  We can not be held responsible for any negative consequence of code you type in for Crunchy/Python to execute.</p>
 <h3>Slightly advanced stuff</h3>
 <p>Yes, it's ok to read on.  I am not going to introduce really super advanced stuff here.</p>
-<p>You can type in more than one line of code and interact with the interpreter in various ways.  In the example below, I have tried to show both what you should type in, and a preview of the response from Crunchy.  Try this example and notice how, at some point, a pop-up "help window" will appear at the top left.  You can make it go away by clicking on the 
-<span style="font:sans-serif;">X</span> or simply keep on typing until it goes away on its own, except for the last three examples.</p>
+<p>You can type in more than one line of code and interact with the interpreter in various ways.  In the examples below, I have tried to show both what you should type in, and a preview of the response from Crunchy.  First, we start
+with an interaction where the interpreter will be waiting for a response to
+a question.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; name = raw_input("What is your name?")  # note: use only ascii characters
 <span class="stdin">What is your name?</span>Your_name_should_appear_here
 &gt;&gt;&gt; print name
 Your_name_should_appear_here
+</pre>
+<p>Next we show examples of loops; make sure you indent the code properly.</p>
+<pre title="interpreter linenumber">
 &gt;&gt;&gt; for i in range(4):
 ...     print i
 ... 
@@ -81,14 +88,131 @@ Your_name_should_appear_here
 1
 2
 3
+</pre>
+
+<p>
+Next, try this example and notice how, at some point, a pop-up "help window" will appear at the top left.  You can make it go away by clicking on the 
+<span style="font:sans-serif;">X</span> or simply keep on typing until it goes away on its own, except for the last three examples.
+</p>
+
+<pre title="interpreter">
 &gt;&gt;&gt; import sys
 &gt;&gt;&gt; help(sys)   # click on the X when you're finished reading
 &gt;&gt;&gt; sys?        # shortcut for help.
 &gt;&gt;&gt; sys.exit?
 </pre>
+
+<p>Finally, you can view the variables defined so far (I won't show you
+the expected output since it depends on what <em>you</em> tried before)
+using the <code title="py_code">dir()</code> function, and remove them all,
+effectively starting a new session, using the <code title="py_code">restart()</code> function.
+</p>
+<pre title="interpreter">
+&gt;&gt;&gt; dir()
+&gt;&gt;&gt; restart()  # specific to Crunchy
+&gt;&gt;&gt; dir()
+</pre>
+
 <p>You now know enough to use the interpreter to learn about Python following a "real" Python tutorial.  You can either do this by go to the 
 <a href="http://docs.python.org/tut/tut_en.html">the official Python tutorial</a>
 on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.</p>
+<h3>Advanced stuff</h3>
+<p>Starting with version 0.9.2, Crunchy's interpreter knows some new tricks that can be very useful ... but potentially tricky.
+Consider the following.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; name = "Guido van Rossum"
+&gt;&gt;&gt; print name
+Guido van Rossum
+</pre>
+<p>Instead of having only two lines of text, imagine we had 20 lines.  To reproduce this example would require lots of typing.
+Using some advanced feature of Crunchy, you can save yourself a fair bit of typing.
+Here is how: click on the image <img src="../editor.png" style="height:30px"/> to the right of
+the interpreter.
+You should see appearing below it a larger box (an html textarea for those interested)
+with two buttons at the buttom.
+One button copies the code shown above (just the input - not the output) 
+inside the textarea, ready for editing or just executing.  
+The other button feeds the code to the interpreter. 
+Try it out!
+</p>
+<p>While this is a neat trick, there are a couple of caveats: Crunchy takes each line as though you had typed it yourself, one line at a time, in an interactive session.</p>
+<h4 style="color:red">Caveat #1 </h4>
+<p>Try to click on the image, copy code and execute trick with the following.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; name = raw_input("Enter your name: ")
+&gt;&gt;&gt; print "YOUR NAME IS", name
+</pre>
+<p>Now, try it again here to see more clearly what happened:</p>
+<pre title="interpreter">
+&gt;&gt;&gt; print "Your name is: ", name
+</pre>
+<p>As you should see, Crunchy had taken the second line as your answer to the first. 
+This is unlikely to be what you want.</p>
+<p><b>First lesson:</b> do not use <code title="py_code">input()</code> or 
+<code title="py_code">raw_input()</code> inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
+
+<h4 style="color:red">Caveat #2 </h4>
+<p>Try again with the following example: click on the editor image, 
+copy the code and execute it.  
+You will find that the interpreter will not be able to
+handle the result and will effectively shut down.  Normally, you would have
+to reload the page to try again; however, I will give you another copy
+to work with just below.</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; def flatten(seq):
+...     """flatten(sequence) -> list
+... 
+...     Returns a single, flat list which contains all elements retrieved
+...     from the sequence and all recursively contained sub-sequences
+...     (iterables).
+... 
+...     Examples:
+...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+...     """
+... 
+...     result = []
+...     for elem in seq:
+...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
+...             result.extend(flatten(elem))
+...         else:
+...             result.append(elem)
+...     return result
+...
+&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+</pre>
+<p>The problem is due to the empty line (12).  Imagine that you were typing in the code yourself, line by line.
+When you enter an empty line, the interpreter interprets this as the end of
+a function definition (or a loop, or if statement, etc.).
+To avoid this problem, we need to have something with no empty lines.
+</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; def flatten(seq):
+...     """flatten(sequence) -> list
+... 
+...     Returns a single, flat list which contains all elements retrieved
+...     from the sequence and all recursively contained sub-sequences
+...     (iterables).
+... 
+...     Examples:
+...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+...     """
+...     result = []
+...     for elem in seq:
+...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
+...             result.extend(flatten(elem))
+...         else:
+...             result.append(elem)
+...     return result
+...
+&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+</pre>
+<p><b>Second lesson:</b> beware of empty lines inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
+
+
 <h3>Advanced stuff, for tutorial writers</h3>
 <p>In order to instruct Crunchy to insert an interpreter below a Python code sample, one uses the <code>title</code> attribute as follows:</p>
 <p><code>&lt;pre title="interpreter [isolated] [linenumber [=starting_number]]"&gt;</code><br/>

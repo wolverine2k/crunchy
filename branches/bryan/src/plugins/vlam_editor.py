@@ -11,6 +11,8 @@ for people familiar with the Crunchy plugin architecture.
 
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
+from src.utilities import extract_log_id
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
@@ -50,14 +52,24 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
 def insert_editor(page, elem, uid):
     """handles the editor widget"""
     vlam = elem.attrib["title"]
-    # first we need to make sure that the required javacript code is in the page:
-    if not page.includes("exec_included"):
-        page.add_include("exec_included")
-        page.add_js_code(exec_jscode)
+    log_id = extract_log_id(vlam)
+    if log_id:
+        t = 'editor'
+        configuration.defaults.logging_uids[uid] = (log_id, t)
+
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in configuration.defaults.security:
+        if not page.includes("exec_included"):
+            page.add_include("exec_included")
+            page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
     code, markup = CrunchyPlugin.services.style_pycode(page, elem)
-
+    if log_id:
+        configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_doctest() method extracted all of the existing
@@ -87,6 +99,9 @@ def insert_editor(page, elem, uid):
         btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = "Execute as external program"
+        if log_id:  # override - probably not useful to log
+            t = 'run_external_editor'
+            configuration.defaults.logging_uids[uid] = (log_id, t)
     if not "no-internal" in vlam:
         btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code('%s')" % uid
@@ -95,8 +110,6 @@ def insert_editor(page, elem, uid):
 
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
-
-
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required

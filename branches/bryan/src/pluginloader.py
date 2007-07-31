@@ -52,17 +52,20 @@ def init_plugin_system(server):
     if not "src/plugins/" in sys.path:
         sys.path.insert(0, "src/plugins")
     imported_plugins = []
-    print "Importing plugins"
+    if CrunchyPlugin.DEBUG:
+        print "Importing plugins"
     for plugin in plugins:
         mod = __import__ (plugin, globals())
         imported_plugins.append(mod)
     register_list = gen_register_list(imported_plugins)
-    print "Registering plugins"
+    if CrunchyPlugin.DEBUG:
+        print "Registering plugins"
     for mod in register_list:
         if hasattr(mod, "register"):
             if server != ["testplugins"]:  # skip for self-testing
                 mod.register()
-            print "  * Registered %s" % mod.__name__
+            if CrunchyPlugin.DEBUG:
+                print "  * Registered %s" % mod.__name__
 
 if __name__ == "__main__":
     init_plugin_system(["testplugins"])

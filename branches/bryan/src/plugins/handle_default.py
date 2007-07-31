@@ -18,23 +18,16 @@ def path_to_filedata(path, root):
     (ie. /example instead of /example/) this function will return none, the
     browser should then be redirected to the same path with a trailing /.
     Root is the fully qualified path to server root.
-    Paths containing .. will return an error message.
+    Paths starting with / and containing .. will return an error message.
     POSIX version, should work in Windows.
     """
     if path == "/exit":
         cp.server.still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()
-    if path.find("/../") != -1:
+    if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path)
-    if path.startswith("/CrunchyTempDir"):
-        fname = path.replace("/CrunchyTempDir", '')
-        npath = join(configuration.defaults.temp_dir, fname)
-    elif path.startswith("/CrunchyLocalFile"):
-        path = path.replace("/CrunchyLocalFile", '')
-        npath = path
-    else:
-        npath = normpath(join(root, normpath(path[1:])))
+    npath = normpath(join(root, normpath(path[1:])))
 
     if isdir(npath):
         if path[-1] != "/":
@@ -84,7 +77,8 @@ def get_directory(npath):
 # the root of the server is in a separate directory:
 root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
 
-print "Root path is %s" % root_path
+if cp.DEBUG:
+    print "Root path is %s" % root_path
 
 default_pages = ["index.htm", "index.html"]
 

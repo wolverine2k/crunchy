@@ -52,7 +52,7 @@ class CrunchyPage(object):
         self.tree = et.ElementTree(html)
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
-        self.tree = security.remove_unwanted(self.tree)
+        self.tree = security.remove_unwanted(self.tree, self)
         self.included = set([])
         self.head = self.tree.find("head")
         if not self.head:
@@ -167,7 +167,9 @@ class CrunchyPage(object):
         #  The following for loop deals with example 3
         for tag in CrunchyPage.handlers1:
             for elem in self.tree.getiterator(tag):
-                CrunchyPage.handlers1[tag](self, elem)
+                if 'title' not in elem.attrib:  # otherwise, it's a
+                        #different kind of handler that processes it.
+                    CrunchyPage.handlers1[tag](self, elem)
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value

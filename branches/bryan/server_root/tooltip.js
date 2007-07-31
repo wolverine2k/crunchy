@@ -133,45 +133,51 @@ function tooltip_dir(interp_id, data) {
     h.send(encodeURIComponent(data));
 };
 
-function convertToEditArea(elm) {
-    theID = elm.id.substring(3);
+function convertFromEditor(uid){
+    outputSpan = document.getElementById("out_"+theID);
+    editor = document.getElementById("code_" + uid);
+    outputSpan.parentNode.removeChild(editor);
+    exec_button = document.getElementById("exec_but_"+uid);
+    outputSpan.parentNode.removeChild(exec_button);
+    copy_button = document.getElementById("copy_but_"+uid);
+    outputSpan.parentNode.removeChild(copy_button);
+    document.getElementById("ed_link_"+theID).style.backgroundColor = "white";
+};
+
+function convertToEditor(elm, exec_btn_label, copy_btn_label) {
+    theID = elm.id.substring(8);
+    if (elm.style.backgroundColor == "red"){
+       return convertFromEditor(theID);
+    }
+    elm.style.backgroundColor = "red";
 
     newEditor = document.createElement('textarea');
     newEditor.cols = "80";
     newEditor.rows = "10";
-    newEditor.id = "code_" + theID
-    newEditor.value = elm.value;
+    newEditor.id = "code_" + theID;
+    inp = document.getElementById("in_" + theID);
+    newEditor.value = inp.value;
+    newEditor.style.backgroundColor = "#eff";
+    newEditor.style.fontWeight = "bold";
 
-    newButton = document.createElement('button')
-    newButton.appendChild(document.createTextNode('Execute'));
-    newButton.onclick = function () { exec_code(theID) }
+    execButton = document.createElement('button');
+    execButton.appendChild(document.createTextNode(exec_btn_label));
+    execButton.onclick = function () { push_input(theID) };
+    execButton.id = "exec_but_" + theID;
+    
+    copyButton = document.createElement('button');
+    copyButton.appendChild(document.createTextNode(copy_btn_label));
+    copyButton.onclick = function () { copyCodeSample(theID) };
+    copyButton.id = "copy_but_" + theID;  
 
-    parentElm = elm.parentNode;
-    elm.style.display = 'none';
     outputSpan = document.getElementById("out_"+theID);
-    outputSpan.innerHTML = "";
-    outputSpan.parentNode.insertBefore(newEditor, outputSpan);
-    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
-    outputSpan.parentNode.insertBefore(newButton, outputSpan);
-    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
-    outputSpan.parentNode.insertBefore(document.createElement('br'), outputSpan);
+    outputSpan.parentNode.appendChild(newEditor);
+    outputSpan.parentNode.appendChild(document.createElement('br'));
+    outputSpan.parentNode.appendChild(execButton);
+    outputSpan.parentNode.appendChild(copyButton);
+};
 
-/*
-    // TODO: language is static
-    editAreaLoader.init({
-        id: theID,
-        font_size: "11",
-        allow_resize: "both",
-        allow_toggle: true,
-        language: "en",
-        toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
-        syntax: "python",
-        start_highlight: true,
-        load_callback:"my_load_file",
-        save_callback:"my_save_file",
-        display: "later",
-        replace_tab_by_spaces:4,
-        min_height: 150
-    });
-*/
-}
+function copyCodeSample(uid){
+    editor = document.getElementById("code_"+ uid);
+    editor.value = document.getElementById("code_sample_" +uid).value;
+};

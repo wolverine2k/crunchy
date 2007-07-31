@@ -12,6 +12,7 @@ import src.CrunchyPlugin as CrunchyPlugin
 _default_menu = None
 _css = None
 
+
 def register():
     """The register() function is required for all plugins.
        """

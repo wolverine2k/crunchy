@@ -13,10 +13,35 @@ def register():
     cp.register_tag_handler("img", None, None, src_handler)
     cp.register_tag_handler("link", None, None, href_handler)
     cp.register_tag_handler("style", None, None, style_handler)
+    cp.register_tag_handler("a","title", "external_link", external_link)
+
+def external_link(page, elem, *dummies):
+    '''handler which totally ignores the link being passed to it, other than
+    inserting an image to indicate it leads outside of Crunchy'''
+    if elem.tail:
+        elem.tail += " "
+    else:
+        elem.text += " "
+    img = cp.SubElement(elem, "img")
+    img.attrib['src'] = "/external_link.png"
+    img.attrib['style'] = "border:0;"
+    return
 
 def link_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in remote pages"""
     if is_remote_url(page.url) and "href" in elem.attrib:
+        if "#" in elem.attrib["href"]:
+            if elem.attrib["href"].startswith("#"):
+                return
+            else:
+                # Python.org tutorial has internal links of the form
+                #   node#some_reference i.e. there is an extra prefix
+                splitted = elem.attrib["href"].split("#")
+                if page.url.endswith(splitted[0]): # remove extra prefix
+                    elem.attrib["href"] = "#" + splitted[1]
+                    return
+                else:  # remove trailing #... which Crunchy can't handle
+                    elem.attrib["href"] = splitted[0]
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if "href" in elem.attrib:
@@ -37,8 +62,8 @@ def src_handler(page, elem):
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/CrunchyLocalFile" + os.path.join(
-                                            local_dir, elem.attrib["src"])
+        elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["src"]))
+
 def href_handler(page, elem):
     """used in remote pages for elements that have an href attribute"""
     if is_remote_url(page.url) and "href" in elem.attrib:
@@ -46,8 +71,9 @@ def href_handler(page, elem):
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local and "href" in elem.attrib:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/CrunchyLocalFile" + os.path.join(
-                                            local_dir, elem.attrib["href"])
+        elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
+
+
 def is_remote_url(url):
     """test if a url is remote or not"""
     return not url.startswith("/")

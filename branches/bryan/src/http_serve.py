@@ -24,7 +24,7 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
         """register a default handler"""
         self.default_handler = handler
 
-    def register_handler(self, handler, path):
+    def register_handler(self, path, handler):
         """
         register a handler function
         the function should be of the form: handler(request)
@@ -57,6 +57,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if self.path.find("?") > -1:
             realpath, argstring = self.path.split("?")
         self.path = urllib.unquote(realpath)
+        if realpath.startswith("/generated_image"):
+            realpath = "/generated_image"
+            self.path = "/generated_image"
         # parse any arguments there might be
         if argstring:
             arg = []

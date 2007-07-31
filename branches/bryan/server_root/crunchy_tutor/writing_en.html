@@ -26,6 +26,7 @@
 <a href="remote_en.html">Browsing</a>
 
 <a href="config_en.html">Configuring Crunchy</a>
+<a href="faq_en.html">FAQ, bugs, etc.</a>
 <a href="writing_en.html">Writing tutorials</a>
 
 <a href="/functional_tests">Tests</a>
@@ -36,9 +37,13 @@ or module.  Congratulations, this is hard work.  If your tutorial was written in
 relevant Python code inside  <code>&lt;pre&gt;</code> elements, then Crunchy can be used
 to interact with it.  However, with just a tiny bit more work, you can make the interaction
 with Crunchy much richer.</p>
+<div class="notes">
+<h4>Note</h4>
+<p> This document has <b><em>not</em></b> been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.  Please, let us know if you do find any.
+</p>
+</div>
 
 <h3>Extremely Advanced Stuff</h3>
-<p style="color:red; font-size:small">Note: this document has not been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.</p>
 <p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
  VLAM is essentially just an extended set of attributes for some common HTML tags. 
  Any .htm or .html file loaded through Crunchy 
@@ -90,6 +95,12 @@ on the left for some actual examples.</p>
 	expected to be the creation of an image file (whose name needs to be given as an argument) 
 	which will then be displayed below the editor.</td>
 </tr>
+    <td><code>external_link</code></td>
+    <td>Used with an html anchor &lt;a&gt;; tells Crunchy to leave the link <em>as is</em>.
+    If a user clicks on it, the browser will handle it directly, without Crunchy interfering.
+    </td>
+<tr>
+</tr>
 <tr><th colspan='2'>Options</th></tr>
 <tr>
 	<td><code>no-copy</code></td>
@@ -102,6 +113,14 @@ on the left for some actual examples.</p>
 	<td>Inserts line numbers before each code line inside the &lt;pre&gt; 
 	element. An optional starting number can be given.<br/>
 	Can be used with: <code>python_code, py_code, interpreter, editor, doctest, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>log_id = (some unique name)</code></td>
+	<td>Instructs Crunchy to log the input and the output obtained when interacting
+	with this element.  The result will be saved in the file crunchy.html located
+	in the user's home directory.<br/>
+	Can be used with: <code>interpreter, editor, doctest</code>.  No result is recorded
+	if the <code>external</code> option is used.</td>
 </tr>
 <tr>
 	<td><code>isolated</code></td>
@@ -189,15 +208,6 @@ code.</p>
 [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
-<p>Code entered into a doctest textarea added to the doctest and executed with
-the addition special code as follows:</p>
-<pre title="py_code">
-__teststring = \"\"\"%s\"\"\"
-from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
-__test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
-__x = __DocTestRunner().run(__test, out=doctest_out.write)
-doctest_out.write(__x)
-</pre>
 <p>The output from the doctest result is further processed by Crunchy to make error messages a bit
 friendlier to beginners.</p>
 
@@ -259,6 +269,13 @@ all that is required is to write:</br>
 edit it to insert interactive elements,
 all that is required is to write:</br>
 <code>&lt;span title="edit tutorial"&gt;</code> <em>space</em> <code>&lt;/span&gt;</code></p>
+
+<div class="wide-warning">
+<h4>Custom menus are disabled</h4>
+<p>The following option to change the default menu is temporarily disabled
+until the security issues are all sorted out.</p>
+</div>
+
 <h3>Changing the default menu</h3>
 <p>Changing the default menu can be done by including<br/>
 <code>&lt;meta name="crunchy_menu" content="filename"&gt;</code> in the html <code>&lt;head&gt;</code> element.  The file designated by <code>filename</code> must be a valid

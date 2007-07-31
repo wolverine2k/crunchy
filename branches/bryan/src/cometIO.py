@@ -9,9 +9,9 @@ import interpreter
 import sys
 
 import configuration
-from utilities import changeHTMLspecialCharacters
+from utilities import changeHTMLspecialCharacters, log_session
 
-debug_enabled = False
+debug_ids = []
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -25,7 +25,7 @@ class StringBuffer(object):
         """get the current contents of the buffer, if the buffer is empty, this
         always blocks until data is available.
         Multiple clients are handled in no particular order"""
-        debug_msg("entering StringBuffer.get")
+        debug_msg("entering StringBuffer.get", 1)
         while True:
             self.event.clear()
             self.lock.acquire()
@@ -33,29 +33,32 @@ class StringBuffer(object):
                 t = self.data
                 self.data = ""
                 self.lock.release()
-                debug_msg("leaving StringBuffer.get: " + t)
+                debug_msg("leaving StringBuffer.get: " + t, 1)
                 return t
             self.lock.release()
             self.event.wait()
-    def getline(self):
+
+    def getline(self, uid):
         """basically does the job of readline"""
-        debug_msg("entering StringBuffer.get")
+        debug_msg("entering StringBuffer.getline", 2)
         while True:
-                self.event.clear()
-                self.lock.acquire()
-                data_t = self.data.split("\n", 1)
-                if len(data_t) > 1:
-                    # we have a complete line, do something with it
-                    self.data = data_t[1]
-                    self.lock.release()
-                    debug_msg("leaving StringBuffer.getline: " + data_t[0])
-                    return data_t[0] + "\n"
-                # no luck:
+            self.event.clear()
+            self.lock.acquire()
+            data_t = self.data.split("\n", 1)
+            if len(data_t) > 1:
+                # we have a complete line, do something with it
+                self.data = data_t[1]
                 self.lock.release()
-                self.event.wait()
+                debug_msg("leaving StringBuffer.getline: " + data_t[0] +
+                                                        "end_of_data", 2)
+                return uid, data_t[0] + "\n"
+            # no luck:
+            self.lock.release()
+            self.event.wait()
+
     def put(self, data):
         """put some data into the buffer"""
-        debug_msg("entering StringBuffer.put: " + data)
+        debug_msg("entering StringBuffer.put: " + data, 3)
         self.lock.acquire()
         self.data += data
         self.event.set()
@@ -71,10 +74,15 @@ class CrunchyIOBuffer(StringBuffer):
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
-        debug_msg("pdata = "+ pdata)
+        debug_msg("pdata = "+ pdata, 4)
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
+            # Saving session; appending from below
+            if uid in configuration.defaults.logging_uids:
+                log_id = configuration.defaults.logging_uids[uid][0]
+                configuration.defaults.log[log_id].append(data)
+                log_session()
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
@@ -83,6 +91,11 @@ class CrunchyIOBuffer(StringBuffer):
             self.help_flag = False
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
+            # Saving session; first line...
+            if uid in configuration.defaults.logging_uids:
+                log_id = configuration.defaults.logging_uids[uid][0]
+                configuration.defaults.log[log_id].append(data)
+                log_session()
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
@@ -117,9 +130,15 @@ def write_output(pageid, uid, output):
 def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
     """
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    if 'display' in configuration.defaults.security:
+        return
+
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
+
     symbols = { configuration.defaults._prefix : configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
     t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
@@ -134,7 +153,6 @@ def push_input(request):
     in_to_browser = changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
-
     # display help menu on a seperate div
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
@@ -162,6 +180,18 @@ class ThreadedBuffer(object):
         self.default_out = out_buf
         self.default_in = in_buf
         self.buf_class = buf_class
+# Unfortunately, IPython interferes with Crunchy.
+# The following is kept un-commented (unlike the rest of the IPython stuff
+# which has been commented out) so that users can try the relevant
+# code to start IPython from an interpreter or an editor and see
+# what happens.
+    # the encoding is required by IPython but currently ignored by Crunchy.
+        self.encoding = 'utf-8'
+    # the following is defined as a dummy function to make IPython work;
+    # it is currently ignored by Crunchy.
+    def flush(self):
+        return
+#====     end of IPython stuff
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
@@ -169,7 +199,6 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-
         output_buffers[pageid].put(reset_js % (uid, uid))
 
     def unregister_thread(self):
@@ -190,6 +219,12 @@ class ThreadedBuffer(object):
 
     def write(self, data):
         """write some data"""
+        #
+        # Note: even though we create interpreters in separate threads
+        # identified by their uid, Borg interpreters share a common
+        # state.  As a result, if we have long running code in one
+        # Borg interpreter, there can be exchange of input or output between
+        # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
         data = changeHTMLspecialCharacters(data)
@@ -210,11 +245,16 @@ class ThreadedBuffer(object):
 
     def readline(self, length=0):
         """len is ignored, can block, complex and oft-used, needs a testcase"""
+        # used by Interactive Console - raw_input(">>>")
         uid = threading.currentThread().getName()
+        new_id = "none"
+        debug_msg("entering readline, uid=%s"%uid, 7)
         if self.__redirect(uid):
-            data = input_buffers[uid].getline()
+            new_id, data = input_buffers[uid].getline(uid)
         else:
             data = self.default_in.readline()
+        debug_msg("leaving readline, uid=%s, new_id=%s\ndata=%s"%(uid,
+                                                           new_id, data), 7)
         return data
 
     def __redirect(self, uid):
@@ -226,9 +266,9 @@ class ThreadedBuffer(object):
         """write to the default output"""
         self.default_out.write(data)
 
-def debug_msg(data):
+def debug_msg(data, id=None):
     """write a debug message, debug messages always appear on stderr"""
-    if debug_enabled:
+    if id in debug_ids:
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)

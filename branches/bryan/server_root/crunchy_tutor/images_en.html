@@ -22,14 +22,20 @@
 <span class="heading">Advanced Topics</span>
 <a href="remote_en.html">Browsing</a>
 <a href="config_en.html">Configuring Crunchy</a>
+<a href="faq_en.html">FAQ, bugs, etc.</a>
 <a href="writing_en.html">Writing tutorials</a>
 <a href="/functional_tests">Tests</a>
 </div>
 <div id="main">
-
+<div class="notes">
+<h4>Bug?</h4>
+<p> Sometimes (always?) the image generated is not displayed properly after you click
+on the obvious button.  This is why we have provided a second button to (re)load the
+image.
+</p>
+</div>
 <p>Crunchy can now work with modules that generate images to display them dynamically
-within the browser.  At present (version 0.9), Crunchy has a "feature" (on Mac OS only?) that requires the
-user to click on the "Execute" button twice for the image to be displayed.  The following example
+within the browser.  The following example
 assumes that matplotlib is installed; if it's not, you're out of luck!</p>
 <pre title="image_file foo.png">
 # assumes matplotlib is installed
@@ -38,8 +44,8 @@ import pylab as p
 
 def boltzman(x, xmid, tau):
     """
-    evaluate the boltzman function with midpoint xmid and time constant tau
-    over x
+    evaluate the boltzman function with midpoint 
+    xmid and time constant tau over x
     """
     return 1. / (1. + nx.exp(-(x-xmid)/tau))
 
@@ -62,11 +68,18 @@ p.plot(x, S, x, Z, color='red', lw=2)
 fill_below_intersection(x, S, Z)
 p.savefig("foo.png")
 </pre>
+<div class="notes">
+<h4>Suggestions?</h4>
+<p> If you have some suggestions for libraries other than matplotlib that generate
+images and could be showcased by Crunchy, let us know.
+</p>
+</div>
 
 <h3>Advanced stuff, for tutorial writers</h3>
 <p>The required markup is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="image_file filename [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
+&lt;pre title="image_file filename [no-copy] [no-pre] 
+                         [linenumber [=start_number]]"&gt;
 Some Python code
 &lt;/pre&gt;</pre>
 <p>Note that the filename must be included, otherwise the code will simply be styled.

@@ -48,7 +48,6 @@ html {
 	color: #369;
 	background: white;
 	padding: 0.15em 0.5em;
-	border: 1px solid white;
 	margin: 1px 0;
 	text-decoration: none;
 }
@@ -56,9 +55,8 @@ html {
 #navbar a:hover {
 	background: #369;
 	text-decoration: none;
-	border-color: #ccc;
-	border-bottom-color: #fe0;
-	color: #fe0;
+	font-weight: bold;
+	color: #FFBC29;
 }
 
 #navbar .me {

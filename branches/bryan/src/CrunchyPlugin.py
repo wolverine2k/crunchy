@@ -19,6 +19,7 @@ from element_tree import ElementTree, HTMLTreeBuilder
 Element = ElementTree.Element
 SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
+tostring = ElementTree.tostring
 parse = HTMLTreeBuilder.parse
 
 # We generate a random string that will be appended to javascript functions
@@ -26,34 +27,18 @@ parse = HTMLTreeBuilder.parse
 session_random_id = str(int(random.random()*1000000000))
 
 _ = translation._
+DEBUG = False
 
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
     the request object passed to http handlers."""
+    if DEBUG:
+        print "Registering http handler ", pattern
     if pattern is None:
         server.register_default_handler(handler)
     else:
-        server.register_handler(handler, pattern)
+        server.register_handler(pattern, handler)
         pass
-
-##def register_vlam_handler(elem_type, option, handler):
-##    """register a new vlam handler, see vlam.py for documentation on the
-##    page object passed to vlam handlers"""
-##    if option is None:
-##        if elem_type in vlam.CrunchyPage.handlers:
-##            return
-##        else:
-##            vlam.CrunchyPage.null_handlers[elem_type] = handler
-##    if elem_type not in vlam.CrunchyPage.handlers:
-##        vlam.CrunchyPage.handlers[elem_type] = {}
-##    if option in vlam.CrunchyPage.handlers[elem_type]:
-##        print "FATAL ERROR"
-##        print "vlam handler defined twice for"+\
-##               " tag=%s, option=%s"%(elem_type, option)
-##        print "handlers should be unique: a new plugin must have been"
-##        print "created, that conflicts with an existing one."
-##        raise
-##    vlam.CrunchyPage.handlers[elem_type][option] = handler
 
 def register_tag_handler(tag, attribute, keyword, handler):
     """register a new tag handler, a generalisation of vlam handlers

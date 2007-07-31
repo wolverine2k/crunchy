@@ -23,34 +23,59 @@ editarea_languages_allowed_values = ['de', # German
                                      'pl', # Polish
                                      'pt' # Portuguese
                                     ]
+languages_allowed_values = ['en' # English
+                            ]
+security_allowed_values = [
+                        'trusted','display trusted',
+                        'normal', 'display normal',
+                        'severe', 'display severe',
+                        'paranoid', 'display paranoid'
+                            ]
 
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
-no_markup_allowed_values = ["none", "editor", "interpreter", "python_code",
-                    "image_file"]  # image_file needs an optional argument
+no_markup_allowed_values = ["none", "editor", "interpreter", #"ipython",
+                    "python_code", "image_file"]  # image_file needs an optional argument
 
 class Defaults(object):
     """
     class containing various default values:
         user_dir: home user directory
         temp_dir: temporary (working) directory
+        nm: no_markup option, i.e. default mode to use when the user has
+            not specied a vlam keyword
+        language: language to use for feedback to user - and anything
+            else that might have been translated.
+        editarea_language: language used for ui of editarea
+        friendly: traceback settings
+        security: level of filtering of web pages.
 
     This class is instantiated [instance name: defaults] within this module.
     """
 
     def __init__(self):
         self.set_dirs()
+        self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
+        # properties, that can be configured by user
         self._prefix = "crunchy"
         self.__no_markup = "interpreter"
         self.__language = 'en'
         self.__editarea_language = 'en'
+        self.__friendly = True
+        self.__security = 'normal'
+
+        # end of properties
         translation.init_translation(self.__language)
+        self.logging_uids = {}  # {uid : (name, type)}
+                               # name is defined by tutorial writer
+                               # type is one of 'interpreter', 'editor',...
+        self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         self.__temp_dir = os.path.join(self.__user_dir, "temp")
-        print "creating temp directory", self.__temp_dir
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
@@ -113,13 +138,13 @@ variable.  Some of these variables are "fixed", which means that
 their value can not be changed by the user.
 -
 Here are the values of some variables currently used by Crunchy.
----------------------------------------------------------------
 """)
         for k, v in Defaults.__dict__.iteritems():
             if isinstance(v, property):
                 if v.__doc__ != 'help':
-                    __help += "\n" + v.__doc__ + self._prefix + "." + k \
-                             + " = '" + str(v.fget(self)) + "'"
+                    __help += "\n"  + "~"*50 +"\n" +\
+                                 v.__doc__ + self._prefix + "." +\
+                               k + " = '" + str(v.fget(self)) + "'"
         return __help + "\n"
 
     help = property(get_help, None, None, 'help')
@@ -147,7 +172,7 @@ Here are the values of some variables currently used by Crunchy.
         if not valid:
             print _("Invalid choice for %s.no_markup")%self._prefix
             print _("The valid choices are: "), no_markup_allowed_values
-            print _('or "image_file   file_name"')
+            print _('with "image_file   file_name" as a required option.')
             print _("The current value is: "), self.__no_markup
 
     no_markup = property(get_nm, set_nm, None,
@@ -192,6 +217,40 @@ Here are the values of some variables currently used by Crunchy.
 
     editarea_language = property(get_editarea_language, set_editarea_language, None,
              _('editor "editarea" language (two-letter code) used by Crunchy: '))
+    #==============
+
+    def get_friendly_traceback(self):
+        return self.__friendly
+
+    def set_friendly_traceback(self, choice):
+        if choice == True:
+            self.__friendly = True
+            print _("Crunchy will attempt to provide friendly error messages.")
+        elif choice == False:
+            self.__friendly = False
+            print _("Crunchy's error messages will be similar to Python's default tracebacks.")
+        else:
+            print _("friendly attribute must be set to True or False.")
+
+    friendly = property(get_friendly_traceback, set_friendly_traceback, None,
+        _('"friendly" value currently used by Crunchy is: '))
+
+    #==============
+
+    def get_security(self):
+        return self.__security
+
+    def set_security(self, choice):
+        if choice in security_allowed_values:
+            self.__security = choice
+            print _("security set to: ") , choice
+        else:
+            print _("Invalid choice for %s.security")%self._prefix
+            print _("The valid choices are: "), security_allowed_values
+
+    security = property(get_security, set_security, None,
+        _('"security" level currently used by Crunchy is: '))
+
     #==============
 
 defaults = Defaults()

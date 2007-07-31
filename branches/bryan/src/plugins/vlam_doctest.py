@@ -12,6 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 import src.CrunchyPlugin as CrunchyPlugin
+import src.configuration as configuration
+from src.utilities import extract_log_id
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -56,12 +58,24 @@ def doctest_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
     run doctests"""
     vlam = elem.attrib["title"]
-    # first we need to make sure that the required javacript code is in the page:
-    if not page.includes("doctest_included"):
-        page.add_include("doctest_included")
-        page.add_js_code(doctest_jscode)
+    log_id = extract_log_id(vlam)
+    if log_id:
+        t = 'doctest'
+        configuration.defaults.logging_uids[uid] = (log_id, t)
+
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in configuration.defaults.security:
+        if not page.includes("doctest_included") :
+            page.add_include("doctest_included")
+            page.add_js_code(doctest_jscode)
+
     # next, we style the code, also extracting it in a useful form ...
     doctestcode, markup = CrunchyPlugin.services.style_pycode_nostrip(page, elem)
+    if log_id:
+        configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
     # reset the original element to use it as a container.  For those

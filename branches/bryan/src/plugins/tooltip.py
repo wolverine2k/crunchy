@@ -78,7 +78,6 @@ def doc_handler(request):
             request.end_headers()
             return
     else:
-        # should not occur
         result = "builtins not defined in console yet."
 
     request.send_response(200)
