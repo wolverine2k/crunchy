@@ -241,6 +241,8 @@ def remove_unwanted(tree, page):
     ElementTree from an html page.'''
 
     _allowed = allowed_attributes[configuration.defaults.security]
+    #The following will be updated so as to add result from page.
+    page.security_info = [configuration.defaults.security, 0, {}]
 
 # first, removing unwanted tags
     unwanted = set()
@@ -254,6 +256,7 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print "These unwanted tags have been removed:"
         print unwanted
+    page.security_info[1] += len(unwanted)
 
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
@@ -302,6 +305,8 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print "These unwanted attributes have been removed:"
         print unwanted
+
+    page.security_info[1] += len(unwanted)
     return tree
 
 def __cleanup(elem, filter):

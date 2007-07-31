@@ -153,6 +153,13 @@ class CrunchyPage(object):
         #
         #============================================
         #
+
+
+### possible but:
+### link conversion may take place after a custom menu is inserted.
+### This would very likely mess all links for the menu,when viewing an
+### external page, rendering it useless
+
         #  The following for loop deals with examples 1 and 2
         for tag in CrunchyPage.handlers3:
             for elem in self.tree.getiterator(tag):
@@ -187,6 +194,9 @@ class CrunchyPage(object):
         # need to have an additional for loop implemented.
         if "menu_included" not in self.included:
             CrunchyPage.handlers2["no_tag"]["menu"](self)
+        # finally, we insert the security advisory last so that it goes
+        # at the top of the page and so that none of its links get converted.
+        CrunchyPage.handlers2["no_tag"]["security"](self)
         return
 
     def read(self):
