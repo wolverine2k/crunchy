@@ -470,6 +470,31 @@ def scan_for_unwanted(css_file):
                 return True
     return False
 
+# default trusted sites are specified here
+site_access = {'trusted':[],'normal':[],'severe':[],'paranoid':[]}
+site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
+
+def get_security_level(hostname):
+    for access in site_access.keys():
+        if hostname in site_access[access]:
+            return access.capitalize() + " zone"
+
+    return "Normal zone"
+
+# update security setting for a specific domain
+def update_security(request):
+    # prevent duplicates of any domain name
+    for access in site_access.keys():
+        while site_access[access].count(request.data) > 0:
+            site_access[access].remove(request.data)
+
+    site_access[request.args['level']].append(request.data)
+
+    # save settings
+    sites = open("sites.txt", 'w')
+    sites.write(repr(site_access))
+    sites.close()
+
 
 
 

@@ -16,6 +16,9 @@ def register():
     CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
 
+def get_level():
+    return "Trusted zone"
+
 def insert_tooltip(page, elem, uid):
     if not page.includes("tooltip_included") and page.body:
         page.add_include("tooltip_included")
