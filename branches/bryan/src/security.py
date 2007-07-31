@@ -236,11 +236,53 @@ allowed_attributes['display paranoid'] = paranoid
 dangerous_strings = ['url(', '&#']
 
 
+# default trusted sites are specified here
+site_access = {'trusted':[],'normal':[],'severe':[],'paranoid':[]}
+site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
+
+# update security setting for a specific domain
+def set_page_security(request):
+    if request.data == "":
+        return
+
+    # prevent duplicates of any domain name
+    for access in site_access.keys():
+        while site_access[access].count(request.data) > 0:
+            site_access[access].remove(request.data)
+
+    site_access[request.args['level']].append(request.data)
+
+    # save settings
+    sites = open("sites.txt", 'w')
+    sites.write(repr(site_access))
+    sites.close()
+
+def get_page_security(url):
+    if not url.startswith("http://"):
+        return configuration.defaults.security
+
+    # parse hostname
+    lastIndex = url.find("/",7)
+    if lastIndex == -1:
+        lastIndex = len(url)
+    hostname = url[7:lastIndex]
+
+    for access in site_access.keys():
+        if hostname in site_access[access]:
+            return access
+
+    return configuration.defaults.security
+
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
 
-    _allowed = allowed_attributes[configuration.defaults.security]
+    access = get_page_security(page.url)
+    if DEBUG:
+        print "Removing tags based on " + access + " access"
+    _allowed = allowed_attributes[access]
+    #The following will be updated so as to add result from page.
+    page.security_info = [access, 0, {}]
 
 # first, removing unwanted tags
     unwanted = set()
@@ -254,6 +296,7 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print "These unwanted tags have been removed:"
         print unwanted
+    page.security_info[1] += len(unwanted)
 
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
@@ -302,6 +345,8 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print "These unwanted attributes have been removed:"
         print unwanted
+
+    page.security_info[1] += len(unwanted)
     return tree
 
 def __cleanup(elem, filter):
@@ -469,31 +514,6 @@ def scan_for_unwanted(css_file):
                     print squished
                 return True
     return False
-
-# default trusted sites are specified here
-site_access = {'trusted':[],'normal':[],'severe':[],'paranoid':[]}
-site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
-
-def get_security_level(hostname):
-    for access in site_access.keys():
-        if hostname in site_access[access]:
-            return access.capitalize() + " zone"
-
-    return "Normal zone"
-
-# update security setting for a specific domain
-def update_security(request):
-    # prevent duplicates of any domain name
-    for access in site_access.keys():
-        while site_access[access].count(request.data) > 0:
-            site_access[access].remove(request.data)
-
-    site_access[request.args['level']].append(request.data)
-
-    # save settings
-    sites = open("sites.txt", 'w')
-    sites.write(repr(site_access))
-    sites.close()
 
 
 

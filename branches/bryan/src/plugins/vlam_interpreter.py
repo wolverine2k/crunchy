@@ -96,7 +96,6 @@ def insert_interpreter(page, elem, uid):
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)
-    CrunchyPlugin.services.display_security(page, elem, uid)
     return
 
 

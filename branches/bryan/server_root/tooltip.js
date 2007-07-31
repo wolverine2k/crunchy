@@ -181,10 +181,3 @@ function copyCodeSample(uid){
     editor = document.getElementById("code_"+ uid);
     editor.value = document.getElementById("code_sample_" +uid).value;
 };
-
-function updateSecurity(level) {
-    var j = new XMLHttpRequest();
-    j.open("POST", "/update"+session_id+"?level="+level, false);
-    j.send(document.location.hostname);
-    alert('Setting "'+document.location.hostname+' to trusted zone');
-};

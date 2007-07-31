@@ -9,11 +9,9 @@ can be avoided.
 
 import src.CrunchyPlugin as CrunchyPlugin
 from src.cometIO import comet, push_input
-from src.security import update_security
 
-provides = set(["/comet", "/input", "/update"])
+provides = set(["/comet", "/input"])
 
 def register():
     CrunchyPlugin.register_http_handler("/input", push_input )
     CrunchyPlugin.register_http_handler("/comet", comet)
-    CrunchyPlugin.register_http_handler("/update%s"%CrunchyPlugin.session_random_id, update_security)
