@@ -90,7 +90,7 @@ def doc_handler(request):
 tooltip_css = """
 #tooltip {
     position: fixed;
-    top: 10px;
+    top: 70px;
     right: 20px;
     width: 50%;
     overflow:auto;
@@ -112,7 +112,7 @@ tooltip_css = """
 }
 #help_menu {
     position: fixed;
-    top: 10px;
+    top: 70px;
     right: 5px;
     width: 50%;
     height: 50%;
@@ -135,7 +135,7 @@ tooltip_css = """
 }
 #help_menu_x {
     position: fixed;
-    top: 15px;
+    top: 75px;
     right: 25px;
     color: #fe0;
     background-color: #369;

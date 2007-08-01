@@ -233,7 +233,7 @@ Before we proceed with a more detailed explanation, you might want
 to read 
 <a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">this</a>
 document from feedparser.org.  You may also want to do an Internet search for
-<em>cross site scripting<em> (XSS), which is a topic closely related to the
+<em>cross site scripting</em> (XSS), which is a topic closely related to the
 problem we are trying to address.  Once you understand XSS, you might want to 
 have also a look at 
 <a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>.
@@ -245,7 +245,7 @@ They are: <em>paranoid</em>, <em>severe</em>, <em>normal</em> and <em>trusted</e
 </p>
 
 <dl>
-<dt>paranoid</dt>
+<dt><img src="/paranoid.png" height="20" /> paranoid</dt>
 <dd>With the paranoid level, the following html tags are not included
 in our white list: applet, basefont, base, button, form, frameset,
 iframe, input, isindex, object, optgroup, option, param, script,
@@ -257,11 +257,11 @@ for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
 as attributes.  If they don't contain Crunchy objects, pages displayed
 with the paranoid level selected are essentially the same as old-fashioned html
 text only documents.</dd>
-<dt>severe</dt>
+<dt><img src="/severe.png" height="20" /> severe</dt>
 <dd>At the severe level, we allow essentially the same tags as with the
 paranoid level, but with more attributes permitted.  For example, one can
 use some &lt;font&gt; attributes, or insert an image.</dd>
-<dt>normal</dt>
+<dt><img src="/normal.png" height="20" /> normal</dt>
 <dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
 attribute.  However, we scan either the file being linked or the content 
 inside the &lt;style&gt; tag, or style attribute
@@ -278,7 +278,7 @@ With this level, you can browse the official Python tutorial and it will look
 just the same <small>[better, actually!]</small> as if you viewed it
 directly in your browser without Crunchy's help.  However, a site like python.org
 will look very different, as most styling will be removed.</dd>
-<dt>trusted</dt>
+<dt><img src="/trusted.png" height="20" /> trusted</dt>
 <dd>Finally, at the trusted level, we allow the same content as with the normal level,
 except that we don't scan for suspicious styling information.  Using the trusted
 level, a site like python.org will look almost as intended when viewed through

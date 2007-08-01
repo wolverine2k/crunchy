@@ -235,53 +235,78 @@ allowed_attributes['display paranoid'] = paranoid
 
 dangerous_strings = ['url(', '&#']
 
+__dangerous_text = ''
 
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
+    global __dangerous_text
 
     _allowed = allowed_attributes[configuration.defaults.security]
     #The following will be updated so as to add result from page.
-    page.security_info = [configuration.defaults.security, 0, {}]
+    page.security_info = { 'level': configuration.defaults.security,
+                          'number removed': 0,
+                          'tags removed' : [],
+                          'attributes removed': [],
+                          'styles removed': []
+                        }
 
 # first, removing unwanted tags
     unwanted = set()
+    tag_count = {}
+    page.security_info['number removed'] = 0
     for element in tree.getiterator():
         if element.tag not in _allowed:
             unwanted.add(element.tag)
+            if element.tag in tag_count:
+                tag_count[element.tag] += 1
+            else:
+                tag_count[element.tag] = 1
+            page.security_info['number removed'] += 1
     for tag in unwanted:
         for element in tree.getiterator(tag):
             element.clear() # removes the text
             element.tag = None  # set up so that cleanup will remove it.
+        page.security_info['tags removed'].append([tag, tag_count[tag]])
     if DEBUG:
         print "These unwanted tags have been removed:"
         print unwanted
-    page.security_info[1] += len(unwanted)
+
 
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
-
+    count = 0
     for tag in _allowed:
         for element in tree.getiterator(tag):
 # Filtering for possible dangerous content in "styles..."
             if tag == "link":
                 if not 'trusted' in configuration.defaults.security: # default is True
                     if not is_link_safe(element, page):
+                        page.security_info['styles removed'].append(
+                                                [tag, '', __dangerous_text])
+                        __dangerous_text = ''
                         element.clear()
                         element.tag = None
+                        page.security_info['number removed'] += 1
                         continue
             for attr in element.attrib.items():
                 if attr[0].lower() not in _allowed[tag]:
                     if DEBUG:
                         unwanted.add(attr[0])
+                    page.security_info['attributes removed'].append(
+                                                [tag, attr[0], ''])
                     del element.attrib[attr[0]]
+                    page.security_info['number removed'] += 1
                 elif attr[0].lower() == 'href':
                     testHREF = urllib.unquote_plus(attr[1]).replace("\r","").replace("\n","")
                     testHREF = testHREF.replace("\t","").lstrip().lower()
                     if testHREF.startswith("javascript:"):
                         if DEBUG:
                             print "removing href = ", testHREF
+                        page.security_info['attributes removed'].append(
+                                                [tag, attr[0], attr[1]])
                         del element.attrib[attr[0]]
+                        page.security_info['number removed'] += 1
 # Filtering for possible dangerous content in "styles..."
                 elif attr[0].lower() == 'style':
                     if not 'trusted' in configuration.defaults.security: # default is True
@@ -290,7 +315,10 @@ def remove_unwanted(tree, page):
                             if x in value:
                                 if DEBUG:
                                     unwanted.add(value)
+                                page.security_info['styles removed'].append(
+                                                [tag, attr[0], attr[1]])
                                 del element.attrib[attr[0]]
+                                page.security_info['number removed'] += 1
 # Filtering for possible dangerous content in "styles..."
             if tag == 'style':
                 if not 'trusted' in configuration.defaults.security: # default is True
@@ -299,14 +327,15 @@ def remove_unwanted(tree, page):
                         if x in text:
                             if DEBUG:
                                 unwanted.add(text)
+                            page.security_info['styles removed'].append(
+                                                [tag, '', element.text])
                             element.clear()
                             element.tag = None
+                            page.security_info['number removed'] += 1
     __cleanup(tree.getroot(), lambda e: e.tag)
     if DEBUG:
         print "These unwanted attributes have been removed:"
         print unwanted
-
-    page.security_info[1] += len(unwanted)
     return tree
 
 def __cleanup(elem, filter):
@@ -465,6 +494,8 @@ def scan_for_unwanted(css_file):
     in it is deemed suspicious  and will be rejected.
 
     returns True if suspicious code is found.'''
+    global __dangerous_text
+
     for line in css_file.readlines():
         squished = line.replace(' ', '').replace('\t', '')
         for x in dangerous_strings:
@@ -472,6 +503,7 @@ def scan_for_unwanted(css_file):
                 if DEBUG:
                     print "found suspicious content in the following line:"
                     print squished
+                __dangerous_text = squished
                 return True
     return False
 
