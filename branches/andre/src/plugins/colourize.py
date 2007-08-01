@@ -61,7 +61,7 @@ def plugin_style(page, elem, dummy_uid):
     if not page.includes("colourize_included"):
         page.add_include("colourize_included")
         page.add_css_code(style_css)
-    code, markup = style(elem)
+    code, markup, error = style(elem)
     replace_element(elem, markup)
 
 def service_style(page, elem):
@@ -141,30 +141,23 @@ def style(elem):
         # re-creating element
         tag = elem.tag
         new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-        try:   # need to find a better way to deal with this
+        try:
             new_elem = et.fromstring(new_html)
         except:
             new_html = new_html.encode('utf-8')
             try:
                 new_elem = et.fromstring(new_html)
             except:
-                print "problem encountered in colourize.py with the following:"
-                try:
-                    s = new_html.encode('utf-8')
-                    sys.__stderr__.write(s)
-                except:
-                    print "Sorry, could not write the code; encoding problem?"
-                message = "Crunchy says: Problem encountered in colourize.py."
-                message += "  ElementTree could not deal with the Python code. "
-                message += "  It is likely to be an encoding problem."
-                new_html = "<%s>\n%s\n</%s>"%(tag, message, tag)
-                new_elem = et.fromstring(new_html)
+                sp = et.Element("span")
+                sp.attrib['class'] = "py_warning"
+                sp.text = _("Crunchy: could not style the following code")
+                return '', '', sp
         new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     else:
         new_elem = elem
     new_elem.tail = tail
     new_elem.attrib['class'] = 'py_pre'
-    return py_code, new_elem
+    return py_code, new_elem, None
 
 def nostrip_style(elem):
     """performs exactly the same as style(elem) except that the python

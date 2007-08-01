@@ -9,6 +9,7 @@ Crunchy plugin; it probably contains more comments than necessary
 for people familiar with the Crunchy plugin architecture.
 """
 
+import copy
 import sys
 
 # All plugins should import the crunchy plugin API
@@ -80,12 +81,14 @@ def insert_interpreter(page, elem, uid):
     # this could change in a future version where we could add a button to
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
+    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    if error is not None:
+        markup = copy.deepcopy(elem)
     if log_id:
         configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_doctest() method extracted all of the existing
+    # note that the style_pycode() method extracted all of the existing
     # text, removing any original markup (and other elements), so that we
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
@@ -93,6 +96,8 @@ def insert_interpreter(page, elem, uid):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.insert(0, markup)
+    if error is not None:
+        elem.insert(0, error)
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)

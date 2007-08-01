@@ -67,7 +67,9 @@ def insert_editor(page, elem, uid):
             page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
+    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    if error is not None:
+        markup = copy.deepcopy(elem)
     if log_id:
         configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # reset the original element to use it as a container.  For those
@@ -83,7 +85,9 @@ def insert_editor(page, elem, uid):
     # no-pre and no-copy at the same time
     if not "no-pre" in vlam:
         elem.insert(0, markup)
-    elif "no-copy" in vlam:
+        if error is not None:
+            elem.insert(0, error)
+    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
