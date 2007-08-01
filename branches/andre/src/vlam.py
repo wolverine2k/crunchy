@@ -153,12 +153,15 @@ class CrunchyPage(object):
         #
         #============================================
         #
-
-
-### possible but:
-### link conversion may take place after a custom menu is inserted.
-### This would very likely mess all links for the menu,when viewing an
-### external page, rendering it useless
+        # IMPORTANT: we must convert existing links on the page
+        # before creating new ones.  This means that handlers1 must
+        # be dealt with first.
+        #  The following for loop deals with example 3
+        for tag in CrunchyPage.handlers1:
+            for elem in self.tree.getiterator(tag):
+                if 'title' not in elem.attrib:  # otherwise, it's a
+                        #different kind of handler that processes it.
+                    CrunchyPage.handlers1[tag](self, elem)
 
         #  The following for loop deals with examples 1 and 2
         for tag in CrunchyPage.handlers3:
@@ -171,12 +174,6 @@ class CrunchyPage(object):
                         if keyword in CrunchyPage.handlers3[tag][attr]:
                             CrunchyPage.handlers3[tag][attr][keyword](
                             self, elem, self.pageid + ":" + uidgen())
-        #  The following for loop deals with example 3
-        for tag in CrunchyPage.handlers1:
-            for elem in self.tree.getiterator(tag):
-                if 'title' not in elem.attrib:  # otherwise, it's a
-                        #different kind of handler that processes it.
-                    CrunchyPage.handlers1[tag](self, elem)
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value
@@ -189,9 +186,6 @@ class CrunchyPage(object):
                     CrunchyPage.handlers3["pre"]["title"][keyword](self, elem,
                                                 self.pageid + ":" + uidgen())
         #  The following for loop deals with example 5
-        # Note that this is the only case we have of a "level 2" handler
-        # If we define new plugins that require such handlers, we'll
-        # need to have an additional for loop implemented.
         if "menu_included" not in self.included:
             CrunchyPage.handlers2["no_tag"]["menu"](self)
         # finally, we insert the security advisory last so that it goes

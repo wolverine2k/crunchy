@@ -62,7 +62,10 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
         code_sample = CrunchyPlugin.SubElement(elem, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
-        code_sample.text = sample_code
+        if sample_code:
+            code_sample.text = sample_code
+        else:
+            code_sample.text = '\n'
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"

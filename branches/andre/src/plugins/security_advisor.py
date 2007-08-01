@@ -146,19 +146,6 @@ def format_report(page, div):
 
     return
 
-
-'''
-<table summary="valid colours" class='summary'>
-<tr><th colspan='2'>Valid colours</th></tr>
-<tr><td><a href="named_colours_en.html">'named colour'</a></td><td>HTML colour name.</td></tr>
-<tr><td>'hex value'</td><td>Colours are defined using a hexadecimal notation for the combination of Red, Green, and Blue colour values (RGB). The lowest value that can be given to one basic colour is 0 (hex #00). The highest value is 255 (hex #FF or #ff; both upper and lower case letters are accepted).  See <a href="named_colours_en.html">named colours</a> for examples. </td></tr>
-<tr><td>'rgb(<em>red, green, blue</em>)'</td><td>Colours are defined using a decimal notation for the combination of Red, Green, and Blue colorr values (RGB). The lowest value that can be given to any one of the basic colour (<em>red</em>, <em>green</em>, or <em>blue</em>) is 0. The highest value is 255. </td></tr>
-<tr><td>'rgba(<em>red, green, blue, alpha</em>)'</td><td>Similar to rgb(<em>red</em>, <em>green</em>, or <em>blue</em>), but with the addition of a transparency parameter (<em>alpha</em>). The valid range of values is from 0.0 (fully transparent) to 1.0 (fully opaque). By default, this property is set to 1.0 (fully opaque). </td></tr>
-</table>
-'''
-
-
-
 security_css = """
 #security_info {
     position: fixed;
