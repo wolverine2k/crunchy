@@ -91,7 +91,9 @@ def register_page_handler(handler):
 
 def create_vlam_page(filehandle, url, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
-    return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
+    crunchy_page = vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
+    crunchy_page.add_js_code("""var session_id = "%s";"""%session_random_id)
+    return crunchy_page
 
 def exec_code(code, uid, doctest=False):
     """execute some code in a given uid"""

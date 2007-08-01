@@ -20,7 +20,6 @@ def insert_tooltip(page, elem, uid):
     if not page.includes("tooltip_included") and page.body:
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")
-        page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
 
         tooltip = CrunchyPlugin.Element("div")
@@ -90,7 +89,7 @@ def doc_handler(request):
 tooltip_css = """
 #tooltip {
     position: fixed;
-    top: 10px;
+    top: 70px;
     right: 20px;
     width: 50%;
     overflow:auto;
@@ -112,7 +111,7 @@ tooltip_css = """
 }
 #help_menu {
     position: fixed;
-    top: 10px;
+    top: 70px;
     right: 5px;
     width: 50%;
     height: 50%;
@@ -135,7 +134,7 @@ tooltip_css = """
 }
 #help_menu_x {
     position: fixed;
-    top: 15px;
+    top: 75px;
     right: 25px;
     color: #fe0;
     background-color: #369;
@@ -146,8 +145,3 @@ tooltip_css = """
     z-index:12;
 }
 """
-
-# javascript code
-tooltip_js = """
-var session_id = "%s";
-"""%CrunchyPlugin.session_random_id
