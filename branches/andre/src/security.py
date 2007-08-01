@@ -107,7 +107,8 @@ specific_allowed = {
     'html': [],
     'i': [],
     # iframe not allowed
-    'img': ['src', 'alt', 'longdesc', 'name', 'height', 'width', 'usemap', 'ismap'],
+    'img': ['src', 'alt', 'longdesc', 'name', 'height', 'width',
+            'usemap', 'ismap', 'border'],
     # input not allowed
     'ins': ['cite', 'datetime'],
     # isindex deprecated
@@ -363,6 +364,7 @@ def __cleanup(elem, filter):
 def is_link_safe(elem, page):
     '''only keep <link> referring to style sheets that are deemed to
        be safe'''
+    global __dangerous_text
     url = page.url
     if DEBUG:
         print "found link element; page url = ", url
@@ -372,10 +374,12 @@ def is_link_safe(elem, page):
         if DEBUG2:
             print "type = ", type
         if type.lower() != "text/css":  # not a style sheet - eliminate
+            __dangerous_text = 'type != "text/css"'
             return False
     else:
         if DEBUG2:
             print "type not found."
+        __dangerous_text = 'type not found'
         return False
     #--
     if "rel" in elem.attrib:
@@ -383,10 +387,12 @@ def is_link_safe(elem, page):
         if DEBUG2:
             print "rel = ", rel
         if rel.lower() != "stylesheet":  # not a style sheet - eliminate
+            __dangerous_text = 'rel != "stylesheet"'
             return False
     else:
         if DEBUG2:
             print "rel not found."
+        __dangerous_text = 'rel not found'
         return False
     #--
     if "href" in elem.attrib:
@@ -396,6 +402,7 @@ def is_link_safe(elem, page):
     else:         # no link to a style sheet: not a style sheet!
         if DEBUG2:
             print "href not found."
+        __dangerous_text = 'href not found'
         return False
     #--If we reach this point we have in principle a valid style sheet.
     link_url = find_url(url, href)
