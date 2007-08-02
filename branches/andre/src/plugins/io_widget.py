@@ -80,24 +80,24 @@ function push_keys(event, uid){
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
     var i = new XMLHttpRequest()
-    i.open("POST", "/input?uid="+uid, true);
+    i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
 
     return true;
 };
-"""
+"""%CrunchyPlugin.session_random_id
 
 push_input = r"""
 function push_input(uid){
     data = document.getElementById("code_"+uid).value;
     document.getElementById("in_"+uid).value = "";
     var i = new XMLHttpRequest()
-    i.open("POST", "/input?uid="+uid, true);
+    i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
     convertFromEditor(uid);
     return true;
 };
-"""
+"""%CrunchyPlugin.session_random_id
 
 io_css = r"""
 

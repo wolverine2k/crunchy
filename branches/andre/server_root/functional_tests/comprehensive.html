@@ -76,6 +76,10 @@ print 'title = "editor linenumber=99"'
 print 'title = "editor no-pre"'
 </pre>
 
+<h4>No execute button (need to use the editor to run the program)</h4>
+<pre title="editor no-internal">
+print 'title = "editor no-internal"'
+</pre>
 
 <h4>Similar three examples with Python code styled but not copied in the editor</h4>
 <pre title="editor no-copy">
@@ -90,7 +94,10 @@ print 'title = "editor linenumber no-copy"'
 print 'title = "editor linenumber=99 no-copy"'
 </pre>
 
-
+<h4>Both no-pre and no-copy present: only no-pre is obeyed.</h4>
+<pre title="editor no-pre no-copy">
+print 'title = "editor no-pre no-copy"'
+</pre>
 
 <h3>Doctest</h3>
 <h4>Three basic examples</h4>
@@ -108,7 +115,39 @@ print 'title = "editor linenumber=99 no-copy"'
 
 <h3>External programs</h3>
 
+<pre title="editor external">
+# title = "editor external"
+import code
+code.interact()
+</pre>
+
+<pre title="editor external no-internal">
+# title = "editor external no-internal"
+import code
+code.interact()
+</pre>
+
+<pre title="editor external no-internal linenumber">
+# title = "editor external no-internal linenumber"
+import code
+code.interact()
+</pre>
 <h3>Image files</h3>
+<pre title="image_file foo.png">
+# title="image_file foo.png"
+# assumes matplotlib is installed
+import pylab
+pylab.plot([1,2,1])
+pylab.savefig('foo.png')
+</pre>
+
+<pre title="image_file foo2.png linenumber">
+# title="image_file foo2.png linenumber"
+# assumes matplotlib is installed
+import pylab
+pylab.plot([1,2,1])
+pylab.savefig('foo2.png')
+</pre>
 
 <p><a href="index.html">Back to the test index</a></p>
 </body>

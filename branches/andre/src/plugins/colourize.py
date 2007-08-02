@@ -62,7 +62,14 @@ def plugin_style(page, elem, dummy_uid):
         page.add_include("colourize_included")
         page.add_css_code(style_css)
     code, markup, error = style(elem)
-    replace_element(elem, markup)
+    if error is None:
+        replace_element(elem, markup)
+    else:
+        br = et.Element("br")
+        br.tail = elem.text
+        elem.text = ''
+        elem.insert(0, br)
+        elem.insert(0, error)
 
 def service_style(page, elem):
     if not page.includes("colourize_included"):

@@ -90,8 +90,9 @@ def insert_editor(page, elem, uid):
     if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
-    #some spacing:
-    CrunchyPlugin.SubElement(elem, "br")
+    #some spacing if buttons are needed, they appear below.
+    if "external in vlam" or not "no-internal" in vlam:
+        CrunchyPlugin.SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
     # button for external execution, if required, appear first.
     #

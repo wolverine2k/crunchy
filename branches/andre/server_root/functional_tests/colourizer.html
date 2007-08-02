@@ -140,6 +140,37 @@ existing formatting removed, and new one added.)</p>
 "Hello world!"
 "Hello world!"
 </pre>
+
+<p>An example (taken from a website) with pre-formatted code that included linenumbers;
+the changing indentation when the line number goes to 2 digits causes some
+parsing problems for Crunchy</p>
+<pre title="py_code">
+  1 import random
+  2 import pygame
+  3 from gfx import gl, array, ext
+  4
+  5
+  6 def main():
+  7     pygame.init()
+  8     flags =  pygame.OPENGL|pygame.DOUBLEBUF|pygame.HWSURFACE
+  9     pygame.display.set_mode((800,600), flags)
+ 10 
+</pre>
+
+<p>Same example as above, but the indentation has been made to stay constant</p>
+<pre title="py_code">
+  1 import random
+  2 import pygame
+  3 from gfx import gl, array, ext
+  4
+  5
+  6 def main():
+  7     pygame.init()
+  8     flags =  pygame.OPENGL|pygame.DOUBLEBUF|pygame.HWSURFACE
+  9     pygame.display.set_mode((800,600), flags)
+  10 
+</pre>
+
 <p> Some examples using the <code>&lt;code&gt;</code> element, as in
 <code title="py_code">print "Hello world!"</code> and, with line numbering,
 <code title="python_code linenumber">print "How are you?"</code> as well
