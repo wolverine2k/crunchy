@@ -178,10 +178,12 @@ class CrunchyPage(object):
                 attributes = dict(elem.attrib)
                 for attr in attributes:
                     if attr in CrunchyPage.handlers3[tag]:
-                        keyword = elem.attrib[attr].split(" ")[0]
-                        if keyword in CrunchyPage.handlers3[tag][attr]:
-                            CrunchyPage.handlers3[tag][attr][keyword](
-                            self, elem, self.pageid + ":" + uidgen())
+                        keywords = elem.attrib[attr].split(" ")
+                        for keyword in keywords:
+                            if keyword in CrunchyPage.handlers3[tag][attr]:
+                                CrunchyPage.handlers3[tag][attr][keyword](
+                                self, elem, self.pageid + ":" + uidgen())
+                                break
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value

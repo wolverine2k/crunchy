@@ -86,7 +86,10 @@ def insert_editor(page, elem, uid):
     if not "no-pre" in vlam:
         elem.insert(0, markup)
         if error is not None:
-            elem.insert(0, error)
+            try:  # usually the error is a warning meant to be inserted
+                elem.insert(0, error)
+            except:
+                pass
     if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)

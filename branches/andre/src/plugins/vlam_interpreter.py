@@ -97,7 +97,10 @@ def insert_interpreter(page, elem, uid):
     elem.attrib["id"] = "div_"+uid
     elem.insert(0, markup)
     if error is not None:
-        elem.insert(0, error)
+        try:  # usually the error is a warning meant to be inserted
+            elem.insert(0, error)
+        except:
+            pass
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)

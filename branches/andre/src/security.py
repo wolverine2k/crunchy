@@ -26,8 +26,8 @@ from element_tree import ElementTree
 
 import configuration
 
-DEBUG = False
-DEBUG2 = False
+DEBUG = True
+DEBUG2 = True
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -404,7 +404,7 @@ def is_link_safe(elem, page):
         __dangerous_text = 'href not found'
         return False
     #--If we reach this point we have in principle a valid style sheet.
-    link_url = find_url(url, href)
+    link_url = find_url(url, href, page)
     if DEBUG2:
         print "link url = ", link_url
     #--Scan for suspicious content
@@ -440,10 +440,11 @@ def is_link_safe(elem, page):
 # the root of the server is in a separate directory:
 root_path = os.path.join(os.path.dirname(imp.find_module("crunchy")[1]), "server_root/")
 
-def find_url(url, href):
+def find_url(url, href, page):
     '''given the url of a "parent" html page and the href of a "child"
        (specified in a link element), returns
        the complete url of the child.'''
+
     if "://" in url:
         if DEBUG2:
             print ":// found in url"
@@ -452,6 +453,12 @@ def find_url(url, href):
         if DEBUG2:
             print ":// found in href"
         return href
+
+    if page.is_local:
+        base, fname = os.path.split(url)
+        href = os.path.normpath(os.path.join(base, os.path.normpath(href)))
+        return href
+
     elif href.startswith("/"):   # local css file from the root server
         return os.path.normpath(os.path.join(root_path, os.path.normpath(href[1:])))
     else:

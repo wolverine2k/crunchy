@@ -12,6 +12,7 @@ would only need to modify only parts of this module, as idenfied below.
 '''
 
 # stdlib modules
+import copy
 import re
 import keyword
 import StringIO
@@ -140,28 +141,30 @@ def style(elem):
     py_code = extract_code(elem)
 
     tail = elem.tail
-    if 'title' in elem.attrib:
-        # styling
-        offset = get_linenumber_offset(elem.attrib['title'])
-        styled_code, py_code = _style(py_code, offset)
+    if "no_style" in elem.attrib['title']:
+        markup = copy.deepcopy(elem)
+        return py_code, markup, None
 
-        # re-creating element
-        tag = elem.tag
-        new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    # styling
+    offset = get_linenumber_offset(elem.attrib['title'])
+    styled_code, py_code = _style(py_code, offset)
+
+    # re-creating element
+    tag = elem.tag
+    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    try:
+        new_elem = et.fromstring(new_html)
+    except:
+        new_html = new_html.encode('utf-8')
         try:
             new_elem = et.fromstring(new_html)
         except:
-            new_html = new_html.encode('utf-8')
-            try:
-                new_elem = et.fromstring(new_html)
-            except:
-                sp = et.Element("span")
-                sp.attrib['class'] = "py_warning"
-                sp.text = _("Crunchy: could not style the following code")
-                return '', '', sp
-        new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
-    else:
-        new_elem = elem
+            sp = et.Element("span")
+            sp.attrib['class'] = "py_warning"
+            sp.text = _("Crunchy: could not style the following code")
+            return '', '', sp
+    new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
+
     new_elem.tail = tail
     new_elem.attrib['class'] = 'py_pre'
     return py_code, new_elem, None
@@ -177,18 +180,19 @@ def nostrip_style(elem):
     independently of changing the code for style().
     """
     py_code = extract_code(elem)
+    if "no_style" in elem.attrib['title']:
+        new_elem = copy.deepcopy(elem)
+        return py_code, new_elem
+
     tail = elem.tail
-    if 'title' in elem.attrib:
-        # styling
-        offset = get_linenumber_offset(elem.attrib['title'])
-        styled_code, dummy = _style(py_code, offset)
-        # re-creating element
-        tag = elem.tag
-        new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-        new_elem = et.fromstring(new_html)
-        new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
-    else:
-        new_elem = elem
+    # styling
+    offset = get_linenumber_offset(elem.attrib['title'])
+    styled_code, dummy = _style(py_code, offset)
+    # re-creating element
+    tag = elem.tag
+    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    new_elem = et.fromstring(new_html)
+    new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     new_elem.tail = tail
     return py_code, new_elem
 
