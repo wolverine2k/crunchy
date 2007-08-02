@@ -4,7 +4,7 @@ Rewrites links so that crunchy can access remote pages.
 
 import urllib
 import re
-from urlparse import urljoin
+from urlparse import urljoin, urlsplit, urlunsplit
 import os
 
 import src.CrunchyPlugin as cp
@@ -29,7 +29,10 @@ def external_link(page, elem, *dummies):
 
 def link_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in remote pages"""
-    if is_remote_url(page.url) and "href" in elem.attrib:
+    if "href" not in elem.attrib:
+        return
+    elem.attrib["href"] = secure_url(elem.attrib["href"])
+    if is_remote_url(page.url):
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
                 return
@@ -44,11 +47,12 @@ def link_handler(page, elem):
                     elem.attrib["href"] = splitted[0]
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
-    if "href" in elem.attrib:
-        href = elem.attrib["href"]
-        if "://" in href:
-            elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
-    if page.is_local and "href" in elem.attrib:
+
+    href = elem.attrib["href"]
+    if "://" in href:
+        elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+
+    if page.is_local:
         if "#" in elem.attrib["href"]:
             return
         if "://" not in elem.attrib["href"]:
@@ -56,8 +60,11 @@ def link_handler(page, elem):
             elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
 
 def src_handler(page, elem):
-    """used in remote pages for elements that have an src attribute"""
-    if is_remote_url(page.url) and "src" in elem.attrib:
+    """used for elements that have an src attribute not loaded from the server root"""
+    if "src" not in elem.attrib:
+        return
+    elem.attrib["src"] = secure_url(elem.attrib["src"])
+    if is_remote_url(page.url):
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
@@ -65,14 +72,22 @@ def src_handler(page, elem):
         elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["src"]))
 
 def href_handler(page, elem):
-    """used in remote pages for elements that have an href attribute"""
-    if is_remote_url(page.url) and "href" in elem.attrib:
+    """used for elements that have an href attribute not loaded from the server root"""
+    if "href" not in elem.attrib:
+        return
+    elem.attrib["href"] = secure_url(elem.attrib["href"])
+    if is_remote_url(page.url):
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
-    if page.is_local and "href" in elem.attrib:
+    if page.is_local:
         local_dir = os.path.split(page.url)[0]
         elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
 
+def secure_url(url):
+    '''For security reasons, restricts a link to its simplest form so
+    that it can't be used to pass arguments to the Python server'''
+    info = urlsplit(url)
+    return urlunsplit((info[0], info[1], info[2], '', ''))
 
 def is_remote_url(url):
     """test if a url is remote or not"""

@@ -61,7 +61,7 @@ common_allowed = ['class', 'dir', 'id', 'lang', 'title']
 
 # index {1} below: see also http://feedparser.org/docs/html-sanitization.html
 specific_allowed = {
-    'a': ['charset', 'type', 'name', 'href', 'hreflang', 'rel'],
+    'a': ['charset', 'type', 'name', 'href', 'hreflang', 'rel', 'accesskey'],
     'abbr': [],
     'acronym': [],
     'address': [],
@@ -104,11 +104,11 @@ specific_allowed = {
     'h6': ['align'],
     'head': [],
     'hr': ['align', 'noshade', 'size', 'width'], # these attributes are deprecated!
-    'html': [],
+    'html': ['xmlns', 'xml:lang'],
     'i': [],
     # iframe not allowed
     'img': ['src', 'alt', 'longdesc', 'name', 'height', 'width',
-            'usemap', 'ismap', 'border'],
+            'usemap', 'ismap', 'border', 'hspace'],
     # input not allowed
     'ins': ['cite', 'datetime'],
     # isindex deprecated
@@ -145,11 +145,11 @@ specific_allowed = {
                 'border', 'cellspacing', 'cellpadding'],
     'tbody': ['align', 'char', 'charoff', 'valign'],
     'td': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign'],
+            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
     # textarea not needed; only included by Crunchy
     'tfoot': ['align', 'char', 'charoff', 'valign'],
     'th': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign'],
+            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
     'thead': ['align', 'char', 'charoff', 'valign'],
     'title': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
             'align', 'char', 'charoff', 'valign'],
