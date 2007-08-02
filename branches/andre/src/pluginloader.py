@@ -68,4 +68,5 @@ def init_plugin_system(server):
                 print "  * Registered %s" % mod.__name__
 
 if __name__ == "__main__":
+    CrunchyPlugin.DEBUG = True
     init_plugin_system(["testplugins"])

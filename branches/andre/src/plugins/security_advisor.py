@@ -152,6 +152,7 @@ security_css = """
     top: 60px;
     right: 400px;
     width: 50%;
+    height: 75%;
     overflow:auto;
     border: 4px outset #369;
     color: black;

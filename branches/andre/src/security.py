@@ -26,7 +26,7 @@ from element_tree import ElementTree
 
 import configuration
 
-DEBUG = True
+DEBUG = False
 DEBUG2 = False
 
 # Better safe than sorry: we do not allow the following html tags for the
@@ -184,13 +184,12 @@ allowed_attributes['display severe'] = severe
 # - normal
 normal = {}
 for key in specific_allowed:
-    if key != 'meta':  # until we secure the menu plugin, exclude it.
-        normal[key] = []
-        for item in specific_allowed[key]:
-            normal[key].append(item)
-        for item in common_allowed:
-            normal[key].append(item)
-        normal[key].append('style')
+    normal[key] = []
+    for item in specific_allowed[key]:
+        normal[key].append(item)
+    for item in common_allowed:
+        normal[key].append(item)
+    normal[key].append('style')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal

@@ -59,16 +59,24 @@ class CrunchyPage(object):
             self.head = et.Element("head")
             self.head.text = " "
             html = self.tree.find("html")
-            html.insert(0, self.head)
+            try:
+                html.insert(0, self.head)
+            except AttributeError:
+                html = self.tree.getroot()
+                html.insert(0, self.head)
         self.body = self.tree.find("body")
-        self.frameset = self.tree.find("frameset")
-        self.process_tags()
-        # we have to check wether there is a body element
-        # because sometimes there is just a frameset elem.
-        if self.body:
+        if not self.body:
+            html = self.tree.find("html")
+            try:
+                self.body = et.SubElement(html, "body")
+            except AttributeError:
+                html = self.tree.getroot()
+                self.body = et.SubElement(html, "body")
             self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        else:
-            print "No body, assuming frameset"
+            warning = et.SubElement(self.body, 'h1')
+            warning.text = "Missing body from original file"
+        self.process_tags()
+        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         self.add_js_code(comet_js)
 
     def add_include(self, include_str):

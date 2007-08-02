@@ -8,10 +8,10 @@ import os
 
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
+import src.security as security
 
 _default_menu = None
 _css = None
-
 
 def register():
     """The register() function is required for all plugins.
@@ -33,7 +33,7 @@ def insert_special_menu(page, elem, dummy):
         menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
                                  "server_root", local_path,
                                  elem.attrib["content"])
-    menu, css = extract_menu(menu_file)
+    menu, css = extract_menu(menu_file, page)
     if page.body:
         page.body.insert(0, menu)
     if css is not None:
@@ -48,17 +48,14 @@ def insert_default_menu(page):
                               # This will need to be changed later.
         menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
                                  "server_root", "menu_en.html")
-        _default_menu, _css = extract_menu(menu_file)
+        _default_menu, _css = extract_menu(menu_file, page)
     if page.body:
         page.body.insert(0, _default_menu) # make sure we insert at 0 i.e.
         # it appears first -
         # this is important for poorly formed tutorials (non-w3c compliant).
-    elif page.frameset:
-        pass
     page.head.append(_css)
 
-
-def extract_menu(filename):
+def extract_menu(filename, page):
     '''extract a menu and css information from an html file.
 
        It assumes that the menu (usually an unordered list) is
@@ -69,6 +66,9 @@ def extract_menu(filename):
         tree = CrunchyPlugin.parse(filename)
     except Exception, info:
         print info
+    # Treat menus just as suspiciously as the original file
+    tree = security.remove_unwanted(tree, page)
+
     # extract menu for use in other files
     menu = tree.find(".//div")
     #head = tree.find("head")
