@@ -103,6 +103,12 @@ on the left for some actual examples.</p>
 </tr>
 <tr><th colspan='2'>Options</th></tr>
 <tr>
+	<td><code>no_style</code></td>
+	<td>Prevents the Python code inside the &lt;pre&gt; element from being
+	styled by Crunchy.<br/>
+	Can be used with: <code>interpreter, editor, doctest, image_file</code>.</td>
+</tr>
+<tr>
 	<td><code>no-copy</code></td>
 	<td>Prevents the Python code inside the &lt;pre&gt; element from being
 	copied into the editor.<br/>
@@ -155,7 +161,7 @@ on the left for some actual examples.</p>
 
 <h2><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
-<code>&lt;pre title="interpreter [isolated] [linenumber [=starting_number]]"&gt;</code><br/>
+<code>&lt;pre title="interpreter [no_style] [isolated] [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
 <code>&lt;/pre&gt;</code></p>
 <p> where the square brackets
@@ -178,7 +184,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <h2><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="no_vlam">
-&lt;pre title="editor [no-copy] [no-pre] 
+&lt;pre title="editor [no_style] [no-copy] [no-pre] 
             [linenumber [=start_number]] [external [no-internal]]"&gt;
 Some Python code
 
@@ -204,8 +210,7 @@ code.</p>
 </dl>
 
 <h2><a id="doctest">DocTest</a></h2>
-<p><code>&lt;pre title="doctest [size=(rows, cols)]  
-[linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
+<p><code>&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
 <p>The output from the doctest result is further processed by Crunchy to make error messages a bit
@@ -224,7 +229,7 @@ friendlier to beginners.</p>
 <h2><a id="images">Images</a></h2>
 <p>The required markup is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="image_file filename [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
+&lt;pre title="image_file filename [no_style] [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
 Some Python code
 &lt;/pre&gt;</pre>
 <p>Note that the filename must be included, otherwise the code will simply be styled.
