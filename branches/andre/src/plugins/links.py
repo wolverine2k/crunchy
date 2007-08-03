@@ -63,7 +63,8 @@ def src_handler(page, elem):
     """used for elements that have an src attribute not loaded from the server root"""
     if "src" not in elem.attrib:
         return
-    elem.attrib["src"] = secure_url(elem.attrib["src"])
+    # not needed as we validate images in security.py
+    ##elem.attrib["src"] = secure_url(elem.attrib["src"])
     if is_remote_url(page.url):
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])

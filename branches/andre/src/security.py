@@ -16,7 +16,7 @@ caused by insertion of malicious javascript code within a web page.
 # id generated in CrunchyPlugin.py
 import imp
 import os
-
+import imghdr
 import urllib
 import urlparse
 import sys
@@ -26,8 +26,8 @@ from element_tree import ElementTree
 
 import configuration
 
-DEBUG = True
-DEBUG2 = True
+DEBUG = False
+DEBUG2 = False
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -276,6 +276,8 @@ def remove_unwanted(tree, page):
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
     count = 0
+    good_images = set()
+    bad_images = set()
     for tag in _allowed:
         for element in tree.getiterator(tag):
 # Filtering for possible dangerous content in "styles..."
@@ -332,6 +334,36 @@ def remove_unwanted(tree, page):
                             element.clear()
                             element.tag = None
                             page.security_info['number removed'] += 1
+# making sure that this is an image
+            if tag == "img" and \
+                      not 'trusted' in configuration.defaults.security:
+                _rem = False
+                try:
+                    src = element.attrib["src"] # may raise an exception
+                    if src in good_images:
+                        pass
+                    elif src in bad_images:
+                        element.clear()
+                        element.tag = None
+                        # do not repeat the information; same image
+                        #_rem = True
+                    else:
+                        if validate_image(src, page):
+                            good_images.add(src)
+                        else:
+                            bad_images.add(src)
+                            element.clear()
+                            element.tag = None
+                            _rem = True
+                except:
+                    element.clear()
+                    element.tag = None
+                    _rem = True
+                if _rem:
+                    page.security_info['number removed'] += 1
+                    page.security_info['attributes removed'].append(
+                        ['img', 'src',
+                        "could not validate or accept image:" + src])
     __cleanup(tree.getroot(), lambda e: e.tag)
     if DEBUG:
         print "These unwanted attributes have been removed:"
@@ -359,6 +391,54 @@ def __cleanup(elem, filter):
             out.append(e)
     elem[:] = out
     return
+
+def validate_image(src, page):
+    '''verifies that the file contents appears to be that of an image'''
+    if DEBUG:
+        print "entering validate_image"
+        print "page.is_local", page.is_local
+        print "page.is_remote", page.is_remote
+        print "page.url", page.url
+        print "src", src
+        print "root_path", root_path
+    if page.is_local:
+        local_dir = os.path.split(page.url)[0]
+        fn = os.path.join(local_dir, src)
+    elif page.is_remote:
+        fn = urlparse.urljoin(page.url, src)
+    else:
+        src = urlparse.urljoin(page.url, src)[1:]
+        fn = os.path.join(root_path, src)
+    try:
+        if DEBUG:
+            print "opening fn=", fn
+        try:
+            if page.is_remote:
+                h = urllib.urlopen(fn).read()
+            else:
+                h = open(fn, 'rb').read()
+            if DEBUG:
+                print "opened the file"
+        except:
+            if DEBUG:
+                print "could not open"
+            return False
+        try:
+            type = imghdr.what('ignore', h)
+            if DEBUG:
+                print "opened with imghdr.what"
+                print "image type = ", type
+                print "image src = ", src
+            if type is not None:
+                print "validated image:", fn
+                return True
+        except:
+            if DEBUG:
+                print "could not open with imghdr.what"
+            return False
+    except:
+        return False
+
 
 def is_link_safe(elem, page):
     '''only keep <link> referring to style sheets that are deemed to
