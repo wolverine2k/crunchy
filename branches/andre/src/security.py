@@ -42,11 +42,6 @@ DEBUG2 = False
 # time to find out about possible other security issues.
 #
 
-
-# The following is not used currently
-#attribute_black_list = ["text/javascript"]
-
-
 # Rather than trying to find which attributes might be problematic (black list),
 # we create a database of allowed (safe) attributes which we know will not cause
 # any trouble.  This list can always be expanded if required.
@@ -56,8 +51,8 @@ DEBUG2 = False
 
 # To save on typing, we list here the common attributes
 # that almost all html tags can make use of in a sensible way:
-common_allowed = ['class', 'dir', 'id', 'lang', 'title']
-# note that we left out "style" which will be handled separately
+common_allowed = ['class', 'dir', 'id', 'lang', 'title', 'style']
+# but we do have to possibly check for 'style'...
 
 # index {1} below: see also http://feedparser.org/docs/html-sanitization.html
 specific_allowed = {
@@ -167,19 +162,9 @@ specific_allowed = {
 
 allowed_attributes = {}
 
-#- severe -
-severe = {}
-for key in specific_allowed:
-    if key != 'link' and key != 'style' and key != 'meta':
-        severe[key] = []
-        for item in specific_allowed[key]:
-            severe[key].append(item)
-        for item in common_allowed:
-            severe[key].append(item)
-
-allowed_attributes['severe'] = severe
-allowed_attributes['display severe'] = severe
-
+# Currently, the difference between normal and trusted is that
+# we validate styles, links and images for normal whereas we don't
+# for trusted; otherwise, they allow the same tags and attributes
 
 # - normal
 normal = {}
@@ -189,11 +174,9 @@ for key in specific_allowed:
         normal[key].append(item)
     for item in common_allowed:
         normal[key].append(item)
-    normal[key].append('style')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal
-
 
 # - trusted
 trusted = {}
@@ -203,21 +186,20 @@ for key in specific_allowed:
         trusted[key].append(item)
     for item in common_allowed:
         trusted[key].append(item)
-    trusted[key].append('style')
 
 allowed_attributes['trusted'] = trusted
 allowed_attributes['display trusted'] = trusted
 
-# - paranoid -
-paranoid = {}
+# - strict -
+strict = {}
 for key in specific_allowed:
-    if key != 'style' and key!= 'meta' and key != 'link':
-        paranoid[key] = ['title']  # only harmless vlam-specific attribute
+    if key != 'style' and key!= 'meta' and key != 'link' and key != 'img':
+        strict[key] = ['title']  # only harmless vlam-specific attribute
 
-paranoid['a'] = ['href', 'id'] # only items required for navigation
+strict['a'] = ['href', 'id'] # only items required for navigation
 
-allowed_attributes['paranoid'] = paranoid
-allowed_attributes['display paranoid'] = paranoid
+allowed_attributes['strict'] = strict
+allowed_attributes['display strict'] = strict
 
 
 # Just like XSS vulnerability are possible through <style> or 'style' attrib
@@ -231,11 +213,14 @@ allowed_attributes['display paranoid'] = paranoid
 #
 # As a result, we will not allowed dangerous "substring" to appear
 # in style attributes or in style sheets in "normal" security level;
-# styles are not permitted in "severe" or "paranoid".
+# styles are not permitted in "severe" or "strict".
 
 dangerous_strings = ['url(', '&#']
 
 __dangerous_text = ''
+
+good_images = set()
+bad_images = set()
 
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by
@@ -276,8 +261,6 @@ def remove_unwanted(tree, page):
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
     count = 0
-    good_images = set()
-    bad_images = set()
     for tag in _allowed:
         for element in tree.getiterator(tag):
 # Filtering for possible dangerous content in "styles..."
@@ -338,8 +321,8 @@ def remove_unwanted(tree, page):
             if tag == "img" and \
                       not 'trusted' in configuration.defaults.security:
                 _rem = False
-                try:
-                    src = element.attrib["src"] # may raise an exception
+                if 'src' in element.attrib:
+                    src = element.attrib["src"]
                     if src in good_images:
                         pass
                     elif src in bad_images:
@@ -355,7 +338,7 @@ def remove_unwanted(tree, page):
                             element.clear()
                             element.tag = None
                             _rem = True
-                except:
+                else:
                     element.clear()
                     element.tag = None
                     _rem = True
@@ -414,9 +397,10 @@ def validate_image(src, page):
             print "opening fn=", fn
         try:
             if page.is_remote:
-                h = urllib.urlopen(fn).read()
+                h = urllib.urlopen(fn).read(32) #32 is all that's needed for
+                                                # imghrd.what
             else:
-                h = open(fn, 'rb').read()
+                h = open(fn, 'rb').read(32)
             if DEBUG:
                 print "opened the file"
         except:

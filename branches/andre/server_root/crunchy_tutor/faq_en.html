@@ -240,28 +240,25 @@ have also a look at
 </p>
 
 <p>The white list we have created is different from the one at feedparser.org.
-Actually, we have 4 different white lists, for 4 different levels of security.
-They are: <em>paranoid</em>, <em>severe</em>, <em>normal</em> and <em>trusted</em>.
+Actually, we have 3 different white lists, for 3 different levels of security.
+They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
 </p>
 
 <dl>
-<dt><img src="/paranoid.png" height="20" /> paranoid</dt>
-<dd>With the paranoid level, the following html tags are not included
+<dt><img src="/paranoid.png" height="20" /> strict</dt>
+<dd>With the strict level (previously named <em>paranoid</em>), 
+the following html tags are not included
 in our white list: applet, basefont, base, button, form, frameset,
 iframe, input, isindex, object, optgroup, option, param, script,
-select and textarea - as well as link, meta and style.
+select and textarea - as well as link, meta, style and img.
 Not all excluded tags are potentially harmful; some are simply
 deprecated.<br/>
 For the included tags, only the <em>title</em> attribute is allowed, except
 for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
 as attributes.  If they don't contain Crunchy objects, pages displayed
-with the paranoid level selected are essentially the same as old-fashioned html
+with the strict level selected are essentially the same as old-fashioned html
 text only documents.</dd>
-<dt><img src="/severe.png" height="20" /> severe</dt>
-<dd>At the severe level, we allow essentially the same tags as with the
-paranoid level, but with more attributes permitted.  For example, one can
-use some &lt;font&gt; attributes, or insert an image.</dd>
-<dt><img src="/normal.png" height="20" /> normal</dt>
+<dt><img src="/severe.png" height="20" /> normal</dt>
 <dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
 attribute.  However, we scan either the file being linked or the content 
 inside the &lt;style&gt; tag, or style attribute
@@ -273,6 +270,13 @@ and
 <a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>
 links already mentioned for an explanation].  We treat such content as automatically
 suspicious and remove automatically these tags entirely when such content is met.<br/>
+We also allow the meta tag which is used by Crunchy to allow a tutorial
+writer to design an alternate menu for Crunchy.
+Finally, we allow the img tag; however, we pre-scan each image
+to make sure that it is indeed an image file and not some cleverly disguised javascript
+code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
+a page containing many external images.  However, we normally need to verify the
+validity of a given image only once per Crunchy session.<br/>
 The normal level is currently the default level used when starting Crunchy.  
 With this level, you can browse the official Python tutorial and it will look
 just the same <small>[better, actually!]</small> as if you viewed it
@@ -280,23 +284,36 @@ directly in your browser without Crunchy's help.  However, a site like python.or
 will look very different, as most styling will be removed.</dd>
 <dt><img src="/trusted.png" height="20" /> trusted</dt>
 <dd>Finally, at the trusted level, we allow the same content as with the normal level,
-except that we don't scan for suspicious styling information.  Using the trusted
+except that we don't scan for suspicious styling information and assume that all images
+are safe.  Using the trusted
 level, a site like python.org will look almost as intended when viewed through
 Crunchy; the only difference comes about due to the fact that Crunchy shifts
 the page body down, to create some blank space at the top of the page
 for its menu.<br/>
-We also allow the meta tag which is used by Crunchy to allow a tutorial
-writer to design an alternate menu for Crunchy.</dd>
+</dd>
 </dl>
-<p>All first three levels mentioned [paranoid, severe and normal] should be
-totally safe against unwanted javascript intrusion.  The fourth one, as its name
+<p>In addition to the above described steps, we do the following:</p>
+<ul>
+<li>We transform all links of the form <code>href="url?query"</code> into <code>href="url"</code>.
+This is to prevent accidental communication between the webbrowser and the Python server, sending a
+"query" to the latter.</li>
+<li>All instructions sent to the Python server in order of having some Python command executed
+take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long random
+integer generated at the beginning of a session.  This way, even if a malicious query bypassed
+the cleanup mentioned at the previous step, it would still be nearly impossible to guess the
+commands required for the Python interpreter to execute some malicious code sent by a query.
+</li>
+</ul>
+<p>The first two security levels mentioned [strict and normal] should be
+totally safe against unwanted javascript intrusion.  The third one, as its name
 indicates, should only be used with trusted sites - and only if it is found that
 it is required for appropriate formatting.
 </p>
 
 <p>The possibility of using obfuscated code (e.g. using "&#..." entities) is one that
 can cause problems for many filters [see the two links already mentioned].  
-However, Crunchy is somewhat immune to this problem due to the way it parses
+However, as far as we have been able to verify, 
+Crunchy is immune to this problem due to the way it parses
 html pages according to step 2 mentioned previously.</p>
 <p>Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
 to parse pages.  BeautifulSoup is known to handled ill-formed web pages, parsing them
@@ -310,15 +327,14 @@ any potential problems.
 </p>
 <h4>How can one determine which security level to use?</h4>
 <p>At this point you might wonder how you could afford to select a security level
-other than 'paranoid' to view pages.  What you look at a page found on the web using
+other than 'strict' to view pages from a new site.  What you look at a page found on the web using
 a less stringent level, and something nasty sneaks in? By the time you look at it, it might
 already be too late...</p>
 
-<p>The solution to this problem is the introduction of 4 additional security levels.  They are:
+<p>The solution to this problem is the introduction of 3 additional security levels.  They are:
 </p>
 <ul>
-<li>display paranoid</li>
-<li>display severe</li>
+<li>display strict</li>
 <li>display normal</li>
 <li>display trusted</li>
 </ul>
@@ -330,24 +346,18 @@ browser and the Python interpreter]</small> does not take place.  Crunchy simply
 displays the page so that it looks almost like it would normally, but no Python code execution
 is possible.  A user can select a 'display' mode, inspect the page content to verify that
 no foreign javascript is included, before loading it normally.</p>
-<p>Currently, some javascript code is still included by Crunchy, enabling the 
-javascript based editor for example.  In a future release, we might remove such
-code to make it even easier to identify any javascript code that might have eluded
-Crunchy's filtering.</p>
+<p>To help you, whenever some tags or attributes are removed from a page, Crunchy inserts a link
+at the top of the page giving you some summary of what it actually removed.</p>
 <h4>How do I select a security level?</h4>
 <p>Use any object used to execute some Python code, such as the interpreter below.</p>
 <pre title="interpreter">
-&gt;&gt;&gt; crunchy.security = 'severe'
+&gt;&gt;&gt; crunchy.security = 'strict'
 </pre>
 <p>The chosen security level will be used when you load a new page, or reload the current page.
 Note that if you use a 'display' security level, you will not be able to change it back
 from a new page as Crunchy won't let you enter new Python code!  A way around this is to
 open a new page in a separate window or tab, keeping the original still going.
 </p>
-<p>More information will be provided by the next release.  We feel it is
-more important to get the current security-fix release out as quickly
-as possible, even if it is not documented as fully as it could be.</p>
-
 
 </div>
 </body>

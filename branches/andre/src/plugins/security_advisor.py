@@ -18,10 +18,8 @@ def insert_security_info(page, *dummy):
     if 'trusted' in page.security_info['level']:
         src = '/trusted.png'
     elif 'normal' in page.security_info['level']:
-        src = '/normal.png'
-    elif 'severe' in page.security_info['level']:
         src = '/severe.png'
-    elif 'paranoid' in page.security_info['level']:
+    elif 'strict' in page.security_info['level']:
         src = '/paranoid.png'
 
     outer_span = cp.Element("span")

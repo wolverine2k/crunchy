@@ -28,8 +28,7 @@ languages_allowed_values = ['en' # English
 security_allowed_values = [
                         'trusted','display trusted',
                         'normal', 'display normal',
-                        'severe', 'display severe',
-                        'paranoid', 'display paranoid'
+                        'strict', 'display strict'
                             ]
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.

@@ -85,8 +85,11 @@ def href_handler(page, elem):
         elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
 
 def secure_url(url):
-    '''For security reasons, restricts a link to its simplest form so
-    that it can't be used to pass arguments to the Python server'''
+    '''For security reasons, restricts a link to its simplest form if it
+    contains a query ("?") so that it can't be used to pass arguments
+    to the Python server'''
+    if "?" not in url:
+        return url
     info = urlsplit(url)
     return urlunsplit((info[0], info[1], info[2], '', ''))
 
