@@ -36,6 +36,9 @@ security_allowed_values = [
 no_markup_allowed_values = ["none", "editor", "interpreter", #"ipython",
                     "python_code", "image_file"]  # image_file needs an optional argument
 
+override_default_interpreter_allowed_values = ['interpreter', 'Borg',
+       'isolated', 'Human', 'parrot', 'Parrots']
+
 class Defaults(object):
     """
     class containing various default values:
@@ -62,6 +65,7 @@ class Defaults(object):
         self.__editarea_language = 'en'
         self.__friendly = True
         self.__security = 'normal'
+        self.__override_default_interpreter = 'interpreter'
 
         # end of properties
         translation.init_translation(self.__language)
@@ -252,4 +256,20 @@ Here are the values of some variables currently used by Crunchy.
 
     #==============
 
+    def get_override_default_interpreter(self):
+        return self.__override_default_interpreter
+
+    def set_override_default_interpreter(self, choice):
+        if choice in override_default_interpreter_allowed_values:
+            self.__override_default_interpreter = choice
+            print _("override_default_interpreter set to: ") , choice
+        else:
+            print _("Invalid choice for %s.override_default_interpreter")%self._prefix
+            print _("The valid choices are: "), override_default_interpreter_allowed_values
+
+    override_default_interpreter = property(get_override_default_interpreter,
+           set_override_default_interpreter, None,
+        _('override_default_interpreter currently used by Crunchy is: '))
+
+    #==============
 defaults = Defaults()

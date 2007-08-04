@@ -43,17 +43,33 @@ def register():
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
     vlam = elem.attrib["title"]
-    if "isolated" in vlam or "Human" in vlam:
-        interp_kind = "isolated"
-    elif 'parrot' in vlam:
-        interp_kind = 'parrot'
-    elif 'Parrots' in vlam:
-        interp_kind = "Parrots"
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-##    elif "ipython" in vlam:
-##        interp_kind = "ipython"
+    c = configuration.defaults.override_default_interpreter
+    if c == 'interpreter':
+        # go with interpreter specified in tutorial
+        if "isolated" in vlam or "Human" in vlam:
+            interp_kind = "isolated"
+        elif 'parrot' in vlam:
+            interp_kind = 'parrot'
+        elif 'Parrots' in vlam:
+            interp_kind = "Parrots"
+    #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    ##    elif "ipython" in vlam:
+    ##        interp_kind = "ipython"
+        else:
+            interp_kind = "borg"
     else:
-        interp_kind = "borg"
+        if c == "isolated" or c == "Human":
+            interp_kind = "isolated"
+        elif c == 'parrot':
+            interp_kind = 'parrot'
+        elif c == 'Parrots':
+            interp_kind = "Parrots"
+    #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    ##    elif "ipython" in vlam:
+    ##        interp_kind = "ipython"
+        else:
+            interp_kind = "borg"
+
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'interpreter'
