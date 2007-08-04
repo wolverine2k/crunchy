@@ -36,8 +36,8 @@ security_allowed_values = [
 no_markup_allowed_values = ["none", "editor", "interpreter", #"ipython",
                     "python_code", "image_file"]  # image_file needs an optional argument
 
-override_default_interpreter_allowed_values = ['interpreter', 'Borg',
-       'isolated', 'Human', 'parrot', 'Parrots']
+override_default_interpreter_allowed_values = ['default',
+        'Borg', 'isolated', 'Human', 'parrot', 'Parrots']
 
 class Defaults(object):
     """

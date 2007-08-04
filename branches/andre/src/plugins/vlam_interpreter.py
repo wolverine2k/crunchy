@@ -44,7 +44,7 @@ def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
     vlam = elem.attrib["title"]
     c = configuration.defaults.override_default_interpreter
-    if c == 'interpreter':
+    if c == 'default':
         # go with interpreter specified in tutorial
         if "isolated" in vlam or "Human" in vlam:
             interp_kind = "isolated"
