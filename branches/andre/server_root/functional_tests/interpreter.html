@@ -56,7 +56,8 @@ as the previous ones.</p>
 42
 </pre>
 
-<p>Here's one that should not share any variables with the previous ones.</p>
+<p>Here's one that should not share any variables with the previous ones
+(the prompt will be different that what is displayed).</p>
 <pre title="interpreter isolated">
 >>> print x
 Traceback (most recent call last):
@@ -70,6 +71,23 @@ NameError: name 'x' is not defined
 Traceback (most recent call last):
   File "", line 1, in
 NameError: name 'x' is not defined
+</pre>
+
+<p>A parrot interpreter (the prompt will be different that what is displayed).</p>
+<pre title="parrot">
+>>> 7*8
+>>> print 7*8
+56
+</pre>
+
+<p>A Parrots interpreter - shares state with Borg 
+(the prompt will be different that what is displayed).</p>
+<pre title="Parrots">
+>>> 7*8
+>>> print 7*8
+56
+>>> print x
+42
 </pre>
 
 <p>An IPython shell - this used to work but it was found that IPython (0.8.1) interfered

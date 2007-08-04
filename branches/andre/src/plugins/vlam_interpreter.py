@@ -35,6 +35,8 @@ def register():
     # just for fun, we define these; they are case-sensitive.
     CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "parrot", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "Parrots", insert_interpreter)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
 
@@ -43,6 +45,10 @@ def insert_interpreter(page, elem, uid):
     vlam = elem.attrib["title"]
     if "isolated" in vlam or "Human" in vlam:
         interp_kind = "isolated"
+    elif 'parrot' in vlam:
+        interp_kind = 'parrot'
+    elif 'Parrots' in vlam:
+        interp_kind = "Parrots"
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    elif "ipython" in vlam:
 ##        interp_kind = "ipython"
@@ -70,6 +76,16 @@ def insert_interpreter(page, elem, uid):
                 page.add_include("SingleInterpreter_included")
                 page.add_js_code(SingleInterpreter_js)
             page.add_js_code('init_SingleInterpreter("%s");' % uid)
+        elif interp_kind == "parrot":
+            if not page.includes("parrot_included"):
+                page.add_include("parrot_included")
+                page.add_js_code(parrot_js)
+            page.add_js_code('init_parrotInterpreter("%s");' % uid)
+        elif interp_kind == "Parrots":
+            if not page.includes("Parrots_included"):
+                page.add_include("Parrots_included")
+                page.add_js_code(Parrots_js)
+            page.add_js_code('init_ParrotsInterpreter("%s");' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##        else:
 ##          if not page.includes("IPythonInterpreter_included"):
@@ -117,7 +133,7 @@ function init_BorgInterpreter(uid){
     code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
-    code += "')\nborg.interact('')\n";
+    code += "')\nborg.interact()\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
@@ -132,7 +148,38 @@ function init_SingleInterpreter(uid){
     code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
     code += "\nisolated.push('print ";
     code += '"Crunchy: Individual Interpreter (Python version %s). %s"';
-    code += "')\nisolated.interact('')\n";
+    code += "')\nisolated.interact(ps1='-->')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+# The following are not implemented yet.
+parrot_js = r"""
+function init_parrotInterpreter(uid){
+    code = "import src.configuration as configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+    code += "\nisolated.push('print ";
+    code += '"Crunchy: [dead] Parrot Interpreter (Python version %s). %s"';
+    code += "')\nisolated.interact(ps1='u_) ', symbol='exec')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+Parrots_js = r"""
+function init_ParrotsInterpreter(uid){
+    code = "import src.configuration as configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: [dead] Parrots Interpreter (Python version %s). %s"';
+    code += "')\nborg.interact(ps1='u_)) ', symbol='exec')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
