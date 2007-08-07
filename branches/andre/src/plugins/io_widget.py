@@ -123,7 +123,7 @@ io_css = r"""
 }
 
 .output{
-    font: 10pt monospace;
+    font: 11pt monospace;
     font-weight: bold;
     color:darkgreen;
     white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */

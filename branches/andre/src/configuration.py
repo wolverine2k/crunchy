@@ -32,12 +32,13 @@ security_allowed_values = [
                             ]
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-
-no_markup_allowed_values = ["none", "editor", "interpreter", #"ipython",
-                    "python_code", "image_file"]  # image_file needs an optional argument
-
-override_default_interpreter_allowed_values = ['default',
+override_default_interpreter_allowed_values = ['default', # ipython,
         'Borg', 'isolated', 'Human', 'parrot', 'Parrots']
+
+no_markup_allowed_values = ["none", "editor",
+                    "python_code", "image_file"]  # image_file needs an optional argument
+for interpreter in override_default_interpreter_allowed_values:
+    no_markup_allowed_values.append(interpreter)
 
 class Defaults(object):
     """
@@ -65,7 +66,7 @@ class Defaults(object):
         self.__editarea_language = 'en'
         self.__friendly = True
         self.__security = 'normal'
-        self.__override_default_interpreter = 'interpreter'
+        self.__override_default_interpreter = 'default'
 
         # end of properties
         translation.init_translation(self.__language)
@@ -179,8 +180,7 @@ Here are the values of some variables currently used by Crunchy.
             print _("The current value is: "), self.__no_markup
 
     no_markup = property(get_nm, set_nm, None,
-        _('  The choices for "pre" tag without markup are %s\n  ')% no_markup_allowed_values +\
-        _('This has no effect on pages containing any Crunchy markup.\n') +\
+        _('  The choices for "pre" tag without Crunchy markup are %s\n  ')% no_markup_allowed_values +\
         _('  The current value is: '))
     #==============
 
@@ -269,7 +269,8 @@ Here are the values of some variables currently used by Crunchy.
 
     override_default_interpreter = property(get_override_default_interpreter,
            set_override_default_interpreter, None,
-        _('override_default_interpreter currently used by Crunchy is: '))
+                _('  The choices for override_default_interpreter are %s\n  ')% override_default_interpreter_allowed_values +\
+        _('The value currently used by Crunchy is: '))
 
     #==============
 defaults = Defaults()

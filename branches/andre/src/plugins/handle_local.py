@@ -2,6 +2,7 @@
 Uses the /local http request path.
 """
 import os
+import sys
 
 from src.CrunchyPlugin import *
 from urllib import unquote_plus
@@ -17,6 +18,11 @@ def local_loader(request):
     url = unquote_plus(request.args["url"])
     if ".htm" in url:
         page = create_vlam_page(open(url), url, local=True)
+        # The following will make it possible to include python modules
+        # with tutorials so that they can be imported.
+        base_url, fname = os.path.split(url)
+        if base_url not in sys.path:
+            sys.path.insert(0, base_url)
     else:
         page = open(url, 'rb')
     request.send_response(200)

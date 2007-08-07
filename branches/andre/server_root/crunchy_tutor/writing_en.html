@@ -84,10 +84,14 @@ on the left for some actual examples.</p>
 	be executed together with the user-code inside the editor.</td>
 </tr>
 <tr>
-	<td><code>interpreter</code></td>
+	<td><code>interpreter</code> or
+	<code>isolated</code> or
+	<code>parrot</code> or
+	<code>Parrots</code>
+	</td>
 	<td>Inserts a Python interpreter after the &lt;pre&gt; element.  There are
-	two different types of interpreters, those that share a common environment and
-	those that have their own unique environment.</td>
+	four different types of interpreters, some (interpreter and Parrots) that 
+	share a common environment and the others have their own unique environment.</td>
 </tr>
 <tr>
 	<td><code>image file</code></td>
@@ -101,7 +105,8 @@ on the left for some actual examples.</p>
     </td>
 <tr>
 </tr>
-<tr><th colspan='2'>Options</th></tr>
+<tr><th colspan='2'>Options (note that <code>interpreter</code> can be replaced by any
+of the different types mentioned above)</th></tr>
 <tr>
 	<td><code>no_style</code></td>
 	<td>Prevents the Python code inside the &lt;pre&gt; element from being
@@ -128,12 +133,7 @@ on the left for some actual examples.</p>
 	Can be used with: <code>interpreter, editor, doctest</code>.  No result is recorded
 	if the <code>external</code> option is used.</td>
 </tr>
-<tr>
-	<td><code>isolated</code></td>
-	<td>Used to indicate that the interpreter will not share an environment with other that
-	are present on the same page.<br/>
-	Can be used with: <code>interpreter</code>.</td>
-</tr>
+
 <tr>
 	<td><code>no-pre</code></td>
 	<td><code>no-pre</code> does not show the code inside the &lt;pre&gt; 
@@ -161,14 +161,25 @@ on the left for some actual examples.</p>
 
 <h2><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
-<code>&lt;pre title="interpreter [no_style] [isolated] [linenumber [=starting_number]]"&gt;</code><br/>
+<p><code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
-<code>&lt;/pre&gt;</code></p>
-<p> where the square brackets
-indicate optional arguments.  Any number of interpreter "prompts" can 
-appear within a page, and every interpreter prompt used in a given session 
-shares the same environment, unless the <code>isolated</code> argument is used.  
+<code>&lt;/pre&gt;</code></p> <p> where the square brackets
+indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
+be any value taken from the following list:
+<code>[interpreter, isolated, parrot, Parrots]</code>; the standard choice
+should be <code>interpreter</code>.</p>
+
+<p>
+Any number of interpreter "prompts" can 
+appear within a page; if <code>interpreter</code> has been selected, every
+such interpreter used on the same page 
+shares the same environment; if <code>isolated</code> is chosen, then
+each such interpreter will have its own environment.  
 Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code; the line numbering will start at 1 unless a different starting value is given.</p>
+
 <p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
 option is present, a line number will appear before each line of input
 code; the line numbering will start at 1 unless a different starting value is given.</p>
@@ -264,7 +275,13 @@ tutorial writers.</p>
 <h3>Fetching a local tutorial</h3>
 <p>If one wants to insert a "browser" object to load a local tutorial,
 all that is required is to write:</br>
-<code>&lt;span title="load local"&gt;</code> <em>space</em> <code>&lt;/span&gt;</code></p>
+<code>&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
+<code>&lt;/span&gt;</code>.  
+In addition to loading the tutorial, Crunchy will also adds as the first item 
+to the Python path (sys.path)
+the directory where the tutorial is located; this will allow importing
+modules that are distributed with the tutorial - as long as they are in the
+same directory.</p>
 <h3>Fetching a remote tutorial</h3>
 <p>If one wants to insert a input box to load a remote tutorial,
 all that is required is to write:</br>
@@ -273,13 +290,7 @@ all that is required is to write:</br>
 <p>If one wants to insert a "browser" object to load a local tutorial and
 edit it to insert interactive elements,
 all that is required is to write:</br>
-<code>&lt;span title="edit tutorial"&gt;</code> <em>space</em> <code>&lt;/span&gt;</code></p>
-
-<div class="wide-warning">
-<h4>Custom menus are disabled</h4>
-<p>The following option to change the default menu is temporarily disabled
-until the security issues are all sorted out.</p>
-</div>
+<code>&lt;span title="edit tutorial"&gt;</code> <em>one or more spaces</em> <code>&lt;/span&gt;</code></p>
 
 <h3>Changing the default menu</h3>
 <p>Changing the default menu can be done by including<br/>

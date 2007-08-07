@@ -32,6 +32,7 @@ def register():
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
     CrunchyPlugin.register_tag_handler("pre", "title", "interpreter", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "isolated", insert_interpreter)
     # just for fun, we define these; they are case-sensitive.
     CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
@@ -179,8 +180,8 @@ function init_parrotInterpreter(uid){
     code += "locals = {'%s': configuration.defaults}\n";
     code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
     code += "\nisolated.push('print ";
-    code += '"Crunchy: [dead] Parrot Interpreter (Python version %s). %s"';
-    code += "')\nisolated.interact(ps1='u_) ', symbol='exec')\n";
+    code += '"Crunchy: [dead] parrot Interpreter (Python version %s). %s"';
+    code += "')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
@@ -195,7 +196,7 @@ function init_ParrotsInterpreter(uid){
     code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: [dead] Parrots Interpreter (Python version %s). %s"';
-    code += "')\nborg.interact(ps1='u_)) ', symbol='exec')\n";
+    code += "')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);

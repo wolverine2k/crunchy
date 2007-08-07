@@ -305,7 +305,7 @@ class InteractiveConsole(InteractiveInterpreter):
 
 class SingleConsole(InteractiveConsole):
     '''SingleConsole are isolated one from another'''
-    def __init__(self, locals={}, filename="Isolated console"):
+    def __init__(self, locals={}, filename="Crunchy console"):
         self.locals = locals
         self.locals['restart'] = self.restart
         InteractiveConsole.__init__(self, self.locals, filename=filename)
@@ -348,7 +348,7 @@ class Borg(object):
 
 class BorgConsole(Borg, SingleConsole):
     '''Every BorgConsole share a common state'''
-    def __init__(self, locals={}, filename="Borg console"):
+    def __init__(self, locals={}, filename="Crunchy console"):
         SingleConsole.__init__(self, locals, filename=filename)
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
