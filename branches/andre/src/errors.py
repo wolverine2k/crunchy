@@ -34,28 +34,49 @@ def simplify_traceback(code=None):
         return simplify_syntax_error(code, ex_type, value, trace, lineno)
     if ex_type is SystemExit:
         value = _("Your program tried to exit Crunchy.\n")
+
+    tblist = traceback.extract_tb(trace)
+    del tblist[:1]
+    tb_list = traceback.format_list(tblist)
+    if tb_list:
+        tb_list.insert(0, "Traceback (most recent call last):\n")
+    tb_list[len(tb_list):] = traceback.format_exception_only(ex_type, value)
+
+    saved_tb_list = []
+    for line in tb_list:
+        saved_tb_list.append(line)
+
     if configuration.defaults.friendly:
-        if code is not None:
-            code_line = code.split('\n')[lineno - 1]
-        else:
-            try:
-                dummy_filename, dummy_line_number, dummy_function_name, \
-                                code_line = traceback.extract_tb(trace)[2]
-            except:
-                return _("Error on line %s:\n%s: %s\n")%(lineno,
-                         ex_type.__name__, value)
-        return _("Error on line %s:\n%s\n%s: %s\n")%(lineno, code_line,
-                         ex_type.__name__, value)
-    else:   # from InteractiveInterpreter showtraceback in module code.py
-        tblist = traceback.extract_tb(trace)
-        del tblist[:1]
-        list = traceback.format_list(tblist)
-        if list:
-            list.insert(0, "Traceback (most recent call last):\n")
-        list[len(list):] = traceback.format_exception_only(ex_type, value)
-        retval = StringIO()
-        map(retval.write, list)
-        return retval.getvalue()
+        try:
+            if code is not None:
+                code_line = code.split('\n')[lineno - 1]
+            else:
+                try:
+                    dummy_filename, dummy_line_number, dummy_function_name, \
+                                    code_line = traceback.extract_tb(trace)[2]
+                except:
+                    code_line = None
+            del tb_list[0]
+            tb_list[0] = tb_list[0].replace('  File "Crunchy console", line',
+                                   _("Error on line"))
+            tb_list[0] = tb_list[0].replace(' File "User\'s code", line',
+                                   _("Error on line"))
+            tb_list[0] = tb_list[0].replace(', in <module>', ':')
+            if code_line is not None:
+                tb_list.insert(1, ">>> " + code_line + "\n")
+            for index, line in enumerate(tb_list):
+                if ' File "Crunchy console", line' in line:
+                    tb_list[index] = line.replace(' File "Crunchy console", line',
+                                        _("called by line"))
+                if ', in <module>' in line:
+                    tb_list[index] = line.replace(', in <module>', '')
+        except:
+            tb_list = saved_tb_list
+
+    retval = StringIO()
+    map(retval.write, tb_list)
+    return retval.getvalue()
+
 
 def simplify_syntax_error(code, ex_type, value, trace, lineno):
     """
