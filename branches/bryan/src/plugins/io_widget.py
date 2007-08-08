@@ -62,7 +62,10 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
         code_sample = CrunchyPlugin.SubElement(elem, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
-        code_sample.text = sample_code
+        if sample_code:
+            code_sample.text = sample_code
+        else:
+            code_sample.text = '\n'
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
@@ -77,24 +80,24 @@ function push_keys(event, uid){
     data = document.getElementById("in_"+uid).value;
     document.getElementById("in_"+uid).value = "";
     var i = new XMLHttpRequest()
-    i.open("POST", "/input?uid="+uid, true);
+    i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
 
     return true;
 };
-"""
+"""%CrunchyPlugin.session_random_id
 
 push_input = r"""
 function push_input(uid){
     data = document.getElementById("code_"+uid).value;
     document.getElementById("in_"+uid).value = "";
     var i = new XMLHttpRequest()
-    i.open("POST", "/input?uid="+uid, true);
+    i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
     convertFromEditor(uid);
     return true;
 };
-"""
+"""%CrunchyPlugin.session_random_id
 
 io_css = r"""
 
@@ -120,7 +123,7 @@ io_css = r"""
 }
 
 .output{
-    font: 10pt monospace;
+    font: 11pt monospace;
     font-weight: bold;
     color:darkgreen;
     white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */

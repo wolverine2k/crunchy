@@ -80,9 +80,10 @@ commands on the html page;
 (like /exec and /doctest) that enable communication between the browser and Crunchy's server.  
 This is done as a 2nd security layer in case we have overlooked some potentially 
 unsecure javascript code.
-It is not clear how useful this second layer is: all it does is make
+<b><em>If</em></b> there remains some unsecure javascript, it is not clear how useful this second layer is: all it does is make
 it more difficult to write javascript code that will send python code to the server
-as it has to scan the page to identify the string to use.</li>
+as it has to scan the page to identify the string to use.  However, it would prevent the
+inclusion of Crunchy specific links to be included "by accident" on a page.</li>
 </ul>
 </li>
 </ul>

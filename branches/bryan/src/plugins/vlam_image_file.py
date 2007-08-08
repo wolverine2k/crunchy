@@ -33,8 +33,9 @@ def insert_image_file(page, elem, uid):
     vlam = elem.attrib["title"]
     # We add html markup, extracting the Python
     # code to be executed in the process
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
-
+    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    if error is not None:
+        markup = copy.deepcopy(elem)
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -52,6 +53,8 @@ def insert_image_file(page, elem, uid):
     else:
         # The user hasn't supplied the filename in the VLAM.
         elem.insert(0, markup)
+        if error is not None:
+            elem.insert(0, error)
         message = CrunchyPlugin.SubElement(elem, "p")
         message.text = """
         The above code was supposed to be used to generate an image.
@@ -64,7 +67,12 @@ def insert_image_file(page, elem, uid):
     # no-pre and no-copy at the same time; both are optional.
     if not "no-pre" in vlam:
         elem.insert(0, markup)
-    elif "no-copy" in vlam:
+        if error is not None:
+            try:    # usually the error is a warning meant to be inserted
+                elem.insert(0, error)
+            except:
+                pass
+    elif "no-copy" in vlam or not code:
         code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
     # some spacing:

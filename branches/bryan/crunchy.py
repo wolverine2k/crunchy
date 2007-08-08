@@ -1,5 +1,5 @@
 """Crunchy: serving up interactive Python tutorials
-At present Crunchy can only be started from here, as a script.
+
 """
 
 import socket
@@ -44,6 +44,11 @@ def find_port(start=8001):
     return finalport
 
 def run_crunchy(host='127.0.0.1', port=None, url=None):
+    '''starts Crunchy
+
+    * set the port to the value specified, or looks for a free one
+    * open a web browser at given url, or a default if not specified
+    '''
     if port is None:
         port = find_port()
     server = http_serve.MyHTTPServer((host, port), http_serve.HTTPRequestHandler)

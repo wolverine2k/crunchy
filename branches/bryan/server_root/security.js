@@ -24,7 +24,7 @@ function allowSite() {
 
     if (confirm("Are you sure you wish to allow potentially dangerous content on this site?")) {
         var j = new XMLHttpRequest();
-        j.open("POST", "/update"+session_id+"?level=trusted", false);
+        j.open("POST", "/update"+session_id, false);
         j.send(hostname);
         alert('Setting '+hostname+' to trusted');
     }

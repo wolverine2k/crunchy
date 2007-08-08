@@ -9,6 +9,7 @@ Crunchy plugin; it probably contains more comments than necessary
 for people familiar with the Crunchy plugin architecture.
 """
 
+import copy
 import sys
 
 # All plugins should import the crunchy plugin API
@@ -31,22 +32,45 @@ def register():
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
     CrunchyPlugin.register_tag_handler("pre", "title", "interpreter", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "isolated", insert_interpreter)
     # just for fun, we define these; they are case-sensitive.
     CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "parrot", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "Parrots", insert_interpreter)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
     vlam = elem.attrib["title"]
-    if "isolated" in vlam or "Human" in vlam:
-        interp_kind = "isolated"
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-##    elif "ipython" in vlam:
-##        interp_kind = "ipython"
+    c = configuration.defaults.override_default_interpreter
+    if c == 'default':
+        # go with interpreter specified in tutorial
+        if "isolated" in vlam or "Human" in vlam:
+            interp_kind = "isolated"
+        elif 'parrot' in vlam:
+            interp_kind = 'parrot'
+        elif 'Parrots' in vlam:
+            interp_kind = "Parrots"
+    #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    ##    elif "ipython" in vlam:
+    ##        interp_kind = "ipython"
+        else:
+            interp_kind = "borg"
     else:
-        interp_kind = "borg"
+        if c == "isolated" or c == "Human":
+            interp_kind = "isolated"
+        elif c == 'parrot':
+            interp_kind = 'parrot'
+        elif c == 'Parrots':
+            interp_kind = "Parrots"
+    #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    ##    elif "ipython" in vlam:
+    ##        interp_kind = "ipython"
+        else:
+            interp_kind = "borg"
+
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'interpreter'
@@ -69,6 +93,16 @@ def insert_interpreter(page, elem, uid):
                 page.add_include("SingleInterpreter_included")
                 page.add_js_code(SingleInterpreter_js)
             page.add_js_code('init_SingleInterpreter("%s");' % uid)
+        elif interp_kind == "parrot":
+            if not page.includes("parrot_included"):
+                page.add_include("parrot_included")
+                page.add_js_code(parrot_js)
+            page.add_js_code('init_parrotInterpreter("%s");' % uid)
+        elif interp_kind == "Parrots":
+            if not page.includes("Parrots_included"):
+                page.add_include("Parrots_included")
+                page.add_js_code(Parrots_js)
+            page.add_js_code('init_ParrotsInterpreter("%s");' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##        else:
 ##          if not page.includes("IPythonInterpreter_included"):
@@ -80,12 +114,14 @@ def insert_interpreter(page, elem, uid):
     # this could change in a future version where we could add a button to
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
-    code, markup = CrunchyPlugin.services.style_pycode(page, elem)
+    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    if error is not None:
+        markup = copy.deepcopy(elem)
     if log_id:
         configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_doctest() method extracted all of the existing
+    # note that the style_pycode() method extracted all of the existing
     # text, removing any original markup (and other elements), so that we
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
@@ -93,6 +129,11 @@ def insert_interpreter(page, elem, uid):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.insert(0, markup)
+    if error is not None:
+        try:  # usually the error is a warning meant to be inserted
+            elem.insert(0, error)
+        except:
+            pass
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)
@@ -109,7 +150,7 @@ function init_BorgInterpreter(uid){
     code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
     code += "\nborg.push('print ";
     code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
-    code += "')\nborg.interact('')\n";
+    code += "')\nborg.interact()\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
@@ -124,7 +165,38 @@ function init_SingleInterpreter(uid){
     code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
     code += "\nisolated.push('print ";
     code += '"Crunchy: Individual Interpreter (Python version %s). %s"';
-    code += "')\nisolated.interact('')\n";
+    code += "')\nisolated.interact(ps1='-->')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+# The following are not implemented yet.
+parrot_js = r"""
+function init_parrotInterpreter(uid){
+    code = "import src.configuration as configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+    code += "\nisolated.push('print ";
+    code += '"Crunchy: [dead] parrot Interpreter (Python version %s). %s"';
+    code += "')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+Parrots_js = r"""
+function init_ParrotsInterpreter(uid){
+    code = "import src.configuration as configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: [dead] Parrots Interpreter (Python version %s). %s"';
+    code += "')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);

@@ -2,6 +2,7 @@
 Uses the /local http request path.
 """
 import os
+import sys
 
 from src.CrunchyPlugin import *
 from urllib import unquote_plus
@@ -12,11 +13,17 @@ provides = set(["/local", "/generated_image"])
 def register():
     register_http_handler("/local", local_loader)
     register_http_handler("/generated_image", image_loader)
+    register_tag_handler("span", "title", "add_to_python_path", add_to_path)
 
 def local_loader(request):
     url = unquote_plus(request.args["url"])
     if ".htm" in url:
         page = create_vlam_page(open(url), url, local=True)
+        # The following will make it possible to include python modules
+        # with tutorials so that they can be imported.
+        base_url, fname = os.path.split(url)
+        if base_url not in sys.path:
+            sys.path.insert(0, base_url)
     else:
         page = open(url, 'rb')
     request.send_response(200)
@@ -30,3 +37,15 @@ def image_loader(request):
     request.send_response(200)
     request.end_headers()
     request.wfile.write(page.read())
+
+def add_to_path(page, elem, *dummy):
+    '''adds a path, relative to the html tutorial, to the Python path'''
+    base_url, fname = os.path.split(page.url)
+    added_path = os.path.normpath(os.path.join(base_url, elem.text))
+    if added_path not in sys.path:
+        sys.path.insert(0, added_path)
+    elem.text = ' '
+
+
+
+

@@ -13,5 +13,6 @@ from src.cometIO import comet, push_input
 provides = set(["/comet", "/input"])
 
 def register():
-    CrunchyPlugin.register_http_handler("/input", push_input )
+    CrunchyPlugin.register_http_handler(
+                    "/input%s"%CrunchyPlugin.session_random_id, push_input)
     CrunchyPlugin.register_http_handler("/comet", comet)

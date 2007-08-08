@@ -3,14 +3,15 @@ serve HTTP in a beautiful threaded way, allowing requests to branch
 off into new threads and handling URL's automagically
 This was built for Crunchy - and it rocks!
 In some ways it is more restrictive than the default python HTTPserver -
-for instance, it can only handle GET and POST requests.
+for instance, it can only handle GET and POST requests and actually
+treats them the same.
 """
 
 from SocketServer import ThreadingMixIn, TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from sys import stderr
 import urllib
 from traceback import format_exc
+
 import CrunchyPlugin
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
@@ -81,13 +82,14 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(format_exc())
-        if CrunchyPlugin.server.still_serving == False:
-            #sometimes the program does not exit; so force it...
-            import sys
-            sys.exit()
+        finally:
+            if CrunchyPlugin.server.still_serving == False:
+                #sometimes the program does not exit; so force it...
+                import sys
+                sys.exit()
 
     def do_GET(self):
-        """the same as GET, we draw no distinction"""
+        """the same as POST, we draw no distinction"""
         self.do_POST()
 
     def send_response(self, code):

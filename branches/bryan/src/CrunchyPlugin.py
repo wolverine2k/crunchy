@@ -24,7 +24,8 @@ parse = HTMLTreeBuilder.parse
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
-session_random_id = str(int(random.random()*1000000000))
+session_random_id = str(int(random.random()*1000000000)) + str(
+                                           int(random.random()*1000000000))
 
 _ = translation._
 DEBUG = False

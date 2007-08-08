@@ -11,6 +11,8 @@ z-index: 10;
 body
 {margin-top: 52px; /* keep nearly (-10px) in sync with crunchy_menu_container height */}
 
+code{font-size:12pt;}
+
 #crunchy_menu_container ul
 {
 border: 0;
