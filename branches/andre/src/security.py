@@ -115,6 +115,7 @@ specific_allowed = {
     'map': ['shape', 'coords', 'href', 'nohref', 'alt'],
     'menu': [], # deprecated
     'meta': ['name', 'content'], #  'http-equiv' can be a potential problem
+    'nobr': [],
     'noframes': [],   # should not be needed
     'noscript' : [],   # should not be needed
     # object not allowed - preventing unwanted interactions
@@ -165,6 +166,8 @@ allowed_attributes = {}
 # Currently, the difference between normal and trusted is that
 # we validate styles, links and images for normal whereas we don't
 # for trusted; otherwise, they allow the same tags and attributes
+# However, we do keep initialize them separately in case we
+# ever distinguish further between them (like we used to)
 
 # - normal
 normal = {}
@@ -193,10 +196,11 @@ allowed_attributes['display trusted'] = trusted
 # - strict -
 strict = {}
 for key in specific_allowed:
-    if key != 'style' and key!= 'meta' and key != 'link' and key != 'img':
+    if key != 'style' and key != 'link' and key != 'img':
         strict[key] = ['title']  # only harmless vlam-specific attribute
 
-strict['a'] = ['href', 'id'] # only items required for navigation
+strict['a'] = ['href', 'id', 'title'] # only items required for navigation
+strict['meta'] = ['title', 'name']  # needed for appending path to sys.path
 
 allowed_attributes['strict'] = strict
 allowed_attributes['display strict'] = strict

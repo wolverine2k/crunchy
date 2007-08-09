@@ -9,6 +9,8 @@ Crunchy plugin; it probably contains more comments than necessary
 for people familiar with the Crunchy plugin architecture.
 """
 
+import copy
+
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration

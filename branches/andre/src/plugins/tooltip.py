@@ -5,6 +5,7 @@ import urllib
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
+import src.configuration as configuration
 
 borg_console = interpreter.BorgConsole()
 
@@ -41,6 +42,12 @@ def insert_tooltip(page, elem, uid):
 
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
+
+    if not configuration.defaults.dir_help:
+        request.send_response(204)
+        request.end_headers()
+        return
+
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
@@ -62,6 +69,11 @@ def dir_handler(request):
 
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
+
+    if not configuration.defaults.doc_help:
+        request.send_response(204)
+        request.end_headers()
+        return
 
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "func(text" as "func(", because the browser

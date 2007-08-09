@@ -287,10 +287,23 @@ same directory.</p>
 all that is required is to write:</br>
 <code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
 <h3>Fetching a local tutorial to edit it</h3>
-<p>If one wants to insert a "browser" object to load a local tutorial and
+<p>If one wants to insert a "file browser" object to load a local tutorial and
 edit it to insert interactive elements,
 all that is required is to write:</br>
 <code>&lt;span title="edit tutorial"&gt;</code> <em>one or more spaces</em> <code>&lt;/span&gt;</code></p>
+<p>Note that, when a tutorial is loaded this way, its path is added
+to <code title="py_code">sys.path</code> so that modules found in
+the same directory can be easily imported.</p>
+
+<h4>Adding a path to <code title="py_code">sys.path</code></h4>
+<p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
+above, its path is added to <code title="py_code">sys.path</code>.  Other relative
+paths can be added via the following syntax<br/>
+<code>
+&lt;meta title="python_import" name="<em>relative_path</em>" /&gt;
+</code>
+</p>
+
 
 <h3>Changing the default menu</h3>
 <p>Changing the default menu can be done by including<br/>

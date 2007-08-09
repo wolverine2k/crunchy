@@ -118,6 +118,93 @@ tracebacks used as indicated below.</p>
 &gt;&gt;&gt; crunchy.friendly = False
 </pre>
 
+
+<h3>Styles</h3>
+
+<pre title="editor">
+crunchy.styles = {
+'name' : 'crunchy',
+'.py_keyword': 'color: #336699; font-weight: bold;', 
+'.py_number': 'color: #000000;', 
+'.py_comment': 'color: gray;', 
+'.py_string': 'color: #660066;', 
+'.py_variable': 'color: #000000;', 
+'.py_op': 'color: #993300; font-weight:bold;', 
+'.py_builtins': 'color: #009900;', 
+'.py_stdlib': 'color: #009900;', 
+'.py_special': 'color: #006666;', 
+'.py_linenumber': 'font-size: small; color: #666666;', 
+'.py_prompt': 'color:blue;', 
+'.py_output': 'color:blue;', 
+'.py_warning': 'background-color:yellow; font-size: large; font-weight: bold;', 
+'.py_pre': 'text-align: left;font-size:12pt;',
+'.stdout': 'color: blue; font-weight: normal;',
+'.stderr': 'color: red;',
+'.input': 'width: 80%; max-width: 800px; font: 11pt monospace; font-weight: bold;'+\
+    'border: solid 1px; border-width: 2px; background-color: #eff; border-color: #369;',
+'.output': 'font: 11pt monospace; font-weight: bold; color:darkgreen;' ,
+'button': 'background-color: #369; color: white;',
+'button:hover': 'background-color: #369; border-bottom-color: #fe0; color:#fe0;'
+}
+print "style set to ", crunchy.styles['name']
+</pre>
+
+<pre title="editor">
+crunchy.styles = {
+'name' : 'black on white',
+'.py_keyword': 'color: black; font-weight: bold;', 
+'.py_number': 'color: black;', 
+'.py_comment': 'color: black;', 
+'.py_string': 'color: black;', 
+'.py_variable': 'color: black;', 
+'.py_op': 'color: black; font-weight:bold;', 
+'.py_builtins': 'color: black;', 
+'.py_stdlib': 'color: black;', 
+'.py_special': 'color: black;', 
+'.py_linenumber': 'font-size: small; color: black;', 
+'.py_prompt': 'color:black;', 
+'.py_output': 'color:black;', 
+'.py_warning': 'background-color:white; font-size: large; font-weight: bold;', 
+'.py_pre': 'text-align: left;font-size:12pt;',
+'.stdout': 'color: black; font-weight: normal;',
+'.stderr': 'color: black;',
+'.input': 'width: 80%; max-width: 800px; font: 11pt monospace; font-weight:'+\
+  'bold; border: solid 1px; border-width: 2px; background-color: white; border-color: black;',
+'.output': 'font: 11pt monospace; font-weight: bold; color:black;',
+'button': 'background-color: black; color: white;',
+'button:hover': 'background-color: white; border-bottom-color: black; color:black;'
+}
+print "style set to ", crunchy.styles['name']
+</pre>
+
+<pre title="editor">
+crunchy.styles = {
+'name' : 'white on black',
+'.py_keyword': 'color: white; font-weight: bold;', 
+'.py_number': 'color: white;', 
+'.py_comment': 'color: white;', 
+'.py_string': 'color: white;', 
+'.py_variable': 'color: white;', 
+'.py_op': 'color: white; font-weight:bold;', 
+'.py_builtins': 'color: white;', 
+'.py_stdlib': 'color: white;', 
+'.py_special': 'color: white;', 
+'.py_linenumber': 'font-size: small; color: white;', 
+'.py_prompt': 'color:white;', 
+'.py_output': 'color:white;', 
+'.py_warning': 'background-color:black; font-size: large; font-weight: bold;', 
+'.py_pre': 'text-align: left;font-size:12pt; background-color:black',
+'.stdout': 'color: white; font-weight: normal;  background-color:black;',
+'.stderr': 'color: white;  background-color:black;',
+'.input': 'width: 80%; max-width: 800px; font: 11pt monospace; font-weight: bold; border: solid 1px;'+\
+          'border-width: 2px; color: white; background-color: black; border-color: white;',
+'.output': 'font: 11pt monospace; font-weight: bold; color:white; background-color:black;' ,
+'button': 'background-color: white; color: black;',
+'button:hover': 'background-color: black; border-bottom-color: white; color:white;'
+}
+print "style set to ", crunchy.styles['name']
+</pre>
+
 </div>
 </body>
 </html>

@@ -40,6 +40,9 @@ no_markup_allowed_values = ["none", "editor",
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
 
+doc_help_allowed_values = [True, False]
+dir_help_allowed_values = [True, False]
+
 class Defaults(object):
     """
     class containing various default values:
@@ -51,24 +54,32 @@ class Defaults(object):
             else that might have been translated.
         editarea_language: language used for ui of editarea
         friendly: traceback settings
-        security: level of filtering of web pages.
+        security: level of filtering of web pages
+        doc_help: interactive help for Borg consoles
+        dir_help: interactive help for Borg consoles
+        my_style: enables preferred styling of Python code, etc.
 
     This class is instantiated [instance name: defaults] within this module.
     """
+    _prefix = "crunchy"
 
     def __init__(self):
         self.set_dirs()
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         # properties, that can be configured by user
-        self._prefix = "crunchy"
+
         self.__no_markup = "interpreter"
         self.__language = 'en'
         self.__editarea_language = 'en'
         self.__friendly = True
         self.__security = 'normal'
         self.__override_default_interpreter = 'default'
+        self.__doc_help = True  # ok for beginners
+        self.__dir_help = False # less useful for beginners
+        self.__my_style = False
 
         # end of properties
+        self.styles = {}
         translation.init_translation(self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
                                # name is defined by tutorial writer
@@ -129,6 +140,43 @@ class Defaults(object):
 
     temp_dir = property(get_temp_dir, None, None,
                        _("(Fixed) Temporary working directory: "))
+
+    #==============
+
+    def get_dir_help(self):
+        return self.__dir_help
+
+    def set_dir_help(self, choice):
+        if choice not in dir_help_allowed_values:
+            print _("Invalid choice for %s.dir_help")%self._prefix
+            print _("The valid choices are: "), dir_help_allowed_values
+            print _("The current value is: "), self.__dir_help
+            return
+        self.__dir_help = choice
+        return
+
+    dir_help = property(get_dir_help, set_dir_help, None,
+        _('The choices for dir_help are %s\n')% dir_help_allowed_values +\
+        _('  The current value is: '))
+
+    #==============
+
+    def get_doc_help(self):
+        return self.__doc_help
+
+    def set_doc_help(self, choice):
+        if choice not in doc_help_allowed_values:
+            print _("Invalid choice for %s.doc_help")%self._prefix
+            print _("The valid choices are: "), doc_help_allowed_values
+            print _("The current value is: "), self.__doc_help
+            return
+        self.__doc_help = choice
+        return
+
+    doc_help = property(get_doc_help, set_doc_help, None,
+        _('The choices for doc_help are %s\n')% doc_help_allowed_values +\
+        _('  The current value is: '))
+
     #==============
 
     def get_help(self):
@@ -143,12 +191,25 @@ their value can not be changed by the user.
 -
 Here are the values of some variables currently used by Crunchy.
 """)
-        for k, v in Defaults.__dict__.iteritems():
-            if isinstance(v, property):
-                if v.__doc__ != 'help':
-                    __help += "\n"  + "~"*50 +"\n" +\
-                                 v.__doc__ + self._prefix + "." +\
-                               k + " = '" + str(v.fget(self)) + "'"
+# we sort the keys so that they are listed in alphabetical order,
+# making them easier to find when reading the rather long text
+        keys = []
+        for key in Defaults.__dict__:
+            keys.append(key)
+        keys.sort()
+
+        for key in keys:
+            val = Defaults.__dict__[key]
+            if isinstance(val, property):
+                if val.__doc__ != 'help':
+                    value = val.fget(self)
+# we make sure that the choice is shown as a string if expected from the user
+                    if value not in [True, False]:
+                        value = "'" + str(value) + "'"
+                    else:
+                        value = str(value)
+                    __help += "\n"  + "~"*50 +"\n" + val.__doc__ +\
+                        self._prefix + "." +  key + " = " + value
         return __help + "\n"
 
     help = property(get_help, None, None, 'help')
@@ -180,7 +241,7 @@ Here are the values of some variables currently used by Crunchy.
             print _("The current value is: "), self.__no_markup
 
     no_markup = property(get_nm, set_nm, None,
-        _('  The choices for "pre" tag without Crunchy markup are %s\n  ')% no_markup_allowed_values +\
+        _('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values +\
         _('  The current value is: '))
     #==============
 
@@ -204,7 +265,8 @@ Here are the values of some variables currently used by Crunchy.
             print _("The valid choices are: "), languages_allowed_values
 
     language = property(get_language, set_language, None,
-             _('language (two-letter code) used by Crunchy: '))
+        _('The choices for language are %s\n')% languages_allowed_values +\
+        _('  The current value is: '))
     #==============
 
     def get_editarea_language(self):
@@ -219,7 +281,8 @@ Here are the values of some variables currently used by Crunchy.
             print _("The valid choices are: "), editarea_languages_allowed_values
 
     editarea_language = property(get_editarea_language, set_editarea_language, None,
-             _('editor "editarea" language (two-letter code) used by Crunchy: '))
+        _('The choices for editarea_language are %s\n')% editarea_languages_allowed_values +\
+        _('  The current value is: '))
     #==============
 
     def get_friendly_traceback(self):
@@ -236,7 +299,8 @@ Here are the values of some variables currently used by Crunchy.
             print _("friendly attribute must be set to True or False.")
 
     friendly = property(get_friendly_traceback, set_friendly_traceback, None,
-        _('"friendly" value currently used by Crunchy is: '))
+        _('The choices for friendly tracebacks are %s\n')% [True, False] +\
+        _('  The current value is: '))
 
     #==============
 
@@ -252,8 +316,8 @@ Here are the values of some variables currently used by Crunchy.
             print _("The valid choices are: "), security_allowed_values
 
     security = property(get_security, set_security, None,
-        _('"security" level currently used by Crunchy is: '))
-
+        _('The choices for security levels are %s\n')% security_allowed_values +\
+        _('  The current value is: '))
     #==============
 
     def get_override_default_interpreter(self):
@@ -269,8 +333,29 @@ Here are the values of some variables currently used by Crunchy.
 
     override_default_interpreter = property(get_override_default_interpreter,
            set_override_default_interpreter, None,
-                _('  The choices for override_default_interpreter are %s\n  ')% override_default_interpreter_allowed_values +\
-        _('The value currently used by Crunchy is: '))
+            _('The choices for override_default_interpreter are %s\n')%\
+             override_default_interpreter_allowed_values +\
+            _('  The current value is: '))
+
+    #==============
+
+    def get_my_style(self):
+        return self.__my_style
+
+    def set_my_style(self, choice):
+        if choice in [True, False]:
+            self.__my_style = choice
+            print _("my_style set to: ") , choice
+        else:
+            print _("Invalid choice for %s.my_style")%self._prefix
+            print _("The valid choices are: "), [True, False]
+
+    my_style = property(get_my_style, set_my_style, None,
+            _('The choices for my_style are %s\n')%\
+             [True, False] +\
+            _("If set to True, Crunchy's default styles are replaced"+
+              " by the user's choice specified in %s.styles\n")%_prefix +\
+            _('\n  The current value for my_style is: '))
 
     #==============
 defaults = Defaults()
