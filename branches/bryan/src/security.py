@@ -224,15 +224,23 @@ good_images = set()
 bad_images = set()
 
 # default trusted sites are specified here
-trusted_list = []
+trusted_list = {}
 site_access = {'trusted':[],'normal':[],'severe':[],'paranoid':[]}
-site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
+site_access['trusted'] = ["127.0.0.1"]
+#site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
 
 # update security setting for a specific domain
 def set_page_security(request):
-    if request.data == "":
+
+    # check if site key was already printed
+    if request.data == "" or request.data in trusted_list.values():
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.flush()
+
         return
 
+    # create random site key or users to enter (not too long)
     trusted_key = str(int(random.random()*1000)) + str(int(random.random()*1000))
 
     # print a trusted site key in the console
@@ -243,14 +251,32 @@ def set_page_security(request):
 
     trusted_list[trusted_key] = request.data
 
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.flush()
+
 # have the users enter a trusted site key to add the site to a list
 def enter_trusted_key(request):
     trusted_key = request.data
 
-    if trusted_key in trusted_list:
+    # trusted key was correct
+    if trusted_key in trusted_list.keys():
         proposed = open("proposed.txt", 'a')
-        proposed.write(trusted_list[trusted_key])
+        proposed.write(trusted_list[trusted_key] + "\n")
         proposed.close()
+
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Success")
+        request.wfile.flush()
+
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Failed")
+        request.wfile.flush()
+
+    # TODO: require users to approve the sites in proposed.txt when crunchy loads
 
 # user must still restart crunchy and approve the site the next time is loads
 #    # prevent duplicates of any domain name

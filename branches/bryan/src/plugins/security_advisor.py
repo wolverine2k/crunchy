@@ -4,14 +4,15 @@ security_advisor.py
 Inserts security information at the top of a page
 '''
 
-from src.security import set_page_security
+from src.security import set_page_security,enter_trusted_key
 import src.CrunchyPlugin as cp
 
-provides = set(["/update"])
+provides = set(["/trust_site", "/set_trusted"])
 
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
-    cp.register_http_handler("/update%s"%cp.session_random_id, set_page_security)
+    cp.register_http_handler("/trust_site%s"%cp.session_random_id, set_page_security)
+    cp.register_http_handler("/set_trusted%s"%cp.session_random_id, enter_trusted_key)
 
 def insert_security_info(page, *dummy):
     """Inserts security information at the top of a page"""
