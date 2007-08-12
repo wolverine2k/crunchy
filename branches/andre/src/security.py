@@ -50,105 +50,112 @@ DEBUG2 = False
 # would not have foreseen.
 
 # To save on typing, we list here the common attributes
-# that almost all html tags can make use of in a sensible way:
-common_allowed = ['class', 'dir', 'id', 'lang', 'title', 'style']
+# that almost all html tags can make use of in a sensible way,
+# adapted from http://feedparser.org/docs/html-sanitization.html:
+
+common_allowed = ['abbr', 'accept', 'accept-charset', 'accesskey', 'align',
+'alt', 'axis', 'bgcolor',
+'border', 'cellpadding', 'cellspacing', 'char', 'charoff', 'charset',
+'cite', 'class', 'clear', 'cols', 'colspan', 'color', 'compact',
+'coords', 'datetime', 'dir', 'disabled', 'enctype', 'for', 'headers',
+'height', 'href', 'hreflang', 'hspace', 'id', 'ismap',
+'label', 'lang', 'longdesc', 'maxlength',  'multiple', 'name',
+'nohref', 'noshade', 'nowrap', 'prompt', 'readonly', 'rel', 'rev', 'rows',
+'rowspan', 'rules', 'shape', 'size', 'span', 'start', 'style', 'summary',
+'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'vspace', 'width']
+
 # but we do have to possibly check for 'style'...
 
 # index {1} below: see also http://feedparser.org/docs/html-sanitization.html
 specific_allowed = {
-    'a': ['charset', 'type', 'name', 'href', 'hreflang', 'rel', 'accesskey'],
+    'a': [],
     'abbr': [],
     'acronym': [],
     'address': [],
     # applet deprecated
-    'area': ['name', 'shape', 'coords', 'href', 'alt', 'nohref'],
+    'area': [],
     'b': [],
     #'basefont': [], # not allowed in {1}
     #'base': [],  # not allowed in {1}
     'bdo': [],  # keep, even if not allowed in {1}
     'big': [],
-    'blockquote': ['cite'],
-    'body': ['bgcolor'],
-    'br' : ['clear'],
+    'blockquote': [],
+    'body': [],
+    'br' : [],
     # button not allowed  - should be no reason
     'canvas': [],
-    'caption': ['align'],
+    'caption': [],
     'center': [],
     'cite': [],
     'code': [],
-    'col': ['span', 'width'],
-    'colgroup': ['span', 'width'],
+    'col': [],
+    'colgroup': [],
     'dd': [],
-    'del': ['cite', 'datetime'],
+    'del': [],
     'dfn': [],
     'dir': [],  #  deprecated but allowed
-    'div': ['align'],
+    'div': [],
     'dl': [],
     'dt': [],
     'em': [],
-    'fieldset': ['align'],
-    'font': ['size', 'color', 'face'], # deprecated... but still often used!
+    'fieldset': [],
+    'font': [], # deprecated... but still often used!
     # form not allowed; if required, will be inserted by Crunchy itself
     # frame not allowed (don't want stuff possibly hidden)
     # frameset not allowed
-    'h1': ['align'],
-    'h2': ['align'],
-    'h3': ['align'],
-    'h4': ['align'],
-    'h5': ['align'],
-    'h6': ['align'],
+    'h1': [],
+    'h2': [],
+    'h3': [],
+    'h4': [],
+    'h5': [],
+    'h6': [],
     'head': [],
-    'hr': ['align', 'noshade', 'size', 'width'], # these attributes are deprecated!
+    'hr': [], # these attributes are deprecated!
     'html': ['xmlns', 'xml:lang'],
     'i': [],
     # iframe not allowed
-    'img': ['src', 'alt', 'longdesc', 'name', 'height', 'width',
-            'usemap', 'ismap', 'border', 'hspace'],
+    'img': ['src'],
     # input not allowed
-    'ins': ['cite', 'datetime'],
+    'ins': [],
     # isindex deprecated
     'kbd': [],
-    'label': ['for'],
-    'legend': ['align'],
-    'li': ['value'], # value is deprecated... but replaced by what?
-    'link': ['charset', 'href', 'hreflang', 'type', 'rel', 'rev', 'media'],
-    'map': ['shape', 'coords', 'href', 'nohref', 'alt'],
+    'label': [],
+    'legend': [],
+    'li': [], # value is deprecated... but replaced by what?
+    'link': [],
+    'map': [],
     'menu': [], # deprecated
-    'meta': ['name', 'content'], #  'http-equiv' can be a potential problem
+    'meta': ['content'], #  'http-equiv' can be a potential problem
     'nobr': [],
     'noframes': [],   # should not be needed
     'noscript' : [],   # should not be needed
     # object not allowed - preventing unwanted interactions
-    'ol': ['start'],  # start is deprecated ... but replaced by ??
+    'ol': [],  # start is deprecated ... but replaced by ??
     #'optgroup': ['name', 'size', 'multiple'],  # Keep???
     #'option': ['name', 'size', 'multiple'],    # Keep???
     'p': [],
     # param not needed: only for object
     'pre': [],
-    'q': ['cite'],
+    'q': [],
     's': [],  # deprecated but harmless
     'samp': [],
     # script not allowed!
     # 'select': ['name', 'size', 'multiple'], # Keep???
     'small': [],
-    'span': ['align'],
+    'span': [],
     'strike': [], # deprecated
     'strong': [],
-    'style': ['type', 'media'],
+    'style': ['media'],
     'sub': [],
     'sup': [],
-    'table': ['summary', 'align', 'width', 'bgcolor', 'frame', 'rules',
-                'border', 'cellspacing', 'cellpadding'],
-    'tbody': ['align', 'char', 'charoff', 'valign'],
-    'td': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
+    'table': ['frame'],
+    'tbody': [],
+    'td': [],
     # textarea not needed; only included by Crunchy
-    'tfoot': ['align', 'char', 'charoff', 'valign'],
-    'th': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
-    'thead': ['align', 'char', 'charoff', 'valign'],
-    'title': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign'],
+    'tfoot': [],
+    'th': [],
+    'thead': [],
+    'title': [],
     'tr': [],
     'tt': [],
     'u': [], # deprecated ... but still used

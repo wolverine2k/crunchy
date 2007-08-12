@@ -120,7 +120,48 @@ tracebacks used as indicated below.</p>
 
 
 <h3>Styles</h3>
+<p>One of Crunchy's main feature for tutorial writers is that it takes away
+the drudgery of styling Python code by hand (or cutting and pasting code that was
+styled by an external program); all that a tutorial writer has to do is
+to type in the code inside a &lt;pre&gt; or &lt;code&gt; html element and
+specify the Crunchy specific <code>title</code> attribute, and Crunchy
+takes care of the rest.  However, the default styling done by Crunchy may
+not be to the taste of everyone: this is why we give you some options
+to change it.</p>
+<p>Crunchy's styling goes through four steps:
+<ol>
+<li>Crunchy applies its default.</li>
+<li>A tutorial writer may over-ride Crunchy's default, either by explicit styling
+in the html file, or by linking to an external style sheet.  
+<a href="/functional_tests/css_override.html">Here's an example.</a></li>
+<li>A user may override the tutorial writer's choice; some examples will be given below.
+In order to do so, the user must set <code title="py_code">crunchy.my_style = True</code>
+and then define a style as a Python dict stored in <code title="py_code">crunchy.styles</code></li>
+<li>Finally, a tutorial writer may choose to instruct Crunchy not to add any styling
+on any given element (usually a <code>pre</code>)
+and use its own entirely.  In this case, a user would have to know the classes used
+by the tutorial writer (perhaps through examining the source code) 
+in order to instruct Crunchy to change the defaults.  We will not deal with this case here.</li>
+</ol>
+<p>Before we proceed with choices, here's a small code sample that you can use
+to gauge the effect of any changes you might make.</p>
+<pre title="py_code linenumber">
+class Sample(object):
+    '''A dummy class used to show the effect
+    of different styling choices'''
+    def __init__(self):
+        '''the obligatory function'''
+        self.name = 'Crunchy'   # a comment
+    
+    def hello(self):
+        print "Hello world!"
+        bit_of_math = 5 * 6 / 112
+        return
+</pre>
 
+<h4>Default Crunchy choice</h4>
+<p>Here are the default choices made for Crunchy.  Note that we define a name for reference only
+as it is not used for styling.</p>
 <pre title="editor">
 crunchy.styles = {
 'name' : 'crunchy',
@@ -146,9 +187,13 @@ crunchy.styles = {
 'button': 'background-color: #369; color: white;',
 'button:hover': 'background-color: #369; border-bottom-color: #fe0; color:#fe0;'
 }
-print "style set to ", crunchy.styles['name']
+crunchy.my_style = True
+print "style set to", crunchy.styles['name']
 </pre>
 
+<h4>Black on white</h4>
+<p>Possibly the most boring styling choice that could be made: all text in black
+on a white background.</p>
 <pre title="editor">
 crunchy.styles = {
 'name' : 'black on white',
@@ -174,35 +219,52 @@ crunchy.styles = {
 'button': 'background-color: black; color: white;',
 'button:hover': 'background-color: white; border-bottom-color: black; color:black;'
 }
-print "style set to ", crunchy.styles['name']
+crunchy.my_style = True
+print "style set to", crunchy.styles['name']
 </pre>
 
+<h4>Colorful on dark</h4>
+<p>Here's a most colorful theme on a dark background.</p>
 <pre title="editor">
 crunchy.styles = {
-'name' : 'white on black',
-'.py_keyword': 'color: white; font-weight: bold;', 
-'.py_number': 'color: white;', 
-'.py_comment': 'color: white;', 
-'.py_string': 'color: white;', 
+'name' : 'colorful on black',
+'body': 'color:yellow; background-color: #000033;',
+'pre': 'width:1000px; background-color: black;',
+'.py_keyword': 'color: orange; font-weight: bold;', 
+'.py_number': 'color: red;', 
+'.py_comment': 'color: silver;', 
+'.py_string': 'color: aqua;', 
 '.py_variable': 'color: white;', 
-'.py_op': 'color: white; font-weight:bold;', 
-'.py_builtins': 'color: white;', 
-'.py_stdlib': 'color: white;', 
-'.py_special': 'color: white;', 
-'.py_linenumber': 'font-size: small; color: white;', 
-'.py_prompt': 'color:white;', 
-'.py_output': 'color:white;', 
+'.py_op': 'color: blue; font-weight:bold;', 
+'.py_builtins': 'color: steelblue;', 
+'.py_stdlib': 'color: yellow;', 
+'.py_special': 'color: pink;', 
+'.py_linenumber': 'font-size: small; color: chocolate;', 
+'.py_prompt': 'color:green;', 
+'.py_output': 'color:magenta;', 
 '.py_warning': 'background-color:black; font-size: large; font-weight: bold;', 
-'.py_pre': 'text-align: left;font-size:12pt; background-color:black',
-'.stdout': 'color: white; font-weight: normal;  background-color:black;',
-'.stderr': 'color: white;  background-color:black;',
+'.py_pre': 'text-align: left;font-size:12pt; background-color:black; width:900px;',
+'.stdout': 'color: blueviolet; font-weight: normal;  background-color:black;',
+'.stderr': 'color: orangered;  background-color:black;',
 '.input': 'width: 80%; max-width: 800px; font: 11pt monospace; font-weight: bold; border: solid 1px;'+\
-          'border-width: 2px; color: white; background-color: black; border-color: white;',
-'.output': 'font: 11pt monospace; font-weight: bold; color:white; background-color:black;' ,
-'button': 'background-color: white; color: black;',
-'button:hover': 'background-color: black; border-bottom-color: white; color:white;'
+          'border-width: 2px; color: darkseagreen; background-color: black; border-color: yellow;',
+'.output': 'font: 11pt monospace; font-weight: bold; color:springgreen; background-color:black;' ,
+'button': 'background-color: yellow; color: black;',
+'button:hover': 'background-color: black; border-bottom-color: yellow; color:white;',
+# What follows is specific to Crunchy tutorials
+'.wide-notes': ' border: 1px solid yellow; background-color:black; color:yellow;',
+'.wide-notes h4': ' border-bottom: 3px solid yellow; background-color:yellow; color:black;',
+'.notes': ' border: 1px solid yellow; background-color:black; color:yellow;',
+'.notes h4': ' border-bottom: 3px solid yellow; background-color:yellow; color:black;',
+'.wide-warning': ' border: 1px solid red; background-color:black; color:yellow;',
+'.wide-warning h4': ' border-bottom: 3px solid red; background-color:red; color:black;',
+'#navbar span.heading' : 'color: tan; background-color: black',
+'#navbar a' : 'color: yellow; background-color: black',
+'#navbar a:hover': 'background-color: yellow; color: black',
+'table.summary': ' background-color:#F5F5DC; color: black;'
 }
-print "style set to ", crunchy.styles['name']
+crunchy.my_style = True
+print "style set to", crunchy.styles['name']
 </pre>
 
 </div>
