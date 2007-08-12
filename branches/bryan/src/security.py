@@ -224,61 +224,25 @@ good_images = set()
 bad_images = set()
 
 # default trusted sites are specified here
-trusted_list = {}
+propose_trusted = {}
 site_access = {'trusted':[],'normal':[],'severe':[],'paranoid':[]}
-site_access['trusted'] = ["127.0.0.1"]
-#site_access['trusted'] = ["127.0.0.1", "docs.python.org", "python.org"]
 
-# update security setting for a specific domain
-def set_page_security(request):
+# load trusted sites
+try:
+    sites = open('trusted.txt')
+    trusted_sites = sites.readlines()
+    for line in trusted_sites:
+        line = line.strip()
+        site_access['trusted'].append(line)
+        if DEBUG:
+            print "Added trusted site '"+line+"'"
+    sites.close()
+except:
+    # create blank trusted file
+    sites = open('trusted.txt', 'w')
+    sites.close()
 
-    # check if site key was already printed
-    if request.data == "" or request.data in trusted_list.values():
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.flush()
-
-        return
-
-    # create random site key or users to enter (not too long)
-    trusted_key = str(int(random.random()*1000)) + str(int(random.random()*1000))
-
-    # print a trusted site key in the console
-    print "----------------------------------------------------"
-    print "Host: " + request.data
-    print "Trusted site key: " + trusted_key
-    print "----------------------------------------------------"
-
-    trusted_list[trusted_key] = request.data
-
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.flush()
-
-# have the users enter a trusted site key to add the site to a list
-def enter_trusted_key(request):
-    trusted_key = request.data
-
-    # trusted key was correct
-    if trusted_key in trusted_list.keys():
-        proposed = open("proposed.txt", 'a')
-        proposed.write(trusted_list[trusted_key] + "\n")
-        proposed.close()
-
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Success")
-        request.wfile.flush()
-
-    else:
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Failed")
-        request.wfile.flush()
-
-    # TODO: require users to approve the sites in proposed.txt when crunchy loads
-
-# user must still restart crunchy and approve the site the next time is loads
+# WHEN USER APPROVES SITES
 #    # prevent duplicates of any domain name
 #    for access in site_access.keys():
 #        while site_access[access].count(request.data) > 0:
@@ -286,16 +250,19 @@ def enter_trusted_key(request):
 
 #    site_access['trusted'].append(request.data)
 
-#    # save 
-#    sites = open("sites.txt", 'w')
-#    sites.write(repr(site_access))
+#    # clear proposed list
+#    sites = open("proposed.txt", 'w')
 #    sites.close()
 
+#    # save trusted sites
+#    sites = open("trusted.txt", 'w')
+#    sites.write(site_access['trusted'])
+#    sites.close()
+
+# get security level for a page -- currently, only 'normal' or 'trusted'
 def get_page_security(url):
     # local pages do not have a domain
-    # setting all local pages to trusted may invalidate the security test
-    #if url[0] == "/":
-    #    return 'trusted'
+    # setting all local pages to trusted would invalidate the security test
 
     if not url[0:7] in ['http://','file://']:
         return configuration.defaults.security
@@ -311,6 +278,53 @@ def get_page_security(url):
             return access
 
     return configuration.defaults.security
+
+# update security setting for a specific domain
+def set_page_security(request):
+
+    # check if site key was already printed
+    if request.data == "" or request.data in propose_trusted.values():
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.flush()
+
+        return
+
+    # create random site key or users to enter (not too long)
+    trusted_key = str(int(random.random()*1000)) + str(int(random.random()*1000))
+
+    # print a trusted site key in the console
+    print "----------------------------------------------------"
+    print "Host: " + request.data
+    print "Trusted site key: " + trusted_key
+    print "----------------------------------------------------"
+
+    propose_trusted[trusted_key] = request.data
+
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.flush()
+
+# have the users enter a trusted site key to add the site to a list
+def enter_trusted_key(request):
+    trusted_key = request.data
+
+    # trusted key was correct
+    if trusted_key in propose_trusted.keys():
+        proposed = open("proposed.txt", 'a')
+        proposed.write(propose_trusted[trusted_key] + "\n")
+        proposed.close()
+
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Success")
+        request.wfile.flush()
+
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Failed")
+        request.wfile.flush()
 
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by

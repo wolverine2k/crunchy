@@ -24,7 +24,6 @@ function verify_site(attempts_left) {
 	            alert("Invalid trusted key. Please try again.");
                 verify_site(attempts_left-1);
             }
-            // testing:
             else {
 	            alert("Invalid trusted key. Sorry.");
             }
@@ -58,4 +57,41 @@ function allowSite() {
         }
         j.send(hostname);
     }
+}
+
+// site approval functions (move to python)
+function app_select_all() {
+    for (site_num = 1; site_check = document.getElementById("site_"+site_num); site_num++) {
+	    site_check.checked = true;
+    }
+}
+
+function app_select_none() {
+    for (site_num = 1; site_check = document.getElementById("site_"+site_num); site_num++) {
+	    site_check.checked = false;
+    }
+}
+
+function app_approve() {
+    approved_sites = "";
+    for (site_num = 1; site_check = document.getElementById("site_"+site_num); site_num++) {
+        if (site_check.checked) {
+        approved_sites += site_check.value + ",";
+        }
+    }
+    // send approval
+    if (approved_sites != "") {
+        // send ajax
+        alert("should approve the following:\n" + approved_sites);
+        hide_security_info();
+    }
+    else {
+        app_deny_all();
+    }
+}
+
+function app_deny_all() {
+    //send ajax deny
+    alert("deny all");
+    hide_security_info();
 }

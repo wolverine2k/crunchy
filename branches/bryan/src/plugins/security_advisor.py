@@ -64,12 +64,62 @@ def insert_security_info(page, *dummy):
     if not page.includes("security_included"):
         page.add_include("security_included")
         page.insert_js_file("/security.js")
-        page.add_css_code(security_css)
 
         info_container = cp.Element("div")
         info_container.attrib["id"] = "security_info"
         format_report(page, info_container)
         #info_container.text = "Here's the information\n more information "
+
+        # read list of proposed trusted sites
+        try:
+            proposed = open('proposed.txt')
+            approve_list = proposed.readlines()
+            proposed.close()
+        except:
+            approve_list = []
+
+        # prompt user to approve sites on index.html only
+        if page.url == "/index.html" and len(approve_list) > 0:
+            page.add_css_code(security_css%('block','block'))
+            directions = cp.SubElement(info_container, "p")
+            directions.text = "Do you wish to allow the following websites to be trusted?\n\n"
+            directions.text += "If you did not approve these sites, click Deny All"
+
+            site_num = 1
+            for site in approve_list:
+                site = site.strip()
+                site_label = cp.SubElement(info_container, "label")
+                site_label.attrib["for"] = "site_"+str(site_num)
+
+                site_cb = cp.SubElement(site_label, "input")
+                site_cb.attrib["id"] = "site_"+str(site_num)
+                site_cb.attrib["value"] = site
+                site_cb.text = " " + site + "\n"
+                site_cb.attrib["type"] = "checkbox"
+                site_num += 1
+
+            select_text = cp.SubElement(info_container, "p")
+            select_text.text = "Select: "
+            select_btn = cp.SubElement(select_text, "a")
+            select_btn.attrib["href"] = 'javascript:app_select_all()'
+            select_btn.text = "All"
+            cp.SubElement(select_text, "span").text = ", "
+
+            select_btn = cp.SubElement(select_text, "a")
+            select_btn.attrib["href"] = 'javascript:app_select_none()'
+            select_btn.text = "None"
+
+            approve_btn = cp.SubElement(info_container, "button")
+            approve_btn.attrib["onclick"] = 'app_approve()'
+            approve_btn.text = "Approve"
+            cp.SubElement(info_container, "span").text = " "
+            deny_btn = cp.SubElement(info_container, "button")
+            deny_btn.attrib["onclick"] = 'app_deny_all()'
+            deny_btn.text = "Deny All"
+
+        else:
+            page.add_css_code(security_css%('none','none'))
+
         page.body.append(info_container)
 
         info_container_x = cp.Element("div")
@@ -148,10 +198,11 @@ def format_report(page, div):
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
 
-    br = cp.SubElement(div, "br")
-    change_link = cp.SubElement(br, "a")
-    change_link.attrib["href"] = 'javascript:allowSite()'
-    change_link.text = "Allow site"
+    if page.security_info['number removed'] != 0:
+        br = cp.SubElement(div, "br")
+        change_link = cp.SubElement(br, "a")
+        change_link.attrib["href"] = 'javascript:allowSite()'
+        change_link.text = "Allow site"
 
     return
 
@@ -160,8 +211,8 @@ security_css = """
     position: fixed;
     top: 60px;
     right: 400px;
-    width: 50%;
-    height: 75%;
+    width: 50%%;
+    height: 75%%;
     overflow:auto;
     border: 4px outset #369;
     color: black;
@@ -176,7 +227,7 @@ security_css = """
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
                             http://www.w3.org/TR/css3-text/#white-space */
     word-wrap: break-word; /* IE 5.5+ */
-    display: none;  /* will appear only when needed */
+    display: %s;  /* will appear only when needed */
     z-index:11;
 }
 #security_info_x {
@@ -188,7 +239,7 @@ security_css = """
     font: 14pt sans-serif;
     cursor: pointer;
     padding: 4px 4px 0 4px;
-    display: none;  /* will appear only when needed */
+    display: %s;  /* will appear only when needed */
     z-index:12;
 }
 """
