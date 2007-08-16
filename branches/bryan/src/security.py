@@ -20,14 +20,13 @@ import imghdr
 import urllib
 import urlparse
 import sys
-import random
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree
 
 import configuration
 
-DEBUG = True
+DEBUG = False
 DEBUG2 = False
 
 # Better safe than sorry: we do not allow the following html tags for the
@@ -37,6 +36,7 @@ DEBUG2 = False
 # *frame*: we don't want hidden frames that could be playing tricks with the
 #          user (very remote possibility, but still.)
 # embed: as the name indicates, can be used to embed some unwanted objects.
+# object, applet: same reason
 #
 #
 #  It may be worthwhile to check http://ha.ckers.org/xss.html from time to
@@ -44,115 +44,155 @@ DEBUG2 = False
 #
 
 # Rather than trying to find which attributes might be problematic (black list),
-# we create a database of allowed (safe) attributes which we know will not cause
-# any trouble.  This list can always be expanded if required.
+# we create a database of allowed (safe) attributes which we are reasonably
+# sure that they will not caus# any trouble.
+# This list can always be expanded if required.
 # Note that a black list would have included onblur, onload, oninit, etc.,
 # with possibly some new attributes introduced by a given browser which we
 # would not have foreseen.
 
-# To save on typing, we list here the common attributes
-# that almost all html tags can make use of in a sensible way:
-common_allowed = ['class', 'dir', 'id', 'lang', 'title', 'style']
-# but we do have to possibly check for 'style'...
+#==========================
+# The following information is taken from
+# http://www.w3schools.com/html/html_standardattributes.asp
 
-# index {1} below: see also http://feedparser.org/docs/html-sanitization.html
+# the following core attributes are valid in all elements/tags except
+# base, head, html, meta, param, script, style, and title:
+# 'class', 'id', 'style', 'title'
+# However, we will allow 'title' in the meta element
+
+# The following language attributes are valid in all elements/tags except
+# base, br, frame, frameset, hr, iframe, param, and script:
+# 'dir', 'lang'
+# we only need to include br and hr in the excluded list since the other
+# tags are removed by Crunchy.
+
+# NOTE: all of these will be included after we define a basic dict
+# containing the (other) allowed attributes
+#=============================
+
+# for the other elements, we use the following
+# reference: http://www.w3.org/TR/html4/index/attributes.html
+
+# also {1} below: see also http://feedparser.org/docs/html-sanitization.html
+
 specific_allowed = {
-    'a': ['charset', 'type', 'name', 'href', 'hreflang', 'rel', 'accesskey'],
-    'abbr': [],
-    'acronym': [],
-    'address': [],
-    # applet deprecated
-    'area': ['name', 'shape', 'coords', 'href', 'alt', 'nohref'],
-    'b': [],
+# the following tags are excluded mostly for security reasons
+    # 'applet'
     #'basefont': [], # not allowed in {1}
     #'base': [],  # not allowed in {1}
-    'bdo': [],  # keep, even if not allowed in {1}
-    'big': [],
-    'blockquote': ['cite'],
-    'body': ['bgcolor'],
-    'br' : ['clear'],
     # button not allowed  - should be no reason
-    'canvas': [],
-    'caption': ['align'],
-    'center': [],
-    'cite': [],
-    'code': [],
-    'col': ['span', 'width'],
-    'colgroup': ['span', 'width'],
-    'dd': [],
-    'del': ['cite', 'datetime'],
-    'dfn': [],
-    'dir': [],  #  deprecated but allowed
-    'div': ['align'],
-    'dl': [],
-    'dt': [],
-    'em': [],
-    'fieldset': ['align'],
-    'font': ['size', 'color', 'face'], # deprecated... but still often used!
+    # 'canvas': [] ; needs javascript to work; will be include by Crunchy
     # form not allowed; if required, will be inserted by Crunchy itself
     # frame not allowed (don't want stuff possibly hidden)
     # frameset not allowed
+    # iframe not allowed
+    # input not allowed
+    # object not allowed - preventing unwanted interactions
+    # param not needed: only for object
+    # script not allowed!
+    # textarea not needed; only included by Crunchy
+# the following are meant to give choice to user; not required for Crunchy?
+    #'optgroup': ['name', 'size', 'multiple'],  # Keep???
+    #'option': ['name', 'size', 'multiple'],    # Keep???
+    # 'select': ['name', 'size', 'multiple'], # Keep???
+
+# Basic document structure & information
+    'a': ['accesskey', 'charset', 'coords', 'href', 'hreflang', 'name',
+        'rel', 'rev', 'shape', 'tabindex'],
+    'address': [],
+    'body': ['alink', 'bgcolor', 'link', 'text', 'vlink'],
+    # 'background' for body not allowed - link to other file
+    'head': [],
+    'html': ['xmlns', 'xml:lang'],
+    'link': ['charset', 'href', 'hreflang', 'media', 'rel', 'rev', 'type'],
+    'meta': ['content', 'name'], #  'http-equiv' can be a potential problem
+    'title': [],
+
+# text structure
+    'br' : ['clear'],
+    'div': ['align'],
     'h1': ['align'],
     'h2': ['align'],
     'h3': ['align'],
     'h4': ['align'],
     'h5': ['align'],
     'h6': ['align'],
-    'head': [],
     'hr': ['align', 'noshade', 'size', 'width'], # these attributes are deprecated!
-    'html': ['xmlns', 'xml:lang'],
-    'i': [],
-    # iframe not allowed
-    'img': ['src', 'alt', 'longdesc', 'name', 'height', 'width',
-            'usemap', 'ismap', 'border', 'hspace'],
-    # input not allowed
-    'ins': ['cite', 'datetime'],
-    # isindex deprecated
-    'kbd': [],
-    'label': ['for'],
-    'legend': ['align'],
-    'li': ['value'], # value is deprecated... but replaced by what?
-    'link': ['charset', 'href', 'hreflang', 'type', 'rel', 'rev', 'media'],
-    'map': ['shape', 'coords', 'href', 'nohref', 'alt'],
-    'menu': [], # deprecated
-    'meta': ['name', 'content'], #  'http-equiv' can be a potential problem
-    'noframes': [],   # should not be needed
-    'noscript' : [],   # should not be needed
-    # object not allowed - preventing unwanted interactions
-    'ol': ['start'],  # start is deprecated ... but replaced by ??
-    #'optgroup': ['name', 'size', 'multiple'],  # Keep???
-    #'option': ['name', 'size', 'multiple'],    # Keep???
-    'p': [],
-    # param not needed: only for object
-    'pre': [],
-    'q': ['cite'],
-    's': [],  # deprecated but harmless
+    'p': ['align'],
+
+# lists, quotes, etc.
+    'acronym': [],
+    'abbr': [],
+    'bdo': [],  # keep, even if not allowed in {1}
+    'code': [],
+    'dd': [],
+    'dfn': [],
+    'dir': ['compact'],  #  dir deprecated but allowed
+    'dl': ['compact'],
+    'dt': [],
+    'blockquote': [],
+    'cite': [],
+    'li': ['type', 'value'], # value is deprecated... but replaced by what?
+    'menu': ['compact'], # deprecated
+    'ol': ['compact', 'start', 'type'],
+    # start for ol is deprecated ... but replaced by ??
+    'pre': ['width'],
+    'q': [],
     'samp': [],
-    # script not allowed!
-    # 'select': ['name', 'size', 'multiple'], # Keep???
+    'ul': ['compact', 'type'],
+
+# text styles, etc.
+    'b': [],
+    'big': [],
+    'center': [],
+    'del': [],
+    'em': [],
+    'font': ['color', 'face', 'size'], # deprecated... but still often used!
+    'i': [],
+    'ins': [],
+    'kbd': [],
+    's': [],  # deprecated but harmless
     'small': [],
-    'span': ['align'],
+    'span': [],
     'strike': [], # deprecated
     'strong': [],
-    'style': ['type', 'media'],
+    'style': ['media', 'type'],
     'sub': [],
     'sup': [],
-    'table': ['summary', 'align', 'width', 'bgcolor', 'frame', 'rules',
-                'border', 'cellspacing', 'cellpadding'],
-    'tbody': ['align', 'char', 'charoff', 'valign'],
-    'td': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
-    # textarea not needed; only included by Crunchy
-    'tfoot': ['align', 'char', 'charoff', 'valign'],
-    'th': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign', 'width', 'nowrap'],
-    'thead': ['align', 'char', 'charoff', 'valign'],
-    'title': ['abbr', 'axis', 'headers', 'scope', 'rowspan', 'colspan', 'bgcolor',
-            'align', 'char', 'charoff', 'valign'],
-    'tr': [],
     'tt': [],
-    'u': [], # deprecated ... but still used
-    'ul': [],
+    'u': [], # underlined deprecated ... but still used
+
+# tables, etc.
+    'caption': ['align'],
+    'col': ['align', 'char', 'charoff', 'span', 'valign', 'width'],
+    'colgroup': ['align', 'char', 'charoff', 'span', 'valign', 'width'],
+    'table': ['align', 'border', 'cellpadding', 'cellspacing', 'frame',
+        'rules', 'summary', 'width'],
+    'tbody': ['align', 'char', 'charoff', 'valign'],
+    'td': ['abbr', 'align', 'axis', 'bgcolor', 'char', 'charoff', 'colspan',
+        'headers', 'height', 'nowrap', 'rowspan', 'scope', 'valign', 'width'],
+    'tfoot': ['align', 'char', 'charoff', 'valign'],
+    'th': ['abbr', 'align', 'axis', 'bgcolor', 'char', 'charoff', 'colspan',
+        'headers', 'height', 'nowrap', 'rowspan', 'scope', 'valign', 'width'],
+    'thead': ['align', 'char', 'charoff', 'valign'],
+    'tr': ['align', 'bgcolor', 'char', 'charoff', 'valign'],
+
+# images, etc.
+    # need to make sure 'area' is safe...
+    #'area': ['accesskey', 'alt', 'coords', 'href', 'nohref', 'shape',
+    # 'tabindex'],
+    'img': ['align', 'alt', 'border', 'height', 'hspace', 'longdesc',
+        'name', 'src', 'vspace', 'width'],
+    'map': [],
+
+# misc. - should not be needed...
+    'fieldset': [],
+    # isindex deprecated
+    'label': ['accesskey', 'for'],
+    'legend': ['accesskey'],
+    'nobr': [],  # not part of any standard but used by Python.org tutorial
+    'noframes': [],   # should not be needed
+    'noscript' : [],   # should not be needed
     'var': []
     }
 
@@ -166,6 +206,8 @@ allowed_attributes = {}
 # Currently, the difference between normal and trusted is that
 # we validate styles, links and images for normal whereas we don't
 # for trusted; otherwise, they allow the same tags and attributes
+# However, we do keep initialize them separately in case we
+# ever distinguish further between them (like we used to)
 
 # - normal
 normal = {}
@@ -173,8 +215,15 @@ for key in specific_allowed:
     normal[key] = []
     for item in specific_allowed[key]:
         normal[key].append(item)
-    for item in common_allowed:
-        normal[key].append(item)
+    if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
+            'style', 'title']:
+        for item in ['class', 'id', 'style', 'title', 'xml:id']:
+            # harmless xml:id added for Python tutorial
+            normal[key].append(item)
+    if key not in ['br', 'hr']:
+        for item in ['dir', 'lang']:
+            normal[key].append(item)
+normal['meta'].append('title')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal
@@ -185,8 +234,15 @@ for key in specific_allowed:
     trusted[key] = []
     for item in specific_allowed[key]:
         trusted[key].append(item)
-    for item in common_allowed:
-        trusted[key].append(item)
+    if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
+            'style', 'title']:
+        for item in ['class', 'id', 'style', 'title', 'xml:id']:
+            # harmless xml:id added for Python tutorial
+            trusted[key].append(item)
+    if key not in ['br', 'hr']:
+        for item in ['dir', 'lang']:
+            trusted[key].append(item)
+trusted['meta'].append('title')
 
 allowed_attributes['trusted'] = trusted
 allowed_attributes['display trusted'] = trusted
@@ -194,10 +250,11 @@ allowed_attributes['display trusted'] = trusted
 # - strict -
 strict = {}
 for key in specific_allowed:
-    if key != 'style' and key!= 'meta' and key != 'link' and key != 'img':
+    if key != 'style' and key != 'link' and key != 'img':
         strict[key] = ['title']  # only harmless vlam-specific attribute
 
-strict['a'] = ['href', 'id'] # only items required for navigation
+strict['a'] = ['href', 'id', 'title'] # only items required for navigation
+strict['meta'] = ['title', 'name']  # needed for appending path to sys.path
 
 allowed_attributes['strict'] = strict
 allowed_attributes['display strict'] = strict
@@ -242,25 +299,8 @@ except:
     sites = open('trusted.txt', 'w')
     sites.close()
 
-# WHEN USER APPROVES SITES
-#    # prevent duplicates of any domain name
-#    for access in site_access.keys():
-#        while site_access[access].count(request.data) > 0:
-#            site_access[access].remove(request.data)
-
-#    site_access['trusted'].append(request.data)
-
-#    # clear proposed list
-#    sites = open("proposed.txt", 'w')
-#    sites.close()
-
-#    # save trusted sites
-#    sites = open("trusted.txt", 'w')
-#    sites.write(site_access['trusted'])
-#    sites.close()
-
 # get security level for a page -- currently, only 'normal' or 'trusted'
-def get_page_security(url):
+def get_site_security(url):
     # local pages do not have a domain
     # setting all local pages to trusted would invalidate the security test
 
@@ -280,58 +320,21 @@ def get_page_security(url):
     return configuration.defaults.security
 
 # update security setting for a specific domain
-def set_page_security(request):
+def set_site_security(hostname, access):
 
-    # check if site key was already printed
-    if request.data == "" or request.data in propose_trusted.values():
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.flush()
+    # remove duplicates of any domain name
+    for access_level in site_access.keys():
+        while site_access[access_level].count(hostname) > 0:
+            site_access[access_level].remove(hostname)
 
-        return
-
-    # create random site key or users to enter (not too long)
-    trusted_key = str(int(random.random()*1000)) + str(int(random.random()*1000))
-
-    # print a trusted site key in the console
-    print "----------------------------------------------------"
-    print "Host: " + request.data
-    print "Trusted site key: " + trusted_key
-    print "----------------------------------------------------"
-
-    propose_trusted[trusted_key] = request.data
-
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.flush()
-
-# have the users enter a trusted site key to add the site to a list
-def enter_trusted_key(request):
-    trusted_key = request.data
-
-    # trusted key was correct
-    if trusted_key in propose_trusted.keys():
-        proposed = open("proposed.txt", 'a')
-        proposed.write(propose_trusted[trusted_key] + "\n")
-        proposed.close()
-
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Success")
-        request.wfile.flush()
-
-    else:
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Failed")
-        request.wfile.flush()
+    site_access[access].append(hostname)
 
 def remove_unwanted(tree, page):
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
     global __dangerous_text
 
-    access = get_page_security(page.url)
+    access = get_site_security(page.url)
     if DEBUG:
         print "Removing tags based on " + access + " access for " + page.url
 
@@ -365,13 +368,12 @@ def remove_unwanted(tree, page):
         print "These unwanted tags have been removed:"
         print unwanted
 
-
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
     count = 0
     for tag in _allowed:
         for element in tree.getiterator(tag):
-# Filtering for possible dangerous content in "styles..."
+            # Filtering for possible dangerous content in "styles..."
             if tag == "link":
                 if not 'trusted' in configuration.defaults.security: # default is True
                     if not is_link_safe(element, page):
@@ -400,7 +402,7 @@ def remove_unwanted(tree, page):
                                                 [tag, attr[0], attr[1]])
                         del element.attrib[attr[0]]
                         page.security_info['number removed'] += 1
-# Filtering for possible dangerous content in "styles..."
+                # Filtering for possible dangerous content in "styles..."
                 elif attr[0].lower() == 'style':
                     if not 'trusted' in configuration.defaults.security: # default is True
                         value = attr[1].lower().replace(' ', '').replace('\t', '')
@@ -412,7 +414,7 @@ def remove_unwanted(tree, page):
                                                 [tag, attr[0], attr[1]])
                                 del element.attrib[attr[0]]
                                 page.security_info['number removed'] += 1
-# Filtering for possible dangerous content in "styles..."
+            # Filtering for possible dangerous content in "styles..."
             if tag == 'style':
                 if not 'trusted' in configuration.defaults.security: # default is True
                     text = element.text.lower().replace(' ', '').replace('\t', '')
@@ -425,7 +427,7 @@ def remove_unwanted(tree, page):
                             element.clear()
                             element.tag = None
                             page.security_info['number removed'] += 1
-# making sure that this is an image
+            # making sure that this is an image
             if tag == "img" and \
                       not 'trusted' in configuration.defaults.security:
                 _rem = False
@@ -691,8 +693,3 @@ def scan_for_unwanted(css_file):
                 __dangerous_text = squished
                 return True
     return False
-
-
-
-
-

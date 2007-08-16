@@ -4,15 +4,17 @@ security_advisor.py
 Inserts security information at the top of a page
 '''
 
-from src.security import set_page_security,enter_trusted_key
+from src.security import get_site_security,set_site_security,propose_trusted,site_access
 import src.CrunchyPlugin as cp
+import random
 
-provides = set(["/trust_site", "/set_trusted"])
+provides = set(["/allow_site", "/enter_key", "/set_trusted"])
 
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
-    cp.register_http_handler("/trust_site%s"%cp.session_random_id, set_page_security)
-    cp.register_http_handler("/set_trusted%s"%cp.session_random_id, enter_trusted_key)
+    cp.register_http_handler("/allow_site%s"%cp.session_random_id, allow_site)
+    cp.register_http_handler("/enter_key%s"%cp.session_random_id, enter_trusted_key)
+    cp.register_http_handler("/set_trusted%s"%cp.session_random_id, set_list_trusted)
 
 def insert_security_info(page, *dummy):
     """Inserts security information at the top of a page"""
@@ -198,13 +200,91 @@ def format_report(page, div):
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
 
-    if page.security_info['number removed'] != 0:
+    if page.security_info['number removed'] != 0 and get_site_security(page.url) != 'trusted':
+        page.add_js_code(allow_site_js)
+
         br = cp.SubElement(div, "br")
         change_link = cp.SubElement(br, "a")
-        change_link.attrib["href"] = 'javascript:allowSite()'
+        change_link.attrib["href"] = 'javascript:allow_site()'
         change_link.text = "Allow site"
 
     return
+
+"""Set site to trusted
+This is called when the user allows a site from the security report
+"""
+def allow_site(request):
+
+    # checks if site key was already printed
+    # TODO: warn user if site access level is already set
+    if request.data == "" or request.data in propose_trusted.values():
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("asdf")
+        request.wfile.flush()
+
+        return
+
+    # create random site key or users to enter (not too long)
+    trusted_key = str(int(random.random()*1000)) + str(int(random.random()*1000))
+
+    # print a trusted site key in the console
+    print "----------------------------------------------------"
+    print "Host: " + request.data
+    print "Trusted site key: " + trusted_key
+    print "----------------------------------------------------"
+
+    propose_trusted[trusted_key] = request.data
+
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.flush()
+
+# have the users enter a trusted site key to add the site to a list
+def enter_trusted_key(request):
+    trusted_key = request.data
+
+    # trusted key was correct
+    if trusted_key in propose_trusted.keys():
+        proposed = open("proposed.txt", 'a')
+        proposed.write(propose_trusted[trusted_key] + "\n")
+        proposed.close()
+
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Success")
+        request.wfile.flush()
+
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Failed")
+        request.wfile.flush()
+
+def set_list_trusted(request):
+
+    site_list = request.data.strip(',').split(',')
+
+    for site in site_list:
+        set_site_security(site, 'trusted')
+        if cp.DEBUG:
+            print 'Site has been set to trusted: ' + site
+
+    # clear proposed list
+    sites = open("proposed.txt", 'w')
+    sites.close()
+
+    # save trusted sites
+    sites = open("trusted.txt", 'w')
+    sites.write('\n'.join(site_access['trusted']))
+    sites.close()
+    if cp.DEBUG:
+        print 'Saving trusted sites: ' + '|'.join(site_access['trusted'])
+
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.write("")
+    request.wfile.flush()
 
 security_css = """
 #security_info {
@@ -242,4 +322,8 @@ security_css = """
     display: %s;  /* will appear only when needed */
     z-index:12;
 }
+"""
+
+allow_site_js = """
+// allow site code will go here
 """

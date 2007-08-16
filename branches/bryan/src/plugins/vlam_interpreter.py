@@ -17,8 +17,8 @@ import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
 from src.utilities import extract_log_id
 
-def _(mesg):  # dummy for now
-    return mesg
+import src.translation
+_ = src.translation._
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])

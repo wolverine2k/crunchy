@@ -5,7 +5,10 @@ import urllib
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
+import src.configuration as configuration
+import src.translation
 
+_ = src.translation._
 borg_console = interpreter.BorgConsole()
 
 provides = set(["/dir","/doc"])
@@ -40,6 +43,12 @@ def insert_tooltip(page, elem, uid):
 
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
+
+    if not configuration.defaults.dir_help:
+        request.send_response(204)
+        request.end_headers()
+        return
+
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
@@ -62,22 +71,29 @@ def dir_handler(request):
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
 
+    if not configuration.defaults.doc_help:
+        request.send_response(204)
+        request.end_headers()
+        return
+
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "func(text" as "func(", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
     line = "(".join(line.split("(")[:-1])
     if line in borg_console.__dict__['locals']:
-        result = "%s()\n %s"%(line, borg_console.__dict__['locals'][line].__doc__)
+        result = "%s()\n %s"%(line,
+                 borg_console.__dict__['locals'][line].__doc__)
     elif '__builtins__' in borg_console.__dict__['locals']:
         if line in borg_console.__dict__['locals']['__builtins__']:
-            result = "%s()\n %s"%(line, borg_console.__dict__['locals']['__builtins__'][line].__doc__)
+            result = "%s()\n %s"%(line,
+                 borg_console.__dict__['locals']['__builtins__'][line].__doc__)
         else:
             request.send_response(204)
             request.end_headers()
             return
     else:
-        result = "builtins not defined in console yet."
+        result = _("builtins not defined in console yet.")
 
     request.send_response(200)
     request.end_headers()

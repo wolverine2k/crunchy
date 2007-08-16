@@ -28,7 +28,7 @@ session_random_id = str(int(random.random()*1000000000)) + str(
                                            int(random.random()*1000000000))
 
 _ = translation._
-DEBUG = False
+DEBUG = True
 
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on

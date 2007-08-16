@@ -364,3 +364,63 @@ class BorgConsole(Borg, SingleConsole):
 ##                                        user_ns = locals)
 ##except:
 ##    pass  # for now
+
+
+
+
+##Examples:
+##
+############################################### set it up
+##
+##>>> import sys
+##>>> sys.displayhook = show_expression_value
+##
+############################################### show how it works
+##
+##>>> 23 + 45 - 31
+##<<< 37              (INTEGER expression value)
+##
+##>>> 2/3.0
+##<<< 0.67            (FLOAT expression value)
+##
+##>>> 'hi' + 'there'
+##<<< 'hithere'       (STRING expression value)
+
+
+##  string <-- 'hithere'
+
+
+##
+##>>> def f(inp):
+##       return inp
+##
+##>>> f('func arg')
+##<<< 'func arg'      (STRING expression value)
+##
+##>>> f(2 + 3 + 4)
+##<<< 9               (INTEGER expression value)
+##
+############################################### quiet if return value is None
+##
+##>>> a = 2 + 3 + 4
+##>>> a = f(4.56789)
+##
+##
+##Here's my implementation:
+##
+##def show_expression_value(val):
+##   """
+##   Show expression value or function return value in IDLE.
+##   Deploy this function with: sys.displayhook = show_expression_value
+##   """
+##   if type(val) is type("hello"):
+##       displayme = "'%s'"  % val
+##       print "<<< %-15s (STRING expression value)" % displayme
+##   elif type(val) is type(1):
+##       displayme = "%d" % val
+##       print "<<< %-15s (INTEGER expression value)" % displayme
+##   elif type(val) is type(1.0):
+##       displayme = "%.2f" % val
+##       print "<<< %-15s (FLOAT expression value)" % displayme
+##
+##   # TO DO: more "elif"s for other value types

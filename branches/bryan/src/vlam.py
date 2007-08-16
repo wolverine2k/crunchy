@@ -78,6 +78,7 @@ class CrunchyPage(object):
         self.process_tags()
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         self.add_js_code(comet_js)
+        self.add_user_style()
 
     def add_include(self, include_str):
         self.included.add(include_str)
@@ -110,6 +111,23 @@ class CrunchyPage(object):
         css.set("type", "text/css")
         css.text = code
         self.head.insert(0, css)
+
+    def add_user_style(self):
+        '''adds user style meant to replace Crunchy's default if
+        so desired by the user'''
+        if not configuration.defaults.my_style:
+            return
+        styles = configuration.defaults.styles
+        if styles == {}:
+            return
+        style = et.Element("style")
+        style = et.Element("style")
+        style.set("type", "text/css")
+        style.text = ''
+        for key in styles:
+            if key != 'name':
+                style.text += key + "{" + styles[key] + "}\n"
+        self.head.append(style)  # has to appear last to override choices
 
     def process_tags(self):
         """process all the customised tags in the page"""
@@ -162,14 +180,18 @@ class CrunchyPage(object):
         #============================================
         #
         # IMPORTANT: we must convert existing links on the page
-        # before creating new ones.  This means that handlers1 must
+        # before creating new ones - but not those that have been identified
+        # as external links.  This means that handlers1 must
         # be dealt with first.
         #  The following for loop deals with example 3
         for tag in CrunchyPage.handlers1:
             for elem in self.tree.getiterator(tag):
-                if 'title' not in elem.attrib:  # otherwise, it's a
-                        #different kind of handler that processes it.
+            # vlam option <a title="external_link"> needs special treatment
+                if 'title' not in elem.attrib:
                     CrunchyPage.handlers1[tag](self, elem)
+                elif elem.attrib['title'] != 'external_link':
+                    CrunchyPage.handlers1[tag](self, elem)
+
 
         #  The following for loop deals with examples 1 and 2
         for tag in CrunchyPage.handlers3:
