@@ -250,12 +250,15 @@ They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
 the following html tags are not included
 in our white list: applet, basefont, base, button, form, frameset,
 iframe, input, isindex, object, optgroup, option, param, script,
-select and textarea - as well as link, meta, style and img.
+select and textarea - as well as link, style and img.
 Not all excluded tags are potentially harmful; some are simply
 deprecated.<br/>
 For the included tags, only the <em>title</em> attribute is allowed, except
 for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
-as attributes.  If they don't contain Crunchy objects, pages displayed
+as attributes and the &lt;meta&gt; for which we allow the <em>name</em> attribute which can
+be used in conjunction with the <em>title</em> attribute to add a relative path to 
+<code>sys.path</code> so that examples using <code title="py_code">import</code>
+can be used.  If they don't contain Crunchy objects, pages displayed
 with the strict level selected are essentially the same as old-fashioned html
 text only documents.</dd>
 <dt><img src="/severe.png" height="20" /> normal</dt>
@@ -270,8 +273,8 @@ and
 <a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>
 links already mentioned for an explanation].  We treat such content as automatically
 suspicious and remove automatically these tags entirely when such content is met.<br/>
-We also allow the meta tag which is used by Crunchy to allow a tutorial
-writer to design an alternate menu for Crunchy.
+We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy 
+to allow a tutorial writer to design an alternate menu for Crunchy.
 Finally, we allow the img tag; however, we pre-scan each image
 to make sure that it is indeed an image file and not some cleverly disguised javascript
 code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
@@ -314,8 +317,8 @@ it is required for appropriate formatting.
 can cause problems for many filters [see the two links already mentioned].  
 However, as far as we have been able to verify, 
 Crunchy is immune to this problem due to the way it parses
-html pages according to step 2 mentioned previously.</p>
-<p>Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
+html pages according to step 2 mentioned previously:
+Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
 to parse pages.  BeautifulSoup is known to handled ill-formed web pages, parsing them
 and transforming them into well-formed ones.  Elementtree takes well-formed
 web pages, and create a tree structure representing them. If a page is not well-formed,

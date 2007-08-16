@@ -1,13 +1,11 @@
 """ configuration.py:
     Keeps track of user based settings, some automatically set
     by Crunchy, others ajustable by the user.
-    In future we should provide a GUI for changing the preferences.
 """
 import os
 import sys
 
 import translation
-
 _ = translation._
 
 translation.init_translation()

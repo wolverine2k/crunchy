@@ -6,7 +6,9 @@ import urllib
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
 import src.configuration as configuration
+import src.translation
 
+_ = src.translation._
 borg_console = interpreter.BorgConsole()
 
 provides = set(["/dir","/doc"])
@@ -81,16 +83,18 @@ def doc_handler(request):
     # has clicked on a few more keys.
     line = "(".join(line.split("(")[:-1])
     if line in borg_console.__dict__['locals']:
-        result = "%s()\n %s"%(line, borg_console.__dict__['locals'][line].__doc__)
+        result = "%s()\n %s"%(line,
+                 borg_console.__dict__['locals'][line].__doc__)
     elif '__builtins__' in borg_console.__dict__['locals']:
         if line in borg_console.__dict__['locals']['__builtins__']:
-            result = "%s()\n %s"%(line, borg_console.__dict__['locals']['__builtins__'][line].__doc__)
+            result = "%s()\n %s"%(line,
+                 borg_console.__dict__['locals']['__builtins__'][line].__doc__)
         else:
             request.send_response(204)
             request.end_headers()
             return
     else:
-        result = "builtins not defined in console yet."
+        result = _("builtins not defined in console yet.")
 
     request.send_response(200)
     request.end_headers()

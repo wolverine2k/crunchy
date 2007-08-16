@@ -127,7 +127,7 @@ def exec_external(code=None,  path=None):
     elif sys.platform == 'darwin':  # a much more general method can be found
                                  # in SPE, Stani's Python Editor - Child.py
         activate = 'tell application "Terminal" to activate'
-        script = r"cd '\''%s'\'';python '\''%s'\'';exit"%(target_dir, fname)
+        script = r"cd '\''%s'\'';pythonw '\''%s'\'';exit"%(target_dir, fname)
         do_script = r'tell application "Terminal" to do script "%s"'%script
         command =  "osascript -e '%s';osascript -e '%s'"%(activate, do_script)
         os.popen(command)

@@ -11,9 +11,7 @@ import src.configuration as configuration
 # for converting to edit area
 from editarea import editArea_load_and_save
 
-# dummy function for now
-def _(msg):
-    return msg
+_ = CrunchyPlugin._
 
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")

@@ -23,6 +23,8 @@ def insert_special_menu(page, elem, dummy):
     '''inserts a menu different from the Crunchy default based.
        The instruction is contained in a <meta> element and includes the
        filename where the menu is defined.'''
+    if 'content' not in elem.attrib:  # most likely stripped using strict
+        return                       # security mode
     if page.is_local:
         local_path = os.path.split(page.url)[0]
         menu_file = os.path.join(local_path, elem.attrib["content"])
