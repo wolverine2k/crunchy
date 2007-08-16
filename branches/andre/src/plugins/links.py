@@ -28,7 +28,8 @@ def external_link(page, elem, *dummies):
     return
 
 def link_handler(page, elem):
-    """convert remote links if necessary, need to deal with all links in remote pages"""
+    """convert remote links if necessary, need to deal with all links in
+       remote pages"""
     if "href" not in elem.attrib:
         return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
@@ -70,7 +71,8 @@ def link_handler(page, elem):
             elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
 
 def src_handler(page, elem):
-    """used for elements that have an src attribute not loaded from the server root"""
+    """used for elements that have an src attribute not loaded from the
+       server root"""
     if "src" not in elem.attrib:
         return
     # not needed as we validate images in security.py
@@ -80,10 +82,12 @@ def src_handler(page, elem):
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["src"]))
+        elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(
+                                os.path.join(local_dir, elem.attrib["src"]))
 
 def href_handler(page, elem):
-    """used for elements that have an href attribute not loaded from the server root"""
+    """used for elements that have an href attribute not loaded from the
+       server root"""
     if "href" not in elem.attrib:
         return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
@@ -92,7 +96,8 @@ def href_handler(page, elem):
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(os.path.join(local_dir, elem.attrib["href"]))
+        elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(
+                                os.path.join(local_dir, elem.attrib["href"]))
 
 def secure_url(url):
     '''For security reasons, restricts a link to its simplest form if it

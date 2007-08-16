@@ -104,7 +104,7 @@ specific_allowed = {
     # 'background' for body not allowed - link to other file
     'head': [],
     'html': ['xmlns', 'xml:lang'],
-    'link': ['charset', 'href', 'hreflang', 'rel', 'rev', 'type'],
+    'link': ['charset', 'href', 'hreflang', 'media', 'rel', 'rev', 'type'],
     'meta': ['content', 'name'], #  'http-equiv' can be a potential problem
     'title': [],
 
