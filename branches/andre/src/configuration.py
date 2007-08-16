@@ -33,7 +33,7 @@ security_allowed_values = [
 override_default_interpreter_allowed_values = ['default', # ipython,
         'Borg', 'isolated', 'Human', 'parrot', 'Parrots']
 
-no_markup_allowed_values = ["none", "editor",
+no_markup_allowed_values = ["none", "editor", 'python_tutorial',
                     "python_code", "image_file"]  # image_file needs an optional argument
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
@@ -66,7 +66,7 @@ class Defaults(object):
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         # properties, that can be configured by user
 
-        self.__no_markup = "interpreter"
+        self.__no_markup = "python_tutorial"
         self.__language = 'en'
         self.__editarea_language = 'en'
         self.__friendly = True

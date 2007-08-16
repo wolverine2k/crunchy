@@ -16,6 +16,7 @@ import sys
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
 from src.utilities import extract_log_id
+import src.plugins.colourize as colourize
 
 import src.translation
 _ = src.translation._
@@ -38,6 +39,7 @@ def register():
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "parrot", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Parrots", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "python_tutorial", insert_interpreter)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
 
@@ -56,6 +58,12 @@ def insert_interpreter(page, elem, uid):
     #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
     ##    elif "ipython" in vlam:
     ##        interp_kind = "ipython"
+        elif 'python_tutorial' in vlam:
+            text = colourize.extract_code(elem)
+            if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
+                interp_kind = 'borg'
+            else:
+                return   # assume it is not an interpreter session.
         else:
             interp_kind = "borg"
     else:
