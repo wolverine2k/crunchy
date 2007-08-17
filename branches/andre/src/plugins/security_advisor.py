@@ -5,6 +5,8 @@ Inserts security information at the top of a page
 '''
 
 import src.CrunchyPlugin as cp
+_ = cp._
+
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
 
@@ -23,34 +25,35 @@ def insert_security_info(page, *dummy):
         src = '/paranoid.png'
 
     outer_span = cp.Element("span")
-    outer_span.attrib["style"] = "top:10px; left:50px; font-size:10pt; position:absolute; z-index:2"
-    outer_span.text = "Crunchy security level: "
+    outer_span.attrib["class"] = "security_info"
+    outer_span.text = _("Crunchy security level: [") +\
+                        page.security_info['level'] + "]"
     level_img = cp.SubElement(outer_span, "img")
     level_img.attrib["src"] = src
     level_img.attrib["alt"] = "security level image"
-    level_img.attrib["style"] = "border:0"
-    level_img.attrib["height"] = "20"
+    level_img.attrib["style"] = "border:0;height:20px"
     level_img.tail = " "
 
     span = cp.SubElement(outer_span, "span")
-    span.text = "[" + page.security_info['level'] + "] Page content:"
+    span.text = _(" - Page content:")
     img = cp.SubElement(span, "img")
     img.attrib["alt"] = "security result"
+    img.attrib["style"] = "border:0;height:20px"
     if page.security_info['number removed'] == 0:
         img.attrib["src"] = "/ok.png"
-        img.tail = "No elements were removed"
+        img.tail = _("No elements were removed. ")
     elif page.security_info['number removed'] == 1:
         img.attrib["src"] = "/warning.png"
-        img.tail = "One element was removed"
+        img.tail = _("One element was removed. - ")
     else:
         img.attrib["src"] = "/warning.png"
-        img.tail = "%d elements were removed"%page.security_info['number removed']
+        img.tail = _("%d elements were removed. - ")%page.security_info['number removed']
     if page.security_info['number removed'] != 0:
         span.tail = " "
         view = cp.SubElement(outer_span, "a")
         view.attrib["onclick"] = "show_security_info();"
         view.attrib["href"] = "#"
-        view.text = "View security report"
+        view.text = _(" View security report ")
     page.body.insert(0, outer_span)
 
     # Next, the hidden container for the full security information

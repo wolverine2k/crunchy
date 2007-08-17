@@ -29,12 +29,14 @@ security_allowed_values = [
                         'strict', 'display strict'
                             ]
 
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+# Unfortunately, IPython interferes with Crunchy;
+#  I'm commenting it out, keeping it in as a reference.
 override_default_interpreter_allowed_values = ['default', # ipython,
-        'Borg', 'isolated', 'Human', 'parrot', 'Parrots']
+        'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
 
 no_markup_allowed_values = ["none", "editor", 'python_tutorial',
-                    "python_code", "image_file"]  # image_file needs an optional argument
+                    "python_code", "image_file"]
+                                  # image_file needs an optional argument
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
 

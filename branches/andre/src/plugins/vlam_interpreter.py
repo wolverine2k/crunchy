@@ -18,8 +18,7 @@ import src.configuration as configuration
 from src.utilities import extract_log_id
 import src.plugins.colourize as colourize
 
-import src.translation
-_ = src.translation._
+_ = CrunchyPlugin._
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])
@@ -39,6 +38,7 @@ def register():
     CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "parrot", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "Parrots", insert_interpreter)
+    CrunchyPlugin.register_tag_handler("pre", "title", "TypeInfoConsole", insert_interpreter)
     CrunchyPlugin.register_tag_handler("pre", "title", "python_tutorial", insert_interpreter)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
@@ -55,6 +55,8 @@ def insert_interpreter(page, elem, uid):
             interp_kind = 'parrot'
         elif 'Parrots' in vlam:
             interp_kind = "Parrots"
+        elif 'TypeInfoConsole' in vlam:
+            interp_kind = "TypeInfoConsole"
     #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
     ##    elif "ipython" in vlam:
     ##        interp_kind = "ipython"
@@ -73,6 +75,8 @@ def insert_interpreter(page, elem, uid):
             interp_kind = 'parrot'
         elif c == 'Parrots':
             interp_kind = "Parrots"
+        elif 'TypeInfoConsole' in vlam:
+            interp_kind = "TypeInfoConsole"
     #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
     ##    elif "ipython" in vlam:
     ##        interp_kind = "ipython"
@@ -111,6 +115,11 @@ def insert_interpreter(page, elem, uid):
                 page.add_include("Parrots_included")
                 page.add_js_code(Parrots_js)
             page.add_js_code('init_ParrotsInterpreter("%s");' % uid)
+        elif interp_kind == "TypeInfoConsole":
+            if not page.includes("TypeInfoConsole_included"):
+                page.add_include("TypeInfoConsole_included")
+                page.add_js_code(TypeInfoConsole_js)
+            page.add_js_code('init_TypeInfoConsole("%s");' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##        else:
 ##          if not page.includes("IPythonInterpreter_included"):
@@ -146,7 +155,6 @@ def insert_interpreter(page, elem, uid):
                         interp_kind = interp_kind, sample_code = code)
     CrunchyPlugin.services.insert_tooltip(page, elem, uid)
     return
-
 
 prefix = configuration.defaults._prefix
 crunchy_help = _("Type %s.help for more information."%prefix)
@@ -205,6 +213,21 @@ function init_ParrotsInterpreter(uid){
     code += "\nborg.push('print ";
     code += '"Crunchy: [dead] Parrots Interpreter (Python version %s). %s"';
     code += "')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
+    var j = new XMLHttpRequest();
+    j.open("POST", "/exec%s?uid="+uid, false);
+    j.send(code);
+};
+"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
+           CrunchyPlugin.session_random_id)
+
+TypeInfoConsole_js = r"""
+function init_TypeInfoConsole(uid){
+    code = "import src.configuration as configuration\n";
+    code += "locals = {'%s': configuration.defaults}\n";
+    code += "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(locals)";
+    code += "\nborg.push('print ";
+    code += '"Crunchy: TypeInfoConsole (Python version %s). %s"';
+    code += "')\nborg.interact(ps1='<t>>> ')\n";
     var j = new XMLHttpRequest();
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);

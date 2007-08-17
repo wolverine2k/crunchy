@@ -26,8 +26,8 @@ from element_tree import ElementTree
 
 import configuration
 
-DEBUG = True
-DEBUG2 = True
+DEBUG = False
+DEBUG2 = False
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:

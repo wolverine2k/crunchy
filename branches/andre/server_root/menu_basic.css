@@ -154,3 +154,12 @@ table.summary th, td {
 border:1px inset gray;
 padding:1px;
 }
+.security_info{
+background-color: white;
+color: darkblue;
+top:0px; 
+left:50px; 
+font-size:10pt; 
+position:absolute; 
+z-index:2
+}

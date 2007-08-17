@@ -42,7 +42,7 @@ a specific point on a new page; it always displays the page from the top.]</p>
 
 <h3>Officially learning Python</h3>
 <p> To learn about Python, it might be a good idea to through 
-<a href="http://docs.python.org/tut/tut.html">the official Python tutorial</a>
+<a href="http://docs.python.org/tut/tut.html">the old official Python tutorial</a>
 on the <a href="http://www.python.org">python.org</a> website.
 </p>
 <div class="wide-warning">
@@ -56,9 +56,12 @@ for asking Python to execute some code - not Crunchy's designers.</p>
 <h3>Elsewhere on the planet</h3>
 <p>
 Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
-If you do so, you might want to look at them using this:<p>
+If you do so, you might want to look at them using this:</p>
 <span title="load_remote">http://planet.python.org</span>
-<p>... or try any other valid url.</p>
+<p>... or try any other valid url.  An interesting choice might be 
+<a href="http://docs.python.org/dev/tutorial/index.html">the NEW official Python tutorial</a>;
+if you select this, make sure you set the security level to <code>trusted</code>
+so that you can appreciate the new documentation style.</p>
 
 
 <h3>Closer to home</h3>
@@ -74,7 +77,7 @@ will be able to import them (if they are in the same directory).</p>
 <div class="notes">
 <h4>Crunchy is paranoid</h4>
 <p>
-Due to security concerns, every time you start Crunchy, it is set in a "paranoid" mode, 
+Due to security concerns, every time you start Crunchy, it is set in a fairly strict mode, 
 where it is very restrictive about the html code it lets filter through to your
 browser.  In particular, some style attributes and style sheets are prevented
 from loading as they could hide links to some hidden javascript instructions.
@@ -90,7 +93,7 @@ a little bit more permissive.  You can do this by entering the
 following at an interpreter prompt.
 </p>
 <pre title="interpreter">
-&gt;&gt;&gt; crunchy.paranoid = False
+&gt;&gt;&gt; crunchy.security = 'trusted'
 </pre>
 <p>A good example might be <a href="http://www.python.org">python.org</a>, a site that
 can most likely be trusted to be safe for Crunchy.  To see the difference between Crunchy's
@@ -101,12 +104,12 @@ paranoid mode and its more trusting one, here's what you can do:
 normal styling is gone.</li>
 <li>Use the browser back button to come back to this page; you will need to reload it
 to have access to the interpreter.</li>
-<li>Instruct Crunchy to be less paranoid as described above, and click on
+<li>Instruct Crunchy to trust the site to be safe as described above, and click on
 the python.org link again- the display should be a lot more similar to what
 you normally see when viewing the site with your browser.</li>
 </ul>
 <p>
-In its normal paranoid mode, Crunchy removes any styling information that contains
+In its normal mode, Crunchy removes any styling information that contains
 the string "url(" as it can open the door to the introduction of some malicious 
 javascript code.  Such styling information
 can occur either as an attribute of any html tag, inside a &lt;style&gt; html element or, 

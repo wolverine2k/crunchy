@@ -386,9 +386,11 @@ class Colourizer(object):
                 temp_out += "\n<span class='py_linenumber'>%3d </span>"%line_num \
                             + substring
             self.tokenString = temp_out
+        if self.lastTokenType == token.OP:
         # we will assume they are real string as opposed to multi-line comments
-        return "<span class='py_string'>"
-        # return "<span class='py_comment'>"
+            return "<span class='py_string'>"
+        else:
+            return "<span class='py_comment'>"
 
     def indent(self):
         self.tokenString = " "*self.beginColumn + self.tokenString

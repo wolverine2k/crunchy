@@ -25,6 +25,7 @@ def external_link(page, elem, *dummies):
     img = cp.SubElement(elem, "img")
     img.attrib['src'] = "/external_link.png"
     img.attrib['style'] = "border:0;"
+    img.attrib['alt'] = "external_link.png"
     return
 
 def link_handler(page, elem):
