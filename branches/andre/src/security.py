@@ -285,6 +285,10 @@ def remove_unwanted(tree, page):
     ElementTree from an html page.'''
     global __dangerous_text
 
+    # determine if site security level has been set to override
+    # the default
+    configuration.defaults.url_security_level(page.url)
+
     _allowed = allowed_attributes[configuration.defaults.security]
     #The following will be updated so as to add result from page.
     page.security_info = { 'level': configuration.defaults.security,

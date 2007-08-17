@@ -4,6 +4,7 @@
 """
 import os
 import sys
+from urlparse import urlsplit
 
 import translation
 _ = translation._
@@ -67,7 +68,6 @@ class Defaults(object):
         self.set_dirs()
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         # properties, that can be configured by user
-
         self.__no_markup = "python_tutorial"
         self.__language = 'en'
         self.__editarea_language = 'en'
@@ -77,8 +77,13 @@ class Defaults(object):
         self.__doc_help = True  # ok for beginners
         self.__dir_help = False # less useful for beginners
         self.__my_style = False
-
         # end of properties
+        # backup value used in resetting security level
+        self.__saved_security_setting = self.__security
+        # Default value as test for now
+        self.site_security = {'docs.python.org': 'trusted',
+                              'planet.python.org': 'strict'}
+
         self.styles = {}
         translation.init_translation(self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
@@ -304,6 +309,15 @@ Here are the values of some variables currently used by Crunchy.
 
     #==============
 
+    def url_security_level(self, url):
+        '''sets the security level by site'''
+        info = urlsplit(url)
+        # simply reset at the beginning to avoid 2 level if/else
+        self.__security = self.__saved_security_setting
+        if info.netloc in self.site_security:
+            if self.site_security[info.netloc] in security_allowed_values:
+                self.__security = self.site_security[info.netloc]
+
     def get_security(self):
         return self.__security
 
@@ -311,6 +325,7 @@ Here are the values of some variables currently used by Crunchy.
         if choice in security_allowed_values:
             self.__security = choice
             print _("security set to: ") , choice
+            self.__saved_security_setting = choice # keep
         else:
             print _("Invalid choice for %s.security")%self._prefix
             print _("The valid choices are: "), security_allowed_values

@@ -3,12 +3,19 @@ security_advisor.py
 
 Inserts security information at the top of a page
 '''
+import random
 
+import src.configuration as configuration
 import src.CrunchyPlugin as cp
 _ = cp._
 
+provides = set(["/allow_site", "/enter_key", "/set_trusted"])
+
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
+    cp.register_http_handler("/allow_site", allow_site)
+    cp.register_http_handler("/enter_key", enter_trusted_key)
+    cp.register_http_handler("/set_trusted", set_security_list)
 
 def insert_security_info(page, *dummy):
     """Inserts security information at the top of a page"""
@@ -61,12 +68,53 @@ def insert_security_info(page, *dummy):
     if not page.includes("security_included"):
         page.add_include("security_included")
         page.insert_js_file("/security.js")
-        page.add_css_code(security_css)
 
         info_container = cp.Element("div")
         info_container.attrib["id"] = "security_info"
         format_report(page, info_container)
-        #info_container.text = "Here's the information\n more information "
+
+        # prompt user to approve sites on index.html only
+        if page.url == "/index.html" and configuration.defaults.site_security:
+            page.add_css_code(security_css%('block','block'))
+            directions = cp.SubElement(info_container, "h4")
+            directions.text = _("Do you wish to retain the existing settings for these sites?\n\n")
+
+
+            site_num = 0
+            options = [['trusted', 'trusted'],
+                        ['normal', 'normal'],
+                        ['strict', 'strict'],
+                        ['remove', _('remove from list')]]
+            for site in configuration.defaults.site_security:
+                site_num += 1
+                form = cp.SubElement(info_container, "form")
+                form.attrib['id'] = "site_" + str(site_num)
+                form.attrib['name'] = site
+                site_label = cp.SubElement(form, "span")
+                site_label.text = site
+                site_label.attrib['style'] = "font-weight:bold;"
+                for option in options:
+                    inp = cp.SubElement(form, 'input')
+                    inp.attrib['value'] = option[0]
+                    inp.attrib['type'] = 'radio'
+                    inp.attrib['name'] = "rad"
+                    inp.text = option[1]
+                    if option[1] == configuration.defaults.site_security[site]:
+                        inp.attrib['checked'] = ''
+                br = cp.SubElement(form, "br")
+
+            approve_btn = cp.SubElement(info_container, "button")
+            approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
+            approve_btn.text = _("Approve")
+            cp.SubElement(info_container, "span").text = " "
+            deny_btn = cp.SubElement(info_container, "button")
+            deny_btn.attrib["onclick"] = "app_remove_all()"
+            deny_btn.text = _("Remove all")
+        else:
+            print "if is false"
+            print "page.url = ", page.url
+            page.add_css_code(security_css%('none','none'))
+
         page.body.append(info_container)
 
         info_container_x = cp.Element("div")
@@ -78,17 +126,18 @@ def insert_security_info(page, *dummy):
 def format_report(page, div):
     '''puts the security information (extracted material) into a table
        for display'''
+    global netloc
     if page.security_info['tags removed']:
         h2 = cp.SubElement(div, 'h2')
-        h2.text = 'Removed: tag not allowed'
+        h2.text = _('Removed: tag not allowed')
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
         tr = cp.SubElement(table, 'tr')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Tag removed'
+        th.text = _('Tag removed')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Number of times'
+        th.text = _('Number of times')
 
         for item in page.security_info['tags removed']:
             tr = cp.SubElement(table, 'tr')
@@ -99,18 +148,18 @@ def format_report(page, div):
 
     if page.security_info['attributes removed']:
         h2 = cp.SubElement(div, 'h2')
-        h2.text = 'Removed: attribute, or attribute value not allowed'
+        h2.text = _('Removed: attribute, or attribute value not allowed')
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
 
         tr = cp.SubElement(table, 'tr')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Tag'
+        th.text = _('Tag')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Attribute'
+        th.text = _('Attribute')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Value (if relevant)'
+        th.text = _('Value (if relevant)')
 
         for item in page.security_info['attributes removed']:
             tr = cp.SubElement(table, 'tr')
@@ -123,18 +172,18 @@ def format_report(page, div):
 
     if page.security_info['styles removed']:
         h2 = cp.SubElement(div, 'h2')
-        h2.text = 'Removed: style tag or attribute not allowed'
+        h2.text = _('Removed: style tag or attribute not allowed')
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
 
         tr = cp.SubElement(table, 'tr')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Tag'
+        th.text = _('Tag')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Attribute (if relevant)'
+        th.text = _('Attribute (if relevant)')
         th = cp.SubElement(tr, 'th')
-        th.text = 'Value'
+        th.text = _('Value')
 
         for item in page.security_info['styles removed']:
             tr = cp.SubElement(table, 'tr')
@@ -144,16 +193,101 @@ def format_report(page, div):
             td.text = item[1]
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
+    from urlparse import urlsplit
+    netloc = urlsplit(page.url).netloc
+    if page.security_info['number removed'] != 0:
+        #page.add_js_code(allow_site_js)
 
+        br = cp.SubElement(div, "br")
+        change_link = cp.SubElement(br, "a")
+        change_link.attrib["href"] = 'javascript:allow_site()'
+        change_link.text = _("Allow site")
     return
+
+def allow_site(request):
+    '''function used to have the user confirm the security level
+       for the site'''
+    global trusted_key
+    # checks if site key was already printed
+    # TODO: warn user if site access level is already set
+    if request.data == "":
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("asdf")
+        request.wfile.flush()
+        return
+
+    # create random site key or users to enter (not too long)
+    n = int(random.random()*1000000)
+    if n < 100000:
+        n = 999999 - n
+    trusted_key = str(n)
+
+    # print a trusted site key in the console
+    print "----------------------------------------------------"
+    print _("Host: ") + request.data
+    print _("Confirmation code: ") + trusted_key
+    print "----------------------------------------------------"
+
+##    propose_trusted[trusted_key] = request.data
+
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.flush()
+
+# have the users enter a trusted site key to add the site to a list
+def enter_trusted_key(request):
+    global trusted_key, netloc
+    user_key = request.data
+
+    if user_key == trusted_key:
+        configuration.defaults.site_security[netloc] = 'trusted'
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Success")
+        request.wfile.flush()
+    else:
+        request.send_response(200)
+        request.end_headers()
+        request.wfile.write("Failed")
+        request.wfile.flush()
+
+def set_security_list(request):
+    site_list_info = request.data.strip(',').split(',')
+    site_list = []
+    for site_info in site_list_info:
+        if ":" not in site_info:
+            continue
+        site = site_info.split(':')
+        mode = site[1].strip()
+        site = site[0].strip()
+        site_list.append(site)
+        if site.strip() != '':
+            if mode in ['trusted', 'normal', 'strict']:
+                configuration.defaults.site_security[site] = mode
+                if cp.DEBUG:
+                    print '%s has been set to %s: '%(site, mode)
+            else:
+                del configuration.defaults.site_security[site]
+    # removing items in dict is done in two steps: can't loop over
+    # dict while its size changes
+    to_be_deleted = []
+    for site in configuration.defaults.site_security:
+        if site not in site_list:
+            to_be_deleted.append(site)
+    for site in to_be_deleted:
+        del configuration.defaults.site_security[site]
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.write("")
+    request.wfile.flush()
 
 security_css = """
 #security_info {
     position: fixed;
     top: 60px;
-    right: 400px;
-    width: 50%;
-    height: 75%;
+    right: 100px;
+    height: 75%%;
     overflow:auto;
     border: 4px outset #369;
     color: black;
@@ -168,19 +302,19 @@ security_css = """
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
                             http://www.w3.org/TR/css3-text/#white-space */
     word-wrap: break-word; /* IE 5.5+ */
-    display: none;  /* will appear only when needed */
+    display: %s;  /* will appear only when needed */
     z-index:11;
 }
 #security_info_x {
     position: fixed;
     top: 65px;
-    right: 410px;
+    right: 110px;
     color: #fe0;
     background-color: #369;
     font: 14pt sans-serif;
     cursor: pointer;
     padding: 4px 4px 0 4px;
-    display: none;  /* will appear only when needed */
+    display: %s;  /* will appear only when needed */
     z-index:12;
 }
 """
