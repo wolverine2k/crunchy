@@ -4,6 +4,7 @@ security_advisor.py
 Inserts security information at the top of a page
 '''
 import random
+from urlparse import urlsplit
 
 import src.configuration as configuration
 import src.CrunchyPlugin as cp
@@ -78,21 +79,32 @@ def insert_security_info(page, *dummy):
             page.add_css_code(security_css%('block','block'))
             directions = cp.SubElement(info_container, "h4")
             directions.text = _("Do you wish to retain the existing settings for these sites?\n\n")
-
+            # in case list gets too long, we include buttons at top and bottom
+            approve_btn = cp.SubElement(info_container, "button")
+            site_num = len(configuration.defaults.site_security)
+            approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
+            approve_btn.text = _("Approve")
+            cp.SubElement(info_container, "span").text = " "
+            deny_btn = cp.SubElement(info_container, "button")
+            deny_btn.attrib["onclick"] = "app_remove_all()"
+            deny_btn.text = _("Remove all")
 
             site_num = 0
             options = [['trusted', 'trusted'],
                         ['normal', 'normal'],
                         ['strict', 'strict'],
+                        ['display trusted', 'display trusted'],
+                        ['display normal', 'display normal'],
+                        ['display strict', 'display strict'],
                         ['remove', _('remove from list')]]
             for site in configuration.defaults.site_security:
                 site_num += 1
-                form = cp.SubElement(info_container, "form")
+                fieldset = cp.SubElement(info_container, "fieldset")
+                site_label = cp.SubElement(fieldset, "legend")
+                site_label.text = site
+                form = cp.SubElement(fieldset, "form")
                 form.attrib['id'] = "site_" + str(site_num)
                 form.attrib['name'] = site
-                site_label = cp.SubElement(form, "span")
-                site_label.text = site
-                site_label.attrib['style'] = "font-weight:bold;"
                 for option in options:
                     inp = cp.SubElement(form, 'input')
                     inp.attrib['value'] = option[0]
@@ -100,9 +112,8 @@ def insert_security_info(page, *dummy):
                     inp.attrib['name'] = "rad"
                     inp.text = option[1]
                     if option[1] == configuration.defaults.site_security[site]:
-                        inp.attrib['checked'] = ''
-                br = cp.SubElement(form, "br")
-
+                        inp.attrib['checked'] = 'checked'
+            # in case list gets too long, we include buttons at top and bottom
             approve_btn = cp.SubElement(info_container, "button")
             approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
             approve_btn.text = _("Approve")
@@ -111,8 +122,6 @@ def insert_security_info(page, *dummy):
             deny_btn.attrib["onclick"] = "app_remove_all()"
             deny_btn.text = _("Remove all")
         else:
-            print "if is false"
-            print "page.url = ", page.url
             page.add_css_code(security_css%('none','none'))
 
         page.body.append(info_container)
@@ -193,23 +202,45 @@ def format_report(page, div):
             td.text = item[1]
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
-    from urlparse import urlsplit
-    netloc = urlsplit(page.url).netloc
-    if page.security_info['number removed'] != 0:
-        #page.add_js_code(allow_site_js)
 
-        br = cp.SubElement(div, "br")
-        change_link = cp.SubElement(br, "a")
-        change_link.attrib["href"] = 'javascript:allow_site()'
-        change_link.text = _("Allow site")
+    netloc = urlsplit(page.url).netloc #l ocalhost will return empty string
+    if page.security_info['number removed'] != 0 and netloc:
+        site_num = 1
+        options = [['trusted', 'trusted'],
+                    ['normal', 'normal'],
+                    ['strict', 'strict'],
+                    ['display trusted', 'display trusted'],
+                    ['display normal', 'display normal'],
+                    ['display strict', 'display strict'],
+                    ['remove', _('remove from list')]]
+
+        fieldset = cp.SubElement(div, "fieldset")
+        site_label = cp.SubElement(fieldset, "legend")
+        site_label.text = netloc
+        form = cp.SubElement(fieldset, "form")
+        form.attrib['id'] = "single_site_" + str(site_num)
+        form.attrib['name'] = netloc
+        for option in options:
+            inp = cp.SubElement(form, 'input')
+            inp.attrib['value'] = option[0]
+            inp.attrib['type'] = 'radio'
+            inp.attrib['name'] = "rad"
+            inp.text = option[1]
+            try:
+                if option[1] == configuration.defaults.site_security[site]:
+                    inp.attrib['checked'] = 'checked'
+            except:
+                pass
+        approve_btn = cp.SubElement(div, "button")
+        approve_btn.attrib["onclick"] = "javascript:allow_site();"
+        approve_btn.text = _("Select site security level")
     return
 
 def allow_site(request):
     '''function used to have the user confirm the security level
        for the site'''
-    global trusted_key
-    # checks if site key was already printed
-    # TODO: warn user if site access level is already set
+    global trusted_key, netloc
+
     if request.data == "":
         request.send_response(200)
         request.end_headers()
@@ -225,11 +256,9 @@ def allow_site(request):
 
     # print a trusted site key in the console
     print "----------------------------------------------------"
-    print _("Host: ") + request.data
+    print _("Host: ") + netloc
     print _("Confirmation code: ") + trusted_key
     print "----------------------------------------------------"
-
-##    propose_trusted[trusted_key] = request.data
 
     request.send_response(200)
     request.end_headers()
@@ -241,7 +270,6 @@ def enter_trusted_key(request):
     user_key = request.data
 
     if user_key == trusted_key:
-        configuration.defaults.site_security[netloc] = 'trusted'
         request.send_response(200)
         request.end_headers()
         request.wfile.write("Success")
@@ -263,7 +291,8 @@ def set_security_list(request):
         site = site[0].strip()
         site_list.append(site)
         if site.strip() != '':
-            if mode in ['trusted', 'normal', 'strict']:
+            if mode in ['trusted', 'normal', 'strict',
+               'display normal', 'display strict', 'display trusted']:
                 configuration.defaults.site_security[site] = mode
                 if cp.DEBUG:
                     print '%s has been set to %s: '%(site, mode)
@@ -287,7 +316,7 @@ security_css = """
     position: fixed;
     top: 60px;
     right: 100px;
-    height: 75%%;
+    height: 85%%;
     overflow:auto;
     border: 4px outset #369;
     color: black;
