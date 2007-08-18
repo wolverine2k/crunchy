@@ -2,6 +2,7 @@
     Keeps track of user based settings, some automatically set
     by Crunchy, others ajustable by the user.
 """
+import cPickle
 import os
 import sys
 from urlparse import urlsplit
@@ -10,6 +11,8 @@ import translation
 _ = translation._
 
 translation.init_translation()
+
+initial_security_set = False
 
 editarea_languages_allowed_values = ['de', # German
                                      'dk', # Danish
@@ -67,6 +70,39 @@ class Defaults(object):
     def __init__(self):
         self.set_dirs()
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
+        self.load_settings()
+        translation.init_translation(self.__language)
+        self.logging_uids = {}  # {uid : (name, type)}
+                               # name is defined by tutorial writer
+                               # type is one of 'interpreter', 'editor',...
+        self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
+        # backup value used in resetting security level
+        self.__saved_security_setting = self.__security
+
+    def load_settings(self):
+        success = False
+        pickled_path = os.path.join(self.__user_dir, "settings.pkl")
+        try:
+            pickled = open(pickled_path, 'rb')
+            success = True
+        except:
+            print "could not open file for pickling data in configuration.load_settings()"
+        if success:
+            saved = cPickle.load(pickled)
+            pickled.close()
+            self.__no_markup = saved['no_markup']
+            self.__language = saved['language']
+            self.__editarea_language = saved['editarea_language']
+            self.__friendly = saved['friendly']
+            self.__security = saved['security']
+            self.__override_default_interpreter = saved['override_default_interpreter']
+            self.__doc_help = saved['doc_help']
+            self.__dir_help = saved['dir_help']
+            self.__my_style = saved['my_style']
+            self.styles = saved['styles']
+            self.site_security = saved['site_security']
+            return
+
         # properties, that can be configured by user
         self.__no_markup = "python_tutorial"
         self.__language = 'en'
@@ -78,18 +114,37 @@ class Defaults(object):
         self.__dir_help = False # less useful for beginners
         self.__my_style = False
         # end of properties
-        # backup value used in resetting security level
-        self.__saved_security_setting = self.__security
+
         # Default value as test for now
         self.site_security = {'docs.python.org': 'trusted',
                               'planet.python.org': 'strict'}
-
         self.styles = {}
-        translation.init_translation(self.__language)
-        self.logging_uids = {}  # {uid : (name, type)}
-                               # name is defined by tutorial writer
-                               # type is one of 'interpreter', 'editor',...
-        self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
+        return
+
+
+    def save_settings(self):
+        saved = {}
+        saved['no_markup'] = self.__no_markup
+        saved['language'] = self.__language
+        saved['editarea_language'] = self.__editarea_language
+        saved['friendly'] = self.__friendly
+        saved['security'] = self.__security
+        saved['override_default_interpreter'] = self.__override_default_interpreter
+        saved['doc_help'] = self.__doc_help
+        saved['dir_help'] = self.__dir_help
+        saved['my_style'] = self.__my_style
+        saved['styles'] = self.styles
+        saved['site_security'] = self.site_security
+        # time to save
+        pickled_path = os.path.join(self.__user_dir, "settings.pkl")
+        try:
+            pickled = open(pickled_path, 'wb')
+        except:
+            print "could not open file for pickling data in configuration.save_settings()"
+            return
+        cPickle.dump(saved, pickled)
+        pickled.close()
+        return
 
     def set_dirs(self):
         '''sets the user directory, creating it if needed.
@@ -158,6 +213,7 @@ class Defaults(object):
             print _("The current value is: "), self.__dir_help
             return
         self.__dir_help = choice
+        self.save_settings()
         return
 
     dir_help = property(get_dir_help, set_dir_help, None,
@@ -176,6 +232,7 @@ class Defaults(object):
             print _("The current value is: "), self.__doc_help
             return
         self.__doc_help = choice
+        self.save_settings()
         return
 
     doc_help = property(get_doc_help, set_doc_help, None,
@@ -244,6 +301,8 @@ Here are the values of some variables currently used by Crunchy.
             print _("The valid choices are: "), no_markup_allowed_values
             print _('with "image_file   file_name" as a required option.')
             print _("The current value is: "), self.__no_markup
+        else:
+            self.save_settings()
 
     no_markup = property(get_nm, set_nm, None,
         _('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values +\
@@ -265,6 +324,7 @@ Here are the values of some variables currently used by Crunchy.
                 print _("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\
                 _("The language choice for editarea remains ") +\
                  self.__editarea_language
+            self.save_settings()
         else:
             print _("Invalid choice for %s.language")%self._prefix
             print _("The valid choices are: "), languages_allowed_values
@@ -281,6 +341,7 @@ Here are the values of some variables currently used by Crunchy.
         if choice in editarea_languages_allowed_values:
             self.__editarea_language = choice
             print _("editarea_language set to: ") , choice
+            self.save_settings()
         else:
             print _("Invalid choice for %s.editarea_language")%self._prefix
             print _("The valid choices are: "), editarea_languages_allowed_values
@@ -297,9 +358,11 @@ Here are the values of some variables currently used by Crunchy.
         if choice == True:
             self.__friendly = True
             print _("Crunchy will attempt to provide friendly error messages.")
+            self.save_settings()
         elif choice == False:
             self.__friendly = False
             print _("Crunchy's error messages will be similar to Python's default tracebacks.")
+            self.save_settings()
         else:
             print _("friendly attribute must be set to True or False.")
 
@@ -317,6 +380,7 @@ Here are the values of some variables currently used by Crunchy.
         if info.netloc in self.site_security:
             if self.site_security[info.netloc] in security_allowed_values:
                 self.__security = self.site_security[info.netloc]
+                self.save_settings()
 
     def get_security(self):
         return self.__security
@@ -326,6 +390,7 @@ Here are the values of some variables currently used by Crunchy.
             self.__security = choice
             print _("security set to: ") , choice
             self.__saved_security_setting = choice # keep
+            self.save_settings()
         else:
             print _("Invalid choice for %s.security")%self._prefix
             print _("The valid choices are: "), security_allowed_values
@@ -342,6 +407,7 @@ Here are the values of some variables currently used by Crunchy.
         if choice in override_default_interpreter_allowed_values:
             self.__override_default_interpreter = choice
             print _("override_default_interpreter set to: ") , choice
+            self.save_settings()
         else:
             print _("Invalid choice for %s.override_default_interpreter")%self._prefix
             print _("The valid choices are: "), override_default_interpreter_allowed_values
@@ -361,6 +427,7 @@ Here are the values of some variables currently used by Crunchy.
         if choice in [True, False]:
             self.__my_style = choice
             print _("my_style set to: ") , choice
+            self.save_settings()
         else:
             print _("Invalid choice for %s.my_style")%self._prefix
             print _("The valid choices are: "), [True, False]

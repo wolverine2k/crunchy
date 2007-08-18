@@ -75,7 +75,9 @@ def insert_security_info(page, *dummy):
         format_report(page, info_container)
 
         # prompt user to approve sites on index.html only
-        if page.url == "/index.html" and configuration.defaults.site_security:
+        if page.url == "/index.html" and configuration.defaults.site_security \
+              and not configuration.initial_security_set:
+            configuration.initial_security_set = True
             page.add_css_code(security_css%('block','block'))
             directions = cp.SubElement(info_container, "h4")
             directions.text = _("Do you wish to retain the existing settings for these sites?\n\n")
