@@ -122,7 +122,11 @@ def exec_external(code=None,  path=None):
     if os.name == 'nt':
         os.chdir(target_dir) # change dir so as to deal with paths that
                              # include spaces
-        Popen(["cmd.exe", ('/c start python %s'%fname)])
+        try: # the other one did not work under WinME; is this more robust?
+            Popen(["command.com", ('/c start python %s'%fname)])
+        except:  # old one that worked under Win XP
+            Popen(["cmd.exe", ('/c start python %s'%fname)])
+
         os.chdir(current_dir)
     elif sys.platform == 'darwin':  # a much more general method can be found
                                  # in SPE, Stani's Python Editor - Child.py
