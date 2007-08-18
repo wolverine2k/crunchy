@@ -123,9 +123,12 @@ def exec_external(code=None,  path=None):
         os.chdir(target_dir) # change dir so as to deal with paths that
                              # include spaces
         try: # the other one did not work under WinME; is this more robust?
-            Popen(["command.com", ('/c start python %s'%fname)])
+            Popen(["command", ('/c start python %s'%fname)])
+            print "works with command instead of cmd.exe"
         except:  # old one that worked under Win XP
             Popen(["cmd.exe", ('/c start python %s'%fname)])
+            print "did not work with command; used cmd.exe"
+
 
         os.chdir(current_dir)
     elif sys.platform == 'darwin':  # a much more general method can be found

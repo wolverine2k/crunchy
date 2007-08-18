@@ -28,6 +28,8 @@ import configuration
 
 DEBUG = False
 DEBUG2 = False
+# the root of the server is in a separate directory:
+root_path = os.path.join(os.path.dirname(imp.find_module("crunchy")[1]), "server_root/")
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -151,6 +153,7 @@ specific_allowed = {
     'i': [],
     'ins': [],
     'kbd': [],
+    'quote': [],
     's': [],  # deprecated but harmless
     'small': [],
     'span': [],
@@ -437,6 +440,7 @@ def __cleanup(elem, filter):
     return
 
 def validate_image(src, page):
+    global root_path
     '''verifies that the file contents appears to be that of an image'''
     if DEBUG:
         print "entering validate_image"
@@ -445,6 +449,21 @@ def validate_image(src, page):
         print "page.url", page.url
         print "src", src
         print "root_path", root_path
+
+    # try solving encoding problems
+    try:
+        page.url = page.url.encode(sys.getfilesystemencoding())
+    except:  # alreay encoded?
+        pass
+    try:
+        root_path = root_path.encode(sys.getfilesystemencoding())
+    except:  # alreay encoded?
+        pass
+    try:
+        src = src.encode(sys.getfilesystemencoding())
+    except:  # alreay encoded?
+        pass
+
     if page.is_local:
         local_dir = os.path.split(page.url)[0]
         fn = os.path.join(local_dir, src)
@@ -529,6 +548,17 @@ def is_link_safe(elem, page):
         __dangerous_text = 'href not found'
         return False
     #--If we reach this point we have in principle a valid style sheet.
+
+    # try solving encoding problems
+    try:
+        url = url.encode(sys.getfilesystemencoding())
+    except:  # alreay encoded?
+        pass
+    try:
+        href = href.encode(sys.getfilesystemencoding())
+    except:  # alreay encoded?
+        pass
+
     link_url = find_url(url, href, page)
     if DEBUG2:
         print "link url = ", link_url
@@ -561,9 +591,6 @@ def is_link_safe(elem, page):
     if DEBUG:
         print "should not be reached"
     return False  # don't take any chances
-
-# the root of the server is in a separate directory:
-root_path = os.path.join(os.path.dirname(imp.find_module("crunchy")[1]), "server_root/")
 
 def find_url(url, href, page):
     '''given the url of a "parent" html page and the href of a "child"
