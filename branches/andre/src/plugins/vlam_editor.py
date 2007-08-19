@@ -83,6 +83,7 @@ def insert_editor(page, elem, uid):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
+    elem.attrib['class'] = "crunchy"
     # determine where the code should appear; we can't have both
     # no-pre and no-copy at the same time
     if not "no-pre" in vlam:

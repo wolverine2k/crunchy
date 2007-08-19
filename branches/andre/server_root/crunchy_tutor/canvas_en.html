@@ -30,7 +30,7 @@
 <a href="/functional_tests">Tests</a>
 </div>
 <div id="main">
-<h2>Picasso's challenge</h2>
+<h2 class="crunchy">Picturesque Crunchy</h2>
 <p>Using Crunchy, you can draw the most incredible pictures. 
  Try the following example; following the usual convention in computer graphics (but not in mathematics) the origin is at the top left corner.  
 The drawing will take place when you press the appropriate button; it is left as a challenge for you to find it. [Note that this will only work if you use a
@@ -91,15 +91,15 @@ for i in range(10):
 
 <p>Rather than going straight to the next page, if you want, you can make a little detour and have a look at <a href="named_colours_en.html">valid colour names</a> used in Crunchy.</p>
 
-<h3>Using the interpreter</h3>
+<h3 class="crunchy">Using the interpreter</h3>
 <p>You can also create graphics using the interpreter.  Try the following:</p>
-<pre>
+<pre title="interpreter">
 &gt;&gt;&gt; import graphics as g
 &gt;&gt;&gt; g.init_graphics()
 &gt;&gt;&gt; g.line((100, 100), (200, 200))
 </pre>
 
-<h3>Advanced stuff</h3>
+<h3 class="crunchy">Advanced stuff</h3>
 <p>The new "comet-based" Crunchy has not only static graphics capabilities but 
 also supports simple animations.  However, sometimes the animation may seem to 
 stall.</p>
@@ -115,7 +115,7 @@ for i in range(40):
     filled_rectangle((10*i, 10*i), 50, 50)
     time.sleep(0.1)
 </pre>
-<h3>Graphics reference</h3>
+<h3 class="crunchy">Graphics reference</h3>
 <p>The following table is a summary of available graphics commands.</p>
 <table summary="Available graphics commands" class='summary'>
 <tr><th colspan='2'>Available graphics commands</th></tr>
@@ -165,7 +165,7 @@ for i in range(40):
 <tr><td>'rgb(<em>red, green, blue</em>)'</td><td>Colours are defined using a decimal notation for the combination of Red, Green, and Blue colorr values (RGB). The lowest value that can be given to any one of the basic colour (<em>red</em>, <em>green</em>, or <em>blue</em>) is 0. The highest value is 255. </td></tr>
 <tr><td>'rgba(<em>red, green, blue, alpha</em>)'</td><td>Similar to rgb(<em>red</em>, <em>green</em>, or <em>blue</em>), but with the addition of a transparency parameter (<em>alpha</em>). The valid range of values is from 0.0 (fully transparent) to 1.0 (fully opaque). By default, this property is set to 1.0 (fully opaque). </td></tr>
 </table>
-<h3>Advanced stuff, for tutorial writers</h3>
+<h3 class="crunchy">Advanced stuff, for tutorial writers</h3>
 <p>Surprise, there is nothing special to do.  Every interactive object (interpreter and editor) can use the graphics.</p>
 </div>
 </body>

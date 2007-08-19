@@ -61,6 +61,7 @@ def insert_security_info(page, *dummy):
         view = cp.SubElement(outer_span, "a")
         view.attrib["onclick"] = "show_security_info();"
         view.attrib["href"] = "#"
+        view.attrib['style'] = "text-decoration: underline;"
         view.text = _(" View security report ")
     page.body.insert(0, outer_span)
 
@@ -74,13 +75,16 @@ def insert_security_info(page, *dummy):
         info_container.attrib["id"] = "security_info"
         format_report(page, info_container)
 
-        # prompt user to approve sites on index.html only
-        if page.url == "/index.html" and configuration.defaults.site_security \
+        # prompt user to approve sites as soon as the second page is loading
+        if page.url != "/index.html" and configuration.defaults.site_security \
               and not configuration.initial_security_set:
             configuration.initial_security_set = True
             page.add_css_code(security_css%('block','block'))
             directions = cp.SubElement(info_container, "h4")
-            directions.text = _("Do you wish to retain the existing settings for these sites?\n\n")
+            directions.text = _("Before browsing any further ...\n\n")
+            directions.text += _("Do you wish to retain the existing settings for these sites?\n\n")
+            directions.text += _("You can change any of them before clicking on the approve button.\n\n")
+
             # in case list gets too long, we include buttons at top and bottom
             approve_btn = cp.SubElement(info_container, "button")
             site_num = len(configuration.defaults.site_security)
@@ -228,11 +232,9 @@ def format_report(page, div):
             inp.attrib['type'] = 'radio'
             inp.attrib['name'] = "rad"
             inp.text = option[1]
-            try:
-                if option[1] == configuration.defaults.site_security[site]:
+            if netloc in configuration.defaults.site_security:
+                if option[1] == configuration.defaults.site_security[netloc]:
                     inp.attrib['checked'] = 'checked'
-            except:
-                pass
         approve_btn = cp.SubElement(div, "button")
         approve_btn.attrib["onclick"] = "javascript:allow_site();"
         approve_btn.text = _("Select site security level")

@@ -75,12 +75,15 @@ images and could be showcased by Crunchy, let us know.
 </p>
 </div>
 
-<h3>Advanced stuff, for tutorial writers</h3>
-<p>The required markup is as follows.</p>
+<h3 class="crunchy">Advanced stuff, for tutorial writers</h3>
+<p>If you wish to use an application, such as matplotlib, that generate images which can be loaded
+on a page, the required markup is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="image_file filename [no_style] [no-copy] [no-pre] 
-                         [linenumber [=start_number]]"&gt;
+&lt;pre title="image_file filename [no_style] 
+       [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
+...
 Some Python code
+...
 &lt;/pre&gt;</pre>
 <p>Note that the filename must be included, otherwise the code will simply be styled.
 The Python code that is to be executed <b>must</b> save a file under the same name 

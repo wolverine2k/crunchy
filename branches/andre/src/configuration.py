@@ -121,7 +121,6 @@ class Defaults(object):
         self.styles = {}
         return
 
-
     def save_settings(self):
         saved = {}
         saved['no_markup'] = self.__no_markup

@@ -58,40 +58,7 @@ begin_html ="""
 <head>
 <head>
 <title>Crunchy Log</title>
-<style>
-p{width: 800px;}
-/* from colourize.py */
-.py_keyword{color: #336699; /* blue */
-            font-weight: bold;} /* EditArea does not support font-weight */
-.py_number{color: #000000;} /* EditArea does not recognize number; keep black.*/
-.py_comment{color: gray;}
-.py_string{color: #660066;} /* Indigo */
-.py_variable{color: #000000;}
-.py_op{color: #993300; font-weight:bold;}
-.py_builtins{color: #009900;} /* builtins and string functions */
-.py_stdlib{color: #009900;} /* standard library modules */
-.py_special{color: #006666;} /* special method of the form __x__ */
-.py_linenumber{font-size: small; color: #666666;}
-.py_prompt{color:blue; }
-.py_output{color:blue;}
-.py_warning{background-color:yellow; font-size: large; font-weight: bold;}
-.py_pre{text-align: left;}
-
-/* adapted from io_widget.py */
-.stdout {
-    color: blue;
-}
-
-.stderr {
-    font-weight: bold;
-    color: red;
-}
-
-.stdin{
-    font-weight: bold;
-    color:darkgreen;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="/crunchy.css">
 </head>
 <body>
 <h1>Crunchy Session Log</h1>
@@ -100,8 +67,7 @@ to the element to be logged, the uid is the unique identifier given
 to an element on a page by Crunchy.  If the page gets reloaded, uid
 will change but not log_id.
 </p><p>By convention, original code from the page is styled using the
-Crunchy defaults, input from the user is in green, standard output in
-blue and standard error messages are in red.
+Crunchy defaults.
 </p>
 """
 end_html ="""

@@ -228,6 +228,33 @@ class ThreadedBuffer(object):
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
         data = changeHTMLspecialCharacters(data)
+
+        #Note: in the following, it is important to ensure that the
+        # py_prompt class is surrounded by single quotes - not double ones.
+        # normal prompt
+        if 'crunchy_py_prompt&gt;&gt;&gt; ' in data:
+            dd = data.split('crunchy_py_prompt&gt;&gt;&gt; ')
+            data = "<span class='py_prompt'>&gt;&gt;&gt; ".join(dd)
+        if 'crunchy_py_prompt... ' in data:
+            dd = data.split('crunchy_py_prompt... ')
+            data = "<span class='py_prompt'>... ".join(dd)
+        # isolated interpreter prompt
+        if 'crunchy_py_prompt--&gt; ' in data:
+            dd = data.split('crunchy_py_prompt--&gt; ')
+            data = "<span class='py_prompt'>--&gt; ".join(dd)
+        # TypeInfoConsole prompt
+        if 'crunchy_py_prompt&lt;t&gt;&gt;&gt; ' in data:
+            dd = data.split('crunchy_py_prompt&lt;t&gt;&gt;&gt; ')
+            data = "<span class='py_prompt'>&lt;t&gt;&gt;&gt; ".join(dd)
+        # parrot prompt
+        if 'crunchy_py_prompt_u__) ' in data:
+            dd = data.split('crunchy_py_prompt_u__) ')
+            data = "<span class='py_prompt'>_u__) ".join(dd)
+        # Parrots prompt
+        if 'crunchy_py_prompt_u__)) ' in data:
+            dd = data.split('crunchy_py_prompt_u__)) ')
+            data = "<span class='py_prompt'>_u__)) ".join(dd)
+
         if self.__redirect(uid):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:

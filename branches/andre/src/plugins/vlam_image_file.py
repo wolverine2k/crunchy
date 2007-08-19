@@ -45,6 +45,7 @@ def insert_image_file(page, elem, uid):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_" + uid
+    elem.attrib['class'] = "crunchy"
     # extracting the image file name
     stripped_vlam = vlam.strip()
     args = stripped_vlam.split()

@@ -249,6 +249,11 @@ class InteractiveConsole(InteractiveInterpreter):
         ps2 = ps2.replace('&gt;', '>')
         ps2 = ps2.replace('&lt;', '<')
         more = False
+        # the following will be used to style the prompt
+        # in cometIO.TreadedBuffer.write
+        ps1 = 'crunchy_py_prompt' + ps1
+        ps2 = 'crunchy_py_prompt' + ps2
+
         while True:
             try:
                 if more:

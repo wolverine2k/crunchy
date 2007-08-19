@@ -99,38 +99,8 @@ function push_input(uid){
 };
 """%CrunchyPlugin.session_random_id
 
+# moved most style information to crunchy.css
 io_css = r"""
-
-.stdout {
-    color: blue;
-    font-weight: normal;
-}
-
-.stderr {
-    color: red;
-}
-
-.input {
-    display: none;
-    width: 80%;
-    max-width: 800px;
-    font: 11pt monospace;
-    font-weight: bold;
-    border: solid 1px
-    border-width: 2px;
-    background-color: #eff;
-    border-color: #369;
-}
-
-.output{
-    font: 11pt monospace;
-    font-weight: bold;
-    color:darkgreen;
-    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
-                            http://www.w3.org/TR/css3-text/#white-space */
-}
-
 .crunchy_canvas{
     display: none;
 }

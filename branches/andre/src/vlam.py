@@ -78,7 +78,10 @@ class CrunchyPage(object):
         self.process_tags()
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         self.add_js_code(comet_js)
+        # first crunchy's style, then user's so it can override crunchy's
+        self.add_crunchy_style()
         self.add_user_style()
+        return
 
     def add_include(self, include_str):
         self.included.add(include_str)
@@ -111,6 +114,15 @@ class CrunchyPage(object):
         css.set("type", "text/css")
         css.text = code
         self.head.insert(0, css)
+
+    def add_crunchy_style(self):
+        '''inserts a link to the standard Crunchy style file'''
+        css = et.Element("link")
+        css.set("type", "text/css")
+        css.set("rel", "stylesheet")
+        css.set("href", "/crunchy.css")
+        self.head.insert(0, css)
+        return
 
     def add_user_style(self):
         '''adds user style meant to replace Crunchy's default if
