@@ -58,10 +58,6 @@ def register():
 
 def plugin_style(page, elem, dummy_uid):
     '''Handles the vlam py_code elements'''
-    # first we need to make sure that the required css code is in the page:
-    if not page.includes("colourize_included"):
-        page.add_include("colourize_included")
-        page.add_css_code(style_css)
     code, markup, error = style(elem)
     if error is None:
         replace_element(elem, markup)
@@ -73,37 +69,11 @@ def plugin_style(page, elem, dummy_uid):
         elem.insert(0, error)
 
 def service_style(page, elem):
-##    if not page.includes("colourize_included"):
-##        page.add_include("colourize_included")
-##        page.add_css_code(style_css)
     return style(elem)
 
 def service_style_nostrip(page, elem):
-##    if not page.includes("colourize_included"):
-##        page.add_include("colourize_included")
-##        page.add_css_code(style_css)
     return nostrip_style(elem)
 
-style_css = r"""
-##/* Basic Python Elements; color choice are chosen, if possible, to be
-##   consistent with those of the editor (EditArea); these are
-##   found in file python.js of the EditArea distribution*/
-##.py_keyword{color: #336699; /* blue */
-##            font-weight: bold;} /* EditArea does not support font-weight */
-##.py_number{color: #000000;} /* EditArea does not recognize number; keep black.*/
-##.py_comment{color: gray;}
-##.py_string{color: #660066;} /* Indigo */
-##.py_variable{color: #000000;}
-##.py_op{color: #993300; font-weight:bold;}
-##.py_builtins{color: #009900;} /* builtins and string functions */
-##.py_stdlib{color: #009900;} /* standard library modules */
-##.py_special{color: #006666;} /* special method of the form __x__ */
-##.py_linenumber{font-size: small; color: #666666;}
-##.py_prompt{color:blue; }
-##.py_output{color:blue;}
-##.py_warning{background-color:yellow; font-size: large; font-weight: bold;}
-##.py_pre{text-align: left;font-size:12pt;}
-"""
 #---------end plugin specific-------------------------
 
 #--------Begin ElementTree dependent part-------------
@@ -202,7 +172,7 @@ def nostrip_style(elem):
     new_elem.tail = tail
     return py_code, new_elem
 
-def extract_code(elem):
+def extract_code(elem, trim=False):
     """extract all the text (Python code) from a marked up
     code sample encoded as an ElementTree structure, but converting
     <br/> into "\n" and removing "\r" which are not
@@ -218,6 +188,8 @@ def extract_code(elem):
             text += e.tail
     # \r causes bugs!
     text = text.replace("\r", "")
+    if trim:
+        text = trim_empty_lines_from_end(text)
     return text
 
 def get_linenumber_offset(vlam):

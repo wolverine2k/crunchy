@@ -61,7 +61,7 @@ def insert_interpreter(page, elem, uid):
     ##    elif "ipython" in vlam:
     ##        interp_kind = "ipython"
         elif 'python_tutorial' in vlam:
-            text = colourize.extract_code(elem)
+            text = colourize.extract_code(elem, trim=True)
             if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
                 interp_kind = 'borg'
             else:
