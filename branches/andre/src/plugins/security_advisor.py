@@ -75,11 +75,19 @@ def insert_security_info(page, *dummy):
         info_container.attrib["id"] = "security_info"
         format_report(page, info_container)
 
-        # prompt user to approve sites as soon as the second page is loading
-        if page.url != "/index.html" and configuration.defaults.site_security \
-              and not configuration.initial_security_set:
+        # prompt user to approve sites as soon as the first page is loaded
+        # if there are sites for which to confirm the security level.
+        if (page.url.startswith("/index")
+                  # will work with /index_fr.html ...
+              and configuration.defaults.site_security
+                  # something to confirm
+              and not configuration.initial_security_set):
+                  # only do it once per session
             configuration.initial_security_set = True
             page.add_css_code(security_css%('block','block'))
+            h2 = cp.SubElement(info_container, 'h2')
+            h2.text = _('Confirm the security levels')
+            h2.attrib['class'] = "crunchy"
             directions = cp.SubElement(info_container, "h4")
             directions.text = _("Before browsing any further ...\n\n")
             directions.text += _("Do you wish to retain the existing settings for these sites?\n\n")
@@ -112,11 +120,15 @@ def insert_security_info(page, *dummy):
                 form.attrib['id'] = "site_" + str(site_num)
                 form.attrib['name'] = site
                 for option in options:
-                    inp = cp.SubElement(form, 'input')
+                    label = cp.SubElement(form, 'label')
+                    label.text = option[1]
+                    label.attrib['for'] = site + option[0]
+                    inp = cp.SubElement(label, 'input')
                     inp.attrib['value'] = option[0]
                     inp.attrib['type'] = 'radio'
                     inp.attrib['name'] = "rad"
-                    inp.text = option[1]
+                    inp.attrib['id'] = site + option[0]
+                    br = cp.SubElement(form, 'br')
                     if option[1] == configuration.defaults.site_security[site]:
                         inp.attrib['checked'] = 'checked'
             # in case list gets too long, we include buttons at top and bottom
@@ -145,6 +157,7 @@ def format_report(page, div):
     if page.security_info['tags removed']:
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('Removed: tag not allowed')
+        h2.attrib['class'] = "crunchy"
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
@@ -164,6 +177,7 @@ def format_report(page, div):
     if page.security_info['attributes removed']:
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('Removed: attribute, or attribute value not allowed')
+        h2.attrib['class'] = "crunchy"
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
@@ -188,6 +202,7 @@ def format_report(page, div):
     if page.security_info['styles removed']:
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('Removed: style tag or attribute not allowed')
+        h2.attrib['class'] = "crunchy"
 
         table = cp.SubElement(div, 'table')
         table.attrib['class'] = 'summary'
@@ -209,8 +224,11 @@ def format_report(page, div):
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
 
-    netloc = urlsplit(page.url).netloc #l ocalhost will return empty string
+    netloc = urlsplit(page.url).netloc # localhost will return empty string
     if page.security_info['number removed'] != 0 and netloc:
+        h2 = cp.SubElement(div, 'h2')
+        h2.text = _('You may select a site specific security level:')
+        h2.attrib['class'] = "crunchy"
         site_num = 1
         options = [['trusted', 'trusted'],
                     ['normal', 'normal'],
@@ -227,11 +245,15 @@ def format_report(page, div):
         form.attrib['id'] = "single_site_" + str(site_num)
         form.attrib['name'] = netloc
         for option in options:
-            inp = cp.SubElement(form, 'input')
+            label = cp.SubElement(form, 'label')
+            label.text = option[1]
+            label.attrib['for'] = netloc + option[0]
+            inp = cp.SubElement(label, 'input')
             inp.attrib['value'] = option[0]
             inp.attrib['type'] = 'radio'
             inp.attrib['name'] = "rad"
-            inp.text = option[1]
+            inp.attrib['id'] = netloc + option[0]
+            br = cp.SubElement(form, 'br')
             if netloc in configuration.defaults.site_security:
                 if option[1] == configuration.defaults.site_security[netloc]:
                     inp.attrib['checked'] = 'checked'
@@ -294,22 +316,19 @@ def set_security_list(request):
         mode = site[1].strip()
         site = site[0].strip()
         site_list.append(site)
+        to_be_deleted = []
         if site.strip() != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                configuration.defaults.site_security[site] = mode
+                configuration.defaults.set_site_security(site, mode)
                 if cp.DEBUG:
                     print '%s has been set to %s: '%(site, mode)
             else:
-                del configuration.defaults.site_security[site]
-    # removing items in dict is done in two steps: can't loop over
-    # dict while its size changes
-    to_be_deleted = []
-    for site in configuration.defaults.site_security:
-        if site not in site_list:
-            to_be_deleted.append(site)
+                to_be_deleted.append(site)
     for site in to_be_deleted:
         del configuration.defaults.site_security[site]
+    configuration.defaults.save_settings()
+
     request.send_response(200)
     request.end_headers()
     request.wfile.write("")

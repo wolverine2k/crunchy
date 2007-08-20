@@ -4,6 +4,17 @@
 '''
 import re
 import configuration
+import urlparse
+
+level = 'display trusted'
+def security_level(url):
+    global level
+    info = urlparse.urlsplit(url)
+    if info.netloc == '':
+        level = configuration.defaults.local_security
+    else:
+        level = configuration.defaults.get_site_security(info.netloc)
+    return level
 
 def extract_log_id(vlam):
     '''given a vlam of the form

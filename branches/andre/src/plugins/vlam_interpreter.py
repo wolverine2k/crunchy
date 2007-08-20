@@ -15,7 +15,7 @@ import sys
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
-from src.utilities import extract_log_id
+import src.utilities as utilities
 import src.plugins.colourize as colourize
 
 _ = CrunchyPlugin._
@@ -83,7 +83,7 @@ def insert_interpreter(page, elem, uid):
         else:
             interp_kind = "borg"
 
-    log_id = extract_log_id(vlam)
+    log_id = utilities.extract_log_id(vlam)
     if log_id:
         t = 'interpreter'
         configuration.defaults.logging_uids[uid] = (log_id, t)
@@ -92,8 +92,7 @@ def insert_interpreter(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in configuration.defaults.security:
-
+    if 'display' not in utilities.security_level(page.url):
         # first we need to make sure that the required javacript code is in the page:
         if interp_kind == "borg":
             if not page.includes("BorgInterpreter_included"):

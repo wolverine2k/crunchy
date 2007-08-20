@@ -14,7 +14,7 @@ import copy
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id, security_level
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
@@ -63,7 +63,7 @@ def insert_editor(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in configuration.defaults.security:
+    if 'display' not in security_level(page.url):
         if not page.includes("exec_included"):
             page.add_include("exec_included")
             page.add_js_code(exec_jscode)

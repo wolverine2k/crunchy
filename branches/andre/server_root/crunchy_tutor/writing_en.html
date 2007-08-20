@@ -43,7 +43,7 @@ with Crunchy much richer.</p>
 </p>
 </div>
 
-<h3>Extremely Advanced Stuff</h3>
+<h3 class="crunchy">Extremely Advanced Stuff</h3>
 <p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
  VLAM is essentially just an extended set of attributes for some common HTML tags. 
  Any .htm or .html file loaded through Crunchy 
@@ -58,7 +58,7 @@ with Crunchy much richer.</p>
 </ul>
 <p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
 
-<h1>Crunchy attributes</h1>
+<h1 class="crunchy">Crunchy attributes</h1>
 <p>The following table is a summary of available "crunchy attributes"; these 
 are attributes of the html tag "title".  Please refer to the <em>Crunchy user Tutorial</em>
 on the left for some actual examples.</p>
@@ -160,7 +160,7 @@ of the different types mentioned above)</th></tr>
 </table>
 
 
-<h2><a id="interpreter">Interpreter</a></h2>
+<h2 class="crunchy"><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
 <p><code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
@@ -193,7 +193,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <dt>#input</dt>
 	<dd>The textbox used for input</dd>
 </dl>
-<h2><a id="editor">Code Editor</a></h2>
+<h2 class="crunchy"><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="no_vlam">
 &lt;pre title="editor [no_style] [no-copy] [no-pre] 
@@ -221,7 +221,7 @@ code.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2><a id="doctest">DocTest</a></h2>
+<h2 class="crunchy"><a id="doctest">DocTest</a></h2>
 <p><code>&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
@@ -238,7 +238,7 @@ friendlier to beginners.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2><a id="images">Images</a></h2>
+<h2 class="crunchy"><a id="images">Images</a></h2>
 <p>The required markup is as follows.</p>
 <pre title="no_vlam">
 &lt;pre title="image_file filename [no_style] [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
@@ -248,7 +248,7 @@ Some Python code
 The Python code that is to be executed <b>must</b> save a file under the same name 
 (the file will be saved in a temporary directory maintained by Crunchy).</p>
 
-<h2><a id="styling">Simple code styling</a></h2>
+<h2 class="crunchy"><a id="styling">Simple code styling</a></h2>
 <p>Crunchy will automatically colourize the Python code between the <code>&lt;pre ...&gt; ...&lt;/pre&gt;</code> tags, unless the combination <code>title="no_vlam"</code> appears as
 an attribute to the <code>pre</code>.  Sometimes, you may want simply to 
 colourize the Python code without actually inserting an interactive element.  You can do so by writing:</p>
@@ -270,10 +270,10 @@ colourize the Python code without actually inserting an interactive element.  Yo
 <dt>span.py_prompt</dt>
 <dt>span.py_output</dt>
 </dl>
-<h2><a id="advanced">Advanced options</a></h2>
+<h2 class="crunchy"><a id="advanced">Advanced options</a></h2>
 <p>Some "advanced" options require hand-coding and should rarely be used by
 tutorial writers.</p>
-<h3>Fetching a local tutorial</h3>
+<h3 class="crunchy">Fetching a local tutorial</h3>
 <p>If one wants to insert a "browser" object to load a local tutorial,
 all that is required is to write:</br>
 <code>&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
@@ -283,20 +283,12 @@ to the Python path (sys.path)
 the directory where the tutorial is located; this will allow importing
 modules that are distributed with the tutorial - as long as they are in the
 same directory.</p>
-<h3>Fetching a remote tutorial</h3>
+<h3 class="crunchy">Fetching a remote tutorial</h3>
 <p>If one wants to insert a input box to load a remote tutorial,
 all that is required is to write:</br>
 <code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
-<h3>Fetching a local tutorial to edit it</h3>
-<p>If one wants to insert a "file browser" object to load a local tutorial and
-edit it to insert interactive elements,
-all that is required is to write:</br>
-<code>&lt;span title="edit tutorial"&gt;</code> <em>one or more spaces</em> <code>&lt;/span&gt;</code></p>
-<p>Note that, when a tutorial is loaded this way, its path is added
-to <code title="py_code">sys.path</code> so that modules found in
-the same directory can be easily imported.</p>
 
-<h4>Adding a path to <code title="py_code">sys.path</code></h4>
+<h4 class="crunchy">Adding a path to <code title="py_code">sys.path</code></h4>
 <p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
 above, its path is added to <code title="py_code">sys.path</code>.  Other relative
 paths can be added via the following syntax<br/>
@@ -306,7 +298,7 @@ paths can be added via the following syntax<br/>
 </p>
 
 
-<h3>Changing the default menu</h3>
+<h3 class="crunchy">Changing the default menu</h3>
 <p>Changing the default menu can be done by including<br/>
 <code>&lt;meta name="crunchy_menu" content="filename"&gt;</code> in the html <code>&lt;head&gt;</code> element.  The file designated by <code>filename</code> must be a valid
 html file having a well defined structure.  The following is the file currently used by

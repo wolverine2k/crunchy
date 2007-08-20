@@ -9,7 +9,7 @@ import interpreter
 import sys
 
 import configuration
-from utilities import changeHTMLspecialCharacters, log_session
+import utilities
 
 debug_ids = []
 
@@ -82,7 +82,7 @@ class CrunchyIOBuffer(StringBuffer):
             if uid in configuration.defaults.logging_uids:
                 log_id = configuration.defaults.logging_uids[uid][0]
                 configuration.defaults.log[log_id].append(data)
-                log_session()
+                utilities.log_session()
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
@@ -95,7 +95,7 @@ class CrunchyIOBuffer(StringBuffer):
             if uid in configuration.defaults.logging_uids:
                 log_id = configuration.defaults.logging_uids[uid][0]
                 configuration.defaults.log[log_id].append(data)
-                log_session()
+                utilities.log_session()
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
@@ -132,7 +132,7 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if 'display' in configuration.defaults.security:
+    if 'display' in utilities.level:
         return
 
     # configuration.defaults._prefix = '_crunchy_' is the
@@ -150,7 +150,7 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # echo back to output:
-    in_to_browser = changeHTMLspecialCharacters(request.data)
+    in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
@@ -227,7 +227,7 @@ class ThreadedBuffer(object):
         # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
         pageid = uid.split(":")[0]
-        data = changeHTMLspecialCharacters(data)
+        data = utilities.changeHTMLspecialCharacters(data)
 
         #Note: in the following, it is important to ensure that the
         # py_prompt class is surrounded by single quotes - not double ones.

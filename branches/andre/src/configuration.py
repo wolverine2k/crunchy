@@ -77,7 +77,6 @@ class Defaults(object):
                                # type is one of 'interpreter', 'editor',...
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
         # backup value used in resetting security level
-        self.__saved_security_setting = self.__security
 
     def load_settings(self):
         success = False
@@ -94,13 +93,13 @@ class Defaults(object):
             self.__language = saved['language']
             self.__editarea_language = saved['editarea_language']
             self.__friendly = saved['friendly']
-            self.__security = saved['security']
+            self.__local_security = saved['local_security']
+            self.site_security = saved['site_security']
             self.__override_default_interpreter = saved['override_default_interpreter']
             self.__doc_help = saved['doc_help']
             self.__dir_help = saved['dir_help']
             self.__my_style = saved['my_style']
             self.styles = saved['styles']
-            self.site_security = saved['site_security']
             return
 
         # properties, that can be configured by user
@@ -108,17 +107,16 @@ class Defaults(object):
         self.__language = 'en'
         self.__editarea_language = 'en'
         self.__friendly = True
-        self.__security = 'normal'
+        self.__local_security = 'normal'
+        self.site_security = {}
         self.__override_default_interpreter = 'default'
         self.__doc_help = True  # ok for beginners
         self.__dir_help = False # less useful for beginners
         self.__my_style = False
         # end of properties
-
-        # Default value as test for now
-        self.site_security = {'docs.python.org': 'trusted',
-                              'planet.python.org': 'strict'}
         self.styles = {}
+        # save the file with the default values
+        self.save_settings()
         return
 
     def save_settings(self):
@@ -127,7 +125,7 @@ class Defaults(object):
         saved['language'] = self.__language
         saved['editarea_language'] = self.__editarea_language
         saved['friendly'] = self.__friendly
-        saved['security'] = self.__security
+        saved['local_security'] = self.__local_security
         saved['override_default_interpreter'] = self.__override_default_interpreter
         saved['doc_help'] = self.__doc_help
         saved['dir_help'] = self.__dir_help
@@ -143,6 +141,7 @@ class Defaults(object):
             return
         cPickle.dump(saved, pickled)
         pickled.close()
+        print "saved settings"
         return
 
     def set_dirs(self):
@@ -371,31 +370,37 @@ Here are the values of some variables currently used by Crunchy.
 
     #==============
 
-    def url_security_level(self, url):
-        '''sets the security level by site'''
-        info = urlsplit(url)
-        # simply reset at the beginning to avoid 2 level if/else
-        self.__security = self.__saved_security_setting
-        if info.netloc in self.site_security:
-            if self.site_security[info.netloc] in security_allowed_values:
-                self.__security = self.site_security[info.netloc]
-                self.save_settings()
-
-    def get_security(self):
-        return self.__security
-
-    def set_security(self, choice):
-        if choice in security_allowed_values:
-            self.__security = choice
-            print _("security set to: ") , choice
-            self.__saved_security_setting = choice # keep
-            self.save_settings()
+    def get_site_security(self, site):
+        if site in self.site_security:
+            print "site = ", site
+            print "self.site_security = ", self.site_security
+            return self.site_security[site]
         else:
-            print _("Invalid choice for %s.security")%self._prefix
+            return 'display trusted'
+
+    def set_site_security(self, site, choice):
+        if choice in security_allowed_values:
+            self.site_security[site] = choice
+            self.save_settings()
+            print _("site security set to: ") , choice
+        else:
+            print _("Invalid choice for %s.site_security")%self._prefix
             print _("The valid choices are: "), security_allowed_values
 
-    security = property(get_security, set_security, None,
-        _('The choices for security levels are %s\n')% security_allowed_values +\
+    def get_local_security(self):
+        return self.__local_security
+
+    def set_local_security(self, choice):
+        if choice in security_allowed_values:
+            self.__local_security = choice
+            print _("security set to: ") , choice
+            self.save_settings()
+        else:
+            print _("Invalid choice for %s.local_security")%self._prefix
+            print _("The valid choices are: "), security_allowed_values
+
+    local_security = property(get_local_security, set_local_security, None,
+        _('The choices for local_security levels are %s\n')% security_allowed_values +\
         _('  The current value is: '))
     #==============
 

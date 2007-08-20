@@ -21,6 +21,7 @@ padding: 3px 0 3px 10px;
 div.crunchy{
     background-color: #f8fff0;
     border-bottom: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
 	font-size:12pt;
 }
 
@@ -28,45 +29,47 @@ div.crunchy{
    new Python.org doc style.
    Color choices for the editor (EditArea) are found in file python.js of the EditArea 
    distribution and can not be set via a style sheet.*/
-.py_keyword{ color: #007020; font-weight: bold;} 
-.py_number{color: #207030;}
+.py_keyword{font: 12pt monospace; color: #007020; font-weight: bold;} 
+.py_number{font: 12pt monospace; color: #207030;}
 .py_comment{
     color: grey; 
-    font-style: italic; 
-    font-family:'arial', sans-serif;}
-.py_string{color: #660066;} /* Indigo */
-.py_variable{color: #000000;}
-.py_op{color: #993300; font-weight:bold;}
-.py_builtins{color: #046;} /* builtins and string functions */
-.py_stdlib{color: #046;} /* standard library modules */
-.py_special{color: #066;} /* special method of the form __x__ */
-.py_linenumber{font-size: small; color: #666666;}
-.py_prompt{color: #c65d09; font-weight: bold; font-style:normal;}
-.py_output{color:#257; font-style:italic;}
+    font: 12pt 'arial', sans-serif;
+    font-style: italic;
+    }
+.py_string{font: 12pt monospace; color: #660066;} /* Indigo */
+.py_variable{font: 12pt monospace; color: #000000;}
+.py_op{font: 12pt monospace; color: #993300; font-weight:bold;}
+.py_builtins{font: 12pt monospace; color: #046;} /* builtins and string functions */
+.py_stdlib{font: 12pt monospace; color: #046;} /* standard library modules */
+.py_special{font: 12pt monospace; color: #066;} /* special method of the form __x__ */
+.py_linenumber{font: 9pt monospace; color: #666666; font-style:normal;}
+.py_prompt{color: #c65d09; font: 12pt monospace; font-weight: bold; font-style:normal;}
+.py_output{font: 12pt monospace; color:black; font-style:italic;}
 .py_warning{background-color:yellow; font-size: large; font-weight: bold;}
 pre.crunchy{
     padding: 5px;
     background-color: #f8fff0;
     color: #333;
     border-top: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
 	font-size:12pt;
 	}
 code.crunchy{    
     background-color: #efd;
     padding: 0 1px 0 1px;
-    font-size:12pt;
+    font: 12pt monospace;
     }
 
 
 .stdout {
-    color: #257;
+    color: black;
     font-weight: normal;
    	font: 12pt monospace;
     font-style:italic;
     }
 
 .stderr {
-    color: red;
+    color: #B00;
     font-weight: bold;
 	font: 12pt monospace;
 }
