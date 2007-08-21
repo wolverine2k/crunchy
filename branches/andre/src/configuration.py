@@ -85,7 +85,7 @@ class Defaults(object):
             pickled = open(pickled_path, 'rb')
             success = True
         except:
-            print "could not open file for pickling data in configuration.load_settings()"
+            print "No configuration file found."
         if success:
             saved = cPickle.load(pickled)
             pickled.close()
@@ -137,7 +137,7 @@ class Defaults(object):
         try:
             pickled = open(pickled_path, 'wb')
         except:
-            print "could not open file for pickling data in configuration.save_settings()"
+            print "could not open file in configuration.save_settings()"
             return
         cPickle.dump(saved, pickled)
         pickled.close()

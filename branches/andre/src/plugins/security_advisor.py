@@ -32,38 +32,36 @@ def insert_security_info(page, *dummy):
     elif 'strict' in page.security_info['level']:
         src = '/paranoid.png'
 
-    outer_span = cp.Element("span")
-    outer_span.attrib["class"] = "security_info"
-    outer_span.text = _("Crunchy security level: [") +\
-                        page.security_info['level'] + "]"
-    level_img = cp.SubElement(outer_span, "img")
+    span = cp.Element("span")
+    span.attrib['class'] = "security_report" # in file menu_basic.css
+    level_img = cp.SubElement(span, "img")
     level_img.attrib["src"] = src
     level_img.attrib["alt"] = "security level image"
-    level_img.attrib["style"] = "border:0;height:20px"
-    level_img.tail = " "
+    level_img.attrib["style"] = "border:0;height:12pt"
+    level_img.tail = _(" Crunchy security level: ") +\
+                        page.security_info['level']
 
-    span = cp.SubElement(outer_span, "span")
-    span.text = _(" - Page content:")
+    br = cp.SubElement(span, "br")
+
     img = cp.SubElement(span, "img")
     img.attrib["alt"] = "security result"
-    img.attrib["style"] = "border:0;height:20px"
+    img.attrib["style"] = "border:0;height:12pt"
     if page.security_info['number removed'] == 0:
         img.attrib["src"] = "/ok.png"
-        img.tail = _("No elements were removed. ")
+        img.tail = _(" No elements were removed. ")
     elif page.security_info['number removed'] == 1:
         img.attrib["src"] = "/warning.png"
-        img.tail = _("One element was removed. - ")
+        img.tail = _(" One element was removed. - ")
     else:
         img.attrib["src"] = "/warning.png"
-        img.tail = _("%d elements were removed. - ")%page.security_info['number removed']
-    if page.security_info['number removed'] != 0:
-        span.tail = " "
-        view = cp.SubElement(outer_span, "a")
-        view.attrib["onclick"] = "show_security_info();"
-        view.attrib["href"] = "#"
-        view.attrib['style'] = "text-decoration: underline;"
-        view.text = _(" View security report ")
-    page.body.insert(0, outer_span)
+        img.tail = _(" %d elements were removed. - ")%page.security_info['number removed']
+
+    view = cp.SubElement(span, "a")
+    view.attrib["onclick"] = "show_security_info();"
+    view.attrib["href"] = "#"
+    view.attrib['style'] = "text-decoration: underline;"
+    view.text = _(" View report ")
+    page.body.insert(0, span)
 
     # Next, the hidden container for the full security information
 
@@ -344,7 +342,7 @@ security_css = """
     border: 4px outset #369;
     color: black;
     background-color: white;
-    font: 10pt monospace;
+    font: 12pt monospace;
     margin: 0;
     padding: 4px;
     padding-right: 30px;
