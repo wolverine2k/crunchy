@@ -55,12 +55,12 @@ def insert_security_info(page, *dummy):
     else:
         img.attrib["src"] = "/warning.png"
         img.tail = _(" %d elements were removed. - ")%page.security_info['number removed']
-
-    view = cp.SubElement(span, "a")
-    view.attrib["onclick"] = "show_security_info();"
-    view.attrib["href"] = "#"
-    view.attrib['style'] = "text-decoration: underline;"
-    view.text = _(" View report ")
+    if not page.url.startswith("/"):
+        view = cp.SubElement(span, "a")
+        view.attrib["onclick"] = "show_security_info();"
+        view.attrib["href"] = "#"
+        view.attrib['style'] = "text-decoration: underline;"
+        view.text = _(" View report ")
     page.body.insert(0, span)
 
     # Next, the hidden container for the full security information
@@ -228,6 +228,7 @@ def format_report(page, div):
         h2.text = _('You may select a site specific security level:')
         h2.attrib['class'] = "crunchy"
         site_num = 1
+
         options = [['trusted', 'trusted'],
                     ['normal', 'normal'],
                     ['strict', 'strict'],
@@ -258,6 +259,49 @@ def format_report(page, div):
         approve_btn = cp.SubElement(div, "button")
         approve_btn.attrib["onclick"] = "javascript:allow_site();"
         approve_btn.text = _("Select site security level")
+
+        p = cp.SubElement(div, 'p')
+        p.text = _("""
+Selection of a 'display MODE' will result in the same processing by Crunchy
+as the selection of 'MODE' except that no interactive elements
+(such as a Python interpreter)
+will be inserted in the page, thereby preserving the normal browser
+sandbox to protect your computer from malicious code.""")
+
+        p = cp.SubElement(div, 'p')
+        p.text = _("""
+Crunchy will remove any pre-existing javascript code on the page as
+well as a number of html elements that could be used to hide some
+javascript code.
+        """)
+
+        p = cp.SubElement(div, 'p')
+        p.text = _("""
+'trusted' should only be used for sites that you are convinced will
+not attempt to insert malicious code.  Sites that allow users to post
+comments, or worse, that allow users to edit (such as wikis) should not
+be set to 'trusted'. With 'trusted' selected, Crunchy will display the
+site as closely as it can to the wayt the original looked using only
+ your browser.
+        """)
+
+        p = cp.SubElement(div, 'p')
+        p.text = _("""
+'normal' will attempt to display the sites the same ways as 'trusted' does
+except that it will remove any styling deemed suspicious (see the docs for
+details) and will validate any image source before allowing the image to
+be displayed.  If the site contains many images, this validation process
+will slow down the display.  Images that can not be validated will not be
+shown.  Each image is validated only once during a given Crunchy session.
+        """)
+
+        p = cp.SubElement(div, 'p')
+        p.text = _("""
+'strict' will remove all styling and image on the page.  It will result
+in the fastest display, but one that will likely be the least visually
+appealing.
+        """)
+
     return
 
 def allow_site(request):
@@ -325,6 +369,10 @@ def set_security_list(request):
                 to_be_deleted.append(site)
     for site in to_be_deleted:
         del configuration.defaults.site_security[site]
+    # If we are approving a site for the first time, we don't need
+    # the user to confirm again in this session, so assign
+    # initial_security_set to True
+    configuration.initial_security_set = True
     configuration.defaults.save_settings()
 
     request.send_response(200)
