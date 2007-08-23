@@ -83,10 +83,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(format_exc())
 
-        if CrunchyPlugin.server.still_serving == False:
-            #sometimes the program does not exit; so force it...
-            import sys
-            sys.exit()
+##        if CrunchyPlugin.server.still_serving == False:
+##            #sometimes the program does not exit; so force it...
+##            import sys
+##            sys.exit()
 
     def do_GET(self):
         """the same as POST, we draw no distinction"""

@@ -89,34 +89,55 @@ class Defaults(object):
         if success:
             saved = cPickle.load(pickled)
             pickled.close()
-            self.__no_markup = saved['no_markup']
-            self.__language = saved['language']
-            self.__editarea_language = saved['editarea_language']
-            self.__friendly = saved['friendly']
-            self.__local_security = saved['local_security']
-            self.site_security = saved['site_security']
-            self.__override_default_interpreter = saved['override_default_interpreter']
-            self.__doc_help = saved['doc_help']
-            self.__dir_help = saved['dir_help']
-            self.__my_style = saved['my_style']
-            self.styles = saved['styles']
-            return
 
-        # properties, that can be configured by user
-        self.__no_markup = "python_tutorial"
-        self.__language = 'en'
-        self.__editarea_language = 'en'
-        self.__friendly = True
-        self.__local_security = 'normal'
-        self.site_security = {}
-        self.__override_default_interpreter = 'default'
-        self.__doc_help = True  # ok for beginners
-        self.__dir_help = False # less useful for beginners
-        self.__my_style = False
-        # end of properties
-        self.styles = {}
-        # save the file with the default values
-        self.save_settings()
+        try:
+            self.__no_markup = saved['no_markup']
+        except:
+            self.__no_markup = "python_tutorial"
+        try:
+            self.__language = saved['language']
+        except:
+            self.__language = 'en'
+        try:
+            self.__editarea_language = saved['editarea_language']
+        except:
+            self.__editarea_language = 'en'
+        try:
+            self.__friendly = saved['friendly']
+        except:
+            self.__friendly = True
+        try:
+            self.__local_security = saved['local_security']
+        except:
+            self.__local_security = 'normal'
+        try:
+            self.site_security = saved['site_security']
+        except:
+            self.site_security = {}
+        try:
+            self.__override_default_interpreter = saved['override_default_interpreter']
+        except:
+            self.__override_default_interpreter = 'default'
+        try:
+            self.__doc_help = saved['doc_help']
+        except:
+            self.__doc_help = True  # ok for beginners
+        try:
+            self.__dir_help = saved['dir_help']
+        except:
+            self.__dir_help = False # less useful for beginners
+        try:
+            self.__my_style = saved['my_style']
+        except:
+            self.__my_style = False
+        try:
+            self.styles = saved['styles']
+        except:
+            self.styles = {}
+
+        if not success:
+            # save the file with the default values
+            self.save_settings()
         return
 
     def save_settings(self):
