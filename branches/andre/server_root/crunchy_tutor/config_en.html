@@ -55,8 +55,11 @@ different security level as follows:
 <pre title="interpreter">
 &gt;&gt;&gt; # choose among 'strict', 'normal', 'trusted', 'display strict' ...
 &gt;&gt;&gt; # ... 'display normal', 'display trusted'
-&gt;&gt;&gt; crunchy.security = 'strict'
+&gt;&gt;&gt; crunchy.local_security = 'strict'
 </pre>
+<p>This will only affect the processing of pages that resides on your computer,
+whether they are part of the Crunchy distribution or others loaded via the
+file browser.</p>
 <p>Remember that if you choose a security level that starts with <code>display</code>
 no interactive elements will remain and, unless you have another previously open page
 in a different tab or window, you will not be able to change that setting during

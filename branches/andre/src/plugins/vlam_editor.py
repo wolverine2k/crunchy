@@ -10,11 +10,13 @@ for people familiar with the Crunchy plugin architecture.
 """
 
 import copy
+import os
 
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
 from src.utilities import extract_log_id, security_level
+_ = CrunchyPlugin._
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
@@ -109,15 +111,25 @@ def insert_editor(page, elem, uid):
     if "external" in vlam:
         btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
-        btn.text = "Execute as external program"
+        btn.text = _("Execute as external program")
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
             configuration.defaults.logging_uids[uid] = (log_id, t)
-    if not "no-internal" in vlam:
+        path_label = CrunchyPlugin.SubElement(elem, "span")
+        path_label.attrib['id'] = 'path_' + uid
+        path_label.attrib['class'] = 'path_info'
+        path_label.text = configuration.defaults.temp_dir + os.path.sep + "temp.py"
+        if not "no-internal" in vlam:
+            CrunchyPlugin.SubElement(elem, "br")
+            btn = CrunchyPlugin.SubElement(elem, "button")
+            btn.attrib["onclick"] = "exec_code('%s')" % uid
+            btn.text = _("Execute as separate thread")
+    else:
         btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code('%s')" % uid
-        btn.text = "Execute"
-    CrunchyPlugin.SubElement(elem, "br")
+        btn.text = _("Execute")
+
+
 
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
@@ -141,8 +153,9 @@ function exec_code_externally(uid){
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
     }
+    path = document.getElementById("path_"+uid).innerHTML;
     var j = new XMLHttpRequest();
-    j.open("POST", "/run_external%s?uid="+uid, false);
-    j.send(code);
+    j.open("POST", "/save_and_run%s?uid="+uid, false);
+    j.send(path+"_::EOF::_"+code);
 };
 """%(CrunchyPlugin.session_random_id, CrunchyPlugin.session_random_id)

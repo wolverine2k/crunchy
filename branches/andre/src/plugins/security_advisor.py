@@ -10,13 +10,14 @@ import src.configuration as configuration
 import src.CrunchyPlugin as cp
 _ = cp._
 
-provides = set(["/allow_site", "/enter_key", "/set_trusted"])
+provides = set(["/allow_site", "/enter_key", "/set_trusted", "/remove_all"])
 
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
     cp.register_http_handler("/allow_site", allow_site)
     cp.register_http_handler("/enter_key", enter_trusted_key)
     cp.register_http_handler("/set_trusted", set_security_list)
+    cp.register_http_handler("/remove_all", empty_security_list)
 
 def insert_security_info(page, *dummy):
     """Inserts security information at the top of a page"""
@@ -227,6 +228,10 @@ def format_report(page, div):
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('You may select a site specific security level:')
         h2.attrib['class'] = "crunchy"
+        if netloc in configuration.defaults.site_security:
+            p = cp.SubElement(div, 'p')
+            p.text = _("If you want to preserve the existing selection, ")
+            p.text += _("simply dismiss this window by clicking on the X above.")
         site_num = 1
 
         options = [['trusted', 'trusted'],
@@ -368,6 +373,23 @@ def set_security_list(request):
             else:
                 to_be_deleted.append(site)
     for site in to_be_deleted:
+        del configuration.defaults.site_security[site]
+    # If we are approving a site for the first time, we don't need
+    # the user to confirm again in this session, so assign
+    # initial_security_set to True
+    configuration.initial_security_set = True
+    configuration.defaults.save_settings()
+
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.write("")
+    request.wfile.flush()
+
+def empty_security_list(request):
+    sites = []
+    for site in configuration.defaults.site_security:
+        sites.append(site)
+    for site in sites:
         del configuration.defaults.site_security[site]
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign

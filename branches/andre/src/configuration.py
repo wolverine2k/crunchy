@@ -148,19 +148,21 @@ class Defaults(object):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
-        self.__temp_dir = os.path.join(self.__user_dir, "temp")
+        # There is no real need to have a separate temp (sub)directory
+        self.__temp_dir = self.__user_dir
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
-                try:
-                    os.makedirs(self.__temp_dir)
-                except:
-                    # Note: we do not translate diagnostic messages
-                    # sent to the terminal
-                    print "Created successfully home directory."
-                    print "Could not create temporary directory."
-                    self.__temp_dir = None
-                return
+                if not os.path.exists(self.__temp_dir):
+                    try:
+                        os.makedirs(self.__temp_dir)
+                    except:
+                        # Note: we do not translate diagnostic messages
+                        # sent to the terminal
+                        print "Created successfully home directory."
+                        print "Could not create temporary directory."
+                        self.__temp_dir = None
+                    return
             except:
                 print "Could not create the user directory."
                 self.__user_dir = os.getcwd()  # use crunchy's as a default.

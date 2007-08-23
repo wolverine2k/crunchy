@@ -95,7 +95,11 @@ code.crunchy{
                             http://www.w3.org/TR/css3-text/#white-space */
 }
 
-
+.path_info{
+    font: 9pt monospace;
+    border: solid 1px;
+    border-color: darkred;
+}
 
 /* notes, warning, etc. */
 

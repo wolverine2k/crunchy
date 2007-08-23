@@ -62,6 +62,7 @@ def save_and_run_request_handler(request):
     '''saves the code in a file in user specified directory and runs it
        from there'''
     path = save_file_request_handler(request)
+    print "path = ", path
     exec_external(path=path)
 
 def run_external_request_handler(request):

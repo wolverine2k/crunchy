@@ -141,11 +141,13 @@ function load_python_file(obj_id)
             }
         };
     h.open("GET", "/load_file"+"?"+"path="+path, true);
+    document.getElementById("path_"+obj_id.substring(5)).innerHTML = path;
     h.send('');
 }
 function save_python_file(path, id)
 {
     data = document.getElementById(id).value;
+    document.getElementById("path_"+id.substring(5)).innerHTML = path;
     var j = new XMLHttpRequest();
 	j.open("POST", "/save_file", true);
 	// Use an unlikely part of a filename (path) as a separator between file
@@ -159,6 +161,7 @@ function save_python_file(path, id)
 function save_and_run(path, id)
 {
 	data = document.getElementById(id).value;
+    document.getElementById("path_"+id.substring(5)).innerHTML = path;
 	var h = new XMLHttpRequest();
 	h.open("POST", "/save_and_run%s", true);
 	// Use an unlikely part of a filename (path) as a separator between file

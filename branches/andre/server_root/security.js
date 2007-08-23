@@ -43,7 +43,7 @@ function app_approve(nb_item) {
 function app_remove_all() {
     hide_security_info();
     var j = new XMLHttpRequest();
-    j.open("POST", "/set_trusted");
+    j.open("POST", "/remove_all");
     j.onreadystatechange = function() {
         if (j.readyState == 4 && j.status == 200) {
             alert("All sites will be removed from list");
