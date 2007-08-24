@@ -48,9 +48,7 @@ that you type the following code in the interpreter prompt that appears just bel
 <p>If you haven't made any mistake, Python will respond with <b>
 The Answer to The Ultimate Question Of Life, the Universe and Everything,</b>  <small>at least according to the Hitchhiker's Guide to the Galaxy.</small> 
 The Python interpreter you just used was actually inspired by and adapted from some great work by Robert Brewer. You may have also 
-noticed that the Python code was displayed in colour, with Python keywords in 
-blue, numbers in black, operators in reddish brown, etc., quite unlike the boring all
-black stuff of the original html page.</p>
+noticed that the Python code was displayed in colour, quite unlike the boring allblack stuff of the original html page.</p>
 <p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; print answer
@@ -83,8 +81,9 @@ to the ultimate question.  Generally, you should only see Borg type interpreters
 with an interaction where the interpreter will be waiting for a response to
 a question.</p>
 <pre title="interpreter linenumber">
-&gt;&gt;&gt; name = raw_input("What is your name?")  # note: use only ascii characters
-<span class="stdin">What is your name?</span>Your_name_should_appear_here
+&gt;&gt;&gt; name = raw_input("What is your name? ")
+What is your name?
+[Type in your name in the input box with no prompt in front]
 &gt;&gt;&gt; print name
 Your_name_should_appear_here
 </pre>
@@ -227,7 +226,7 @@ on the editor image next to an interpreter.</p>
 <em>
      <b>Mr. Praline:</b> ... I wish to complain about this parrot what I purchased not half an hour ago from this very boutique.<br/><br/>
 
-     <b>Owner:</b> Oh yes, the, uh, the Norwegian Blue...What's,uh...What's wrong with it?<br/><br/>
+     <b>Owner:</b> Oh yes, the, uh, the Norwegian Blue...What's, uh...What's wrong with it?<br/><br/>
 
      <b>Mr. Praline:</b> I'll tell you what's wrong with it, my lad. 'E's dead, that's what's wrong with it!<br/><br/>
      <b>Owner:</b> No, no, 'e's uh,...he's resting.<br/><br/>
@@ -290,18 +289,20 @@ comes to Crunchy.  This is why I give you the <small>[dead]</small> Parrots
 He's resting.
 </pre>
 <p>Like the Borg interpreter
-these share all the same state.  They have been assimilated.</p>
+these share all the same state.  They have been assimilated. 
+You can confirm this by defining a variable in it, and verifying that it
+is known by the other Borg interpreters on this page.</p>
 
 <h3 class="crunchy">More really advanced stuff: the TypeInfoConsole</h3>
 <p>As a follow-up to Michael Tobis original post on edu-sig mentioned above,
 John Posner suggested:</p>
-<blockquote>... if the user types an expression that
+<blockquote><i>... if the user types an expression that
 returns a value,
-have IDLE echo the return value annotated with its type, and with 
+have IDLE echo the return value <b>annotated with its type</b>, and with 
 "&lt;&lt;&lt;" as a
 prefix. Reversing the direction of the angle brackets is a neat (IMHO) way
 to remind the user of the concept of "return value".
-</blockquote>
+</i></blockquote>
 <p>While we did not quite follow to the letter John's suggestion, we have
 made available the TypeInfoConsole which you can try below.</p>
 <pre title="TypeInfoConsole">
@@ -331,7 +332,8 @@ such interpreter used on the same page
 shares the same environment; if <code>isolated</code> is chosen, then
 each such interpreter will have its own environment.  
 Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>
-<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled, unless the <code>no_style</code>
+option is specified. If the <code>linenumber</code>
 option is present, a line number will appear before each line of input
 code; the line numbering will start at 1 unless a different starting value is given.</p>
 

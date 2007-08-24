@@ -163,7 +163,17 @@ def nostrip_style(elem):
     # re-creating element
     tag = elem.tag
     new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
-    new_elem = et.fromstring(new_html)
+    try:
+        new_elem = et.fromstring(new_html)
+    except:
+        new_html = new_html.encode('utf-8')
+        try:
+            new_elem = et.fromstring(new_html)
+        except:
+            sp = et.Element("span")
+            sp.attrib['class'] = "py_warning"
+            sp.text = _("Crunchy: could not style the following code")
+            return '', '', sp
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
         new_elem.attrib['class'] += ' crunchy'

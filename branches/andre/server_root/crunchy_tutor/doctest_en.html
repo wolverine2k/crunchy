@@ -49,9 +49,9 @@ Afterwards try the next, slightly more difficult example.</p>
 >>> p = Teacher('Jeff')
 >>> p.name
 'Jeff'
->>> p.addFriend('Andre')
+>>> p.addFriend('Andr&eacute;')  # Crunchy [doctest?] bug: can't deal with non-ascii as in Andr&eacute;
 >>> p.friends
-['Andre']
+['Andr&eacute;']
 </pre>
 <p>If you are using Crunchy, you realise that you can simply enter your code in the editor above, 
 press the button, and see what happens.</p>
