@@ -25,7 +25,8 @@ editarea_languages_allowed_values = ['de', # German
                                      'pl', # Polish
                                      'pt' # Portuguese
                                     ]
-languages_allowed_values = ['en' # English
+languages_allowed_values = ['en', # English
+                            'fr' # French
                             ]
 security_allowed_values = [
                         'trusted','display trusted',
@@ -288,10 +289,20 @@ Here are the values of some variables currently used by Crunchy.
                     value = val.fget(self)
 # we make sure that the choice is shown as a string if expected from the user
                     if value not in [True, False]:
-                        value = "'" + str(value) + "'"
+                        try:
+                            value = str(value)
+                        except:
+                            try: # perhaps a path
+                                value = str(value.encode(sys.getfilesystemencoding()))
+                            except: # or translation
+                                try:
+                                    value = str(value.encode('utf-8'))
+                                except:
+                                    value = str(value.encode(sys.getdefaultencoding()))
+                        value = "'" + value + "'"
                     else:
                         value = str(value)
-                    __help += "\n"  + "~"*50 +"\n" + val.__doc__ +\
+                    __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
                         self._prefix + "." +  key + " = " + value
         return __help + "\n"
 
