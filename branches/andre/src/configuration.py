@@ -147,7 +147,14 @@ class Defaults(object):
         saved['language'] = self.__language
         saved['editarea_language'] = self.__editarea_language
         saved['friendly'] = self.__friendly
-        saved['local_security'] = self.__local_security
+        if 'display' not in self.__local_security:
+            saved['local_security'] = self.__local_security
+        else:
+            # we do not want to restart Crunchy in a "display" mode
+            # as we will not be able to change it without loading
+            # a remote tutorial.
+            saved_value = self.__local_security.replace("display ", '')
+            saved['local_security'] = saved_value
         saved['override_default_interpreter'] = self.__override_default_interpreter
         saved['doc_help'] = self.__doc_help
         saved['dir_help'] = self.__dir_help
