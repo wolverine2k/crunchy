@@ -1,5 +1,8 @@
 """
-graphics.py
+math_graphics.py
+
+Similar to graphics.py, except that the origin is at the bottom left
+corner of the drawing region.
 """
 
 import re
@@ -11,8 +14,11 @@ def register():
     # no callbacks to register or initialisation needed
     pass
 
+HEIGHTS = {}
+
 def init_graphics(width=400, height=400, border_color='red'):
     uid = __cp.get_uid()
+    HEIGHTS[uid] = height
     if uid not in created_uids: # dynamically create a canvas
         created_uids.append(uid)
         __cp.exec_js(__cp.get_pageid(), """var divCanvas = document.getElementById("div_%s");
@@ -50,6 +56,8 @@ set_fill_color = set_fill_colour
 def line((x1, y1), (x2, y2)):
     '''Draws a line from point (x1, y1) to point (x2, y2) in the default line colour.'''
     uid = __cp.get_uid()
+    y1 = HEIGHTS[uid] - y1
+    y2 = HEIGHTS[uid] - y2
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
@@ -58,6 +66,7 @@ def line((x1, y1), (x2, y2)):
 def circle((x, y), r):
     '''Draws a circle of radius r centred on (x, y) in the default line colour.'''
     uid = __cp.get_uid()
+    y = HEIGHTS[uid] - y
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, r, uid))
@@ -65,6 +74,7 @@ def circle((x, y), r):
 def filled_circle((x, y), r):
     '''Draws a filled circle of radius r centred on (x, y) in the default fill colour.'''
     uid = __cp.get_uid()
+    y = HEIGHTS[uid] - y
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').fill();""" % (uid, uid, x, y, r, uid))
@@ -72,16 +82,21 @@ def filled_circle((x, y), r):
 def rectangle((x1, y1), w, h):
     '''Draws a rectangle in the default line colour.'''
     uid = __cp.get_uid()
+    y1 = HEIGHTS[uid] - y1 - h
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x1, y1, w, h))
 
 def filled_rectangle((x1, y1), w, h):
     '''Draws a filled rectangle in the default fill colour.'''
     uid = __cp.get_uid()
+    y1 = HEIGHTS[uid] - y1 - h
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x1, y1, w, h))
 
 def triangle((x1, y1), (x2, y2), (x3, y3)):
     '''Draws a triangle joining the three points in the default line colour.'''
     uid = __cp.get_uid()
+    y1 = HEIGHTS[uid] - y1
+    y2 = HEIGHTS[uid] - y2
+    y3 = HEIGHTS[uid] - y3
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
@@ -92,6 +107,9 @@ def triangle((x1, y1), (x2, y2), (x3, y3)):
 def filled_triangle((x1, y1), (x2, y2), (x3, y3)):
     '''Draws a filled triangle joining the three points in the default fill colour.'''
     uid = __cp.get_uid()
+    y1 = HEIGHTS[uid] - y1
+    y2 = HEIGHTS[uid] - y2
+    y3 = HEIGHTS[uid] - y3
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
@@ -102,6 +120,7 @@ def filled_triangle((x1, y1), (x2, y2), (x3, y3)):
 def point(x, y):
     '''Draws a point in the default line colour.'''
     uid = __cp.get_uid()
+    y = HEIGHTS[uid] - y
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);

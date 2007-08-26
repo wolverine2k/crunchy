@@ -31,10 +31,18 @@
 </div>
 <div id="main">
 <h2 class="crunchy">Picturesque Crunchy</h2>
+<div class="notes">
+<h4>Mathematical graphics</h4>
+<p> If you want graphics that have the origin at the bottom left corner, with increasing <i>y</i> coordinates going up, load up the 
+<code title="py_code">math_graphics</code> module instead of the 
+<code title="py_code">graphics</code> module.
+</p>
+</div>
 <p>Using Crunchy, you can draw the most incredible pictures. 
  Try the following example; following the usual convention in computer graphics (but not in mathematics) the origin is at the top left corner.  
 The drawing will take place when you press the appropriate button; it is left as a challenge for you to find it. [Note that this will only work if you use a
 browser that supports the html <code>&lt;canvas&gt;</code> tag.]</p>
+
 <pre title="editor">
 import graphics
 graphics.init_graphics(300, 300)
@@ -102,10 +110,12 @@ for i in range(10):
 <h3 class="crunchy">Advanced stuff</h3>
 <p>The new "comet-based" Crunchy has not only static graphics capabilities but 
 also supports simple animations.  However, sometimes the animation may seem to 
-stall.</p>
+stall.  In this example, we use the <code title="py_code">math_graphics</code>
+module instead of the <code title="py_code">graphics</code> module, which 
+means that the origin is at the bottom left corner.</p>
 
 <pre title="editor">
-from graphics import  *
+from math_graphics import  *
 init_graphics()
 import time
 for i in range(40):
