@@ -29,16 +29,18 @@ def insert_tooltip(page, elem, uid):
         tooltip = CrunchyPlugin.Element("div")
         tooltip.attrib["id"] = "tooltip"
         tooltip.text = " "
+        tooltip.attrib["onmousedown"] = "grab(this);"
         page.body.append(tooltip)
 
         help_menu = CrunchyPlugin.Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
+        help_menu.attrib["onmousedown"] = "grab(this);"
         page.body.append(help_menu)
 
         help_menu_x = CrunchyPlugin.Element("div")
         help_menu_x.attrib["id"] = "help_menu_x"
-        help_menu_x.attrib["onclick"] = "hide_help()"
+        help_menu_x.attrib["onclick"] = "hide_help();"
         help_menu_x.text = "X"
         page.body.append(help_menu_x)
 
@@ -152,7 +154,7 @@ tooltip_css = """
 #help_menu_x {
     position: fixed;
     top: 75px;
-    right: 25px;
+    right: 10px;
     color: #fe0;
     background-color: #369;
     font: 14pt sans-serif;

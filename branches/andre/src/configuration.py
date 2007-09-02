@@ -484,5 +484,13 @@ Here are the values of some variables currently used by Crunchy.
               " by the user's choice specified in %s.styles\n")%_prefix +\
             _('\n  The current value for my_style is: '))
 
+    def add_site(self):
+        '''interactive function to facilitate adding new site to
+           the secured list'''
+        site = raw_input("Enter site url (for example, www.python.org) ")
+        level = raw_input("Enter security level (for example: normal) ")
+        self.set_site_security(site, level)
+
+
     #==============
 defaults = Defaults()

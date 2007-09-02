@@ -33,6 +33,8 @@ def link_handler(page, elem):
        remote pages"""
     if "href" not in elem.attrib:
         return
+    if elem.attrib["href"].startswith("/"):
+        return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
     if is_remote_url(page.url):
         if "#" in elem.attrib["href"]:

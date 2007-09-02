@@ -50,14 +50,28 @@ function tooltip_display(event, interp_id) {
 };
 
 function hide_help() {
-    document.getElementById("help_menu").style.display = "none";
+    var help_menu = document.getElementById("help_menu");
+    help_menu.style.display = "none";
+    //document.getElementById("help_menu").style.display = "none";
+    help_menu.style.position = "fixed";
+    help_menu.style.top = "70px";
+    help_menu.style.right = "5px";
+    
+
+    
     hide_tooltip();
 };
 
 function hide_tooltip() {
     document.getElementById("help_menu_x").style.display = "none";
-    document.getElementById("tooltip").style.display = "none";
-    document.getElementById("tooltip").innerHTML = " ";
+    var tool_tip = document.getElementById("tooltip");
+    tool_tip.style.display = "none";
+    tool_tip.innerHTML = " ";
+
+    tool_tip.style.position = "fixed";
+    tool_tip.style.top = "70px";
+    tool_tip.style.right = "5px";
+
 };
 
 function show_tooltip(tipText) {
@@ -180,4 +194,57 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
 function copyCodeSample(uid){
     editor = document.getElementById("code_"+ uid);
     editor.value = document.getElementById("code_sample_" +uid).value;
+};
+
+/* The following has been adapted from http://dunnbypaul.net/js_mouse/   
+   to make resizable tooltips; references to IE have been removed from original*/
+   
+var mousex = 0;
+var mousey = 0;
+var elex = 0;
+
+var dragobj = null;
+
+function falsefunc() { return false; } // used to block cascading events
+
+function getMouseXY(e)
+{ 
+  if (e)
+  { 
+      mousex = e.pageX;
+      mousey = e.layerY;
+  }
+};
+
+function grab(context)
+{
+  document.onmousedown = falsefunc; // in NS this prevents cascading of events, 
+  dragobj = context;
+  dragobj.style.cursor = "ne-resize";
+  document.onmousemove = drag;
+  document.onmouseup = drop;
+  getMouseXY();
+};
+
+function drag(e) // parameter passing is important for NS family 
+{
+  if (dragobj)
+  {
+    elex = document.width - mousex;
+    dragobj.style.width = (elex).toString(10) + 'px';
+    dragobj.style.height = (mousey).toString(10) + 'px';
+  }
+  getMouseXY(e);
+};
+
+function drop()
+{
+  if (dragobj)
+  {
+    dragobj = null;
+  }
+  getMouseXY();
+  document.onmousemove = getMouseXY;
+  document.onmouseup = null;
+  document.onmousedown = null;   // re-enables text selection on NS
 };

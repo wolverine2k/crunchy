@@ -33,7 +33,7 @@ div.crunchy{
 .py_number{font: 12pt monospace; color: #207030;}
 .py_comment{
     color: grey; 
-    font: 12pt 'arial', sans-serif;
+    font: 12pt monospace, sans-serif; /*keep monospace to have proper indentation */
     font-style: italic;
     }
 .py_string{font: 12pt monospace; color: #660066;} /* Indigo */
@@ -55,7 +55,7 @@ pre.crunchy{
 	font-size:12pt;
 	}
 code.crunchy{    
-    background-color: #efd;
+    background-color: #f8fff0;
     padding: 0 1px 0 1px;
     font: 12pt monospace;
     }
