@@ -59,13 +59,17 @@ def dir_handler(request):
     line = ".".join(line.split(".")[:-1])
     try:
         result = eval("dir(%s)" % line, {}, borg_console.__dict__['locals'])
-        result = repr(result)
+
     except:
         request.send_response(204)
         request.end_headers()
         return
+    if type(result) == type([]):
+        # strip private variables
+        result = [a for a in result if not a.startswith("_")]
 
     # have to convert the list to a string
+    result = repr(result)
     request.send_response(200)
     request.end_headers()
     request.wfile.write(result)

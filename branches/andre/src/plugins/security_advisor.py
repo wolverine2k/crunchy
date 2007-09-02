@@ -378,7 +378,7 @@ def set_security_list(request):
     # the user to confirm again in this session, so assign
     # initial_security_set to True
     configuration.initial_security_set = True
-    configuration.defaults.save_settings()
+    configuration.defaults._save_settings()
 
     request.send_response(200)
     request.end_headers()
@@ -395,7 +395,7 @@ def empty_security_list(request):
     # the user to confirm again in this session, so assign
     # initial_security_set to True
     configuration.initial_security_set = True
-    configuration.defaults.save_settings()
+    configuration.defaults._save_settings()
 
     request.send_response(200)
     request.end_headers()

@@ -2,6 +2,14 @@
     Keeps track of user based settings, some automatically set
     by Crunchy, others ajustable by the user.
 """
+
+### Important:
+#
+# In order to reduce the list of variables displayed in the popup
+# "tooltip" when the user enters "crunchy.", most methods have been
+# prefixed by a leading underscore; Crunchy (in tooltip.py) filters
+# out such methods from the display.
+
 import cPickle
 import os
 import sys
@@ -69,9 +77,9 @@ class Defaults(object):
     _prefix = "crunchy"
 
     def __init__(self):
-        self.set_dirs()
+        self._set_dirs()
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
-        self.load_settings()
+        self._load_settings()
         translation.init_translation(self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
                                # name is defined by tutorial writer
@@ -79,7 +87,7 @@ class Defaults(object):
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
         # backup value used in resetting security level
 
-    def load_settings(self):
+    def _load_settings(self):
         success = False
         pickled_path = os.path.join(self.__user_dir, "settings.pkl")
         try:
@@ -126,7 +134,7 @@ class Defaults(object):
         try:
             self.__dir_help = saved['dir_help']
         except:
-            self.__dir_help = False # less useful for beginners
+            self.__dir_help = True # Possibly less useful for beginners
         try:
             self.__my_style = saved['my_style']
         except:
@@ -138,10 +146,10 @@ class Defaults(object):
 
         if not success:
             # save the file with the default values
-            self.save_settings()
+            self._save_settings()
         return
 
-    def save_settings(self):
+    def _save_settings(self):
         saved = {}
         saved['no_markup'] = self.__no_markup
         saved['language'] = self.__language
@@ -166,14 +174,14 @@ class Defaults(object):
         try:
             pickled = open(pickled_path, 'wb')
         except:
-            print "could not open file in configuration.save_settings()"
+            print "could not open file in configuration._save_settings()"
             return
         cPickle.dump(saved, pickled)
         pickled.close()
         print "saved settings"
         return
 
-    def set_dirs(self):
+    def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
@@ -217,60 +225,60 @@ class Defaults(object):
         return
 
     #==============
-    def get_user_dir(self):
+    def _get_user_dir(self):
         return self.__user_dir
 
-    user_dir = property(get_user_dir, None, None,
+    user_dir = property(_get_user_dir, None, None,
                        _("(Fixed) User home directory: "))
     #==============
 
-    def get_temp_dir(self):
+    def _get_temp_dir(self):
         return self.__temp_dir.decode(sys.getfilesystemencoding())
 
-    temp_dir = property(get_temp_dir, None, None,
+    temp_dir = property(_get_temp_dir, None, None,
                        _("(Fixed) Temporary working directory: "))
 
     #==============
 
-    def get_dir_help(self):
+    def _get_dir_help(self):
         return self.__dir_help
 
-    def set_dir_help(self, choice):
+    def _set_dir_help(self, choice):
         if choice not in dir_help_allowed_values:
             print _("Invalid choice for %s.dir_help")%self._prefix
             print _("The valid choices are: "), dir_help_allowed_values
             print _("The current value is: "), self.__dir_help
             return
         self.__dir_help = choice
-        self.save_settings()
+        self._save_settings()
         return
 
-    dir_help = property(get_dir_help, set_dir_help, None,
+    dir_help = property(_get_dir_help, _set_dir_help, None,
         _('The choices for dir_help are %s\n')% dir_help_allowed_values +\
         _('  The current value is: '))
 
     #==============
 
-    def get_doc_help(self):
+    def _get_doc_help(self):
         return self.__doc_help
 
-    def set_doc_help(self, choice):
+    def _set_doc_help(self, choice):
         if choice not in doc_help_allowed_values:
             print _("Invalid choice for %s.doc_help")%self._prefix
             print _("The valid choices are: "), doc_help_allowed_values
             print _("The current value is: "), self.__doc_help
             return
         self.__doc_help = choice
-        self.save_settings()
+        self._save_settings()
         return
 
-    doc_help = property(get_doc_help, set_doc_help, None,
+    doc_help = property(_get_doc_help, _set_doc_help, None,
         _('The choices for doc_help are %s\n')% doc_help_allowed_values +\
         _('  The current value is: '))
 
     #==============
 
-    def get_help(self):
+    def _get_help(self):
         '''Help message that includes all the values that are set
            as properties.'''
         __help = _("""
@@ -313,16 +321,16 @@ Here are the values of some variables currently used by Crunchy.
                         self._prefix + "." +  key + " = " + value
         return __help + "\n"
 
-    help = property(get_help, None, None, 'help')
+    help = property(_get_help, None, None, 'help')
     #==============
     #
     # Crunchy allows the user to treat a bare <pre> as though it had
     # a given vlam value.
 
-    def get_nm(self):
+    def _get_nm(self):
         return self.__no_markup
 
-    def set_nm(self, choice):
+    def _set_nm(self, choice):
         ch = choice.strip().split(' ')
         valid = False
         if ch[0] in no_markup_allowed_values:
@@ -341,17 +349,17 @@ Here are the values of some variables currently used by Crunchy.
             print _('with "image_file   file_name" as a required option.')
             print _("The current value is: "), self.__no_markup
         else:
-            self.save_settings()
+            self._save_settings()
 
-    no_markup = property(get_nm, set_nm, None,
+    no_markup = property(_get_nm, _set_nm, None,
         _('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values +\
         _('  The current value is: '))
     #==============
 
-    def get_language(self):
+    def _get_language(self):
         return self.__language
 
-    def set_language(self, choice):
+    def _set_language(self, choice):
         if choice in languages_allowed_values:
             self.__language = choice
             translation.init_translation(self.__language)
@@ -363,55 +371,55 @@ Here are the values of some variables currently used by Crunchy.
                 print _("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\
                 _("The language choice for editarea remains ") +\
                  self.__editarea_language
-            self.save_settings()
+            self._save_settings()
         else:
             print _("Invalid choice for %s.language")%self._prefix
             print _("The valid choices are: "), languages_allowed_values
 
-    language = property(get_language, set_language, None,
+    language = property(_get_language, _set_language, None,
         _('The choices for language are %s\n')% languages_allowed_values +\
         _('  The current value is: '))
     #==============
 
-    def get_editarea_language(self):
+    def _get_editarea_language(self):
         return self.__editarea_language
 
-    def set_editarea_language(self, choice):
+    def _set_editarea_language(self, choice):
         if choice in editarea_languages_allowed_values:
             self.__editarea_language = choice
             print _("editarea_language set to: ") , choice
-            self.save_settings()
+            self._save_settings()
         else:
             print _("Invalid choice for %s.editarea_language")%self._prefix
             print _("The valid choices are: "), editarea_languages_allowed_values
 
-    editarea_language = property(get_editarea_language, set_editarea_language, None,
+    editarea_language = property(_get_editarea_language, _set_editarea_language, None,
         _('The choices for editarea_language are %s\n')% editarea_languages_allowed_values +\
         _('  The current value is: '))
     #==============
 
-    def get_friendly_traceback(self):
+    def _get_friendly_traceback(self):
         return self.__friendly
 
-    def set_friendly_traceback(self, choice):
+    def _set_friendly_traceback(self, choice):
         if choice == True:
             self.__friendly = True
             print _("Crunchy will attempt to provide friendly error messages.")
-            self.save_settings()
+            self._save_settings()
         elif choice == False:
             self.__friendly = False
             print _("Crunchy's error messages will be similar to Python's default tracebacks.")
-            self.save_settings()
+            self._save_settings()
         else:
             print _("friendly attribute must be set to True or False.")
 
-    friendly = property(get_friendly_traceback, set_friendly_traceback, None,
+    friendly = property(_get_friendly_traceback, _set_friendly_traceback, None,
         _('The choices for friendly tracebacks are %s\n')% [True, False] +\
         _('  The current value is: '))
 
     #==============
 
-    def get_site_security(self, site):
+    def _get_site_security(self, site):
         if site in self.site_security:
             print "site = ", site
             print "self.site_security = ", self.site_security
@@ -419,65 +427,65 @@ Here are the values of some variables currently used by Crunchy.
         else:
             return 'display trusted'
 
-    def set_site_security(self, site, choice):
+    def _set_site_security(self, site, choice):
         if choice in security_allowed_values:
             self.site_security[site] = choice
-            self.save_settings()
+            self._save_settings()
             print _("site security set to: ") , choice
         else:
             print _("Invalid choice for %s.site_security")%self._prefix
             print _("The valid choices are: "), security_allowed_values
 
-    def get_local_security(self):
+    def _get_local_security(self):
         return self.__local_security
 
-    def set_local_security(self, choice):
+    def _set_local_security(self, choice):
         if choice in security_allowed_values:
             self.__local_security = choice
             print _("security set to: ") , choice
-            self.save_settings()
+            self._save_settings()
         else:
             print _("Invalid choice for %s.local_security")%self._prefix
             print _("The valid choices are: "), security_allowed_values
 
-    local_security = property(get_local_security, set_local_security, None,
+    local_security = property(_get_local_security, _set_local_security, None,
         _('The choices for local_security levels are %s\n')% security_allowed_values +\
         _('  The current value is: '))
     #==============
 
-    def get_override_default_interpreter(self):
+    def _get_override_default_interpreter(self):
         return self.__override_default_interpreter
 
-    def set_override_default_interpreter(self, choice):
+    def _set_override_default_interpreter(self, choice):
         if choice in override_default_interpreter_allowed_values:
             self.__override_default_interpreter = choice
             print _("override_default_interpreter set to: ") , choice
-            self.save_settings()
+            self._save_settings()
         else:
             print _("Invalid choice for %s.override_default_interpreter")%self._prefix
             print _("The valid choices are: "), override_default_interpreter_allowed_values
 
-    override_default_interpreter = property(get_override_default_interpreter,
-           set_override_default_interpreter, None,
+    override_default_interpreter = property(_get_override_default_interpreter,
+           _set_override_default_interpreter, None,
             _('The choices for override_default_interpreter are %s\n')%\
              override_default_interpreter_allowed_values +\
             _('  The current value is: '))
 
     #==============
 
-    def get_my_style(self):
+    def _get_my_style(self):
         return self.__my_style
 
-    def set_my_style(self, choice):
+    def _set_my_style(self, choice):
         if choice in [True, False]:
             self.__my_style = choice
             print _("my_style set to: ") , choice
-            self.save_settings()
+            self._save_settings()
         else:
             print _("Invalid choice for %s.my_style")%self._prefix
             print _("The valid choices are: "), [True, False]
 
-    my_style = property(get_my_style, set_my_style, None,
+    my_style = property(_get_my_style, _set_my_style, None,
             _('The choices for my_style are %s\n')%\
              [True, False] +\
             _("If set to True, Crunchy's default styles are replaced"+
@@ -489,7 +497,7 @@ Here are the values of some variables currently used by Crunchy.
            the secured list'''
         site = raw_input("Enter site url (for example, www.python.org) ")
         level = raw_input("Enter security level (for example: normal) ")
-        self.set_site_security(site, level)
+        self._set_site_security(site, level)
 
 
     #==============
