@@ -48,7 +48,7 @@ that you type the following code in the interpreter prompt that appears just bel
 <p>If you haven't made any mistake, Python will respond with <b>
 The Answer to The Ultimate Question Of Life, the Universe and Everything,</b>  <small>at least according to the Hitchhiker's Guide to the Galaxy.</small> 
 The Python interpreter you just used was actually inspired by and adapted from some great work by Robert Brewer. You may have also 
-noticed that the Python code was displayed in colour, quite unlike the boring allblack stuff of the original html page.</p>
+noticed that the Python code was displayed in colour, quite unlike the boring all black stuff of the original html page.</p>
 <p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; print answer
@@ -123,7 +123,17 @@ effectively starting a new session, using the <code title="py_code">restart()</c
 
 <p>You now know enough to use the interpreter to learn about Python following a "real" Python tutorial.  You can either do this by go to the 
 <a href="http://docs.python.org/tut/tut_en.html">the official Python tutorial</a>
-on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.</p>
+on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.  WARNING: if you click on the above link, you will not, 
+in fact, be able to try out the Python code.  This is because Crunchy
+does not allow interactions with unknown sites; it will simply style the page
+in its own way and display it.  You will need to explicitly tell it (there are
+at least 3 different ways of doing this) that you consider the
+site "safe" for browsing.  If you can't wait, just enter</p>
+<pre title="interpreter">
+>>> crunchy.add_site()
+</pre>
+<p>It's most likely safe to write <code title="py_code">trusted</code> for the
+security level of the www.python.org site.</p>
 <h3 class="crunchy">Advanced stuff</h3>
 <p>Starting with version 0.9.2, Crunchy's interpreter knows some new tricks that can be very useful ... but potentially tricky.
 Consider the following.</p>
@@ -137,7 +147,7 @@ Using some advanced feature of Crunchy, you can save yourself a fair bit of typi
 Here is how: click on the image <img src="../editor.png" alt="editor.png" style="height:30px"/> to the right of
 the interpreter.
 You should see appearing below it a larger box (an html textarea for those interested)
-with two buttons at the buttom.
+with two buttons at the bottom.
 One button copies the code shown above (just the input - not the output) 
 inside the textarea, ready for editing or just executing.  
 The other button feeds the code to the interpreter. 
@@ -150,7 +160,7 @@ Try it out!
 &gt;&gt;&gt; name = raw_input("Enter your name: ")
 &gt;&gt;&gt; print "YOUR NAME IS", name
 </pre>
-<p>Now, try it again here to see more clearly what happened:</p>
+<p>Now, try the next example below to see more clearly what happened:</p>
 <pre title="interpreter">
 &gt;&gt;&gt; print "Your name is: ", name
 </pre>
@@ -164,9 +174,8 @@ on the editor image next to an interpreter.</p>
 <p>Try again with the following example: click on the editor image, 
 copy the code and execute it.  
 You will find that the interpreter will not be able to
-handle the result and will effectively shut down.  Normally, you would have
-to reload the page to try again; however, I will give you another copy
-to work with just below.</p>
+handle the result give you a number of error messages.  When that happens, 
+continue reading below.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; def flatten(seq):
 ...     """flatten(sequence) -> list
@@ -193,30 +202,9 @@ to work with just below.</p>
 <p>The problem is due to the empty line (12).  Imagine that you were typing in the code yourself, line by line.
 When you enter an empty line, the interpreter interprets this as the end of
 a function definition (or a loop, or if statement, etc.).
-To avoid this problem, we need to have something with no empty lines.
+To avoid this problem, we need to have something with no empty lines; so try again, this time removing the empty line before executing the code.
 </p>
-<pre title="interpreter linenumber">
-&gt;&gt;&gt; def flatten(seq):
-...     """flatten(sequence) -> list
-... 
-...     Returns a single, flat list which contains all elements retrieved
-...     from the sequence and all recursively contained sub-sequences
-...     (iterables).
-... 
-...     Examples:
-...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
-...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-...     """
-...     result = []
-...     for elem in seq:
-...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
-...             result.extend(flatten(elem))
-...         else:
-...             result.append(elem)
-...     return result
-...
-&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
-</pre>
+
 <p><b>Second lesson:</b> beware of empty lines inside a box obtained by clicking
 on the editor image next to an interpreter.</p>
 

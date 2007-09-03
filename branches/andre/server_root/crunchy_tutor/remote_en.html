@@ -81,6 +81,22 @@ Perhaps you are a more advanced user, interested in browsing the latest Python b
 If you do so, you might want to look at them using this:</p>
 <span title="load_remote">http://planet.python.org</span>
 <p>... or try any other valid url.</p>
+<p>Before you do, you may want to add the site as follows:</p>
+<pre title="interpreter">
+>>> crunchy.add_site()
+</pre>
+<p>Note: if you want to browse planet.python.org, which is an aggregates of many
+sites, I suggest you select 
+<code title="py_code">strict</code> as the security level; no images will be shown, but
+it will be totally safe.</p>
+<p> You may also want to enter</p>
+<pre title="py_code">
+>>> crunchy.no_markup = 'interpreter'
+</pre>
+<p>This will insert an interpreter prompt wherever an html &lt;pre&gt; tag is encountered,
+in the oft-chance that it might include some Python code that you might want to try.
+However, if you are planning to browse the official Python tutorial, I suggest you
+leave the current default (<code title="py_code">'python_tutorial'</code>) unchanged.</p>
 
 
 <h3 class="crunchy">Closer to home</h3>

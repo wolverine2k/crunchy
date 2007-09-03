@@ -13,7 +13,7 @@ def security_level(url):
     if info.netloc == '':
         level = configuration.defaults.local_security
     else:
-        level = configuration.defaults.get_site_security(info.netloc)
+        level = configuration.defaults._get_site_security(info.netloc)
     return level
 
 def extract_log_id(vlam):

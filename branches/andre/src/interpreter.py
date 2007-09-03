@@ -11,8 +11,8 @@ from utilities import trim_empty_lines_from_end, log_session
 import configuration
 import errors
 
-def _(msg):  # dummy for now
-    return msg
+import translation
+_ = translation._
 
 class Interpreter(threading.Thread):
     """
@@ -57,7 +57,7 @@ class Interpreter(threading.Thread):
                             if not user_code.endswith('\n'):
                                 user_code += '\n'
                         else:
-                            user_code = _("# no code entered by user\n")
+                            user_code = _("# no code entered by user\n").encode("utf-8")
                         data = "<span class='stdin'>" + user_code + "</span>"
                         configuration.defaults.log[log_id].append(data)
                         log_session()
@@ -92,7 +92,7 @@ class Interpreter(threading.Thread):
                         if not user_code.endswith('\n'):
                             user_code += '\n'
                     else:
-                        user_code = _("# no code entered by user\n")
+                        user_code = _("# no code entered by user\n").encode("utf-8")
                     data = "<span class='stdin'>" + user_code + "</span>"
                     configuration.defaults.log[log_id].append(data)
                     log_session()

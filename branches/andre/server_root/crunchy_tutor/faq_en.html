@@ -132,8 +132,8 @@ the Python version, browser, etc.  The more details you provide, the better.
 If you want to be more discrete you can write to either
 </p>
 <ul>
-<li>andre dot roberge at gmail dot com, <em>or</em></li>
-<li>johannes dot woolard at gmail dot com</li>
+<li>andre.roberge@gmail.com, <em>or</em></li>
+<li>johannes.woolard@gmail.com</li>
 </ul>
 
 <a id="ipython"> </a><br/>
@@ -353,15 +353,23 @@ no foreign javascript is included, before loading it normally.</p>
 <p>To help you, whenever some tags or attributes are removed from a page, Crunchy inserts a link
 at the top of the page giving you some summary of what it actually removed.</p>
 <h4>How do I select a security level?</h4>
-<p>Use any object used to execute some Python code, such as the interpreter below.</p>
+<p>Use any object used to execute some Python code, such as the interpreter below.
+For browsing local tutorials that you have downloaded on your computer, use</p>
 <pre title="interpreter">
-&gt;&gt;&gt; crunchy.security = 'strict'
+&gt;&gt;&gt; crunchy.local_security = 'strict'
 </pre>
 <p>The chosen security level will be used when you load a new page, or reload the current page.
 Note that if you use a 'display' security level, you will not be able to change it back
-from a new page as Crunchy won't let you enter new Python code!  A way around this is to
-open a new page in a separate window or tab, keeping the original still going.
+from a new page as Crunchy won't let you enter new Python code - unless there have been some
+html tags removed in which case a link will appear at the top giving you
+the possibility of viewing the report ... and changing the security level.
 </p>
+<p>For remote tutorials, you can assign a security level for each site using</p>
+<pre title="interpreter">
+&gt;&gt;&gt; crunchy.add_site()
+</pre>
+
+
 
 </div>
 </body>

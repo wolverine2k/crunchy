@@ -45,7 +45,7 @@ security_allowed_values = [
 # Unfortunately, IPython interferes with Crunchy;
 #  I'm commenting it out, keeping it in as a reference.
 override_default_interpreter_allowed_values = ['default', # ipython,
-        'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
+        'interpreter', 'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
 
 no_markup_allowed_values = ["none", "editor", 'python_tutorial',
                     "python_code", "image_file"]
@@ -229,14 +229,14 @@ class Defaults(object):
         return self.__user_dir
 
     user_dir = property(_get_user_dir, None, None,
-                       _("(Fixed) User home directory: "))
+                       _("(Fixed) User home directory: ").encode("utf-8"))
     #==============
 
     def _get_temp_dir(self):
         return self.__temp_dir.decode(sys.getfilesystemencoding())
 
     temp_dir = property(_get_temp_dir, None, None,
-                       _("(Fixed) Temporary working directory: "))
+                       _("(Fixed) Temporary working directory: ").encode("utf-8"))
 
     #==============
 
@@ -245,17 +245,17 @@ class Defaults(object):
 
     def _set_dir_help(self, choice):
         if choice not in dir_help_allowed_values:
-            print _("Invalid choice for %s.dir_help")%self._prefix
-            print _("The valid choices are: "), dir_help_allowed_values
-            print _("The current value is: "), self.__dir_help
+            print (_("Invalid choice for %s.dir_help")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), dir_help_allowed_values
+            print _("The current value is: ").encode("utf-8"), self.__dir_help
             return
         self.__dir_help = choice
         self._save_settings()
         return
 
     dir_help = property(_get_dir_help, _set_dir_help, None,
-        _('The choices for dir_help are %s\n')% dir_help_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for dir_help are %s\n')% dir_help_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
 
     #==============
 
@@ -264,17 +264,17 @@ class Defaults(object):
 
     def _set_doc_help(self, choice):
         if choice not in doc_help_allowed_values:
-            print _("Invalid choice for %s.doc_help")%self._prefix
-            print _("The valid choices are: "), doc_help_allowed_values
-            print _("The current value is: "), self.__doc_help
+            print (_("Invalid choice for %s.doc_help")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), doc_help_allowed_values
+            print _("The current value is: ").encode("utf-8"), self.__doc_help
             return
         self.__doc_help = choice
         self._save_settings()
         return
 
     doc_help = property(_get_doc_help, _set_doc_help, None,
-        _('The choices for doc_help are %s\n')% doc_help_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for doc_help are %s\n')% doc_help_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
 
     #==============
 
@@ -289,7 +289,7 @@ variable.  Some of these variables are "fixed", which means that
 their value can not be changed by the user.
 -
 Here are the values of some variables currently used by Crunchy.
-""")
+""").encode("utf-8")
 # we sort the keys so that they are listed in alphabetical order,
 # making them easier to find when reading the rather long text
         keys = []
@@ -344,16 +344,16 @@ Here are the values of some variables currently used by Crunchy.
                 self.__no_markup = choice
                 valid = True
         if not valid:
-            print _("Invalid choice for %s.no_markup")%self._prefix
-            print _("The valid choices are: "), no_markup_allowed_values
-            print _('with "image_file   file_name" as a required option.')
-            print _("The current value is: "), self.__no_markup
+            print (_("Invalid choice for %s.no_markup")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), no_markup_allowed_values
+            print _('with "image_file   file_name" as a required option.').encode("utf-8")
+            print _("The current value is: ").encode("utf-8"), self.__no_markup
         else:
             self._save_settings()
 
     no_markup = property(_get_nm, _set_nm, None,
-        _('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
     #==============
 
     def _get_language(self):
@@ -363,22 +363,22 @@ Here are the values of some variables currently used by Crunchy.
         if choice in languages_allowed_values:
             self.__language = choice
             translation.init_translation(self.__language)
-            print _("language set to: ") , choice
+            print _("language set to: ").encode("utf-8") , choice
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice
-                print _("editarea_language also set to: ") , choice
+                print _("editarea_language also set to: ").encode("utf-8") , choice
             else:
-                print _("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\
-                _("The language choice for editarea remains ") +\
+                print _("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ").encode("utf-8") +\
+                _("The language choice for editarea remains ").encode("utf-8") +\
                  self.__editarea_language
             self._save_settings()
         else:
-            print _("Invalid choice for %s.language")%self._prefix
-            print _("The valid choices are: "), languages_allowed_values
+            print (_("Invalid choice for %s.language")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), languages_allowed_values
 
     language = property(_get_language, _set_language, None,
-        _('The choices for language are %s\n')% languages_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for language are %s\n')% languages_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
     #==============
 
     def _get_editarea_language(self):
@@ -387,15 +387,15 @@ Here are the values of some variables currently used by Crunchy.
     def _set_editarea_language(self, choice):
         if choice in editarea_languages_allowed_values:
             self.__editarea_language = choice
-            print _("editarea_language set to: ") , choice
+            print _("editarea_language set to: ").encode("utf-8") , choice
             self._save_settings()
         else:
-            print _("Invalid choice for %s.editarea_language")%self._prefix
-            print _("The valid choices are: "), editarea_languages_allowed_values
+            print (_("Invalid choice for %s.editarea_language")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), editarea_languages_allowed_values
 
     editarea_language = property(_get_editarea_language, _set_editarea_language, None,
-        _('The choices for editarea_language are %s\n')% editarea_languages_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for editarea_language are %s\n')% editarea_languages_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
     #==============
 
     def _get_friendly_traceback(self):
@@ -404,18 +404,18 @@ Here are the values of some variables currently used by Crunchy.
     def _set_friendly_traceback(self, choice):
         if choice == True:
             self.__friendly = True
-            print _("Crunchy will attempt to provide friendly error messages.")
+            print _("Crunchy will attempt to provide friendly error messages.").encode("utf-8")
             self._save_settings()
         elif choice == False:
             self.__friendly = False
-            print _("Crunchy's error messages will be similar to Python's default tracebacks.")
+            print _("Crunchy's error messages will be similar to Python's default tracebacks.").encode("utf-8")
             self._save_settings()
         else:
-            print _("friendly attribute must be set to True or False.")
+            print _("friendly attribute must be set to True or False.").encode("utf-8")
 
     friendly = property(_get_friendly_traceback, _set_friendly_traceback, None,
-        _('The choices for friendly tracebacks are %s\n')% [True, False] +\
-        _('  The current value is: '))
+        (_('The choices for friendly tracebacks are %s\n')% [True, False]).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
 
     #==============
 
@@ -431,10 +431,10 @@ Here are the values of some variables currently used by Crunchy.
         if choice in security_allowed_values:
             self.site_security[site] = choice
             self._save_settings()
-            print _("site security set to: ") , choice
+            print _("site security set to: ").encode("utf-8") , choice
         else:
-            print _("Invalid choice for %s.site_security")%self._prefix
-            print _("The valid choices are: "), security_allowed_values
+            print (_("Invalid choice for %s.site_security")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), security_allowed_values
 
     def _get_local_security(self):
         return self.__local_security
@@ -442,15 +442,15 @@ Here are the values of some variables currently used by Crunchy.
     def _set_local_security(self, choice):
         if choice in security_allowed_values:
             self.__local_security = choice
-            print _("security set to: ") , choice
+            print _("security set to: ").encode("utf-8") , choice
             self._save_settings()
         else:
-            print _("Invalid choice for %s.local_security")%self._prefix
-            print _("The valid choices are: "), security_allowed_values
+            print (_("Invalid choice for %s.local_security")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), security_allowed_values
 
     local_security = property(_get_local_security, _set_local_security, None,
-        _('The choices for local_security levels are %s\n')% security_allowed_values +\
-        _('  The current value is: '))
+        (_('The choices for local_security levels are %s\n')% security_allowed_values).encode("utf-8") +\
+        _('  The current value is: ').encode("utf-8"))
     #==============
 
     def _get_override_default_interpreter(self):
@@ -459,17 +459,17 @@ Here are the values of some variables currently used by Crunchy.
     def _set_override_default_interpreter(self, choice):
         if choice in override_default_interpreter_allowed_values:
             self.__override_default_interpreter = choice
-            print _("override_default_interpreter set to: ") , choice
+            print _("override_default_interpreter set to: ").encode("utf-8") , choice
             self._save_settings()
         else:
-            print _("Invalid choice for %s.override_default_interpreter")%self._prefix
-            print _("The valid choices are: "), override_default_interpreter_allowed_values
+            print (_("Invalid choice for %s.override_default_interpreter")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), override_default_interpreter_allowed_values
 
     override_default_interpreter = property(_get_override_default_interpreter,
            _set_override_default_interpreter, None,
-            _('The choices for override_default_interpreter are %s\n')%\
-             override_default_interpreter_allowed_values +\
-            _('  The current value is: '))
+            (_('The choices for override_default_interpreter are %s\n')%\
+             override_default_interpreter_allowed_values).encode("utf-8") +\
+            _('  The current value is: ').encode("utf-8"))
 
     #==============
 
@@ -479,18 +479,18 @@ Here are the values of some variables currently used by Crunchy.
     def _set_my_style(self, choice):
         if choice in [True, False]:
             self.__my_style = choice
-            print _("my_style set to: ") , choice
+            print _("my_style set to: ").encode("utf-8") , choice
             self._save_settings()
         else:
-            print _("Invalid choice for %s.my_style")%self._prefix
-            print _("The valid choices are: "), [True, False]
+            print (_("Invalid choice for %s.my_style")%self._prefix).encode("utf-8")
+            print _("The valid choices are: ").encode("utf-8"), [True, False]
 
     my_style = property(_get_my_style, _set_my_style, None,
-            _('The choices for my_style are %s\n')%\
-             [True, False] +\
-            _("If set to True, Crunchy's default styles are replaced"+
-              " by the user's choice specified in %s.styles\n")%_prefix +\
-            _('\n  The current value for my_style is: '))
+            (_('The choices for my_style are %s\n')%\
+             [True, False]).encode("utf-8") +\
+            (_("If set to True, Crunchy's default styles are replaced"+
+              " by the user's choice specified in %s.styles\n")%_prefix).encode("utf-8") +\
+            _('\n  The current value for my_style is: ').encode("utf-8"))
 
     def add_site(self):
         '''interactive function to facilitate adding new site to
