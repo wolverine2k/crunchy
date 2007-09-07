@@ -108,24 +108,27 @@ def insert_editor(page, elem, uid):
     # button will NOT be included.  Perhaps the tutorial writer wants
     # the user to only execute code from the "save and run" option
     # of the editor...
+
+    btn = CrunchyPlugin.SubElement(elem, "button")
+    # path_label required in all cases to avoid javascript error
+    path_label = CrunchyPlugin.SubElement(elem, "span")
+    path_label.attrib['id'] = 'path_' + uid
+
     if "external" in vlam:
-        btn = CrunchyPlugin.SubElement(elem, "button")
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = _("Execute as external program")
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
             configuration.defaults.logging_uids[uid] = (log_id, t)
-        path_label = CrunchyPlugin.SubElement(elem, "span")
-        path_label.attrib['id'] = 'path_' + uid
-        path_label.attrib['class'] = 'path_info'
         path_label.text = configuration.defaults.temp_dir + os.path.sep + "temp.py"
+        path_label.attrib['class'] = 'path_info'
         if not "no-internal" in vlam:
             CrunchyPlugin.SubElement(elem, "br")
             btn = CrunchyPlugin.SubElement(elem, "button")
             btn.attrib["onclick"] = "exec_code('%s')" % uid
             btn.text = _("Execute as separate thread")
     else:
-        btn = CrunchyPlugin.SubElement(elem, "button")
+        path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
 
