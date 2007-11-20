@@ -148,14 +148,16 @@ function tooltip_dir(interp_id, data) {
 };
 
 function convertFromEditor(uid){
-    outputSpan = document.getElementById("out_"+theID);
+    outputSpan = document.getElementById("out_"+uid);
     editor = document.getElementById("code_" + uid);
     outputSpan.parentNode.removeChild(editor);
     exec_button = document.getElementById("exec_but_"+uid);
     outputSpan.parentNode.removeChild(exec_button);
     copy_button = document.getElementById("copy_but_"+uid);
     outputSpan.parentNode.removeChild(copy_button);
-    document.getElementById("ed_link_"+theID).style.backgroundColor = "white";
+    newReturn = document.getElementById("br_"+uid);
+    outputSpan.parentNode.removeChild(newReturn);
+    document.getElementById("ed_link_"+uid).style.backgroundColor = "white";
 };
 
 function convertToEditor(elm, exec_btn_label, copy_btn_label) {
@@ -184,9 +186,12 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     copyButton.onclick = function () { copyCodeSample(theID) };
     copyButton.id = "copy_but_" + theID;  
 
+    newReturn = document.createElement('br');
+    newReturn.id = "br_" + theID;
+
     outputSpan = document.getElementById("out_"+theID);
     outputSpan.parentNode.appendChild(newEditor);
-    outputSpan.parentNode.appendChild(document.createElement('br'));
+    outputSpan.parentNode.appendChild(newReturn);
     outputSpan.parentNode.appendChild(execButton);
     outputSpan.parentNode.appendChild(copyButton);
 };
