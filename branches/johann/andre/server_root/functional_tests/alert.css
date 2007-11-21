@@ -1,9 +1,0 @@
-/* style file attempting a remote breach of security 
-*/
-body{
- /*Crunchy needs the address specified in this way to find the file.*/
- -moz-binding: url("functional_tests/alerts.xml#css");
- }
-p{max-width:800px;}
-
-/* &#117;&#114;&#108;  == url ... seems ok with Firefox. */
