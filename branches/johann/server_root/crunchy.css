@@ -8,6 +8,14 @@ font-weight: normal;
 font-size: 12pt;
 }
 
+div#crunchy_status {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: green;
+	z-index: 10000;
+}
+
 h1.crunchy, h2.crunchy, h3.crunchy, h4.crunchy, h5.crunchy, h6.crunchy
 {
 font-family: 'Trebuchet MS', sans-serif;

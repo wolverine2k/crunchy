@@ -30,7 +30,7 @@ class CrunchyPage(object):
 
     # We could do with defining a single variable "handlers" but doing
     # it this way makes it a bit easier to distinguish the various cases
-    # (sorry, a weird mix of haskell and OCaml notation in a python program :)
+    # (sorry, a weird mix of haskell and OCaml type notation in a python program :)
     # handler1 ::  tag -> handler function
     handlers1 = {}
     # handler2 ::  tag -> attribute -> handler function
@@ -229,12 +229,9 @@ class CrunchyPage(object):
                     elem.attrib["title"] = n_m
                     CrunchyPage.handlers3["pre"]["title"][keyword](self, elem,
                                                 self.pageid + ":" + uidgen())
-        #  The following for loop deals with example 5
-        if "menu_included" not in self.included:
-            CrunchyPage.handlers2["no_tag"]["menu"](self)
-        # finally, we insert the security advisory last so that it goes
-        # at the top of the page and so that none of its links get converted.
-        CrunchyPage.handlers2["no_tag"]["security"](self)
+		# and finally, the status bar
+		
+		CrunchyPage.handlers2["no_tag"]["insert_status_bar"](self)
         return
 
     def read(self):
