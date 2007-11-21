@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>FAQ, bugs and all that.</title>
+<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
+<link href="tutor_bw.css" title="Black and white"type="text/css" rel="stylesheet" />
+
+</head>
+<body>
+<div id="topbar">
+<img alt="" src="argh.gif" class="titleimage"/>
+<span class="title">FAQ, bugs, etc.</span>
+</div>
+<div id="navbar">
+<span class="heading">Crunchy user tutorial</span>
+<a href="welcome_en.html">Begin tutorial</a>
+<a href="interpreter_en.html">Interpreter</a>
+<a href="editor_en.html">Editor</a>
+<a href="doctest_en.html">DocTest</a>
+<a href="canvas_en.html">Graphics</a>
+<a href="images_en.html">Image files</a>
+
+<a href="external_en.html">External applications</a>
+<span class="heading">Advanced Topics</span>
+
+<a href="remote_en.html">Browsing</a>
+
+<a href="config_en.html">Configuring Crunchy</a>
+<a href="faq_en.html">FAQ, bugs, etc.</a>
+<a href="writing_en.html">Writing tutorials</a>
+
+<a href="/functional_tests">Tests</a>
+</div>
+<div id="main">
+<blockquote><i>
+Just a flesh wound.</i> <br/>
+<small>-said the Black Knight after both his arms were cut off in 
+<em>Monty Python and the Holy Grail</em>.</small>
+</blockquote>
+<p>Crunchy does not have bugs! 
+We do recognize that it does have a few interesting <em>features</em>; however, you should
+not confuse those with actual <em><b>bugs</b></em>.</p>
+<h3 class="crunchy">If you do have some questions...</h3>
+<ul>
+<li>
+<a href="#secure">If it safe to browse a web site with Crunchy?</a> 
+<small>(Long answer provided at the bottom of this page; follow the link.)</small>
+</li>
+
+<li>
+<a href="#w3c">The external page I view with Crunchy is all messed up as compared with viewing
+it directly with my browser.</a>
+</li>
+<li>
+<a href="#colours">Crunchy's logo and the choice of colours look very much like
+Python's.  Can you really do this?</a>
+</li>
+<li>
+<a href="#crunchy_ready">My blog or tutorial shows up very well using Crunchy; 
+should I do anything special?</a>
+</li>
+<li>
+<a href="#disappearing_cursor">The cursor (caret) sometimes does not show up in an editor or
+textarea.  Surely, this is a Crunchy bug.</a>
+</li>
+<li><a href="#bug">I'm sure I found a bug; what do I do?</a></li>
+<li><a href="#ipython">Can I use IPython with Crunchy?</a></li>
+</ul>
+
+<h3 class="crunchy"> ... we might have some answers.</h3>
+<a id="w3c"> </a><br/>
+<h4 class="crunchy">Page messed up?</h4>
+<p>
+Unfortunately, Crunchy sometimes does not do a very good job of processing and rendering
+<b>non W3C compliant</b> pages for display in the browser. If you find such a page, complain
+to its creator, not to us! 
+If you do find a W3C compliant page that Crunchy does not interpret properly, <em>then</em> 
+let us know.  However, be aware that there are two reasons that may cause Crunchy
+not to display a W3C compliant page properly</p>
+<ul>
+<li>In its normal "paranoid" mode, Crunchy can filter out a lot of styling instructions
+that only <em>look</em> like they may open the door to some malicious javascript code.
+We make no apology for this: security trumps appearance in our books.
+</li>
+<li>Crunchy moves the body of a page down slightly so that its menu
+does not interfere with the rest of the material on the page when it is
+first loaded.  If a page contains absolutely position objects, then the relative
+positioning of certain elements may be off.</li>
+</ul>
+
+<a id="colours"> </a><br/>
+<h4 class="crunchy">Look and Feel</h4>
+<p> If you are wondering, we did obtain permission from officials of the 
+Python Software Foundation (PSF)
+for adapting the official Python logo for Crunchy.  However, this work is not endorsed officially
+by the PSF and our choice of color scheme should only be seen as a sign of 
+<b><em>our</em></b> enthusiastic support of the work of the PSF - not the other way around.
+</p>
+
+
+<a id="crunchy_ready"> </a><br/>
+<h4 class="crunchy">Crunchy ready blog or tutorial?</h4>
+<p>
+If your blog or tutorial can be well displayed by Crunchy, 
+either because it is W3C compliant or because (or especially if) you
+have added special Crunchy markup (vlam), please consider adding a copy of the
+image displayed on below in a prominent place on your blog or tutorial.  This images is
+crunchy-python-powered.png and the original can be found in the server_root
+directory of the Crunchy distribution.</p>
+<img src="../crunchy-python-powered.png" alt="Crunchy Logo"/>
+
+<a id="disappearing_cursor"> </a><br/>
+<h4 class="crunchy">Vanishing cursor?</h4>
+<p>
+How dare you suggest that Crunchy could have a bug, simply because sometimes you can't see 
+the cursor (caret) inside an editor.  Actually, this is a 
+long standing Firefox
+bug which <em>supposedly</em> is going to go away by the time Firefox 3.0 comes out.  If you
+don't believe us, look at
+<a title="external_link" href="https://bugzilla.mozilla.org/show_bug.cgi?id=167801">this bug report</a>.  </p>
+
+<a id="bug"> </a><br/>
+<h4 class="crunchy">You are sure that you found a bug?</h4>
+<p>
+That's rather presomptuous of you 
+<small style="font-size:6pt">thinking that you found a bug, grumble</small>.  Ok,
+since you appear to be so sure of yourself, you can go ahead and humiliate yourself
+publicly by posting to 
+<a title="external_link" href="http://groups.google.com/group/crunchy-discuss">crunchy-discuss</a>, with
+a description of the steps needed to reproduce the bug, the platform (OS) you are using,
+the Python version, browser, etc.  The more details you provide, the better.
+If you want to be more discrete you can write to either
+</p>
+<ul>
+<li>andre.roberge@gmail.com, <em>or</em></li>
+<li>johannes.woolard@gmail.com</li>
+</ul>
+
+<a id="ipython"> </a><br/>
+<h4 class="crunchy">You want to use IPython with Crunchy?</h4>
+<p>
+Sorry, IPython messes things up - it inserts its tentacles everywhere and prevent the other
+intepreters from working properly.  If you have IPython installed, you can 
+<a href="/functional_tests/ipython.html">check here</a>.
+</p>
+
+<a id="secure"> </a><br/>
+<h4 class="crunchy">Is it safe to browse a web site with Crunchy?</h4>
+<div class="wide-warning">
+<h4>We are serious about safety</h4>
+<p>While we try to be humorous in Crunchy's documentation, security is not
+a laughing matter.  We believe it is important that we provide you with a full
+description of how Crunchy deals with security matters.
+Feel free to contact us directly if you have any questions or suggestions
+concerning security.</p>
+</div>
+
+<p>
+We begin with an overview explaining how Crunchy work.  
+Assume Crunchy is running and that the user click on a link 
+(or similar method) to go to a new page.
+</p>
+<ol>
+<li>Crunchy retrieves the page.</li>
+<li>Crunchy parses the page to create a tree structure 
+(using Elementtree - more on this later).</li>
+<li>Crunchy removes any existing javascript, links to javascript files
+and various undesired html tags.</li>
+<li>Crunchy processes the Crunchy specific markup (vlam), adding
+custom elements <b><em>and</em></b> custom javascript.</li>
+<li>Crunchy feeds the page to the browser, leaving a line of
+communication open, waiting for user instruction.</li>
+</ol>
+<p>
+We will address the various points in reverse order.
+At step 5, Crunchy is simply waiting for the user's instruction, and will
+not execute any code on the page unless the user takes some active steps,
+like clicking on a button or typing some code and pressing the "enter" key
+to send it to an interpreter.
+<em>If the user types in the appropriate Python code to delete all files
+on the computer ...</em> Crunchy will dutifully execute that code.  There is
+nothing we can do about this.  The same thing could happen if a user
+started a normal Python shell and typed in the same code.  So, at step 5,
+it is <em>user beware</em>!
+</p>
+<p>
+At step 4, Crunchy inserts the required javascript code to enable 
+communication between the browser and the Python interpreter. 
+On its own, this step is harmless.
+</p>
+<p>
+At step 3, Crunchy removes any pre-existing javascript code, etc.
+<em>What if Crunchy fails in removing the existing javascript code?</em>
+And, <em>what if the existing javascript code is designed to 
+identify a Crunchy specific javascript function on the page and uses it 
+to send some malicious Python code to the interpreter?</em>.
+</p>
+<div class="notes">
+<h4>Quote from feedparser.org</h4>
+Our white list consists of a series of html tags, each with their own set of attributes,
+that are allowed on the page.  For example, &lt;a&gt; is allowed, but &lt;applet&gt; is not.
+
+Here is an incomplete list of potentially dangerous <acronym >HTML</acronym> tags and 
+attributes:</p>
+<ul>
+<li>
+<tt>script</tt>, which can contain malicious script</li>
+<li>
+<tt>applet</tt>, <tt>embed</tt>, and <tt>object</tt>, which can automatically download and 
+execute malicious code</li>
+
+<li>
+<tt>meta</tt>, which can contain malicious redirects</li>
+<li>
+<tt>onload</tt>, <tt>onunload</tt>, and all other <tt>on*</tt> attributes, 
+which can contain malicious script</li>
+<li>
+<tt>style</tt>, <tt>link</tt>, and the <tt>style</tt> attribute, which can contain 
+malicious script</li>
+
+</ul>
+<p><em><tt>style</tt>?</em>
+Yes, <tt>style</tt>.  
+<acronym>CSS</acronym> 
+definitions can contain executable code.
+</p>
+</div>
+
+<p>If something like this were to happen ... it would be disastrous.  
+Therefore, we must be very careful in identifying and removing potentially
+harmful content.  The method
+we use is based on the existence of a <em>white list</em> that we created.
+Before we proceed with a more detailed explanation, you might want
+to read 
+<a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">this</a>
+document from feedparser.org.  You may also want to do an Internet search for
+<em>cross site scripting</em> (XSS), which is a topic closely related to the
+problem we are trying to address.  Once you understand XSS, you might want to 
+have also a look at 
+<a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>.
+</p>
+
+<p>The white list we have created is different from the one at feedparser.org.
+Actually, we have 3 different white lists, for 3 different levels of security.
+They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
+</p>
+
+<dl>
+<dt><img src="/paranoid.png" alt="strict" height="20" /> strict</dt>
+<dd>With the strict level (previously named <em>paranoid</em>), 
+the following html tags are not included
+in our white list: applet, basefont, base, button, form, frameset,
+iframe, input, isindex, object, optgroup, option, param, script,
+select and textarea - as well as link, style and img.
+Not all excluded tags are potentially harmful; some are simply
+deprecated.<br/>
+For the included tags, only the <em>title</em> attribute is allowed, except
+for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
+as attributes and the &lt;meta&gt; for which we allow the <em>name</em> attribute which can
+be used in conjunction with the <em>title</em> attribute to add a relative path to 
+<code>sys.path</code> so that examples using <code title="py_code">import</code>
+can be used.  If they don't contain Crunchy objects, pages displayed
+with the strict level selected are essentially the same as old-fashioned html
+text only documents.</dd>
+<dt><img src="/severe.png" alt="normal" height="20" /> normal</dt>
+<dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
+attribute.  However, we scan either the file being linked or the content 
+inside the &lt;style&gt; tag, or style attribute
+for either the string "url("  [with possible spaces before the parenthese]
+and any string starting with "&amp;#" which often would denote an obfuscated character 
+meant to bypass normal filters [see the 
+<a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">feedparser.org</a>
+and 
+<a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>
+links already mentioned for an explanation].  We treat such content as automatically
+suspicious and remove automatically these tags entirely when such content is met.<br/>
+We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy 
+to allow a tutorial writer to design an alternate menu for Crunchy.
+Finally, we allow the img tag; however, we pre-scan each image
+to make sure that it is indeed an image file and not some cleverly disguised javascript
+code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
+a page containing many external images.  However, we normally need to verify the
+validity of a given image only once per Crunchy session.<br/>
+The normal level is currently the default level used when starting Crunchy.  
+With this level, you can browse the official Python tutorial and it will look
+just the same <small>[better, actually!]</small> as if you viewed it
+directly in your browser without Crunchy's help.  However, a site like python.org
+will look very different, as most styling will be removed.</dd>
+<dt><img src="/trusted.png" alt="trusted" height="20" /> trusted</dt>
+<dd>Finally, at the trusted level, we allow the same content as with the normal level,
+except that we don't scan for suspicious styling information and assume that all images
+are safe.  Using the trusted
+level, a site like python.org will look almost as intended when viewed through
+Crunchy; the only difference comes about due to the fact that Crunchy shifts
+the page body down, to create some blank space at the top of the page
+for its menu.<br/>
+</dd>
+</dl>
+<p>In addition to the above described steps, we do the following:</p>
+<ul>
+<li>We transform all links of the form <code>href="url?query"</code> into <code>href="url"</code>.
+This is to prevent accidental communication between the webbrowser and the Python server, sending a
+"query" to the latter.</li>
+<li>All instructions sent to the Python server in order of having some Python command executed
+take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long random
+integer generated at the beginning of a session.  This way, even if a malicious query bypassed
+the cleanup mentioned at the previous step, it would still be nearly impossible to guess the
+commands required for the Python interpreter to execute some malicious code sent by a query.
+</li>
+</ul>
+<p>The first two security levels mentioned [strict and normal] should be
+totally safe against unwanted javascript intrusion.  The third one, as its name
+indicates, should only be used with trusted sites - and only if it is found that
+it is required for appropriate formatting.
+</p>
+
+<p>The possibility of using obfuscated code (e.g. using "&#..." entities) is one that
+can cause problems for many filters [see the two links already mentioned].  
+However, as far as we have been able to verify, 
+Crunchy is immune to this problem due to the way it parses
+html pages according to step 2 mentioned previously:
+Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
+to parse pages.  BeautifulSoup is known to handled ill-formed web pages, parsing them
+and transforming them into well-formed ones.  Elementtree takes well-formed
+web pages, and create a tree structure representing them. If a page is not well-formed,
+Elementtree will raise an exception and Crunchy will not be able to
+proceed with that page.
+By using this combination of BeautifulSoup and Elementtree,
+we are left with a well defined tree that can be trimmed as mentioned above, removing
+any potential problems.
+</p>
+<h4>How can one determine which security level to use?</h4>
+<p>At this point you might wonder how you could afford to select a security level
+other than 'strict' to view pages from a new site.  What you look at a page found on the web using
+a less stringent level, and something nasty sneaks in? By the time you look at it, it might
+already be too late...</p>
+
+<p>The solution to this problem is the introduction of 3 additional security levels.  They are:
+</p>
+<ul>
+<li>display strict</li>
+<li>display normal</li>
+<li>display trusted</li>
+</ul>
+<p>
+Using each of these levels, Crunchy parses the page as you would expect according to
+the above descriptions.  The difference is that step 4 <small>[where Crunchy
+inserts custom javascript code and enables communication between the
+browser and the Python interpreter]</small> does not take place.  Crunchy simply
+displays the page so that it looks almost like it would normally, but no Python code execution
+is possible.  A user can select a 'display' mode, inspect the page content to verify that
+no foreign javascript is included, before loading it normally.</p>
+<p>To help you, whenever some tags or attributes are removed from a page, Crunchy inserts a link
+at the top of the page giving you some summary of what it actually removed.</p>
+<h4>How do I select a security level?</h4>
+<p>Use any object used to execute some Python code, such as the interpreter below.
+For browsing local tutorials that you have downloaded on your computer, use</p>
+<pre title="interpreter">
+&gt;&gt;&gt; crunchy.local_security = 'strict'
+</pre>
+<p>The chosen security level will be used when you load a new page, or reload the current page.
+Note that if you use a 'display' security level, you will not be able to change it back
+from a new page as Crunchy won't let you enter new Python code - unless there have been some
+html tags removed in which case a link will appear at the top giving you
+the possibility of viewing the report ... and changing the security level.
+</p>
+<p>For remote tutorials, you can assign a security level for each site using</p>
+<pre title="interpreter">
+&gt;&gt;&gt; crunchy.add_site()
+</pre>
+
+
+
+</div>
+</body>
+</html>

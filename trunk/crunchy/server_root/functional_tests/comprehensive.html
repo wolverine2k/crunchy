@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Comprehensive vlam test</title>
+</head>
+<body>
+<h1>Comprehensive vlam test</h1>
+<p>In this document, we try to list all possible vlam combinations for reference.</p>
+<h3>No markup</h3>
+<pre title="no_vlam">
+>>> print 'title = "no_vlam"'
+</pre>
+
+<h3>Styling only</h3>
+<pre title="py_code">
+>>> print 'title = "py_code"'
+</pre>
+<pre title="py_code linenumber">
+>>> print 'title = "py_code linenumber"'
+</pre>
+<pre title="py_code linenumber=99">
+>>> print 'title = "py_code linenumber=99"'
+</pre>
+
+<p>Styling of Python code inside &lt;code&gt; element, such as <br/>
+<code title="py_code">print 'title = "py_code"'</code> <br/>
+<code title="py_code linenumber">print 'title = "py_code linenumber"'</code> <br/>
+<code title="py_code linenumber=99">print 'title = "py_code linenumber=99"'</code> <br/>
+is also possible.
+</p>
+
+<h3>Interpreter</h3>
+<h4>Three examples with standard interpreter</h4>
+<pre title="interpreter">
+>>> print 'title = "interpreter"'
+</pre>
+<pre title="interpreter linenumber">
+>>> print 'title = "interpreter linenumber"'
+</pre>
+<pre title="interpreter linenumber=99">
+>>> print 'title = "interpreter linenumber=99"'
+</pre>
+
+<h4>Similar three examples with isolated interpreter</h4>
+<pre title="interpreter isolated">
+>>> print 'title = "interpreter isolated"'
+</pre>
+<pre title="interpreter linenumber isolated">
+>>> print 'title = "interpreter isolated linenumber"'
+</pre>
+<pre title="interpreter isolated linenumber=99">
+>>> print 'title = "interpreter isolated linenumber=99"'
+</pre>
+
+<h3>Interpreter with no styling</h3>
+<pre title="interpreter no_style">
+>>> print 'title = "interpreter no_style"'
+</pre>
+
+
+
+<h3>Editor</h3>
+<h4>Three examples with input as interpreter sessions (with prompt)</h4>
+<pre title="editor">
+>>> print 'title = "editor"'
+</pre>
+<pre title="editor linenumber">
+>>> print 'title = "editor linenumber"'
+</pre>
+<pre title="editor linenumber=99">
+>>> print 'title = "editor linenumber=99"'
+</pre>
+
+<h4>Similar three examples with input as normal python code (no prompt)</h4>
+<pre title="editor">
+print 'title = "editor"'
+</pre>
+<pre title="editor linenumber">
+print 'title = "editor linenumber"'
+</pre>
+<pre title="editor linenumber=99">
+print 'title = "editor linenumber=99"'
+</pre>
+
+<h4>Similar three examples with no styled Python code</h4>
+<pre title="editor no-pre">
+print 'title = "editor no-pre"'
+</pre>
+
+<h4>No execute button (need to use the editor to run the program)</h4>
+<pre title="editor no-internal">
+print 'title = "editor no-internal"'
+</pre>
+
+<h4>Similar three examples with Python code styled but not copied in the editor</h4>
+<pre title="editor no-copy">
+print 'title = "editor no-copy"'
+</pre>
+
+<pre title="editor linenumber no-copy">
+print 'title = "editor linenumber no-copy"'
+</pre>
+
+<pre title="editor linenumber=99 no-copy">
+print 'title = "editor linenumber=99 no-copy"'
+</pre>
+
+<h4>Both no-pre and no-copy present: only no-pre is obeyed.</h4>
+<pre title="editor no-pre no-copy">
+print 'title = "editor no-pre no-copy"'
+</pre>
+
+<h3>Doctest</h3>
+<h4>Three basic examples</h4>
+<pre title="doctest">
+>>> print 'title = "doctest"'
+</pre>
+
+<pre title="doctest linenumber">
+>>> print 'title = "doctest linenumber"'
+</pre>
+
+<pre title="doctest linenumber=99">
+>>> print 'title = "doctest linenumber=99"'
+</pre>
+
+<h3>External programs</h3>
+
+<pre title="editor external">
+# title = "editor external"
+import code
+code.interact()
+</pre>
+
+<pre title="editor external no-internal">
+# title = "editor external no-internal"
+import code
+code.interact()
+</pre>
+
+<pre title="editor external no-internal linenumber">
+# title = "editor external no-internal linenumber"
+import code
+code.interact()
+</pre>
+<h3>Image files</h3>
+<pre title="image_file foo.png">
+# title="image_file foo.png"
+# assumes matplotlib is installed
+import pylab
+pylab.plot([1,2,1])
+pylab.savefig('foo.png')
+</pre>
+
+<pre title="image_file foo2.png linenumber">
+# title="image_file foo2.png linenumber"
+# assumes matplotlib is installed
+import pylab
+pylab.plot([1,2,1])
+pylab.savefig('foo2.png')
+</pre>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
