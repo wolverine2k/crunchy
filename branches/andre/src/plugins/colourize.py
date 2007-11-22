@@ -135,7 +135,8 @@ def style(elem):
             return '', '', sp
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
-        new_elem.attrib['class'] += ' crunchy'
+        if 'crunchy' not in new_elem.attrib['class']:
+            new_elem.attrib['class'] += ' crunchy'
     else:
         new_elem.attrib['class'] = 'crunchy'
     new_elem.tail = tail

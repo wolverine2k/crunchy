@@ -321,22 +321,26 @@ Next, we introduce a series of tests of increasing complexity.
 First, some unstyled code.
     >>> sample = '<pre>print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
-    >>> py_code, new_elem = colourize.style(pre)
+    >>> pre.attrib['title'] = 'py_code'
+    >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    &lt;pre class="py_pre"&gt;print "Hello World!"&lt;/pre&gt;
+    &lt;pre class="crunchy" title="py_code"&gt;
+    &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
+    &lt;/pre&gt;
+
 
 Next, some simple styled code
     >>> sample = '<pre title="junk">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
-    >>> py_code, new_elem = colourize.style(pre)
+    >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    &lt;pre class="py_pre" title="junk"&gt;
+    &lt;pre class="crunchy" title="junk"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
 
@@ -345,24 +349,24 @@ ElementTree - at least in the version used for this test.
 
     >>> sample = '<pre title="junk" tag="other">print <span>"Hello World!"</span></pre>'
     >>> pre = et.fromstring(sample)
-    >>> py_code, new_elem = colourize.style(pre)
+    >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    &lt;pre class="py_pre" tag="other" title="junk"&gt;
+    &lt;pre class="crunchy" tag="other" title="junk"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
 
 Finally, a test including the linenumber option
     >>> sample = '<pre title="junk linenumber=2">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
-    >>> py_code, new_elem = colourize.style(pre)
+    >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
     >>> print py_code
     print "Hello World!"
     >>> print styled
-    &lt;pre class="py_pre" title="junk linenumber=2"&gt;
+    &lt;pre class="crunchy" title="junk linenumber=2"&gt;
     &lt;span class="py_linenumber"&gt;  2 &lt;/span&gt;&lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
 
@@ -371,11 +375,11 @@ Make sure we parse properly from html tree with a prompt included.
     >>> sample = """<html><body><pre title="py_code">&gt;&gt;&gt; print 'Hello!'</pre></body></html>"""
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//pre")
-    >>> pycode, new_elem = colourize.style(pre2)
+    >>> pycode, new_elem, dummy_error = colourize.style(pre2)
     >>> print pycode
     print 'Hello!'
     >>> print et.tostring(new_elem)
-    &lt;pre class="py_pre" title="py_code"&gt;
+    &lt;pre class="crunchy" title="py_code"&gt;
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hello!'&lt;/span&gt;
     &lt;/pre&gt;
 
@@ -386,10 +390,10 @@ tests the proper handling of an Element's "tail".
     ...            </code> with a tail.</p></body></html>"""
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//code")
-    >>> pycode, new_elem = colourize.style(pre2)
+    >>> pycode, new_elem, dummy_error = colourize.style(pre2)
     >>> print pycode
     print 'Hi!'
     >>> print et.tostring(new_elem)
-    &lt;code class="py_pre" title="py_code"&gt;
+    &lt;code class="crunchy" title="py_code"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hi!'&lt;/span&gt;
     &lt;/code&gt; with a tail.
