@@ -113,6 +113,7 @@ def insert_editor(page, elem, uid):
     # path_label required in all cases to avoid javascript error
     path_label = CrunchyPlugin.SubElement(elem, "span")
     path_label.attrib['id'] = 'path_' + uid
+    path_label.text = configuration.defaults.temp_dir + os.path.sep + "temp.py"
 
     if "external" in vlam:
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
@@ -120,20 +121,18 @@ def insert_editor(page, elem, uid):
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
             configuration.defaults.logging_uids[uid] = (log_id, t)
-        path_label.text = configuration.defaults.temp_dir + os.path.sep + "temp.py"
         path_label.attrib['class'] = 'path_info'
         if not "no-internal" in vlam:
             CrunchyPlugin.SubElement(elem, "br")
-            btn = CrunchyPlugin.SubElement(elem, "button")
-            btn.attrib["onclick"] = "exec_code('%s')" % uid
-            btn.text = _("Execute as separate thread")
+            btn2 = CrunchyPlugin.SubElement(elem, "button")
+            btn2.attrib["onclick"] = "exec_code('%s')" % uid
+            btn2.text = _("Execute as separate thread")
     else:
         path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
-
-
-
+    # leaving some space to start output on next line, below last button
+    CrunchyPlugin.SubElement(elem, "br")
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
