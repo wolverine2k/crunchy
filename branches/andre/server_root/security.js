@@ -52,44 +52,8 @@ function app_remove_all() {
     j.send("");
 }
 
-/*
-function verify_site(attempts_left) {
-    trusted_key = prompt("Enter trusted key (from the console window): ");
-    if (trusted_key == '' || trusted_key == null) return;
-
-    var j = new XMLHttpRequest();
-    j.open("POST", "/enter_key");
-    j.onreadystatechange = function() {
-        // check if user entered the correct trusted key
-        if (j.readyState == 4 && j.status == 200) {
-            if (j.responseText == "Success") {
-                app_approve(0);
-            }
-            else if (attempts_left > 1) {
-                alert("Invalid trusted key. Please try again.");
-                verify_site(attempts_left-1);
-            }
-            else {
-                alert("Invalid trusted key. Sorry.");
-            }
-        }
-    }
-
-    j.send(trusted_key);
-}
-*/
 
 function allow_site() {
-        /*
-        var j = new XMLHttpRequest();
-        j.open("POST", "/allow_site");
-        j.onreadystatechange = function() {
-            if (j.readyState == 4 && j.status == 200) {
-                verify_site(3);
-            }
-        }
-        j.send('ok');
-        */
         app_approve(0);
 }
 
