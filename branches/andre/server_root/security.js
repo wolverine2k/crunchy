@@ -52,7 +52,7 @@ function app_remove_all() {
     j.send("");
 }
 
-
+/*
 function verify_site(attempts_left) {
     trusted_key = prompt("Enter trusted key (from the console window): ");
     if (trusted_key == '' || trusted_key == null) return;
@@ -77,8 +77,10 @@ function verify_site(attempts_left) {
 
     j.send(trusted_key);
 }
+*/
 
 function allow_site() {
+        /*
         var j = new XMLHttpRequest();
         j.open("POST", "/allow_site");
         j.onreadystatechange = function() {
@@ -87,6 +89,8 @@ function allow_site() {
             }
         }
         j.send('ok');
+        */
+        app_approve(0);
 }
 
 

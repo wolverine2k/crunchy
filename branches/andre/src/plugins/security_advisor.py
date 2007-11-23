@@ -14,8 +14,8 @@ provides = set(["/allow_site", "/enter_key", "/set_trusted", "/remove_all"])
 
 def register():
     cp.register_tag_handler("no_tag", "security", None, insert_security_info)
-    cp.register_http_handler("/allow_site", allow_site)
-    cp.register_http_handler("/enter_key", enter_trusted_key)
+##    cp.register_http_handler("/allow_site", allow_site)
+##    cp.register_http_handler("/enter_key", enter_trusted_key)
     cp.register_http_handler("/set_trusted", set_security_list)
     cp.register_http_handler("/remove_all", empty_security_list)
 
@@ -309,52 +309,54 @@ appealing.
 
     return
 
-def allow_site(request):
-    '''function used to have the user confirm the security level
-       for the site'''
-    global trusted_key, netloc
+##def allow_site(request):
+##    '''function used to have the user confirm the security level
+##       for the site'''
+##    global trusted_key, netloc
+##
+##    if request.data == "":
+##        request.send_response(200)
+##        request.end_headers()
+##        request.wfile.write("asdf")
+##        request.wfile.flush()
+##        return
+##
+##    # create random site key or users to enter (not too long)
+##    n = int(random.random()*1000000)
+##    if n < 100000:
+##        n = 999999 - n
+##    trusted_key = str(n)
+##
+##    # print a trusted site key in the console
+##    print "----------------------------------------------------"
+##    print _("Host: ") + netloc
+##    print _("Confirmation code: ") + trusted_key
+##    print "----------------------------------------------------"
+##
+##    request.send_response(200)
+##    request.end_headers()
+##    request.wfile.flush()
 
-    if request.data == "":
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("asdf")
-        request.wfile.flush()
-        return
-
-    # create random site key or users to enter (not too long)
-    n = int(random.random()*1000000)
-    if n < 100000:
-        n = 999999 - n
-    trusted_key = str(n)
-
-    # print a trusted site key in the console
-    print "----------------------------------------------------"
-    print _("Host: ") + netloc
-    print _("Confirmation code: ") + trusted_key
-    print "----------------------------------------------------"
-
-    request.send_response(200)
-    request.end_headers()
-    request.wfile.flush()
-
-# have the users enter a trusted site key to add the site to a list
-def enter_trusted_key(request):
-    global trusted_key, netloc
-    user_key = request.data
-
-    if user_key == trusted_key:
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Success")
-        request.wfile.flush()
-    else:
-        request.send_response(200)
-        request.end_headers()
-        request.wfile.write("Failed")
-        request.wfile.flush()
+### have the users enter a trusted site key to add the site to a list
+##def enter_trusted_key(request):
+##    global trusted_key, netloc
+##    user_key = request.data
+##
+##    if user_key == trusted_key:
+##        request.send_response(200)
+##        request.end_headers()
+##        request.wfile.write("Success")
+##        request.wfile.flush()
+##    else:
+##        request.send_response(200)
+##        request.end_headers()
+##        request.wfile.write("Failed")
+##        request.wfile.flush()
 
 def set_security_list(request):
+    print "called set_security_list"
     site_list_info = request.data.strip(',').split(',')
+    print site_list_info
     site_list = []
     for site_info in site_list_info:
         if ":" not in site_info:
@@ -364,10 +366,11 @@ def set_security_list(request):
         site = site[0].strip()
         site_list.append(site)
         to_be_deleted = []
+        print "site = ", site
         if site.strip() != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                configuration.defaults.set_site_security(site, mode)
+                configuration.defaults._set_site_security(site, mode)
                 if cp.DEBUG:
                     print '%s has been set to %s: '%(site, mode)
             else:
