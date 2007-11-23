@@ -54,7 +54,8 @@ def insert_security_info(page, *dummy):
     else:
         img.attrib["src"] = "/warning.png"
         img.tail = _(" %d elements were removed. - ")%page.security_info['number removed']
-    if not page.url.startswith("/"):
+#    if not page.url.startswith("/"):
+    if not page.security_info['number removed'] == 0:
         view = cp.SubElement(span, "a")
         view.attrib["onclick"] = "show_security_info();"
         view.attrib["href"] = "#"

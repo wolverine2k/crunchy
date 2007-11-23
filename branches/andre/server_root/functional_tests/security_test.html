@@ -71,8 +71,9 @@ cript:alert(&quot;security breach #6&quot;)">Security Test #6</a><br>
 <h2>Bugs</h2>
 <ul>
   <li>There are no known security bugs in the security model used for Crunchy, using
-  the 'normal', 'severe', or 'paranoid' levels. Crunchy's approach to security
-  consists of two main parts:
+  the 'strict' level.  The other two levels ('normal' and 'trusted') have potential security
+  holes.  
+  Crunchy's approach to security consists of two main parts:
 <ul><li> a "script stripping" function (found in security.py), which removes any pre-existing javascript and other "unsafe" 
 commands on the html page; 
 </li>
