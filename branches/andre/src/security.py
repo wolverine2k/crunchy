@@ -445,8 +445,9 @@ def __cleanup(elem, filter):
     return
 
 def validate_image(src, page):
-    global root_path
     '''verifies that the file contents appears to be that of an image'''
+    global root_path
+
     if DEBUG:
         print "entering validate_image"
         print "page.is_local", page.is_local
@@ -469,7 +470,11 @@ def validate_image(src, page):
     except:  # alreay encoded?
         pass
 
-    if page.is_local:
+    if src.startswith("http://"):
+        # the image may be residing on a different site than the one
+        # currently viewed.
+        fn = src
+    elif page.is_local:
         local_dir = os.path.split(page.url)[0]
         fn = os.path.join(local_dir, src)
     elif page.is_remote:
@@ -481,7 +486,7 @@ def validate_image(src, page):
         if DEBUG:
             print "opening fn=", fn
         try:
-            if page.is_remote:
+            if page.is_remote or src.startswith("http://"):
                 h = urllib.urlopen(fn).read(32) #32 is all that's needed for
                                                 # imghrd.what
             else:
