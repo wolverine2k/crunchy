@@ -93,6 +93,9 @@ class Interpreter(threading.Thread):
                             user_code += '\n'
                     else:
                         user_code = _("# no code entered by user\n").encode("utf-8")
+                    # separating each attempts
+                    user_code = "\n" + "- "*25 + "\n" + user_code
+
                     data = "<span class='stdin'>" + user_code + "</span>"
                     configuration.defaults.log[log_id].append(data)
                     log_session()
