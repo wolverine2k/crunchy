@@ -53,8 +53,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
     if interp_kind is not None:
         editor_link = CrunchyPlugin.SubElement(span_input, "a")
-        editor_link.attrib["onclick"]= "return convertToEditor(this,'%s', '%s')"\
-                                      %(_("Execute"), _("Copy code sample"))
+        editor_link.attrib["onclick"]= "return convertToEditor(this,'%s')"\
+                                      %_("Execute")
         editor_link.attrib["id"] = "ed_link_" + uid
         image = CrunchyPlugin.SubElement(editor_link, 'img')
         image.attrib["src"] = "/editor.png"

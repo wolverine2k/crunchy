@@ -153,14 +153,14 @@ function convertFromEditor(uid){
     outputSpan.parentNode.removeChild(editor);
     exec_button = document.getElementById("exec_but_"+uid);
     outputSpan.parentNode.removeChild(exec_button);
-    copy_button = document.getElementById("copy_but_"+uid);
-    outputSpan.parentNode.removeChild(copy_button);
+    //copy_button = document.getElementById("copy_but_"+uid);
+    //outputSpan.parentNode.removeChild(copy_button);
     newReturn = document.getElementById("br_"+uid);
     outputSpan.parentNode.removeChild(newReturn);
     document.getElementById("ed_link_"+uid).style.backgroundColor = "white";
 };
 
-function convertToEditor(elm, exec_btn_label, copy_btn_label) {
+function convertToEditor(elm, exec_btn_label) {
     theID = elm.id.substring(8);
     if (elm.style.backgroundColor == "red"){
        return convertFromEditor(theID);
@@ -181,11 +181,6 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     execButton.onclick = function () { push_input(theID) };
     execButton.id = "exec_but_" + theID;
     
-    copyButton = document.createElement('button');
-    copyButton.appendChild(document.createTextNode(copy_btn_label));
-    copyButton.onclick = function () { copyCodeSample(theID) };
-    copyButton.id = "copy_but_" + theID;  
-
     newReturn = document.createElement('br');
     newReturn.id = "br_" + theID;
 
@@ -193,7 +188,8 @@ function convertToEditor(elm, exec_btn_label, copy_btn_label) {
     outputSpan.parentNode.appendChild(newEditor);
     outputSpan.parentNode.appendChild(newReturn);
     outputSpan.parentNode.appendChild(execButton);
-    outputSpan.parentNode.appendChild(copyButton);
+    
+    copyCodeSample(theID);
 };
 
 function copyCodeSample(uid){
