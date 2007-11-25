@@ -37,6 +37,10 @@ def init_graphics(width=400, height=400, border_color='red'):
     rectangle((0, 0), width, height)
     set_line_colour('black')
 
+def clear_graphics():
+    '''remove existing graphics from a page'''
+    init_graphics(0, 0)
+
 def set_line_colour(col):
     '''Sets the default line colour using a valid value given as a string.'''
     uid = __cp.get_uid()
