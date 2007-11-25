@@ -153,8 +153,6 @@ function convertFromEditor(uid){
     outputSpan.parentNode.removeChild(editor);
     exec_button = document.getElementById("exec_but_"+uid);
     outputSpan.parentNode.removeChild(exec_button);
-    //copy_button = document.getElementById("copy_but_"+uid);
-    //outputSpan.parentNode.removeChild(copy_button);
     newReturn = document.getElementById("br_"+uid);
     outputSpan.parentNode.removeChild(newReturn);
     document.getElementById("ed_link_"+uid).style.backgroundColor = "white";
@@ -172,7 +170,7 @@ function convertToEditor(elm, exec_btn_label) {
     newEditor.rows = "10";
     newEditor.id = "code_" + theID;
     inp = document.getElementById("in_" + theID);
-    newEditor.value = inp.value;
+
     newEditor.style.backgroundColor = "#eff";
     newEditor.style.fontWeight = "bold";
 
@@ -189,12 +187,7 @@ function convertToEditor(elm, exec_btn_label) {
     outputSpan.parentNode.appendChild(newReturn);
     outputSpan.parentNode.appendChild(execButton);
     
-    copyCodeSample(theID);
-};
-
-function copyCodeSample(uid){
-    editor = document.getElementById("code_"+ uid);
-    editor.value = document.getElementById("code_sample_" +uid).value;
+    newEditor.value = document.getElementById("code_sample_" + theID).value;
 };
 
 /* The following has been adapted from http://dunnbypaul.net/js_mouse/   
