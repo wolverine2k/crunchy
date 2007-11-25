@@ -135,7 +135,7 @@ tooltip_css = """
 #help_menu {
     position: fixed;
     top: 70px;
-    right: 5px;
+    right: 1em;
     width: 50%;
     height: 50%;
     overflow:auto;
@@ -158,7 +158,7 @@ tooltip_css = """
 #help_menu_x {
     position: fixed;
     top: 75px;
-    right: 10px;
+    right: 2em;
     color: #fe0;
     background-color: #369;
     font: 14pt sans-serif;
