@@ -8,6 +8,10 @@ function show_security_info() {
     document.getElementById("security_info_x").style.display = "block";
 }
 
+function hide_security_report() {
+    document.getElementById("security_report").style.display = "none";
+};
+
 function app_approve(nb_item) {
     hide_security_info();
     approved_sites = "";

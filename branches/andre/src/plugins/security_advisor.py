@@ -18,7 +18,7 @@ def register():
     cp.register_http_handler("/remove_all", empty_security_list)
 
 def insert_security_info(page, *dummy):
-    """Inserts security information at the top of a page"""
+    """Inserts security information on a page"""
     if not page.body:
         return
 
@@ -33,6 +33,7 @@ def insert_security_info(page, *dummy):
 
     span = cp.Element("span")
     span.attrib['class'] = "security_report" # in file menu_basic.css
+    span.attrib['id'] = "security_report"
     level_img = cp.SubElement(span, "img")
     level_img.attrib["src"] = src
     level_img.attrib["alt"] = "security level image"
@@ -61,6 +62,11 @@ def insert_security_info(page, *dummy):
         view.attrib["href"] = "#"
         view.attrib['style'] = "text-decoration: underline;"
         view.text = _(" View report ")
+    hide = cp.SubElement(span, "a")
+    hide.attrib["onclick"] = "hide_security_report();"
+    hide.attrib["href"] = "#"
+    hide.attrib['style'] = "text-decoration: underline;"
+    hide.text = _("/ Hide security report ")
     page.body.insert(0, span)
 
     # Next, the hidden container for the full security information

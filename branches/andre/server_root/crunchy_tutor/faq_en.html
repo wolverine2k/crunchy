@@ -302,10 +302,12 @@ for its menu.<br/>
 This is to prevent accidental communication between the webbrowser and the Python server, sending a
 "query" to the latter.</li>
 <li>All instructions sent to the Python server in order of having some Python command executed
-take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long random
-integer generated at the beginning of a session.  This way, even if a malicious query bypassed
+take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long 
+random integer generated at the beginning of a session.  This way, even if a malicious query bypassed
 the cleanup mentioned at the previous step, it would still be nearly impossible to guess the
-commands required for the Python interpreter to execute some malicious code sent by a query.
+commands required for the Python interpreter to execute some malicious code sent by a query; some
+javascript code specifically designed to scan the page and extract this session-specific random 
+integer would have had to be inserted on that page.
 </li>
 </ul>
 <p>The first two security levels mentioned [strict and normal] should be
@@ -326,7 +328,7 @@ web pages, and create a tree structure representing them. If a page is not well-
 Elementtree will raise an exception and Crunchy will not be able to
 proceed with that page.
 By using this combination of BeautifulSoup and Elementtree,
-we are left with a well defined tree that can be trimmed as mentioned above, removing
+we are left with a well defined tree that can be trimmed as mentioned above, hopefully removing
 any potential problems.
 </p>
 <h4>How can one determine which security level to use?</h4>
@@ -368,6 +370,10 @@ the possibility of viewing the report ... and changing the security level.
 <pre title="interpreter">
 &gt;&gt;&gt; crunchy.add_site()
 </pre>
+<p>In addition, when viewing a page, you should be able to click on a link ["View report"]
+at the top of a page.  This will bring up a window with information regarding elements that
+were removed on the page (if any) and allow you to change the security level for that page.  
+After changing the security level, you will need to reload the page to see its effect.</p>
 
 
 

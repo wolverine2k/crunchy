@@ -1,27 +1,25 @@
 #crunchy_menu_container
 {
-padding: 0;
-height: 62px;   /* keep in sync with margin-top for body*/
+height: 56px;
 position:fixed; 
-top:0;
 right: 0;
+bottom: 0;
 z-index: 10;
+border: 2px solid #FFBC29;
 }
 
-body
-{margin-top: 52px; /* keep nearly (-10px) in sync with crunchy_menu_container height */}
-
 .security_report {
-    position: absolute;
-    top: 0;
+    position: fixed; 
+    bottom: 0;
+    z-index:10;
     left: 0;
     color: black;
+    border: 3px solid #FFBC29;
     background-color: white;
     font: 10pt monospace;
     margin: 0;
 
 }
-
 
 #crunchy_menu_container ul
 {
@@ -45,7 +43,7 @@ margin: 0;
 background: #fff;
 width: 150px;
 height: 54px;
-border: 2px solid #FFBC29;
+border: 1px solid #FFBC29;
 padding: 0;
 color: #369;
 text-decoration: none;

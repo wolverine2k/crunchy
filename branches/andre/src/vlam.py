@@ -232,8 +232,8 @@ class CrunchyPage(object):
         #  The following for loop deals with example 5
         if "menu_included" not in self.included:
             CrunchyPage.handlers2["no_tag"]["menu"](self)
-        # finally, we insert the security advisory last so that it goes
-        # at the top of the page and so that none of its links get converted.
+        # finally, we insert the security advisory last so that
+        # none of its links get converted.
         CrunchyPage.handlers2["no_tag"]["security"](self)
         return
 
