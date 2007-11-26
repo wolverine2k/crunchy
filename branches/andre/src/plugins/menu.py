@@ -62,6 +62,10 @@ def insert_default_menu(page):
     except Exception, info:
         print info
         print "_css=", _css
+    # insert the required code to make the menu draggable
+    if not page.includes("drag_included"):
+        page.add_include("drag_included")
+        page.insert_js_file("/drag.js")
 
 def extract_menu(filename, page, safe_menus=False):
     '''extract a menu and css information from an html file.
@@ -82,5 +86,9 @@ def extract_menu(filename, page, safe_menus=False):
     menu = tree.find(".//div")
     #head = tree.find("head")
     css = tree.find(".//link")
+
+    # make the menu draggable
+    menu.attrib['id'] = 'menu_box'
+    menu.attrib['onmousedown'] = "dragStart(event, 'menu_box')"
     return menu, css
 

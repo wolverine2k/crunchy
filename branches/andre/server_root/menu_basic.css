@@ -1,16 +1,23 @@
-#crunchy_menu_container
+.crunchy_menu_container
 {
 height: 56px;
 position:fixed; 
 right: 0;
-bottom: 0;
+top: 0;
 z-index: 10;
 border: 2px solid #FFBC29;
+/* make a visible top bar, giving a target to drag */
+border-top: 15px solid #369;
+border-right: 15px solid #369;
+cursor: move;
+width: 306px;  /* twice 150 px, as below, plus space for borders */
 }
 
 .security_report {
-    position: fixed; 
-    bottom: 0;
+    position: absolute;
+    cursor: move;
+    height: 56px;
+    top: 0;
     z-index:10;
     left: 0;
     color: black;
@@ -18,9 +25,10 @@ border: 2px solid #FFBC29;
     background-color: white;
     font: 10pt monospace;
     margin: 0;
+    max-width: 440px;
 }
 
-#crunchy_menu_container ul
+.crunchy_menu_container ul
 {
 border: 0;
 margin: 0;
@@ -28,7 +36,7 @@ padding: 0;
 list-style-type: none;
 }
 
-#crunchy_menu_container ul li
+.crunchy_menu_container ul li
 {
 display: block;
 float: left;
@@ -37,7 +45,7 @@ padding: 0;
 margin: 0;
 }
 
-#crunchy_menu_container ul li a
+.crunchy_menu_container ul li a
 {
 background: #fff;
 width: 150px;
@@ -51,13 +59,13 @@ text-align: center;
 font: 50px sans-serif;
 }
 
-#crunchy_menu_container ul li a img
+.crunchy_menu_container ul li a img
 {
 background: white;
 border: 2px solid white;
 }
 
-#crunchy_menu_container ul li a:hover
+.crunchy_menu_container ul li a:hover
 {
 color: white;
 background: #369;

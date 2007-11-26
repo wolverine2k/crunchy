@@ -31,7 +31,7 @@ def insert_security_info(page, *dummy):
     elif 'strict' in page.security_info['level']:
         src = '/paranoid.png'
 
-    span = cp.Element("span")
+    span = cp.Element("div")
     span.attrib['class'] = "security_report" # in file menu_basic.css
     span.attrib['id'] = "security_report"
     level_img = cp.SubElement(span, "img")
@@ -67,6 +67,13 @@ def insert_security_info(page, *dummy):
     hide.attrib["href"] = "#"
     hide.attrib['style'] = "text-decoration: underline;"
     hide.text = _("/ Hide security report ")
+
+    # make the advisory draggable; insert the required code
+    if not page.includes("drag_included"):
+        page.add_include("drag_included")
+        page.insert_js_file("/drag.js")
+    span.attrib['onmousedown'] = "dragStart(event, 'security_report')"
+
     page.body.insert(0, span)
 
     # Next, the hidden container for the full security information
