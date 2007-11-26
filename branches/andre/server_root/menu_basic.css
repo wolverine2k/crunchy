@@ -14,7 +14,7 @@ cursor: move;
 .security_report {
     position: absolute;
     cursor: move;
-    height: 56px;
+    height: 60px;
     top: 0;
     z-index:10;
     left: 0;
@@ -23,7 +23,10 @@ cursor: move;
     background-color: white;
     font: 10pt monospace;
     margin: 0;
-    max-width: 440px;
+    max-width: 600px;
+}
+.security_report a:hover{
+font:bold;
 }
 
 .crunchy_menu_container ul

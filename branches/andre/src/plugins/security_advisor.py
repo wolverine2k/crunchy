@@ -62,11 +62,13 @@ def insert_security_info(page, *dummy):
         view.attrib["href"] = "#"
         view.attrib['style'] = "text-decoration: underline;"
         view.text = _(" View report ")
+    br = cp.SubElement(span, "br")
     hide = cp.SubElement(span, "a")
     hide.attrib["onclick"] = "hide_security_report();"
     hide.attrib["href"] = "#"
-    hide.attrib['style'] = "text-decoration: underline;"
-    hide.text = _("/ Hide security report ")
+    hide.attrib['style'] = "text-decoration: underline overline;"
+    
+    hide.text = _(" | Hide summary |")
 
     # make the advisory draggable; insert the required code
     if not page.includes("drag_included"):
