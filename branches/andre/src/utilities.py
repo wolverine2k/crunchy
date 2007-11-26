@@ -10,10 +10,12 @@ level = 'display trusted'
 def security_level(url):
     global level
     info = urlparse.urlsplit(url)
-    if info.netloc == '':
+    # info.netloc == info[1] is not Python 2.4 compatible
+    info_netloc = info[1]
+    if info_netloc == '':
         level = configuration.defaults.local_security
     else:
-        level = configuration.defaults._get_site_security(info.netloc)
+        level = configuration.defaults._get_site_security(info_netloc)
     return level
 
 def extract_log_id(vlam):

@@ -237,7 +237,10 @@ def format_report(page, div):
             td = cp.SubElement(tr, 'td')
             td.text = item[2]
 
-    netloc = urlsplit(page.url).netloc # localhost will return empty string
+    #netloc = urlsplit(page.url).netloc # localhost will return empty string
+    # urlsplit().netloc == urlsplit()[1] is not Python 2.4 compatible
+    netloc = urlsplit(page.url)[1]     
+
     if page.security_info['number removed'] != 0 and netloc:
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('You may select a site specific security level:')
