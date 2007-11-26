@@ -2,15 +2,13 @@
 {
 height: 56px;
 position:fixed; 
-right: 0;
+/* right: 0;  set in menu.py */
 top: 0;
 z-index: 10;
 border: 2px solid #FFBC29;
 /* make a visible top bar, giving a target to drag */
-border-top: 15px solid #369;
-border-right: 15px solid #369;
+border-top: 10px solid #369;
 cursor: move;
-width: 306px;  /* twice 150 px, as below, plus space for borders */
 }
 
 .security_report {

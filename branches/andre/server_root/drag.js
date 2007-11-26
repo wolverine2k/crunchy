@@ -90,7 +90,20 @@ function dragStart(event, id) {
   dragObj.elStartLeft  = parseInt(dragObj.elNode.style.left, 10);
   dragObj.elStartTop   = parseInt(dragObj.elNode.style.top,  10);
 
-  if (isNaN(dragObj.elStartLeft)) dragObj.elStartLeft = 0;
+  //if (isNaN(dragObj.elStartLeft)) dragObj.elStartLeft = 0;
+  // the previous line is replaced by the following for Crunchy
+  if (isNaN(dragObj.elStartLeft)) {
+    startRight = parseInt(dragObj.elNode.style.right, 10);
+    if (isNaN(startRight)) {
+        dragObj.elStartLeft = 0;
+    }
+    else {
+    dragObj.elStartLeft = window.innerWidth - startRight - parseInt(dragObj.elNode.style.width, 10);
+    dragObj.elNode.style.left = dragObj.elStartLeft + "px";
+    dragObj.elNode.style.right = null;
+  	}
+  }
+  // end of Crunchy changes
   if (isNaN(dragObj.elStartTop))  dragObj.elStartTop  = 0;
 
   // Update element's z-index.
