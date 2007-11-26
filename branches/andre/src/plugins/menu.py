@@ -90,7 +90,5 @@ def extract_menu(filename, page, safe_menus=False):
     # make the menu draggable
     menu.attrib['id'] = 'menu_box'
     menu.attrib['onmousedown'] = "dragStart(event, 'menu_box')"
-    # explicit style value so that the drag function can work.
-    menu.attrib['style'] = 'right:0;width:306px;' # other values in menu_basic.css
     return menu, css
 
