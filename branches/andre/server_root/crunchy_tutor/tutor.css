@@ -22,16 +22,19 @@ html {
 
 #topbar .title {
 	vertical-align: 20%;
-	margin-left: 3.5em;
+	margin-left: 150px;
 	font-size: 3em;
 	}
 /* --------------------------- navbar ------------------------------- */
+
+/* try to aim for width of navbar + main content below to be <= 1024 px */
+
 #navbar {
 	position: fixed;
 	top: 6em;
 	left: 0;
-	width: 12em;
-	padding: 1em;
+	width: 200px;
+	padding: 10px;
 	overflow: auto; /* this and the following value ensure that the menu will be scrollable */
 	bottom: 1%;     /* if it becomes too big to be displayed vertically. */
 }
@@ -77,18 +80,19 @@ html {
 	font-style: italic;
 }
 /* --------------------------- main content ------------------------------- */
+/* try to aim for width of navbar + main content below to be <= 1024 px */
 #main {
 	position: absolute;
 	top: 5em;
-	left: 13em;
-	margin: 1em;
-	padding: 1em;
+	left: 200px;
+	margin: 20px;
+	padding: 10px;
 	border-left-style: dashed;
 	border-width: 1px;
 	border-color: #369;
 }
-p{max-width:800px;}
-div{max-width:800px;}
+p{max-width:750px;}
+div{max-width:750px;}
 
 .question {
 	font-weight: bold;

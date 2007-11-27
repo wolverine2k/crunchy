@@ -310,9 +310,11 @@ Crunchy.</p>
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;div id="crunchy_menu_container"&gt;
+&lt;!-- specify width and right values so that it can be dragged properly --&gt;
+&lt;div class="crunchy_menu_container" style="width:306px;right:0;"&gt;
 &lt;ul&gt;
-&lt;li&gt; &lt;a href="/"&gt;&lt;img src="/crunchy.png" height="47" width="147" alt="Home"/&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt; &lt;a href="/"&gt;&lt;img src="/crunchy.png" 
+             alt="Home"/&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href="/exit"&gt;Quit&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
@@ -321,7 +323,9 @@ Crunchy.</p>
 &lt;/html&gt;
 </pre>
 <p>Crunchy looks for the menu inside the <code>&lt;div&gt;</code>, and the menu styling
-in the <code>&lt;head&gt;</code>.</p>
+in the <code>&lt;head&gt;</code>.  Note that we have to specify styles values for "width"
+and "right" so that the menu can be clicked and dragged.  Alternatively, we could specify
+a value for the "left" attribute.</p>
 </div>
 </body>
 </html>
