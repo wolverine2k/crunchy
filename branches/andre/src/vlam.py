@@ -3,17 +3,21 @@ perform vlam substitution
 
 sets up the page and calls appropriate plugins
 """
+from sys import version
+    
+if int(version.split('.')[0]) > 2:
+    from io import StringIO
+else:
+    from StringIO import StringIO
 
-from StringIO import StringIO
-
-import security
+import src.security as security
 
 # Third party modules - included in crunchy distribution
 from element_tree import ElementTree, HTMLTreeBuilder, ElementSoup
 et = ElementTree
 
-from cometIO import register_new_page
-import configuration
+from src.cometIO import register_new_page
+import src.configuration as configuration
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'

@@ -6,10 +6,10 @@ from os.path import dirname
 from imp import find_module
 import random
 
-import vlam
-import cometIO
-import PluginServices as services
-import translation
+import src.vlam as vlam
+import src.cometIO as cometIO
+import src.PluginServices as services
+import src.translation as translation
 
 # Rather than having plugins import ElementTree if needed, we will expose
 # the required API through CrunchyPlugin.  This way, if we ever
@@ -34,7 +34,7 @@ def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
     the request object passed to http handlers."""
     if DEBUG:
-        print "Registering http handler ", pattern
+        print("Registering http handler " + pattern)
     if pattern is None:
         server.register_default_handler(handler)
     else:
@@ -47,11 +47,11 @@ def register_tag_handler(tag, attribute, keyword, handler):
     if keyword is None:
         if attribute is None:  # example: for <a ...>
             if tag in vlam.CrunchyPage.handlers1:
-                print """FATAL ERROR
+                print ("""FATAL ERROR
 Attempting to define a null handler twice for the same
 tag: %s
 Handlers should be unique: a new plugin must have been"
-created, that conflicts with an existing one."""%tag
+created, that conflicts with an existing one."""%tag)
                 raise
             else:
                 vlam.CrunchyPage.handlers1[tag] = handler
@@ -65,11 +65,11 @@ created, that conflicts with an existing one."""%tag
                 vlam.CrunchyPage.handlers2[tag][attribute] = handler
                 return
             else:
-                print """FATAL ERROR"
+                print("""FATAL ERROR"
 Attempting to define a handler twice for the same combination
 tag: %s, option: %s
 Handlers should be unique: a new plugin must have been
-created, that conflicts with an existing one."""%(elem_type, option)
+created, that conflicts with an existing one."""%(elem_type, option))
                 raise
     # Dealing with case where tag, attribut and keyword are all defined.
     if tag not in vlam.CrunchyPage.handlers3:
@@ -77,11 +77,11 @@ created, that conflicts with an existing one."""%(elem_type, option)
     if attribute not in vlam.CrunchyPage.handlers3[tag]:
         vlam.CrunchyPage.handlers3[tag][attribute] = {}
     if keyword in vlam.CrunchyPage.handlers3[tag][attribute]:
-        print """FATAL ERROR"
+        print("""FATAL ERROR"
 Attempting to define a handler twice for the same
 tag: %s, attribute: %s, keyword: %s
 Handlers should be unique: a new plugin must have been
-created, that conflicts with an existing one."""%(tag, attribute, keyword)
+created, that conflicts with an existing one."""%(tag, attribute, keyword))
         raise
     vlam.CrunchyPage.handlers3[tag][attribute][keyword] = handler
     return

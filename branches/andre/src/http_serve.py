@@ -12,7 +12,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import urllib
 from traceback import format_exc
 
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
