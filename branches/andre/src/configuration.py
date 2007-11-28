@@ -25,13 +25,15 @@ initial_security_set = False
 editarea_languages_allowed_values = ['de', # German
                                      'dk', # Danish
                                      'en', # English
+                                     'es', # Spanish
                                      'fr', # French
                                      'hr', # Croatian
                                      'it', # Italian
                                      'ja', # Japanese
                                      'nl', # Dutch
                                      'pl', # Polish
-                                     'pt' # Portuguese
+                                     'pt', # Portuguese
+                                     'sk', # Slovak
                                     ]
 languages_allowed_values = ['en', # English
                             'fr' # French
