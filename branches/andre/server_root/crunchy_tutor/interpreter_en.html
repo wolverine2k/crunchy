@@ -131,9 +131,11 @@ at least 3 different ways of doing this) that you consider the
 site "safe" for browsing.  If you can't wait, just enter</p>
 <pre title="interpreter">
 >>> crunchy.add_site()
+>>> # docs.python.org is the answer to the first question
+>>> # trusted is the likely answer to the second
 </pre>
 <p>It's most likely safe to write <code title="py_code">trusted</code> for the
-security level of the www.python.org site.</p>
+security level of the docs.python.org site.</p>
 <h3 class="crunchy">Advanced stuff</h3>
 <p>Starting with version 0.9.2, Crunchy's interpreter knows some new tricks that can be very useful ... but potentially tricky.
 Consider the following.</p>
@@ -147,10 +149,8 @@ Using some advanced feature of Crunchy, you can save yourself a fair bit of typi
 Here is how: click on the image <img src="../editor.png" alt="editor.png" style="height:30px"/> to the right of
 the interpreter.
 You should see appearing below it a larger box (an html textarea for those interested)
-with two buttons at the bottom.
-One button copies the code shown above (just the input - not the output) 
-inside the textarea, ready for editing or just executing.  
-The other button feeds the code to the interpreter. 
+a button at the bottom.  
+Clicking on that button feeds the code to the interpreter. 
 Try it out!
 </p>
 <p>While this is a neat trick, there are a couple of caveats: Crunchy takes each line as though you had typed it yourself, one line at a time, in an interactive session.</p>
@@ -162,7 +162,7 @@ Try it out!
 </pre>
 <p>Now, try the next example below to see more clearly what happened:</p>
 <pre title="interpreter">
-&gt;&gt;&gt; print "Your name is: ", name
+&gt;&gt;&gt; name
 </pre>
 <p>As you should see, Crunchy had taken the second line as your answer to the first. 
 This is unlikely to be what you want.</p>
@@ -171,10 +171,9 @@ This is unlikely to be what you want.</p>
 on the editor image next to an interpreter.</p>
 
 <h4 class="crunchy">Caveat #2 </h4>
-<p>Try again with the following example: click on the editor image, 
-copy the code and execute it.  
+<p>Try again with the following example: click on the editor image and execute the code.  
 You will find that the interpreter will not be able to
-handle the result give you a number of error messages.  When that happens, 
+handle the result and give you a number of error messages.  When that happens, 
 continue reading below.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; def flatten(seq):
@@ -212,7 +211,7 @@ on the editor image next to an interpreter.</p>
 
 <blockquote>
 <em>
-     <b>Mr. Praline:</b> ... I wish to complain about this parrot what I purchased not half an hour ago from this very boutique.<br/><br/>
+     <b>Mr. Praline:</b> ... I wish to complain about this parrot that I purchased not half an hour ago from this very boutique.<br/><br/>
 
      <b>Owner:</b> Oh yes, the, uh, the Norwegian Blue...What's, uh...What's wrong with it?<br/><br/>
 
@@ -316,7 +315,7 @@ should be <code>interpreter</code>.</p>
 <p>
 Any number of interpreter "prompts" can 
 appear within a page; if <code>interpreter</code> has been selected, every
-such interpreter used on the same page 
+such interpreter used <b>on the same page</b> 
 shares the same environment; if <code>isolated</code> is chosen, then
 each such interpreter will have its own environment.  
 Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>

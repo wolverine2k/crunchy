@@ -283,13 +283,13 @@ class Defaults(object):
            as properties.'''
         __help = _("""
 You can change some of the default values by Crunchy, just like
-you can obtain this help message, using either an interpreter
-prompt or an editor, and assigning the desired value to a given
-variable.  Some of these variables are "fixed", which means that
-their value can not be changed by the user.
--
-Here are the values of some variables currently used by Crunchy.
-""").encode("utf-8")
+ you can obtain this help message, using either an interpreter
+ prompt or an editor, and assigning the desired value to a given
+ variable.  Some of these variables are "fixed", which means that
+ their value can not be changed by the user.
+ - 
+ Here are the values of some variables currently used by Crunchy. 
+ """).encode("utf-8")
 # we sort the keys so that they are listed in alphabetical order,
 # making them easier to find when reading the rather long text
         keys = []
@@ -495,7 +495,7 @@ Here are the values of some variables currently used by Crunchy.
     def add_site(self):
         '''interactive function to facilitate adding new site to
            the secured list'''
-        site = raw_input("Enter site url (for example, www.python.org) ")
+        site = raw_input("Enter site url (for example, docs.python.org) ")
         level = raw_input("Enter security level (for example: normal) ")
         self._set_site_security(site, level)
 

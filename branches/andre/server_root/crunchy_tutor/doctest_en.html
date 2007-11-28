@@ -49,7 +49,7 @@ Afterwards try the next, slightly more difficult example.</p>
 >>> p = Teacher('Jeff')
 >>> p.name
 'Jeff'
->>> p.addFriend('Andre')  # Crunchy [doctest?] bug: can't deal with non-ascii as in Andr&eacute;
+>>> p.addFriend('Andre')  # doctest bug?: can't deal with non-ascii as in Andr&eacute;
 >>> p.friends
 ['Andre']
 </pre>
@@ -58,7 +58,7 @@ press the button, and see what happens.</p>
 <p>If you are not using Crunchy, and you still want to try your hand at this DocTest business, you have to:</p>
 <ul>
 <li>copy the above test in a file (which can be the same as your program);</li>
-<li>edit your program to add the desired code;</li>
+<li>edit your program to add the desired code that will satisfy the doctest;</li>
 <li>look up the syntax to call up the appropriate method in the doctest module and feel like you 
 are wasting too much time on something that should be much easier if life were fair.</li>
 </ul>  
