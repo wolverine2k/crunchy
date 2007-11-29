@@ -52,15 +52,21 @@ def _(message):
 # from the old Crunchy
 _selected = {}
 english = {}
+estonian = {}
 french = {}
 
 def init_translation(lang=None):
-    global english, french, _selected
+    global english, estonian, french, _selected
 
     trans_path = os.path.join(os.path.dirname(
                                     find_module("crunchy")[1]), "translations")
 
-    if lang == 'fr':
+    if lang == 'et':
+        if estonian == {}:
+            filename = os.path.join(trans_path, "et", "LC_MESSAGES", "crunchy.po")
+            estonian = build_dict(filename)
+        _selected = estonian
+    elif lang == 'fr':
         if french == {}:
             filename = os.path.join(trans_path, "fr", "LC_MESSAGES", "crunchy.po")
             french = build_dict(filename)

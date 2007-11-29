@@ -36,7 +36,8 @@ editarea_languages_allowed_values = ['de', # German
                                      'sk', # Slovak
                                     ]
 languages_allowed_values = ['en', # English
-                            'fr' # French
+                            'fr', # French
+                            'et', # Estonian
                             ]
 security_allowed_values = [
                         'trusted','display trusted',
