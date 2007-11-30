@@ -97,8 +97,8 @@ function dragStart(event, id) {
     if (isNaN(startRight)) {
         dragObj.elStartLeft = 0;
     }
-    else {
-    dragObj.elStartLeft = window.innerWidth - startRight - parseInt(dragObj.elNode.style.width, 10);
+    else {  // 4 below takes care of the border (Crunchy menu)
+    dragObj.elStartLeft = -4 + window.innerWidth - startRight - parseInt(dragObj.elNode.style.width, 10);
     dragObj.elNode.style.left = dragObj.elStartLeft + "px";
     dragObj.elNode.style.right = null;
   	}
