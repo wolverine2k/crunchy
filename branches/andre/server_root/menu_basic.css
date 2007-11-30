@@ -9,6 +9,8 @@ border: 2px solid #FFBC29;
 /* make a visible top bar, giving a target to drag */
 border-top: 10px solid #369;
 cursor: move;
+margin: 0;
+padding: 0;
 }
 
 .security_report {

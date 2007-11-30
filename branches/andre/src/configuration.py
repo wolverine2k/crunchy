@@ -30,6 +30,7 @@ editarea_languages_allowed_values = ['de', # German
                                      'hr', # Croatian
                                      'it', # Italian
                                      'ja', # Japanese
+                                     'mk', # Macedonian
                                      'nl', # Dutch
                                      'pl', # Polish
                                      'pt', # Portuguese
@@ -37,7 +38,8 @@ editarea_languages_allowed_values = ['de', # German
                                     ]
 languages_allowed_values = ['en', # English
                             'fr', # French
-                            'et', # Estonian
+                            'et', # Estonian,
+                            'it', # Italian
                             'mk', # Macedonian
                             'pl' # Polish
                             ]
