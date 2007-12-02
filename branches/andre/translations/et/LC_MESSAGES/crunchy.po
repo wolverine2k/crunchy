@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: rur-ple\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2007-11-29 00:31+0300\n"
-"Last-Translator: Tanel <kuratkull@kuratkull.com>\n"
+"Last-Translator: Raul Laansoo\n"
 "Language-Team:  <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -22,13 +22,13 @@ msgstr "(Fikseeritud) Kasutaja kodukaust:"
 #: ..\andre/src/configuration.py:223
 #: src/configuration.py:223
 msgid "(Fixed) Temporary working directory: "
-msgstr "(Fikseeritud) Ajutine töötamise kaust:"
+msgstr "(Fikseeritud) Ajutine töökaust:"
 
 #: ..\andre/src/configuration.py:232
 #: src/configuration.py:232
 #, python-format
 msgid "Invalid choice for %s.dir_help"
-msgstr "Vale valik %s.dir_help 'is"
+msgstr "Vale valik %s.dir_help jaoks"
 
 #: ..\andre/src/configuration.py:233
 #: ..\andre/src/configuration.py:252
@@ -49,7 +49,7 @@ msgstr "Vale valik %s.dir_help 'is"
 #: src/configuration.py:440
 #: src/configuration.py:460
 msgid "The valid choices are: "
-msgstr "Kehtivad valikud on: "
+msgstr "Võimalikud valikud on: "
 
 #: ..\andre/src/configuration.py:234
 #: ..\andre/src/configuration.py:253
@@ -58,13 +58,13 @@ msgstr "Kehtivad valikud on: "
 #: src/configuration.py:253
 #: src/configuration.py:324
 msgid "The current value is: "
-msgstr "Vale valik %s.dir_help 'is"
+msgstr "Hetkeväärtus on: "
 
 #: ..\andre/src/configuration.py:241
 #: src/configuration.py:241
 #, python-format
 msgid "The choices for dir_help are %s\n"
-msgstr "Dir_help valikud on %s\n"
+msgstr "Valikud dir_help jaoks on %s\n"
 
 #: ..\andre/src/configuration.py:242
 #: ..\andre/src/configuration.py:261
@@ -83,13 +83,13 @@ msgstr "Dir_help valikud on %s\n"
 #: src/configuration.py:427
 #: src/configuration.py:446
 msgid "  The current value is: "
-msgstr "  Hetkene väärtus on: "
+msgstr "  Hetkeväärtus on: "
 
 #: ..\andre/src/configuration.py:251
 #: src/configuration.py:251
 #, python-format
 msgid "Invalid choice for %s.doc_help"
-msgstr "Vale valik %s.doc_help 'is"
+msgstr "Vale valik %s.doc_help jaoks"
 
 #: ..\andre/src/configuration.py:260
 #: src/configuration.py:260
@@ -110,10 +110,10 @@ msgid ""
 "Here are the values of some variables currently used by Crunchy.\n"
 msgstr ""
 "\n"
-"Sa saad muuta mõningaid Crunchy vaike väärtusi, just nagu\n"
-"saad sa siia abi teatesse, kasutades kas interpretaatorit\n"
-"käsurida või teksti redaktorit, määrates soovitud väärtuse antud\n"
-"muutujasse.  Mõned neist muutujatest on \"fikseeritud\", mis tähendab seda\n"
+"Sa saad muuta mõningaid Crunchy vaikeväärtusi, nagu ka näha seda\n"
+"abiteksti, kasutades interpretaatori käsurida; või kasutades selleks\n"
+"tekstiredaktorit ning anda muutujale soovitud väärtuse.  Mõned\n"
+"neist muutujatest on \"fikseeritud\", mis tähendab seda\n"
 "et nende väärtust ei saa kasutaja muuta.\n"
 "-\n"
 "Siin on mõndade Crunchy poolt kasutatavate muutujate väärtused.\n"
@@ -122,44 +122,44 @@ msgstr ""
 #: src/configuration.py:321
 #, python-format
 msgid "Invalid choice for %s.no_markup"
-msgstr "Vale valik %s.no_markup 'is"
+msgstr "Vale %s.no_markup valik"
 
 #: ..\andre/src/configuration.py:323
 #: src/configuration.py:323
 msgid "with \"image_file   file_name\" as a required option."
-msgstr "kasutades \"pildi_nimi   faili_nimi\" kui nõutud valikut."
+msgstr "kasutades \"image_file   faili_nimi\" kui nõutud valikut."
 
 #: ..\andre/src/configuration.py:329
 #: src/configuration.py:329
 #, python-format
 msgid "The choices for \"pre\" tag without Crunchy markup are %s\n"
-msgstr "Valikud \"pre\" märgisele ilma Crunchy märgenduseta on %s\n"
+msgstr "Valikud \"pre\" sildile ilma Crunchy märgistuskeeleta on %s\n"
 
 #: ..\andre/src/configuration.py:340
 #: src/configuration.py:340
 msgid "language set to: "
-msgstr "keeleks pandud: "
+msgstr "keeleks on valitud: "
 
 #: ..\andre/src/configuration.py:343
 #: src/configuration.py:343
 msgid "editarea_language also set to: "
-msgstr "muuteala_keel ka pandud: "
+msgstr "editarea_language on samuti valitud: "
 
 #: ..\andre/src/configuration.py:345
 #: src/configuration.py:345
 msgid "Note: while this is a valid choice, this choice is not available for a language provided by editarea. "
-msgstr "Teade: kuigi see on sobiv valik, ei ole see valik siiski kehtiv muuteala poolt pakutud keelele. "
+msgstr "Märkus: kuigi see on korrektne valik, ei kehti see valik redaktoris kasutatavale keelele. "
 
 #: ..\andre/src/configuration.py:346
 #: src/configuration.py:346
 msgid "The language choice for editarea remains "
-msgstr "Muuteala keelevalikuna säilib "
+msgstr "Redaktori keelevalikuna säilib "
 
 #: ..\andre/src/configuration.py:350
 #: src/configuration.py:350
 #, python-format
 msgid "Invalid choice for %s.language"
-msgstr "Vale valik %s.language 's"
+msgstr "Vale valik %s.language jaoks"
 
 #: ..\andre/src/configuration.py:354
 #: src/configuration.py:354
@@ -170,107 +170,107 @@ msgstr "Keelevalikud on %s\n"
 #: ..\andre/src/configuration.py:364
 #: src/configuration.py:364
 msgid "editarea_language set to: "
-msgstr "muuteala_keel on pandud: "
+msgstr "editarea_language on pandud: "
 
 #: ..\andre/src/configuration.py:367
 #: src/configuration.py:367
 #, python-format
 msgid "Invalid choice for %s.editarea_language"
-msgstr "Vale valik %s.editarea_language"
+msgstr "Vale valik %s.editarea_language jaoks"
 
 #: ..\andre/src/configuration.py:371
 #: src/configuration.py:371
 #, python-format
 msgid "The choices for editarea_language are %s\n"
-msgstr "Muuteala_keel valikud on %s\n"
+msgstr "editarea_language valikud on %s\n"
 
 #: ..\andre/src/configuration.py:381
 #: src/configuration.py:381
 msgid "Crunchy will attempt to provide friendly error messages."
-msgstr "Crunchy üritab serveerida sulle ainult sõbralikke veateateid."
+msgstr "Crunchy üritab näidata sõbralikke veateateid."
 
 #: ..\andre/src/configuration.py:385
 #: src/configuration.py:385
 msgid "Crunchy's error messages will be similar to Python's default tracebacks."
-msgstr "Crunchy veateated on sarnased Pythoni traceback 'idele."
+msgstr "Crunchy veateated on sarnased Pythoni traceback'idele."
 
 #: ..\andre/src/configuration.py:388
 #: src/configuration.py:388
 msgid "friendly attribute must be set to True or False."
-msgstr "sõbralik atribuut peab olema kas Tõsi või Vale."
+msgstr "sõbralik atribuut peab olema kas True või False."
 
 #: ..\andre/src/configuration.py:391
 #: src/configuration.py:391
 #, python-format
 msgid "The choices for friendly tracebacks are %s\n"
-msgstr "Sõbralike traceback 'ide valikud on %s\n"
+msgstr "Sõbralike traceback'ide valikud on %s\n"
 
 #: ..\andre/src/configuration.py:408
 #: src/configuration.py:408
 msgid "site security set to: "
-msgstr "lehe turvalisus seatud: "
+msgstr "lehe turvalisuseks valitud: "
 
 #: ..\andre/src/configuration.py:410
 #: src/configuration.py:410
 #, python-format
 msgid "Invalid choice for %s.site_security"
-msgstr "Vale valik %s.site_security 's"
+msgstr "Vale valik %s.site_security jaoks"
 
 #: ..\andre/src/configuration.py:419
 #: src/configuration.py:419
 msgid "security set to: "
-msgstr "turvalisus seatud: "
+msgstr "turvalisuseks valitud: "
 
 #: ..\andre/src/configuration.py:422
 #: src/configuration.py:422
 #, python-format
 msgid "Invalid choice for %s.local_security"
-msgstr "Vale valik %s.local_security 's"
+msgstr "Vale valik %s.local_security jaoks"
 
 #: ..\andre/src/configuration.py:426
 #: src/configuration.py:426
 #, python-format
 msgid "The choices for local_security levels are %s\n"
-msgstr "Valikud local_security jaoks on %s\n"
+msgstr "Valikud local_security taseme jaoks on %s\n"
 
 #: ..\andre/src/configuration.py:436
 #: src/configuration.py:436
 msgid "override_default_interpreter set to: "
-msgstr "override_default_interpreter pandud: "
+msgstr "override_default_interpreter valitud: "
 
 #: ..\andre/src/configuration.py:439
 #: src/configuration.py:439
 #, python-format
 msgid "Invalid choice for %s.override_default_interpreter"
-msgstr "Vale valik %s.override_default_interpreter 's"
+msgstr "Vale valik %s.override_default_interpreter jaoks"
 
 #: ..\andre/src/configuration.py:444
 #: src/configuration.py:444
 #, python-format
 msgid "The choices for override_default_interpreter are %s\n"
-msgstr "Valikud override_default_interpreter 'i jaoks on %s\n"
+msgstr "Valikud override_default_interpreter jaoks on %s\n"
 
 #: ..\andre/src/configuration.py:456
 #: src/configuration.py:456
 msgid "my_style set to: "
-msgstr "my_style pandud: "
+msgstr "my_style valitud: "
 
 #: ..\andre/src/configuration.py:459
 #: src/configuration.py:459
 #, python-format
 msgid "Invalid choice for %s.my_style"
-msgstr "Vale valik %s.my_style 's"
+msgstr "%s.my_style 'i Vale valik"
 
 #: ..\andre/src/configuration.py:463
 #: src/configuration.py:463
 #, python-format
 msgid "The choices for my_style are %s\n"
-msgstr "Valikud my_style jaoks on %s\n"
+msgstr "my_style valikud on %s\n"
 
 #: ..\andre/src/configuration.py:465
 #: src/configuration.py:465
 msgid "If set to True, Crunchy's default styles are replaced"
-msgstr "Kui pandud Tõsi, siis Crunchy vaikimisi stiilid muudetakse"
+msgstr "Kui valitud True, siis asendatakse Crunchy vaikimisi vormingud"
 
 #: ..\andre/src/configuration.py:466
 #: src/configuration.py:466
@@ -285,7 +285,7 @@ msgid ""
 "  The current value for my_style is: "
 msgstr ""
 "\n"
-"  Hetkene väärtus my_style 'is on: "
+"  my_style hetkeväärtus on: "
 
 #: ..\andre/src/errors.py:36
 #: src/errors.py:36
@@ -302,7 +302,7 @@ msgstr "Viga real"
 #: ..\andre/src/errors.py:70
 #: src/errors.py:70
 msgid "called by line"
-msgstr "esilekutsutud rea poolt"
+msgstr "viidatud rea poolt"
 
 #: ..\andre/src/errors.py:87
 #: src/errors.py:87
@@ -351,7 +351,7 @@ msgstr "Su kood ei läbinud %s 'e testi %s 'est."
 #: ..\andre/src/errors.py:144
 #: src/errors.py:144
 msgid "The following example failed:"
-msgstr "Järgnev näide ei läbinud:"
+msgstr "Järgnev näide ebaõnnestus:"
 
 #: ..\andre/src/errors.py:146
 #: src/errors.py:146
@@ -366,7 +366,7 @@ msgstr "Saadud tulemus oli:"
 #: ..\andre/src/errors.py:150
 #: src/errors.py:150
 msgid "An exception was raised:"
-msgstr "Erand kerkis:"
+msgstr "Erandjuhtum tõstetud:"
 
 #: ..\andre/src/interpreter.py:60
 #: ..\andre/src/interpreter.py:95
@@ -379,7 +379,7 @@ msgstr "# kasutaja poolt ei sisestatud koodi\n"
 #: src/plugins/colourize.py:134
 #: src\plugins/colourize.py:134
 msgid "Crunchy: could not style the following code"
-msgstr "Crunchy: ei suutnud stiliseerida järgnevat koodi"
+msgstr "Crunchy: ei suutnud vormindada järgnevat koodi"
 
 #: ..\andre/src/plugins/colourize.py:560
 #: src/plugins/colourize.py:560
@@ -389,7 +389,7 @@ msgid ""
 "Parsing error occurred in the following Python code.\n"
 "Info: %s."
 msgstr ""
-"Parseerimis viga kerkis järgnevas Pythoni koodis.\n"
+"Süntaksi viga järgnevas Pythoni koodis.\n"
 "Info: %s."
 
 #: ..\andre/src/plugins/editarea.py:63
@@ -411,7 +411,7 @@ msgstr "Katkesta"
 #: src/plugins/editarea.py:81
 #: src\plugins/editarea.py:81
 msgid "Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally."
-msgstr "Kasuta \"Salvesta ja jooksuta\", et käivitada programme (nagu pygame ja graafilisel liidesel põhinevaid) väliselt."
+msgstr "Kasuta \"Salvesta ja käivita\", et käivitada programme (nagu pygame ja graafilisel liidesel põhinevaid) väliselt."
 
 #: ..\andre/src/plugins/editarea.py:86
 #: src/plugins/editarea.py:86
@@ -423,37 +423,37 @@ msgstr "Salvesta Pythoni fail"
 #: src/plugins/editarea.py:93
 #: src\plugins/editarea.py:93
 msgid "Save and Run"
-msgstr "Salvesta ja jooksuta"
+msgstr "Salvesta ja käivita"
 
 #: ..\andre/src/plugins/handle_default.py:75
 #: src/plugins/handle_default.py:75
 #: src\plugins/handle_default.py:75
 msgid "Directory Listing"
-msgstr "Kausta Nimistu"
+msgstr "Kaustade Loetelu"
 
 #: ..\andre/src/plugins/handle_default.py:123
 #: src/plugins/handle_default.py:123
 #: src\plugins/handle_default.py:123
 msgid "Illegal path, page not found."
-msgstr "Illegaalne asukoht, lehte ei leitud."
+msgstr "Lubamatu failitee, lehte ei leitud."
 
 #: ..\andre/src/plugins/handle_default.py:124
 #: src/plugins/handle_default.py:124
 #: src\plugins/handle_default.py:124
 msgid "Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"
-msgstr "Crunchy ei suutnud avada soovitud lehte. Seda võisid põhjustada mitmed asjaolud, kaasaarvatud:"
+msgstr "Crunchy ei suutnud avada soovitud lehte.  Seda võisid põhjustada mitmed asjaolud, kaasaarvatud:"
 
 #: ..\andre/src/plugins/handle_default.py:125
 #: src/plugins/handle_default.py:125
 #: src\plugins/handle_default.py:125
 msgid "The page doesn't exist."
-msgstr "Leht ei eksisteeri."
+msgstr "Lehte ei eksisteeri."
 
 #: ..\andre/src/plugins/handle_default.py:126
 #: src/plugins/handle_default.py:126
 #: src\plugins/handle_default.py:126
 msgid "The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."
-msgstr "Soovitud asukoht on illegaalne, näited illegaalsetest asukohtades, kaasarvatud need mis sisaldavad .. liidest."
+msgstr "Soovitud failitee ei ole lubatud.  Lubamatud teed on muu hulgas need, milles sisaldub .. ."
 
 #: ..\andre/src/plugins/handle_default.py:127
 #: src/plugins/handle_default.py:127
@@ -474,13 +474,13 @@ msgstr "Käivita"
 #: src/plugins/io_widget.py:57
 #: src\plugins/io_widget.py:57
 msgid "Copy code sample"
-msgstr "Kopeeri koodi jupp"
+msgstr "Kopeeri koodilõik"
 
 #: ..\andre/src/plugins/security_advisor.py:42
 #: src/plugins/security_advisor.py:42
 #: src\plugins/security_advisor.py:42
 msgid " Crunchy security level: "
-msgstr " Crunchy turvatase: "
+msgstr " Crunchy turvatase: "Hetkeväärtus
 
 #: ..\andre/src/plugins/security_advisor.py:52
 #: src/plugins/security_advisor.py:52
@@ -499,7 +499,7 @@ msgstr "Üks element eemaldati. - "
 #: src\plugins/security_advisor.py:58
 #, python-format
 msgid " %d elements were removed. - "
-msgstr " %d elementi eemaldati. - "
+msgstr " eemaldati %d elementi. - "
 
 #: ..\andre/src/plugins/security_advisor.py:64
 #: src/plugins/security_advisor.py:64
@@ -530,7 +530,7 @@ msgid ""
 "Do you wish to retain the existing settings for these sites?\n"
 "\n"
 msgstr ""
-"Soovid sa säilitada nende lehtede olemasolevad sätted?\n"
+"Kas soovid säilitada nende saitide olemasolevad sätted?\n"
 "\n"
 
 #: ..\andre/src/plugins/security_advisor.py:93
@@ -540,7 +540,7 @@ msgid ""
 "You can change any of them before clicking on the approve button.\n"
 "\n"
 msgstr ""
-"Võid neid muuta igaüht vajutades Kinnita nupule.\n"
+"Saad neid kõiki muuta enne Kinnita nupule vajutamist.\n"
 "\n"
 
 #: ..\andre/src/plugins/security_advisor.py:99
@@ -568,25 +568,25 @@ msgstr "Eemalda kõik"
 #: src\plugins/security_advisor.py:112
 #: src\plugins/security_advisor.py:243
 msgid "remove from list"
-msgstr "eemalda listist"
+msgstr "eemalda loetelust"
 
 #: ..\andre/src/plugins/security_advisor.py:158
 #: src/plugins/security_advisor.py:158
 #: src\plugins/security_advisor.py:158
 msgid "Removed: tag not allowed"
-msgstr "Eemaldatud: märge pole lubatud"
+msgstr "Eemaldatud: silt pole lubatud"
 
 #: ..\andre/src/plugins/security_advisor.py:165
 #: src/plugins/security_advisor.py:165
 #: src\plugins/security_advisor.py:165
 msgid "Tag removed"
-msgstr "Märge eemaldatud"
+msgstr "Silt eemaldatud"
 
 #: ..\andre/src/plugins/security_advisor.py:167
 #: src/plugins/security_advisor.py:167
 #: src\plugins/security_advisor.py:167
 msgid "Number of times"
-msgstr "Kordade arv"
+msgstr "Korduste arv"
 
 #: ..\andre/src/plugins/security_advisor.py:178
 #: src/plugins/security_advisor.py:178
@@ -601,7 +601,7 @@ msgstr "Eemaldatud: atribuut või atribuudi väärtus pole lubatud"
 #: src\plugins/security_advisor.py:186
 #: src\plugins/security_advisor.py:211
 msgid "Tag"
-msgstr "Märge"
+msgstr "Silt"
 
 #: ..\andre/src/plugins/security_advisor.py:188
 #: src/plugins/security_advisor.py:188
@@ -619,7 +619,7 @@ msgstr "Väärtus (kui omab tähtsust)"
 #: src/plugins/security_advisor.py:203
 #: src\plugins/security_advisor.py:203
 msgid "Removed: style tag or attribute not allowed"
-msgstr "Eemaldatud: stiili märge või atribuut pole lubatud"
+msgstr "Eemaldatud: vormingu silt või atribuut pole lubatud"
 
 #: ..\andre/src/plugins/security_advisor.py:213
 #: src/plugins/security_advisor.py:213
@@ -637,7 +637,7 @@ msgstr "Väärtus"
 #: src/plugins/security_advisor.py:229
 #: src\plugins/security_advisor.py:229
 msgid "You may select a site specific security level:"
-msgstr "Võid valida lehe raames turvataseme:"
+msgstr "Võid valida saidi raames turvataseme:"
 
 #: ..\andre/src/plugins/security_advisor.py:233
 #: src/plugins/security_advisor.py:233
@@ -649,7 +649,7 @@ msgstr "Kui tahad säilitada olemasolevat valikut, "
 #: src/plugins/security_advisor.py:234
 #: src\plugins/security_advisor.py:234
 msgid "simply dismiss this window by clicking on the X above."
-msgstr "lihtsalt välju sellest aknast vajutades üleval X'i."
+msgstr "sulge see aken vajutades X."
 
 #: ..\andre/src/plugins/security_advisor.py:266
 #: src/plugins/security_advisor.py:266
@@ -669,11 +669,10 @@ msgid ""
 "sandbox to protect your computer from malicious code."
 msgstr ""
 "\n"
-"Valides 'display MODE', valib sama ka Crunchy, kuna 'MODE' valik välistab\n"
-"ühegi interaktiivse elemendi\n"
-"(näiteks Pythoni interpreeter)\n"
-"sisestamise lehele, säilitades sellega normaalse \n"
-"brauseri turvatsooni, et kaitsta su arvutit kurja koodi eest."
+"Valides 'display MODE' töötleb Crunchy lehte samuti kui 'MODE' valiku korral,\n"
+"välja arvatud see, et ühtegi interaktiivset elementi (näiteks Pythoni\n"
+"interpretaator) leheküljele ei lisata, säilitades brauseri olemasolevaid\n"
+"turvaseaded kaitseks ründekoodi eest."
 
 #: ..\andre/src/plugins/security_advisor.py:277
 #: src/plugins/security_advisor.py:277
@@ -686,8 +685,8 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Crunchy eemaldab lehelt juba olemasoleva javascript koodi ja ka \n"
-"mitmed html elemendid, mis võivad peita endas javascript koodi.\n"
+"Crunchy eemaldab lehe koodist selles sisalduva javascripti ja ka \n"
+"mitmed html elemendid, mis peidavad brauseri eest javascripti.\n"
 "        "
 
 #: ..\andre/src/plugins/security_advisor.py:284
@@ -704,12 +703,13 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"'trusted' peaks kasutama ainult lehtede puhul, milles ollakse\n"
-"kindlad, et nad ei ürita sisestada kurja koodi. Lehed mis\n"
-"lubavad kasutajatel postitada, kommenteerida, või hullemgi veel,\n"
-"mis lubavad kasutajatel lehe sisu muuta (näiteks wikid), ei\n"
-"tohiks olla 'trusted'. Kui 'trusted' valitud, näitab Crunchy seda\n"
-"lehte sinu brauseris nii originaali lähedaselt kui suudab.\n"
+"'trusted' tuleks kasutada ainult saitide korral, mille puhul oled\n"
+"veendunud, et nad ei ürita sisestada ründeprogramme.  Saite, mis\n"
+"lubavad kasutajatel postitada, kommenteerida, või veel hullem,\n"
+"kasutajatel lehe sisu muuta (näiteks wiki'd), ei tohiks määrata\n"
+"kui 'trusted'.  Valides 'trusted', näitab Crunchy seda saiti\n"
+"nii originaalilähedaselt kui võimalik, ehk nagu see paistaks\n"
+"sinu brauseris .\n"
 
 #: ..\andre/src/plugins/security_advisor.py:294
 #: src/plugins/security_advisor.py:294
@@ -725,13 +725,12 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"'normal' üritab näidata lehti sarnaselt 'trusted' valikule, erandiga,\n"
-"et eemaldab kõik kahtlasena näivad stiili sätted\n"
-"(vaata dokumentatsiooni et lähemalt teada saada) ja valideerib\n"
-"kõik pildid, enne kui lubab pilti näidata. Kui leht sisaldab palju\n"
-"pilte, siis valideerimine võtab kuvamise kiirust alla. PIldid mille\n"
-"valideerimine ei õnnestu, ei saa kuvatud. Iga pilti valideeritakse\n"
-"iga Crunchy sessiooni jooksul vaid korra.\n"
+"'normal' üritab näidata lehti sarnaselt 'trusted' valikule selle\n"
+"erandiga, et eemaldab kõik kahtlasena näivad vormingud (vaata\n"
+"täpsemat infot dokumentatsioonist) ja kontrollib pildi allikat enne,\n"
+"kui lubab pilti näidata.  Paljude piltidega saidi korral muutub\n"
+"ekraanipildi kuvamine aeglaseks.  Pilte, mille kontroll ei õnnestu,\n"
+"ei kuvata.  Igat pilti kontrollitakse vaid kord Crunchy seansi jooksul.\n"
 
 #: ..\andre/src/plugins/security_advisor.py:304
 #: src/plugins/security_advisor.py:304
@@ -744,9 +743,9 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"'strict' eemaldab lehelt kõik stiliseerimised ja pildid. See toob\n"
-"kaasa kiireima kuvamise, aga samas on see ka tõenäoliselt\n"
-"visuaalselt kõige vähem köitev.\n"
+"'strict' eemaldab lehelt kõik vormingud ja pildid.  Tulemuseks on\n"
+"kiireim kuvamine, kuid samas visuaalselt kõige tagasihoidlikum\n"
+"ekraanipilt.\n"
 
 #: ..\andre/src/plugins/security_advisor.py:332
 #: src/plugins/security_advisor.py:332
@@ -758,30 +757,30 @@ msgstr "Omanik: "
 #: src/plugins/security_advisor.py:333
 #: src\plugins/security_advisor.py:333
 msgid "Confirmation code: "
-msgstr "Kinnitus kood: "
+msgstr "Kinnituskood: "
 
 #: ..\andre/src/plugins/tooltip.py:97
 #: src/plugins/tooltip.py:97
 #: src\plugins/tooltip.py:97
 msgid "builtins not defined in console yet."
-msgstr "sisseehitatud muutujad ei ole veel konsoolis defineeritud."
+msgstr "sisemised muutujad ei ole veel konsoolis defineeritud."
 
 #: ..\andre/src/plugins/vlam_editor.py:114
 #: src/plugins/vlam_editor.py:114
 #: src\plugins/vlam_editor.py:114
 msgid "Execute as external program"
-msgstr "Käivitatud välise programmina"
+msgstr "Käivita välise programmina"
 
 #: ..\andre/src/plugins/vlam_editor.py:126
 #: src/plugins/vlam_editor.py:126
 #: src\plugins/vlam_editor.py:126
 msgid "Execute as separate thread"
-msgstr "Käivitatud eraldiseisva haruna"
+msgstr "Käivita eraldiseisvas harus"
 
 #: ..\andre/src/plugins/vlam_interpreter.py:160
 #: src/plugins/vlam_interpreter.py:160
 #: src\plugins/vlam_interpreter.py:160
 #, python-format
 msgid "Type %s.help for more information."
-msgstr "Trüki %s.help , et saada rohkem infot."
+msgstr "Kirjuta %s.help , et saada rohkem infot."
 
