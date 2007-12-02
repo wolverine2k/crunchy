@@ -3,6 +3,8 @@ utilities.py tests
 
     >>> import src.utilities as utilities
 
+=============
+
 First, testing some log id.
     >>> fake_id1 = "id"
     >>> fake_id2 = "id with space"
@@ -34,3 +36,55 @@ It's probably a good idea to check at some failing tests as well
     False
     >>> print utilities.extract_log_id("Move along, there is nothing here")
     <BLANKLINE>
+
+=============
+
+Testing how well empty lines are stripped from the end of code segments
+
+Define test data
+	>>> strip_none = "Hello, World!"
+	>>> strip_top = "\nHello, World!"
+    >>> strip_bottom = "Hello, World!\n"
+	>>> strip_both = "\nHello, World!\n"
+	>>> strip_mixed = "\nHello,\n\nWorld!\n"
+	>>> strip_with_spaces = "   \nHello World!\n \r "
+
+Carry out tests on test data, checking that results were correct
+	>>> print utilities.trim_empty_lines_from_end(strip_none) == "Hello, World!"
+	True
+	>>> print utilities.trim_empty_lines_from_end(strip_top) == "Hello, World!"
+	True
+	>>> print utilities.trim_empty_lines_from_end(strip_bottom) == "Hello, World!"
+	True
+	>>> print utilities.trim_empty_lines_from_end(strip_both) == "Hello, World!"
+	True
+	>>> print utilities.trim_empty_lines_from_end(strip_mixed) == "Hello,\n\nWorld!"
+	True
+	>>> print utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!"
+	True
+	
+=============
+
+Testing conversion of HTML special characters
+
+Define tests and expected results
+	>>> html_lt_test = "Airspeed Velocity of Unladen African Swallow < Airspeed Velocity of Unladen European Swallow"
+	>>> html_lt_result = "Airspeed Velocity of Unladen African Swallow &lt; Airspeed Velocity of Unladen European Swallow"
+	>>> html_and_test = "Arthur & Patsy"
+	>>> html_and_result = "Arthur &amp; Patsy"
+	>>> html_gt_test = "Witch's Weight > Duck's Weight?"
+	>>> html_gt_result = "Witch's Weight &gt; Duck's Weight?"
+	>>> html_combo_test = "x < y && y > z"
+	>>> html_combo_result = "x &lt; y &amp;&amp; y &gt; z"
+
+Carry out tests
+	>>> print utilities.changeHTMLspecialCharacters(html_lt_test) == html_lt_result
+	True
+	>>> print utilities.changeHTMLspecialCharacters(html_and_test) == html_and_result
+	True
+	>>> print utilities.changeHTMLspecialCharacters(html_gt_test) == html_gt_result
+	True
+	>>> print utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result
+	True
+
+=============

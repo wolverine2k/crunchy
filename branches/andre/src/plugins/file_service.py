@@ -22,7 +22,7 @@ def register():
     """The register() function is required for all plugins.
        In this case, we need to register three types of 'actions':
          1. an 'http handler' that deals with requests to save files
-         2. an 'http handler' that deals with requuests to load files.
+         2. an 'http handler' that deals with requests to load files.
          3. an 'http handler' that deals with request to save (Python)
             scripts and executes them as an external process.
        If needed, we could register two services using internal functions

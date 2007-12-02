@@ -41,22 +41,7 @@ def trim_empty_lines_from_end(text):
     # with spaces at different levels is inserted at the end or beginning
     # of some code to be executed.
     # This function is used in interpreter.py and colourize.py.
-    lines = text.split('\n')
-    top = 0
-    for line in lines:
-        if line.strip():
-            break
-        else:
-            top += 1
-    bottom = 0
-    for line in lines[::-1]:
-        if line.strip():
-            break
-        else:
-            bottom += 1
-    if bottom == 0:
-        return '\n'.join(lines[top:])
-    return '\n'.join(lines[top:-bottom])
+    return text.strip(' \r\n')
 
 def changeHTMLspecialCharacters(text):
     '''replace <>& by their escaped valued so they are displayed properly
