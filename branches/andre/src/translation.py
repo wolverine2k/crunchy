@@ -57,15 +57,21 @@ french = {}
 italian = {}
 macedonian = {}
 polish = {}
+spanish = {}
 
 
 def init_translation(lang=None):
-    global english, estonian, french, italian, macedonian, polish, _selected
+    global english, estonian, french, italian, macedonian, polish, spanish, _selected
 
     trans_path = os.path.join(os.path.dirname(
                                     find_module("crunchy")[1]), "translations")
 
-    if lang == 'et':
+    if lang == 'es':
+        if spanish == {}:
+            filename = os.path.join(trans_path, "es", "LC_MESSAGES", "crunchy.po")
+            spanish = build_dict(filename)
+        _selected = spanish
+    elif lang == 'et':
         if estonian == {}:
             filename = os.path.join(trans_path, "et", "LC_MESSAGES", "crunchy.po")
             estonian = build_dict(filename)
