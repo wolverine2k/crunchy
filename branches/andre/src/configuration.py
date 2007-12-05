@@ -14,6 +14,7 @@ import cPickle
 import os
 import sys
 from urlparse import urlsplit
+from imp import find_module
 
 import translation
 _ = translation._
@@ -21,6 +22,12 @@ _ = translation._
 translation.init_translation()
 
 initial_security_set = False
+
+trans_path = os.path.join(os.path.dirname(
+                                    find_module("crunchy")[1]), "translations")
+languages_allowed_values = [f for f in os.listdir(trans_path)
+                             if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
+                                    and not f.startswith('.')]
 
 editarea_languages_allowed_values = ['de', # German
                                      'dk', # Danish
@@ -36,14 +43,7 @@ editarea_languages_allowed_values = ['de', # German
                                      'pt', # Portuguese
                                      'sk', # Slovak
                                     ]
-languages_allowed_values = ['en', # English
-                            'fr', # French
-                            'es', # Spanish
-                            'et', # Estonian,
-                            'it', # Italian
-                            'mk', # Macedonian
-                            'pl' # Polish
-                            ]
+
 security_allowed_values = [
                         'trusted','display trusted',
                         'normal', 'display normal',

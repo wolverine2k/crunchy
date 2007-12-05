@@ -96,7 +96,7 @@ def build_dict(filename):
         lines = open(filename).readlines()
     except:
         print "In translation.py's build_dict, could not open file = ", filename
-        return
+        raise
     header = True
     msgid = False
     msgstr = False
