@@ -7,9 +7,10 @@ All the tests are asssumed to be located in the "src/tests" sub-directory.
 
 import doctest
 from os import listdir, getcwd
-from os.path import join, sep
+from os.path import join, sep, dirname
+from imp import find_module
 
-test_path = join(getcwd(), "src", "tests")
+test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
 test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 for t in test_files:

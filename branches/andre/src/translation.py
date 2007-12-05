@@ -3,14 +3,14 @@ translation.py
 Translation infrastructure for Crunchy.
 """
 
-import gettext
+#import gettext
 import os.path
 from imp import find_module
 
 current_locale = None
 DEBUG = False
 
-#The following is temporarily replaced by the old Crunchy method
+#The following, which does not work, is temporarily replaced by the old Crunchy method
 '''
 def init_translation(lang=None):
     if DEBUG:
@@ -49,58 +49,32 @@ def _(message):
 '''
 
 
-# from the old Crunchy
+# adapted from the old Crunchy (pre 0.7)
 _selected = {}
-english = {}
-estonian = {}
-french = {}
-italian = {}
-macedonian = {}
-polish = {}
-spanish = {}
-
+languages = {}
 
 def init_translation(lang=None):
-    global english, estonian, french, italian, macedonian, polish, spanish, _selected
-
+    global _selected
     trans_path = os.path.join(os.path.dirname(
                                     find_module("crunchy")[1]), "translations")
 
-    if lang == 'es':
-        if spanish == {}:
-            filename = os.path.join(trans_path, "es", "LC_MESSAGES", "crunchy.po")
-            spanish = build_dict(filename)
-        _selected = spanish
-    elif lang == 'et':
-        if estonian == {}:
-            filename = os.path.join(trans_path, "et", "LC_MESSAGES", "crunchy.po")
-            estonian = build_dict(filename)
-        _selected = estonian
-    elif lang == 'fr':
-        if french == {}:
-            filename = os.path.join(trans_path, "fr", "LC_MESSAGES", "crunchy.po")
-            french = build_dict(filename)
-        _selected = french
-    elif lang == 'it':
-        if italian == {}:
-            filename = os.path.join(trans_path, "it", "LC_MESSAGES", "crunchy.po")
-            italian = build_dict(filename)
-        _selected = italian
-    elif lang == 'mk':
-        if macedonian == {}:
-            filename = os.path.join(trans_path, "mk", "LC_MESSAGES", "crunchy.po")
-            macedonian = build_dict(filename)
-        _selected = macedonian
-    elif lang == 'pl':
-        if polish == {}:
-            filename = os.path.join(trans_path, "pl", "LC_MESSAGES", "crunchy.po")
-            polish = build_dict(filename)
-        _selected = polish
-    else: # English is the default
-        if english == {}:
-            filename = os.path.join(trans_path, "en", "LC_MESSAGES", "crunchy.po")
-            english = build_dict(filename)
-        _selected = english
+    if lang in languages:
+        _selected = languages[lang]
+    else:
+        try:
+            filename = os.path.join(trans_path, lang, "LC_MESSAGES", "crunchy.po")
+            languages[lang] = build_dict(filename)
+            _selected = languages[lang]
+        except:   # English is the default
+            if 'en' in languages:
+                _selected = languages['en']
+            else:
+                try:
+                    filename = os.path.join(trans_path, 'en', "LC_MESSAGES", "crunchy.po")
+                    languages['en'] = build_dict(filename)
+                    _selected = languages['en']
+                except:  # returning an empty dict will result in untranslated strings
+                    _selected = {}
     if DEBUG:
         import pprint
         pprint.pprint( _selected)
