@@ -6,17 +6,14 @@ All the tests are asssumed to be located in the "src/tests" sub-directory.
 '''
 
 import doctest
-import os.path
+from os import listdir, getcwd
+from os.path import join, sep
 
-test_files = [ "test_colourize.txt",
-              "test_pluginloader.txt",
-              "test_file_service.txt",
-              "test_configuration.txt",
-              "test_utilities.txt" ]
+test_path = join(getcwd(), "src", "tests")
+test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 for t in test_files:
-   failure, nb_tests = doctest.testfile("src" + os.path.sep +
-                                        "tests" + os.path.sep + t)
+   failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
    print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
 
 print """========
@@ -27,5 +24,3 @@ which prints out some diagnostic that should be ignored."""
 # is equal to the number of commands entered at the interpreter
 # prompt; so this number is normally much higher than the number
 # of test.
-
-

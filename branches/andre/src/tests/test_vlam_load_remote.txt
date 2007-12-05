@@ -1,0 +1,48 @@
+plugins/vlam_load_remote.py tests
+=================================
+
+    >>> import src.vlam as vlam
+    >>> import src.pluginloader as pl
+    >>> from StringIO import StringIO
+    >>> import sys
+
+We're using a dummy server because the pluginloader won't register
+the plugins without it
+
+    >>> class DummyServer():
+    ...     def __init__(self): pass
+    ...     def register_handler(self, a, b): pass
+    ...     def register_default_handler(self, a): pass
+    ...
+
+If the plugin system is initialized by another script, do not reinitiate it
+    >>> if not "vlam_load_remote" in sys.modules.keys():
+    ...     pl.init_plugin_system(DummyServer())
+    ...
+
+    >>> handle = StringIO("""<span title="load_remote"></span>""") 
+    >>> page = vlam.CrunchyPage(handle, "./") 
+    ... # doctest: +ELLIPSIS
+    security_level in security.py = ...
+    >>> for el in page.tree.getiterator():
+    ...     if el.tag == "form":
+    ...         form = el
+    ...         break
+    ... 
+    >>> form.attrib["name"]
+    'url'
+    >>> form.attrib["size"]
+    '80'
+    >>> form.attrib["method"]
+    'get'
+    >>> form.attrib["action"]
+    '/remote'
+    >>> inputs = form.findall("input")
+    >>> len(inputs)
+    2
+    >>> inputs[0].attrib["name"]
+    'url'
+    >>> inputs[0].attrib["size"]
+    '80'
+    >>> inputs[1].attrib["type"]
+    'submit'

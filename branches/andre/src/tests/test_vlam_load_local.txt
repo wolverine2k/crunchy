@@ -1,0 +1,64 @@
+plugins/vlam_load_local.py tests
+================================
+
+    >>> import src.vlam as vlam
+    >>> import src.pluginloader as pl
+    >>> from StringIO import StringIO
+    >>> import sys
+
+We're using a dummy server because the pluginloader won't register
+the plugins without it
+
+    >>> class DummyServer():
+    ...     def __init__(self): pass
+    ...     def register_handler(self, a, b): pass
+    ...     def register_default_handler(self, a): pass
+    ...
+
+If the plugin system is initialized by another doctest, do not reinitiate it
+    >>> if not "vlam_load_local" in sys.modules.keys():
+    ...     pl.init_plugin_system(DummyServer())
+    ...
+
+    >>> handle = StringIO("""<span title="load_local"></span>""") 
+    >>> page = vlam.CrunchyPage(handle, "./")
+    ... # doctest: +ELLIPSIS
+    security_level in security.py = ...
+    >>> forms = []
+    >>> for el in page.tree.getiterator():
+    ...     if el.tag == "form": forms.append(el)
+    ...
+    >>> len(forms)
+    2
+
+Testing the first generated form
+
+    >>> forms[0].attrib["name"]
+    'browser_'
+    >>> input = forms[0].find("input")
+    >>> input.attrib["name"]
+    'filename'
+    >>> input.attrib["size"]
+    '80'
+    >>> input.attrib["type"]
+    'file'
+    >>> forms[0].find("br") == None
+    False
+
+Now the second one
+
+    >>> forms[1].attrib["name"]
+    'submit_'
+    >>> forms[1].attrib["method"]
+    'get'
+    >>> forms[1].attrib["action"]
+    '/local'
+    >>> inputs2 = forms[1].findall("input")
+    >>> len(inputs2)
+    2
+    >>> inputs2[0].attrib["type"]
+    'hidden'
+    >>> inputs2[0].attrib["name"]
+    'url'
+    >>> inputs2[1].attrib["type"]
+    'submit'
