@@ -23,26 +23,20 @@ translation.init_translation()
 
 initial_security_set = False
 
+# Existing translations for Crunchy messages
 trans_path = os.path.join(os.path.dirname(
                                     find_module("crunchy")[1]), "translations")
+# allow values like "en" or "en_GB"
 languages_allowed_values = [f for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
                                     and not f.startswith('.')]
-
-editarea_languages_allowed_values = ['de', # German
-                                     'dk', # Danish
-                                     'en', # English
-                                     'es', # Spanish
-                                     'fr', # French
-                                     'hr', # Croatian
-                                     'it', # Italian
-                                     'ja', # Japanese
-                                     'mk', # Macedonian
-                                     'nl', # Dutch
-                                     'pl', # Polish
-                                     'pt', # Portuguese
-                                     'sk', # Slovak
-                                    ]
+# Existing translations for editarea
+trans_path = os.path.join(os.path.dirname(
+                    find_module("crunchy")[1]), "server_root", "edit_area", "langs")
+# language file names end in ".js"
+editarea_languages_allowed_values = [f[0:-3] for f in os.listdir(trans_path)
+                             if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
+                                    and not f.startswith('.')]
 
 security_allowed_values = [
                         'trusted','display trusted',
