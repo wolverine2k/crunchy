@@ -63,6 +63,10 @@ should I do anything special?</a>
 <a href="#disappearing_cursor">The cursor (caret) sometimes does not show up in an editor or
 textarea.  Surely, this is a Crunchy bug.</a>
 </li>
+<li>
+<a href="#selenium">When I enable an editor, the syntax coloring does not work, and
+each character appears with a shadow.</a>
+</li>
 <li><a href="#bug">I'm sure I found a bug; what do I do?</a></li>
 <li><a href="#ipython">Can I use IPython with Crunchy?</a></li>
 <li><a href="#acknowledgements">Who contributed to Crunchy?</a></li>
@@ -119,6 +123,15 @@ long standing Firefox
 bug which <em>supposedly</em> is going to go away by the time Firefox 3.0 comes out.  If you
 don't believe us, look at
 <a title="external_link" href="https://bugzilla.mozilla.org/show_bug.cgi?id=167801">this bug report</a>.  </p>
+
+<a id="selenium"> </a><br/>
+<h4 class="crunchy">No syntax coloring in editor and weird shadow for each character.</h4>
+<p>
+A similar bug has been observed on a Mac with the selenium plugin enabled in Firefox.
+Try disabling your Firefox plugins to see if one is causing that problem.  
+Please report any problem you find with a given Firefox plugin to us so we can add
+it to the FAQ.
+</p>
 
 <a id="bug"> </a><br/>
 <h4 class="crunchy">You are sure that you found a bug?</h4>
@@ -401,6 +414,8 @@ implemented by <b>Robert Brewer</b> using CherryPy.</li>
 was the main driving force behind the security advisor feature.</li>
 <li><b>Edin Salkovic</b> worked briefly on Crunchy during Google's Summer of Code 2007; he
 implemented the prototype for the image file plugin.</li>
+<li><b>Nic Freeman</b> did the images (blue line drawings) displayed on the right hand side
+at the top of the Crunchy tutorial pages.</li>
 <li>As part of Google's Highly Open Participation contest 2007 (currently on-going at
 the time this is written), many students contributed to Crunchy.  They are:
  <ul>
