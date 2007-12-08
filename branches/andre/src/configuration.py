@@ -73,6 +73,7 @@ class Defaults(object):
         doc_help: interactive help for Borg consoles
         dir_help: interactive help for Borg consoles
         my_style: enables preferred styling of Python code, etc.
+        alternate_python_version: path of an alternate Python interpreter
 
     This class is instantiated [instance name: defaults] within this module.
     """
@@ -145,6 +146,10 @@ class Defaults(object):
             self.styles = saved['styles']
         except:
             self.styles = {}
+        try:
+            self.__alternate_python_version = saved['alternate_python_version']
+        except:
+            self.__alternate_python_version = 'python'
 
         if not success:
             # save the file with the default values
@@ -171,6 +176,7 @@ class Defaults(object):
         saved['my_style'] = self.__my_style
         saved['styles'] = self.styles
         saved['site_security'] = self.site_security
+        saved['alternate_python_version'] = self.__alternate_python_version
         # time to save
         pickled_path = os.path.join(self.__user_dir, "settings.pkl")
         try:
@@ -501,6 +507,20 @@ You can change some of the default values by Crunchy, just like
         level = raw_input("Enter security level (for example: normal) ")
         self._set_site_security(site, level)
 
+
+    #==============
+
+    def _get_alternate_python_version(self):
+        return self.__alternate_python_version
+
+    def _set_alternate_python_version(self, alternate_python_version):
+        self.__alternate_python_version = alternate_python_version
+        print _("alternate_python_version set to: ").encode("utf-8") , alternate_python_version
+        self._save_settings()
+
+    alternate_python_version = property(_get_alternate_python_version,
+                                     _set_alternate_python_version, None,
+        (_('  The current value for alternate_python_version is: ').encode("utf-8")))
 
     #==============
 defaults = Defaults()

@@ -35,6 +35,11 @@ def register():
                                         save_and_run_request_handler)
     CrunchyPlugin.register_http_handler("/run_external%s"%CrunchyPlugin.session_random_id,
                                         run_external_request_handler)
+    CrunchyPlugin.register_http_handler("/save_file_python_interpreter", save_file_python_interpreter_request_handler)
+    CrunchyPlugin.register_http_handler("/save_and_run_python_interpreter%s"%CrunchyPlugin.session_random_id,
+                                        save_and_run_python_interpreter_request_handler)
+    CrunchyPlugin.register_http_handler("/run_external_python_interpreter%s"%CrunchyPlugin.session_random_id,
+                                        run_external_python_interpreter_request_handler)
 
 def save_file_request_handler(request):
     '''extracts the path & the file content from the request and
@@ -178,3 +183,97 @@ def exec_external(code=None,  path=None):
                 raise NotImplementedError
     else:
         raise NotImplementedError
+
+
+def save_file_python_interpreter_request_handler(request):
+    '''extracts the path & the file content from the request and
+       saves the content in the path as indicated.'''
+    if DEBUG:
+        print "entering save_file_python_interpreter_request_handler"
+    data = request.data
+    request.send_response(200)
+    request.end_headers()
+
+    info = data.split("_::EOF::_")
+    path = info[1].decode("utf-8")
+    try:
+        path = path.encode(sys.getfilesystemencoding())
+    except:
+        print "could not encode path"
+
+    content = '_::EOF::_'.join(info[2:])
+    save_file(path, content)
+    
+    if info[0]:
+        configuration.defaults.alternate_python_version = info[0]
+    
+    return path
+
+def save_and_run_python_interpreter_request_handler(request):
+    '''saves the code in a file in user specified directory and runs it
+       from there'''
+    if DEBUG:
+        print "entering save_and_run_python_interpreter_request_handler"
+    path = save_file_python_interpreter_request_handler(request)
+    if DEBUG:
+        print "path = ", path
+    exec_external_python_interpreter(path=path)
+
+def run_external_python_interpreter_request_handler(request):
+    '''saves the code in a default location and runs it from there'''
+    if DEBUG:
+        print "entering run_external_python_interpreter_request_handler"
+    code = request.data
+    request.send_response(200)
+    request.end_headers()
+    exec_external_python_interpreter(code=code)
+
+def exec_external_python_interpreter(code=None,  path=None):
+    """execute code in an external process with the choosed python intepreter
+    currently works under:
+        * Windows NT
+        * GNOME (Tested)
+        * OS X
+    This also needs to be tested for KDE
+    and implemented some form of linux fallback (xterm?)
+    """
+    if DEBUG:
+        print "entering exec_external_python_interpreter"
+    if path is None:
+        path = os.path.join(configuration.defaults.temp_dir, "temp.py")
+    if os.name == 'nt' or sys.platform == 'darwin':
+        current_dir = os.getcwd()
+        target_dir, fname = os.path.split(path)
+
+    if code is not None:
+        filename = open(path, 'w')
+        filename.write(code)
+        filename.close()
+
+    if os.name == 'nt':
+        os.chdir(target_dir) 
+        try:
+            Popen(["command", ('/c start %s %s'%(configuration.defaults.alternate_python_version,fname))])
+            print "works with command instead of cmd.exe"
+        except:
+            Popen(["cmd.exe", ('/c start %s %s'%(configuration.defaults.alternate_python_version,fname))])
+            print "did not work with command; used cmd.exe"
+        os.chdir(current_dir)
+    elif sys.platform == 'darwin': 
+        activate = 'tell application "Terminal" to activate'
+        script = r"cd '\''%s'\'';%s '\''%s'\'';exit"%(target_dir, configuration.defaults.alternate_python_version, fname)
+        do_script = r'tell application "Terminal" to do script "%s"'%script
+        command =  "osascript -e '%s';osascript -e '%s'"%(activate, do_script)
+        os.popen(command)
+    elif os.name == 'posix':
+        try:
+            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', '-x', configuration.defaults.alternate_python_version, '%s'%path)
+        except:
+            try:
+                os.spawnlp(os.P_NOWAIT, 'konsole', 'konsole',
+                                '-x', configuration.defaults.python_interpreter_path, '%s'%path)
+            except:
+                raise NotImplementedError
+    else:
+        raise NotImplementedError
+
