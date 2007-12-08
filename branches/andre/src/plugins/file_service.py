@@ -133,56 +133,11 @@ def read_file(full_path):
     return content
 
 def exec_external(code=None,  path=None):
-    """execute code in an external process
-    currently works under:
-        * Windows NT (tested)
-        * GNOME
-        * OS X
-    This also needs to be tested for KDE
-    and implemented some form of linux fallback (xterm?)
+    """execute code in an external process with default interpreter
     """
     if DEBUG:
         print "entering exec_external"
-    if path is None:
-        path = os.path.join(configuration.defaults.temp_dir, "temp.py")
-    if os.name == 'nt' or sys.platform == 'darwin':
-        current_dir = os.getcwd()
-        target_dir, fname = os.path.split(path)
-
-    if code is not None:
-        filename = open(path, 'w')
-        filename.write(code)
-        filename.close()
-
-    if os.name == 'nt':
-        os.chdir(target_dir) # change dir so as to deal with paths that
-                             # include spaces
-        try: # the other one did not work under WinME; is this more robust?
-            Popen(["command", ('/c start python %s'%fname)])
-            print "works with command instead of cmd.exe"
-        except:  # old one that worked under Win XP
-            Popen(["cmd.exe", ('/c start python %s'%fname)])
-            print "did not work with command; used cmd.exe"
-        os.chdir(current_dir)
-    elif sys.platform == 'darwin':  # a much more general method can be found
-                                 # in SPE, Stani's Python Editor - Child.py
-        activate = 'tell application "Terminal" to activate'
-        script = r"cd '\''%s'\'';pythonw '\''%s'\'';exit"%(target_dir, fname)
-        do_script = r'tell application "Terminal" to do script "%s"'%script
-        command =  "osascript -e '%s';osascript -e '%s'"%(activate, do_script)
-        os.popen(command)
-    elif os.name == 'posix':
-        try:
-            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal',
-                                '-x', 'python', '%s'%path)
-        except:
-            try: # untested
-                os.spawnlp(os.P_NOWAIT, 'konsole', 'konsole',
-                                '-x', 'python', '%s'%path)
-            except:
-                raise NotImplementedError
-    else:
-        raise NotImplementedError
+    exec_external_python_version(code, path, alternate_version=False)
 
 
 def save_file_python_interpreter_request_handler(request):
@@ -217,7 +172,7 @@ def save_and_run_python_interpreter_request_handler(request):
     path = save_file_python_interpreter_request_handler(request)
     if DEBUG:
         print "path = ", path
-    exec_external_python_interpreter(path=path)
+    exec_external_python_version(path=path)
 
 def run_external_python_interpreter_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -226,9 +181,9 @@ def run_external_python_interpreter_request_handler(request):
     code = request.data
     request.send_response(200)
     request.end_headers()
-    exec_external_python_interpreter(code=code)
+    exec_external_python_version(code=code)
 
-def exec_external_python_interpreter(code=None,  path=None):
+def exec_external_python_version(code=None,  path=None, alternate_version=True):
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
@@ -239,6 +194,10 @@ def exec_external_python_interpreter(code=None,  path=None):
     """
     if DEBUG:
         print "entering exec_external_python_interpreter"
+    if alternate_version:
+        python_interpreter = configuration.defaults.alternate_python_version
+    else:
+        python_interpreter = 'python'  # default interpreter
     if path is None:
         path = os.path.join(configuration.defaults.temp_dir, "temp.py")
     if os.name == 'nt' or sys.platform == 'darwin':
@@ -251,27 +210,28 @@ def exec_external_python_interpreter(code=None,  path=None):
         filename.close()
 
     if os.name == 'nt':
-        os.chdir(target_dir) 
+        os.chdir(target_dir) # change dir so as to deal with paths that
+                             # include spaces
         try:
-            Popen(["command", ('/c start %s %s'%(configuration.defaults.alternate_python_version,fname))])
-            print "works with command instead of cmd.exe"
+            Popen(["command", ('/c start %s %s'%(python_interpreter,fname))])
         except:
-            Popen(["cmd.exe", ('/c start %s %s'%(configuration.defaults.alternate_python_version,fname))])
-            print "did not work with command; used cmd.exe"
+            Popen(["cmd.exe", ('/c start %s %s'%(python_interpreter,fname))])
+            print "launching program did not work with command; used cmd.exe"
         os.chdir(current_dir)
-    elif sys.platform == 'darwin': 
+    elif sys.platform == 'darwin': # a much more general method can be found
+                                   # in SPE, Stani's Python Editor - Child.py
         activate = 'tell application "Terminal" to activate'
-        script = r"cd '\''%s'\'';%s '\''%s'\'';exit"%(target_dir, configuration.defaults.alternate_python_version, fname)
+        script = r"cd '\''%s'\'';%s '\''%s'\'';exit"%(target_dir, python_interpreter, fname)
         do_script = r'tell application "Terminal" to do script "%s"'%script
         command =  "osascript -e '%s';osascript -e '%s'"%(activate, do_script)
         os.popen(command)
     elif os.name == 'posix':
         try:
-            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', '-x', configuration.defaults.alternate_python_version, '%s'%path)
+            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal', '-x', python_interpreter, '%s'%path)
         except:
             try:
                 os.spawnlp(os.P_NOWAIT, 'konsole', 'konsole',
-                                '-x', configuration.defaults.python_interpreter_path, '%s'%path)
+                                '-x', python_interpreter, '%s'%path)
             except:
                 raise NotImplementedError
     else:
