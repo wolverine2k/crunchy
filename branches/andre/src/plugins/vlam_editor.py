@@ -40,6 +40,9 @@ def register():
                                             "insert_editor_subwidget")
     CrunchyPlugin.register_tag_handler("pre", "title", "alternate_python_version",
                                                         insert_alternate_python)
+    # shorter name version of the above
+    CrunchyPlugin.register_tag_handler("pre", "title", "alt_py",
+                                                        insert_alternate_python)
 
 def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
@@ -161,7 +164,15 @@ def insert_alternate_python(page, elem, uid):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "crunchy"
-
+    if not "no-pre" in vlam:
+        elem.insert(0, markup)
+        if error is not None:
+            try:  # usually the error is a warning meant to be inserted
+                elem.insert(0, error)
+            except:
+                pass
+    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+        code = "\n"
     CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
 
     form1 = CrunchyPlugin.SubElement(elem, 'form', name='form1_')

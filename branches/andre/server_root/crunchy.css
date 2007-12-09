@@ -108,13 +108,14 @@ span.alt_python{
     font-style: italic;
     }
 input.alt_python{
-    font: 11pt;
+    /*display: none;*/
+    font: 11pt monospace;
     font-weight: bold;
+    border: solid 1px
+    border-width: 2px;
     background-color: #FFFFCC;
-    padding: 2px;
-    border: solid 2px;
-    border-color: darkgreen;
-}
+    border-color: #369;
+
 /* notes, warning, etc. */
 
 .wide-notes{
