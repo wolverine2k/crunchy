@@ -101,6 +101,20 @@ code.crunchy{
     border-color: darkred;
 }
 
+span.alt_python{
+    margin: 3px;
+    font: 11pt;
+    font-color: darkgreen;
+    font-style: italic;
+    }
+input.alt_python{
+    font: 11pt;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    padding: 2px;
+    border: solid 2px;
+    border-color: darkgreen;
+}
 /* notes, warning, etc. */
 
 .wide-notes{
