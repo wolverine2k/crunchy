@@ -54,6 +54,7 @@ with Crunchy much richer.</p>
 <li><a href="#doctest">DocTest</a></li>
 <li><a href="#images">Images</a></li>
 <li><a href="#styling">Simple code styling</a></li>
+<li><a href="#alternate">Launching programs using alternate Python version</a></li>
 <li><a href="#advanced">Advanced options</a></li>
 </ul>
 <p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
@@ -93,6 +94,12 @@ on the left for some actual examples.</p>
 	<td>Inserts a Python interpreter after the &lt;pre&gt; element.  There are
 	four different types of interpreters, some (interpreter, Parrots, TypeInfoConsole) that 
 	share a common environment and the others have their own unique environment.</td>
+</tr>
+<tr>
+	<td><code>alternate_python_version</code> <i>or</i> <code>alt_py</code></td>
+	<td>Inserts an editor after the &lt;pre&gt; element, an input box to specify
+	which (installed) Python version to use and a button to launch an
+	program externally.</td>
 </tr>
 <tr>
 	<td><code>image file</code></td>
@@ -270,6 +277,36 @@ colourize the Python code without actually inserting an interactive element.  Yo
 <dt>span.py_prompt</dt>
 <dt>span.py_output</dt>
 </dl>
+
+
+<h2 class="crunchy"><a id="alternate">Alternate Python version</a></h2>
+<p>Insert an editor, an input box to specify the Python version to use,
+and a button to execute the code externally using the specified Python version.</p>
+<pre title="no_vlam">
+&lt;pre title="alternate_python_version [no_style] [no-copy] [no-pre] 
+            [linenumber [=start_number]] [external [no-internal]]"&gt;
+Some Python code
+
+&lt;/pre&gt;</pre>
+<p>Note that the shorter <code>alt_py</code> can be used instead of
+<code>alternate_python_version</code>
+
+<p>By default, Crunchy copies the contents of the <code>pre</code> into a new 
+<code>pre</code> above the editor; however, this is prevented if 
+<code>no-copy</code> is present. 
+If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code.</p>
+<p>Any text between the <code>pre</code> tags is placed before the editor, in a <code>pre</code> element to serve as a constant reference for the user.</p>
+<p>The input box for specifying the Python version uses the following CSS classes:</p>
+<dl>
+<dt>span.alt_python</dt>
+	<dd>For the text before the input box.</dd>
+<dt>input.alt_python</dt>
+	<dd>For the input box itself.</dd>
+</dl>
+
+
 <h2 class="crunchy"><a id="advanced">Advanced options</a></h2>
 <p>Some "advanced" options require hand-coding and should rarely be used by
 tutorial writers.</p>
