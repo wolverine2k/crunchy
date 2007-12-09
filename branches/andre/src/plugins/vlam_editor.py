@@ -168,7 +168,7 @@ def insert_alternate_python(page, elem, uid):
     span = CrunchyPlugin.SubElement(form1, 'span')
     span.text = _('Alternate Python path: ')
     span.attrib['class'] = 'alt_python'
-    input = CrunchyPlugin.SubElement(form1, 'input', name='input1_', size='50',
+    input = CrunchyPlugin.SubElement(form1, 'input', id='input1_'+uid, size='50',
                             value=configuration.defaults.alternate_python_version)
     input.attrib['class'] = 'alt_python'
     CrunchyPlugin.SubElement(elem, "br")
@@ -215,6 +215,7 @@ function exec_code_externally_python_interpreter(uid){
     path = document.getElementById("path_"+uid).innerHTML;
     var j = new XMLHttpRequest();
     j.open("POST", "/save_and_run_python_interpreter%s?uid="+uid, false);
-    j.send(document.form1_.input1_.value+"_::EOF::_"+path+"_::EOF::_"+code);
+    inp = document.getElementById("input1_"+uid).value;
+    j.send(inp+"_::EOF::_"+path+"_::EOF::_"+code);
 };
 """%(CrunchyPlugin.session_random_id, CrunchyPlugin.session_random_id, CrunchyPlugin.session_random_id)
