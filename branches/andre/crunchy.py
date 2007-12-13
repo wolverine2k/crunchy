@@ -6,8 +6,16 @@ import socket
 import webbrowser
 import sys
 
+version = sys.version.split('.')
+version = float(version[0] + '.' + version[1])
+required = 2.4
+if version < required:
+    print("Crunchy requires at least Python version %s"%required)
+    raise SystemExit
+
 import src.http_serve as http_serve
 import src.pluginloader as pluginloader
+
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
