@@ -9,7 +9,7 @@ plugins/vlam_load_remote.py tests
 We're using a dummy server because the pluginloader won't register
 the plugins without it
 
-    >>> class DummyServer():
+    >>> class DummyServer(object):
     ...     def __init__(self): pass
     ...     def register_handler(self, a, b): pass
     ...     def register_default_handler(self, a): pass
