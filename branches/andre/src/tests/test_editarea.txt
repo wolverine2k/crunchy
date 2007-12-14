@@ -191,12 +191,7 @@ making sure they are slightly different from those used before so that
 we don't get a correct result by accident.
     >>> new_elem = cp.Element('dummy')
     >>> id1 = 'ONE'
-    >>> id2 = 'TWO'
-    >>> editarea.add_hidden_load_and_save(new_elem, id1, id2)
-
-
-***NOTE: the first id is not used - it should be removed from the argument list.
-
+    >>> editarea.add_hidden_load_and_save(new_elem, id1)
     
 Next, as a first crude test, we investigate to see if all the required elements 
 have been inserted (and none unexpected).
@@ -236,8 +231,8 @@ have been inserted (and none unexpected).
     2
 
 We then check for the explicit content    
-    >>> hidden_load_id = 'hidden_load' + id2
-    >>> hidden_save_id = 'hidden_save' + id2
+    >>> hidden_load_id = 'hidden_load' + id1
+    >>> hidden_save_id = 'hidden_save' + id1
     >>> divs[0].attrib['id'] == hidden_load_id
     True
     >>> divs[1].attrib['id'] == hidden_save_id
@@ -278,15 +273,15 @@ called properly.
     ...
     >>> page = TestPage()
     >>> dummy_elem = cp.Element('dummy')
-    >>> editarea.enable_editarea(page, dummy_elem, '1', '2')
+    >>> editarea.enable_editarea(page, dummy_elem, '1')
     >>> print page.called_css
     True
     >>> print page.called_js
     True
     >>> print page.js_file
     True
-    >>> len(page.included)
-    2
+    >>> print page.included
+    set(['editarea_included', 'hidden_load_and_save'])
     
 
 

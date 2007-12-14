@@ -56,7 +56,7 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
     if code == "":
         code = "\n"
     inp.text = code
-    CrunchyPlugin.services.enable_editarea(page, elem, uid, editor_id)
+    CrunchyPlugin.services.enable_editarea(page, elem, editor_id)
 
 def insert_editor(page, elem, uid):
     """handles the editor widget"""

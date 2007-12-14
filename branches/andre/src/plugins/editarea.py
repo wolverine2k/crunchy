@@ -13,7 +13,7 @@ requires = set(["/save_file", "/load_file"])
 def register():
     CrunchyPlugin.register_service(enable_editarea, "enable_editarea")
 
-def enable_editarea(page, elem, uid, textarea_id):
+def enable_editarea(page, elem, textarea_id):
     """enables an editarea editor on a given element (textarea) of a page.
     """
     if not page.includes("editarea_included"):
@@ -29,10 +29,10 @@ def enable_editarea(page, elem, uid, textarea_id):
     # element specific code
     page.add_js_code(editAreaLoader_js%(textarea_id,
                                 configuration.defaults.editarea_language))
-    add_hidden_load_and_save(elem, uid, textarea_id)
+    add_hidden_load_and_save(elem, textarea_id)
     return
 
-def add_hidden_load_and_save(elem, id, textarea_id):
+def add_hidden_load_and_save(elem, textarea_id):
     hidden_load_id = 'hidden_load' + textarea_id
     hidden_load = CrunchyPlugin.SubElement(elem, 'div', id=hidden_load_id)
     hidden_load.attrib['class'] = 'load_python'
