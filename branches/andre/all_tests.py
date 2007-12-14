@@ -17,8 +17,9 @@ for t in test_files:
    failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
    print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
 
-print """========
-   Sometimes, the first test will fail due to importing configuration.py
+print """\n========
+
+Sometimes, the test_configuration will fail due to importing configuration.py
 which prints out some diagnostic that should be ignored."""
 
 # Note that the number of tests, as identified by the doctest module

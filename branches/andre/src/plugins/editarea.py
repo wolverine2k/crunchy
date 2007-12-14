@@ -20,7 +20,7 @@ def enable_editarea(page, elem, uid, textarea_id):
         page.add_include("editarea_included")
         page.add_js_code(editArea_load_and_save)
         # note: crunchy (handle_default.py) needs all js files loaded to be accessible
-        # from the server root; ".." are not allowed.
+        # from the server root; "/.." are not allowed.
         page.insert_js_file("/edit_area/edit_area_crunchy.js")
     # first we need to make sure that the required css code is in the page:
     if not page.includes("hidden_load_and_save"):
