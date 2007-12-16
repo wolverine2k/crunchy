@@ -16,8 +16,8 @@ version = sys.version.split('.')
 python_version = float(version[0] + '.' + version[1][0])
 
 if python_version < 3:
-    import tools
+    import src.tools as tools
 else:
-    import tools_3k as tools
+    import src.tools_3k as tools
 
 u_print = tools.u_print
