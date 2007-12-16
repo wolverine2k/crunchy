@@ -13,7 +13,7 @@ for people familiar with the Crunchy plugin architecture.
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
-from src.utilities import extract_log_id, security_level
+from src.utilities import extract_log_id
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -67,7 +67,7 @@ def doctest_widget_callback(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in security_level(page.url):
+    if 'display' not in configuration.defaults.page_security_level(page.url):
         if not page.includes("doctest_included") :
             page.add_include("doctest_included")
             page.add_js_code(doctest_jscode)

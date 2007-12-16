@@ -92,7 +92,7 @@ def insert_interpreter(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in utilities.security_level(page.url):
+    if 'display' not in configuration.defaults.page_security_level(page.url):
         # first we need to make sure that the required javacript code is in the page:
         if interp_kind == "borg":
             if not page.includes("BorgInterpreter_included"):

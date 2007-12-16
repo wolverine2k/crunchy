@@ -81,6 +81,7 @@ class Defaults(object):
 
     def __init__(self):
         self._set_dirs()
+        self.current_page_security_level = 'display_trusted' # starting value
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         self._load_settings()
         translation.init_translation(self.__language)
@@ -522,5 +523,17 @@ You can change some of the default values by Crunchy, just like
                                      _set_alternate_python_version, None,
         (_('  The current value for alternate_python_version is: ').encode("utf-8")))
 
+    def page_security_level(self, url):
+        info = urlsplit(url)
+        # info.netloc == info[1] is not Python 2.4 compatible
+        info_netloc = info[1]
+        if info_netloc == '':
+            level = self.local_security
+        else:
+            level = self._get_site_security(info_netloc)
+        self.current_page_security_level = level
+        return level
+
     #==============
 defaults = Defaults()
+

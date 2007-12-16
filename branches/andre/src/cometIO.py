@@ -132,7 +132,7 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if 'display' in utilities.level:
+    if 'display' in configuration.defaults.current_page_security_level:
         return
 
     # configuration.defaults._prefix = '_crunchy_' is the
