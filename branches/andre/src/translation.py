@@ -7,47 +7,10 @@ Translation infrastructure for Crunchy.
 import os.path
 from imp import find_module
 
+from src.universal import python_version, u_print
+
 current_locale = None
 DEBUG = False
-
-#The following, which does not work, is temporarily replaced by the old Crunchy method
-'''
-def init_translation(lang=None):
-    if DEBUG:
-        print "init_translation called with lang=", lang
-    try:
-        if lang:
-            try:
-                trans_path = os.path.join(os.path.dirname(
-                                    find_module("crunchy")[1]), "translations")
-                current_locale = gettext.translation("crunchy", trans_path,
-                                                        languages=[lang])
-                current_locale.install()
-                if DEBUG:
-                    print "path to translation files: ", trans_path
-                    print "current_locale = ", current_locale
-            except:
-                if DEBUG:
-                    print "exception in init_translation"
-                init_translation()
-##        else:
-##            current_locale = gettext.translation("crunchy",
-##            os.path.join(os.path.dirname(find_module("crunchy")[1]),
-##                                    "translations"))
-    except IOError:
-        print "No Language file found, not translating anything"
-'''
-
-#The following is temporarily replaced by the old Crunchy method
-'''
-def _(message):
-    global current_locale
-
-    if current_locale is None:
-        return message
-    return current_locale.gettext(message)
-'''
-
 
 # adapted from the old Crunchy (pre 0.7)
 _selected = {}
@@ -95,7 +58,7 @@ def build_dict(filename):
     try:
         lines = open(filename).readlines()
     except:
-        print "In translation.py's build_dict, could not open file = ", filename
+        u_print("In translation.py's build_dict, could not open file = ", filename)
         raise
     header = True
     msgid = False

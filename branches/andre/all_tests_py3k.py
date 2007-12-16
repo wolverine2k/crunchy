@@ -16,7 +16,7 @@ test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
 test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 #excluded = ['test_colourize.txt']#, 'test_configuration.txt']
-target =['test_universal.txt', 'test_utilities.txt']
+target =['test_universal.txt', 'test_utilities.txt', 'test_configuration.txt']
 for t in test_files:
     if t not in target:
         continue

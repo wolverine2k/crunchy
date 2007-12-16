@@ -30,3 +30,30 @@ which is meant to print a series of arguments.
     André
     >>> universal.u_print("a", "b", "c")
     abc
+
+Testing ElementTree and friends
+-------------------------------
+
+    >>> elem = universal.Element("p")
+    >>> elem.attrib['class'] = 'crunchy'
+    >>> elem.text = "This is a neat sentence."
+    >>> universal.u_print(universal.tostring(elem))
+    <p class="crunchy">This is a neat sentence.</p>
+
+We create a fake html file
+    >>> html_content = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    ... "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    ... <html>
+    ... <head>
+    ... <title>Crunchy fun</title>
+    ... </head>
+    ... <body>
+    ... <p>This is some text.</p>
+    ... </body>
+    ... </html>"""
+    >>> fake_file = universal.StringIO()
+    >>> dummy = fake_file.write(html_content) # return value in Py3k
+    >>> dummy = fake_file.seek(0)  # return value in Py3k
+    >>> tree = universal.parse(fake_file)
+    
+    
