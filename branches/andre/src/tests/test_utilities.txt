@@ -1,6 +1,9 @@
 utilities.py tests
 =============
 
+Note that we can not reliably test security_level() as it reads a value from a
+configuration file - we will just ignore it.
+
     >>> import src.utilities as utilities
 
 =============
@@ -18,23 +21,23 @@ First, testing some log id.
     >>> fake_vlam3a = "interpreter log_id = ( %s )  other = (dumb)"%fake_id3
     
 Now, testing the extraction itself
-    >>> print fake_id1 == utilities.extract_log_id(fake_vlam1)
+    >>> print(fake_id1 == utilities.extract_log_id(fake_vlam1))
     True
-    >>> print fake_id1 == utilities.extract_log_id(fake_vlam1a)
+    >>> print(fake_id1 == utilities.extract_log_id(fake_vlam1a))
     True
-    >>> print fake_id2 == utilities.extract_log_id(fake_vlam2)
+    >>> print(fake_id2 == utilities.extract_log_id(fake_vlam2))
     True
-    >>> print fake_id2 == utilities.extract_log_id(fake_vlam2a)
+    >>> print(fake_id2 == utilities.extract_log_id(fake_vlam2a))
     True
-    >>> print fake_id3 == utilities.extract_log_id(fake_vlam3)
+    >>> print(fake_id3 == utilities.extract_log_id(fake_vlam3))
     True
-    >>> print fake_id3 == utilities.extract_log_id(fake_vlam3a)
+    >>> print(fake_id3 == utilities.extract_log_id(fake_vlam3a))
     True
 
 It's probably a good idea to check at some failing tests as well
-    >>> print fake_id2 == utilities.extract_log_id(fake_vlam1)
+    >>> print(fake_id2 == utilities.extract_log_id(fake_vlam1))
     False
-    >>> print utilities.extract_log_id("Move along, there is nothing here")
+    >>> print(utilities.extract_log_id("Move along, there is nothing here"))
     <BLANKLINE>
 
 =============
@@ -50,17 +53,17 @@ Define test data
 	>>> strip_with_spaces = "   \nHello World!\n \r "
 
 Carry out tests on test data, checking that results were correct
-	>>> print utilities.trim_empty_lines_from_end(strip_none) == "Hello, World!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_none) == "Hello, World!")
 	True
-	>>> print utilities.trim_empty_lines_from_end(strip_top) == "Hello, World!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_top) == "Hello, World!")
 	True
-	>>> print utilities.trim_empty_lines_from_end(strip_bottom) == "Hello, World!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_bottom) == "Hello, World!")
 	True
-	>>> print utilities.trim_empty_lines_from_end(strip_both) == "Hello, World!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_both) == "Hello, World!")
 	True
-	>>> print utilities.trim_empty_lines_from_end(strip_mixed) == "Hello,\n\nWorld!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_mixed) == "Hello,\n\nWorld!")
 	True
-	>>> print utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!"
+	>>> print(utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!")
 	True
 	
 =============
@@ -78,13 +81,13 @@ Define tests and expected results
 	>>> html_combo_result = "x &lt; y &amp;&amp; y &gt; z"
 
 Carry out tests
-	>>> print utilities.changeHTMLspecialCharacters(html_lt_test) == html_lt_result
+	>>> print(utilities.changeHTMLspecialCharacters(html_lt_test) == html_lt_result)
 	True
-	>>> print utilities.changeHTMLspecialCharacters(html_and_test) == html_and_result
+	>>> print(utilities.changeHTMLspecialCharacters(html_and_test) == html_and_result)
 	True
-	>>> print utilities.changeHTMLspecialCharacters(html_gt_test) == html_gt_result
+	>>> print(utilities.changeHTMLspecialCharacters(html_gt_test) == html_gt_result)
 	True
-	>>> print utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result
+	>>> print(utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result)
 	True
 
 =============

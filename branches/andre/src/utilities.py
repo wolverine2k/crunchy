@@ -3,11 +3,11 @@
    a collection of functions used in other modules.
 '''
 import re
-import configuration
 import urlparse
 
 level = 'display trusted'
 def security_level(url):
+    import src.configuration as configuration
     global level
     info = urlparse.urlsplit(url)
     # info.netloc == info[1] is not Python 2.4 compatible

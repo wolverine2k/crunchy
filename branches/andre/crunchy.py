@@ -6,15 +6,11 @@ import socket
 import webbrowser
 import sys
 
-version = sys.version.split('.')
-version = float(version[0] + '.' + version[1])
+from universal import python_version, u_print
 required = 2.4
-if version < required:
+if python_version < required:
     print("Crunchy requires at least Python version %s"%required)
     raise SystemExit
-
-import src.http_serve as http_serve
-import src.pluginloader as pluginloader
 
 
 def find_port(start=8001):
@@ -37,6 +33,10 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     * set the port to the value specified, or looks for a free one
     * open a web browser at given url, or a default if not specified
     '''
+    ## keep the following import inside this function so that
+    ## we can run unit tests using Python 3.0
+    import src.http_serve as http_serve
+    import src.pluginloader as pluginloader
     if port is None:
         port = find_port()
     server = http_serve.MyHTTPServer((host, port), http_serve.HTTPRequestHandler)
@@ -46,7 +46,8 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     webbrowser.open(url)
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
-    print('\nCrunchy Server: serving up interactive tutorials at URL %s\n'%url)
+    u_print('\nCrunchy Server: serving up interactive tutorials at URL ' +
+            url + '\n')
     server.still_serving = True
     while server.still_serving:
         server.handle_request()

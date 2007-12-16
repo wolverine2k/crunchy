@@ -1,0 +1,30 @@
+﻿universal.py tests
+==================
+
+Note: this file is encoded in utf-8.
+
+universal.py contains various functions whose definitions are dependent on the
+Python version being used, but provided to the user in a totally transparent way.
+
+Testing u_print
+---------------
+
+Whereas the original Python used ascii as the default encoding,
+Python 3k is using utf-8 as a default.  One of the many consequences is that
+unicode strings are not specified with a prefix "u".  Thus, whereas in the
+original Python, one might have written u"André", in Python 3k the same
+string is simply written "André".
+
+Furthermore, in Python 3k, "print" is now a function.   To provide a
+transparent way of printing, we have defined a function called u_print()
+which is meant to print a series of arguments.
+
+    >>> import universal
+    >>> if universal.python_version < 3:
+    ...     to_print = "André".decode('utf-8')
+    ... else: 
+    ...     to_print = "André"
+    >>> universal.u_print(to_print)
+    André
+    >>> universal.u_print("a", "b", "c")
+    abc

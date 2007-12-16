@@ -21,11 +21,16 @@ import urllib
 import urlparse
 import sys
 
-# Third party modules - included in crunchy distribution
-from element_tree import ElementTree
+version = sys.version.split('.')
+python_version = float(version[0] + '.' + version[1][0])
+if python_version < 2.5:
+    # Third party modules - included in crunchy distribution
+    from src.element_tree import ElementTree
+else:
+    from xml.etree import ElementTree
 
-import configuration
-import utilities
+import src.configuration as configuration
+import src.utilities as utilities
 
 DEBUG = False
 DEBUG2 = False
@@ -292,7 +297,7 @@ def remove_unwanted(tree, page):
     # determine if site security level has been set to override
     # the default
     security_level = utilities.security_level(page.url)
-    print "security_level in security.py = ", security_level
+    print("security_level in security.py = "+ security_level)
 
     _allowed = allowed_attributes[security_level]
     #The following will be updated so as to add result from page.
@@ -321,8 +326,8 @@ def remove_unwanted(tree, page):
             element.tag = None  # set up so that cleanup will remove it.
         page.security_info['tags removed'].append([tag, tag_count[tag]])
     if DEBUG:
-        print "These unwanted tags have been removed:"
-        print unwanted
+        print("These unwanted tags have been removed:")
+        print(unwanted)
 
 # next, removing unwanted attributes of allowed tags
     unwanted = set()
@@ -353,7 +358,7 @@ def remove_unwanted(tree, page):
                     testHREF = testHREF.replace("\t","").lstrip().lower()
                     if testHREF.startswith("javascript:"):
                         if DEBUG:
-                            print "removing href = ", testHREF
+                            print("removing href = "+ testHREF)
                         page.security_info['attributes removed'].append(
                                                 [tag, attr[0], attr[1]])
                         del element.attrib[attr[0]]
@@ -415,8 +420,8 @@ def remove_unwanted(tree, page):
                         "could not validate or accept image:" + src])
     __cleanup(tree.getroot(), lambda e: e.tag)
     if DEBUG:
-        print "These unwanted attributes have been removed:"
-        print unwanted
+        print("These unwanted attributes have been removed:")
+        print(unwanted)
 ##    # recover normal security level after setting to site-specific
 ##    # (if that was the case)
 ##    configuration.defaults.reset_security()
@@ -449,12 +454,12 @@ def validate_image(src, page):
     global root_path
 
     if DEBUG:
-        print "entering validate_image"
-        print "page.is_local", page.is_local
-        print "page.is_remote", page.is_remote
-        print "page.url", page.url
-        print "src", src
-        print "root_path", root_path
+        print("entering validate_image")
+        print("page.is_local "+ page.is_local)
+        print("page.is_remote "+ page.is_remote)
+        print("page.url "+ page.url)
+        print("src "+ src)
+        print("root_path "+ root_path)
 
     # try solving encoding problems
     try:
@@ -484,7 +489,7 @@ def validate_image(src, page):
         fn = os.path.join(root_path, src)
     try:
         if DEBUG:
-            print "opening fn=", fn
+            print("opening fn="+ fn)
         try:
             if page.is_remote or src.startswith("http://"):
                 h = urllib.urlopen(fn).read(32) #32 is all that's needed for
@@ -492,23 +497,23 @@ def validate_image(src, page):
             else:
                 h = open(fn, 'rb').read(32)
             if DEBUG:
-                print "opened the file"
+                print("opened the file")
         except:
             if DEBUG:
-                print "could not open"
+                print("could not open")
             return False
         try:
             type = imghdr.what('ignore', h)
             if DEBUG:
-                print "opened with imghdr.what"
-                print "image type = ", type
-                print "image src = ", src
+                print("opened with imghdr.what")
+                print("image type = "+ type)
+                print("image src = "+ src)
             if type is not None:
-                print "validated image:", fn
+                print("validated image:"+ fn)
                 return True
         except:
             if DEBUG:
-                print "could not open with imghdr.what"
+                print("could not open with imghdr.what")
             return False
     except:
         return False
@@ -520,41 +525,41 @@ def is_link_safe(elem, page):
     global __dangerous_text
     url = page.url
     if DEBUG:
-        print "found link element; page url = ", url
+        print("found link element; page url = "+ url)
     #--  Only allow style files
     if "type" in elem.attrib:
         type = elem.attrib["type"]
         if DEBUG2:
-            print "type = ", type
+            print("type = "+ type)
         if type.lower() != "text/css":  # not a style sheet - eliminate
             __dangerous_text = 'type != "text/css"'
             return False
     else:
         if DEBUG2:
-            print "type not found."
+            print("type not found.")
         __dangerous_text = 'type not found'
         return False
     #--
     if "rel" in elem.attrib:
         rel = elem.attrib["rel"]
         if DEBUG2:
-            print "rel = ", rel
+            print("rel = "+ rel)
         if rel.lower() != "stylesheet":  # not a style sheet - eliminate
             __dangerous_text = 'rel != "stylesheet"'
             return False
     else:
         if DEBUG2:
-            print "rel not found."
+            print("rel not found.")
         __dangerous_text = 'rel not found'
         return False
     #--
     if "href" in elem.attrib:
         href = elem.attrib["href"]
         if DEBUG2:
-            print "href = ", href
+            print("href = "+ href)
     else:         # no link to a style sheet: not a style sheet!
         if DEBUG2:
-            print "href not found."
+            print("href not found.")
         __dangerous_text = 'href not found'
         return False
     #--If we reach this point we have in principle a valid style sheet.
@@ -571,7 +576,7 @@ def is_link_safe(elem, page):
 
     link_url = find_url(url, href, page)
     if DEBUG2:
-        print "link url = ", link_url
+        print("link url = "+ link_url)
     #--Scan for suspicious content
     suspicious = False
     if page.is_local:
@@ -592,14 +597,14 @@ def is_link_safe(elem, page):
 
     if not suspicious:
         if DEBUG:
-            print "No suspicious content found in css file"
+            print("No suspicious content found in css file.")
         return True
     elif DEBUG:
-        print "suspicious content found in css file"
+        print("Suspicious content found in css file.")
         return False
 
     if DEBUG:
-        print "should not be reached"
+        print("should not be reached")
     return False  # don't take any chances
 
 def find_url(url, href, page):
@@ -609,11 +614,11 @@ def find_url(url, href, page):
 
     if "://" in url:
         if DEBUG2:
-            print ":// found in url"
+            print(":// found in url")
         return urlparse.urljoin(url, href)
     elif "://" in href:
         if DEBUG2:
-            print ":// found in href"
+            print(":// found in href")
         return href
 
     if page.is_local:
@@ -626,40 +631,40 @@ def find_url(url, href, page):
     else:
         base, fname = os.path.split(url)
         if DEBUG2:
-            print "base path =", base
-            print "root_path =", root_path
+            print("base path = "+ base)
+            print("root_path = "+ root_path)
         href = os.path.normpath(os.path.join(base, os.path.normpath(href)))
         if href.startswith(root_path):
             if DEBUG2:
-                print "href starts with rootpath"
-                print "href =", href
+                print("href starts with rootpath")
+                print("href = " + href)
             return href
         if DEBUG2:
-            print "href does not start with rootpath"
-            print "href =", href
+            print("href does not start with rootpath")
+            print("href = " + href)
         return os.path.normpath(os.path.join(root_path, href[1:]))
 
 def open_local_file(url):
     if DEBUG:
-        print "attempting to open file: ", url
+        print("attempting to open file: " + url)
     if url.startswith("http://"):
         try:
             return urllib.urlopen(url)
         except:
             if DEBUG:
-                print "Cannot open remote file with url=", url
+                print("Cannot open remote file with url= " + url)
             return False
     try:
         return open(url, mode="r")
     except IOError:
         if DEBUG2:
-            print "opening the file without encoding did not work."
+            print("Opening the file without encoding did not work.")
         try:
             return open(url.encode(sys.getfilesystemencoding()),
                         mode="r")
         except IOError:
             if DEBUG:
-                print "Cannot open local file with url=", url
+                print("Cannot open local file with url= " + url)
             return False
 
 def scan_for_unwanted(css_file):
@@ -676,8 +681,8 @@ def scan_for_unwanted(css_file):
         for x in dangerous_strings:
             if x in squished:
                 if DEBUG:
-                    print "found suspicious content in the following line:"
-                    print squished
+                    print("Found suspicious content in the following line:")
+                    print(squished)
                 __dangerous_text = squished
                 return True
     return False
