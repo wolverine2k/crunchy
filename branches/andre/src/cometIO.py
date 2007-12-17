@@ -5,11 +5,11 @@ Also handles the redirection of stdin, stdout and stderr.
 """
 
 import threading
-import interpreter
 import sys
 
-import configuration
-import utilities
+import src.configuration as configuration
+import src.interpreter as interpreter
+import src.utilities as utilities
 
 debug_ids = []
 

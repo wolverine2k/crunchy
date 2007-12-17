@@ -13,7 +13,9 @@ else:
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from element_tree import ElementTree, HTMLTreeBuilder, ElementSoup
+from src.universal import python_version, ElementTree, parse
+if python_version < 3:
+    from src.element_tree import ElementSoup
 et = ElementTree
 
 from src.cometIO import register_new_page

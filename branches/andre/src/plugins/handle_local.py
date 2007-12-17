@@ -4,21 +4,21 @@ Uses the /local http request path.
 import os
 import sys
 
-from src.CrunchyPlugin import *
+import src.CrunchyPlugin as CrunchyPlugin
 from urllib import unquote_plus
 from src.configuration import defaults
 
 provides = set(["/local", "/generated_image"])
 
 def register():
-    register_http_handler("/local", local_loader)
-    register_http_handler("/generated_image", image_loader)
-    register_tag_handler("meta", "title", "python_import", add_to_path)
+    CrunchyPlugin.register_http_handler("/local", local_loader)
+    CrunchyPlugin.register_http_handler("/generated_image", image_loader)
+    CrunchyPlugin.register_tag_handler("meta", "title", "python_import", add_to_path)
 
 def local_loader(request):
     url = unquote_plus(request.args["url"])
     if ".htm" in url:
-        page = create_vlam_page(open(url), url, local=True)
+        page = CrunchyPlugin.create_vlam_page(open(url), url, local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
         base_url, fname = os.path.split(url)

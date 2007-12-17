@@ -1,31 +1,41 @@
-plugins/vlam_load_local.py tests
+vlam_load_local.py tests
 ================================
 
-    >>> import src.vlam as vlam
-    >>> import src.pluginloader as pl
-    >>> from StringIO import StringIO
-    >>> import sys
+vlam_load_local.py is a plugin whose purpose is to create a form
+allowing a user to browse for a local tutorial to be loaded by Crunchy.
 
-We're using a dummy server because the pluginloader won't register
-the plugins without it
+It contains two methods that need to be tested:
+1. register()
+2. insert_load_local()
 
-    >>> class DummyServer(object):
-    ...     def __init__(self): pass
-    ...     def register_handler(self, a, b): pass
-    ...     def register_default_handler(self, a): pass
-    ...
+0. Setting things up
+--------------------
 
-If the plugin system is initialized by another doctest, do not reinitiate it
-    >>> if not "vlam_load_local" in sys.modules.keys():
-    ...     pl.init_plugin_system(DummyServer())
-    ...
+We simply need to import the plugin and something to create an Element
 
-    >>> handle = StringIO("""<span title="load_local"></span>""") 
-    >>> page = vlam.CrunchyPage(handle, "./")
-    ... # doctest: +ELLIPSIS
-    security_level in security.py = ...
+   >>> import src.plugins.vlam_load_local as vlam_load_local
+   >>> from src.universal import Element
+
+1. Testing register()
+---------------------
+
+# Test - check that tag handler, and service have been registered
+    >>> vlam_load_local.register() 
+    >>> vlam_load_local.CrunchyPlugin.vlam.CrunchyPage.handlers3[
+    ...     'span']['title']['load_local'] == vlam_load_local.insert_load_local
+    True
+
+2. Testing insert_load_local()
+------------------------------
+
+This method inserts two forms inside a <span> element.
+    
+    >>> fake_page = ''  # unused
+    >>> fake_uid = '2'  # unused
+    >>> span = Element("span")
+    >>> vlam_load_local.insert_load_local(fake_page, span, fake_uid)
     >>> forms = []
-    >>> for el in page.tree.getiterator():
+    >>> for el in span.getiterator():
     ...     if el.tag == "form": forms.append(el)
     ...
     >>> len(forms)

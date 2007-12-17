@@ -26,7 +26,9 @@ if python_version < 3:
 else:
     import src.tools_3k as tools
 u_print = tools.u_print
+exec_code = tools.exec_code
 
+ElementTree = None
 # ElementTree is part of Python as of version 2.5.
 if python_version == 2.4:
     from src.element_tree import ElementTree, HTMLTreeBuilder

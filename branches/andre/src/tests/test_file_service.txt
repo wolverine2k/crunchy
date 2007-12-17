@@ -11,11 +11,11 @@ Generate a totally random file.
 
 See if we can save it.
     >>> fs.save_file(fake_name, content)
-    >>> print os.path.exists(fake_name)
+    >>> print(os.path.exists(fake_name))
     True
 
 And if we can read from it.
-    >>> print fs.read_file(fake_name) == content
+    >>> print(fs.read_file(fake_name) == content)
     True
 
 Finally, we need to clean up.

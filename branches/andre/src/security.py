@@ -107,7 +107,7 @@ specific_allowed = {
     'a': ['accesskey', 'charset', 'coords', 'href', 'hreflang', 'name',
         'rel', 'rev', 'shape', 'tabindex'],
     'address': [],
-    'body': ['alink', 'bgcolor', 'link', 'text', 'vlink'],
+    'body': ['alink', 'bgcolor', 'link', 'text', 'vlink', 'marginheight', 'topmargin'],
     # 'background' for body not allowed - link to other file
     'head': [],
     'html': ['xmlns', 'xml:lang'],
@@ -117,7 +117,7 @@ specific_allowed = {
 
 # text structure
     'br' : ['clear'],
-    'div': ['align'],
+    'div': ['align', 'width'],
     'h1': ['align'],
     'h2': ['align'],
     'h3': ['align'],

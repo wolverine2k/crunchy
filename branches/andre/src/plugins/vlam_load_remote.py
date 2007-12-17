@@ -26,6 +26,8 @@ def register():
                                                     insert_load_remote)
 
 def insert_load_remote(page, parent, uid):
+    # in general, page and uid are used by similar plugins, but they are
+    # redundant here.
     form = CrunchyPlugin.SubElement(parent, 'form', name='url', size='80', method='get',
                        action='/remote')
     input1 = CrunchyPlugin.SubElement(form, 'input', name='url', size='80',

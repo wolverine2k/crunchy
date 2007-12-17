@@ -34,6 +34,8 @@ which is meant to print a series of arguments.
 Testing ElementTree and friends
 -------------------------------
 
+The following is incomplete.
+
     >>> elem = universal.Element("p")
     >>> elem.attrib['class'] = 'crunchy'
     >>> elem.text = "This is a neat sentence."
@@ -56,4 +58,17 @@ We create a fake html file
     >>> dummy = fake_file.seek(0)  # return value in Py3k
     >>> tree = universal.parse(fake_file)
     
-    
+Testing exec_code()
+-------------------
+
+Whereas exec used to be a statement, in Python 3000 it is now a function.
+So, just like for print, we need to give a transparent access to the right version.
+
+    >>> def double(n):
+    ...     return 2*n
+    ...
+    >>> locals = {'double': double, 'universal': universal}
+    >>> test_code = "a = double(21)\nuniversal.u_print(str(a))"
+    >>> universal.exec_code(test_code, locals)
+    42
+

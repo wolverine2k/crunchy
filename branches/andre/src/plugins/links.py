@@ -55,6 +55,7 @@ def link_handler(page, elem):
     href = elem.attrib["href"]
     if "://" in href:
         elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+        return
 
     if page.is_local:
         if "#" in elem.attrib["href"]:

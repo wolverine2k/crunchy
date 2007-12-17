@@ -15,12 +15,15 @@ import src.translation as translation
 # the required API through CrunchyPlugin.  This way, if we ever
 # use something else than ElementTree, we can avoid having to change
 # any working plugin, as long as we maintain the API here.
-from element_tree import ElementTree, HTMLTreeBuilder
-Element = ElementTree.Element
-SubElement = ElementTree.SubElement
-fromstring = ElementTree.fromstring
-tostring = ElementTree.tostring
-parse = HTMLTreeBuilder.parse
+
+#from src.element_tree import ElementTree, HTMLTreeBuilder
+#Element = ElementTree.Element
+#SubElement = ElementTree.SubElement
+#fromstring = ElementTree.fromstring
+#tostring = ElementTree.tostring
+#parse = HTMLTreeBuilder.parse
+
+from src.universal import Element, SubElement, fromstring, tostring, parse
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
@@ -82,7 +85,7 @@ Attempting to define a handler twice for the same
 tag: %s, attribute: %s, keyword: %s
 Handlers should be unique: a new plugin must have been
 created, that conflicts with an existing one."""%(tag, attribute, keyword))
-        raise
+        #raise   # ignore for now...
     vlam.CrunchyPage.handlers3[tag][attribute][keyword] = handler
     return
 

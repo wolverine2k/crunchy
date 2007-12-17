@@ -26,6 +26,8 @@ def register():
                                                  insert_load_local)
 
 def insert_load_local(page, parent, uid):
+    # in general, page and uid are used by similar plugins, but they are
+    # redundant here.
     name1 = 'browser_'
     name2 = 'submit_'
     form1 = CrunchyPlugin.SubElement(parent, 'form', name=name1,
