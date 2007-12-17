@@ -98,15 +98,11 @@ True
 True
 >>> elem[1][3].attrib == {'onclick': "c=getElementById('pathhidden_loadcode_2');path=c.value;load_python_file('code_2');"}
 True
->>> elem[1][3].text == "Load Python file"
-True
 
 # Test - hidden_load/btn2
 >>> elem[1][4].tag == "button"
 True
 >>> elem[1][4].attrib == {'onclick': "c=getElementById('hidden_loadcode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
-True
->>> elem[1][4].text == "Cancel"
 True
 
 ##
@@ -140,8 +136,6 @@ True
 # Test - hidden_save/form2
 >>> elem[2][2].tag == "form"
 True
->>> elem[2][2].text == "Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally."
-True
 
 # Test - hidden_save/form2/input2
 >>> elem[2][2][0].tag == "input"
@@ -154,15 +148,11 @@ True
 True
 >>> elem[2][3].attrib == {"onclick": "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_python_file(path,'code_2');"}
 True
->>> elem[2][3].text == "Save Python file"
-True
 
 # Test - hidden_save/btn2
 >>> elem[2][4].tag == "button"
 True
 >>> elem[2][4].attrib == {'onclick': "c=getElementById('hidden_savecode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
-True
->>> elem[2][4].text == "Cancel"
 True
 
 # Test - hidden_save/btn3
@@ -170,8 +160,7 @@ True
 True
 >>> elem[2][5].attrib == {'onclick': "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_and_run(path,'code_2');"}
 True
->>> elem[2][5].text == "Save and Run"
-True
+
 
 
 3.)  Test (insert_editor)
@@ -214,8 +203,6 @@ True
 True
 >>> elem[4].attrib == {"onclick": "exec_code('2')"}
 True
->>> elem[4].text == "Execute"
-True
 
 # Test - span
 >>> elem[5].tag == "span"
@@ -228,7 +215,6 @@ True
 # Test - br
 >>> elem[6].tag == "br"
 True
-
 
 
 
