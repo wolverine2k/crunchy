@@ -5,14 +5,15 @@ import sys
 import traceback
 from codeop import CommandCompiler, compile_command
 
-from StringIO import StringIO
+from src.universal import StringIO, exec_code, python_version
+#from StringIO import StringIO
 
-from utilities import trim_empty_lines_from_end, log_session
-import configuration
-import errors
+from src.utilities import trim_empty_lines_from_end, log_session
+import src.configuration as configuration
+if python_version < 3:
+    import src.errors as errors
 
-import translation
-_ = translation._
+from src.translation import _
 
 class Interpreter(threading.Thread):
     """
@@ -61,7 +62,8 @@ class Interpreter(threading.Thread):
                         data = "<span class='stdin'>" + user_code + "</span>"
                         configuration.defaults.log[log_id].append(data)
                         log_session()
-                exec self.ccode in self.symbols#, {}
+                exec_code(self.ccode, self.symbols, source=None)
+                #exec self.ccode in self.symbols#, {}
                 # note: previously, the "local" directory used for exec
                 # was simply an empty directory.  However, this meant that
                 # module names imported outside a function definition
@@ -201,7 +203,8 @@ class InteractiveInterpreter(object):
         caller should be prepared to deal with it.
         """
         try:
-            exec code in self.locals
+            exec_code(code, self.locals, source=source)
+            #exec code in self.locals
         except:
             sys.stderr.write(errors.simplify_traceback(source))
         else:
@@ -380,7 +383,8 @@ class TypeInfoConsole(Borg, SingleConsole):
         saved_dp = sys.displayhook
         sys.displayhook = self.show_expression_value
         try:
-            exec code in self.locals
+            exec_code(code, self.locals, source=source)
+            #exec code in self.locals
         except:
             sys.stderr.write(errors.simplify_traceback(source))
         else:
@@ -401,9 +405,9 @@ class TypeInfoConsole(Borg, SingleConsole):
 
         if t:
             if t == type('string'):
-                print "'%s'     %s"%(val, t)
+                print("'" + str(val) + "'      " + str(t))
             else:
-                print "%s      %s"%(val, t)
+                print(str(val) + "      " + str(t))
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##try:

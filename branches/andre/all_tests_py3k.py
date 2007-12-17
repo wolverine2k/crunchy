@@ -17,7 +17,7 @@ test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 #excluded = ['test_colourize.txt']#, 'test_configuration.txt']
 target =['test_universal.txt', 'test_utilities.txt', 'test_configuration.txt',
-         'test_vlam_load_local.txt']#, 'test_file_service.txt']
+         'test_vlam_load_local.txt', 'test_vlam_load_remote.txt']#, 'test_file_service.txt']
 for t in test_files:
     if t not in target:
         continue

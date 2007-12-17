@@ -17,5 +17,13 @@ def u_print(*args):
         to_print.append(arg.encode("utf-8"))
     print ''.join(to_print)
 
-def exec_code(code, local_dict):
-    exec code in local_dict
+def exec_code(code, local_dict, source=''):
+    import src.errors as errors   # prevent premature import
+    import sys                    # 
+    try:
+        exec code in local_dict
+    except:
+        if source is not None:
+            sys.stderr.write(errors.simplify_traceback(source))
+        else:
+            raise
