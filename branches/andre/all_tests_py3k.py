@@ -15,9 +15,7 @@ from imp import find_module
 test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
 test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
-excluded = []#['test_colourize.txt']
-target =['test_universal.txt', 'test_utilities.txt', 'test_configuration.txt',
-         'test_vlam_load_local.txt', 'test_vlam_load_remote.txt']#, 'test_file_service.txt']
+excluded = []#['test_colourize.rst']
 for t in test_files:
     if t in excluded:
         continue

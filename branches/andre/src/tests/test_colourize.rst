@@ -1,3 +1,4 @@
+==================
 colourize.py tests
 ==================
 
@@ -128,7 +129,7 @@ A final example that starts at line 11 (offset of 10)
 
 
 New stuff
-========
+=========
 
 We use TDD to change colourize.py.
 First, we define a new function that will be called, instead of calling an
@@ -144,11 +145,12 @@ After adding a line numbering option, we can reproduce a second example.
 however, this does not mean that the code does not work as intended in this case,
 just that we deal with empty lines differently with the style() function as
 we do with the simple parseListing method)
+
     >>> print(styled_code2a == colourize._style(code_sample2, offset=0)[0])
     True
 
 Extracting code from an interpreter session.
-===========================================
+============================================
 
 Consider the following simulated interpreter sessions (using square brackets
 and commas to represent the prompt), to be embedded in an html page.
@@ -197,6 +199,7 @@ with line numbers added of the previous two cases.
 
 Next, we define a function to add back the prompt and output to the
 styled code from a simulated interpreter session.
+
     >>> fully_styled3 = colourize.add_back_prompt_and_output(styled_code3, extracted3)
     >>> print(fully_styled3)  #doctest:+ELLIPSIS
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
@@ -337,6 +340,7 @@ Next, a function to replace an ElementTree Element "in place".
 
 Next, we introduce a series of tests of increasing complexity.
 First, some unstyled code.
+
     >>> sample = '<pre>print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
     >>> pre.attrib['title'] = 'py_code'
@@ -403,6 +407,7 @@ Make sure we parse properly from html tree with a prompt included.
 
 Testing with a <code> element that is followed by some text; this
 tests the proper handling of an Element's "tail".
+
     >>> sample = """<html><body><p> An embedded code sample as in
     ...            <code title="py_code">print 'Hi!'
     ...            </code> with a tail.</p></body></html>"""
