@@ -472,8 +472,8 @@ def _style(text, offset=None):
         # \r is unnecesary and causes bugs!
         raw_code = raw_code.replace('\r', '')
         return styled_code, raw_code
-    except Exception, parsingErrorMessage:
-        error_message = parsing_error_dialog(parsingErrorMessage)
+    except Exception:#, parsingErrorMessage:
+        error_message = parsing_error_dialog()#parsingErrorMessage)
         return "<span class='py_warning'>%s</span>\n<span>%s</span>"%(
                                        error_message, raw_code), None
 
@@ -571,8 +571,10 @@ def is_interpreter_session(py_code):
             else:
                 return False
 
-def parsing_error_dialog(info):
+def parsing_error_dialog():
+#def parsing_error_dialog(info):
     '''Information given when the code colourizer fails.'''
-    return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
+    #return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
+    return _("Parsing error occurred in the following Python code.")
 
 
