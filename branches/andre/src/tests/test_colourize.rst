@@ -1,8 +1,7 @@
-==================
 colourize.py tests
 ==================
 
-Tested successfully with Python 2.4 and 2.5 but NOT 3.0a1
+Tested successfully with Python 2.4, 2.5 and 3.0a1
 
 Note that in order to have tests compatible with Python 2.x and 3.x, we can not use "print"
 since it is a statement in 2.x and a function in 3.x; the same is true with "exec".
@@ -10,9 +9,7 @@ Furthermore, parsing of code sample with comments appears to be done differently
 we need to be a little bit more careful about those.
 
 Since some behaviour differ between Python versions, we will have to make some adjustments,
-using the following variable as our guide.
-
-    >>> from src.universal import python_version
+using the ELLIPSIS directive to skip over differences for print/exec and comments as noted above.
 
 Introduction
 ------------
@@ -56,13 +53,7 @@ between Python 2.x and 3.x, we will keep the example reasonably short.
 Note that we also removed the last empty line.
 
     >>> code_sample2 = """#First comment
-    ... print 'Hello world!'
-    ... for i in range(3):
-    ...     print i*i  # another comment
-    ... # yet another one
-    ... class test_case(object):
-    ...     def __init__(self):
-    ...         pass"""
+    ... a = 'Hello world!'"""
 
 [[ Note that we need to re-initialize the Colourizer as a new instance.
 This was not needed for Crunchy version prior 0.8.2 as we used to call
@@ -73,14 +64,8 @@ version that does not call Colourizer directly). ]]
     >>> styler = colourize.Colourizer()
     >>> styled_code2 = styler.parseListing(code_sample2)
     >>> print(styled_code2) #doctest:+ELLIPSIS
-    &lt;span class='py_comment'&gt;#First comment
-    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_comment'&gt;  # another comment&lt;/span&gt;
-    &lt;span class='py_comment'&gt;# yet another one
-    &lt;/span&gt;&lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
+    &lt;span class='py_comment'&gt;#First comment...
+    ...&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
 
 Note how the comments result in a </span> inserted at the beginning of the
 next line.  This requires special consideration when styling code with
@@ -102,14 +87,9 @@ Next, we redo the same tests, but this time with added line numbers.
     >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code2a = styler.parseListing(code_sample2)
     >>> print(styled_code2a)  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment
-    &lt;/span&gt;&lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  4 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_comment'&gt;  # another comment&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  5 &lt;/span&gt;&lt;span class='py_comment'&gt;# yet another one
-    &lt;/span&gt;&lt;span class='py_linenumber'&gt;  6 &lt;/span&gt;&lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  7 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  8 &lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
+    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment...
+    ...&lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+
 
 Note again how the comments ending one line result in a </span> inserted at the beginning of the
 next one.
@@ -118,18 +98,13 @@ A final example that starts at line 11 (offset of 10)
     >>> styler = colourize.Colourizer(offset=10)
     >>> styled_code2b = styler.parseListing(code_sample2)
     >>> print(styled_code2b)  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt; 11 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment
-    &lt;/span&gt;&lt;span class='py_linenumber'&gt; 12 &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt; 13 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt; 14 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_comment'&gt;  # another comment&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt; 15 &lt;/span&gt;&lt;span class='py_comment'&gt;# yet another one
-    &lt;/span&gt;&lt;span class='py_linenumber'&gt; 16 &lt;/span&gt;&lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt; 17 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt; 18 &lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
+    &lt;span class='py_linenumber'&gt; 11 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment...
+    ...&lt;span class='py_linenumber'&gt; 12 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+
 
 
 New stuff
-=========
+---------
 
 We use TDD to change colourize.py.
 First, we define a new function that will be called, instead of calling an
@@ -150,7 +125,7 @@ we do with the simple parseListing method)
     True
 
 Extracting code from an interpreter session.
-============================================
+--------------------------------------------
 
 Consider the following simulated interpreter sessions (using square brackets
 and commas to represent the prompt), to be embedded in an html page.
@@ -297,9 +272,8 @@ removed such lines.
     line1
     line2
 
-=====================
 Testing the plugin
-=====================
+------------------
 
 First, we define and test a function to extract the text content from
 a piece of html code, converting <br/> into "\n"
