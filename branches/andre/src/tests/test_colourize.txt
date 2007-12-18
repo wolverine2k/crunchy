@@ -1,6 +1,21 @@
 colourize.py tests
 ==================
 
+Tested successfully with Python 2.4 and 2.5 but NOT 3.0a1
+
+Note that in order to have tests compatible with Python 2.x and 3.x, we can not use "print"
+since it is a statement in 2.x and a function in 3.x; the same is true with "exec".
+Furthermore, parsing of code sample with comments appears to be done differently by the tokenizer;
+we need to be a little bit more careful about those.
+
+Since some behaviour differ between Python versions, we will have to make some adjustments,
+using the following variable as our guide.
+
+    >>> from src.universal import python_version
+
+Introduction
+------------
+
 This file contains tests of styling Python code.  Unfortunately, the
 additional markup makes it near impossible to have short (<80 characters)
 output lines.
@@ -13,18 +28,18 @@ crunchyfier.py (version 0.8).
 
 We now style a few code samples.  First, some straight Python code.
 
-    >>> code_sample1 = """print 'Hello world!'
+    >>> code_sample1 = """a = 'Hello world!'
     ... for i in range(3):
-    ...     print i*i
+    ...     a += str(i)
     ... class test_case(object):
     ...     def __init__(self):
     ...         pass
     ... """
     >>> styled_code1 = styler.parseListing(code_sample1)
-    >>> print styled_code1
-    &lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    >>> print(styled_code1)
+    &lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
+    &lt;span&gt;    &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; +=&lt;/span&gt;&lt;span class='py_builtins'&gt; str&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;
     &lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
     &lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
     &lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
@@ -35,7 +50,8 @@ done some functional testing and looked at similar code displayed by
 a browser.  We will use such code samples from now on, assuming them
 to be correct, as we develop additional functionality.
 
-Next, a similar code sample but with added comments.
+Next, another code sample but with added comments; since comment parsing differ slightly
+between Python 2.x and 3.x, we will keep the example reasonably short.
 Note that we also removed the last empty line.
 
     >>> code_sample2 = """#First comment
@@ -51,6 +67,7 @@ Note that we also removed the last empty line.
 This was not needed for Crunchy version prior 0.8.2 as we used to call
 a reset() method after each styling (which is redundant with the new
 version that does not call Colourizer directly). ]]
+
 
     >>> styler = colourize.Colourizer()
     >>> styled_code2 = styler.parseListing(code_sample2)
@@ -71,18 +88,19 @@ interpreter prompts.
 Next, we redo the same tests, but this time with added line numbers.
     >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code1a = styler.parseListing(code_sample1)
-    >>> print styled_code1a
-    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    >>> print(styled_code1a)
+    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
+    &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; +=&lt;/span&gt;&lt;span class='py_builtins'&gt; str&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  4 &lt;/span&gt;&lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  5 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  6 &lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  7 &lt;/span&gt;
 
+
     >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code2a = styler.parseListing(code_sample2)
-    >>> print styled_code2a
+    >>> print(styled_code2a)
     &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment
     &lt;/span&gt;&lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
@@ -98,7 +116,7 @@ next one.
 A final example that starts at line 11 (offset of 10)
     >>> styler = colourize.Colourizer(offset=10)
     >>> styled_code2b = styler.parseListing(code_sample2)
-    >>> print styled_code2b
+    >>> print(styled_code2b)
     &lt;span class='py_linenumber'&gt; 11 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment
     &lt;/span&gt;&lt;span class='py_linenumber'&gt; 12 &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_linenumber'&gt; 13 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
@@ -118,7 +136,7 @@ instance of the Colourizer class directly.
 UPDATE: this function also strips empty lines; so to compare with the
 previous cases, we may need to add an extra line "\n" by hand.
 
-    >>> print styled_code1 == colourize._style(code_sample1)[0] + "\n"
+    >>> print(styled_code1 == colourize._style(code_sample1)[0] + "\n")
     True
 
 After adding a line numbering option, we can reproduce a second example.
@@ -126,7 +144,7 @@ After adding a line numbering option, we can reproduce a second example.
 however, this does not mean that the code does not work as intended in this case,
 just that we deal with empty lines differently with the style() function as
 we do with the simple parseListing method)
-    >>> print styled_code2a == colourize._style(code_sample2, offset=0)[0]
+    >>> print(styled_code2a == colourize._style(code_sample2, offset=0)[0])
     True
 
 Extracting code from an interpreter session.
@@ -139,9 +157,9 @@ and commas to represent the prompt), to be embedded in an html page.
 
     >>> code_sample3 = """>>> print 'Hello world!'"""
     >>> python_code3, extracted3 = colourize.extract_code_from_interpreter(code_sample3)
-    >>> print python_code3
+    >>> print(python_code3)
     print 'Hello world!'
-    >>> print extracted3
+    >>> print(extracted3)
     [('&amp;gt;&amp;gt;&amp;gt; ', 1)]
 
 ]]] print "Hello world!"
@@ -154,11 +172,11 @@ Hello world!
     ... >>> for i in range(3):
     ... ...     print i*i"""
     >>> python_code4, extracted4 = colourize.extract_code_from_interpreter(code_sample4)
-    >>> print python_code4
+    >>> print(python_code4)
     print 'Hello world!'
     for i in range(3):
         print i*i
-    >>> print extracted4
+    >>> print(extracted4)
     [('&amp;gt;&amp;gt;&amp;gt; ', 1), ('', 'Hello world!'), ('&amp;gt;&amp;gt;&amp;gt; ', 2), ('... ', 3)]
 
 
@@ -169,9 +187,9 @@ We can style the code as before.
 For future reference, we will document as tests here styling examples
 with line numbers added of the previous two cases.
 
-    >>> print colourize._style(code_sample3, offset=4)[0]
+    >>> print(colourize._style(code_sample3, offset=4)[0])
     &lt;span class='py_linenumber'&gt;  5 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    >>> print colourize._style(code_sample4, offset=0)[0]
+    >>> print(colourize._style(code_sample4, offset=0)[0])
     &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;    &lt;/span&gt;&lt;span class="py_output"&gt;Hello world!&lt;/span&gt;
     &lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
@@ -180,10 +198,10 @@ with line numbers added of the previous two cases.
 Next, we define a function to add back the prompt and output to the
 styled code from a simulated interpreter session.
     >>> fully_styled3 = colourize.add_back_prompt_and_output(styled_code3, extracted3)
-    >>> print fully_styled3
+    >>> print(fully_styled3)
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     >>> fully_styled4 = colourize.add_back_prompt_and_output(styled_code4, extracted4)
-    >>> print fully_styled4
+    >>> print(fully_styled4)
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class="py_output"&gt;Hello world!&lt;/span&gt;
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
@@ -197,12 +215,12 @@ see if we have to take care of this in this version.
 
     >>> end_comment6 = '''>>> # this is a comment'''
     >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
-    >>> print colourize._style(python_code6)[0]
+    >>> print(colourize._style(python_code6)[0])
     &lt;span class='py_comment'&gt;# this is a comment&lt;/span&gt;
     >>> styled6, py6 = colourize._style(end_comment6) # letting style do its thing
-    >>> print styled6
+    >>> print(styled6)
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_comment'&gt;# this is a comment&lt;/span&gt;
-    >>> print py6
+    >>> print(py6)
     # this is a comment
 
 This looks ok; let us try a slightly longer example.
@@ -212,7 +230,7 @@ This looks ok; let us try a slightly longer example.
     ... ...     print i*i
     ... >>> # another comment."""
     >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
-    >>> print colourize._style(python_code7)[0]
+    >>> print(colourize._style(python_code7)[0])
     &lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
     &lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
     &lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
@@ -232,17 +250,17 @@ at the cost of some minor increase complexity of the code written so far.
 We consider the two simplest case first.
     >>> sample1 = '''print "Hello world!"'''
     >>> sample2 = '''>>> print "Hello world!"'''
-    >>> print colourize.is_interpreter_session(sample1)
+    >>> print(colourize.is_interpreter_session(sample1))
     False
-    >>> print colourize.is_interpreter_session(sample2)
+    >>> print(colourize.is_interpreter_session(sample2))
     True
 
 We then consider two more cases, with blank lines inserted at the beginning:
     >>> sample7 = '''\n\nprint "Hello world!"'''
     >>> sample8 = '''   \n  \n>>> print "Hello world!"'''
-    >>> print colourize.is_interpreter_session(sample7)
+    >>> print(colourize.is_interpreter_session(sample7))
     False
-    >>> print colourize.is_interpreter_session(sample8)
+    >>> print(colourize.is_interpreter_session(sample8))
     True
 
 We use this function inside colourize.py to proceed, reusing some
@@ -250,13 +268,13 @@ examples introduced previously.  We know, from the tests done above,
 that the new version still works with non-interpreter code.  We can use
 some previous examples to test the interpreter version.
 
-    >>> print colourize._style(code_sample3)[0] == fully_styled3
+    >>> print(colourize._style(code_sample3)[0] == fully_styled3)
     True
-    >>> print colourize._style(code_sample4)[0] == fully_styled4
+    >>> print(colourize._style(code_sample4)[0] == fully_styled4)
     True
 
 In case we find a discrepancy, we compare with the expected result.
-    >>> print colourize._style(code_sample3)[0]
+    >>> print(colourize._style(code_sample3)[0])
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
 
 Using this code with sample pages, we noted that sometimes blank lines
@@ -266,13 +284,13 @@ displayed by Crunchy, we will introduce a function which will be used to
 removed such lines.
 
     >>> test_blank = '\n \r\n\n\r  \nline1\nline2 followed by blank line\n\nline3\n \n'
-    >>> print colourize.trim_empty_lines_from_end(test_blank)
+    >>> print(colourize.trim_empty_lines_from_end(test_blank))
     line1
     line2 followed by blank line
     <BLANKLINE>
     line3
     >>> test_blank2 = 'line1\nline2'
-    >>> print colourize.trim_empty_lines_from_end(test_blank2)
+    >>> print(colourize.trim_empty_lines_from_end(test_blank2))
     line1
     line2
 
@@ -286,23 +304,23 @@ a piece of html code, converting <br/> into "\n"
     >>> et = colourize.et
     >>> sample = "<pre>a\nb<br/>c<span>d</span></pre>"
     >>> pre = et.fromstring(sample)
-    >>> print colourize.extract_code(pre)
+    >>> print(colourize.extract_code(pre))
     a
     b
     cd
 
 We also have a function to extract the value of the linenumber option if present.
-    >>> print colourize.get_linenumber_offset("junk")
+    >>> print(colourize.get_linenumber_offset("junk"))
     None
-    >>> print colourize.get_linenumber_offset("linenumber")
+    >>> print(colourize.get_linenumber_offset("linenumber"))
     0
-    >>> print colourize.get_linenumber_offset("linenumber=4")
+    >>> print(colourize.get_linenumber_offset("linenumber=4"))
     3
-    >>> print colourize.get_linenumber_offset("linenumber =    22")
+    >>> print(colourize.get_linenumber_offset("linenumber =    22"))
     21
-    >>> print colourize.get_linenumber_offset("linenumber  start =    24")
+    >>> print(colourize.get_linenumber_offset("linenumber  start =    24"))
     0
-    >>> print colourize.get_linenumber_offset("LineNumber = 3")
+    >>> print(colourize.get_linenumber_offset("LineNumber = 3"))
     2
 
 Next, a function to replace an ElementTree Element "in place".
@@ -312,9 +330,9 @@ Next, a function to replace an ElementTree Element "in place".
     >>> replacement = et.fromstring(new)
     >>> elem_id = id(elem)
     >>> colourize.replace_element(elem, replacement)
-    >>> print elem_id == id(elem) # same object as before
+    >>> print(elem_id == id(elem)) # same object as before
     True
-    >>> print et.tostring(elem) == new # but with new content
+    >>> print(et.tostring(elem) == new)# but with new content
     True
 
 Next, we introduce a series of tests of increasing complexity.
@@ -324,9 +342,9 @@ First, some unstyled code.
     >>> pre.attrib['title'] = 'py_code'
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
-    >>> print py_code
+    >>> print(py_code)
     print "Hello World!"
-    >>> print styled
+    >>> print(styled)
     &lt;pre class="crunchy" title="py_code"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
@@ -337,9 +355,9 @@ Next, some simple styled code
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
-    >>> print py_code
+    >>> print(py_code)
     print "Hello World!"
-    >>> print styled
+    >>> print(styled)
     &lt;pre class="crunchy" title="junk"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
@@ -351,9 +369,9 @@ ElementTree - at least in the version used for this test.
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
-    >>> print py_code
+    >>> print(py_code)
     print "Hello World!"
-    >>> print styled
+    >>> print(styled)
     &lt;pre class="crunchy" tag="other" title="junk"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
@@ -363,9 +381,9 @@ Finally, a test including the linenumber option
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
-    >>> print py_code
+    >>> print(py_code)
     print "Hello World!"
-    >>> print styled
+    >>> print(styled)
     &lt;pre class="crunchy" title="junk linenumber=2"&gt;
     &lt;span class="py_linenumber"&gt;  2 &lt;/span&gt;&lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
     &lt;/pre&gt;
@@ -376,9 +394,9 @@ Make sure we parse properly from html tree with a prompt included.
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//pre")
     >>> pycode, new_elem, dummy_error = colourize.style(pre2)
-    >>> print pycode
+    >>> print(pycode)
     print 'Hello!'
-    >>> print et.tostring(new_elem)
+    >>> print(et.tostring(new_elem))
     &lt;pre class="crunchy" title="py_code"&gt;
     &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hello!'&lt;/span&gt;
     &lt;/pre&gt;
@@ -391,9 +409,9 @@ tests the proper handling of an Element's "tail".
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//code")
     >>> pycode, new_elem, dummy_error = colourize.style(pre2)
-    >>> print pycode
+    >>> print(pycode)
     print 'Hi!'
-    >>> print et.tostring(new_elem)
+    >>> print(et.tostring(new_elem))
     &lt;code class="crunchy" title="py_code"&gt;
     &lt;span class="py_keyword"&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hi!'&lt;/span&gt;
     &lt;/code&gt; with a tail.

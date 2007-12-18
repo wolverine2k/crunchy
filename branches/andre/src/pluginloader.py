@@ -7,7 +7,7 @@ import os
 from imp import find_module
 import os.path
 
-import CrunchyPlugin
+import src.CrunchyPlugin as CrunchyPlugin
 
 def gen_register_list(initial_list):
     """generates a registration ordering from the dependencies.
@@ -53,19 +53,19 @@ def init_plugin_system(server):
         sys.path.insert(0, "src/plugins")
     imported_plugins = []
     if CrunchyPlugin.DEBUG:
-        print "Importing plugins"
+        print("Importing plugins.")
     for plugin in plugins:
         mod = __import__ (plugin, globals())
         imported_plugins.append(mod)
     register_list = gen_register_list(imported_plugins)
     if CrunchyPlugin.DEBUG:
-        print "Registering plugins"
+        print("Registering plugins.")
     for mod in register_list:
         if hasattr(mod, "register"):
             if server != ["testplugins"]:  # skip for self-testing
                 mod.register()
             if CrunchyPlugin.DEBUG:
-                print "  * Registered %s" % mod.__name__
+                print("  * Registered %s" % mod.__name__)
 
 if __name__ == "__main__":
     CrunchyPlugin.DEBUG = True

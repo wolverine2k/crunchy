@@ -1,6 +1,8 @@
 vlam_load_remote.py tests
 ================================
 
+Tested successfully with Python 2.4, 2.5 and 3.0a1
+
 vlam_load_remote.py is a plugin whose purpose is to create a form
 allowing a user to browse for a remote tutorial to be loaded by Crunchy.
 

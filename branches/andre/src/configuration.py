@@ -248,7 +248,10 @@ class Defaults(object):
     #==============
 
     def _get_temp_dir(self):
-        return self.__temp_dir.decode(sys.getfilesystemencoding())
+        if python_version < 3:
+            return self.__temp_dir.decode(sys.getfilesystemencoding())
+        else:
+            return self.__temp_dir  #untested
 
     temp_dir = property(_get_temp_dir, None, None,
                        _("(Fixed) Temporary working directory: "))

@@ -15,13 +15,15 @@ would only need to modify only parts of this module, as idenfied below.
 import copy
 import re
 import keyword
-import StringIO
+#import StringIO
 import token
 import tokenize
 import sys
 #import htmlentitydefs
 
-from src.element_tree import ElementTree as et
+from src.universal import StringIO, ElementTree, python_version
+et = ElementTree
+#from src.element_tree import ElementTree as et
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 
 #---------begin plugin specific---------------------
@@ -227,12 +229,15 @@ def get_linenumber_offset(vlam):
 def replace_element(elem, replacement):
     '''replace the content of an ElementTree Element by that of another
        one.'''
-    elem.clear()
-    elem.text = replacement.text
-    elem.tail = replacement.tail
-    elem.tag = replacement.tag
-    elem.attrib = replacement.attrib
-    elem[:] = replacement[:]
+    if python_version < 3:
+        elem.clear()
+        elem.text = replacement.text
+        elem.tail = replacement.tail
+        elem.tag = replacement.tag
+        elem.attrib = replacement.attrib
+        elem[:] = replacement[:]   # does not work with py3k
+    else:
+        elem.__dict__ = replacement.__dict__
     return
 
 #--------End ElementTree dependent part-------------
@@ -423,8 +428,8 @@ class Colourizer(object):
 # inp.readline reads a "logical" line;
 # the continuation character '\' is gobbled up.
     def parseListing(self, code):
-        self.inp = StringIO.StringIO(code)
-        self.outp = StringIO.StringIO()
+        self.inp = StringIO(code)
+        self.outp = StringIO()
         for tok in tokenize.generate_tokens(self.inp.readline):
             self.lastTokenType = self.tokenType
             self.tokenType = tok[0]

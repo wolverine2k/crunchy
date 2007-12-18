@@ -1,0 +1,8 @@
+Test junk
+=========
+
+    >>> print "<"
+    <
+    >>> import src.plugins.colourize as colourize
+    >>> print "<"
+    <

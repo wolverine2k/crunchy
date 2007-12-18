@@ -49,6 +49,7 @@ def link_handler(page, elem):
                     return
                 else:  # remove trailing #... which Crunchy can't handle
                     elem.attrib["href"] = splitted[0]
+
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
 
@@ -70,9 +71,15 @@ def link_handler(page, elem):
                     return
                 else:  # remove trailing #... which Crunchy can't handle
                     elem.attrib["href"] = splitted[0]
+        if ".rst" in elem.attrib["href"]:
+            elem.attrib["href"] = "/rst?url=%s" % \
+                os.path.dirname(page.url) + "/" + \
+                urllib.quote_plus(elem.attrib["href"])
+            return
         if "://" not in elem.attrib["href"]:
             href = urljoin(page.url, elem.attrib["href"])
             elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
+            return
 
 def src_handler(page, elem):
     """used for elements that have an src attribute not loaded from the

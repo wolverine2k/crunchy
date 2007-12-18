@@ -1,8 +1,11 @@
 pluginloader.py tests
 =====================
 
+Tested successfully with Python 2.4, 2.5 and 3.0a1
+
 This file contains a few tests for pluginloader.py.
     >>> import src.pluginloader as pl
+    >>> from src.universal import python_version
 
 We begin by making a few mock modules that would provide services and
 require others.
@@ -41,9 +44,9 @@ done.
     ...         provided_so_far.extend(list(item.provides))
     ...         for i in list(item.requires):
     ...             if i not in provided_so_far:
-    ...                 print "ordering problem in gen_register_list"
-    ...                 print "provided so far: ", provided_so_far
-    ...                 print "required here: ", item.requires
+    ...                 print("ordering problem in gen_register_list")
+    ...                 print("provided so far: " + str(provided_so_far))
+    ...                 print("required here: " + str(item.requires))
 
 
 We then define a few mock object that we will use in tests.
@@ -62,10 +65,12 @@ It should pass silently.
 
 We can see the object required appearing after being provided in the final
 list:
-    >>> print a_list
-    [requires = set([])  provided = set(['C', 'B'])
-    , requires = set(['B'])  provided = set([])
-    ]
+    >>> if python_version < 3:
+    ...    ans = "[requires = set([])  provided = set(['C', 'B'])\n, requires = set(['B'])  provided = set([])\n]"
+    ... else:
+    ...    ans = "[requires = set()  provided = {'C', 'B'}\n, requires = {'B'}  provided = set()\n]"
+    >>> str(a_list) == ans
+    True
 
 -------------------------------
 The next test is one in which an object "b" is required but not provided.
@@ -76,7 +81,7 @@ The next test is one in which an object "b" is required but not provided.
 After it passes silently, we can inspect visually the final list, which
 should be empty as the object requiring "b" is removed since "b" is
 not provided.
-    >>> print a_list
+    >>> print(str(a_list))
     []
 
 -------------------------------
@@ -87,9 +92,12 @@ The next test is one in which an object "b" is not required but is provided.
 
 After it passes silently, we can inspect visually the final list, which
 should should contain that one object.
-    >>> print a_list
-    [requires = set([])  provided = set(['G'])
-    ]
+    >>> if python_version < 3:
+    ...     ans = "[requires = set([])  provided = set(['G'])\n]"
+    ... else:
+    ...     ans = "[requires = set()  provided = {'G'}\n]"
+    >>> str(a_list) == ans
+    True
 
 
 -------------------------------

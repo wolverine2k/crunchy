@@ -1,6 +1,8 @@
 editarea.py tests
 ==================
 
+Tested successfully with Python 2.4, 2.5 and 3.0a1
+
 editarea.py is a plugin whose purpose is to insert the appropriate code in 
 a page to enable the javascript based editor "editarea".  It has the following functions
 that require testing:
@@ -30,7 +32,7 @@ Before we proceed with testing individual functions, we need to import editarea.
 
    >>> editarea.register()
    >>> import src.CrunchyPlugin as cp
-   >>> print cp.services.enable_editarea == editarea.enable_editarea
+   >>> print(cp.services.enable_editarea == editarea.enable_editarea)
    True
 
 5. Testing addSavePython():
@@ -61,7 +63,7 @@ have been inserted (and none unexpected).
     ...     elif el.tag == "parent":
     ...         parent.append(el)
     ...     else:
-    ...         print "Unexpected element found"
+    ...         print("Unexpected element found")
     ...
     >>> len(br)
     2
@@ -137,7 +139,7 @@ have been inserted (and none unexpected).
     ...     elif el.tag == "load_parent":
     ...         parent.append(el)
     ...     else:
-    ...         print "Unexpected element found"
+    ...         print("Unexpected element found")
     ...
     >>> len(br)
     2
@@ -215,7 +217,7 @@ have been inserted (and none unexpected).
     ...     elif el.tag == 'div':
     ...         divs.append(el)
     ...     else:
-    ...         print "Unexpected element found"
+    ...         print("Unexpected element found")
     ...
     >>> len(br)
     4
@@ -274,14 +276,16 @@ called properly.
     >>> page = TestPage()
     >>> dummy_elem = cp.Element('dummy')
     >>> editarea.enable_editarea(page, dummy_elem, '1')
-    >>> print page.called_css
+    >>> print(page.called_css)
     True
-    >>> print page.called_js
+    >>> print(page.called_js)
     True
-    >>> print page.js_file
+    >>> print(page.js_file)
     True
-    >>> print page.included
-    set(['editarea_included', 'hidden_load_and_save'])
+    >>> for inc in page.included:
+    ...     print(inc)
+    editarea_included
+    hidden_load_and_save
     
 
 
