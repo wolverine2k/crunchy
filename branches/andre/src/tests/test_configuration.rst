@@ -1,5 +1,5 @@
 configuration.py tests
-==================
+======================
 
 Tested successfully with Python 2.4, 2.5 and 3.0a1
 

@@ -4,167 +4,193 @@
 Tested successfully with Python 2.4, 2.5 and 3.0a1
 
 # Import vlam_editor, _ElementInterface, and editarea
->>> import src.plugins.vlam_editor as vlam_editor 
->>> import src.plugins.editarea as editarea
->>> from src.universal import Element
+
+  >>> import src.plugins.vlam_editor as vlam_editor 
+  >>> import src.plugins.editarea as editarea
+  >>> from src.universal import Element
 
 # Used to create a fake page object
->>> class TestPage(object):   
-...  def __init__(self): 
-...   self.pageid = 1
-...   self.Function_List = []
-...  def includes(self, object):
-...   self.Function_List.append("includes")
-...   return False
-...  def add_include(self, object):
-...   self.Function_List.append("add_include")
-...  def add_js_code(self, object):
-...   self.Function_List.append("add_js_code")
-...  def insert_js_file(self, object):
-...   self.Function_List.append("insert_js_file")
-...  def add_css_code(self, object):
-...   self.Function_List.append("add_css_code")
+
+  >>> class TestPage(object):   
+  ...  def __init__(self): 
+  ...   self.pageid = 1
+  ...   self.Function_List = []
+  ...  def includes(self, object):
+  ...   self.Function_List.append("includes")
+  ...   return False
+  ...  def add_include(self, object):
+  ...   self.Function_List.append("add_include")
+  ...  def add_js_code(self, object):
+  ...   self.Function_List.append("add_js_code")
+  ...  def insert_js_file(self, object):
+  ...   self.Function_List.append("insert_js_file")
+  ...  def add_css_code(self, object):
+  ...   self.Function_List.append("add_css_code")
 
 # Used as a fake style_pycode function
->>> def style_pycode(page, elem):
-...  return "", "TestMarkup", None
+
+  >>> def style_pycode(page, elem):
+  ...  return "", "TestMarkup", None
 
 # Used as a fake insert_io_subwidget function
->>> def insert_io_subwidget(page, elem, uid):
-...  return
+
+  >>> def insert_io_subwidget(page, elem, uid):
+  ...  return
 
 1.)  Test (Register)
 ------------------------------------
 
 # Test - check that tag handler, and service have been registered
->>> vlam_editor.register()
->>> vlam_editor.CrunchyPlugin.vlam.CrunchyPage.handlers3['pre']['title']['editor'] == vlam_editor.insert_editor
-True
->>> vlam_editor.CrunchyPlugin.services.insert_editor_subwidget == vlam_editor.insert_editor_subwidget
-True
+
+  >>> vlam_editor.register()
+  >>> vlam_editor.CrunchyPlugin.vlam.CrunchyPage.handlers3['pre']['title']['editor'] == vlam_editor.insert_editor
+  True
+  >>> vlam_editor.CrunchyPlugin.services.insert_editor_subwidget == vlam_editor.insert_editor_subwidget
+  True
 
 2.)  Test (insert_editor_subwidget)
 ------------------------------------
 
 # Submits the service enable_editarea into CrunchyPlugin.sevices
->>> vlam_editor.CrunchyPlugin.register_service(editarea.enable_editarea, "enable_editarea")
+
+  >>> vlam_editor.CrunchyPlugin.register_service(editarea.enable_editarea, "enable_editarea")
 
 # Create the 3 parameters, and run the function
->>> page = TestPage()
->>> elem = Element("pre")
->>> uid = "2"
->>> vlam_editor.insert_editor_subwidget(page, elem, uid) 
+
+  >>> page = TestPage()
+  >>> elem = Element("pre")
+  >>> uid = "2"
+  >>> vlam_editor.insert_editor_subwidget(page, elem, uid) 
 
 # Test the Results
->>> page.Function_List == ["includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
-True
->>> elem[0].tag == "textarea"
-True
+
+  >>> page.Function_List == ["includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
+  True
+  >>> elem[0].tag == "textarea"
+  True
 
 # Test - hidden_load
->>> elem[1].tag == "div"
-True
->>> elem[1].attrib == {'id': 'hidden_loadcode_2', 'class': 'load_python'}
-True
+
+  >>> elem[1].tag == "div"
+  True
+  >>> elem[1].attrib == {'id': 'hidden_loadcode_2', 'class': 'load_python'}
+  True
 
 # Test - hidden_load/br
->>> elem[1][0].tag == "br"
-True
+
+  >>> elem[1][0].tag == "br"
+  True
 
 # Test - hidden_load/form1
->>> elem[1][1].tag == "form"
-True
+  >>> elem[1][1].tag == "form"
+  True
 
->>> elem[1][1].attrib == {'onblur': "a=getElementById('pathhidden_loadcode_2');b=getElementById('filenamehidden_loadcode_2');a.value=b.value"}
-True
+  >>> elem[1][1].attrib == {'onblur': "a=getElementById('pathhidden_loadcode_2');b=getElementById('filenamehidden_loadcode_2');a.value=b.value"}
+  True
 
 # Test - hidden_load/form1/input1
->>> elem[1][1][0].tag == "input"
-True
->>> elem[1][1][0].attrib == {'type': 'file', 'id': 'filenamehidden_loadcode_2', 'size': '80'}
-True
+
+  >>> elem[1][1][0].tag == "input"
+  True
+  >>> elem[1][1][0].attrib == {'type': 'file', 'id': 'filenamehidden_loadcode_2', 'size': '80'}
+  True
 
 # Test - hidden_load/form1/br
->>> elem[1][1][1].tag == "br"
-True
+
+  >>> elem[1][1][1].tag == "br"
+  True
 
 # Test - hidden_load/form2
->>> elem[1][2].tag == "form"
-True
+
+  >>> elem[1][2].tag == "form"
+  True
 
 # Test - hidden_load/form2/input2
->>> elem[1][2][0].tag == "input"
-True
->>> elem[1][2][0].attrib == {'type': 'hidden', 'id': 'pathhidden_loadcode_2'}
-True
+
+  >>> elem[1][2][0].tag == "input"
+  True
+  >>> elem[1][2][0].attrib == {'type': 'hidden', 'id': 'pathhidden_loadcode_2'}
+  True
 
 # Test - hidden_load/btn
->>> elem[1][3].tag == "button"
-True
->>> elem[1][3].attrib == {'onclick': "c=getElementById('pathhidden_loadcode_2');path=c.value;load_python_file('code_2');"}
-True
+
+  >>> elem[1][3].tag == "button"
+  True
+  >>> elem[1][3].attrib == {'onclick': "c=getElementById('pathhidden_loadcode_2');path=c.value;load_python_file('code_2');"}
+  True
 
 # Test - hidden_load/btn2
->>> elem[1][4].tag == "button"
-True
->>> elem[1][4].attrib == {'onclick': "c=getElementById('hidden_loadcode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
-True
+
+  >>> elem[1][4].tag == "button"
+  True
+  >>> elem[1][4].attrib == {'onclick': "c=getElementById('hidden_loadcode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
+  True
 
 ##
 ## start test on add_hidden_load_and_save / addSavePython
 ##
 
 # Test - hidden_save
->>> elem[2].tag == "div"
-True
->>> elem[2].attrib == {'id': 'hidden_savecode_2', 'class': 'save_python'}
-True
+
+  >>> elem[2].tag == "div"
+  True
+  >>> elem[2].attrib == {'id': 'hidden_savecode_2', 'class': 'save_python'}
+  True
 
 # Test - hidden_save/br
->>> elem[2][0].tag == "br"
-True
+
+  >>> elem[2][0].tag == "br"
+  True
 
 # Test - hidden_save/form1
->>> elem[2][1].tag == "form"
-True
+
+  >>> elem[2][1].tag == "form"
+  True
 
 # Test = hidden_save/form1/input1
->>> elem[2][1][0].tag == "input"
-True
->>> elem[2][1][0].attrib == {'type': 'file', 'id': 'filenamehidden_savecode_2', 'size': '80'}
-True
+
+  >>> elem[2][1][0].tag == "input"
+  True
+  >>> elem[2][1][0].attrib == {'type': 'file', 'id': 'filenamehidden_savecode_2', 'size': '80'}
+  True
 
 # Test - hidden_save/form1/br
->>> elem[2][1][1].tag == "br"
-True
+
+  >>> elem[2][1][1].tag == "br"
+  True
 
 # Test - hidden_save/form2
->>> elem[2][2].tag == "form"
-True
+
+  >>> elem[2][2].tag == "form"
+  True
 
 # Test - hidden_save/form2/input2
->>> elem[2][2][0].tag == "input"
-True
->>> elem[2][2][0].attrib == {'type': 'hidden', 'id': 'pathhidden_savecode_2'}
-True
+
+  >>> elem[2][2][0].tag == "input"
+  True
+  >>> elem[2][2][0].attrib == {'type': 'hidden', 'id': 'pathhidden_savecode_2'}
+  True
 
 # Test - hidden_save/btn
->>> elem[2][3].tag == "button"
-True
->>> elem[2][3].attrib == {"onclick": "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_python_file(path,'code_2');"}
-True
+
+  >>> elem[2][3].tag == "button"
+  True
+  >>> elem[2][3].attrib == {"onclick": "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_python_file(path,'code_2');"}
+  True
 
 # Test - hidden_save/btn2
->>> elem[2][4].tag == "button"
-True
->>> elem[2][4].attrib == {'onclick': "c=getElementById('hidden_savecode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
-True
+
+  >>> elem[2][4].tag == "button"
+  True
+  >>> elem[2][4].attrib == {'onclick': "c=getElementById('hidden_savecode_2');path=c.style.visibility='hidden';c.style.zIndex=-1;"}
+  True
 
 # Test - hidden_save/btn3
->>> elem[2][5].tag == "button"
-True
->>> elem[2][5].attrib == {'onclick': "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_and_run(path,'code_2');"}
-True
+
+  >>> elem[2][5].tag == "button"
+  True
+  >>> elem[2][5].attrib == {'onclick': "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_and_run(path,'code_2');"}
+  True
 
 
 
@@ -172,54 +198,65 @@ True
 ------------------------------------
 
 # Submits the fake service style_pycode into CrunchyPlugin.sevices
->>> vlam_editor.CrunchyPlugin.register_service(style_pycode, "style_pycode")
+
+  >>> vlam_editor.CrunchyPlugin.register_service(style_pycode, "style_pycode")
 
 # Submits the fake service insert_io_subwidget into CrunchyPlugin.sevices
->>> vlam_editor.CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
+
+  >>> vlam_editor.CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
 
 #  Create Objects needed
->>> page = TestPage()
->>> elem = Element("pre")
->>> uid = "2"
+
+  >>> page = TestPage()
+  >>> elem = Element("pre")
+  >>> uid = "2"
 
 #  Set Object Attributes
->>> page.url = "TestURL"
->>> elem.attrib = {'title': 'no-pre'}
+
+  >>> page.url = "TestURL"
+  >>> elem.attrib = {'title': 'no-pre'}
 
 #  Run the Function
->>> vlam_editor.insert_editor(page, elem, uid) 
+
+  >>> vlam_editor.insert_editor(page, elem, uid) 
 
 # Test - check to make sure functions in page were called
->>> page.Function_List == ["includes", "add_include", "add_js_code", "includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
-True
+
+  >>> page.Function_List == ["includes", "add_include", "add_js_code", "includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
+  True
 
 # Test - elem
->>> elem.tag == "div"
-True
->>> elem.attrib == {'class': 'crunchy', 'id': 'div_2'}
-True
+
+  >>> elem.tag == "div"
+  True
+  >>> elem.attrib == {'class': 'crunchy', 'id': 'div_2'}
+  True
 
 # Test - br
->>> elem[3].tag == "br"
-True
+
+  >>> elem[3].tag == "br"
+  True
 
 # Test - button
->>> elem[4].tag == "button"
-True
->>> elem[4].attrib == {"onclick": "exec_code('2')"}
-True
+
+  >>> elem[4].tag == "button"
+  True
+  >>> elem[4].attrib == {"onclick": "exec_code('2')"}
+  True
 
 # Test - span
->>> elem[5].tag == "span"
-True
->>> elem[5].attrib == {'style': 'display:none', 'id': 'path_2'}
-True
->>> elem[5].text == vlam_editor.configuration.defaults.temp_dir + vlam_editor.os.path.sep + "temp.py"
-True
+
+  >>> elem[5].tag == "span"
+  True
+  >>> elem[5].attrib == {'style': 'display:none', 'id': 'path_2'}
+  True
+  >>> elem[5].text == vlam_editor.configuration.defaults.temp_dir + vlam_editor.os.path.sep + "temp.py"
+  True
 
 # Test - br
->>> elem[6].tag == "br"
-True
+
+  >>> elem[6].tag == "br"
+  True
 
 
 

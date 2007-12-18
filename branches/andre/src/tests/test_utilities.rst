@@ -1,11 +1,9 @@
 utilities.py tests
-=============
+==================
 
 Tested successfully with Python 2.4, 2.5 and 3.0a1
 
     >>> import src.utilities as utilities
-
-=============
 
 First, testing some log id.
     >>> fake_id1 = "id"
@@ -39,19 +37,21 @@ It's probably a good idea to check at some failing tests as well
     >>> print(utilities.extract_log_id("Move along, there is nothing here"))
     <BLANKLINE>
 
-=============
 
-Testing how well empty lines are stripped from the end of code segments
+Testing how well empty lines are stripped from the end of code segments.
+------------------------------------------------------------------------
 
-Define test data
-	>>> strip_none = "Hello, World!"
-	>>> strip_top = "\nHello, World!"
+Define test data.
+
+    >>> strip_none = "Hello, World!"
+    >>> strip_top = "\nHello, World!"
     >>> strip_bottom = "Hello, World!\n"
-	>>> strip_both = "\nHello, World!\n"
-	>>> strip_mixed = "\nHello,\n\nWorld!\n"
-	>>> strip_with_spaces = "   \nHello World!\n \r "
+    >>> strip_both = "\nHello, World!\n"
+    >>> strip_mixed = "\nHello,\n\nWorld!\n"
+    >>> strip_with_spaces = "   \nHello World!\n \r "
 
-Carry out tests on test data, checking that results were correct
+Carry out tests on test data, checking that results were correct.
+
 	>>> print(utilities.trim_empty_lines_from_end(strip_none) == "Hello, World!")
 	True
 	>>> print(utilities.trim_empty_lines_from_end(strip_top) == "Hello, World!")
@@ -65,11 +65,12 @@ Carry out tests on test data, checking that results were correct
 	>>> print(utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!")
 	True
 	
-=============
 
 Testing conversion of HTML special characters
+---------------------------------------------
 
-Define tests and expected results
+Define tests and expected results.
+
 	>>> html_lt_test = "Airspeed Velocity of Unladen African Swallow < Airspeed Velocity of Unladen European Swallow"
 	>>> html_lt_result = "Airspeed Velocity of Unladen African Swallow &lt; Airspeed Velocity of Unladen European Swallow"
 	>>> html_and_test = "Arthur & Patsy"
@@ -89,4 +90,3 @@ Carry out tests
 	>>> print(utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result)
 	True
 
-=============

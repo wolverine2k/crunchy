@@ -6,6 +6,7 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
 editarea.py is a plugin whose purpose is to insert the appropriate code in 
 a page to enable the javascript based editor "editarea".  It has the following functions
 that require testing:
+
 1. register(): registers a service available to other plugins.
 2. enable_editarea(): enables an editarea editor on a given element (textarea) of a page.
 3. add_hidden_load_and_save(): inserts the appropriate html/javascript code required to
@@ -46,6 +47,7 @@ We start by creating an Element which will be manipulated by the function we wis
 
 Next, as a first crude test, we investigate to see if all the required elements 
 have been inserted (and none unexpected).
+
     >>> br = []
     >>> forms = []
     >>> inputs = []
@@ -78,12 +80,14 @@ have been inserted (and none unexpected).
 
 Assuming all the above pass, we can start looking at things in a bit more detail.
 The first form has one 'br' as sub-subelement whereas the second does not.
+
     >>> forms[0].find('br') == None
     False
     >>> forms[1].find('br') == None
     True
 
 The first form has one 'input' as a sub-element with the following characteristics.
+
     >>> input1 = forms[0].find('input')
     >>> input1.attrib['type']
     'file'
@@ -96,6 +100,7 @@ The first form has one 'input' as a sub-element with the following characteristi
     3
 
 The second form has also one 'input' as a sub-element.
+
     >>> input2 = forms[1].find('input')
     >>> input2.attrib['type']
     'hidden'
@@ -115,6 +120,7 @@ Testing addLoadPython() is very similar to testing addSavePython().
 We start by creating an Element which will be manipulated by the function we wish to test,
 making sure they are slightly different from those used for addSavePython() so that
 we don't get a correct result by accident.
+
     >>> elem_load = cp.Element('load_parent')
     >>> id__1 = 'un'
     >>> id__2 = 'deux'
@@ -122,6 +128,7 @@ we don't get a correct result by accident.
     
 Next, as a first crude test, we investigate to see if all the required elements 
 have been inserted (and none unexpected).
+
     >>> br = []
     >>> forms = []
     >>> inputs = []
@@ -154,12 +161,14 @@ have been inserted (and none unexpected).
     
 Assuming all the above pass, we can start looking at things in a bit more detail.
 The first form has one 'br' as sub-subelement whereas the second does not.
+
     >>> forms[0].find('br') == None
     False
     >>> forms[1].find('br') == None
     True
 
 The first form has one 'input' as a sub-element with the following characteristics.
+
     >>> input1 = forms[0].find('input')
     >>> input1.attrib['type']
     'file'
@@ -172,6 +181,7 @@ The first form has one 'input' as a sub-element with the following characteristi
     3
 
 The second form has also one 'input' as a sub-element.
+
     >>> input2 = forms[1].find('input')
     >>> input2.attrib['type']
     'hidden'
@@ -191,12 +201,14 @@ This is actually a bit simpler to test than the previous two as the function is 
 We start by creating an Element which will be manipulated by the function we wish to test,
 making sure they are slightly different from those used before so that
 we don't get a correct result by accident.
+
     >>> new_elem = cp.Element('dummy')
     >>> id1 = 'ONE'
     >>> editarea.add_hidden_load_and_save(new_elem, id1)
     
 Next, as a first crude test, we investigate to see if all the required elements 
 have been inserted (and none unexpected).
+
     >>> br = []
     >>> forms = []
     >>> inputs = []
@@ -233,6 +245,7 @@ have been inserted (and none unexpected).
     2
 
 We then check for the explicit content    
+
     >>> hidden_load_id = 'hidden_load' + id1
     >>> hidden_save_id = 'hidden_save' + id1
     >>> divs[0].attrib['id'] == hidden_load_id
@@ -286,13 +299,3 @@ called properly.
     ...     print(inc)
     editarea_included
     hidden_load_and_save
-    
-
-
-
-
-
-
-
-
-
