@@ -46,7 +46,7 @@ def path_to_filedata(path, root):
                 return open(npath.encode(sys.getfilesystemencoding()),
                             mode="rb").read()
             except IOError:
-                print "in path_to_filedata, can not open path = ", npath
+                print("In path_to_filedata, can not open path = " + npath)
                 return error_page(path)
 
 def handler(request):
@@ -71,14 +71,14 @@ def get_directory(npath):
             return path_to_filedata("/"+i, npath)
     tstring = ""
     for child in childs:
-        tstring += '<li><a href="%s">%s</a></li>' % (child, child)
+        tstring += '<li><a href="' + str(child) + '">' + str(child) +'</a></li>'
     return dir_list_page % (_("Directory Listing"), tstring)
 
 # the root of the server is in a separate directory:
 root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
 
 if cp.DEBUG:
-    print "Root path is %s" % root_path
+    print("Root path is %s" % root_path)
 
 default_pages = ["index.htm", "index.html"]
 

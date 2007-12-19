@@ -21,8 +21,8 @@ import urllib
 import urlparse
 import sys
 
-version = sys.version.split('.')
-python_version = float(version[0] + '.' + version[1][0])
+from src.universal import python_version
+
 if python_version < 2.5:
     # Third party modules - included in crunchy distribution
     from src.element_tree import ElementTree
@@ -296,6 +296,8 @@ def remove_unwanted(tree, page):
     # determine if site security level has been set to override
     # the default
     security_level = configuration.defaults.page_security_level(page.url)
+    
+    
     print("security_level in security.py = "+ security_level)
 
     _allowed = allowed_attributes[security_level]
@@ -306,6 +308,8 @@ def remove_unwanted(tree, page):
                           'attributes removed': [],
                           'styles removed': []
                         }
+    #if python_version >= 3:
+    #    return
 
 # first, removing unwanted tags
     unwanted = set()
@@ -428,6 +432,8 @@ def remove_unwanted(tree, page):
 
 def __cleanup(elem, filter):
     ''' See http://effbot.org/zone/element-bits-and-pieces.htm'''
+    if python_version >= 3:
+        return
     out = []
     for e in elem:
         __cleanup(e, filter)

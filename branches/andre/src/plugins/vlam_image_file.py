@@ -164,9 +164,9 @@ img.src = "/generated_image"+now.getTime()+"?url="+image_name;
         page.add_js_code(load_image)
         old_files = [x for x in os.listdir(defaults.temp_dir)]
         for x in old_files:
-            print "removing file %s"%(x)
+            print("removing file %s"%x)
             try:
                 os.remove(os.path.join(defaults.temp_dir, x))
             except:  # if it fails, it is not a major problem
-                print "could not remove file %s"%(x)
+                print("could not remove file %s"%x)
 

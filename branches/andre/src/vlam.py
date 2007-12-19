@@ -54,8 +54,13 @@ class CrunchyPage(object):
         register_new_page(self.pageid)
         # "old" method using ElementTree directly
         #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
-        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
-        self.tree = et.ElementTree(html)
+        if python_version < 3:
+            #self.tree = parse(filehandle, encoding = 'utf-8')
+            html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+            self.tree = et.ElementTree(html)
+        else:
+            self.tree = parse(filehandle)
+        
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
         self.tree = security.remove_unwanted(self.tree, self)

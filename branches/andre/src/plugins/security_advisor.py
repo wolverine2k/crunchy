@@ -328,7 +328,8 @@ appealing.
 
 def set_security_list(request):
     site_list_info = request.data.strip(',').split(',')
-    print site_list_info
+    if cp.DEBUG:
+        print(site_list_info)
     site_list = []
     for site_info in site_list_info:
         if ":" not in site_info:
@@ -343,7 +344,7 @@ def set_security_list(request):
                'display normal', 'display strict', 'display trusted']:
                 configuration.defaults._set_site_security(site, mode)
                 if cp.DEBUG:
-                    print '%s has been set to %s: '%(site, mode)
+                    print(str(site) + ' has been set to ' + str(mode))
             else:
                 to_be_deleted.append(site)
     for site in to_be_deleted:

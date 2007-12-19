@@ -59,9 +59,9 @@ def insert_default_menu(page):
         # this is important for poorly formed tutorials (non-w3c compliant).
     try:
         page.head.append(_css)
-    except Exception, info:
-        print info
-        print "_css=", _css
+    except Exception:#, info:
+        print("Cannot append css code in the head") # info
+        print("_css= " + _css)
     # insert the required code to make the menu draggable
     if not page.includes("drag_included"):
         page.add_include("drag_included")
@@ -76,8 +76,8 @@ def extract_menu(filename, page, safe_menus=False):
        <link> in that file.'''
     try:
         tree = CrunchyPlugin.parse(filename)
-    except Exception, info:
-        print info
+    except Exception:#, info:
+        print("cannot create a tree from the file")# info
     # Treat menus just as suspiciously as the original file
     if not safe_menus:
         tree = security.remove_unwanted(tree, page)

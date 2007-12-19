@@ -19,5 +19,5 @@ def u_print(*args):
         to_print.append(arg)
     print(''.join(to_print))
 
-def exec_code(code, local_dict):
+def exec_code(code, local_dict, source="ignore"):
     exec(code, local_dict)

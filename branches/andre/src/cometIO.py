@@ -10,8 +10,9 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
+from src.universal import python_version
 
-debug_ids = []
+debug_ids = [1, 2, 3, 4, 5]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -27,8 +28,11 @@ class StringBuffer(object):
         Multiple clients are handled in no particular order"""
         debug_msg("entering StringBuffer.get", 1)
         while True:
+            debug_msg("begin loop", 5)
             self.event.clear()
+            debug_msg("cleared events", 5)
             self.lock.acquire()
+            debug_msg("acquired lock", 5)
             if len(self.data) > 0:
                 t = self.data
                 self.data = ""
@@ -36,6 +40,7 @@ class StringBuffer(object):
                 debug_msg("leaving StringBuffer.get: " + t, 1)
                 return t
             self.lock.release()
+            debug_msg("released lock", 5)
             self.event.wait()
 
     def getline(self, uid):
@@ -132,18 +137,27 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if 'display' in configuration.defaults.current_page_security_level:
-        return
-
+    if python_version < 3:
+        if 'display' in configuration.defaults.current_page_security_level:
+            return
+    else:
+        # need to figure out the new string handling; the above
+        # code always returns using Python 3k
+        pass
+       
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
 
     symbols = { configuration.defaults._prefix : configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
+    debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
     t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
+    debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
     t.setDaemon(True)
+    debug_msg("  starting the thread in cometIO.do_exec()", 5)
     t.start()
+    debug_msg("reached the end of cometIO.do_exec()", 5)
 
 def push_input(request):
     """An http request handler to deal with stdin"""
@@ -199,7 +213,12 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-        output_buffers[pageid].put(reset_js % (uid, uid))
+        
+        # the following does not seem to work for py3k...
+        if python_version < 3:
+            output_buffers[pageid].put(reset_js % (uid, uid))
+        else:
+            output_buffers[pageid].put(reset_js_3k.format(uid, uid))
 
     def unregister_thread(self):
         """
@@ -306,6 +325,11 @@ reset_js = """
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 """
+reset_js_3k = """
+document.getElementById("in_{0}").style.display="inline";
+document.getElementById("out_{1}").innerHTML="";
+"""
+
 help_js = """
 document.getElementById("help_menu").style.display = "block";
 document.getElementById("help_menu_x").style.display = "block";

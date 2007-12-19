@@ -57,9 +57,11 @@ def set_fill_colour(col):
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
 set_fill_color = set_fill_colour
 
-def line((x1, y1), (x2, y2)):
-    '''Draws a line from point (x1, y1) to point (x2, y2) in the default line colour.'''
+def line(point_1, point_2):
+    '''Draws a line from point_1 = (x1, y1) to point_2 (x2, y2) in the default line colour.'''
     uid = __cp.get_uid()
+    x1, y1 = point_1
+    x2, y2 = point_2
     y1 = HEIGHTS[uid] - y1
     y2 = HEIGHTS[uid] - y2
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
@@ -67,37 +69,44 @@ def line((x1, y1), (x2, y2)):
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x1, y1, uid, x2, y2, uid))
 
-def circle((x, y), r):
-    '''Draws a circle of radius r centred on (x, y) in the default line colour.'''
+def circle(centre, r):
+    '''Draws a circle of radius r centred on centre = (x, y) in the default line colour.'''
     uid = __cp.get_uid()
+    x, y = centre
     y = HEIGHTS[uid] - y
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, r, uid))
 
-def filled_circle((x, y), r):
-    '''Draws a filled circle of radius r centred on (x, y) in the default fill colour.'''
+def filled_circle(centre, r):
+    '''Draws a filled circle of radius r centred on centre = (x, y) in the default fill colour.'''
     uid = __cp.get_uid()
+    x, y = centre
     y = HEIGHTS[uid] - y
     __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').fill();""" % (uid, uid, x, y, r, uid))
 
-def rectangle((x1, y1), w, h):
+def rectangle(corner, w, h):
     '''Draws a rectangle in the default line colour.'''
     uid = __cp.get_uid()
-    y1 = HEIGHTS[uid] - y1 - h
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x1, y1, w, h))
+    x, y = corner # bottom left
+    y = HEIGHTS[uid] - y - h
+    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
-def filled_rectangle((x1, y1), w, h):
+def filled_rectangle(corner, w, h):
     '''Draws a filled rectangle in the default fill colour.'''
     uid = __cp.get_uid()
-    y1 = HEIGHTS[uid] - y1 - h
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x1, y1, w, h))
+    x, y = corner # bottom left
+    y = HEIGHTS[uid] - y - h
+    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
-def triangle((x1, y1), (x2, y2), (x3, y3)):
+def triangle(point_1, point_2, point_3):
     '''Draws a triangle joining the three points in the default line colour.'''
     uid = __cp.get_uid()
+    x1, y1 = point_1
+    x2, y2 = point_2
+    x3, y3 = point_3
     y1 = HEIGHTS[uid] - y1
     y2 = HEIGHTS[uid] - y2
     y3 = HEIGHTS[uid] - y3
@@ -108,9 +117,12 @@ def triangle((x1, y1), (x2, y2), (x3, y3)):
                              document.getElementById("canvas_%s").getContext('2d').closePath();
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x1, y1, uid, x2, y2, uid, x3, y3, uid, uid))
 
-def filled_triangle((x1, y1), (x2, y2), (x3, y3)):
+def filled_triangle(point_1, point_2, point_3):
     '''Draws a filled triangle joining the three points in the default fill colour.'''
     uid = __cp.get_uid()
+    x1, y1 = point_1
+    x2, y2 = point_2
+    x3, y3 = point_3
     y1 = HEIGHTS[uid] - y1
     y2 = HEIGHTS[uid] - y2
     y3 = HEIGHTS[uid] - y3

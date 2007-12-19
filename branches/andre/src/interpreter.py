@@ -20,19 +20,27 @@ class Interpreter(threading.Thread):
     Run python source asynchronously
     """
     def __init__(self, code, channel, symbols = {}, doctest=False):
+        print("init Interpreter")
         threading.Thread.__init__(self)
-        self.code = trim_empty_lines_from_end(code)
+        print("initialized the thread")
+        if python_version < 3:
+            self.code = trim_empty_lines_from_end(code) # problem with Py3k?
+        else:
+            self.code = code
+        print("set the code")
         self.channel = channel
         self.symbols = symbols
         self.doctest = doctest
         if self.doctest:
             self.doctest_out = StringIO()
             self.symbols['doctest_out'] = self.doctest_out
+        print("reached the end of init")
 
     def run(self):
         """run the code, redirecting stdout, stderr, stdin and
            returning the string representing the output
         """
+        print("inside Interpreter.run()")
         sys.stdin.register_thread(self.channel)
         sys.stdout.register_thread(self.channel)
         sys.stderr.register_thread(self.channel)
@@ -40,8 +48,8 @@ class Interpreter(threading.Thread):
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
-                if configuration.defaults.friendly:
-                    sys.stderr.write(errors.simplify_traceback(self.code))
+                if configuration.defaults.friendly and python_version < 3:
+                        sys.stderr.write(errors.simplify_traceback(self.code))
                 else:
                     traceback.print_exc()
             if not self.ccode:    #code does nothing
@@ -71,7 +79,7 @@ class Interpreter(threading.Thread):
                 # we have commented out the {} as a reminder; self.symbols
                 # will be used for holding both global and local variables.
             except:
-                if configuration.defaults.friendly:
+                if configuration.defaults.friendly and python_version < 3:
                     sys.stderr.write(errors.simplify_traceback(self.code))
                 else:
                     traceback.print_exc()
@@ -185,7 +193,10 @@ class InteractiveInterpreter(object):
         try:
             code = self.compile(source, filename, symbol)
         except (OverflowError, SyntaxError, ValueError):
-            sys.stderr.write(errors.simplify_traceback(source))
+            if python_version < 3:
+                sys.stderr.write(errors.simplify_traceback(source))
+            else:
+                traceback.print_exc()
             return False
         if code is None:
             return True
