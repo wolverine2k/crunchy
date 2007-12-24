@@ -1,5 +1,5 @@
 """Plugin for loading and transforming ReST files."""
-import os, sys
+
 import src.CrunchyPlugin as CrunchyPlugin
 
 _docutils_installed = True
@@ -29,9 +29,9 @@ def load_rst(request):
             return self._data
 
     url = request.args["url"]
-    file = open(url)
+    file_ = open(url)
 
-    rst_file = ReST_file(publish_string(file.read(), writer_name="html"))
+    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
     page = CrunchyPlugin.create_vlam_page(rst_file, 
             url, local=True)
     
@@ -39,7 +39,7 @@ def load_rst(request):
     request.end_headers()
     request.wfile.write(page.read())
 
-def insert_load_rst(page, parent, uid):
+def insert_load_rst(dummy_page, parent, dummy_uid):
     """Creates new widget for loading rst files.
     Only include <span title="load_rst"> </span>"""
     name1 = 'browser_rst'
@@ -47,13 +47,13 @@ def insert_load_rst(page, parent, uid):
     form1 = CrunchyPlugin.SubElement(parent, 'form', name=name1,
                         onblur = "document.%s.url.value="%name2+\
                         "document.%s.filename.value"%name1)
-    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file',
+    CrunchyPlugin.SubElement(form1, 'input', type='file',
                  name='filename', size='80')
-    br = CrunchyPlugin.SubElement(form1, 'br')
+    CrunchyPlugin.SubElement(form1, 'br')
 
     form2 = CrunchyPlugin.SubElement(parent, 'form', name=name2, method='get',
                 action='/rst')
-    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', name='url')
+    CrunchyPlugin.SubElement(form2, 'input', type='hidden', name='url')
     input3 = CrunchyPlugin.SubElement(form2, 'input', type='submit',
              value='Load local ReST file')
     input3.attrib['class'] = 'crunchy'

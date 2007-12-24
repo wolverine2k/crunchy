@@ -4,7 +4,6 @@ from imp import find_module
 from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
-import src.configuration as configuration
 import src.CrunchyPlugin as cp
 
 
@@ -64,7 +63,7 @@ def handler(request):
 def get_directory(npath):
     _ = cp._
     childs = listdir(npath)
-    childs = childs[:]
+    #childs = childs[:]  # pointless statement; why was this done?
     annotate(npath, childs)
     for i in default_pages:
         if i in childs:

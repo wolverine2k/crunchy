@@ -53,11 +53,11 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     br = CrunchyPlugin.SubElement(parent, 'br')
     form1 = CrunchyPlugin.SubElement(parent, 'form',
                 onblur = "a=getElementById('%s');b=getElementById('%s');a.value=b.value"%(path, filename))
-    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
-    br = CrunchyPlugin.SubElement(form1, 'br')
+    CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
+    CrunchyPlugin.SubElement(form1, 'br')
 
     form2 = CrunchyPlugin.SubElement(parent, 'form')
-    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
+    CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
     btn = CrunchyPlugin.SubElement(parent, 'button',
         onclick="c=getElementById('%s');path=c.value;load_python_file('%s');"%(path, textarea_id))
     btn.text = _("Load Python file")
@@ -72,14 +72,14 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     '''
     filename = 'filename' + hidden_save_id
     path = 'path' + hidden_save_id
-    br = CrunchyPlugin.SubElement(parent, 'br')
+    CrunchyPlugin.SubElement(parent, 'br')
     form1 = CrunchyPlugin.SubElement(parent, 'form')
-    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
-    br = CrunchyPlugin.SubElement(form1, 'br')
+    CrunchyPlugin.SubElement(form1, 'input', type='file', id=filename, size='80')
+    CrunchyPlugin.SubElement(form1, 'br')
 
     form2 = CrunchyPlugin.SubElement(parent, 'form')
     form2.text = _("Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally.")
-    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
+    CrunchyPlugin.SubElement(form2, 'input', type='hidden', id=path)
     btn = CrunchyPlugin.SubElement(parent, 'button',
         onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
         "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))

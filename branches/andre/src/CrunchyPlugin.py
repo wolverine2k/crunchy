@@ -70,9 +70,9 @@ created, that conflicts with an existing one."""%tag)
             else:
                 print("""FATAL ERROR"
 Attempting to define a handler twice for the same combination
-tag: %s, option: %s
+tag: %s, attribute: %s
 Handlers should be unique: a new plugin must have been
-created, that conflicts with an existing one."""%(elem_type, option))
+created, that conflicts with an existing one."""%(tag, attribute))
                 raise
     # Dealing with case where tag, attribut and keyword are all defined.
     if tag not in vlam.CrunchyPage.handlers3:

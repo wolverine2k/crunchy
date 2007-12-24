@@ -15,7 +15,7 @@ def register():
     cp.register_tag_handler("style", None, None, style_handler)
     cp.register_tag_handler("a","title", "external_link", external_link)
 
-def external_link(page, elem, *dummies):
+def external_link(dummy_page, elem, *dummies):
     '''handler which totally ignores the link being passed to it, other than
     inserting an image to indicate it leads outside of Crunchy'''
     if elem.tail:

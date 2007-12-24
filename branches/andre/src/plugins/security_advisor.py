@@ -3,7 +3,6 @@ security_advisor.py
 
 Inserts security information at the top of a page
 '''
-import random
 from urlparse import urlsplit
 
 import src.configuration as configuration
@@ -41,7 +40,7 @@ def insert_security_info(page, *dummy):
     level_img.tail = _(" Crunchy security level: ") +\
                         page.security_info['level']
 
-    br = cp.SubElement(span, "br")
+    cp.SubElement(span, "br")
 
     img = cp.SubElement(span, "img")
     img.attrib["alt"] = "security result"
@@ -274,7 +273,7 @@ def format_report(page, div):
             inp.attrib['type'] = 'radio'
             inp.attrib['name'] = "rad"
             inp.attrib['id'] = netloc + option[0]
-            br = cp.SubElement(form, 'br')
+            cp.SubElement(form, 'br')
             if netloc in configuration.defaults.site_security:
                 if option[1] == configuration.defaults.site_security[netloc]:
                     inp.attrib['checked'] = 'checked'

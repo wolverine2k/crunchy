@@ -9,7 +9,6 @@ import os
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 import src.security as security
-import src.configuration as configuration
 
 _default_menu = None
 _css = None
@@ -84,7 +83,6 @@ def extract_menu(filename, page, safe_menus=False):
 
     # extract menu for use in other files
     menu = tree.find(".//div")
-    #head = tree.find("head")
     css = tree.find(".//link")
 
     # make the menu draggable

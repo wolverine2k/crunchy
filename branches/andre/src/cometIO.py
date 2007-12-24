@@ -12,7 +12,7 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 from src.universal import python_version
 
-debug_ids = [1, 2, 3, 4, 5]
+debug_ids = []#1, 2, 3, 4, 5]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended

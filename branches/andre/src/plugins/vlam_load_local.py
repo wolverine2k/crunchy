@@ -25,7 +25,7 @@ def register():
     CrunchyPlugin.register_tag_handler("span", "title", "load_local",
                                                  insert_load_local)
 
-def insert_load_local(page, parent, uid):
+def insert_load_local(dummy_page, parent, dummy_uid):
     # in general, page and uid are used by similar plugins, but they are
     # redundant here.
     name1 = 'browser_'
@@ -33,13 +33,13 @@ def insert_load_local(page, parent, uid):
     form1 = CrunchyPlugin.SubElement(parent, 'form', name=name1,
                         onblur = "document.%s.url.value="%name2+\
                         "document.%s.filename.value"%name1)
-    input1 = CrunchyPlugin.SubElement(form1, 'input', type='file',
+    CrunchyPlugin.SubElement(form1, 'input', type='file',
                  name='filename', size='80')
-    br = CrunchyPlugin.SubElement(form1, 'br')
+    CrunchyPlugin.SubElement(form1, 'br')
 
     form2 = CrunchyPlugin.SubElement(parent, 'form', name=name2, method='get',
                 action='/local')
-    input2 = CrunchyPlugin.SubElement(form2, 'input', type='hidden', name='url')
+    CrunchyPlugin.SubElement(form2, 'input', type='hidden', name='url')
     input3 = CrunchyPlugin.SubElement(form2, 'input', type='submit',
              value='Load local tutorial')
     input3.attrib['class'] = 'crunchy'

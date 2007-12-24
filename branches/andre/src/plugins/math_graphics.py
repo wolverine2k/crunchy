@@ -10,9 +10,6 @@ import re
 import src.CrunchyPlugin as __cp
 
 created_uids = []
-def register():
-    # no callbacks to register or initialisation needed
-    pass
 
 HEIGHTS = {}
 

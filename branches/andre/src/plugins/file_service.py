@@ -97,7 +97,7 @@ def load_file_request_handler(request):
         content = read_file(request.args['path'])
     except:
         print("  Exception found.")
-        print("  path = " + path)
+        print("  path = " + request.args['path'])
         return 404
     request.send_response(200)
     request.end_headers()

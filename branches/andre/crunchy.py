@@ -1,17 +1,15 @@
 """Crunchy: serving up interactive Python tutorials
 
 """
-
 import socket
 import webbrowser
-import sys
+#import pychecker.checker
 
 from src.universal import python_version, u_print
 required = 2.4
 if python_version < required:
     print("Crunchy requires at least Python version %s"%required)
     raise SystemExit
-
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""

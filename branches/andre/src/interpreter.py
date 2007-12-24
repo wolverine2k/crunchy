@@ -20,27 +20,22 @@ class Interpreter(threading.Thread):
     Run python source asynchronously
     """
     def __init__(self, code, channel, symbols = {}, doctest=False):
-        print("init Interpreter")
         threading.Thread.__init__(self)
-        print("initialized the thread")
         if python_version < 3:
             self.code = trim_empty_lines_from_end(code) # problem with Py3k?
         else:
             self.code = code
-        print("set the code")
         self.channel = channel
         self.symbols = symbols
         self.doctest = doctest
         if self.doctest:
             self.doctest_out = StringIO()
             self.symbols['doctest_out'] = self.doctest_out
-        print("reached the end of init")
 
     def run(self):
         """run the code, redirecting stdout, stderr, stdin and
            returning the string representing the output
         """
-        print("inside Interpreter.run()")
         sys.stdin.register_thread(self.channel)
         sys.stdout.register_thread(self.channel)
         sys.stderr.register_thread(self.channel)

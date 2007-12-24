@@ -19,7 +19,7 @@ def register():
     CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
     CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
 
-def insert_tooltip(page, elem, uid):
+def insert_tooltip(page, *dummies):
     if not page.includes("tooltip_included") and page.body:
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")

@@ -7,9 +7,6 @@ import re
 import src.CrunchyPlugin as __cp
 
 created_uids = []
-def register():
-    # no callbacks to register or initialisation needed
-    pass
 
 def init_graphics(width=400, height=400, border_color='red'):
     uid = __cp.get_uid()

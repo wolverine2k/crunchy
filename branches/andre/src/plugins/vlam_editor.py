@@ -179,9 +179,9 @@ def insert_alternate_python(page, elem, uid):
     span = CrunchyPlugin.SubElement(form1, 'span')
     span.text = _('Alternate Python path: ')
     span.attrib['class'] = 'alt_python'
-    input = CrunchyPlugin.SubElement(form1, 'input', id='input1_'+uid, size='50',
+    input1 = CrunchyPlugin.SubElement(form1, 'input', id='input1_'+uid, size='50',
                             value=configuration.defaults.alternate_python_version)
-    input.attrib['class'] = 'alt_python'
+    input1.attrib['class'] = 'alt_python'
     CrunchyPlugin.SubElement(elem, "br")
 
     btn = CrunchyPlugin.SubElement(elem, "button")

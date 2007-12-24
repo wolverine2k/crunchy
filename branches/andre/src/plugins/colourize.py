@@ -15,11 +15,8 @@ would only need to modify only parts of this module, as idenfied below.
 import copy
 import re
 import keyword
-#import StringIO
 import token
 import tokenize
-import sys
-#import htmlentitydefs
 
 from src.universal import StringIO, ElementTree, python_version
 et = ElementTree
@@ -58,7 +55,7 @@ def register():
 
 
 
-def plugin_style(page, elem, dummy_uid):
+def plugin_style(dummy_page, elem, dummy_uid):
     '''Handles the vlam py_code elements'''
     code, markup, error = style(elem)
     if error is None:
@@ -70,10 +67,10 @@ def plugin_style(page, elem, dummy_uid):
         elem.insert(0, br)
         elem.insert(0, error)
 
-def service_style(page, elem):
+def service_style(dummy_page, elem):
     return style(elem)
 
-def service_style_nostrip(page, elem):
+def service_style_nostrip(dummy_page, elem):
     return nostrip_style(elem)
 
 #---------end plugin specific-------------------------
@@ -176,7 +173,10 @@ def nostrip_style(elem):
             sp = et.Element("span")
             sp.attrib['class'] = "py_warning"
             sp.text = _("Crunchy: could not style the following code")
-            return '', '', sp
+            return '', '', sp   # will be treated as special case in vlam_image_file.py
+                                # Need to treat this more consistently i.e. have the
+                                # same number of arguments returned - perhaps check
+                                # if return a tuple as second argument
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
         new_elem.attrib['class'] += ' crunchy'
@@ -373,7 +373,6 @@ class Colourizer(object):
             temp_in = self.tokenString.split('\n')
             line_num = self.beginLine + self.offset
             #
-            prefix = "<span class='py_linenumber'>%3d </span>"%line_num
             temp_out = temp_in[0]
             for substring in temp_in[1:]:
                 line_num += 1
@@ -529,7 +528,6 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
     span_len = len("<span>")
     endspan_len = len("</span>")
 
-
     for (prompt, info) in stripped:
         if prompt:
             if offset is not None:
@@ -538,7 +536,7 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
                 # result in overlapping <span>s which makes the
                 # prompt the same font size as the linenumber
                 if lines[info-1].startswith("<span>"):
-                    length = span_length + line_info_len#pr_len
+                    length = span_len + line_info_len#pr_len
                 elif lines[info-1].startswith("</span>"):
                     length = endspan_len + line_info_len#pr_len
                 else:

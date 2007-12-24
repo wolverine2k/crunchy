@@ -7,6 +7,7 @@ example as to how to write a plugin.
 """
 
 import os
+import copy
 
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
@@ -92,9 +93,9 @@ def insert_image_file(page, elem, uid):
     # an output subwidget:
     CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
 
-    # Extension of the file; used for determining the filetype
-    ext = img_fname.split('.')[-1]
     CrunchyPlugin.SubElement(elem, "br")
+    # Extension of the file; used for determining the filetype
+    #ext = img_fname.split('.')[-1]
     # KEEP .... as a reminder
 ##    if ext in ['svg', 'svgz']:  # currently untested
 ##        img = CrunchyPlugin.SubElement(elem, "iframe")

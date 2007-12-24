@@ -3,6 +3,7 @@
    a collection of functions used in other modules.
 '''
 import re
+import configuration
 
 def extract_log_id(vlam):
     '''given a vlam of the form
