@@ -463,18 +463,19 @@ def validate_image(src, page):
         print("root_path "+ root_path)
 
     # try solving encoding problems
-    try:
-        page.url = page.url.encode(sys.getfilesystemencoding())
-    except:  # alreay encoded?
-        pass
-    try:
-        root_path = root_path.encode(sys.getfilesystemencoding())
-    except:  # alreay encoded?
-        pass
-    try:
-        src = src.encode(sys.getfilesystemencoding())
-    except:  # alreay encoded?
-        pass
+    if page.is_local and python_version < 3:
+        try:
+            page.url = page.url.encode(sys.getfilesystemencoding())
+        except:  # alreay encoded?
+            pass
+        try:
+            root_path = root_path.encode(sys.getfilesystemencoding())
+        except:  # alreay encoded?
+            pass
+        try:
+            src = src.encode(sys.getfilesystemencoding())
+        except:  # alreay encoded?
+            pass
 
     if src.startswith("http://"):
         # the image may be residing on a different site than the one
@@ -566,14 +567,15 @@ def is_link_safe(elem, page):
     #--If we reach this point we have in principle a valid style sheet.
 
     # try solving encoding problems
-    try:
-        url = url.encode(sys.getfilesystemencoding())
-    except:  # alreay encoded?
-        pass
-    try:
-        href = href.encode(sys.getfilesystemencoding())
-    except:  # alreay encoded?
-        pass
+    if page.is_local and python_version < 3:
+        try:
+            url = url.encode(sys.getfilesystemencoding())
+        except:  # alreay encoded?
+            pass
+        try:
+            href = href.encode(sys.getfilesystemencoding())
+        except:  # alreay encoded?
+            pass
 
     link_url = find_url(url, href, page)
     if DEBUG2:

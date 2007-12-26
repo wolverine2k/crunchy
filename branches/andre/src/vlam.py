@@ -13,7 +13,7 @@ else:
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.universal import python_version, ElementTree, parse
+from src.universal import python_version, ElementTree, parse, XmlFile
 if python_version < 3:
     from src.element_tree import ElementSoup
 et = ElementTree
@@ -59,7 +59,7 @@ class CrunchyPage(object):
             html = ElementSoup.parse(filehandle, encoding = 'utf-8')
             self.tree = et.ElementTree(html)
         else:
-            self.tree = parse(filehandle)
+            self.tree = XmlFile(filehandle)
         
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.

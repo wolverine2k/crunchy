@@ -40,3 +40,19 @@ Element = ElementTree.Element
 SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
+
+XmlFile = None
+if python_version >= 3:
+    import src.my_htmlentitydefs
+    class XmlFile(ElementTree.ElementTree):
+        def __init__(self, file=None):
+            ElementTree.ElementTree.__init__(self)
+            parser = ElementTree.XMLTreeBuilder(
+                target=ElementTree.TreeBuilder(ElementTree.Element))
+            ent = src.my_htmlentitydefs.entitydefs
+            for entity in ent:
+                if entity not in parser.entity:
+                    parser.entity[entity] = ent[entity]
+            self.parse(source=file, parser=parser)
+            return 
+
