@@ -318,8 +318,11 @@ class InteractiveConsole(InteractiveInterpreter):
         """
         # Getting ahead of ourselves: ready for Python 3000 ;-)
         if int(sys.version.split('.')[0]) > 2:
-            return input(prompt)
-        return raw_input(prompt)
+            sys.stdout.write(prompt)
+            sys.stdout.flush()
+            return sys.stdin.readline()
+        else:
+            return raw_input(prompt)
 
 #===== End of modified code.py ========
 
@@ -354,10 +357,13 @@ class Borg(object):
     remember to use Borg.__new__ within the overriden class.
     '''
     _shared_state = {}
-    def __new__(cls, *a, **k):
-        obj = object.__new__(cls, *a, **k)
-        obj.__dict__ = cls._shared_state
-        return obj
+    if python_version < 3:
+        def __new__(cls, *a, **k):
+            obj = object.__new__(cls, *a, **k)
+            obj.__dict__ = cls._shared_state
+            return obj
+    else:
+        pass
 
 # The following BorgConsole class is defined such that all instances
 # of an interpreter on a same html page share the same environment.
