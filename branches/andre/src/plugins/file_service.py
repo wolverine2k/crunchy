@@ -171,9 +171,13 @@ def save_file_python_interpreter_request_handler(request):
     data = request.data
     request.send_response(200)
     request.end_headers()
-
+    if python_version >=3:
+        data = str(data)
     info = data.split("_::EOF::_")
-    path = info[1].decode("utf-8")
+    if python_version < 3:
+        path = info[1].decode("utf-8")
+    else:
+        path = info[1]
     try:
         path = path.encode(sys.getfilesystemencoding())
     except:
@@ -194,7 +198,7 @@ def save_and_run_python_interpreter_request_handler(request):
         print("Entering save_and_run_python_interpreter_request_handler.")
     path = save_file_python_interpreter_request_handler(request)
     if DEBUG:
-        print("  path = " + path)
+        print("  path = " + str(path))
     exec_external_python_version(path=path)
 
 def run_external_python_interpreter_request_handler(request):
@@ -230,8 +234,6 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True):
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
-    if DEBUG:
-        print("Reached mid point")
     if code is not None:
         filename = open(path, 'w')
         filename.write(code)
