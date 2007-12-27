@@ -4,6 +4,7 @@
 '''
 import re
 import src.configuration as configuration
+from src.universal import python_version
 
 def extract_log_id(vlam):
     '''given a vlam of the form
@@ -34,6 +35,8 @@ def changeHTMLspecialCharacters(text):
     '''replace <>& by their escaped valued so they are displayed properly
        in browser.'''
     # this function is used in colourize.py and cometIO.py
+    if python_version >= 3:
+        text = str(text)
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')

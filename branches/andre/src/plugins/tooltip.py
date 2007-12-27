@@ -8,6 +8,8 @@ import src.interpreter as interpreter
 import src.configuration as configuration
 import src.translation
 
+from src.universal import python_version
+
 _ = src.translation._
 borg_console = interpreter.BorgConsole()
 
@@ -82,8 +84,11 @@ def doc_handler(request):
         request.send_response(204)
         request.end_headers()
         return
+    if python_version < 3:
+        line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
+    else:
+        line = re.split(r"\s", urllib.unquote_plus(str(request.data)))[-1].strip()
 
-    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "func(text" as "func(", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.

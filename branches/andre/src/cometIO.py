@@ -168,6 +168,8 @@ def push_input(request):
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
+    if python_version >=3:
+        request.data = str(request.data)
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
 
