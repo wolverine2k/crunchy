@@ -90,3 +90,49 @@ Carry out tests
 	>>> print(utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result)
 	True
 
+
+Testing the "sanitization" of HTML
+----------------------------------
+
+When using Py3k, BeautifulSoup is not available ... and the only parser
+we can use successfully with ElementTree is an xml parser.  This means that
+it does require all tags to be closed, even those that are not required by html.
+So, we "sanitize" the html code by either removing such tags altogether, or
+closing them if possible.
+
+Closing <link>
+    >>> in1 = "some junk <link more junk here> more <junk>"
+    >>> print(utilities.close_link(in1))
+    some junk <link more junk here/> more <junk>
+    >>> print(utilities.sanitize_html_for_elementtree(in1))
+    some junk <link more junk here/> more <junk>
+   
+Closing <input>
+    >>> in2 = "some junk <input more junk here> more <junk>"
+    >>> print(utilities.close_input(in2))
+    some junk <input more junk here/> more <junk>
+    >>> print(utilities.sanitize_html_for_elementtree(in2))
+    some junk <input more junk here/> more <junk>
+
+Closing <meta>
+    >>> in3 = "some junk <meta more junk here> more <junk>"
+    >>> print(utilities.close_meta(in3))
+    some junk <meta more junk here/> more <junk>
+    >>> print(utilities.sanitize_html_for_elementtree(in3))
+    some junk <meta more junk here/> more <junk>
+
+Closing <img>
+    >>> in4 = "some junk <img more junk here> more <junk>"
+    >>> print(utilities.close_img(in4))
+    some junk <img more junk here/> more <junk>
+    >>> print(utilities.sanitize_html_for_elementtree(in4))
+    some junk <img more junk here/> more <junk>
+
+Removing <script>
+    >>> in5 = "junk <script> some junk </script> junk"
+    >>> print(utilities.remove_script(in5))
+    junk  junk
+    >>> print(utilities.sanitize_html_for_elementtree(in5))
+    junk  junk
+
+    

@@ -20,6 +20,7 @@ et = ElementTree
 
 from src.cometIO import register_new_page
 import src.configuration as configuration
+import src.utilities as utilities
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
@@ -59,7 +60,15 @@ class CrunchyPage(object):
             html = ElementSoup.parse(filehandle, encoding = 'utf-8')
             self.tree = et.ElementTree(html)
         else:
-            self.tree = XmlFile(filehandle)
+            try:
+                self.tree = XmlFile(filehandle)
+            except:  # this does not work yet
+                html_text = filehandle.read()
+                html_text = utilities.sanitize_html_for_elementtree(html_text)
+                fake_file = StringIO()
+                fake_file.write(str(html_text))
+                fake_file.seek(0)
+                self.tree = XmlFile(fake_file)
         
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.

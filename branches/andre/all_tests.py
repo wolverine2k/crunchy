@@ -15,8 +15,8 @@ test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
 test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 for t in test_files:
-    #if t == "test_colourize.rst":
-    #    continue # skip
+    if t == "test_colourize.rst":
+        continue # skip
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
 
