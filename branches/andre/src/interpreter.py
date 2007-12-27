@@ -44,7 +44,7 @@ class Interpreter(threading.Thread):
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
                 if configuration.defaults.friendly and python_version < 3:
-                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    sys.stderr.write(errors.simplify_traceback(self.code))
                 else:
                     traceback.print_exc()
             if not self.ccode:    #code does nothing
@@ -215,7 +215,7 @@ class InteractiveInterpreter(object):
             sys.stderr.write(errors.simplify_traceback(source))
         else:
             if softspace(sys.stdout, 0):
-                print
+                print('')
 
     def write(self, data):
         """Write a string.
@@ -316,13 +316,17 @@ class InteractiveConsole(InteractiveInterpreter):
         implementation.
 
         """
-        # Getting ahead of ourselves: ready for Python 3000 ;-)
-        if int(sys.version.split('.')[0]) > 2:
+        ## Getting ahead of ourselves: ready for Python 3000 ;-)
+        #if int(sys.version.split('.')[0]) > 2:
+        #    return input(prompt)
+        #return raw_input(prompt)
+        if python_version < 3:
+            return raw_input(prompt)
+        else:
+            return input(prompt)
             sys.stdout.write(prompt)
             sys.stdout.flush()
             return sys.stdin.readline()
-        else:
-            return raw_input(prompt)
 
 #===== End of modified code.py ========
 
@@ -357,6 +361,7 @@ class Borg(object):
     remember to use Borg.__new__ within the overriden class.
     '''
     _shared_state = {}
+
     if python_version < 3:
         def __new__(cls, *a, **k):
             obj = object.__new__(cls, *a, **k)
