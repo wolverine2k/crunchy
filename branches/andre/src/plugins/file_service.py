@@ -10,13 +10,13 @@ import sys
 
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
-
 import src.configuration as configuration
+from src.universal import python_version
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
-DEBUG = False
+DEBUG = True
 
 def register():
     """The register() function is required for all plugins.
@@ -57,8 +57,25 @@ def save_file_request_handler(request):
     # containing the path length separated from the path and the content by
     # a separator where we check to make sure the path recreated
     # is of the correct length - but it probably would be an overkill.
-    info = data.split("_::EOF::_")
-    path = info[0].decode("utf-8")
+    if python_version >=3:
+        data = str(data)
+        if DEBUG:
+            print('transformed data into str; data = ')
+            print(data)
+    if python_version >= 3:
+        try:
+            info = data.split("_::EOF::_")
+        except:
+            print('could not split data')
+    else:
+        info = data.split("_::EOF::_")
+    if DEBUG:
+        print("info = ")
+        print(info)
+    if python_version < 3:
+        path = info[0].decode("utf-8")
+    else:
+        path = info[0]
     try:
         path = path.encode(sys.getfilesystemencoding())
     except:
@@ -76,7 +93,8 @@ def save_and_run_request_handler(request):
         print("Entering save_and_run_request_handler.")
     path = save_file_request_handler(request)
     if DEBUG:
-        print("  path = " + path)
+        print("  path = ")
+        print(path)
     exec_external(path=path)
 
 def run_external_request_handler(request):
@@ -110,12 +128,17 @@ def save_file(full_path, content):
     if DEBUG:
         print("Entering save_file.")
     #full_path = full_path.encode(sys.getfilesystemencoding)
+    if python_version >=3:
+        full_path = str(full_path)
     try:
         f = open(full_path, 'w')
         f.write(content)
         f.close()
     except:
-        print("  Could not save file " + full_path)
+        print("  Could not save file; full_path =")
+        print(full_path)
+    if DEBUG:
+        print("Leaving save_file")
 
 def read_file(full_path):
     """reads a file
@@ -194,6 +217,10 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True):
     """
     if DEBUG:
         print("Entering exec_external_python_interpreter.")
+        print("path =" + str(path))
+        print("alternate version = " + str(alternate_version))
+    if python_version >= 3:
+        path = str(path)
     if alternate_version:
         python_interpreter = configuration.defaults.alternate_python_version
     else:
@@ -203,7 +230,8 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True):
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
-
+    if DEBUG:
+        print("Reached mid point")
     if code is not None:
         filename = open(path, 'w')
         filename.write(code)
