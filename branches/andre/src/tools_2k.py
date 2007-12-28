@@ -1,4 +1,4 @@
-'''tools.py
+'''tools_2k.py
 
 This module contains various utility functions compatible with
 Python 2.4+ (but not with Python 3.x).

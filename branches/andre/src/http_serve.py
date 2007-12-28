@@ -12,7 +12,10 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import urllib
 from traceback import format_exc
 
+from src.universal import python_version, python_minor_version
 import src.CrunchyPlugin as CrunchyPlugin
+
+DEBUG = False
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -41,6 +44,8 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 
     def get_handler(self, path):
         """returns none if no handler registered"""
+        if DEBUG:
+            print("entering get_handler")
         if path in self.handler_table:
             return self.handler_table[path]
         else:
@@ -51,6 +56,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
+        if python_version >=3:
+            realpath = str(realpath)
+        if DEBUG:
+            print(realpath)
         argstring = ""
         self.args = {}
         # if there is a ? in the path then there are some arguments, extract them and set the path
@@ -75,10 +84,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         if "Content-Length" in self.headers:
             self.data = self.rfile.read(int(self.headers["Content-Length"]))
         # and run the handler
+        if DEBUG:
+            print("preparing to call get_handler in do_POST")
         try:
             self.server.get_handler(realpath)(self)
         except:
             # if there is an error, say so
+            if python_minor_version == 'a2':
+                print('problem found in do_POST')
+                print('self.data = ' + str(self.data))
+                print('realpath = ' + str(realpath))
             self.send_response(500)
             self.end_headers()
             self.wfile.write(format_exc())

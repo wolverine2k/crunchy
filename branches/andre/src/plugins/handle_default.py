@@ -5,7 +5,10 @@ from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
 import src.CrunchyPlugin as cp
+from src.universal import python_version
 
+DEBUG = False
+DEBUG2 = False
 
 def register():
     cp.register_http_handler(None, handler)
@@ -50,7 +53,12 @@ def path_to_filedata(path, root):
 
 def handler(request):
     """the actual handler"""
+    if DEBUG:
+        print("entering handler in handle_default.py")
     data = path_to_filedata(request.path, root_path)
+    if DEBUG2:
+        print("in handler, data =")
+        print(data)
     if data == None:
         request.send_response(301)
         request.send_header("Location", request.path + "/")
@@ -58,7 +66,19 @@ def handler(request):
     else:
         request.send_response(200)
         request.end_headers()
-        request.wfile.write(data)
+        try:
+            request.wfile.write(data)
+        except:
+            if python_version >=3:
+                try:
+                    data = bytes(data, sys.getdefaultencoding())
+                except:
+                    print("could not convert data to bytes")
+                try:
+                    request.wfile.write(data)
+                except:
+                    print("failed writing data in handler")
+
 
 def get_directory(npath):
     _ = cp._

@@ -13,6 +13,7 @@ we can run tests successfully.
 import sys
 version = sys.version.split('.')
 python_version = float(version[0] + '.' + version[1][0])
+python_minor_version = version[1][1:3]
 
 # StringIO is used for creating in-memory files
 if python_version < 3:
@@ -22,7 +23,7 @@ else:
 
 # Special functions are defined below
 if python_version < 3:
-    import src.tools as tools
+    import src.tools_2k as tools
 else:
     import src.tools_3k as tools
 u_print = tools.u_print

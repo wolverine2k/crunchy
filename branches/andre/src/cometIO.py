@@ -10,7 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
-from src.universal import python_version
+from src.universal import python_version, python_minor_version
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -118,7 +118,19 @@ def comet(request):
     # OK, data found
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(data)
+    #request.wfile.write(data)
+    try:
+        request.wfile.write(data)
+    except:
+        if python_version >=3:
+            try:
+                data = bytes(data, sys.getdefaultencoding())
+            except:
+                print("could not convert data to bytes")
+            try:
+                request.wfile.write(data)
+            except:
+                print("failed writing data in cometIO.comet")
     request.wfile.flush()
 
 def register_new_page(pageid):

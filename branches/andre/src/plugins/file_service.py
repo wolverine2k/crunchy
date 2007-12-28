@@ -16,7 +16,7 @@ from src.universal import python_version
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
-DEBUG = True
+DEBUG = False
 
 def register():
     """The register() function is required for all plugins.
