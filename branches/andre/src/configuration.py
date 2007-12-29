@@ -16,6 +16,7 @@ from urlparse import urlsplit
 from imp import find_module
 
 from src.universal import python_version, u_print
+from src.interface import config
 
 if python_version < 3:
     import cPickle
@@ -252,10 +253,12 @@ class Defaults(object):
             return self.__temp_dir.decode(sys.getfilesystemencoding())
         else:
             return self.__temp_dir  #untested
+    
+    # note: should allow user to select different temp dir; when doing so,
+    # make sure to update config[]
 
     temp_dir = property(_get_temp_dir, None, None,
                        _("(Fixed) Temporary working directory: "))
-
     #==============
 
     def _get_dir_help(self):
@@ -361,6 +364,7 @@ You can change some of the default values by Crunchy, just like
             else:
                 self.__no_markup = choice
                 valid = True
+            
         if not valid:
             u_print((_("Invalid choice for %s.no_markup")%self._prefix))
             u_print(_("The valid choices are: "), str(no_markup_allowed_values))
@@ -368,6 +372,7 @@ You can change some of the default values by Crunchy, just like
             u_print(_("The current value is: "), self.__no_markup)
         else:
             self._save_settings()
+            config['no_markup'] = self.__no_markup
 
     no_markup = property(_get_nm, _set_nm, None,
         (_('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values) +\
@@ -380,11 +385,13 @@ You can change some of the default values by Crunchy, just like
     def _set_language(self, choice):
         if choice in languages_allowed_values:
             self.__language = choice
+            config['language'] = self.__language
             translation.init_translation(self.__language)
             u_print(_("language set to: ") , choice)
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice
                 u_print(_("editarea_language also set to: ") , choice)
+                config['editarea_language'] = self.__editarea_language
             else:
                 u_print(_("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\
                 _("The language choice for editarea remains ") +\
@@ -407,6 +414,7 @@ You can change some of the default values by Crunchy, just like
             self.__editarea_language = choice
             u_print(_("editarea_language set to: ") , choice)
             self._save_settings()
+            config['editarea_language'] = self.__editarea_language
         else:
             u_print((_("Invalid choice for %s.editarea_language")%self._prefix))
             u_print(_("The valid choices are: "), str(editarea_languages_allowed_values))
@@ -424,10 +432,12 @@ You can change some of the default values by Crunchy, just like
             self.__friendly = True
             u_print(_("Crunchy will attempt to provide friendly error messages."))
             self._save_settings()
+            config['friendly'] = self.__friendly
         elif choice == False:
             self.__friendly = False
             u_print(_("Crunchy's error messages will be similar to Python's default tracebacks."))
             self._save_settings()
+            config['friendly'] = self.__friendly
         else:
             u_print(_("friendly attribute must be set to True or False."))
 
@@ -479,6 +489,7 @@ You can change some of the default values by Crunchy, just like
             self.__override_default_interpreter = choice
             u_print(_("override_default_interpreter set to: ") , choice)
             self._save_settings()
+            config['override_default_interpreter'] = self.__override_default_interpreter
         else:
             u_print((_("Invalid choice for %s.override_default_interpreter")%self._prefix))
             u_print(_("The valid choices are: "), str(override_default_interpreter_allowed_values))
@@ -499,6 +510,7 @@ You can change some of the default values by Crunchy, just like
             self.__my_style = choice
             u_print(_("my_style set to: ") , choice)
             self._save_settings()
+            config['my_style'] = self.__my_style
         else:
             u_print((_("Invalid choice for %s.my_style")%self._prefix))
             u_print(_("The valid choices are: "), "[True, False]")
@@ -527,6 +539,7 @@ You can change some of the default values by Crunchy, just like
         self.__alternate_python_version = alternate_python_version
         u_print(_("alternate_python_version set to: ") , alternate_python_version)
         self._save_settings()
+        config['alternate_python_version'] = self.__alternate_python_version
 
     alternate_python_version = property(_get_alternate_python_version,
                                      _set_alternate_python_version, None,
@@ -546,3 +559,14 @@ You can change some of the default values by Crunchy, just like
     #==============
 defaults = Defaults()
 
+keys = []
+for key in dir(defaults):
+    if '__' not in key[0:2]:
+        val = getattr(defaults, key)
+        config[key] = val
+config['initial_security_set'] = initial_security_set
+# Sample usage:
+#config['language'] == 'fr'
+#config['add_site']()
+
+del keys

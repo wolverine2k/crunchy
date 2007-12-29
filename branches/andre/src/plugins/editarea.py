@@ -3,9 +3,8 @@ simple textarea.
 """
 
 import src.CrunchyPlugin as CrunchyPlugin
-import src.configuration as configuration
-
-_ = CrunchyPlugin._
+from src.interface import config
+_ = config['_']
 
 provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])
@@ -28,7 +27,7 @@ def enable_editarea(page, elem, textarea_id):
         page.add_css_code(load_save_css)
     # element specific code
     page.add_js_code(editAreaLoader_js%(textarea_id,
-                                configuration.defaults.editarea_language))
+                                config['editarea_language']))
     add_hidden_load_and_save(elem, textarea_id)
     return
 

@@ -5,9 +5,9 @@ Inserts security information at the top of a page
 '''
 from urlparse import urlsplit
 
-import src.configuration as configuration
 import src.CrunchyPlugin as cp
-_ = cp._
+from src.interface import config
+_ = config['_']
 
 provides = set(["/allow_site", "/enter_key", "/set_trusted", "/remove_all"])
 
@@ -91,11 +91,11 @@ def insert_security_info(page, *dummy):
         # if there are sites for which to confirm the security level.
         if (page.url.startswith("/index")
                   # will work with /index_fr.html ...
-              and configuration.defaults.site_security
+              and config['site_security']
                   # something to confirm
-              and not configuration.initial_security_set):
+              and not config['initial_security_set']):
                   # only do it once per session
-            configuration.initial_security_set = True
+            config['initial_security_set'] = True
             page.add_css_code(security_css%('block','block'))
             h2 = cp.SubElement(info_container, 'h2')
             h2.text = _('Confirm the security levels')
@@ -107,7 +107,7 @@ def insert_security_info(page, *dummy):
 
             # in case list gets too long, we include buttons at top and bottom
             approve_btn = cp.SubElement(info_container, "button")
-            site_num = len(configuration.defaults.site_security)
+            site_num = len(config['site_security'])
             approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
             approve_btn.text = _("Approve")
             cp.SubElement(info_container, "span").text = " "
@@ -123,7 +123,7 @@ def insert_security_info(page, *dummy):
                         ['display normal', 'display normal'],
                         ['display strict', 'display strict'],
                         ['remove', _('remove from list')]]
-            for site in configuration.defaults.site_security:
+            for site in config['site_security']:
                 site_num += 1
                 fieldset = cp.SubElement(info_container, "fieldset")
                 site_label = cp.SubElement(fieldset, "legend")
@@ -141,7 +141,7 @@ def insert_security_info(page, *dummy):
                     inp.attrib['name'] = "rad"
                     inp.attrib['id'] = site + option[0]
                     br = cp.SubElement(form, 'br')
-                    if option[1] == configuration.defaults.site_security[site]:
+                    if option[1] == config['site_security'][site]:
                         inp.attrib['checked'] = 'checked'
             # in case list gets too long, we include buttons at top and bottom
             approve_btn = cp.SubElement(info_container, "button")
@@ -244,7 +244,7 @@ def format_report(page, div):
         h2 = cp.SubElement(div, 'h2')
         h2.text = _('You may select a site specific security level:')
         h2.attrib['class'] = "crunchy"
-        if netloc in configuration.defaults.site_security:
+        if netloc in config['site_security']:
             p = cp.SubElement(div, 'p')
             p.text = _("If you want to preserve the existing selection, ")
             p.text += _("simply dismiss this window by clicking on the X above.")
@@ -274,8 +274,8 @@ def format_report(page, div):
             inp.attrib['name'] = "rad"
             inp.attrib['id'] = netloc + option[0]
             cp.SubElement(form, 'br')
-            if netloc in configuration.defaults.site_security:
-                if option[1] == configuration.defaults.site_security[netloc]:
+            if netloc in config['site_security']:
+                if option[1] == config['site_security'][netloc]:
                     inp.attrib['checked'] = 'checked'
         approve_btn = cp.SubElement(div, "button")
         approve_btn.attrib["onclick"] = "javascript:allow_site();"
@@ -341,18 +341,18 @@ def set_security_list(request):
         if site.strip() != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                configuration.defaults._set_site_security(site, mode)
+                config['_set_site_security'](site, mode)
                 if cp.DEBUG:
                     print(str(site) + ' has been set to ' + str(mode))
             else:
                 to_be_deleted.append(site)
     for site in to_be_deleted:
-        del configuration.defaults.site_security[site]
+        del config['site_security'][site]
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
-    configuration.initial_security_set = True
-    configuration.defaults._save_settings()
+    config['initial_security_set'] = True
+    config['_save_settings']()
 
     request.send_response(200)
     request.end_headers()
@@ -361,15 +361,15 @@ def set_security_list(request):
 
 def empty_security_list(request):
     sites = []
-    for site in configuration.defaults.site_security:
+    for site in config['site_security']:
         sites.append(site)
     for site in sites:
-        del configuration.defaults.site_security[site]
+        del config['site_security'][site]
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
-    configuration.initial_security_set = True
-    configuration.defaults._save_settings()
+    config['initial_security_set'] = True
+    config['_save_settings']()
 
     request.send_response(200)
     request.end_headers()

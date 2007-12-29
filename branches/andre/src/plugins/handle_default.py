@@ -4,8 +4,9 @@ from imp import find_module
 from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
+
 import src.CrunchyPlugin as cp
-from src.universal import python_version
+from src.interface import python_version
 
 DEBUG = False
 DEBUG2 = False

@@ -6,12 +6,9 @@ This is just the UI part, the communication code is defined in the core
 provides = set(["io_widget"])
 
 import src.CrunchyPlugin as CrunchyPlugin
-import src.configuration as configuration
-
-# for converting to edit area
-from editarea import editArea_load_and_save
-
-_ = CrunchyPlugin._
+from src.interface import config
+from src.plugins.editarea import editArea_load_and_save
+_ = config['_']
 
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
@@ -25,7 +22,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in configuration.defaults.page_security_level(page.url):
+    if 'display' not in config['page_security_level'](page.url):
 
         if not page.includes("io_included"):
             page.add_include("io_included")

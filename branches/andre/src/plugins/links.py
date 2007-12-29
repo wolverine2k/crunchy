@@ -8,6 +8,7 @@ from urlparse import urljoin, urlsplit, urlunsplit
 import os
 
 import src.CrunchyPlugin as cp
+
 def register():
     cp.register_tag_handler("a", None, None, link_handler)
     cp.register_tag_handler("img", None, None, src_handler)

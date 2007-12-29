@@ -25,8 +25,15 @@ with various attributes.  As a result, the tests that need to be performed are
 rather simplistic and tedious.  They also have been written "after the fact" since
 the real test for developing the code was in looking at the UI that was generated.
 
-Before we proceed with testing individual functions, we need to import editarea.py
+Before we proceed with testing individual functions, we need to import interface.py and
+do a variable assignment.
+
+    >>> from src.interface import config
+    >>> config['editarea_language'] = 'en'
+
+We then need to import editarea.py
     >>> import src.plugins.editarea as editarea
+
 
 1. Testing register()
 ---------------------

@@ -18,9 +18,8 @@ import keyword
 import token
 import tokenize
 
-from src.universal import StringIO, ElementTree, python_version
+from src.interface import StringIO, ElementTree, python_version
 et = ElementTree
-#from src.element_tree import ElementTree as et
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 
 #---------begin plugin specific---------------------

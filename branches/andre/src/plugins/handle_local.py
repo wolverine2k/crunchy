@@ -3,10 +3,10 @@ Uses the /local http request path.
 """
 import os
 import sys
+from urllib import unquote_plus
 
 import src.CrunchyPlugin as CrunchyPlugin
-from urllib import unquote_plus
-from src.configuration import defaults
+from src.interface import config
 
 provides = set(["/local", "/generated_image"])
 
@@ -32,7 +32,7 @@ def local_loader(request):
 
 def image_loader(request):
     url = unquote_plus(request.args["url"])
-    fname = os.path.join(defaults.temp_dir, url)
+    fname = os.path.join(config['temp_dir'], url)
     page = open(fname, 'rb')
     request.send_response(200)
     request.end_headers()

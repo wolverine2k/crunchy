@@ -1,5 +1,5 @@
 Testing c_turtle_js.py
-===================
+======================
 
 The first part of this file is essentially a copy of test_c_turtle.py.
 

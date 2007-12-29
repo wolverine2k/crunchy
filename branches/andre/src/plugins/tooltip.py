@@ -5,12 +5,9 @@ import urllib
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
-import src.configuration as configuration
-import src.translation
+from src.interface import python_version, config
+_ = config['_']
 
-from src.universal import python_version
-
-_ = src.translation._
 borg_console = interpreter.BorgConsole()
 
 provides = set(["/dir","/doc"])
@@ -49,7 +46,7 @@ def insert_tooltip(page, *dummies):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    if not configuration.defaults.dir_help:
+    if not config['dir_help']:#configuration.defaults.dir_help:
         request.send_response(204)
         request.end_headers()
         return
@@ -80,7 +77,7 @@ def dir_handler(request):
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
 
-    if not configuration.defaults.doc_help:
+    if not config['doc_help']:#configuration.defaults.doc_help:
         request.send_response(204)
         request.end_headers()
         return
