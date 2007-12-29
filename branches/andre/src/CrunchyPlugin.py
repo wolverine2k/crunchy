@@ -16,14 +16,7 @@ import src.translation as translation
 # use something else than ElementTree, we can avoid having to change
 # any working plugin, as long as we maintain the API here.
 
-#from src.element_tree import ElementTree, HTMLTreeBuilder
-#Element = ElementTree.Element
-#SubElement = ElementTree.SubElement
-#fromstring = ElementTree.fromstring
-#tostring = ElementTree.tostring
-#parse = HTMLTreeBuilder.parse
-
-from src.universal import Element, SubElement, fromstring, tostring, parse
+from src.interface import Element, SubElement, fromstring, tostring, parse
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.

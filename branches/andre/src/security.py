@@ -21,7 +21,7 @@ import urllib
 import urlparse
 import sys
 
-from src.universal import python_version
+from src.interface import python_version
 
 if python_version < 2.5:
     # Third party modules - included in crunchy distribution

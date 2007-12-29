@@ -5,7 +5,7 @@ import socket
 import webbrowser
 #import pychecker.checker
 
-from src.universal import python_version, u_print
+from src.interface import python_version, u_print
 required = 2.4
 if python_version < required:
     print("Crunchy requires at least Python version %s"%required)

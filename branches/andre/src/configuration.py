@@ -15,8 +15,7 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.universal import python_version, u_print
-from src.interface import config
+from src.interface import config, python_version, u_print
 
 if python_version < 3:
     import cPickle

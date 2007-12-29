@@ -12,7 +12,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import urllib
 from traceback import format_exc
 
-from src.universal import python_version, python_minor_version
+from src.interface import python_version, python_minor_version
 import src.CrunchyPlugin as CrunchyPlugin
 
 DEBUG = False

@@ -3,17 +3,17 @@ perform vlam substitution
 
 sets up the page and calls appropriate plugins
 """
-from sys import version
-    
-if int(version.split('.')[0]) > 2:
-    from io import StringIO
-else:
-    from StringIO import StringIO
+#from sys import version
+#    
+#if int(version.split('.')[0]) > 2:
+#    from io import StringIO
+#else:
+#    from StringIO import StringIO
 
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.universal import python_version, ElementTree, parse, XmlFile
+from src.interface import python_version, ElementTree, parse, XmlFile, StringIO
 if python_version < 3:
     from src.element_tree import ElementSoup
 et = ElementTree

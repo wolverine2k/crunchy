@@ -3,11 +3,10 @@ translation.py
 Translation infrastructure for Crunchy.
 """
 
-#import gettext
 import os.path
 from imp import find_module
 
-from src.universal import python_version, u_print
+from src.interface import python_version, u_print
 
 current_locale = None
 DEBUG = False

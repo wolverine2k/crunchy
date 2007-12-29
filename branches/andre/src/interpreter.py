@@ -5,8 +5,7 @@ import sys
 import traceback
 from codeop import CommandCompiler, compile_command
 
-from src.universal import StringIO, exec_code, python_version
-#from StringIO import StringIO
+from src.interface import StringIO, exec_code, python_version
 
 from src.utilities import trim_empty_lines_from_end, log_session
 import src.configuration as configuration

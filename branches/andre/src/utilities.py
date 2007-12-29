@@ -3,8 +3,7 @@
    a collection of functions used in other modules.
 '''
 import re
-import src.configuration as configuration
-from src.universal import python_version
+from src.interface import python_version, config
 
 def extract_log_id(vlam):
     '''given a vlam of the form
@@ -107,13 +106,13 @@ end_html ="""
 """
 
 def log_session():
-    f = open(configuration.defaults.log_filename, 'w')
+    f = open(config['log_filename'], 'w')
     f.write(begin_html)
-    for uid in configuration.defaults.logging_uids:
-        log_id = configuration.defaults.logging_uids[uid][0]
-        vlam_type = configuration.defaults.logging_uids[uid][1]
+    for uid in config['logging_uids']:
+        log_id = config['logging_uids'][uid][0]
+        vlam_type = config['logging_uids'][uid][1]
         f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
-        content = ''.join(configuration.defaults.log[log_id])
+        content = ''.join(config['log'][log_id])
         f.write("<pre>"+content+"</pre>")
     f.write(end_html)
     f.close()

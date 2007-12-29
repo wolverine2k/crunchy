@@ -10,7 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
-from src.universal import python_version, python_minor_version
+from src.interface import python_version, python_minor_version
 
 debug_ids = []#1, 2, 3, 4, 5]
 

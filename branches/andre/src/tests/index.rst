@@ -32,35 +32,30 @@ as that option when viewing these files).  These tests can be run via
 
 In terms of test coverage, this is just a first draft which needs to be verified.
 
-
-
 As a rule, every plugin should import the interface module - and
 nothing else other than other plugins (and, perhaps, utilities.py) and/or modules from the Python standard library.  We keep track of the work that has been done by indicating the modules imported.
-
-Note that utilities.py, which is a currently allowed dependency for plugins,
-will have to be adapted to make use of interface.py itself.
 
 Crunchy Python files listing::
 
 	all_tests.py
 	all_tests_py3k.py
 	crunchy.py
-	    -> universal, http_serve, pluginloader
+	    -> interface, http_serve, pluginloader
 	src:
 		cometIO.py
-		    -> configuration, interpreter, universal, utilities
+		    -> configuration, interpreter, interface, utilities
 		configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-		    -> translation, universal, interface
+		    -> translation, interface
 		CrunchyPlugin.py
-		    -> cometIO, PluginServices, translation, universal, vlam
+		    -> cometIO, PluginServices, translation, interface, vlam
 		errors.py
 		    -> configuration, translation
 		http_serve.py
-		    -> CrunchyPlugin, universal
+		    -> CrunchyPlugin, interface
 		interface.py
-		    -> tools_2k, tools_3k, translation, ElementTree++
+		    -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
 		interpreter.py
-		    -> universal, utilities, translation, configuration, errors
+		    -> interface, utilities, translation, configuration, errors
 		my_htmlentitydefs.py
 		    -> None
 		pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
@@ -68,7 +63,7 @@ Crunchy Python files listing::
 		PluginServices.py
 		    -> None
 		security.py
-		    -> universal, configuration
+		    -> interface, configuration
 		tools_2k.py
 		    -> errors
 		tools_3k.py
@@ -78,9 +73,11 @@ Crunchy Python files listing::
 		universal.py # tests :2.4, 2.5, 3.0a1, 3.0a2
 		    -> tools_2k, tools_3k, my_htmlentitydefs, ElementTree++
 		utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-		    -> configuration, universal
+		    -> interface
 		vlam.py
-            -> security, universal, ElementSoup, cometIO, configuration, utilities
+		    -> security, interface, ElementSoup, cometIO, 
+		       configuration, utilities
+               
 	src/plugins:
 			c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
 			    -> None
@@ -156,7 +153,7 @@ The following are the actual links to existing test files.
 #. test_file_service.rst_
 #. test_pluginloader.rst_
 #. test_turtle_js.rst_
-#. test_universal.rst_
+#. test_interface.rst_
 #. test_utilities.rst_
 #. test_vlam_editor.rst_
 #. test_vlam_load_local.rst_
@@ -169,7 +166,7 @@ The following are the actual links to existing test files.
 .. _test_file_service.rst: test_file_service.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
-.. _test_universal.rst: test_universal.rst
+.. _test_interface.rst: test_interface.rst
 .. _test_utilities.rst: test_utilities.rst
 .. _test_vlam_editor.rst: test_vlam_editor.rst
 .. _test_vlam_load_local.rst: test_vlam_load_local.rst
