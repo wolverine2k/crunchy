@@ -5,14 +5,15 @@ from os.path import normpath, join, isdir, dirname
 from dircache import listdir, annotate
 import sys
 
-import src.CrunchyPlugin as cp
-from src.interface import python_version, translate
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import python_version, translate, plugin, server
 
+_ = translate['_']
 DEBUG = False
 DEBUG2 = False
 
 def register():
-    cp.register_http_handler(None, handler)
+    plugin['register_http_handler'](None, handler)
 
 def path_to_filedata(path, root):
     """
@@ -25,7 +26,7 @@ def path_to_filedata(path, root):
     POSIX version, should work in Windows.
     """
     if path == "/exit":
-        cp.server.still_serving = False
+        server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()
     if path.startswith("/") and (path.find("/../") != -1):
@@ -40,7 +41,7 @@ def path_to_filedata(path, root):
     else:
         try:
             if npath.endswith(".html") or npath.endswith(".htm"):
-                return cp.create_vlam_page(open(npath), path).read()
+                return plugin['create_vlam_page'](open(npath), path).read()
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -95,9 +96,9 @@ def get_directory(npath):
     return dir_list_page % (_("Directory Listing"), tstring)
 
 # the root of the server is in a separate directory:
-root_path = join(dirname(find_module("crunchy")[1]), "server_root/")
+root_path = join(plugin['get_root_dir'](), "server_root/")
 
-if cp.DEBUG:
+if DEBUG:
     print("Root path is %s" % root_path)
 
 default_pages = ["index.htm", "index.html"]
@@ -139,7 +140,6 @@ dir_list_page = """
 """
 
 def error_page(path):
-    _ = cp._
     return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
                                  _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
                                  _("The page doesn't exist."),

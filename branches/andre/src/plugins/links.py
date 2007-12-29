@@ -7,14 +7,15 @@ import re
 from urlparse import urljoin, urlsplit, urlunsplit
 import os
 
-import src.CrunchyPlugin as cp
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import plugin, SubElement
 
 def register():
-    cp.register_tag_handler("a", None, None, link_handler)
-    cp.register_tag_handler("img", None, None, src_handler)
-    cp.register_tag_handler("link", None, None, href_handler)
-    cp.register_tag_handler("style", None, None, style_handler)
-    cp.register_tag_handler("a","title", "external_link", external_link)
+    plugin['register_tag_handler']("a", None, None, link_handler)
+    plugin['register_tag_handler']("img", None, None, src_handler)
+    plugin['register_tag_handler']("link", None, None, href_handler)
+    plugin['register_tag_handler']("style", None, None, style_handler)
+    plugin['register_tag_handler']("a","title", "external_link", external_link)
 
 def external_link(dummy_page, elem, *dummies):
     '''handler which totally ignores the link being passed to it, other than
@@ -23,7 +24,7 @@ def external_link(dummy_page, elem, *dummies):
         elem.tail += " "
     else:
         elem.text += " "
-    img = cp.SubElement(elem, "img")
+    img = SubElement(elem, "img")
     img.attrib['src'] = "/external_link.png"
     img.attrib['style'] = "border:0;"
     img.attrib['alt'] = "external_link.png"

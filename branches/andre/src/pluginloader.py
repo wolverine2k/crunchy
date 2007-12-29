@@ -8,6 +8,7 @@ from imp import find_module
 import os.path
 
 import src.CrunchyPlugin as CrunchyPlugin
+import src.interface as interface
 
 def gen_register_list(initial_list):
     """generates a registration ordering from the dependencies.
@@ -48,7 +49,7 @@ def gen_plugin_list():
 def init_plugin_system(server):
     """load the plugins and has them self-register."""
     plugins = gen_plugin_list()
-    CrunchyPlugin.server = server
+    interface.server['server'] = server
     if not "src/plugins/" in sys.path:
         sys.path.insert(0, "src/plugins")
     imported_plugins = []

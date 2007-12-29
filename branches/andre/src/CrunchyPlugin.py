@@ -15,7 +15,8 @@ import src.PluginServices as services
 # use something else than ElementTree, we can avoid having to change
 # any working plugin, as long as we maintain the API here.
 
-from src.interface import Element, SubElement, fromstring, tostring, parse, plugin
+from src.interface import Element, SubElement, fromstring, tostring, parse, \
+                          plugin, server
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.
@@ -31,9 +32,9 @@ def register_http_handler(pattern, handler):
     if DEBUG:
         print("Registering http handler " + pattern)
     if pattern is None:
-        server.register_default_handler(handler)
+        server['server'].register_default_handler(handler)
     else:
-        server.register_handler(pattern, handler)
+        server['server'].register_handler(pattern, handler)
         pass
 plugin['register_http_handler'] = register_http_handler
 

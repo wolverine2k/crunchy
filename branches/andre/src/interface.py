@@ -42,7 +42,8 @@ exec_code = tools.exec_code
 
 config = {}  # initialized by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
-translate = {} # initialzed below
+server = {}  # initialized by pluginloader.py
+translate = {} # initialized below
 
 import src.translation
 translate['_'] = src.translation._

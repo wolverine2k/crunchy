@@ -198,8 +198,6 @@ class Defaults(object):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
-        # There is no real need to have a separate temp (sub)directory
-        self.__temp_dir = self.__user_dir
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
@@ -227,6 +225,8 @@ class Defaults(object):
                 return
         # we may encounter a situation where a ".crunchy" directory
         # had been created by an old version without a temporary directory
+        self.__temp_dir = os.path.join(os.path.expanduser("~"), ".crunchy", "temp")
+
         if not os.path.exists(self.__temp_dir):
             try:
                 os.makedirs(self.__temp_dir)
@@ -525,7 +525,6 @@ You can change some of the default values by Crunchy, just like
         site = raw_input("Enter site url (for example, docs.python.org) ")
         level = raw_input("Enter security level (for example: normal) ")
         self._set_site_security(site, level)
-
 
     #==============
 

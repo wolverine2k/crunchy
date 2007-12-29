@@ -59,7 +59,7 @@ Crunchy Python files listing::
 		my_htmlentitydefs.py
 		    -> None
 		pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
-		    -> CrunchyPlugin  [and loads all the plugins]
+		    -> interface, CrunchyPlugin  [and loads all the plugins]
 		PluginServices.py
 		    -> None
 		security.py
@@ -92,17 +92,17 @@ Crunchy Python files listing::
 			graphics.py
 			    -> CrunchyPlugin
 			handle_default.py (cp)
-			    -> CrunchyPlugin, interface
+			    -> interface
 			handle_local.py
-			    -> CrunchyPlugin, interface
+			    -> interface
 			handle_remote.py
-			    -> CrunchyPlugin
+			    -> interface
 			io_widget.py
 			    -> CrunchyPlugin, editarea, interface
 			links.py
-			    -> CrunchyPlugin
+			    -> interface
 			math_graphics.py
-			    -> CrunchyPlugin
+			    -> interface
 			menu.py
 			    -> interface, security
 			rst.py
