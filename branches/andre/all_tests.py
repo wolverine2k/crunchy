@@ -14,16 +14,16 @@ from imp import find_module
 test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
 test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
+nb_files = 0
+excluded = ["test_colourize.rst"]
 for t in test_files:
-    if t == "test_colourize.rst":
+    if t in excluded:
         continue # skip
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
+    nb_files += 1
 
-print """\n========
-
-Sometimes, the test_configuration will fail due to importing configuration.py
-which prints out some diagnostic that should be ignored."""
+print "number of test files run: ", nb_files
 
 # Note that the number of tests, as identified by the doctest module
 # is equal to the number of commands entered at the interpreter

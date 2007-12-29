@@ -1,11 +1,11 @@
-﻿universal.py tests
+﻿interface.py tests
 ==================
 
 Note: this file is encoded in utf-8.
 
 Tested successfully with Python 2.4, 2.5 and 3.0a1
 
-universal.py contains various functions whose definitions are dependent on the
+interface.py contains various functions whose definitions are dependent on the
 Python version being used, but provided to the user in a totally transparent way.
 
 Testing u_print
@@ -21,14 +21,14 @@ Furthermore, in Python 3k, "print" is now a function.   To provide a
 transparent way of printing, we have defined a function called u_print()
 which is meant to print a series of arguments.
 
-    >>> import src.universal as universal
-    >>> if universal.python_version < 3:
+    >>> import src.interface as interface
+    >>> if interface.python_version < 3:
     ...     to_print = "André".decode('utf-8')
     ... else: 
     ...     to_print = "André"
-    >>> universal.u_print(to_print)
+    >>> interface.u_print(to_print)
     André
-    >>> universal.u_print("a", "b", "c")
+    >>> interface.u_print("a", "b", "c")
     abc
 
 Testing ElementTree and friends
@@ -36,10 +36,10 @@ Testing ElementTree and friends
 
 The following is incomplete.
 
-    >>> elem = universal.Element("p")
+    >>> elem = interface.Element("p")
     >>> elem.attrib['class'] = 'crunchy'
     >>> elem.text = "This is a neat sentence."
-    >>> universal.u_print(universal.tostring(elem))
+    >>> interface.u_print(interface.tostring(elem))
     <p class="crunchy">This is a neat sentence.</p>
 
 We create a fake html file
@@ -53,10 +53,10 @@ We create a fake html file
     ... <p>This is some text.</p>
     ... </body>
     ... </html>"""
-    >>> fake_file = universal.StringIO()
+    >>> fake_file = interface.StringIO()
     >>> dummy = fake_file.write(html_content) # return value in Py3k
     >>> dummy = fake_file.seek(0)  # return value in Py3k
-    >>> tree = universal.parse(fake_file)
+    >>> tree = interface.parse(fake_file)
     
 Testing exec_code()
 -------------------
@@ -67,8 +67,8 @@ So, just like for print, we need to give a transparent access to the right versi
     >>> def double(n):
     ...     return 2*n
     ...
-    >>> locals = {'double': double, 'universal': universal}
-    >>> test_code = "a = double(21)\nuniversal.u_print(str(a))"
-    >>> universal.exec_code(test_code, locals)
+    >>> locals = {'double': double, 'interface': interface}
+    >>> test_code = "a = double(21)\ninterface.u_print(str(a))"
+    >>> interface.exec_code(test_code, locals)
     42
 

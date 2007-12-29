@@ -6,7 +6,7 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
 This file contains a few tests for pluginloader.py.
 
     >>> import src.pluginloader as pl
-    >>> from src.universal import python_version
+    >>> from src.interface import python_version
 
 We begin by making a few mock modules that would provide services and
 require others.

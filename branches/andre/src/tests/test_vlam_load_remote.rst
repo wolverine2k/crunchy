@@ -16,7 +16,7 @@ It contains two methods that need to be tested:
 We simply need to import the plugin and something to create an Element
 
    >>> import src.plugins.vlam_load_remote as vlam_load_remote
-   >>> from src.universal import Element
+   >>> from src.interface import Element
 
 1. Testing register()
 ---------------------

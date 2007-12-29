@@ -7,7 +7,7 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
 
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea as editarea
-  >>> from src.universal import Element
+  >>> from src.interface import Element
 
 # Used to create a fake page object
 

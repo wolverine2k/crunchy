@@ -52,7 +52,7 @@ Crunchy Python files listing::
 		    -> configuration, translation
 		http_serve.py
 		    -> CrunchyPlugin, interface
-		interface.py
+		interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
 		    -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
 		interpreter.py
 		    -> interface, utilities, translation, configuration, errors
@@ -69,9 +69,7 @@ Crunchy Python files listing::
 		tools_3k.py
 		    -> None
 		translation.py
-		    -> universal
-		universal.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-		    -> tools_2k, tools_3k, my_htmlentitydefs, ElementTree++
+		    -> interface
 		utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
 		    -> interface
 		vlam.py
