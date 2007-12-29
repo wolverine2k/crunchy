@@ -84,9 +84,9 @@ Crunchy Python files listing::
 			comet.py
 			    -> CrunchyPlugin, cometIO
 			editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin, interface
+			    -> interface
 			execution.py
-			    -> CrunchyPlugin
+			    -> interface
 			file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
 			    -> CrunchyPlugin, interface, configuration
 			graphics.py

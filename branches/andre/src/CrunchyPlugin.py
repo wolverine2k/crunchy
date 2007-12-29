@@ -21,6 +21,7 @@ from src.interface import Element, SubElement, fromstring, tostring, parse, plug
 # (like /exec and /doctest) used to communicate with the Python server.
 session_random_id = str(int(random.random()*1000000000)) + str(
                                            int(random.random()*1000000000))
+plugin['session_random_id'] = session_random_id
 
 DEBUG = False
 

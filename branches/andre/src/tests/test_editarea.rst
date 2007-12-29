@@ -28,8 +28,15 @@ the real test for developing the code was in looking at the UI that was generate
 Before we proceed with testing individual functions, we need to import interface.py and
 do a variable assignment.
 
-    >>> from src.interface import config
+    >>> from src.interface import config, plugin, Element
     >>> config['editarea_language'] = 'en'
+    >>> plugin['session_random_id'] = '42'
+    >>> service = None
+    >>> def dummy_register(fn, name):
+    ...     global service
+    ...     service = fn
+    ...
+    >>> plugin['register_service'] = dummy_register
 
 We then need to import editarea.py
     >>> import src.plugins.editarea as editarea
@@ -39,15 +46,14 @@ We then need to import editarea.py
 ---------------------
 
    >>> editarea.register()
-   >>> import src.CrunchyPlugin as cp
-   >>> print(cp.services.enable_editarea == editarea.enable_editarea)
+   >>> print(service == editarea.enable_editarea)
    True
 
 5. Testing addSavePython():
 ---------------------------
 
 We start by creating an Element which will be manipulated by the function we wish to test.
-    >>> elem = cp.Element('parent')
+    >>> elem = Element('parent')
     >>> id_1 = 'one'
     >>> id_2 = 'two'
     >>> editarea.addSavePython(elem, id_1, id_2)
@@ -128,7 +134,7 @@ We start by creating an Element which will be manipulated by the function we wis
 making sure they are slightly different from those used for addSavePython() so that
 we don't get a correct result by accident.
 
-    >>> elem_load = cp.Element('load_parent')
+    >>> elem_load = Element('load_parent')
     >>> id__1 = 'un'
     >>> id__2 = 'deux'
     >>> editarea.addLoadPython(elem_load, id__1, id__2)
@@ -209,7 +215,7 @@ We start by creating an Element which will be manipulated by the function we wis
 making sure they are slightly different from those used before so that
 we don't get a correct result by accident.
 
-    >>> new_elem = cp.Element('dummy')
+    >>> new_elem = Element('dummy')
     >>> id1 = 'ONE'
     >>> editarea.add_hidden_load_and_save(new_elem, id1)
     
@@ -294,7 +300,7 @@ called properly.
     ...         return dummy in self.included
     ...
     >>> page = TestPage()
-    >>> dummy_elem = cp.Element('dummy')
+    >>> dummy_elem = Element('dummy')
     >>> editarea.enable_editarea(page, dummy_elem, '1')
     >>> print(page.called_css)
     True

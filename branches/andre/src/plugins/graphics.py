@@ -3,21 +3,21 @@ graphics.py
 """
 
 import re
-
-import src.CrunchyPlugin as __cp
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import plugin
 
 created_uids = []
 
 def init_graphics(width=400, height=400, border_color='red'):
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     if uid not in created_uids: # dynamically create a canvas
         created_uids.append(uid)
-        __cp.exec_js(__cp.get_pageid(), """var divCanvas = document.getElementById("div_%s");
+        plugin['exec_js'](plugin['get_pageid'](), """var divCanvas = document.getElementById("div_%s");
                         var newCanvas = document.createElement("canvas");
                         newCanvas.setAttribute('id', 'canvas_%s')
                         divCanvas.appendChild(newCanvas);
         """%(uid, uid))
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").width=%d;
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").width=%d;
                     document.getElementById("canvas_%s").height=%d;
                     document.getElementById("canvas_%s").style.display = "block";
                     document.getElementById("canvas_%s").getContext('2d').clearRect(0, 0, %d, %d);
@@ -34,65 +34,65 @@ def clear_graphics():
 
 def set_line_colour(col):
     '''Sets the default line colour using a valid value given as a string.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     if not validate_colour(col):
         col = "DeepPink" # make it stand out for now
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').strokeStyle = %r;""" % (uid, col))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').strokeStyle = %r;""" % (uid, col))
 set_line_color = set_line_colour # American spelling == British/Canadian spelling
 
 def set_fill_colour(col):
     '''Sets the default fill colour using a valid value given as a string.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     if not validate_colour(col):
         col = "DeepPink" # make it stand out for now
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
 set_fill_color = set_fill_colour
 
 def line(point_1, point_2):
     '''Draws a line from point_1 = (x1, y1) to point_2 (x2, y2) in the default line colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x1, y1 = point_1
     x2, y2 = point_2
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x1, y1, uid, x2, y2, uid))
 
 def circle(centre, r):
     '''Draws a circle of radius r centred on centre = (x, y) in the default line colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x, y = centre
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, r, uid))
 
 def filled_circle(centre, r):
     '''Draws a filled circle of radius r centred on centre = (x, y) in the default fill colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x, y = centre
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').fill();""" % (uid, uid, x, y, r, uid))
 
 def rectangle(corner, w, h):
     '''Draws a rectangle in the default line colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x, y = corner # bottom left
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
 def filled_rectangle(corner, w, h):
     '''Draws a filled rectangle in the default fill colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x, y = corner # bottom left
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
 def triangle(point_1, point_2, point_3):
     '''Draws a triangle joining the three points in the default line colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x1, y1 = point_1
     x2, y2 = point_2
     x3, y3 = point_3
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
@@ -101,11 +101,11 @@ def triangle(point_1, point_2, point_3):
 
 def filled_triangle(point_1, point_2, point_3):
     '''Draws a filled triangle joining the three points in the default fill colour.'''
-    uid = __cp.get_uid()
+    uid = plugin['get_uid']()
     x1, y1 = point_1
     x2, y2 = point_2
     x3, y3 = point_3
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
@@ -114,8 +114,8 @@ def filled_triangle(point_1, point_2, point_3):
 
 def point(x, y):
     '''Draws a point in the default line colour.'''
-    uid = __cp.get_uid()
-    __cp.exec_js(__cp.get_pageid(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    uid = plugin['get_uid']()
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, uid, x+1, y+1, uid))
