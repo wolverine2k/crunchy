@@ -3,8 +3,8 @@ simple textarea.
 """
 
 import src.CrunchyPlugin as CrunchyPlugin
-from src.interface import config
-_ = config['_']
+from src.interface import config, translate
+_ = translate['_']
 
 provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])

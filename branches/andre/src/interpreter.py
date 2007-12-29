@@ -5,14 +5,14 @@ import sys
 import traceback
 from codeop import CommandCompiler, compile_command
 
-from src.interface import StringIO, exec_code, python_version
+from src.interface import StringIO, exec_code, python_version, translate
 
 from src.utilities import trim_empty_lines_from_end, log_session
 import src.configuration as configuration
 if python_version < 3:
     import src.errors as errors
 
-from src.translation import _
+_ = translate['_']
 
 class Interpreter(threading.Thread):
     """

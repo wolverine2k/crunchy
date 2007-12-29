@@ -6,9 +6,9 @@ This is just the UI part, the communication code is defined in the core
 provides = set(["io_widget"])
 
 import src.CrunchyPlugin as CrunchyPlugin
-from src.interface import config
+from src.interface import config, translate
 from src.plugins.editarea import editArea_load_and_save
-_ = config['_']
+_ = translate['_']
 
 def register():
     CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")

@@ -15,17 +15,15 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.interface import config, python_version, u_print
+from src.interface import config, python_version, u_print, translate
 
 if python_version < 3:
     import cPickle
 else:
     import pickle as cPickle
 
-import src.translation as translation
-_ = translation._
-
-translation.init_translation()
+_ = translate['_']
+translate['init_translation']()
 
 initial_security_set = False
 
@@ -90,7 +88,7 @@ class Defaults(object):
         self.current_page_security_level = 'display_trusted' # starting value
         self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
         self._load_settings()
-        translation.init_translation(self.__language)
+        translate['init_translation'](self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
                                # name is defined by tutorial writer
                                # type is one of 'interpreter', 'editor',...
@@ -385,7 +383,7 @@ You can change some of the default values by Crunchy, just like
         if choice in languages_allowed_values:
             self.__language = choice
             config['language'] = self.__language
-            translation.init_translation(self.__language)
+            translate['init_translation'](self.__language)
             u_print(_("language set to: ") , choice)
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice
@@ -557,7 +555,6 @@ You can change some of the default values by Crunchy, just like
 
     #==============
 defaults = Defaults()
-
 keys = []
 for key in dir(defaults):
     if '__' not in key[0:2]:

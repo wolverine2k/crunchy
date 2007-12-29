@@ -45,9 +45,9 @@ Crunchy Python files listing::
 		cometIO.py
 		    -> configuration, interpreter, interface, utilities
 		configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-		    -> translation, interface
+		    -> interface
 		CrunchyPlugin.py
-		    -> cometIO, PluginServices, translation, interface, vlam
+		    -> cometIO, PluginServices, interface, vlam
 		errors.py
 		    -> configuration, translation
 		http_serve.py
@@ -55,7 +55,7 @@ Crunchy Python files listing::
 		interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
 		    -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
 		interpreter.py
-		    -> interface, utilities, translation, configuration, errors
+		    -> interface, utilities, configuration, errors
 		my_htmlentitydefs.py
 		    -> None
 		pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
@@ -63,7 +63,7 @@ Crunchy Python files listing::
 		PluginServices.py
 		    -> None
 		security.py
-		    -> interface, configuration
+		    -> interface
 		tools_2k.py
 		    -> errors
 		tools_3k.py
@@ -104,11 +104,11 @@ Crunchy Python files listing::
 			math_graphics.py
 			    -> CrunchyPlugin
 			menu.py
-			    -> CrunchyPlugin, security
+			    -> interface, security
 			rst.py
-			    -> CrunchyPlugin
+			    -> interface
 			security_advisor.py
-			    -> CrunchyPlugin, interface
+			    -> interface
 			tooltip.py
 			    -> CrunchyPlugin, interface, interpreter
 			turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2

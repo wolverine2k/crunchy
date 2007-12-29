@@ -18,7 +18,8 @@ import src.configuration as configuration
 import src.utilities as utilities
 import src.plugins.colourize as colourize
 
-_ = CrunchyPlugin._
+from src.interface import translate
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["io_widget", "/exec"])

@@ -33,6 +33,20 @@ else:
 u_print = tools.u_print
 exec_code = tools.exec_code
 
+# Rather than having various modules importing the configuration.py,
+# CrunchyPlugin.py, etc.,
+# we will set things up so that the relevant will populate the
+# following dictionary when it is loaded; however, it will be possible
+# to artificially populate it as well from other sources enabling
+# independent unit testing.
+
+config = {}  # initialized by configuration.py
+plugin = {}  # initialized by CrunchyPlugin.py
+translate = {} # initialzed below
+
+import src.translation
+translate['_'] = src.translation._
+translate['init_translation'] = src.translation.init_translation
 
 # We use ElementTree, if possible as ElementSoup in combination with
 # BeautifulSoup, in order to parse and process files.
@@ -52,20 +66,12 @@ SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
 
-# Rather than having various modules importing the configuration one,
-# we will set things up so that configuration.py will populate the
-# following dictionary when it is loaded; however, it will be possible
-# to artificially populate it as well from other sources enabling
-# independent unit testing.
 
-config = {}
+
 
 # In the absence of either HTMLTreeBuilder or, even better,
 # ElementSoup/BeautifulSoup in Python 3.x, we provide a basic, but extremely
 # strict, x(h)tml parser.
-
-import src.translation
-config['_'] = src.translation._
 
 XmlFile = None
 if python_version >= 3:

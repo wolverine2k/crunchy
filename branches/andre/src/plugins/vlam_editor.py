@@ -16,7 +16,8 @@ import os
 import src.CrunchyPlugin as CrunchyPlugin
 import src.configuration as configuration
 from src.utilities import extract_log_id
-_ = CrunchyPlugin._
+from src.interface import translate
+_ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])

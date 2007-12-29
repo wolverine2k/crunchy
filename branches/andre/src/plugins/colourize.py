@@ -18,7 +18,7 @@ import keyword
 import token
 import tokenize
 
-from src.interface import StringIO, ElementTree, python_version
+from src.interface import StringIO, ElementTree, python_version, translate
 et = ElementTree
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 
@@ -26,7 +26,7 @@ from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 # All plugins should import the crunchy plugin API
 import src.CrunchyPlugin as CrunchyPlugin
 
-_ = CrunchyPlugin._
+_ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["style_pycode"])

@@ -5,8 +5,8 @@ import urllib
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
-from src.interface import python_version, config
-_ = config['_']
+from src.interface import python_version, config, translate
+_ = translate['_']
 
 borg_console = interpreter.BorgConsole()
 

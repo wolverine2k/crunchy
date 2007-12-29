@@ -21,15 +21,7 @@ import urllib
 import urlparse
 import sys
 
-from src.interface import python_version
-
-if python_version < 2.5:
-    # Third party modules - included in crunchy distribution
-    from src.element_tree import ElementTree
-else:
-    from xml.etree import ElementTree
-
-import src.configuration as configuration
+from src.interface import python_version, config, ElementTree
 
 DEBUG = False
 DEBUG2 = False
@@ -295,10 +287,10 @@ def remove_unwanted(tree, page):
 
     # determine if site security level has been set to override
     # the default
-    security_level = configuration.defaults.page_security_level(page.url)
+    security_level = config['page_security_level'](page.url)
     _allowed = allowed_attributes[security_level]
     #The following will be updated so as to add result from page.
-    page.security_info = { 'level': security_level, #configuration.defaults.security,
+    page.security_info = { 'level': security_level,
                           'number removed': 0,
                           'tags removed' : [],
                           'attributes removed': [],
@@ -335,7 +327,7 @@ def remove_unwanted(tree, page):
         for element in tree.getiterator(tag):
             # Filtering for possible dangerous content in "styles..."
             if tag == "link":
-                if not 'trusted' in security_level: #configuration.defaults.security: # default is True
+                if not 'trusted' in security_level:
                     if not is_link_safe(element, page):
                         page.security_info['styles removed'].append(
                                                 [tag, '', __dangerous_text])
@@ -364,7 +356,7 @@ def remove_unwanted(tree, page):
                         page.security_info['number removed'] += 1
                 # Filtering for possible dangerous content in "styles..."
                 elif attr[0].lower() == 'style':
-                    if not 'trusted' in security_level: #configuration.defaults.security: # default is True
+                    if not 'trusted' in security_level:
                         value = attr[1].lower().replace(' ', '').replace('\t', '')
                         for x in dangerous_strings:
                             if x in value:
@@ -376,7 +368,7 @@ def remove_unwanted(tree, page):
                                 page.security_info['number removed'] += 1
             # Filtering for possible dangerous content in "styles..."
             if tag == 'style':
-                if not 'trusted' in security_level: #configuration.defaults.security: # default is True
+                if not 'trusted' in security_level:
                     text = element.text.lower().replace(' ', '').replace('\t', '')
                     for x in dangerous_strings:
                         if x in text:
@@ -389,7 +381,7 @@ def remove_unwanted(tree, page):
                             page.security_info['number removed'] += 1
             # making sure that this is an image
             if tag == "img" and \
-                      not 'trusted' in security_level: #configuration.defaults.security:
+                      not 'trusted' in security_level:
                 _rem = False
                 if 'src' in element.attrib:
                     src = element.attrib["src"]
@@ -421,9 +413,6 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print("These unwanted attributes have been removed:")
         print(unwanted)
-##    # recover normal security level after setting to site-specific
-##    # (if that was the case)
-##    configuration.defaults.reset_security()
     return tree
 
 def __cleanup(elem, filter):

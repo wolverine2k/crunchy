@@ -6,7 +6,7 @@ from dircache import listdir, annotate
 import sys
 
 import src.CrunchyPlugin as cp
-from src.interface import python_version
+from src.interface import python_version, translate
 
 DEBUG = False
 DEBUG2 = False
@@ -82,7 +82,7 @@ def handler(request):
 
 
 def get_directory(npath):
-    _ = cp._
+    _ = translate['_']
     childs = listdir(npath)
     #childs = childs[:]  # pointless statement; why was this done?
     annotate(npath, childs)

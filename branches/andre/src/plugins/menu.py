@@ -6,8 +6,8 @@ by tutorial writers using a custom meta declaration.
 
 import os
 
-# All plugins should import the crunchy plugin API
-import src.CrunchyPlugin as CrunchyPlugin
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import plugin, parse
 import src.security as security
 
 _default_menu = None
@@ -16,8 +16,8 @@ _css = None
 def register():
     """The register() function is required for all plugins.
        """
-    CrunchyPlugin.register_tag_handler("meta", "name", "crunchy_menu", insert_special_menu)
-    CrunchyPlugin.register_tag_handler("no_tag", "menu", None, insert_default_menu)
+    plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
+    plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
 
 def insert_special_menu(page, elem, dummy):
     '''inserts a menu different from the Crunchy default based.
@@ -32,7 +32,7 @@ def insert_special_menu(page, elem, dummy):
         raise NotImplementedError
     else:
         local_path = os.path.split(page.url)[0][1:]
-        menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
+        menu_file = os.path.join(plugin['get_root_dir'](),
                                  "server_root", local_path,
                                  elem.attrib["content"])
     menu, css = extract_menu(menu_file, page)
@@ -48,7 +48,7 @@ def insert_default_menu(page):
     if _default_menu is None:  # Note: for now we only assume we have
                               # one default menu (in English)
                               # This will need to be changed later.
-        menu_file = os.path.join(CrunchyPlugin.get_data_dir(),
+        menu_file = os.path.join(plugin['get_root_dir'](),
                                  "server_root", "menu_en.html")
         # we trust our own menus to be safe
         _default_menu, _css = extract_menu(menu_file, page, safe_menus=True)
@@ -74,7 +74,7 @@ def extract_menu(filename, page, safe_menus=False):
        whereas the css information is contained in the single
        <link> in that file.'''
     try:
-        tree = CrunchyPlugin.parse(filename)
+        tree = parse(filename)
     except Exception:#, info:
         print("cannot create a tree from the file")# info
     # Treat menus just as suspiciously as the original file
