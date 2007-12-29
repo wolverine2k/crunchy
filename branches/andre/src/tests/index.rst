@@ -122,19 +122,29 @@ Crunchy Python files listing::
 			vlam_doctest.py
 			    -> CrunchyPlugin, interface, utilities
 			vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+			    -> CrunchyPlugin, configuration, utilities
 			vlam_image_file.py
+			    -> CrunchyPlugin, configuration
 			vlam_interpreter.py
+			    -> CrunchyPlugin, configuration, utilities, colourize
 			vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+			    -> CrunchyPlugin
 			vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+			    -> CrunchyPlugin
 
 The following are not likely to be tested by us::
 			
 	src/element_tree:
 			BeautifulSoup.py
+			    -> None
 			ElementPath.py
+			    -> None
 			ElementSoup.py
+			    -> BeautifulSoup, ElementTree
 			ElementTree.py
+			    -> ElementPath
 			HTMLTreeBuilder.py
+			    -> ElementTree
 
 
 The following are the actual links to existing test files.
