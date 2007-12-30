@@ -3,11 +3,14 @@ perform vlam substitution
 
 sets up the page and calls appropriate plugins
 """
+import os
+from urllib import urlopen
+from time import sleep
 
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.interface import python_version, ElementTree, parse, XmlFile, StringIO
+from src.interface import python_version, ElementTree, parse, XmlFile, StringIO, config, plugin
 if python_version < 3:
     from src.element_tree import ElementSoup
 et = ElementTree
@@ -15,6 +18,7 @@ et = ElementTree
 from src.cometIO import register_new_page
 import src.configuration as configuration
 import src.utilities as utilities
+from src.plugins.file_service import exec_external_python_version
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
@@ -56,13 +60,41 @@ class CrunchyPage(object):
         else:
             try:
                 self.tree = XmlFile(filehandle)
-            except:  # this does not work yet
-                html_text = filehandle.read()
-                html_text = utilities.sanitize_html_for_elementtree(html_text)
-                fake_file = StringIO()
-                fake_file.write(str(html_text))
-                fake_file.seek(0)
-                self.tree = XmlFile(fake_file)
+            except:
+                # try with processing the file using an external process
+                # that assumes the default Python version is 2.x
+                #
+                # Read the original file and make a local copy to a set location
+                new_filehandle = urlopen(self.url)
+                html_text = new_filehandle.read()
+                _temp_file_path = os.path.join(config['temp_dir'], 'in.html')
+                _temp_file = open(_temp_file_path, 'w')
+                _temp_file.write(str(html_text))
+                _temp_file.close()
+                #
+                # Get the minimal information required by security.py
+                class DummyPage(object):
+                    url = self.url
+                    is_local = self.is_local
+                    is_remote = self.is_remote
+                config['current_page'] = DummyPage()
+                #
+                # Call an external process to clean up the file; note that this
+                # should take care of all the security removal.
+                sanitize_path = os.path.join(plugin['get_root_dir'](), 'sanitize.py')
+                exec_external_python_version(path=sanitize_path,
+                                             alternate_version=False,
+                                             write_over=False)
+                #
+                # Give some time for the above external process to finish
+                #
+                sleep(2)
+                 #
+                # Used the processed file as our input
+                #
+                _temp_file_path = os.path.join(config['temp_dir'], 'out.html')
+                _temp_file = open(_temp_file_path)              
+                self.tree = XmlFile(_temp_file)
         
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.

@@ -213,7 +213,8 @@ def run_external_python_interpreter_request_handler(request):
     request.end_headers()
     exec_external_python_version(code=code)
 
-def exec_external_python_version(code=None,  path=None, alternate_version=True):
+def exec_external_python_version(code=None,  path=None, alternate_version=True,
+                                 write_over=True):
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
@@ -237,11 +238,14 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True):
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
-    if code is not None:
-        filename = open(path, 'w')
-        filename.write(code)
-        filename.close()
-
+    if code is not None and write_over:
+        try:
+            filename = open(path, 'w')
+            filename.write(code)
+            filename.close()
+        except:
+            print("Could not save file in file_service.exec_external_python_version()")
+        
     if os.name == 'nt':
         os.chdir(target_dir) # change dir so as to deal with paths that
                              # include spaces
