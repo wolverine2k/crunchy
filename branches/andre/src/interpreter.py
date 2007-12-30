@@ -351,48 +351,34 @@ class SingleConsole(InteractiveConsole):
                 del loc[x]
         return
 
-
-class Borg(object):
-    '''Borg Idiom, from the Python Cookbook, 2nd Edition, p:273
-
-    Derive a class form this; all instances of that class will share the
-    same state, provided that they don't override __new__; otherwise,
-    remember to use Borg.__new__ within the overriden class.
+class BorgGroups(object):
+    '''Inspired by the Borg Idiom, from the Python Cookbook, 2nd Edition, p:273
+    to deal with multiple Borg groups (one per crunchy page)
+    while being compatible with Python 3.0a1/2.
+    Derived class must use a super() call to work with this properly.
     '''
-    _shared_state = {}
-
-    if python_version < 3:
-        def __new__(cls, *a, **k):
-            obj = object.__new__(cls, *a, **k)
-            obj.__dict__ = cls._shared_state
-            return obj
-    else:
-        def __init__(self):
-            self.__dict__ = self._shared_state
-
+    _shared_states = {}
+    def __init__(self, group="Borg"):
+        if group not in self._shared_states:
+            self._shared_states[group] = {}
+        self.__dict__ = self._shared_states[group]
 
 # The following BorgConsole class is defined such that all instances
 # of an interpreter on a same html page share the same environment.
-# However, for reasons that are not clear and that need to be explained
-# (but do present the desired behaviour!!!!), request for new
-# pages are such that interpreters on new pages start with fresh
-# environments.
 
-class BorgConsole(Borg, SingleConsole):
+class BorgConsole(BorgGroups, SingleConsole):
     '''Every BorgConsole share a common state'''
-    def __init__(self, locals={}, filename="Crunchy console"):
-        if python_version >=3:
-            super(BorgConsole, self).__init__()
+    def __init__(self, locals={}, filename="Crunchy console", group="Borg"):
+        super(BorgConsole, self).__init__(group=group)
         SingleConsole.__init__(self, locals, filename=filename)
 
-class TypeInfoConsole(Borg, SingleConsole):
+class TypeInfoConsole(BorgGroups, SingleConsole):
     '''meant to provide feedback as to type information
        inspired by John Posner's post on edu-sig
        http://mail.python.org/pipermail/edu-sig/2007-August/008166.html
     '''
-    def __init__(self, locals={}, filename="Crunchy console"):
-        if python_version >=3:
-            super(BorgConsole, self).__init__()
+    def __init__(self, locals={}, filename="Crunchy console", group="Borg"):
+        super(TypeInfoConsole, self).__init__(group=group)
         SingleConsole.__init__(self, locals, filename=filename)
 
     def runcode(self, code, source):

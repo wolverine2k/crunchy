@@ -42,8 +42,89 @@ def register():
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##    plugin['register_tag_handler']("pre", "title", "ipython", insert_interpreter)
 
+
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
+    
+    # First, some definitions that need to be made as local variables
+    # since they will use a local variable, pageid
+    prefix = config['_prefix']
+    crunchy_help = _("Type %s.help for more information."%prefix)
+    
+    BorgInterpreter_js = r"""
+    function init_BorgInterpreter(uid){
+        code = "import src.configuration as configuration\n";
+        code += "locals = {'%s': configuration.defaults}\n";
+        code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals, group='%s')";
+        code += "\nborg.push('print(";
+        code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
+        code += ")')\nborg.interact()\n";
+        var j = new XMLHttpRequest();
+        j.open("POST", "/exec%s?uid="+uid, false);
+        j.send(code);
+    };
+    """%(prefix, page.pageid, (sys.version.split(" ")[0]), crunchy_help,
+               plugin['session_random_id'])
+    
+    SingleInterpreter_js = r"""
+    function init_SingleInterpreter(uid){
+        code = "import src.configuration as configuration\n";
+        code += "locals = {'%s': configuration.defaults}\n";
+        code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+        code += "\nisolated.push('print(";
+        code += '"Crunchy: Individual Interpreter (Python version %s)."';
+        code += ")')\nisolated.interact(ps1='--> ')\n";
+        var j = new XMLHttpRequest();
+        j.open("POST", "/exec%s?uid="+uid, false);
+        j.send(code);
+    };
+    """%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    
+    parrot_js = r"""
+    function init_parrotInterpreter(uid){
+        code = "import src.configuration as configuration\n";
+        code += "locals = {'%s': configuration.defaults}\n";
+        code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+        code += "\nisolated.push('print(";
+        code += '"Crunchy: [dead] parrot Interpreter (Python version %s)."';
+        code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
+        var j = new XMLHttpRequest();
+        j.open("POST", "/exec%s?uid="+uid, false);
+        j.send(code);
+    };
+    """%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    
+    Parrots_js = r"""
+    function init_ParrotsInterpreter(uid){
+        code = "import src.configuration as configuration\n";
+        code += "locals = {'%s': configuration.defaults}\n";
+        code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals, group='%s')";
+        code += "\nborg.push('print(";
+        code += '"Crunchy: [dead] Parrots Interpreter (Python version %s)."';
+        code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
+        var j = new XMLHttpRequest();
+        j.open("POST", "/exec%s?uid="+uid, false);
+        j.send(code);
+    };
+    """%(prefix, page.pageid, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    
+    TypeInfoConsole_js = r"""
+    function init_TypeInfoConsole(uid){
+        code = "import src.configuration as configuration\n";
+        code += "locals = {'%s': configuration.defaults}\n";
+        code += "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(locals, group='%s')";
+        code += "\nborg.push('print(";
+        code += '"Crunchy: TypeInfoConsole (Python version %s)."';
+        code += ")')\nborg.interact(ps1='<t>>> ')\n";
+        var j = new XMLHttpRequest();
+        j.open("POST", "/exec%s?uid="+uid, false);
+        j.send(code);
+    };
+    """%(prefix, page.pageid, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    
+    #
+    # We are now ready to proceed with the actual code.
+
     vlam = elem.attrib["title"]
     c = config['override_default_interpreter']
     if c == 'default':
@@ -155,79 +236,6 @@ def insert_interpreter(page, elem, uid):
     plugin['services'].insert_tooltip(page, elem, uid)
     return
 
-prefix = config['_prefix']
-crunchy_help = _("Type %s.help for more information."%prefix)
-
-BorgInterpreter_js = r"""
-function init_BorgInterpreter(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
-    code += "\nborg.push('print(";
-    code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
-    code += ")')\nborg.interact()\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, (sys.version.split(" ")[0]), crunchy_help,
-           plugin['session_random_id'])
-
-SingleInterpreter_js = r"""
-function init_SingleInterpreter(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
-    code += "\nisolated.push('print(";
-    code += '"Crunchy: Individual Interpreter (Python version %s)."';
-    code += ")')\nisolated.interact(ps1='--> ')\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
-
-parrot_js = r"""
-function init_parrotInterpreter(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
-    code += "\nisolated.push('print(";
-    code += '"Crunchy: [dead] parrot Interpreter (Python version %s)."';
-    code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
-
-Parrots_js = r"""
-function init_ParrotsInterpreter(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals)";
-    code += "\nborg.push('print(";
-    code += '"Crunchy: [dead] Parrots Interpreter (Python version %s)."';
-    code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
-
-TypeInfoConsole_js = r"""
-function init_TypeInfoConsole(uid){
-    code = "import src.configuration as configuration\n";
-    code += "locals = {'%s': configuration.defaults}\n";
-    code += "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(locals)";
-    code += "\nborg.push('print(";
-    code += '"Crunchy: TypeInfoConsole (Python version %s)."';
-    code += ")')\nborg.interact(ps1='<t>>> ')\n";
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
-};
-"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
