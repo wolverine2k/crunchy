@@ -367,7 +367,9 @@ class Borg(object):
             obj.__dict__ = cls._shared_state
             return obj
     else:
-        pass
+        def __init__(self):
+            self.__dict__ = self._shared_state
+
 
 # The following BorgConsole class is defined such that all instances
 # of an interpreter on a same html page share the same environment.
@@ -379,6 +381,8 @@ class Borg(object):
 class BorgConsole(Borg, SingleConsole):
     '''Every BorgConsole share a common state'''
     def __init__(self, locals={}, filename="Crunchy console"):
+        if python_version >=3:
+            super(BorgConsole, self).__init__()
         SingleConsole.__init__(self, locals, filename=filename)
 
 class TypeInfoConsole(Borg, SingleConsole):
@@ -387,6 +391,8 @@ class TypeInfoConsole(Borg, SingleConsole):
        http://mail.python.org/pipermail/edu-sig/2007-August/008166.html
     '''
     def __init__(self, locals={}, filename="Crunchy console"):
+        if python_version >=3:
+            super(BorgConsole, self).__init__()
         SingleConsole.__init__(self, locals, filename=filename)
 
     def runcode(self, code, source):

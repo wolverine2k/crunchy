@@ -142,6 +142,12 @@ class CrunchyPage(object):
         js.set("type", "text/javascript")
         js.text = code
         self.head.append(js)
+        
+    def add_charset(self):
+        c = et.Element("meta")
+        c.set("http-equiv", "Content-Type")
+        c.set("content", "text/html; charset=UTF-8")
+        self.head.append(c)
 
     def insert_js_file(self, filename):
         '''Inserts a javascript file link in the <head>.
@@ -286,9 +292,7 @@ class CrunchyPage(object):
     def read(self):
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
-        # May want to use the "private" _write() instead of write() as the
-        # latter will add a redundant <xml ...> statement unless the
-        # encoding is utf-8 or ascii.
+        self.add_charset()
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
