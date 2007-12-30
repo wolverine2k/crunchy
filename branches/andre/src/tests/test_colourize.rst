@@ -35,12 +35,12 @@ We now style a few code samples.  First, some straight Python code.
     ... """
     >>> styled_code1 = styler.parseListing(code_sample1)
     >>> print(styled_code1)
-    &lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; +=&lt;/span&gt;&lt;span class='py_builtins'&gt; str&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;
-    &lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
+    <span class='py_variable'>a</span><span class='py_op'> =</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_variable'>a</span><span class='py_op'> +=</span><span class='py_builtins'> str</span><span class='py_op'>(</span><span class='py_variable'>i</span><span class='py_op'>)</span>
+    <span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>        </span><span class='py_keyword'>pass</span>
     <BLANKLINE>
 
 We know that the generated work does the required processing as we have
@@ -64,8 +64,8 @@ version that does not call Colourizer directly). ]]
     >>> styler = colourize.Colourizer()
     >>> styled_code2 = styler.parseListing(code_sample2)
     >>> print(styled_code2) #doctest:+ELLIPSIS
-    &lt;span class='py_comment'&gt;#First comment...
-    ...&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class='py_comment'>#First comment...
+    ...<span class='py_variable'>a</span><span class='py_op'> =</span><span class='py_string'> 'Hello world!'</span>
 
 Note how the comments result in a </span> inserted at the beginning of the
 next line.  This requires special consideration when styling code with
@@ -75,20 +75,20 @@ Next, we redo the same tests, but this time with added line numbers.
     >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code1a = styler.parseListing(code_sample1)
     >>> print(styled_code1a)
-    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; +=&lt;/span&gt;&lt;span class='py_builtins'&gt; str&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  4 &lt;/span&gt;&lt;span class='py_keyword'&gt;class&lt;/span&gt;&lt;span class='py_variable'&gt; test_case&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_builtins'&gt;object&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  5 &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='py_keyword'&gt;def&lt;/span&gt;&lt;span class='py_special'&gt; __init__&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_variable'&gt;self&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  6 &lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span class='py_keyword'&gt;pass&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  7 &lt;/span&gt;
+    <span class='py_linenumber'>  1 </span><span class='py_variable'>a</span><span class='py_op'> =</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>  2 </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  3 </span><span>    </span><span class='py_variable'>a</span><span class='py_op'> +=</span><span class='py_builtins'> str</span><span class='py_op'>(</span><span class='py_variable'>i</span><span class='py_op'>)</span>
+    <span class='py_linenumber'>  4 </span><span class='py_keyword'>class</span><span class='py_variable'> test_case</span><span class='py_op'>(</span><span class='py_builtins'>object</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  5 </span><span>    </span><span class='py_keyword'>def</span><span class='py_special'> __init__</span><span class='py_op'>(</span><span class='py_variable'>self</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  6 </span><span>        </span><span class='py_keyword'>pass</span>
+    <span class='py_linenumber'>  7 </span>
 
 
     >>> styler = colourize.Colourizer(offset=0)
     >>> styled_code2a = styler.parseListing(code_sample2)
     >>> print(styled_code2a)  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment...
-    ...&lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class='py_linenumber'>  1 </span><span class='py_comment'>#First comment...
+    ...<span class='py_linenumber'>  2 </span><span class='py_variable'>a</span><span class='py_op'> =</span><span class='py_string'> 'Hello world!'</span>
 
 
 Note again how the comments ending one line result in a </span> inserted at the beginning of the
@@ -98,8 +98,8 @@ A final example that starts at line 11 (offset of 10)
     >>> styler = colourize.Colourizer(offset=10)
     >>> styled_code2b = styler.parseListing(code_sample2)
     >>> print(styled_code2b)  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt; 11 &lt;/span&gt;&lt;span class='py_comment'&gt;#First comment...
-    ...&lt;span class='py_linenumber'&gt; 12 &lt;/span&gt;&lt;span class='py_variable'&gt;a&lt;/span&gt;&lt;span class='py_op'&gt; =&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class='py_linenumber'> 11 </span><span class='py_comment'>#First comment...
+    ...<span class='py_linenumber'> 12 </span><span class='py_variable'>a</span><span class='py_op'> =</span><span class='py_string'> 'Hello world!'</span>
 
 
 
@@ -137,7 +137,7 @@ and commas to represent the prompt), to be embedded in an html page.
     >>> print(python_code3)
     print 'Hello world!'
     >>> print(extracted3)
-    [('&amp;gt;&amp;gt;&amp;gt; ', 1)]
+    [('&gt;&gt;&gt; ', 1)]
 
 ]]] print "Hello world!"
 Hello world!
@@ -154,7 +154,7 @@ Hello world!
     for i in range(3):
         print i*i
     >>> print(extracted4)
-    [('&amp;gt;&amp;gt;&amp;gt; ', 1), ('', 'Hello world!'), ('&amp;gt;&amp;gt;&amp;gt; ', 2), ('... ', 3)]
+    [('&gt;&gt;&gt; ', 1), ('', 'Hello world!'), ('&gt;&gt;&gt; ', 2), ('... ', 3)]
 
 
 We can style the code as before.
@@ -165,25 +165,25 @@ For future reference, we will document as tests here styling examples
 with line numbers added of the previous two cases.
 
     >>> print(colourize._style(code_sample3, offset=4)[0])  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt;  5 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class='py_linenumber'>  5 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
     >>> print(colourize._style(code_sample4, offset=0)[0])  #doctest:+ELLIPSIS
-    &lt;span class='py_linenumber'&gt;  1 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;    &lt;/span&gt;&lt;span class="py_output"&gt;Hello world!&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  2 &lt;/span&gt;&lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class='py_linenumber'&gt;  3 &lt;/span&gt;&lt;span class="py_prompt"&gt;... &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
+    <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_linenumber'>    </span><span class="py_output">Hello world!</span>
+    <span class='py_linenumber'>  2 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class='py_linenumber'>  3 </span><span class="py_prompt">... </span><span>    </span><span class='...'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
 
 Next, we define a function to add back the prompt and output to the
 styled code from a simulated interpreter session.
 
     >>> fully_styled3 = colourize.add_back_prompt_and_output(styled_code3, extracted3)
     >>> print(fully_styled3)  #doctest:+ELLIPSIS
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
     >>> fully_styled4 = colourize.add_back_prompt_and_output(styled_code4, extracted4)
     >>> print(fully_styled4)  #doctest:+ELLIPSIS
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class="py_output"&gt;Hello world!&lt;/span&gt;
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span class="py_prompt"&gt;... &lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class="py_output">Hello world!</span>
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span class="py_prompt">... </span><span>    </span><span class='...'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
 
 By inspection, we conclude that it does appear to be correct.
 
@@ -194,10 +194,10 @@ see if we have to take care of this in this version.
     >>> end_comment6 = '''>>> # this is a comment'''
     >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
     >>> print(colourize._style(python_code6)[0])
-    &lt;span class='py_comment'&gt;# this is a comment&lt;/span&gt;
+    <span class='py_comment'># this is a comment</span>
     >>> styled6, py6 = colourize._style(end_comment6) # letting style do its thing
     >>> print(styled6)
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='py_comment'&gt;# this is a comment&lt;/span&gt;
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_comment'># this is a comment</span>
     >>> print(py6)
     # this is a comment
 
@@ -209,10 +209,10 @@ This looks ok; let us try a slightly longer example.
     ... >>> # another comment."""
     >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
     >>> print(colourize._style(python_code7)[0])  #doctest:+ELLIPSIS
-    &lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
-    &lt;span class='py_keyword'&gt;for&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_keyword'&gt; in&lt;/span&gt;&lt;span class='py_builtins'&gt; range&lt;/span&gt;&lt;span class='py_op'&gt;(&lt;/span&gt;&lt;span class='py_number'&gt;3&lt;/span&gt;&lt;span class='py_op'&gt;)&lt;/span&gt;&lt;span class='py_op'&gt;:&lt;/span&gt;
-    &lt;span&gt;    &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_variable'&gt; i&lt;/span&gt;&lt;span class='py_op'&gt;*&lt;/span&gt;&lt;span class='py_variable'&gt;i&lt;/span&gt;
-    &lt;span class='py_comment'&gt;# another comment.&lt;/span&gt;
+    <span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
+    <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
+    <span>    </span><span class='...'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
+    <span class='py_comment'># another comment.</span>
 
 Again, by inspection, this looks correct.
 
@@ -253,7 +253,7 @@ some previous examples to test the interpreter version.
 
 In case we find a discrepancy, we compare with the expected result.
     >>> print(colourize._style(code_sample3)[0])  #doctest:+ELLIPSIS
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class='...'&gt;print&lt;/span&gt;&lt;span class='py_string'&gt; 'Hello world!'&lt;/span&gt;
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
 
 Using this code with sample pages, we noted that sometimes blank lines
 were added either at the beginning and/or at the end of a code sample.
@@ -323,9 +323,9 @@ First, some unstyled code.
     >>> print(py_code)
     print "Hello World!"
     >>> print(styled) #doctest:+ELLIPSIS
-    &lt;pre class="crunchy" title="py_code"&gt;
-    &lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
-    &lt;/pre&gt;
+    <pre class="crunchy" title="py_code">
+    <span class="...">print</span><span class="py_string"> "Hello World!"</span>
+    </pre>
 
 
 Next, some simple styled code
@@ -336,9 +336,9 @@ Next, some simple styled code
     >>> print(py_code)
     print "Hello World!"
     >>> print(styled)#doctest:+ELLIPSIS
-    &lt;pre class="crunchy" title="junk"&gt;
-    &lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
-    &lt;/pre&gt;
+    <pre class="crunchy" title="junk">
+    <span class="...">print</span><span class="py_string"> "Hello World!"</span>
+    </pre>
 
 In the following example, the order of the attributes is changed by
 ElementTree - at least in the version used for this test.
@@ -350,9 +350,9 @@ ElementTree - at least in the version used for this test.
     >>> print(py_code)
     print "Hello World!"
     >>> print(styled)#doctest:+ELLIPSIS
-    &lt;pre class="crunchy" tag="other" title="junk"&gt;
-    &lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
-    &lt;/pre&gt;
+    <pre class="crunchy" tag="other" title="junk">
+    <span class="...">print</span><span class="py_string"> "Hello World!"</span>
+    </pre>
 
 Finally, a test including the linenumber option
     >>> sample = '<pre title="junk linenumber=2">print "Hello World!"</pre>'
@@ -362,22 +362,22 @@ Finally, a test including the linenumber option
     >>> print(py_code)
     print "Hello World!"
     >>> print(styled)#doctest:+ELLIPSIS
-    &lt;pre class="crunchy" title="junk linenumber=2"&gt;
-    &lt;span class="py_linenumber"&gt;  2 &lt;/span&gt;&lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; "Hello World!"&lt;/span&gt;
-    &lt;/pre&gt;
+    <pre class="crunchy" title="junk linenumber=2">
+    <span class="py_linenumber">  2 </span><span class="...">print</span><span class="py_string"> "Hello World!"</span>
+    </pre>
 
 Make sure we parse properly from html tree with a prompt included.
 
-    >>> sample = """<html><body><pre title="py_code">&gt;&gt;&gt; print 'Hello!'</pre></body></html>"""
+    >>> sample = """<html><body><pre title="py_code">>>> print 'Hello!'</pre></body></html>"""
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//pre")
     >>> pycode, new_elem, dummy_error = colourize.style(pre2)
     >>> print(pycode)
     print 'Hello!'
     >>> print(et.tostring(new_elem))#doctest:+ELLIPSIS
-    &lt;pre class="crunchy" title="py_code"&gt;
-    &lt;span class="py_prompt"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hello!'&lt;/span&gt;
-    &lt;/pre&gt;
+    <pre class="crunchy" title="py_code">
+    <span class="py_prompt">&gt;&gt;&gt; </span><span class="...">print</span><span class="py_string"> 'Hello!'</span>
+    </pre>
 
 Testing with a <code> element that is followed by some text; this
 tests the proper handling of an Element's "tail".
@@ -391,6 +391,6 @@ tests the proper handling of an Element's "tail".
     >>> print(pycode)
     print 'Hi!'
     >>> print(et.tostring(new_elem))#doctest:+ELLIPSIS
-    &lt;code class="crunchy" title="py_code"&gt;
-    &lt;span class="..."&gt;print&lt;/span&gt;&lt;span class="py_string"&gt; 'Hi!'&lt;/span&gt;
-    &lt;/code&gt; with a tail.
+    <code class="crunchy" title="py_code">
+    <span class="...">print</span><span class="py_string"> 'Hi!'</span>
+    </code> with a tail.

@@ -8,18 +8,9 @@ inside an html <canvas>.
 
 import math as _math
 
-from src.CrunchyPlugin import get_uid, exec_js, get_pageid
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import plugin
 from src.plugins.c_turtle import CTurtle
-
-# local functions which can be redefined for testing
-def get_canvas_id():
-    return get_uid()
-
-def page_id():
-    return get_pageid()
-
-def send_js(page_id, code):
-    exec_js(page_id, code)
 
 # Since there can be many drawing areas (& Python interpreters) on a given
 # page, we need to be able to keep track of relevant variables for each
@@ -42,7 +33,7 @@ class Turtle(CTurtle):
         self.line_drawings = []
         CTurtle.__init__(self, x, y, angle, visible)
         self.default_colors()
-        self.uid = get_canvas_id() # determining to which canvas it will be drawn
+        self.uid = plugin['get_uid']() # determining to which canvas it will be drawn
         if self.uid in _turtles:
             _turtles[self.uid].append(self)
         else:
@@ -106,7 +97,7 @@ class Turtle(CTurtle):
     def draw(self, draw_last=False):
         '''draws a turtle'''
         
-        send_js(page_id(), ''.join(self.line_drawings))
+        plugin['exec_js'](plugin['get_pageid'](), ''.join(self.line_drawings))
         
         if not self._visible:
             return
@@ -142,7 +133,7 @@ class Turtle(CTurtle):
     set_line_colour = color
 
 def _update_drawing():
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     any_visible = False
     for turtle in _turtles[uid]:
         if turtle._visible:
@@ -166,18 +157,18 @@ class World(object):
         global default_turtle
         
         This world is an html <canvas>'''
-        uid = get_canvas_id()
+        uid = plugin['get_uid']()
         _heights[uid] = height
         _widths[uid] = width
     
         if uid not in _created_uids: # dynamically create a canvas
             _created_uids.append(uid)
-            send_js(page_id(), """var divCanvas = document.getElementById("div_%s");
+            plugin['exec_js'](plugin['get_pageid'](), """var divCanvas = document.getElementById("div_%s");
                             var newCanvas = document.createElement("canvas");
                             newCanvas.setAttribute('id', 'canvas_%s')
                             divCanvas.appendChild(newCanvas);
             """%(uid, uid))
-        send_js(page_id(), """document.getElementById("canvas_%s").width=%d;
+        plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").width=%d;
                         document.getElementById("canvas_%s").height=%d;
                         document.getElementById("canvas_%s").style.display = "block";
                         document.getElementById("canvas_%s").getContext('2d').clearRect(0, 0, %d, %d);
@@ -223,7 +214,7 @@ def _set_line_colour(col):
     '''Sets the default line colour using a valid value given as a string.'''
     # line_color & fill_color are variables whose values are associated with
     # a given canvas Context - we don't need to remember them.
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     instructions = """document.getElementById("canvas_%s").getContext('2d').strokeStyle = %r;""" % (uid, col)
     return instructions
 
@@ -233,10 +224,10 @@ def set_fill_colour(col):
     '''Sets the default fill colour using a valid value given as a string.'''
     # line_color & fill_color are variables whose values are associated with
     # a given canvas Context - we don't need to remember them.
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     #if not __validate_colour(col):
     #    col = "DeepPink" # make it stand out for now
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
 set_fill_color = set_fill_colour
 
 def __translate_x(x, uid):
@@ -251,7 +242,7 @@ def __translate_y(y, uid):
 
 def line(point_1, point_2):
     '''Draws a line from point_1 = (x1, y1) to point_2 (x2, y2) in the default line colour.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x1, y1 = point_1
     x2, y2 = point_2
     x1 = __translate_x(x1, uid)
@@ -262,47 +253,47 @@ def line(point_1, point_2):
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x1, y1, uid, x2, y2, uid)
-    #send_js(page_id(), instructions)
+    #plugin['exec_js'](plugin['get_pageid'](), instructions)
     return instructions
 
 def circle(centre, r):
     '''Draws a circle of radius r centred on centre = (x, y) in the default line colour.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x, y = centre
     x = __translate_x(x, uid)
     y = __translate_y(y, uid)
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, r, uid))
 
 def filled_circle(centre, r):
     '''Draws a filled circle of radius r centred on centre = (x, y) in the default fill colour.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x, y = centre
     x = __translate_x(x, uid)
     y = __translate_y(y, uid)
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').arc(%s, %s, %s, 0, Math.PI*2, true);
                              document.getElementById("canvas_%s").getContext('2d').fill();""" % (uid, uid, x, y, r, uid))
 
 def _rectangle(corner, w, h):
     '''Draws a rectangle in the default line colour in normal canvas coordinates.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x, y = corner # bottom left
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').strokeRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
 def _filled_rectangle(corner, w, h):
     '''Draws a filled rectangle in the default fill colour in normal canvas coordinates.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x, y = corner # bottom left
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').fillRect(%s, %s, %s, %s);""" % (uid, x, y, w, h))
 
 def __point(x, y):
     '''Draws a point in the default line colour.'''
-    uid = get_canvas_id()
+    uid = plugin['get_uid']()
     x = __translate_x(x, uid)
     y = __translate_y(y, uid)
-    send_js(page_id(), """document.getElementById("canvas_%s").getContext('2d').beginPath();
+    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').beginPath();
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, uid, x+1, y+1, uid))

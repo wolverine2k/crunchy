@@ -9,21 +9,16 @@ We start by initializing a simple Turtle; we also create a mock function to retu
 uid for testing.
 
     >>> import src.plugins.turtle_js as c
+    >>> from src.interface import plugin
     >>> def get_uid():
     ...     return 'dummy_uid'
     >>> def page_id():
     ...     return 'dummy_page'
     >>> def fake_js(dummy, stuff):
     ...     print(stuff)
-    >>> c.get_canvas_id = get_uid
-    >>> c.get_canvas_id()
-    'dummy_uid'
-    >>> c.page_id = page_id
-    >>> c.page_id()
-    'dummy_page'
-    >>> c.send_js = fake_js
-    >>> c.send_js('dummy', 'hello')
-    hello
+    >>> plugin['get_uid'] = get_uid
+    >>> plugin['exec_js'] = fake_js
+    >>> plugin['get_pageid'] = page_id
     >>> c._created_uids.append(get_uid())
     >>> c._widths[get_uid()] = 500
     >>> c._heights[get_uid()] = 500

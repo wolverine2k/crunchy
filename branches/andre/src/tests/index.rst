@@ -37,109 +37,109 @@ nothing else other than other plugins (and, perhaps, utilities.py) and/or module
 
 Crunchy Python files listing::
 
-	all_tests.py
-	all_tests_py3k.py
-	crunchy.py
-	    -> interface, http_serve, pluginloader
-	src:
-		cometIO.py
-		    -> configuration, interpreter, interface, utilities
-		configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-		    -> interface
-		CrunchyPlugin.py
-		    -> cometIO, PluginServices, interface, vlam
-		errors.py
-		    -> configuration, translation
-		http_serve.py
-		    -> CrunchyPlugin, interface
-		interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-		    -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
-		interpreter.py
-		    -> interface, utilities, configuration, errors
-		my_htmlentitydefs.py
-		    -> None
-		pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
-		    -> interface, CrunchyPlugin  [and loads all the plugins]
-		PluginServices.py
-		    -> None
-		security.py
-		    -> interface
-		tools_2k.py
-		    -> errors
-		tools_3k.py
-		    -> None
-		translation.py
-		    -> interface
-		utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-		    -> interface
-		vlam.py
-		    -> security, interface, ElementSoup, cometIO, 
-		       configuration, utilities
+    all_tests.py
+    all_tests_py3k.py
+    crunchy.py
+        -> interface, http_serve, pluginloader
+    src:
+        cometIO.py
+            -> configuration, interpreter, interface, utilities
+        configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            -> interface
+        CrunchyPlugin.py
+            -> cometIO, PluginServices, interface, vlam
+        errors.py
+            -> configuration, translation
+        http_serve.py
+            -> CrunchyPlugin, interface
+        interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+            -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
+        interpreter.py
+            -> interface, utilities, configuration, errors
+        my_htmlentitydefs.py
+            -> None
+        pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
+            -> interface, CrunchyPlugin  [and loads all the plugins]
+        PluginServices.py
+            -> None
+        security.py
+            -> interface
+        tools_2k.py
+            -> errors
+        tools_3k.py
+            -> None
+        translation.py
+            -> interface
+        utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+            -> interface
+        vlam.py
+            -> security, interface, ElementSoup, cometIO, 
+               configuration, utilities
                
-	src/plugins:
-			c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> None
-			colourize.py # tests: 2.4, 2.5, 3.0a1?
-			    -> CrunchyPlugin, interface, utilities
-			comet.py
-			    -> CrunchyPlugin, cometIO
-			editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> interface
-			execution.py
-			    -> interface
-			file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin, interface, configuration
-			graphics.py
-			    -> CrunchyPlugin
-			handle_default.py (cp)
-			    -> interface
-			handle_local.py
-			    -> interface
-			handle_remote.py
-			    -> interface
-			io_widget.py
-			    -> CrunchyPlugin, editarea, interface
-			links.py
-			    -> interface
-			math_graphics.py
-			    -> interface
-			menu.py
-			    -> interface, security
-			rst.py
-			    -> interface
-			security_advisor.py
-			    -> interface
-			tooltip.py
-			    -> CrunchyPlugin, interface, interpreter
-			turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin, c_turtle
-			turtle_tk.py  # empty file for now...
-			vlam_doctest.py
-			    -> CrunchyPlugin, interface, utilities
-			vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin, configuration, utilities
-			vlam_image_file.py
-			    -> CrunchyPlugin, configuration
-			vlam_interpreter.py
-			    -> CrunchyPlugin, configuration, utilities, colourize
-			vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin
-			vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-			    -> CrunchyPlugin
+    src/plugins:
+            c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> None
+            colourize.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> interface, utilities
+            comet.py
+                -> CrunchyPlugin, cometIO
+            editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> interface
+            execution.py
+                -> interface
+            file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> CrunchyPlugin, interface, configuration
+            graphics.py
+                -> interface
+            handle_default.py
+                -> interface
+            handle_local.py
+                -> interface
+            handle_remote.py
+                -> interface
+            io_widget.py
+                -> CrunchyPlugin, editarea, interface
+            links.py
+                -> interface
+            math_graphics.py
+                -> interface
+            menu.py
+                -> interface, security
+            rst.py
+                -> interface
+            security_advisor.py
+                -> interface
+            tooltip.py
+                -> CrunchyPlugin, interface, interpreter
+            turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> interface, c_turtle
+            turtle_tk.py  # empty file for now...
+            vlam_doctest.py
+                -> CrunchyPlugin, interface, utilities
+            vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> CrunchyPlugin, configuration, utilities
+            vlam_image_file.py
+                -> CrunchyPlugin, configuration
+            vlam_interpreter.py
+                -> CrunchyPlugin, configuration, utilities, colourize
+            vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> CrunchyPlugin
+            vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+                -> CrunchyPlugin
 
 The following are not likely to be tested by us::
-			
-	src/element_tree:
-			BeautifulSoup.py
-			    -> None
-			ElementPath.py
-			    -> None
-			ElementSoup.py
-			    -> BeautifulSoup, ElementTree
-			ElementTree.py
-			    -> ElementPath
-			HTMLTreeBuilder.py
-			    -> ElementTree
+            
+    src/element_tree:
+            BeautifulSoup.py
+                -> None
+            ElementPath.py
+                -> None
+            ElementSoup.py
+                -> BeautifulSoup, ElementTree
+            ElementTree.py
+                -> ElementPath
+            HTMLTreeBuilder.py
+                -> ElementTree
 
 
 The following are the actual links to existing test files.

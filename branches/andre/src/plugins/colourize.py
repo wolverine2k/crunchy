@@ -18,14 +18,10 @@ import keyword
 import token
 import tokenize
 
-from src.interface import StringIO, ElementTree, python_version, translate
-et = ElementTree
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import StringIO, ElementTree, python_version, translate, plugin
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
-
-#---------begin plugin specific---------------------
-# All plugins should import the crunchy plugin API
-import src.CrunchyPlugin as CrunchyPlugin
-
+et = ElementTree
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -42,15 +38,15 @@ def register():
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.
-    CrunchyPlugin.register_tag_handler("code", "title", "py_code", plugin_style)
-    CrunchyPlugin.register_tag_handler("code", "title", "python_code", plugin_style)
-    CrunchyPlugin.register_tag_handler("pre", "title", "py_code", plugin_style)
-    CrunchyPlugin.register_tag_handler("pre", "title", "python_code", plugin_style)
+    plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
+    plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
+    plugin['register_tag_handler']("pre", "title", "py_code", plugin_style)
+    plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
     # this plugin can style some Python code, returning both the styled
     # code and either the extracted Python code ...
-    CrunchyPlugin.register_service(service_style, "style_pycode")
+    plugin['register_service'](service_style, "style_pycode")
     # ... or the simulated interactive session, usable as a doctest.
-    CrunchyPlugin.register_service(service_style_nostrip, "style_pycode_nostrip")
+    plugin['register_service'](service_style_nostrip, "style_pycode_nostrip")
 
 
 
