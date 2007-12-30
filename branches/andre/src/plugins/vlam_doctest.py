@@ -11,9 +11,9 @@ for people familiar with the Crunchy plugin architecture.
 
 # All plugins should import the crunchy plugin API
 
-import src.CrunchyPlugin as CrunchyPlugin
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id
-from src.interface import config
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -32,13 +32,13 @@ def register():
        """
     # 'doctest' only appears inside <pre> elements, using the notation
     # <pre title='doctest ...'>
-    CrunchyPlugin.register_tag_handler("pre", "title", "doctest",
+    plugin['register_tag_handler']("pre", "title", "doctest",
                                           doctest_widget_callback)
     # By convention, the custom handler for "name" will be called
     # via "/name"; for security, we add a random session id
     # to the custom handler's name to be executed.
-    CrunchyPlugin.register_http_handler(
-                         "/doctest%s"%CrunchyPlugin.session_random_id,
+    plugin['register_http_handler'](
+                         "/doctest%s"%plugin['session_random_id'],
                                        doctest_runner_callback)
 
 
@@ -50,7 +50,7 @@ def doctest_runner_callback(request):
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
     code = request.data + (doctest_pycode % doctests[request.args["uid"]])
-    CrunchyPlugin.exec_code(code, request.args["uid"], doctest=True)
+    plugin['exec_code'](code, request.args["uid"], doctest=True)
     request.send_response(200)
     request.end_headers()
 
@@ -73,9 +73,9 @@ def doctest_widget_callback(page, elem, uid):
             page.add_js_code(doctest_jscode)
 
     # next, we style the code, also extracting it in a useful form ...
-    doctestcode, markup = CrunchyPlugin.services.style_pycode_nostrip(page, elem)
+    doctestcode, markup = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
-        config['log'][log_id]= [CrunchyPlugin.tostring(markup)]
+        config['log'][log_id]= [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
     # reset the original element to use it as a container.  For those
@@ -91,16 +91,16 @@ def doctest_widget_callback(page, elem, uid):
     # We insert the styled doctest code inside this container element:
     elem.insert(0, markup)
     # call the insert_editor_subwidget service to insert an editor:
-    CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid)
+    plugin['services'].insert_editor_subwidget(page, elem, uid)
     #some spacing:
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
     # the actual button used for code execution:
-    btn = CrunchyPlugin.SubElement(elem, "button")
+    btn = SubElement(elem, "button")
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
     # finally, an output subwidget:
-    CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
+    plugin['services'].insert_io_subwidget(page, elem, uid)
 
 # we need some unique javascript in the page; note how the
 # "/doctest" handler mentioned above appears here, together with the
@@ -112,7 +112,7 @@ function exec_doctest(uid){
     j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);
 };
-"""%CrunchyPlugin.session_random_id
+"""%plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
 doctest_pycode = """

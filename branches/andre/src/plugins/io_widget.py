@@ -5,13 +5,13 @@ This is just the UI part, the communication code is defined in the core
 
 provides = set(["io_widget"])
 
-import src.CrunchyPlugin as CrunchyPlugin
-from src.interface import config, translate
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import config, plugin, translate, SubElement
 from src.plugins.editarea import editArea_load_and_save
 _ = translate['_']
 
 def register():
-    CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
+    plugin['register_service'](insert_io_subwidget, "insert_io_subwidget")
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
@@ -39,24 +39,24 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
                 page.add_js_code(editArea_load_and_save)
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
 
-    output = CrunchyPlugin.SubElement(elem, "span")
+    output = SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
     output.text = "\n"
-    span_input = CrunchyPlugin.SubElement(elem, "span")
-    inp = CrunchyPlugin.SubElement(span_input, "input")
+    span_input = SubElement(elem, "span")
+    inp = SubElement(span_input, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
     if interp_kind is not None:
-        editor_link = CrunchyPlugin.SubElement(span_input, "a")
+        editor_link = SubElement(span_input, "a")
         editor_link.attrib["onclick"]= "return convertToEditor(this,'%s')"\
                                       %_("Execute")
         editor_link.attrib["id"] = "ed_link_" + uid
-        image = CrunchyPlugin.SubElement(editor_link, 'img')
+        image = SubElement(editor_link, 'img')
         image.attrib["src"] = "/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["style"] = "border:0;padding:0;position:relative;top:12px;height:30px;"
-        code_sample = CrunchyPlugin.SubElement(elem, "textarea")
+        code_sample = SubElement(elem, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
         if sample_code:
@@ -82,7 +82,7 @@ function push_keys(event, uid){
 
     return true;
 };
-"""%CrunchyPlugin.session_random_id
+"""%plugin['session_random_id']
 
 push_input = r"""
 function push_input(uid){
@@ -94,7 +94,7 @@ function push_input(uid){
     convertFromEditor(uid);
     return true;
 };
-"""%CrunchyPlugin.session_random_id
+"""%plugin['session_random_id']
 
 # moved most style information to crunchy.css
 io_css = r"""

@@ -8,10 +8,11 @@ from subprocess import Popen
 import os
 import sys
 
-# All plugins should import the crunchy plugin API
-import src.CrunchyPlugin as CrunchyPlugin
-import src.configuration as configuration
-from src.interface import python_version
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import python_version, config, plugin
+# keep the following dependency as it is needed to set the value of
+# defaults.alternate_python_version
+from src.configuration import defaults
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
@@ -29,16 +30,16 @@ def register():
          1. a custom service to save a file.
          2. a custom service to read content from a file.
        """
-    CrunchyPlugin.register_http_handler("/save_file", save_file_request_handler)
-    CrunchyPlugin.register_http_handler("/load_file", load_file_request_handler)
-    CrunchyPlugin.register_http_handler("/save_and_run%s"%CrunchyPlugin.session_random_id,
+    plugin['register_http_handler']("/save_file", save_file_request_handler)
+    plugin['register_http_handler']("/load_file", load_file_request_handler)
+    plugin['register_http_handler']("/save_and_run%s"%plugin['session_random_id'],
                                         save_and_run_request_handler)
-    CrunchyPlugin.register_http_handler("/run_external%s"%CrunchyPlugin.session_random_id,
+    plugin['register_http_handler']("/run_external%s"%plugin['session_random_id'],
                                         run_external_request_handler)
-    CrunchyPlugin.register_http_handler("/save_file_python_interpreter", save_file_python_interpreter_request_handler)
-    CrunchyPlugin.register_http_handler("/save_and_run_python_interpreter%s"%CrunchyPlugin.session_random_id,
+    plugin['register_http_handler']("/save_file_python_interpreter", save_file_python_interpreter_request_handler)
+    plugin['register_http_handler']("/save_and_run_python_interpreter%s"%plugin['session_random_id'],
                                         save_and_run_python_interpreter_request_handler)
-    CrunchyPlugin.register_http_handler("/run_external_python_interpreter%s"%CrunchyPlugin.session_random_id,
+    plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
 
 def save_file_request_handler(request):
@@ -187,7 +188,9 @@ def save_file_python_interpreter_request_handler(request):
     save_file(path, content)
     
     if info[0]:
-        configuration.defaults.alternate_python_version = info[0]
+        defaults.alternate_python_version = info[0]
+        # make sure we update also the indirect reference
+        config['alternate_python_version'] = info[0]
     
     return path
 
@@ -226,11 +229,11 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True):
     if python_version >= 3:
         path = str(path)
     if alternate_version:
-        python_interpreter = configuration.defaults.alternate_python_version
+        python_interpreter = config['alternate_python_version']
     else:
         python_interpreter = 'python'  # default interpreter
     if path is None:
-        path = os.path.join(configuration.defaults.temp_dir, "temp.py")
+        path = os.path.join(config['temp_dir'], "temp.py")
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)

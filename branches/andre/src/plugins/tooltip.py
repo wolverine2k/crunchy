@@ -3,9 +3,9 @@
 import re
 import urllib
 
-import src.CrunchyPlugin as CrunchyPlugin
 import src.interpreter as interpreter
-from src.interface import python_version, config, translate
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import python_version, config, translate, plugin, Element
 _ = translate['_']
 
 borg_console = interpreter.BorgConsole()
@@ -14,9 +14,9 @@ provides = set(["/dir","/doc"])
 
 def register():
     # register service, /dir and /doc
-    CrunchyPlugin.register_service(insert_tooltip, "insert_tooltip")
-    CrunchyPlugin.register_http_handler("/dir%s"%CrunchyPlugin.session_random_id, dir_handler)
-    CrunchyPlugin.register_http_handler("/doc%s"%CrunchyPlugin.session_random_id, doc_handler)
+    plugin['register_service'](insert_tooltip, "insert_tooltip")
+    plugin['register_http_handler']("/dir%s"%plugin['session_random_id'], dir_handler)
+    plugin['register_http_handler']("/doc%s"%plugin['session_random_id'], doc_handler)
 
 def insert_tooltip(page, *dummies):
     if not page.includes("tooltip_included") and page.body:
@@ -25,19 +25,19 @@ def insert_tooltip(page, *dummies):
         page.add_js_code(tooltip_js)
         page.add_css_code(tooltip_css)
 
-        tooltip = CrunchyPlugin.Element("div")
+        tooltip = Element("div")
         tooltip.attrib["id"] = "tooltip"
         tooltip.text = " "
         tooltip.attrib["onmousedown"] = "grab(this);"
         page.body.append(tooltip)
 
-        help_menu = CrunchyPlugin.Element("div")
+        help_menu = Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
         help_menu.attrib["onmousedown"] = "grab(this);"
         page.body.append(help_menu)
 
-        help_menu_x = CrunchyPlugin.Element("div")
+        help_menu_x = Element("div")
         help_menu_x.attrib["id"] = "help_menu_x"
         help_menu_x.attrib["onclick"] = "hide_help();"
         help_menu_x.text = "X"
@@ -174,4 +174,4 @@ tooltip_css = """
 # javascript code
 tooltip_js = """
 var session_id = "%s";
-"""%CrunchyPlugin.session_random_id
+"""%plugin['session_random_id']

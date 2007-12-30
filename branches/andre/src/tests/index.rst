@@ -88,7 +88,7 @@ Crunchy Python files listing::
             execution.py
                 -> interface
             file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> CrunchyPlugin, interface, configuration
+                -> interface, configuration
             graphics.py
                 -> interface
             handle_default.py
@@ -98,7 +98,7 @@ Crunchy Python files listing::
             handle_remote.py
                 -> interface
             io_widget.py
-                -> CrunchyPlugin, editarea, interface
+                -> interface, editarea
             links.py
                 -> interface
             math_graphics.py
@@ -110,22 +110,22 @@ Crunchy Python files listing::
             security_advisor.py
                 -> interface
             tooltip.py
-                -> CrunchyPlugin, interface, interpreter
+                -> interface, interpreter
             turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, c_turtle
             turtle_tk.py  # empty file for now...
             vlam_doctest.py
-                -> CrunchyPlugin, interface, utilities
+                -> interface, utilities
             vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> CrunchyPlugin, configuration, utilities
             vlam_image_file.py
-                -> CrunchyPlugin, configuration
+                -> interface
             vlam_interpreter.py
                 -> CrunchyPlugin, configuration, utilities, colourize
             vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> CrunchyPlugin
+                -> interface
             vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-                -> CrunchyPlugin
+                -> interface
 
 The following are not likely to be tested by us::
             

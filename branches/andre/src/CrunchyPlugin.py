@@ -17,6 +17,7 @@ import src.PluginServices as services
 
 from src.interface import Element, SubElement, fromstring, tostring, parse, \
                           plugin, server
+plugin['services'] = services
 
 # We generate a random string that will be appended to javascript functions
 # (like /exec and /doctest) used to communicate with the Python server.

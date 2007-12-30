@@ -16,15 +16,20 @@ It contains two methods that need to be tested:
 We simply need to import the plugin and something to create an Element
 
    >>> import src.plugins.vlam_load_local as vlam_load_local
-   >>> from src.interface import Element
+   >>> from src.interface import Element, plugin
+   >>> registered = None
+   >>> def dummy(a, b, c, fn):
+   ...     global registered
+   ...     registered = fn
+   ...
+   >>> plugin['register_tag_handler'] = dummy
 
 1. Testing register()
 ---------------------
 
 # Test - check that tag handler, and service have been registered
     >>> vlam_load_local.register() 
-    >>> vlam_load_local.CrunchyPlugin.vlam.CrunchyPage.handlers3[
-    ...     'span']['title']['load_local'] == vlam_load_local.insert_load_local
+    >>> print(registered == vlam_load_local.insert_load_local)
     True
 
 2. Testing insert_load_local()

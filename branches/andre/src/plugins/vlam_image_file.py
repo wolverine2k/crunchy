@@ -9,9 +9,8 @@ example as to how to write a plugin.
 import os
 import copy
 
-# All plugins should import the crunchy plugin API
-import src.CrunchyPlugin as CrunchyPlugin
-from src.configuration import defaults
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import config, plugin, SubElement
 
 # The set of "widgets/services" provided by this plugin
 provides = set(["image_file_widget"])
@@ -26,7 +25,7 @@ def register():
        """
     # 'image_file' only appears inside <pre> elements, using the notation
     # <pre title='image_file ...'>
-    CrunchyPlugin.register_tag_handler("pre", "title", "image_file",
+    plugin['register_tag_handler']("pre", "title", "image_file",
                                             insert_image_file)
 
 def insert_image_file(page, elem, uid):
@@ -34,7 +33,7 @@ def insert_image_file(page, elem, uid):
     vlam = elem.attrib["title"]
     # We add html markup, extracting the Python
     # code to be executed in the process
-    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    code, markup, error = plugin['services'].style_pycode(page, elem)
     if error is not None:
         markup = copy.deepcopy(elem)
     # reset the original element to use it as a container.  For those
@@ -57,7 +56,7 @@ def insert_image_file(page, elem, uid):
         elem.insert(0, markup)
         if error is not None:
             elem.insert(0, error)
-        message = CrunchyPlugin.SubElement(elem, "p")
+        message = SubElement(elem, "p")
         message.text = """
         The above code was supposed to be used to generate an image.
         However, Crunchy could not find a file name to save the image, so
@@ -76,37 +75,37 @@ def insert_image_file(page, elem, uid):
                 pass
     elif "no-copy" in vlam or not code:
         code = "\n"
-    CrunchyPlugin.services.insert_editor_subwidget(page, elem, uid, code)
+    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     # some spacing:
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
 
     # the actual button used for code execution:
-    btn = CrunchyPlugin.SubElement(elem, "button")
+    btn = SubElement(elem, "button")
     btn.attrib["onclick"] = "image_exec_code('%s', '%s')" % (uid, img_fname)
     btn.text = "Generate image"  # This will eventually need to be translated
 
-    btn2 = CrunchyPlugin.SubElement(elem, "button")
+    btn2 = SubElement(elem, "button")
     btn2.attrib["onclick"] = "load_image('%s', '%s')"%(uid, img_fname)
     btn2.text = "Load image"
 
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
     # an output subwidget:
-    CrunchyPlugin.services.insert_io_subwidget(page, elem, uid)
+    plugin['services'].insert_io_subwidget(page, elem, uid)
 
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
     # Extension of the file; used for determining the filetype
     #ext = img_fname.split('.')[-1]
     # KEEP .... as a reminder
 ##    if ext in ['svg', 'svgz']:  # currently untested
-##        img = CrunchyPlugin.SubElement(elem, "iframe")
+##        img = SubElement(elem, "iframe")
 ##    else:
-##        img = CrunchyPlugin.SubElement(elem, "img")
-    img = CrunchyPlugin.SubElement(elem, "img")
+##        img = SubElement(elem, "img")
+    img = SubElement(elem, "img")
     img.attrib['id'] = 'img_' + uid
     img.attrib['src'] = '/generated_image?url=%s'%img_fname
     img.attrib['alt'] = 'The code above should create a file named ' +\
                         img_fname + '.'
-    CrunchyPlugin.SubElement(elem, "br")
+    SubElement(elem, "br")
 
     # we need some unique javascript in the page; note how the
     # "/exec" referred to above as a required service appears here
@@ -131,7 +130,7 @@ function image_exec_code(uid, image_name){
     img.alt = img.alt + '%(error_message)s';
 };
 """%{
-    "session_id": CrunchyPlugin.session_random_id,
+    "session_id": plugin['session_random_id'],
         "pre_code": """
 import os
 __current = os.getcwdu()
@@ -163,11 +162,11 @@ img.src = "/generated_image"+now.getTime()+"?url="+image_name;
         page.add_include("image_included")
         page.add_js_code(image_jscode)
         page.add_js_code(load_image)
-        old_files = [x for x in os.listdir(defaults.temp_dir)]
+        old_files = [x for x in os.listdir(config['temp_dir'])]
         for x in old_files:
             print("removing file %s"%x)
             try:
-                os.remove(os.path.join(defaults.temp_dir, x))
+                os.remove(os.path.join(config['temp_dir'], x))
             except:  # if it fails, it is not a major problem
                 print("could not remove file %s"%x)
 
