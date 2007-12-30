@@ -117,11 +117,11 @@ Crunchy Python files listing::
             vlam_doctest.py
                 -> interface, utilities
             vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> CrunchyPlugin, configuration, utilities
+                -> interface, utilities
             vlam_image_file.py
                 -> interface
             vlam_interpreter.py
-                -> CrunchyPlugin, configuration, utilities, colourize
+                -> interface, utilities, colourize
             vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface
             vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2

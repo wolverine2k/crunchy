@@ -12,13 +12,11 @@ for people familiar with the Crunchy plugin architecture.
 import copy
 import sys
 
-# All plugins should import the crunchy plugin API
-import src.CrunchyPlugin as CrunchyPlugin
-import src.configuration as configuration
+# All plugins should import the crunchy plugin API via interface.py
+from src.interface import config, plugin, translate, tostring
 import src.utilities as utilities
 import src.plugins.colourize as colourize
 
-from src.interface import translate
 _ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
@@ -32,22 +30,22 @@ def register():
        """
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
-    CrunchyPlugin.register_tag_handler("pre", "title", "interpreter", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "isolated", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "interpreter", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "isolated", insert_interpreter)
     # just for fun, we define these; they are case-sensitive.
-    CrunchyPlugin.register_tag_handler("pre", "title", "Borg", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "Human", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "parrot", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "Parrots", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "TypeInfoConsole", insert_interpreter)
-    CrunchyPlugin.register_tag_handler("pre", "title", "python_tutorial", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "Borg", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "parrot", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "Parrots", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "TypeInfoConsole", insert_interpreter)
+    plugin['register_tag_handler']("pre", "title", "python_tutorial", insert_interpreter)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
-##    CrunchyPlugin.register_tag_handler("pre", "title", "ipython", insert_interpreter)
+##    plugin['register_tag_handler']("pre", "title", "ipython", insert_interpreter)
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
     vlam = elem.attrib["title"]
-    c = configuration.defaults.override_default_interpreter
+    c = config['override_default_interpreter']
     if c == 'default':
         # go with interpreter specified in tutorial
         if "isolated" in vlam or "Human" in vlam:
@@ -87,13 +85,13 @@ def insert_interpreter(page, elem, uid):
     log_id = utilities.extract_log_id(vlam)
     if log_id:
         t = 'interpreter'
-        configuration.defaults.logging_uids[uid] = (log_id, t)
+        config['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in configuration.defaults.page_security_level(page.url):
+    if 'display' not in config['page_security_level'](page.url):
         # first we need to make sure that the required javacript code is in the page:
         if interp_kind == "borg":
             if not page.includes("BorgInterpreter_included"):
@@ -131,11 +129,11 @@ def insert_interpreter(page, elem, uid):
     # this could change in a future version where we could add a button to
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
-    code, markup, error = CrunchyPlugin.services.style_pycode(page, elem)
+    code, markup, error = plugin['services'].style_pycode(page, elem)
     if error is not None:
         markup = copy.deepcopy(elem)
     if log_id:
-        configuration.defaults.log[log_id] = [CrunchyPlugin.tostring(markup)]
+        config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -152,12 +150,12 @@ def insert_interpreter(page, elem, uid):
             elem.insert(0, error)
         except:
             pass
-    CrunchyPlugin.services.insert_io_subwidget(page, elem, uid,
+    plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
-    CrunchyPlugin.services.insert_tooltip(page, elem, uid)
+    plugin['services'].insert_tooltip(page, elem, uid)
     return
 
-prefix = configuration.defaults._prefix
+prefix = config['_prefix']
 crunchy_help = _("Type %s.help for more information."%prefix)
 
 BorgInterpreter_js = r"""
@@ -173,7 +171,7 @@ function init_BorgInterpreter(uid){
     j.send(code);
 };
 """%(prefix, (sys.version.split(" ")[0]), crunchy_help,
-           CrunchyPlugin.session_random_id)
+           plugin['session_random_id'])
 
 SingleInterpreter_js = r"""
 function init_SingleInterpreter(uid){
@@ -187,7 +185,7 @@ function init_SingleInterpreter(uid){
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%(prefix, (sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
+"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
 parrot_js = r"""
 function init_parrotInterpreter(uid){
@@ -201,7 +199,7 @@ function init_parrotInterpreter(uid){
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%(prefix, (sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
+"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
 Parrots_js = r"""
 function init_ParrotsInterpreter(uid){
@@ -215,7 +213,7 @@ function init_ParrotsInterpreter(uid){
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%(prefix, (sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
+"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
 TypeInfoConsole_js = r"""
 function init_TypeInfoConsole(uid){
@@ -229,7 +227,7 @@ function init_TypeInfoConsole(uid){
     j.open("POST", "/exec%s?uid="+uid, false);
     j.send(code);
 };
-"""%(prefix, (sys.version.split(" ")[0]), CrunchyPlugin.session_random_id)
+"""%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
@@ -252,4 +250,4 @@ function init_TypeInfoConsole(uid){
 ##    j.open("POST", "/exec%s?uid="+uid, false);
 ##    j.send(code);
 ##};
-##"""%(prefix, sys.version.split(" ")[0], CrunchyPlugin.session_random_id)
+##"""%(prefix, sys.version.split(" ")[0], plugin['session_random_id'])

@@ -1,13 +1,22 @@
 ﻿vlam_editor.py tests
 ================================
 
+##
+##
+##
+##
+##
+Failing following changes to vlam_editor - removed the CrunchyPlugin dependency and the
+test does not deal with registering services properly.  It will need to be corrected.
+
+
 Tested successfully with Python 2.4, 2.5 and 3.0a1
 
 # Import vlam_editor, _ElementInterface, and editarea
 
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea as editarea
-  >>> from src.interface import Element
+  >>> from src.interface import Element, plugin
 
 # Used to create a fake page object
 
@@ -37,6 +46,15 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
   >>> def insert_io_subwidget(page, elem, uid):
   ...  return
 
+# Used as a fake registering service
+
+   >>> registered = None
+   >>> def dummy(a, b, c, fn):
+   ...     global registered
+   ...     registered = fn
+   ...
+   >>> plugin['register_tag_handler'] = dummy
+
 1.)  Test (Register)
 ------------------------------------
 
@@ -53,7 +71,7 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
 
 # Submits the service enable_editarea into CrunchyPlugin.sevices
 
-  >>> vlam_editor.CrunchyPlugin.register_service(editarea.enable_editarea, "enable_editarea")
+#  >>> vlam_editor.CrunchyPlugin.register_service(editarea.enable_editarea, "enable_editarea")
 
 # Create the 3 parameters, and run the function
 
