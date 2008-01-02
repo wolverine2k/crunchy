@@ -1,22 +1,13 @@
-﻿vlam_editor.py tests
+vlam_editor.py tests
 ================================
 
-##
-##
-##
-##
-##
-Failing following changes to vlam_editor - removed the CrunchyPlugin dependency and the
-test does not deal with registering services properly.  It will need to be corrected.
-
-
-Tested successfully with Python 2.4, 2.5 and 3.0a1
+Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 # Import vlam_editor, _ElementInterface, and editarea
 
   >>> import src.plugins.vlam_editor as vlam_editor 
-  >>> import src.plugins.editarea as editarea
-  >>> from src.interface import Element, plugin
+  >>> import src.plugins.editarea
+  >>> from src.interface import Element, plugin, config
 
 # Used to create a fake page object
 
@@ -36,7 +27,43 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
   ...  def add_css_code(self, object):
   ...   self.Function_List.append("add_css_code")
 
-# Used as a fake style_pycode function
+
+# Used as a fake registering service
+
+   >>> registered_tag_handler = {}
+   >>> def dummy(pre, title, name, function):
+   ...     registered_tag_handler[name] = function
+   ...
+   >>> plugin['register_tag_handler'] = dummy
+   
+   >>> registered_services = {}
+   >>> def dummy2(function, name):
+   ...    registered_services[name] = function
+   ...
+   >>> plugin['register_service'] = dummy2
+
+1.)  Test (Register)
+------------------------------------
+
+# Test - check that tag handler, and service have been registered
+
+  >>> vlam_editor.register()
+  >>> registered_tag_handler['editor'] == vlam_editor.insert_editor
+  True
+  >>> registered_tag_handler['alternate_python_version'] == vlam_editor.insert_alternate_python
+  True
+  >>> registered_tag_handler['alt_py'] == vlam_editor.insert_alternate_python
+  True
+  >>> registered_tag_handler['_test_sanitize_for_ElementTree'] == vlam_editor._test_sanitize_for_ElementTree
+  True
+  >>> registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
+  True
+
+
+2.)  Test (insert_editor_subwidget)
+------------------------------------
+
+First, we need to fake some services that are expected by insert_editor_subwidget
 
   >>> def style_pycode(page, elem):
   ...  return "", "TestMarkup", None
@@ -46,34 +73,22 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
   >>> def insert_io_subwidget(page, elem, uid):
   ...  return
 
-# Used as a fake registering service
+# Create fake services from the above functions
 
-   >>> registered = None
-   >>> def dummy(a, b, c, fn):
-   ...     global registered
-   ...     registered = fn
-   ...
-   >>> plugin['register_tag_handler'] = dummy
+  >>> class DummyServices(object):
+  ...     def __init__(self):
+  ...          self.style_pycode = style_pycode
+  ...          self.insert_io_subwidget = insert_io_subwidget
+  ...          self.enable_editarea = src.plugins.editarea.enable_editarea
+  ...          self.insert_editor_subwidget = vlam_editor.insert_editor_subwidget # tested above
+  ...
+  >>> plugin['services'] = DummyServices()
 
-1.)  Test (Register)
-------------------------------------
+Create also a fake configuration variable.
 
-# Test - check that tag handler, and service have been registered
+  >>> config['temp_dir'] = 'temp_dir'
 
-  >>> vlam_editor.register()
-  >>> vlam_editor.CrunchyPlugin.vlam.CrunchyPage.handlers3['pre']['title']['editor'] == vlam_editor.insert_editor
-  True
-  >>> vlam_editor.CrunchyPlugin.services.insert_editor_subwidget == vlam_editor.insert_editor_subwidget
-  True
-
-2.)  Test (insert_editor_subwidget)
-------------------------------------
-
-# Submits the service enable_editarea into CrunchyPlugin.sevices
-
-#  >>> vlam_editor.CrunchyPlugin.register_service(editarea.enable_editarea, "enable_editarea")
-
-# Create the 3 parameters, and run the function
+# Next, we need to create a fake page that we will process. 
 
   >>> page = TestPage()
   >>> elem = Element("pre")
@@ -215,14 +230,6 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
 3.)  Test (insert_editor)
 ------------------------------------
 
-# Submits the fake service style_pycode into CrunchyPlugin.sevices
-
-  >>> vlam_editor.CrunchyPlugin.register_service(style_pycode, "style_pycode")
-
-# Submits the fake service insert_io_subwidget into CrunchyPlugin.sevices
-
-  >>> vlam_editor.CrunchyPlugin.register_service(insert_io_subwidget, "insert_io_subwidget")
-
 #  Create Objects needed
 
   >>> page = TestPage()
@@ -268,13 +275,10 @@ Tested successfully with Python 2.4, 2.5 and 3.0a1
   True
   >>> elem[5].attrib == {'style': 'display:none', 'id': 'path_2'}
   True
-  >>> elem[5].text == vlam_editor.configuration.defaults.temp_dir + vlam_editor.os.path.sep + "temp.py"
+  >>> elem[5].text == config['temp_dir'] + vlam_editor.os.path.sep + "temp.py"
   True
 
 # Test - br
 
   >>> elem[6].tag == "br"
   True
-
-
-
