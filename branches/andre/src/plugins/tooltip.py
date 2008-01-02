@@ -53,8 +53,11 @@ def dir_handler(request):
         request.end_headers()
         return
     
+    if python_version < 3:
+        line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
+    else:
+        line = re.split(r"\s", urllib.unquote_plus(str(request.data)))[-1].strip()
 
-    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
