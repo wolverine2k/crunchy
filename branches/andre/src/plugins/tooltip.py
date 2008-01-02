@@ -8,7 +8,7 @@ import src.interpreter as interpreter
 from src.interface import python_version, config, translate, plugin, Element
 _ = translate['_']
 
-borg_console = interpreter.BorgConsole()
+borg_console = {}
 
 provides = set(["/dir","/doc"])
 
@@ -20,6 +20,8 @@ def register():
 
 def insert_tooltip(page, *dummies):
     if not page.includes("tooltip_included") and page.body:
+        borg_console[page.pageid] = interpreter.BorgConsole(group=page.pageid)
+        
         page.add_include("tooltip_included")
         page.insert_js_file("/tooltip.js")
         page.add_js_code(tooltip_js)
@@ -45,20 +47,22 @@ def insert_tooltip(page, *dummies):
 
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
-
-    if not config['dir_help']:#configuration.defaults.dir_help:
+    
+    if not config['dir_help']:
         request.send_response(204)
         request.end_headers()
         return
+    
 
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
     line = ".".join(line.split(".")[:-1])
+    
+    pageid = request.args['uid'].split(":")[0]
     try:
-        result = eval("dir(%s)" % line, {}, borg_console.__dict__['locals'])
-
+        result = eval("dir(%s)" % line, {}, borg_console[pageid].__dict__['locals'])
     except:
         request.send_response(204)
         request.end_headers()
@@ -81,6 +85,9 @@ def doc_handler(request):
         request.send_response(204)
         request.end_headers()
         return
+
+    pageid = request.args['uid'].split(":")[0]
+
     if python_version < 3:
         line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
     else:
@@ -89,14 +96,14 @@ def doc_handler(request):
     # Support lines like "func(text" as "func(", because the browser
     # may not finish calculating the partial line until after the user
     # has clicked on a few more keys.
+
     line = "(".join(line.split("(")[:-1])
-    if line in borg_console.__dict__['locals']:
-        result = "%s()\n %s"%(line,
-                 borg_console.__dict__['locals'][line].__doc__)
-    elif '__builtins__' in borg_console.__dict__['locals']:
-        if line in borg_console.__dict__['locals']['__builtins__']:
-            result = "%s()\n %s"%(line,
-                 borg_console.__dict__['locals']['__builtins__'][line].__doc__)
+    _locals = borg_console[pageid].__dict__['locals']
+    if line in _locals:
+        result = "%s()\n %s"%(line, _locals[line].__doc__)
+    elif '__builtins__' in _locals:
+        if line in _locals['__builtins__']:
+            result = "%s()\n %s"%(line, _locals['__builtins__'][line].__doc__)
         else:
             request.send_response(204)
             request.end_headers()
