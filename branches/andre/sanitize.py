@@ -16,9 +16,8 @@ temp directory.
 import os
 import src.configuration
 import src.security
-from src.interface import ElementTree
+from src.interface import ElementTree, config
 from src.element_tree import ElementSoup
-from src.interface import config
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'

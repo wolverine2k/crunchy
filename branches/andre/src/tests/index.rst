@@ -41,6 +41,8 @@ Crunchy Python files listing::
     all_tests_py3k.py
     crunchy.py
         -> interface, http_serve, pluginloader
+    sanitize.py
+        -> configuration, security, interface, element_tree
     src:
         cometIO.py
             -> configuration, interpreter, interface, utilities
@@ -82,7 +84,7 @@ Crunchy Python files listing::
             colourize.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, utilities
             comet.py
-                -> CrunchyPlugin, cometIO
+                -> interface, cometIO
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface
             execution.py

@@ -7,12 +7,12 @@ directory so that they are easier to locate, and that names duplication
 can be avoided.
 """
 
-import src.CrunchyPlugin as CrunchyPlugin
+from src.interface import plugin
 from src.cometIO import comet, push_input
 
 provides = set(["/comet", "/input"])
 
 def register():
-    CrunchyPlugin.register_http_handler(
-                    "/input%s"%CrunchyPlugin.session_random_id, push_input)
-    CrunchyPlugin.register_http_handler("/comet", comet)
+    plugin['register_http_handler'](
+                    "/input%s"%plugin['session_random_id'], push_input)
+    plugin['register_http_handler']("/comet", comet)
