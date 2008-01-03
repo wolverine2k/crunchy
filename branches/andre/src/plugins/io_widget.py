@@ -3,12 +3,12 @@ This is just the UI part, the communication code is defined in the core
 - maybe this should me moved to core?
 """
 
-provides = set(["io_widget"])
-
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, SubElement
 from src.plugins.editarea import editArea_load_and_save
 _ = translate['_']
+
+provides = set(["io_widget"])
 
 def register():
     plugin['register_service'](insert_io_subwidget, "insert_io_subwidget")

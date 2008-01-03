@@ -35,125 +35,147 @@ In terms of test coverage, this is just a first draft which needs to be verified
 As a rule, every plugin should import the interface module - and
 nothing else other than other plugins (and, perhaps, utilities.py) and/or modules from the Python standard library. 
 
-In the following, the symbol "->" indicates modules that are imported (excluding
-modules from the standard library).
+In the following, we indicate which modules that are imported, with the exclusion of
+modules from the standard library.
 
 Crunchy Python files listing::
 
     all_tests.py
     all_tests_py3k.py
     crunchy.py
-        -> interface, http_serve, pluginloader
+        -> import: interface, http_serve, pluginloader
     sanitize.py
-        -> configuration, security, interface, element_tree
+        -> import: configuration, security, interface, element_tree
     src:
         cometIO.py
-            -> configuration, interpreter, interface, utilities
+            -> import: configuration, interpreter, interface, utilities
         configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-            -> interface
+            -> import: interface
         CrunchyPlugin.py
-            -> cometIO, PluginServices, interface, vlam
+            -> import: cometIO, PluginServices, interface, vlam
         errors.py
-            -> configuration, translation
+            -> import: configuration, translation
         http_serve.py
-            -> CrunchyPlugin, interface
+            -> import: CrunchyPlugin, interface
         interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-            -> tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
+            -> import: tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
         interpreter.py
-            -> interface, utilities, configuration, errors
+            -> import: interface, utilities, configuration, errors
         my_htmlentitydefs.py
-            -> None
+            -> import: None
         pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1, 3.0a2
-            -> interface
+            -> import: interface
         PluginServices.py # empty file by design - no need to test.
-            -> None
+            -> import: None
         security.py
-            -> interface
+            -> import: interface
         tools_2k.py
-            -> errors
+            -> import: errors
         tools_3k.py
-            -> None
+            -> import: None
         translation.py
-            -> interface
+            -> import: interface
         utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-            -> interface
+            -> import: interface
         vlam.py
-            -> security, interface, ElementSoup, cometIO, 
-               configuration, utilities
+            -> import: security, interface, ElementSoup, cometIO, configuration, utilities
                
     src/plugins:
-            c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> None
             colourize.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface, utilities
+                -> import: interface, utilities
+                   provides = set(["style_pycode"])
             comet.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface, cometIO
+                -> import: interface, cometIO
+                   provides = set(["/comet", "/input"])
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
-                ### to include the services provided by cometIO set(["/comet", "/input"])
+                ### to include the services provided by cometIO ["/comet", "/input"]
                 ### in the plugin directory so that it was easier to find.
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface
+                -> import: interface
+                   provides = set(["editarea"])
+                   requires = set(["/save_file", "/load_file"])
             execution.py
-                -> interface
+                -> import: interface
+                   provides = set(["/exec"])
             file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface, configuration
+                -> import: interface, configuration
+                   provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
                 ### configuration dependency unavoidable; file_service can be used to set
                 ### a variable in configuration.py
-            graphics.py
-                -> interface
             handle_default.py
-                -> interface
+                -> import: interface
             handle_local.py
-                -> interface
+                -> import: interface
+                   provides = set(["/local", "/generated_image"])
             handle_remote.py
-                -> interface
+                -> import: interface
+                   provides = set(["/remote"])
             io_widget.py
-                -> interface, editarea
+                -> import: interface, editarea
+                   provides = set(["io_widget"])
             links.py
-                -> interface
-            math_graphics.py
-                -> interface
+                -> import: interface
             menu.py
-                -> interface, security
+                -> import: interface, security
                 ### security dependency unavoidable; used to scan non-standard menus for
                 ### security holes.
             rst.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface
+                -> import: interface
+                   provides = set(["/rst"])
             security_advisor.py
-                -> interface
+                -> import: interface
+                   provides = set(["/allow_site", "/enter_key", "/set_trusted", "/remove_all"])
             tooltip.py
-                -> interface, interpreter
+                -> import: interface, interpreter
+                   provides = set(["/dir","/doc"])
                 ### interpreter dependency unavoidable - need to initialize a Borg console
                 ### if the shared information is to be made available in the tooltip.
-            turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface, c_turtle
-            turtle_tk.py  # empty file for now...
             vlam_doctest.py
-                -> interface, utilities
+                -> import: interface, utilities
+                   requires =  set(["editor_widget", "io_widget"])
             vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface, utilities
+                -> import: interface, utilities
+                   provides = set(["editor_widget"])
+                   requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
+                                   "editarea"])
             vlam_image_file.py
-                -> interface
+                -> import: interface
+                   provides = set(["image_file_widget"])
+                   requires = set(["io_widget", "/exec", "style_pycode",  "editor_widget"])
             vlam_interpreter.py
-                -> interface, utilities, colourize
+                -> import: interface, utilities, colourize
+                   requires = set(["io_widget", "/exec"])
             vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                -> interface
+                -> import: interface
+                   requires = set(["/local"])
             vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
-                -> interface
+                -> import: interface
+                   requires = set(["/remote"])
+
+    src/imports:
+            c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> import: None
+            graphics.py
+                -> import: interface
+            math_graphics.py
+                -> import: interface
+            turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                -> import: interface, c_turtle
+            turtle_tk.py  # empty file for now...
 
 The following are not likely to be tested by us::
             
     src/element_tree:
             BeautifulSoup.py
-                -> None
+                -> import: None
             ElementPath.py
-                -> None
+                -> import: None
             ElementSoup.py
-                -> BeautifulSoup, ElementTree
+                -> import: BeautifulSoup, ElementTree
             ElementTree.py
-                -> ElementPath
+                -> import: ElementPath
             HTMLTreeBuilder.py
-                -> ElementTree
+                -> import: ElementTree
 
 
 The following are the actual links to existing test files.

@@ -10,7 +10,7 @@ import math as _math
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin
-from src.plugins.c_turtle import CTurtle
+from src.imports.c_turtle import CTurtle
 
 # Since there can be many drawing areas (& Python interpreters) on a given
 # page, we need to be able to keep track of relevant variables for each

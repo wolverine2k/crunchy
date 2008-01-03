@@ -18,17 +18,17 @@ def register():
         plugin['register_http_handler']("/rst", load_rst)
         plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
 
+class ReST_file:
+    """Represents file with transformed text from rst into html.
+    vlam thinks it is an ordinary file object"""
+    def __init__(self, data):
+        self._data = data
+    def read(self):
+        return self._data
+
 def load_rst(request):
     """Loads rst file from disk, 
     transforms it into html and then creates new page"""
-    class ReST_file:
-        """Represents file with transformed text from rst into html.
-        vlam thinks it is an ordinary file object"""
-        def __init__(self, data):
-            self._data = data
-        def read(self):
-            return self._data
-
     url = request.args["url"]
     file_ = open(url)
 
