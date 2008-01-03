@@ -86,7 +86,7 @@ Crunchy Python files listing::
                 -> None
             colourize.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, utilities
-            comet.py
+            comet.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, cometIO
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
                 ### to include the services provided by cometIO set(["/comet", "/input"])
@@ -160,6 +160,7 @@ The following are the actual links to existing test files.
 
 #. test_c_turtle.rst_
 #. test_colourize.rst_
+#. test_comet.rst_
 #. test_configuration.rst_
 #. test_editarea.rst_
 #. test_file_service.rst_
@@ -173,6 +174,7 @@ The following are the actual links to existing test files.
 
 .. _test_c_turtle.rst: test_c_turtle.rst
 .. _test_colourize.rst: test_colourize.rst
+.. _test_comet.rst: test_comet.rst
 .. _test_configuration.rst: test_configuration.rst
 .. _test_editarea.rst: test_editarea.rst
 .. _test_file_service.rst: test_file_service.rst
