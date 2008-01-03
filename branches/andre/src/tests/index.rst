@@ -63,9 +63,9 @@ Crunchy Python files listing::
             -> interface, utilities, configuration, errors
         my_htmlentitydefs.py
             -> None
-        pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1
+        pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1, 3.0a2
             -> interface
-        PluginServices.py
+        PluginServices.py # empty file by design - no need to test.
             -> None
         security.py
             -> interface
@@ -117,7 +117,7 @@ Crunchy Python files listing::
                 -> interface, security
                 ### security dependency unavoidable; used to scan non-standard menus for
                 ### security holes.
-            rst.py
+            rst.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface
             security_advisor.py
                 -> interface
@@ -165,6 +165,7 @@ The following are the actual links to existing test files.
 #. test_editarea.rst_
 #. test_file_service.rst_
 #. test_pluginloader.rst_
+#. test_rst.rst_
 #. test_turtle_js.rst_
 #. test_interface.rst_
 #. test_utilities.rst_
@@ -181,6 +182,7 @@ The following are the actual links to existing test files.
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
 .. _test_interface.rst: test_interface.rst
+.. _test_rst.rst: test_rst.rst
 .. _test_utilities.rst: test_utilities.rst
 .. _test_vlam_editor.rst: test_vlam_editor.rst
 .. _test_vlam_load_local.rst: test_vlam_load_local.rst
