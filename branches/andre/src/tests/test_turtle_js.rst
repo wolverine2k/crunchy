@@ -8,7 +8,7 @@ It has been tested with Python 2.4, 2.5 and 3.0a1.
 We start by initializing a simple Turtle; we also create a mock function to return a canvas
 uid for testing.
 
-    >>> import src.plugins.turtle_js as c
+    >>> import src.imports.turtle_js as c
     >>> from src.interface import plugin
     >>> def get_uid():
     ...     return 'dummy_uid'

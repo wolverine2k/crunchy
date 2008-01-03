@@ -3,11 +3,11 @@ Testing c_turtle.py
 
 This file contains essentially a (reformated) log of a TDD of c_turtle.py.
 
-It has been tested with Python 2.4, 2.5 and 3.0a1.
+It has been tested with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 We start by initializing a simple CTurtle.
 
-    >>> import src.plugins.c_turtle as c
+    >>> import src.imports.c_turtle as c
     >>> t1 = c.CTurtle()
     >>> def get_int_pos(tortue):
     ...     return int(tortue._x), int(tortue._y), int(tortue._angle)
