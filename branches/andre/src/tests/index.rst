@@ -1,24 +1,24 @@
 Boring Work
 ===========
 
-Crunchy is getting a bit big and, as of December 28, 2007, its module are too interdependent.
-It is time for cleaning up and reorganizing things slightly before moving further.  This document
-is a roadmap of things that should be done as well as a repository for ideas for future development.
-
-It is intended to be a living document, updated as we go along.
-
-It has three main sections:
+This document currently has three main sections:
 
  - Reducing dependencies & Testing
  - Design philosophy
  - Future work
 
+The only relevant section is the first one; the other two should be moved into a
+separate document.
+
 Reducing dependencies & Testing
 -------------------------------
 
-Keep track of all modules and their dependencies; see if we can reduce the interdependencies.
-This would make it much easier to reorganize the code if needed.  The way to do so is via
-the interface.py module.  This document helps to keep track of how far we are along this processus.
+In order to reduce the interdependencies between the modules, and allow isolated testing
+as much as possible, we use a module named interface.py which is normally initialized by
+crunchy but can be initialized with mock values by a user.
+
+This document is meant to keep track of all modules and their dependencies and
+of the available unit tests.
 
 All modules should be unit tested; we preferably use doctest-based unit tests that can be
 used as supplementary documentation.
@@ -33,7 +33,10 @@ as that option when viewing these files).  These tests can be run via
 In terms of test coverage, this is just a first draft which needs to be verified.
 
 As a rule, every plugin should import the interface module - and
-nothing else other than other plugins (and, perhaps, utilities.py) and/or modules from the Python standard library.  We keep track of the work that has been done by indicating the modules imported.
+nothing else other than other plugins (and, perhaps, utilities.py) and/or modules from the Python standard library. 
+
+In the following, the symbol "->" indicates modules that are imported (excluding
+modules from the standard library).
 
 Crunchy Python files listing::
 
@@ -85,12 +88,17 @@ Crunchy Python files listing::
                 -> interface, utilities
             comet.py
                 -> interface, cometIO
+                ### cometIO dependency unavoidable - the entire purpose of this plugin was
+                ### to include the services provided by cometIO set(["/comet", "/input"])
+                ### in the plugin directory so that it was easier to find.
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface
             execution.py
                 -> interface
             file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, configuration
+                ### configuration dependency unavoidable; file_service can be used to set
+                ### a variable in configuration.py
             graphics.py
                 -> interface
             handle_default.py
@@ -107,12 +115,16 @@ Crunchy Python files listing::
                 -> interface
             menu.py
                 -> interface, security
+                ### security dependency unavoidable; used to scan non-standard menus for
+                ### security holes.
             rst.py
                 -> interface
             security_advisor.py
                 -> interface
             tooltip.py
                 -> interface, interpreter
+                ### interpreter dependency unavoidable - need to initialize a Borg console
+                ### if the shared information is to be made available in the tooltip.
             turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 -> interface, c_turtle
             turtle_tk.py  # empty file for now...
