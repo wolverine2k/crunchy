@@ -25,7 +25,7 @@ et = ElementTree
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
-provides = set(["style_pycode"])
+provides = set(["style_pycode", "style_pycode_nostrip"])
 
 def register():
     """The register() function is required for all plugins.

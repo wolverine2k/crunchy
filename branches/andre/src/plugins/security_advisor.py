@@ -9,7 +9,7 @@ from urlparse import urlsplit
 from src.interface import config, translate, plugin, Element, SubElement
 _ = translate['_']
 
-provides = set(["/allow_site", "/enter_key", "/set_trusted", "/remove_all"])
+provides = set(["/allow_site", "/set_trusted", "/remove_all"])
 
 DEBUG = False
 
