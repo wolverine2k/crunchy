@@ -119,7 +119,8 @@ as that option when viewing these files).  These tests can be run via
 In terms of test coverage, this is just a first draft which needs to be verified.
 
 As a rule, every plugin should import the interface module - and
-nothing else other than other plugins (and, perhaps, utilities.py) and/or modules from the Python standard library. 
+nothing else other than other plugins (and, perhaps, utilities.py) 
+and/or modules from the Python standard library. 
 
 In the following, we indicate which modules that are imported, with the exclusion of
 modules from the standard library.
@@ -142,6 +143,8 @@ Crunchy Python files listing::
             import: interface
         CrunchyPlugin.py
             import: cometIO, PluginServices, interface, vlam
+        debug.py  # contains just a dict - no need to test anything.
+            import: none
         errors.py
             import: configuration, translation
         http_serve.py
@@ -195,9 +198,7 @@ Crunchy Python files listing::
                 import: interface
                 plugin['register_http_handler']("/exec%s"%r_id, exec_handler)
             file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
-                import: interface, configuration
-                ### configuration dependency unavoidable; file_service can be used to set
-                ### a variable in configuration.py
+                import: interface
                 plugin['register_http_handler']("/save_file", save_file_request_handler)
                 plugin['register_http_handler']("/load_file", load_file_request_handler)
                 plugin['register_http_handler']("/save_and_run%s"%r_id, save_and_run_request_handler)

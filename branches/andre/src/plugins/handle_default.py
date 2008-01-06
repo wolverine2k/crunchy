@@ -54,12 +54,15 @@ def path_to_filedata(path, root):
 def handler(request):
     """the actual handler"""
     if debug['handle_default'] or debug['handle_default.handler']:
-        debug_msg("entering handler() in handle_default.py")
+        debug_msg("--> entering handler() in handle_default.py")
     data = path_to_filedata(request.path, root_path)
     if debug['handle_default'] or debug['handle_default.handler']:
-        debug_msg("in handle_default.handler(), data[0:40] =")
+        debug_msg("in handle_default.handler(), beginning of data =")
         try:
-            debug_msg(data[0:40])
+            d = data[0:80]
+            if "\n" in d:
+                d = d.split("\n")[0]
+            debug_msg(d)
         except:
             debug_msg(data)
     if data == None:
@@ -76,17 +79,21 @@ def handler(request):
                 try:
                     data = bytes(data, sys.getdefaultencoding())
                 except:
-                    print("could not convert data to bytes")
+                    if debug['handle_default'] or debug['handle_default.handler']:
+                        debug_msg("could not convert data to bytes")
+                    else:
+                        pass
                 try:
                     request.wfile.write(data)
                 except:
-                    print("failed writing data in handler")
-
+                    if debug['handle_default'] or debug['handle_default.handler']:
+                        debug_msg("failed writing data in handler")
+                    else:
+                        pass
 
 def get_directory(npath):
     _ = translate['_']
     childs = listdir(npath)
-    #childs = childs[:]  # pointless statement; why was this done?
     annotate(npath, childs)
     for i in default_pages:
         if i in childs:

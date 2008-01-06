@@ -572,4 +572,7 @@ config['initial_security_set'] = initial_security_set
 #config['language'] == 'fr'
 #config['add_site']()
 
+#import pprint
+#pprint.pprint(config)
+
 del keys

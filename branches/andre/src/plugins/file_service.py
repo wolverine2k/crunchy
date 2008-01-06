@@ -10,9 +10,6 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import python_version, config, plugin
-# keep the following dependency as it is needed to set the value of
-# defaults.alternate_python_version
-from src.configuration import defaults
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
@@ -188,9 +185,9 @@ def save_file_python_interpreter_request_handler(request):
     save_file(path, content)
     
     if info[0]:
-        defaults.alternate_python_version = info[0]
-        # make sure we update also the indirect reference
         config['alternate_python_version'] = info[0]
+        # the following updates the value stored in configuration.defaults
+        config['_set_alternate_python_version'](info[0])
     
     return path
 

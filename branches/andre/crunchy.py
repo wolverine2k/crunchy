@@ -68,13 +68,20 @@ def parse_options():
     '''parse command line options'''
     parser = OptionParser(usage)
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
-            help="Enable interactive settings of debug flags"+\
+            help="Enables interactive settings of debug flags "+\
                  "(useful for developers)")
+    parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
+            help="Sets ALL the debug flags to True right from the start "+\
+                 "(useful for developers in case of major problems)")
     (options, args) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True
     else:
         src.interface.debug_flag = False
+    if options.debug_all:
+        src.interface.debug_flag = True
+        for key in src.interface.debug:
+            src.interface.debug[key] = True
 
 if __name__ == "__main__":
     parse_options()
