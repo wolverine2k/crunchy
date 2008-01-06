@@ -6,11 +6,9 @@ from dircache import listdir, annotate
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import python_version, translate, plugin, server
+from src.interface import python_version, translate, plugin, server, debug, debug_msg
 
 _ = translate['_']
-DEBUG = False
-DEBUG2 = False
 
 def register():
     plugin['register_http_handler'](None, handler)
@@ -55,12 +53,15 @@ def path_to_filedata(path, root):
 
 def handler(request):
     """the actual handler"""
-    if DEBUG:
-        print("entering handler in handle_default.py")
+    if debug['handle_default'] or debug['handle_default.handler']:
+        debug_msg("entering handler() in handle_default.py")
     data = path_to_filedata(request.path, root_path)
-    if DEBUG2:
-        print("in handler, data =")
-        print(data)
+    if debug['handle_default'] or debug['handle_default.handler']:
+        debug_msg("in handle_default.handler(), data[0:40] =")
+        try:
+            debug_msg(data[0:40])
+        except:
+            debug_msg(data)
     if data == None:
         request.send_response(301)
         request.send_header("Location", request.path + "/")
@@ -97,9 +98,6 @@ def get_directory(npath):
 
 # the root of the server is in a separate directory:
 root_path = join(plugin['get_root_dir'](), "server_root/")
-
-if DEBUG:
-    print("Root path is %s" % root_path)
 
 default_pages = ["index.htm", "index.html"]
 

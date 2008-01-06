@@ -49,6 +49,14 @@ import src.translation
 translate['_'] = src.translation._
 translate['init_translation'] = src.translation.init_translation
 
+from src.debug import debug
+def debug_msg(data):
+    """write a debug message, debug messages always appear on stderr"""
+    if data is None:
+        data = 'None'
+    sys.__stderr__.write(data)
+    sys.__stderr__.write("\n")
+
 # We use ElementTree, if possible as ElementSoup in combination with
 # BeautifulSoup, in order to parse and process files.
 

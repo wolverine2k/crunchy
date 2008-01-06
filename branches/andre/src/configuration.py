@@ -15,7 +15,7 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.interface import config, python_version, u_print, translate
+from src.interface import config, python_version, u_print, translate, debug, debug_flag
 
 if python_version < 3:
     import cPickle
@@ -94,6 +94,8 @@ class Defaults(object):
                                # type is one of 'interpreter', 'editor',...
         self.log = {} #{name: [ pre.code, input, output, input, output, ...]}
         # backup value used in resetting security level
+        if debug_flag:
+            self.debug = debug
 
     def _load_settings(self):
         success = False

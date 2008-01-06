@@ -1,13 +1,16 @@
 """Crunchy: serving up interactive Python tutorials
 
 """
+from optparse import OptionParser
 import socket
+import sys
 import webbrowser
 #import pychecker.checker
 
-from src.interface import python_version, u_print
+import src.interface
+u_print = src.interface.u_print
 required = 2.4
-if python_version < required:
+if src.interface.python_version < required:
     print("Crunchy requires at least Python version %s"%required)
     raise SystemExit
 
@@ -50,5 +53,29 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     while server.still_serving:
         server.handle_request()
 
+usage='''python crunchy.py [options]
+
+If your browser does not start or does not open a new tab on its own,
+or you have a non-supported browser that starts instead, start Firefox and copy
+the url displayed in the terminal that appeared when you launched Crunchy into
+the address bar (that's the white rectangular box at the top
+of your browser that contains stuff like [http:// ...]).
+The url to be copied there should be something like:
+http://127.0.0.1:8002/
+Copy this in and press enter - Crunchy's first page should be displayed.'''
+
+def parse_options():
+    '''parse command line options'''
+    parser = OptionParser(usage)
+    parser.add_option("-d", "--debug", action="store_true", dest="debug",
+            help="Enable interactive settings of debug flags"+\
+                 "(useful for developers)")
+    (options, args) = parser.parse_args()
+    if options.debug:
+        src.interface.debug_flag = True
+    else:
+        src.interface.debug_flag = False
+
 if __name__ == "__main__":
+    parse_options()
     run_crunchy()
