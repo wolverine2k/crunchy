@@ -3,44 +3,22 @@ vlam_editor.py tests
 
 Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
+vlam_editor.py is a plugin whose purpose is to insert an editor in a page (calling
+editarea.py for some functions in doing so).  It has the following functions
+that require testing:
+
+1. register(): registers a service available to other plugins.
+2. insert_editor_subwidget()
+3. insert_editor()
+
+
 # Import vlam_editor, _ElementInterface, and editarea
 
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea
   >>> from src.interface import Element, plugin, config
+  >>> import src.tests.mocks as mocks
 
-# Used to create a fake page object
-
-  >>> class TestPage(object):   
-  ...  def __init__(self): 
-  ...   self.pageid = 1
-  ...   self.Function_List = []
-  ...  def includes(self, object):
-  ...   self.Function_List.append("includes")
-  ...   return False
-  ...  def add_include(self, object):
-  ...   self.Function_List.append("add_include")
-  ...  def add_js_code(self, object):
-  ...   self.Function_List.append("add_js_code")
-  ...  def insert_js_file(self, object):
-  ...   self.Function_List.append("insert_js_file")
-  ...  def add_css_code(self, object):
-  ...   self.Function_List.append("add_css_code")
-
-
-# Used as a fake registering service
-
-   >>> registered_tag_handler = {}
-   >>> def dummy(pre, title, name, function):
-   ...     registered_tag_handler[name] = function
-   ...
-   >>> plugin['register_tag_handler'] = dummy
-   
-   >>> registered_services = {}
-   >>> def dummy2(function, name):
-   ...    registered_services[name] = function
-   ...
-   >>> plugin['register_service'] = dummy2
 
 1.)  Test (Register)
 ------------------------------------
@@ -48,15 +26,15 @@ Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 # Test - check that tag handler, and service have been registered
 
   >>> vlam_editor.register()
-  >>> registered_tag_handler['editor'] == vlam_editor.insert_editor
+  >>> mocks.registered_tag_handler['pre']['title']['editor'] == vlam_editor.insert_editor
   True
-  >>> registered_tag_handler['alternate_python_version'] == vlam_editor.insert_alternate_python
+  >>> mocks.registered_tag_handler['pre']['title']['alternate_python_version'] == vlam_editor.insert_alternate_python
   True
-  >>> registered_tag_handler['alt_py'] == vlam_editor.insert_alternate_python
+  >>> mocks.registered_tag_handler['pre']['title']['alt_py'] == vlam_editor.insert_alternate_python
   True
-  >>> registered_tag_handler['_test_sanitize_for_ElementTree'] == vlam_editor._test_sanitize_for_ElementTree
+  >>> mocks.registered_tag_handler['pre']['title']['_test_sanitize_for_ElementTree'] == vlam_editor._test_sanitize_for_ElementTree
   True
-  >>> registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
+  >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
   True
 
 
@@ -90,15 +68,15 @@ Create also a fake configuration variable.
 
 # Next, we need to create a fake page that we will process. 
 
-  >>> page = TestPage()
+  >>> page = mocks.Page()
   >>> elem = Element("pre")
   >>> uid = "2"
   >>> vlam_editor.insert_editor_subwidget(page, elem, uid) 
 
 # Test the Results
 
-  >>> page.Function_List == ["includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
-  True
+  >>> print(page.added_info)
+  ['includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
   >>> elem[0].tag == "textarea"
   True
 
@@ -232,7 +210,7 @@ Create also a fake configuration variable.
 
 #  Create Objects needed
 
-  >>> page = TestPage()
+  >>> page = mocks.Page()
   >>> elem = Element("pre")
   >>> uid = "2"
 
@@ -247,8 +225,8 @@ Create also a fake configuration variable.
 
 # Test - check to make sure functions in page were called
 
-  >>> page.Function_List == ["includes", "add_include", "add_js_code", "includes", "add_include", "add_js_code", "insert_js_file", "includes", "add_include", "add_css_code", "add_js_code"]
-  True
+  >>> print(page.added_info)
+  ['includes', ('add_include', 'exec_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
 
 # Test - elem
 

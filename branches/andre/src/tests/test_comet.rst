@@ -13,16 +13,13 @@ It contains one method that need to be tested:
 --------------------
 
 We begin by importing the required information from other
-modules and create some dummy functions
+modules and create a dummy session id
 
    >>> import src.plugins.comet
    >>> from src.interface import plugin
    >>> import src.cometIO as cometIO
-   >>> registered = {}
-   >>> def dummy(name, function):
-   ...     registered[name] = function
-   ...
-   >>> plugin['register_http_handler'] = dummy
+   >>> import src.tests.mocks as mocks
+
    >>> plugin['session_random_id'] = 42
 
 1. Testing register()
@@ -30,8 +27,8 @@ modules and create some dummy functions
 
 # Test - check that the two http_handlers have been registered
     >>> src.plugins.comet.register()
-    >>> print(registered['/input42'] == cometIO.push_input)
+    >>> print(mocks.registered_http_handler['/input42'] == cometIO.push_input)
     True
-    >>> print(registered['/comet'] == cometIO.comet)
+    >>> print(mocks.registered_http_handler['/comet'] == cometIO.comet)
     True
 
