@@ -21,18 +21,8 @@ We need to import the plugin, something to create an Element, and
 set up some dummy registering functions.
 
    >>> import src.plugins.rst as rst
-   >>> from src.interface import Element, plugin
-   >>> registered = {}
-   >>> registered['span'] = {}
-   >>> registered['span']['title'] = {}
-   >>> def dummy(span, title, name, fn):
-   ...     registered[span][title][name] = fn
-   ...
-   >>> plugin['register_tag_handler'] = dummy
-   >>> def dummy2(name, fn):
-   ...     registered[name] = fn
-   ...
-   >>> plugin['register_http_handler'] = dummy2
+   >>> from src.interface import Element
+   >>> import src.tests.mocks as mocks
    
 Note that if docutils is not installed for the Python version we are testing,
 some tests would normally fail; we prevent this from happening by setting up
@@ -50,8 +40,8 @@ an appropriate flag.
 # Test - check that tag handler, and service have been registered
     >>> rst.register() 
     >>> if _docutils_installed:
-    ...     print(registered['span']['title']['load_rst'] == rst.insert_load_rst)
-    ...     print(registered['/rst'] == rst.load_rst)
+    ...     print(mocks.registered_tag_handler['span']['title']['load_rst'] == rst.insert_load_rst)
+    ...     print(mocks.registered_http_handler['/rst'] == rst.load_rst)
     ... else:
     ...     print(True)
     ...     print(True)

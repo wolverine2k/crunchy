@@ -293,6 +293,9 @@ Crunchy Python files listing::
             turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface, c_turtle
             turtle_tk.py  # empty file for now...
+    src/tests:
+            mocks.py # used only for testing
+                import: interface
 
 The following are not likely to be tested by us::
             

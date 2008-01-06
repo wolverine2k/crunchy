@@ -31,22 +31,17 @@ do a variable assignment.
     >>> from src.interface import config, plugin, Element
     >>> config['editarea_language'] = 'en'
     >>> plugin['session_random_id'] = '42'
-    >>> service = None
-    >>> def dummy_register(fn, name):
-    ...     global service
-    ...     service = fn
-    ...
-    >>> plugin['register_service'] = dummy_register
 
-We then need to import editarea.py
+We then need to import editarea.py and mocks
     >>> import src.plugins.editarea as editarea
+    >>> import src.tests.mocks as mocks
 
 
 1. Testing register()
 ---------------------
 
    >>> editarea.register()
-   >>> print(service == editarea.enable_editarea)
+   >>> print(mocks.registered_services['enable_editarea'] == editarea.enable_editarea)
    True
 
 5. Testing addSavePython():
@@ -276,39 +271,11 @@ We then check for the explicit content
 
 Now that we have unit test for all of the functions that are called by enable_editarea(),
 it is much easier to focus on the latter.  enable_editarea() will include some css and
-javascript code on a given page.  To keep this implementation independent of the rest
-of the code, we need to create a "fake" (or "mock") page that has the minimum
-functionality required for testing - all we need to test is if it has been
-called properly.
+javascript code on a given page.  We just keep track of which functions have been called,
+and the order in which they have been called, to add information on a page
 
-    >>> class TestPage(object):    
-    ...     def __init__(self): 
-    ...         self.called_css = False
-    ...         self.called_js = False
-    ...         self.called_include = False
-    ...         self.js_file = False
-    ...         self.included = set([])
-    ...     def add_include(self, dummy):
-    ...         self.included.add(dummy)
-    ...     def add_js_code(self, dummy):
-    ...         self.called_js = True
-    ...     def insert_js_file(self, dummy):
-    ...         self.js_file = True
-    ...     def add_css_code(self, dummy):
-    ...         self.called_css = True
-    ...     def includes(self, dummy):
-    ...         return dummy in self.included
-    ...
-    >>> page = TestPage()
+    >>> page = mocks.Page()
     >>> dummy_elem = Element('dummy')
     >>> editarea.enable_editarea(page, dummy_elem, '1')
-    >>> print(page.called_css)
-    True
-    >>> print(page.called_js)
-    True
-    >>> print(page.js_file)
-    True
-    >>> for inc in page.included:
-    ...     print(inc)
-    editarea_included
-    hidden_load_and_save
+    >>> print(page.added_info)
+    ['includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
