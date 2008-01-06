@@ -21,6 +21,7 @@ The following are the actual links to existing test files.
 #. test_comet.rst_
 #. test_configuration.rst_
 #. test_editarea.rst_
+#. test_execution.rst_
 #. test_file_service.rst_
 #. test_pluginloader.rst_
 #. test_rst.rst_
@@ -36,6 +37,7 @@ The following are the actual links to existing test files.
 .. _test_comet.rst: test_comet.rst
 .. _test_configuration.rst: test_configuration.rst
 .. _test_editarea.rst: test_editarea.rst
+.. _test_execution.rst: test_execution.rst
 .. _test_file_service.rst: test_file_service.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
@@ -189,7 +191,7 @@ Crunchy Python files listing::
                 import: interface
                 requires: {"/save_file", "/load_file"}
                 plugin['register_service'](enable_editarea, "enable_editarea")
-            execution.py
+            execution.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_http_handler']("/exec%s"%r_id, exec_handler)
             file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2

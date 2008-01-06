@@ -41,6 +41,19 @@ class Page(object):
     def add_css_code(self, dummy):
         self.added_info.append('add_css_code')
 
+class Request(object):
+    '''Totally fake request object'''
+    def __init__(self, data='data', args='args'):
+        self.data = data
+        self.args = args
+        
+    def send_response(self, response=42):
+        print(response)
+        
+    def end_headers(self):
+        print("End headers")
+
+
 def register_tag_handler(tag, attribute, value, function):
     if tag not in registered_tag_handler:
         registered_tag_handler[tag] = {}
