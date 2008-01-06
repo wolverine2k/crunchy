@@ -66,7 +66,7 @@ def register_http_handler(handle, function):
     registered_http_handler[handle] = function
 plugin['register_http_handler'] = register_http_handler
 
-def register_service(function, handle): # note the reverse order :-(
+def register_service(handle, function): # note the reverse order :-(
     registered_services[handle] = function
 plugin['register_service'] = register_service
 

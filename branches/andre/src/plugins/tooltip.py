@@ -14,7 +14,7 @@ provides = set(["/dir","/doc"])
 
 def register():
     # register service, /dir and /doc
-    plugin['register_service'](insert_tooltip, "insert_tooltip")
+    plugin['register_service']("insert_tooltip", insert_tooltip)
     plugin['register_http_handler']("/dir%s"%plugin['session_random_id'], dir_handler)
     plugin['register_http_handler']("/doc%s"%plugin['session_random_id'], doc_handler)
 

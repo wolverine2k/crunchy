@@ -44,9 +44,9 @@ def register():
     plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
     # this plugin can style some Python code, returning both the styled
     # code and either the extracted Python code ...
-    plugin['register_service'](service_style, "style_pycode")
+    plugin['register_service']("style_pycode", service_style)
     # ... or the simulated interactive session, usable as a doctest.
-    plugin['register_service'](service_style_nostrip, "style_pycode_nostrip")
+    plugin['register_service']("style_pycode_nostrip", service_style_nostrip)
 
 
 

@@ -11,7 +11,7 @@ _ = translate['_']
 provides = set(["io_widget"])
 
 def register():
-    plugin['register_service'](insert_io_subwidget, "insert_io_subwidget")
+    plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,

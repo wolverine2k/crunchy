@@ -35,8 +35,7 @@ def register():
     # <pre title='editor ...'>
     plugin['register_tag_handler']("pre", "title", "editor",
                                                         insert_editor)
-    plugin['register_service'](insert_editor_subwidget,
-                                            "insert_editor_subwidget")
+    plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
     plugin['register_tag_handler']("pre", "title", "alternate_python_version",
                                                         insert_alternate_python)
     # shorter name version of the above

@@ -100,7 +100,7 @@ def exec_code(code, uid, doctest=False):
     cometIO.do_exec(code, uid, doctest=doctest)
 plugin['exec_code'] = exec_code
 
-def register_service(function, servicename):
+def register_service(servicename, function):
     """Register a new service, takes a callable object.
     Once a service is registered it will be available to all plugins by calling
     CrunchyPlugin.servicename()

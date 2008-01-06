@@ -10,7 +10,7 @@ provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])
 
 def register():
-    plugin['register_service'](enable_editarea, "enable_editarea")
+    plugin['register_service']("enable_editarea", enable_editarea)
 
 def enable_editarea(page, elem, textarea_id):
     """enables an editarea editor on a given element (textarea) of a page.

@@ -66,7 +66,7 @@ available to other parts of code (for example, to other plugins).  An
 example of a "service" is the code styling service - available from
 colourize.py.   It is registered via the instruction::
 
-   plugin['register_service'](service_style, "style_pycode")
+   plugin['register_service']("style_pycode", service_style)
 
 2. Tag handlers, are functions which instruct what to do when Crunchy
 encounters a given html tag with given attributes while processing
@@ -181,8 +181,8 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
                 plugin['register_tag_handler']("pre", "title", "py_code", plugin_style)
                 plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
-                plugin['register_service'](service_style, "style_pycode")
-                plugin['register_service'](service_style_nostrip, "style_pycode_nostrip")
+                plugin['register_service']("style_pycode", service_style)
+                plugin['register_service']("style_pycode_nostrip", service_style_nostrip)
             comet.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface, cometIO
                 plugin['register_http_handler']("/input%s"%r_id, push_input)
@@ -193,7 +193,7 @@ Crunchy Python files listing::
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 requires: {"/save_file", "/load_file"}
-                plugin['register_service'](enable_editarea, "enable_editarea")
+                plugin['register_service']("enable_editarea", enable_editarea)
             execution.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_http_handler']("/exec%s"%r_id, exec_handler)
@@ -219,7 +219,7 @@ Crunchy Python files listing::
                 plugin['register_http_handler']("/remote", remote_loader)
             io_widget.py
                 import: interface, editarea
-                plugin['register_service'](insert_io_subwidget, "insert_io_subwidget")
+                plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
             links.py
                 import: interface
                 plugin['register_tag_handler']("a", None, None, link_handler)
@@ -247,7 +247,7 @@ Crunchy Python files listing::
                 import: interface, interpreter
                 ### interpreter dependency unavoidable - need to initialize a Borg console
                 ### if the shared information is to be made available in the tooltip.
-                plugin['register_service'](insert_tooltip, "insert_tooltip")
+                plugin['register_service']("insert_tooltip", insert_tooltip)
                 plugin['register_http_handler']("/dir%s"%r_id, dir_handler)
                 plugin['register_http_handler']("/doc%s"%r_id, doc_handler)
             vlam_doctest.py
@@ -259,7 +259,7 @@ Crunchy Python files listing::
                 import: interface, utilities
                 requires: {"io_widget", "/exec", "/run_external", "style_pycode", "editarea"}
                 plugin['register_tag_handler']("pre", "title", "editor", insert_editor)
-                plugin['register_service'](insert_editor_subwidget, "insert_editor_subwidget")
+                plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
                 plugin['register_tag_handler']("pre", "title", "alternate_python_version", insert_alternate_python)
                 plugin['register_tag_handler']("pre", "title", "alt_py", insert_alternate_python)
                 plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree", _test_sanitize_for_ElementTree)            
