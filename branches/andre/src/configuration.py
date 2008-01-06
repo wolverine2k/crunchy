@@ -15,7 +15,13 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.interface import config, python_version, u_print, translate, debug, debug_flag
+from src.interface import config, python_version, u_print, translate, debug
+# the following is needed for unit tests, since debug_flag is normally
+# set when crunchy is started.
+try:
+    from src.interface import debug_flag
+except:
+    debug_flag = False
 
 if python_version < 3:
     import cPickle
