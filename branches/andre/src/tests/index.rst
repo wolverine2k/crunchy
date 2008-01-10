@@ -209,7 +209,7 @@ Crunchy Python files listing::
             handle_default.py
                 import: interface
                 plugin['register_http_handler'](None, handler)
-            handle_local.py
+            handle_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_http_handler']("/local", local_loader)
                 plugin['register_http_handler']("/generated_image", image_loader)
