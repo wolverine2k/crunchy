@@ -26,8 +26,6 @@ def local_loader(request):
     url = unquote_plus(request.args["url"])
     if ".htm" in url:  # should make sure that it is in the extension
         page = plugin['create_vlam_page'](open(url), url, local=True)
-        text = page.read()
-        page.seek(0)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
         base_url, fname = os.path.split(url)
