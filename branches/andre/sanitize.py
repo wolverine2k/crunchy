@@ -21,18 +21,17 @@ from src.element_tree import ElementSoup
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
-
+    
 class Page(object):
-   url = 'dummy_url'
-   is_local = False
-   is_remote = True
-
-if 'current_page' not in config:
-    page = Page()
-else:
-    page = config['current_page']
+    def __init__(self, info):
+        self.url, self.is_local, self.is_remote = info 
 
 os.chdir(src.configuration.defaults.temp_dir)
+info_page = open('page.info', 'r')
+page_info = eval(info_page.read())
+page = Page(page_info)
+info_page.close()
+
 infile = open('in.html', 'r')
 html = ElementSoup.parse(infile, encoding = 'utf-8')
 tree = ElementTree.ElementTree(html)

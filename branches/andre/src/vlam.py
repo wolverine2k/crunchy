@@ -73,11 +73,11 @@ class CrunchyPage(object):
                 _temp_file.close()
                 #
                 # Get the minimal information required by security.py
-                class DummyPage(object):
-                    url = self.url
-                    is_local = self.is_local
-                    is_remote = self.is_remote
-                config['current_page'] = DummyPage()
+                info = (self.url, self.is_local, self.is_remote)
+                _page_file_path = os.path.join(config['temp_dir'], 'page.info')
+                _temp_file = open(_page_file_path, 'w')
+                _temp_file.write(str(info))
+                _temp_file.close()
                 #
                 # Call an external process to clean up the file; note that this
                 # should take care of all the security removal.
