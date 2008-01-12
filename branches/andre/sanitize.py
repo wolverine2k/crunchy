@@ -24,12 +24,21 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
     
 class Page(object):
     def __init__(self, info):
-        self.url, self.is_local, self.is_remote = info 
+        self.url, self.is_local, self.is_remote = info
 
 os.chdir(src.configuration.defaults.temp_dir)
 info_page = open('page.info', 'r')
-page_info = eval(info_page.read())
-page = Page(page_info)
+_info = info_page.read().split(',')
+url = _info[0]
+if _info[1] == "True":
+    is_local = True
+else:
+    is_local = False
+if _info[2] == "True":
+    is_remote = True
+else:
+    is_remote = False   
+page = Page((url, is_local, is_remote))
 info_page.close()
 
 infile = open('in.html', 'r')

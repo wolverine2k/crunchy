@@ -199,7 +199,6 @@ class Defaults(object):
             return
         cPickle.dump(saved, pickled)
         pickled.close()
-        u_print("saved settings")
         return
 
     def _set_dirs(self):
@@ -454,8 +453,8 @@ You can change some of the default values by Crunchy, just like
 
     def _get_site_security(self, site):
         if site in self.site_security:
-            u_print("site = ", site)
-            u_print("self.site_security = ", str(self.site_security))
+            #u_print("site = ", site)
+            #u_print("self.site_security = ", str(self.site_security))
             return self.site_security[site]
         else:
             return 'display trusted'

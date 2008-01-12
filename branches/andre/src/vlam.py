@@ -73,10 +73,10 @@ class CrunchyPage(object):
                 _temp_file.close()
                 #
                 # Get the minimal information required by security.py
-                info = (self.url, self.is_local, self.is_remote)
                 _page_file_path = os.path.join(config['temp_dir'], 'page.info')
                 _temp_file = open(_page_file_path, 'w')
-                _temp_file.write(str(info))
+                _temp_file.write(self.url + ',' + str(self.is_local) + ',' +
+                                 str(self.is_remote))
                 _temp_file.close()
                 #
                 # Call an external process to clean up the file; note that this
