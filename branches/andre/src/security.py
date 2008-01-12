@@ -336,7 +336,7 @@ def remove_unwanted(tree, page):
                         element.tag = None
                         page.security_info['number removed'] += 1
                         continue
-            for attr in element.attrib.items():
+            for attr in list(element.attrib.items()):
                 if attr[0].lower() not in _allowed[tag]:
                     if DEBUG:
                         unwanted.add(attr[0])
