@@ -15,12 +15,13 @@ It contains one method that need to be tested:
 We begin by importing the required information from other
 modules and create a dummy session id
 
-   >>> import src.plugins.comet
    >>> from src.interface import plugin
+   >>> plugin['session_random_id'] = 42
+   >>> import src.plugins.comet
    >>> import src.cometIO as cometIO
    >>> import src.tests.mocks as mocks
 
-   >>> plugin['session_random_id'] = 42
+
 
 1. Testing register()
 ---------------------

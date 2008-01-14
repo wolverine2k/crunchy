@@ -24,6 +24,8 @@ The following are the actual links to existing test files.
 #. test_execution.rst_
 #. test_file_service.rst_
 #. test_pluginloader.rst_
+#. test_handle_local.rst_
+#. test_handle_remote.rst_
 #. test_rst.rst_
 #. test_turtle_js.rst_
 #. test_interface.rst_
@@ -39,6 +41,8 @@ The following are the actual links to existing test files.
 .. _test_editarea.rst: test_editarea.rst
 .. _test_execution.rst: test_execution.rst
 .. _test_file_service.rst: test_file_service.rst
+.. _test_handle_local.rst: test_handle_local.rst
+.. _test_handle_remote.rst: test_handle_remote.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
 .. _test_interface.rst: test_interface.rst
@@ -122,6 +126,10 @@ As a rule, every plugin should import the interface module - and
 nothing else other than other plugins (and, perhaps, utilities.py) 
 and/or modules from the Python standard library. 
 
+More details can be found in how_to.rst_
+
+.. _how_to.rst: how_to.rst
+
 In the following, we indicate which modules that are imported, with the exclusion of
 modules from the standard library.
 
@@ -139,7 +147,7 @@ Crunchy Python files listing::
     src:
         cometIO.py
             import: configuration, interpreter, interface, utilities
-        configuration.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+        configuration.py  # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
             import: interface
         CrunchyPlugin.py
             import: cometIO, PluginServices, interface, vlam
@@ -175,7 +183,7 @@ Crunchy Python files listing::
     src/plugins:
             ### Note: in the following plugins, r_id is used as a synonym for
             ### plugin['session_random_id']
-            colourize.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            colourize.py # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface, utilities
                 plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
                 plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
@@ -189,7 +197,7 @@ Crunchy Python files listing::
                 plugin['register_http_handler']("/comet", comet)
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
                 ### to include the services provided by cometIO {"/comet", "/input"}
-                ### in the plugin directory so that it was easier to find.
+                ### in the plugin directory so that they were easier to find.
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 requires: {"/save_file", "/load_file"}
@@ -214,7 +222,7 @@ Crunchy Python files listing::
                 plugin['register_http_handler']("/local", local_loader)
                 plugin['register_http_handler']("/generated_image", image_loader)
                 plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
-            handle_remote.py
+            handle_remote.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_http_handler']("/remote", remote_loader)
             io_widget.py

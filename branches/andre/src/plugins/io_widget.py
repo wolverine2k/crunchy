@@ -1,6 +1,5 @@
 """The IO widget, handles text and graphical IO
 This is just the UI part, the communication code is defined in the core
-- maybe this should me moved to core?
 """
 
 # All plugins should import the crunchy plugin API via interface.py
@@ -15,7 +14,7 @@ def register():
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
-    includes a canvas :-)
+    and includes a canvas.
     """
 
     # When a security mode is set to "display ...", we only parse the

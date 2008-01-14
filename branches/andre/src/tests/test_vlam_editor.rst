@@ -12,13 +12,25 @@ that require testing:
 3. insert_editor()
 
 
-# Import vlam_editor, _ElementInterface, and editarea
+0. Setting things up
+--------------------
 
+We need to import various modules, making sure we start from a clean slate.
+
+  >>> from src.interface import Element, plugin, config
+  >>> plugin.clear()
+  >>> plugin['session_random_id'] = 42
+  >>> config.clear()
+  >>> config['editarea_language'] = 'en'
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea
-  >>> from src.interface import Element, plugin, config
   >>> import src.tests.mocks as mocks
-
+  >>> dummy = reload(mocks)
+  >>> site_security = {'trusted_url': 'trusted',
+  ...                  'display_only_url': 'display normal'}
+  >>> def get_security_level(url):
+  ...     return site_security[url]
+  >>> config['page_security_level'] = get_security_level
 
 1.)  Test (Register)
 ------------------------------------
@@ -214,9 +226,25 @@ Create also a fake configuration variable.
   >>> elem = Element("pre")
   >>> uid = "2"
 
-#  Set Object Attributes
+Set object attributes for an untrusted page
 
-  >>> page.url = "TestURL"
+  >>> page.url = "display_only_url"
+  >>> elem.attrib = {'title': 'no-pre'}
+
+Run the Function
+
+  >>> vlam_editor.insert_editor(page, elem, uid) 
+
+Test - check to make sure functions in page were called
+
+  >>> print(page.added_info)
+  ['includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
+
+Repeat, this time for a trusted page; the code for execution should be 
+included this time.
+
+  >>> page.url = "trusted_url"
+  >>> page.added_info = []
   >>> elem.attrib = {'title': 'no-pre'}
 
 #  Run the Function
@@ -227,6 +255,7 @@ Create also a fake configuration variable.
 
   >>> print(page.added_info)
   ['includes', ('add_include', 'exec_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
+
 
 # Test - elem
 

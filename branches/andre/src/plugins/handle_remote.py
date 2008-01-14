@@ -17,4 +17,6 @@ def remote_loader(request):
     page = plugin['create_vlam_page'](urlopen(url), url, remote=True)
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(page.read())
+    # write() in python 3.0 returns an int instead of None;
+    # this interferes with unit tests
+    dummy = request.wfile.write(page.read())

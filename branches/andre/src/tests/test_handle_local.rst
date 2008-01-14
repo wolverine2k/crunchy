@@ -1,12 +1,12 @@
 handle_local.py tests
 ================================
 
-Not yet Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 handle_local.py is a plugin whose main purpose is to load local tutorials.  
 It has the following functions that require testing:
 
-1. register(): registers a service available to other plugins.
+1. register(): registers two http handlers and one tag handler.
 2. local_loader(): loads a file following a request, and sends it to the browser
 3. image_loader(): loads an image from the "temp" directory
 4. add_to_path(): adds a new path to sys.path
@@ -14,10 +14,11 @@ It has the following functions that require testing:
 0. Setting things up
 --------------------
 
-We need to import various modules before starting
+We need to import various modules before starting, and make sure that they do
+not contain values pre-defined by other tests.
 
-    >>> import src.plugins.handle_local as handle_local
     >>> from src.interface import plugin, config, Element
+    >>> import src.plugins.handle_local as handle_local
     >>> import src.tests.mocks as mocks
     >>> import os
     >>> current_dir = os.getcwd()
@@ -61,7 +62,7 @@ this interferes with unit tests unless we catch the return value.
     >>> __irrelevant = handle.write(file_content)
     >>> handle.close()
     >>> request = mocks.Request(args={'url':filepath})
-    >>> #handle_local.local_loader(request)
+    >>> handle_local.local_loader(request)
     200
     End headers
     This is just a test.

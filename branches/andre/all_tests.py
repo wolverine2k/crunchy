@@ -16,9 +16,12 @@ test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 nb_files = 0
 excluded = []#["test_colourize.rst"]
+#include_only = ['test_handle_remote.rst']
 for t in test_files:
     if t in excluded:
         continue # skip
+    #if t not in include_only:
+    #    continue
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
