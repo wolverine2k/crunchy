@@ -13,11 +13,15 @@ It contains two methods that need to be tested:
 0. Setting things up
 --------------------
 
-We simply need to import the plugin and something to create an Element
+See how_to.rst_ for details.
+
+.. _how_to.rst: how_to.rst
 
    >>> import src.plugins.vlam_load_local as vlam_load_local
    >>> from src.interface import Element, plugin
+   >>> plugin.clear()
    >>> import src.tests.mocks as mocks
+   >>> mocks.init()
 
 
 1. Testing register()

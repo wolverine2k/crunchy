@@ -1,7 +1,7 @@
 vlam_load_remote.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5 and 3.0a1
+Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 vlam_load_remote.py is a plugin whose purpose is to create a form
 allowing a user to browse for a remote tutorial to be loaded by Crunchy.
@@ -13,12 +13,15 @@ It contains two methods that need to be tested:
 0. Setting things up
 --------------------
 
-We simply need to import the plugin, something to create an Element 
-and a fake registration function.
+See how_to.rst_ for details.
+
+.. _how_to.rst: how_to.rst
 
    >>> import src.plugins.vlam_load_remote as vlam_load_remote
    >>> from src.interface import Element, plugin
+   >>> plugin.clear()
    >>> import src.tests.mocks as mocks
+   >>> mocks.init()
 
 1. Testing register()
 ---------------------

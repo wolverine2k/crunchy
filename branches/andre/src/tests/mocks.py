@@ -78,14 +78,26 @@ def register_tag_handler(tag, attribute, value, function):
     if attribute not in registered_tag_handler[tag]:
         registered_tag_handler[tag][attribute] = {}
     registered_tag_handler[tag][attribute][value] = function
-plugin['register_tag_handler'] = register_tag_handler
 
 def register_http_handler(handle, function):
     registered_http_handler[handle] = function
-plugin['register_http_handler'] = register_http_handler
 
 def register_service(handle, function):
     registered_services[handle] = function
-plugin['register_service'] = register_service
 
+def init():
+    '''used to (re-)initialise some functions
+    
+    reload()ing the module could be used to do the same in Python 2.x,
+    provided the plugin values would have been defined at the top level - but
+    this would not be easily done in Python 3.x; it is easier and more
+    accurate to use this function.
+    '''
+    global registered_tag_handler, registered_http_handler, registered_services
+    registered_tag_handler = {}
+    registered_http_handler = {}
+    registered_services = {}
+    plugin['register_tag_handler'] = register_tag_handler
+    plugin['register_http_handler'] = register_http_handler
+    plugin['register_service'] = register_service
 

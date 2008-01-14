@@ -14,12 +14,16 @@ It has the following functions that require testing:
 0. Setting things up
 --------------------
 
-We need to import various modules before starting, and make sure that they do
-not contain values pre-defined by other tests.
+See how_to.rst_ for details.
+
+.. _how_to.rst: how_to.rst
 
     >>> from src.interface import plugin, config, Element
+    >>> plugin.clear()
+    >>> config.clear()
     >>> import src.plugins.handle_local as handle_local
     >>> import src.tests.mocks as mocks
+    >>> mocks.init()
     >>> import os
     >>> current_dir = os.getcwd()
 

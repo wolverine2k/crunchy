@@ -25,16 +25,21 @@ with various attributes.  As a result, the tests that need to be performed are
 rather simplistic and tedious.  They also have been written "after the fact" since
 the real test for developing the code was in looking at the UI that was generated.
 
-Before we proceed with testing individual functions, we need to import interface.py and
-do a variable assignment.
+0. Setting things up
+--------------------
+
+See how_to.rst_ for details.
+
+.. _how_to.rst: how_to.rst
 
     >>> from src.interface import config, plugin, Element
+    >>> config.clear()
+    >>> plugin.clear()
     >>> config['editarea_language'] = 'en'
     >>> plugin['session_random_id'] = '42'
-
-We then need to import editarea.py and mocks
     >>> import src.plugins.editarea as editarea
     >>> import src.tests.mocks as mocks
+    >>> mocks.init()
 
 
 1. Testing register()

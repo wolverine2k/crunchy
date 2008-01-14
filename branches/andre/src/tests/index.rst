@@ -228,7 +228,7 @@ Crunchy Python files listing::
             io_widget.py
                 import: interface, editarea
                 plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
-            links.py
+            links.py  # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_tag_handler']("a", None, None, link_handler)
                 plugin['register_tag_handler']("img", None, None, src_handler)

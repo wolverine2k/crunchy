@@ -15,9 +15,11 @@ that require testing:
 0. Setting things up
 --------------------
 
-We need to import various modules, making sure we start from a clean slate.
+See how_to.rst_ for details.
 
-  >>> from src.interface import Element, plugin, config
+.. _how_to.rst: how_to.rst
+
+  >>> from src.interface import Element, plugin, config, python_version
   >>> plugin.clear()
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
@@ -25,7 +27,7 @@ We need to import various modules, making sure we start from a clean slate.
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea
   >>> import src.tests.mocks as mocks
-  >>> dummy = reload(mocks)
+  >>> mocks.init()
   >>> site_security = {'trusted_url': 'trusted',
   ...                  'display_only_url': 'display normal'}
   >>> def get_security_level(url):

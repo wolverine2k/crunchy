@@ -86,11 +86,14 @@ could have been imported by a previous test that was run in a single
 doctest session.
 In that case, importing it again would only provide a link
 to the module; by clearing the above directory, we will have removed some
-important definitions.  To correct this, we need to immediately reload that
-module.
+important definitions.  To correct this, we need to call the init() function
+from that module
 
     >>> import src.tests.mocks as mocks
-    >>> dummy = reload(mocks)
+    >>> mocks.init
+
+Note that, with Python 2.x, we could have used reload(mocks) instead - but
+this is no longer an option with Python 3.x.
 
 Finally, we can define some fake functions that can be used.  This could
 have been done when we defined required values above, but it is usually

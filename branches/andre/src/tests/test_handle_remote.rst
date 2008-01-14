@@ -14,14 +14,15 @@ It has the following functions that require testing:
 0. Setting things up
 --------------------
 
-We need to import various modules before starting, and make sure that they do
-not contain values pre-defined by other tests.
+See how_to.rst_ for details.
 
-    >>> from src.interface import plugin
+.. _how_to.rst: how_to.rst
+
+    >>> from src.interface import plugin, python_version
     >>> plugin.clear()
     >>> import src.plugins.handle_remote as handle_remote
     >>> import src.tests.mocks as mocks
-    >>> dummy = reload(mocks)
+    >>> mocks.init()
     >>> import os
 
 

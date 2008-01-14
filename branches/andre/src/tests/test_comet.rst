@@ -12,14 +12,17 @@ It contains one method that need to be tested:
 0. Setting things up
 --------------------
 
-We begin by importing the required information from other
-modules and create a dummy session id
+See how_to.rst_ for details.
+
+.. _how_to.rst: how_to.rst
 
    >>> from src.interface import plugin
+   >>> plugin.clear()
    >>> plugin['session_random_id'] = 42
    >>> import src.plugins.comet
    >>> import src.cometIO as cometIO
    >>> import src.tests.mocks as mocks
+   >>> mocks.init()
 
 
 
