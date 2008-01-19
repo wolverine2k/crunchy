@@ -32,6 +32,15 @@ def clear_graphics():
     '''remove existing graphics from a page'''
     init_graphics(0, 0)
 
+def display_image(file_path):
+    '''display an image on a canvas, from the origin'''
+    uid = plugin['get_uid']()
+    plugin['exec_js'](plugin['get_pageid'](), """var img = new Image();
+                             img.src = '%s';
+                             img.onload = function(){
+                             document.getElementById("canvas_%s").getContext('2d');
+                             }""" % (file_path, uid))
+    
 def set_line_colour(col):
     '''Sets the default line colour using a valid value given as a string.'''
     uid = plugin['get_uid']()

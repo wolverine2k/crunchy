@@ -83,8 +83,9 @@ tostring = ElementTree.tostring
 # ElementSoup/BeautifulSoup in Python 3.x, we provide a basic, but extremely
 # strict, x(h)tml parser.
 
-XmlFile = None
-if python_version >= 3:
+if python_version < 3:
+    XmlFile = None
+else:
     import src.my_htmlentitydefs
     class XmlFile(ElementTree.ElementTree):
         def __init__(self, file=None):

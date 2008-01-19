@@ -3,15 +3,12 @@
 """
 from optparse import OptionParser
 import socket
-import sys
 import webbrowser
-#import pychecker.checker
 
 import src.interface
-u_print = src.interface.u_print
-required = 2.4
-if src.interface.python_version < required:
-    print("Crunchy requires at least Python version %s"%required)
+REQUIRED = 2.4
+if src.interface.python_version < REQUIRED:
+    print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
 
 def find_port(start=8001):
@@ -40,20 +37,21 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     import src.pluginloader as pluginloader
     if port is None:
         port = find_port()
-    server = http_serve.MyHTTPServer((host, port), http_serve.HTTPRequestHandler)
+    server = http_serve.MyHTTPServer((host, port),
+                                     http_serve.HTTPRequestHandler)
     pluginloader.init_plugin_system(server)
     if url is None:
         url = 'http://' + host + ':' + str(port) + '/'
     webbrowser.open(url)
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
-    u_print('\nCrunchy Server: serving up interactive tutorials at URL ' +
+    print('\nCrunchy Server: serving up interactive tutorials at URL ' +
             url + '\n')
     server.still_serving = True
     while server.still_serving:
         server.handle_request()
 
-usage='''python crunchy.py [options]
+usage = '''python crunchy.py [options]
 
 If your browser does not start or does not open a new tab on its own,
 or you have a non-supported browser that starts instead, start Firefox and copy
@@ -73,7 +71,7 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems)")
-    (options, args) = parser.parse_args()
+    (options, dummy) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True
     else:

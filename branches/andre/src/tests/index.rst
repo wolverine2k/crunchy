@@ -23,12 +23,13 @@ The following are the actual links to existing test files.
 #. test_editarea.rst_
 #. test_execution.rst_
 #. test_file_service.rst_
-#. test_pluginloader.rst_
 #. test_handle_local.rst_
 #. test_handle_remote.rst_
+#. test_interface.rst_
+#. test_io_widget.rst_
+#. test_pluginloader.rst_
 #. test_rst.rst_
 #. test_turtle_js.rst_
-#. test_interface.rst_
 #. test_utilities.rst_
 #. test_vlam_editor.rst_
 #. test_vlam_load_local.rst_
@@ -43,6 +44,7 @@ The following are the actual links to existing test files.
 .. _test_file_service.rst: test_file_service.rst
 .. _test_handle_local.rst: test_handle_local.rst
 .. _test_handle_remote.rst: test_handle_remote.rst
+.. _test_io_widget.rst: test_io_widget.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
 .. _test_interface.rst: test_interface.rst
@@ -225,7 +227,7 @@ Crunchy Python files listing::
             handle_remote.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 plugin['register_http_handler']("/remote", remote_loader)
-            io_widget.py
+            io_widget.py # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface, editarea
                 plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
             links.py  # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
