@@ -52,10 +52,15 @@ def init_plugin_system(server):
     interface.server['server'] = server
     if not "src/plugins/" in sys.path:
         sys.path.insert(0, "src/plugins")
-    # As an aside, add the same for the non-plugins files that are meant to be
-    # imported by the user, such as graphics.py, etc;
-    if not "src/imports/" in sys.path:
-        sys.path.insert(0, "src/imports")
+    # for the above, we only need the relative path at this point.
+    
+    # In addition, add the same for the non-plugins files that are meant to be
+    # imported by the user, such as graphics.py, etc.
+    # This time, need the absolute path as the base path may be changed
+    # by the user through some code execution.
+    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
+                                    "src", "imports"))
+
     imported_plugins = []
     if DEBUG:
         print("Importing plugins.")

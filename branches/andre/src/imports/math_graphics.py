@@ -21,7 +21,7 @@ def init_graphics(width=400, height=400, border_color='red'):
         created_uids.append(uid)
         plugin['exec_js'](plugin['get_pageid'](), """var divCanvas = document.getElementById("div_%s");
                         var newCanvas = document.createElement("canvas");
-                        newCanvas.setAttribute('id', 'canvas_%s')
+                        newCanvas.setAttribute('id', 'canvas_%s');
                         divCanvas.appendChild(newCanvas);
         """%(uid, uid))
     plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").width=%d;

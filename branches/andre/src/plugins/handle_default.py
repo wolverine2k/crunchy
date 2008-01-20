@@ -1,7 +1,7 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
 from imp import find_module
-from os.path import normpath, join, isdir, dirname
+from os.path import normpath, join, isdir, dirname, exists
 from dircache import listdir, annotate
 import sys
 
@@ -29,7 +29,10 @@ def path_to_filedata(path, root):
         return open(exit_file).read()
     if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path)
-    npath = normpath(join(root, normpath(path[1:])))
+    if exists(path) and path != "/":
+        npath = path
+    else:
+        npath = normpath(join(root, normpath(path[1:])))
 
     if isdir(npath):
         if path[-1] != "/":
