@@ -301,6 +301,8 @@ Crunchy Python files listing::
                 import: None
             graphics.py
                 import: interface
+            dhtml.py
+                import: interface
             math_graphics.py
                 import: interface
             turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2

@@ -16,6 +16,7 @@ test_files = [f for f in listdir(test_path) if f.startswith("test_")]
 
 nb_files = 0
 excluded = []#["test_colourize.rst"]
+
 #include_only = ['test_handle_remote.rst']
 for t in test_files:
     if t in excluded:

@@ -9,6 +9,7 @@ from src.interface import plugin
 created_uids = []
 
 def init_graphics(width=400, height=400, border_color='red'):
+    '''dynamically creates a graphics canvas'''
     uid = plugin['get_uid']()
     if uid not in created_uids: # dynamically create a canvas
         created_uids.append(uid)

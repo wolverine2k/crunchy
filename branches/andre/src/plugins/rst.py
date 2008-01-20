@@ -11,6 +11,10 @@ except:
 
 if _docutils_installed:
     provides = set(["/rst"])
+    from os import linesep
+    from docutils.parsers import rst
+    from docutils.writers.html4css1 import HTMLTranslator
+    from docutils import nodes
 
 def register():
     """Registers new http handler and new widget for loading ReST files"""
@@ -43,183 +47,181 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import docutils
-from os import linesep
-from docutils.parsers import rst
-from docutils import writers
-from docutils.writers.html4css1 import Writer, HTMLTranslator
-from docutils.core import publish_cmdline
-from docutils import nodes
-
-def int_or_one(argument):
-    """If no argument is present, returns 1.
-    Else returns argument as integer."""
-    if argument and argument.strip():
-        return int(argument)
-    else:
-        return 1
-
-class pre(nodes.raw):
-    def __init__(self, *args, **kwargs):
-        nodes.raw.__init__(self, *args, **kwargs)
-        self.tagname = "pre"
-
-class InterpreterDirective(rst.Directive):
-    required_arguments = 1
-    optional_arguments = 1
-    final_argument_whitespace = False
-    option_spec = {
-        'linenumber' : int_or_one,
-        'log_id' : str
-    }
-    has_content = True
-    def run(self):
-        code = linesep.join(self.content)
-        if self.arguments[0].strip() not in [ 'interpreter', 'isolated', 'parrot', 'Parrots', 'TypeInfoConsole' ]:
-            raise ValueError("Wrong interpreter type: %s" % (self.arguments[0].strip(),))
-        if len(self.arguments) is 2:
-            if self.arguments[1].strip() is not "no_style":
-                raise ValueError("Invalid argument: %s" % (self.arguments[1].strip(),))
-        listOut = [ x.strip() for x in self.arguments ]
-        for key in [ "linenumber", "log_id" ]:
-            if self.options.has_key(key):
-                listOut.append(key + "=%s" % (str(self.options[key]),))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class EditorDirective(rst.Directive):
-    required_arguments = 0
-    optional_arguments = 5
-    final_argument_whitespace = False
-    option_spec = {
-        'linenumber' : int_or_one,
-        'log_id' : str
-    }
-    has_content = True
-    def run(self):
-        code = linesep.join(self.content)
-        for arg in self.arguments:
-            if arg.strip() not in [ 'no_style', 'no-copy', 'no-pre', 'external', 'no-internal' ]:
-                raise ValueError("Invalid argument: %s" % (arg.strip(),))
-        listOut = [ x.strip() for x in ['editor'] + self.arguments ]
-        for key in [ "linenumber", "log_id" ]:
-            if self.options.has_key(key):
-                listOut.append(key + "=%s" % (str(self.options[key]),))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class DocTestDirective(rst.Directive):
-    required_arguments = 0
-    optional_arguments = 1
-    option_spec = {
-        'linenumber' : int_or_one,
-        'log_id' : str
-    }
-    has_content = True
-    def run(self):
-        self.assert_has_content()
-        code = linesep.join(self.content)
-        if len(self.arguments) is 1:
-            if self.arguments[0] is not 'no_style': raise ValueError("Invalid argument: %s" % (self.arguments[0].strip(),))
-        listOut = [ x.strip() for x in ['doctest'] + self.arguments ]
-        for key in [ "linenumber", "log_id" ]:
-            if self.options.has_key(key):
-                listOut.append(key + "=%s" % (str(self.options[key]),))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class ImageFileDirective(rst.Directive):
-    required_arguments = 1
-    optional_arguments = 3
-    option_spec = {
-        'linenumber' : int_or_one
-    }
-    has_content = True
-    def run(self):
-        code = linesep.join(self.content)
-        for arg in self.arguments[1:]:
-            if arg.strip() not in [ 'no_style', 'no-copy', 'no-pre' ]:
-                raise ValueError("Invalid argument: %s" % (arg.strip(),))
-        listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
-        if self.options.has_key("linenumber"):
-            listOut.append("linenumber=%d" % (self.options["linenumber"],))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class PythonCodeDirective(rst.Directive):
-    required_arguments = 0
-    optional_arguments = 0
-    option_spec = {
-        'linenumber' : int_or_one
-    }
-    has_content = True
-    def run(self):
-        code = linesep.join(self.content)
-        listOut = ['python_code']
-        if self.options.has_key("linenumber"):
-            listOut.append("linenumber=%d" % (self.options["linenumber"],))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class AltPythonVersionDirective(rst.Directive):
-    required_arguments = 0
-    optional_arguments = 5
-    final_argument_whitespace = False
-    option_spec = {
-        'linenumber' : int_or_one
-    }
-    has_content = True
-    def run(self):
-        code = linesep.join(self.content)
-        for arg in self.arguments:
-            if arg.strip() not in [ 'no_style', 'no-copy', 'no-pre', 'external', 'no-internal' ]:
-                raise ValueError("Invalid argument: %s" % (arg.strip(),))
-        listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
-        if self.options.has_key("linenumber"):
-            listOut.append("linenumber=%d" % (self.options["linenumber"],))
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-class NoVLAMDirective(rst.Directive):
-    required_arguments = 0
-    optional_arguments = 0
-    final_argument_whitespace = False
-    option_spec = {}
-    has_content = True
-    def run(self):
-        self.assert_has_content()
-        code = linesep.join(self.content)
-        listOut = ['no-vlam']
-        titleAttr = " ".join(listOut)
-        return [ pre(title=titleAttr, text=code) ]
-
-DIRECTIVE_DICT = {
-    'interpreter' : InterpreterDirective,
-    'editor' : EditorDirective,
-    'doctest' : DocTestDirective,
-    'image_file' : ImageFileDirective,
-    'py_code' : PythonCodeDirective,
-    'python_code' : PythonCodeDirective,
-    'alternate_python_version' : AltPythonVersionDirective,
-    'alt_py' : AltPythonVersionDirective,
-    'no-vlam' : NoVLAMDirective
-    }
-
-def visit_pre(translator, node):
-    attrDict = {}
-    for key,value in node.attributes.items():
-        if ( value ) and ( key is not "xml:space" ):
-            attrDict[key] = value
-    translator.body.append(translator.starttag(node, 'pre', **attrDict))
-
-def depart_pre(translator, node):
-    translator.body.append('\n</pre>\n')
-
-HTMLTranslator.visit_pre = visit_pre
-HTMLTranslator.depart_pre = depart_pre
+if _docutils_installed:
+    def int_or_one(argument):
+        """If no argument is present, returns 1.
+        Else returns argument as integer."""
+        if argument and argument.strip():
+            return int(argument)
+        else:
+            return 1
+    
+    class pre(nodes.raw):
+        def __init__(self, *args, **kwargs):
+            nodes.raw.__init__(self, *args, **kwargs)
+            self.tagname = "pre"
+    
+    class InterpreterDirective(rst.Directive):
+        required_arguments = 1
+        optional_arguments = 1
+        final_argument_whitespace = False
+        option_spec = {
+            'linenumber' : int_or_one,
+            'log_id' : str
+        }
+        has_content = True
+        def run(self):
+            code = linesep.join(self.content)
+            if self.arguments[0].strip() not in ['interpreter', 'isolated',
+                                        'parrot', 'Parrots', 'TypeInfoConsole']:
+                raise ValueError("Wrong interpreter type: %s" % (self.arguments[0].strip(),))
+            if len(self.arguments) is 2:
+                if self.arguments[1].strip() is not "no_style":
+                    raise ValueError("Invalid argument: %s" % (self.arguments[1].strip(),))
+            listOut = [ x.strip() for x in self.arguments ]
+            for key in [ "linenumber", "log_id" ]:
+                if self.options.has_key(key):
+                    listOut.append(key + "=%s" % (str(self.options[key]),))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class EditorDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 5
+        final_argument_whitespace = False
+        option_spec = {
+            'linenumber' : int_or_one,
+            'log_id' : str
+        }
+        has_content = True
+        def run(self):
+            code = linesep.join(self.content)
+            for arg in self.arguments:
+                if arg.strip() not in ['no_style', 'no-copy', 'no-pre',
+                                       'external', 'no-internal']:
+                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
+            listOut = [ x.strip() for x in ['editor'] + self.arguments ]
+            for key in [ "linenumber", "log_id" ]:
+                if self.options.has_key(key):
+                    listOut.append(key + "=%s" % (str(self.options[key]),))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class DocTestDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 1
+        option_spec = {
+            'linenumber' : int_or_one,
+            'log_id' : str
+        }
+        has_content = True
+        def run(self):
+            self.assert_has_content()
+            code = linesep.join(self.content)
+            if len(self.arguments) is 1:
+                if self.arguments[0] is not 'no_style':
+                    raise ValueError("Invalid argument: %s" % (self.arguments[0].strip(),))
+            listOut = [ x.strip() for x in ['doctest'] + self.arguments ]
+            for key in [ "linenumber", "log_id" ]:
+                if self.options.has_key(key):
+                    listOut.append(key + "=%s" % (str(self.options[key]),))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class ImageFileDirective(rst.Directive):
+        required_arguments = 1
+        optional_arguments = 3
+        option_spec = {
+            'linenumber' : int_or_one
+        }
+        has_content = True
+        def run(self):
+            code = linesep.join(self.content)
+            for arg in self.arguments[1:]:
+                if arg.strip() not in [ 'no_style', 'no-copy', 'no-pre' ]:
+                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
+            listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
+            if self.options.has_key("linenumber"):
+                listOut.append("linenumber=%d" % (self.options["linenumber"],))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class PythonCodeDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 0
+        option_spec = {
+            'linenumber' : int_or_one
+        }
+        has_content = True
+        def run(self):
+            code = linesep.join(self.content)
+            listOut = ['python_code']
+            if self.options.has_key("linenumber"):
+                listOut.append("linenumber=%d" % (self.options["linenumber"],))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class AltPythonVersionDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 5
+        final_argument_whitespace = False
+        option_spec = {
+            'linenumber' : int_or_one
+        }
+        has_content = True
+        def run(self):
+            code = linesep.join(self.content)
+            for arg in self.arguments:
+                if arg.strip() not in ['no_style', 'no-copy', 'no-pre',
+                                       'external', 'no-internal']:
+                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
+            listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
+            if self.options.has_key("linenumber"):
+                listOut.append("linenumber=%d" % (self.options["linenumber"],))
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    class NoVLAMDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 0
+        final_argument_whitespace = False
+        option_spec = {}
+        has_content = True
+        def run(self):
+            self.assert_has_content()
+            code = linesep.join(self.content)
+            listOut = ['no-vlam']
+            titleAttr = " ".join(listOut)
+            return [ pre(title=titleAttr, text=code) ]
+    
+    DIRECTIVE_DICT = {
+        'interpreter' : InterpreterDirective,
+        'editor' : EditorDirective,
+        'doctest' : DocTestDirective,
+        'image_file' : ImageFileDirective,
+        'py_code' : PythonCodeDirective,
+        'python_code' : PythonCodeDirective,
+        'alternate_python_version' : AltPythonVersionDirective,
+        'alt_py' : AltPythonVersionDirective,
+        'no-vlam' : NoVLAMDirective
+        }
+    
+    def visit_pre(translator, node):
+        attrDict = {}
+        for key, value in node.attributes.items():
+            if value and (key is not "xml:space"):
+                attrDict[key] = value
+        translator.body.append(translator.starttag(node, 'pre', **attrDict))
+    
+    def depart_pre(translator, node):
+        translator.body.append('\n</pre>\n')
+    
+    HTMLTranslator.visit_pre = visit_pre
+    HTMLTranslator.depart_pre = depart_pre
 
 if _docutils_installed:
-    for key, value in DIRECTIVE_DICT.items(): rst.directives.register_directive( key, value )
+    for key, value in DIRECTIVE_DICT.items():
+        rst.directives.register_directive( key, value )
 
 class ReST_file:
     """Represents file with transformed text from rst into html.
