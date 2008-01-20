@@ -3,8 +3,12 @@
 Enables dynamic display of images (from files) on a page where no image was
 preloaded.
 '''
+import os
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin
+from src.interface import plugin, config
+
+home = os.path.expanduser("~")
+temp_dir = config['temp_dir']
 
 created_uids = []
 
@@ -17,7 +21,6 @@ def show(file_path, width=400, height=400):
                         newImage.setAttribute('id', 'img_%s');
                         divImage.appendChild(newImage);
         """%(uid, uid))
-        print "new image created; uid = ", uid
     plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("img_%s").width=%d;
                     document.getElementById("img_%s").height=%d;
                     document.getElementById("img_%s").src='%s';
