@@ -1,5 +1,11 @@
 """Plugin for loading and transforming ReST files."""
 
+# Note: much of the rst directives code was created as part of the
+# Google Highly Open Participation Contest 2007/8 by
+# Copyright (C) 2008 Zachary Voase <cracka80 at gmail dot com>
+#
+# It was adapted and incorporated into Crunchy by A. Roberge
+
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, SubElement
 
@@ -21,31 +27,6 @@ def register():
     if _docutils_installed:
         plugin['register_http_handler']("/rst", load_rst)
         plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
-
-"""
-The following is copied from CrunchyDirectives.py
-
-Definitions of docutils reStructuredText directives which export
-VLAM functionalities to reST, to allow for Crunchy tutorials to be
-written in reST and converted to HTML without the need to then add VLAM.
-
-Created as part of the Google Highly Open Participation Contest 2007/8
----------------------------- License -----------------------------------
-Copyright (C) 2008 Zachary Voase <cracka80 at gmail dot com>
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 if _docutils_installed:
     def int_or_one(argument):

@@ -273,10 +273,6 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("pre", "title", "alternate_python_version", insert_alternate_python)
                 plugin['register_tag_handler']("pre", "title", "alt_py", insert_alternate_python)
                 plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree", _test_sanitize_for_ElementTree)            
-            vlam_image_file.py
-                import: interface
-                requires: {"io_widget", "/exec", "style_pycode", "editor_widget"}
-                plugin['register_tag_handler']("pre", "title", "image_file", insert_image_file)
             vlam_interpreter.py
                 import: interface, utilities, colourize
                 requires: {"io_widget", "/exec"}

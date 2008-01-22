@@ -27,20 +27,47 @@
 <a href="/functional_tests">Tests</a>
 </div>
 <div id="main">
-<div class="notes">
-<h4>Bug?</h4>
-<p> Sometimes (always?) the image generated is not displayed properly after you click
-on the obvious button.  This is why we have provided a second button to (re)load the
-image.
+<h3 class="crunchy">Dynamically inserting images into a page</h3>
+<p>Crunchy allow a user to insert one or more images interactively below
+an interpreter or any other elements.  The technique used to do this kind of
+web page transformation is known as <i>dynamic html</i> or <i>dhtml</i> for short.
+You need to import the <code>dhtml.py</code> module to do this within
+Crunchy.
 </p>
-</div>
-<p>Crunchy can work with modules that generate images to display them dynamically
-within the browser.  The following example
+<pre title="interpreter">
+import dhtml
+dhtml.image("../crunchy-python-powered.png", width=457, height=83)
+</pre
+<p>
+The above image has been loaded from a location given relative to the current 
+html file being displayed, always assumed to be from the basic server.  
+To load other images, you will need to specify the absolute path.  Since
+I do not know the path of interesting images on your computer, 
+I'll give you another one to try.
+</p>
+<pre title="interpreter">
+dhtml.image("http://imgs.xkcd.com/comics/python.png")
+</pre>
+<p>
+By default, Crunchy displays images with a width and height of 400 pixels each.
+As you have seen in the first example, you can specify other parameters for
+the image.
+</p>
+<p>Crunchy can also work with modules that generate images 
+to display them dynamically within the browser.  To
+help you with locating images, Crunchy defines two
+locations on your computer: your home directory and the Crunchy temporary
+directory.
+
+The following example
 assumes that matplotlib is installed; if it's not, you're out of luck!</p>
-<pre title="image_file foo.png">
+<pre title="editor">
+import dhtml
+image_file = dhtml.join_path(dhtml.home, "foo.png")
+
 # assumes matplotlib is installed
 import matplotlib.numerix as nx
-import pylab as p
+import pylab
 
 def boltzman(x, xmid, tau):
     """
@@ -59,14 +86,16 @@ def fill_below_intersection(x, S, Z):
     Y = nx.zeros(S.shape, typecode=nx.Float)
     Y[:ind] = S[:ind]  # Y is S up to the intersection
     Y[ind:] = Z[ind:]  # and Z beyond it
-    p.fill(x, Y, facecolor='blue', alpha=0.5)
+    pylab.fill(x, Y, facecolor='blue', alpha=0.5)
 
 x = nx.arange(-6, 6, .01)
 S = boltzman(x, 0, 1)
 Z = 1-boltzman(x, 0.5, 1)
-p.plot(x, S, x, Z, color='red', lw=2)
+pylab.plot(x, S, x, Z, color='red', lw=2)
 fill_below_intersection(x, S, Z)
-p.savefig("foo.png")
+
+pylab.savefig(image_file)
+dhtml.image(image_file)
 </pre>
 <div class="notes">
 <h4>Suggestions?</h4>
@@ -75,19 +104,8 @@ images and could be showcased by Crunchy, let us know.
 </p>
 </div>
 
-<h3 class="crunchy">Advanced stuff, for tutorial writers</h3>
-<p>If you wish to use an application, such as matplotlib, that generate images which can be loaded
-on a page, the required markup is as follows.</p>
-<pre title="no_vlam">
-&lt;pre title="image_file filename [no_style] 
-       [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
-...
-Some Python code
-...
-&lt;/pre&gt;</pre>
-<p>Note that the filename must be included, otherwise the code will simply be styled.
-The Python code that is to be executed <b>must</b> save a file under the same name 
-(the file will be saved in a temporary directory maintained by Crunchy).</p>
+<h3 class="crunchy">Advanced dhtml</h3>
+<p>More to write</p>
 </div>
 
 </body>

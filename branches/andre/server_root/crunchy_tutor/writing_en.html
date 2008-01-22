@@ -52,7 +52,6 @@ with Crunchy much richer.</p>
 <li><a href="#interpreter">Interpreter</a></li>
 <li><a href="#editor">Code editor</a></li>
 <li><a href="#doctest">DocTest</a></li>
-<li><a href="#images">Images</a></li>
 <li><a href="#styling">Simple code styling</a></li>
 <li><a href="#alternate">Launching programs using alternate Python version</a></li>
 <li><a href="#advanced">Advanced options</a></li>
@@ -100,12 +99,6 @@ on the left for some actual examples.</p>
 	<td>Inserts an editor after the &lt;pre&gt; element, an input box to specify
 	which (installed) Python version to use and a button to launch an
 	program externally.</td>
-</tr>
-<tr>
-	<td><code>image file</code></td>
-	<td>Similar to an <code>editor</code> except that the result of the code execution is
-	expected to be the creation of an image file (whose name needs to be given as an argument) 
-	which will then be displayed below the editor.</td>
 </tr>
 <tr>
     <td><code>external_link</code></td>
@@ -244,16 +237,6 @@ friendlier to beginners.</p>
 <dt>div.doctest_out</dt>
 	<dd>The div containing all the output.</dd>
 </dl>
-
-<h2 class="crunchy"><a id="images">Images</a></h2>
-<p>The required markup is as follows.</p>
-<pre title="no_vlam">
-&lt;pre title="image_file filename [no_style] [no-copy] [no-pre] [linenumber [=start_number]]"&gt;
-Some Python code
-&lt;/pre&gt;</pre>
-<p>Note that the filename must be included, otherwise the code will simply be styled.
-The Python code that is to be executed <b>must</b> save a file under the same name 
-(the file will be saved in a temporary directory maintained by Crunchy).</p>
 
 <h2 class="crunchy"><a id="styling">Simple code styling</a></h2>
 <p>Crunchy will automatically colourize the Python code between the <code>&lt;pre ...&gt; ...&lt;/pre&gt;</code> tags, unless the combination <code>title="no_vlam"</code> appears as
