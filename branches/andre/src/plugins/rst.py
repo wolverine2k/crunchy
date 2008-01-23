@@ -204,7 +204,7 @@ if _docutils_installed:
     for key, value in DIRECTIVE_DICT.items():
         rst.directives.register_directive( key, value )
 
-class ReST_file:
+class ReST_file(object):
     """Represents file with transformed text from rst into html.
     vlam thinks it is an ordinary file object"""
     def __init__(self, data):
