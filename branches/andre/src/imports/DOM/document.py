@@ -44,3 +44,5 @@ class Element(object):
     def _set_innerHTML(self, val):
         self.document.exec_jscript('%s.innerHTML= "%s"' % (self.var, val))
     innerHTML = property(None, _set_innerHTML)
+    
+document = Document()
