@@ -106,7 +106,107 @@ images and could be showcased by Crunchy, let us know.
 
 <h3 class="crunchy">Advanced dhtml</h3>
 <p>More to write</p>
-</div>
+<pre title="editor">
+# comprehensive example
 
+import dhtml
+import time
+
+delay = 0.5
+long_delay = 2
+
+def countdown(message):
+    dhtml.append("span", label="message", attributes={'innerHTML':message})
+    time.sleep(delay)
+    dhtml.append("span", label="message", attributes={'innerHTML':message+" ."})
+    time.sleep(delay)
+    dhtml.append("span", label="message", attributes={'innerHTML':message+" .."})
+    time.sleep(delay)
+    dhtml.append("span", label="message", attributes={'innerHTML':message+" ...."})
+    time.sleep(long_delay)
+
+def generic(file_path, position):
+    return dhtml.image(file_path, width=32, height=32, 
+                      label="b_%s"%position, parent_label=position)
+def blue(position):
+    return generic("../normal.png", position)
+
+def green(position):
+    return generic("../trusted.png", position)
+
+def red(position):
+    return generic("../paranoid.png", position)
+
+def gold(position):
+    return generic("../severe.png", position)
+
+def ok(position):
+    return generic("../ok.png", position)
+
+def warning(position):
+    return generic("../warning.png", png)
+
+dhtml.append("br") # start on a new line
+
+countdown("Inserting a table with one row")
+dhtml.append("table", label="table")
+dhtml.append("tr", label="row1", parent_label="table")
+dhtml.append("td", label="1_1", parent_label="row1")
+dhtml.append("td", label="1_2", parent_label="row1")
+dhtml.append("td", label="1_3", parent_label="row1")
+red("1_1")
+red("1_2")
+red("1_3")
+
+countdown("Changing first element")
+ok("1_1")
+countdown("Changing second element")
+ok("1_2")
+countdown("Changing third element")
+ok("1_3")
+
+countdown("Adding a second row")
+dhtml.append("tr", label="row2", parent_label="table")
+dhtml.append("td", label="2_1", parent_label="row2")
+dhtml.append("td", label="2_2", parent_label="row2")
+dhtml.append("td", label="2_3", parent_label="row2")
+red("2_1")
+red("2_2")
+red("2_3")
+
+countdown("Adding a third row")
+dhtml.append("tr", label="row3", parent_label="table")
+dhtml.append("td", label="3_1", parent_label="row3")
+dhtml.append("td", label="3_2", parent_label="row3")
+dhtml.append("td", label="3_3", parent_label="row3")
+blue("3_1")
+blue("3_2")
+blue("3_3")
+
+countdown("Removing the second row")
+dhtml.remove("row2")
+
+# notice how elements are only appended...
+countdown("Appending a new row")
+dhtml.append("tr", label="row2", parent_label="table")
+dhtml.append("td", label="2_1", parent_label="row2")
+dhtml.append("td", label="2_2", parent_label="row2")
+dhtml.append("td", label="2_3", parent_label="row2")
+red("2_1")
+red("2_2")
+red("2_3")
+
+</pre>
+
+<p>
+Some more explanation will follow.
+<br/>
+<br/><br/><br/><br/><br/><br/><br/>
+</p>
+
+
+
+
+</div>
 </body>
 </html>

@@ -56,7 +56,8 @@ class _Tree(object):
         self.parent.deletedlabels.append((self.label, self.parent.label))
         del _nodes[self.label]
 
-def image(file_path, width=400, height=400, name='', from_cwd=False):
+def image(file_path, width=400, height=400, label='', parent_label=None,
+          from_cwd=False):
     ''' dynamically creates an html <img> tag displaying the resulting image.
     
     file_path can be either an absolute path on the local server,
@@ -71,34 +72,34 @@ def image(file_path, width=400, height=400, name='', from_cwd=False):
     if from_cwd:
         file_path = _os.path.join(_os.getcwd(), file_path)
     append('img', attributes={'width':width, 'height':height, 'src':file_path},
-           name=name)
+           label=label, parent_label=parent_label)
 
-def append(tag, attributes=None, name='', parentlabel=None):
+def append(tag, attributes=None, label='', parent_label=None):
     ''' dynamically creates an html object with the given attribute (as a dict).
     
     Different values for name allow to display more than one object; the
     last loaded object for a given name replaces the previous one.
     
-    If parentlabel is None, the objects gets appended to the main <div> of
+    If parent_label is None, the objects gets appended to the main <div> of
     the Python output element; otherwise, it gets appended to the specified
     parent
     '''
     uid = _plugin['get_uid']()
-    child_uid = 'dhtml_' + uid + "_" + str(name)
+    child_uid = 'dhtml_' + uid + "_" + str(label)
     
     # identify the right parent
-    if parentlabel is None and uid not in _roots:
+    if parent_label is None and uid not in _roots:
         parent_tag = "div_"
         pid = parent_tag + uid
         _roots[uid] = _Tree(pid) # create the element
         parent = _roots[uid]
-    elif parentlabel is None:
+    elif parent_label is None:
         parent_tag = "div_"
         pid = parent_tag + uid
         parent = _roots[uid]
     else:
         parent_tag = "dhtml_"
-        pid = 'dhtml_' + uid + "_" + str(parentlabel)
+        pid = 'dhtml_' + uid + "_" + str(parent_label)
         parent = _nodes[pid]
     
     # remove any existing child with the same id, and its own children
@@ -112,14 +113,14 @@ def append(tag, attributes=None, name='', parentlabel=None):
     _Tree(child_uid, parent)
     _js_append_html(pid, tag, child_uid, attributes)
 
-def remove(name=''):
+def remove(label=''):
     ''' dynamically removes an html object that was previously created.
     '''
     uid = _plugin['get_uid']()
-    child_uid = 'dhtml_' + uid + "_" + str(name)
+    child_uid = 'dhtml_' + uid + "_" + str(label)
     if child_uid not in _nodes:
-        print("No object with this id was _created previously; name=" +
-              str(name))
+        print("No object with this id was _created previously; label=" +
+              str(label))
         return
     parent = _nodes[child_uid].parent
     parent.remove_child(_nodes[child_uid]) # remove from tree
