@@ -67,6 +67,7 @@ for interpreter in override_default_interpreter_allowed_values:
 
 doc_help_allowed_values = [True, False]
 dir_help_allowed_values = [True, False]
+browser_choices =  ['None', 'python', 'rst', 'local_html', 'remote_html']
 
 class Defaults(object):
     """
@@ -163,6 +164,10 @@ class Defaults(object):
             self.__alternate_python_version = saved['alternate_python_version']
         except:
             self.__alternate_python_version = 'python'
+        try:
+            self.__power_browser = saved['power_browser']
+        except:
+            self.__power_browser = 'None'
 
         if not success:
             # save the file with the default values
@@ -190,6 +195,7 @@ class Defaults(object):
         saved['styles'] = self.styles
         saved['site_security'] = self.site_security
         saved['alternate_python_version'] = self.__alternate_python_version
+        saved['power_browser'] = self.__power_browser
         # time to save
         pickled_path = os.path.join(self.__user_dir, "settings.pkl")
         try:
@@ -257,7 +263,7 @@ class Defaults(object):
             return self.__temp_dir.decode(sys.getfilesystemencoding())
         else:
             return self.__temp_dir  #untested
-    
+
     # note: should allow user to select different temp dir; when doing so,
     # make sure to update config[]
 
@@ -312,8 +318,8 @@ You can change some of the default values by Crunchy, just like
  prompt or an editor, and assigning the desired value to a given
  variable.  Some of these variables are "fixed", which means that
  their value can not be changed by the user.
- - 
- Here are the values of some variables currently used by Crunchy. 
+ -
+ Here are the values of some variables currently used by Crunchy.
  """)
 # we sort the keys so that they are listed in alphabetical order,
 # making them easier to find when reading the rather long text
@@ -368,7 +374,7 @@ You can change some of the default values by Crunchy, just like
             else:
                 self.__no_markup = choice
                 valid = True
-            
+
         if not valid:
             u_print((_("Invalid choice for %s.no_markup")%self._prefix))
             u_print(_("The valid choices are: "), str(no_markup_allowed_values))
@@ -408,6 +414,23 @@ You can change some of the default values by Crunchy, just like
     language = property(_get_language, _set_language, None,
         (_('The choices for language are %s\n')% languages_allowed_values) +\
         _('  The current value is: '))
+    #==============
+
+    def _get_power_browser(self):
+        return self.__power_browser
+
+    def _set_power_browser(self, choice):
+        if choice in browser_choices:
+            self.__power_browser = choice
+            config['power_browser'] = self.__power_browser
+            self._save_settings()
+        else:
+            u_print(_("This is not a valid choice; the valid choices are:"))
+            u_print(str(browser_choices))
+
+    power_browser = property(_get_power_browser, _set_power_browser, None,
+            _('The choices for power_browser are %s'%browser_choices) +\
+            _('   The current value is: '))
     #==============
 
     def _get_editarea_language(self):
