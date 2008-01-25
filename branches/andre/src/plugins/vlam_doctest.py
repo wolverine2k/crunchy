@@ -80,7 +80,7 @@ def doctest_widget_callback(page, elem, uid):
     doctests[uid] = doctestcode
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_doctest() method extracted all of the existing
+    # note that the style_pycode_nostrip() method extracted all of the existing
     # text, removing any original markup (and other elements), so that we
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.

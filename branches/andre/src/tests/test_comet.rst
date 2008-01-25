@@ -24,8 +24,6 @@ See how_to.rst_ for details.
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
 
-
-
 1. Testing register()
 ---------------------
 
@@ -35,4 +33,3 @@ See how_to.rst_ for details.
     True
     >>> print(mocks.registered_http_handler['/comet'] == cometIO.comet)
     True
-

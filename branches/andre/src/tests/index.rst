@@ -243,6 +243,10 @@ Crunchy Python files listing::
                 ### security holes.
                 plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
                 plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
+            power_browser.py
+                import: interface, python_files, rst, vlam_load_local, vlam_load_remote
+            python_files.py
+                import: interface
             rst.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 # this plugin won't be activated if docutils is not available.
@@ -295,6 +299,8 @@ Crunchy Python files listing::
     src/imports:
             c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: None
+            dhtml.py
+                import: interface
             graphics.py
                 import: interface
             dhtml.py

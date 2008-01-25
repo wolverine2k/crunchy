@@ -112,12 +112,12 @@ Afterwards, we will manipulate this tree to remove elements.
 --------------------------------
     
     >>> dhtml._nodes = {}  # start from fresh
-    >>> dhtml.append('first', name='1')
+    >>> dhtml.append('first', label='1')
     ['div_42', 'first', ('id', 'dhtml_42_1')]
     >>> ids = list(dhtml._nodes.keys())
     >>> ids
     ['div_42', 'dhtml_42_1']
-    >>> dhtml.append('second', name='2')
+    >>> dhtml.append('second', label='2')
     ['div_42', 'second', ('id', 'dhtml_42_2')]
     >>> ids = list(dhtml._nodes.keys())
     >>> ids
@@ -136,6 +136,6 @@ Afterwards, we will manipulate this tree to remove elements.
 Try creating an image with default values.
     >>> dhtml.image('foo.png')
     ['div_42', 'img', ('id', 'dhtml_42_')]
-    [('dhtml_42_', 'width', '200'), ('dhtml_42_', 'src', 'foo.png'), ('dhtml_42_', 'height', '200')]
+    [('dhtml_42_', 'width', '400'), ('dhtml_42_', 'src', 'foo.png'), ('dhtml_42_', 'height', '400')]
     
 
