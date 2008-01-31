@@ -7,13 +7,16 @@ some expected output.'''
 
 import copy
 import difflib
+import re
 import sys
 
-from src.interface import StringIO, plugin, Element, SubElement
+from src.interface import StringIO, plugin, config, Element, SubElement
+import src.imports.dhtml as dhtml
 
 code_setups = {}
 code_samples = {}
 expected_outputs = {}
+names = {}
 
 def register():
     """The register() function is required for all plugins.
@@ -26,32 +29,39 @@ def register():
        """
     # 'doctest' only appears inside <pre> elements, using the notation
     # <pre title='doctest ...'>
-    plugin['register_tag_handler']("pre", "title", "code_setup",
+    plugin['register_tag_handler']("pre", "title", "setup_code",
                                           code_setup_process)
-    plugin['register_tag_handler']("pre", "title", "code_sample",
+    plugin['register_tag_handler']("pre", "title", "check_code",
                                           code_sample_process)
     plugin['register_tag_handler']("pre", "title", "code_output",
                                           expected_output_process)
-    # By convention, the custom handler for "name" will be called
-    # via "/name"; for security, we add a random session id
-    # to the custom handler's name to be executed.
-    plugin['register_http_handler'](
-                         "/code_test%s"%plugin['session_random_id'],
-                                       doc_code_check_runner_callback)
+    plugin['register_http_handler']("/check_code", doc_code_check_callback)
 
-def doc_code_check_runner_callback():
-    pass
+def doc_code_check_callback(request):
+    '''execute the required test code, with setup code prepended,
+    and compare with expected output'''
+    uid = request.args["uid"]
+    name = names[uid]
+    #script = ["code_setups = {%s:%s}"%(name, code_setups[name]),
+    #          "code_samples = {%s:%s}"%(name, code_samples[name]),
+    #          "expected_outputs = {%s:%s}"%(name, expected_outputs[name]),
+    #          "from src.plugins.doc_code_check import run_sample",
+    #          "run_sample('%s')"%name]
+    result = run_sample(name)
+    plugin['exec_code']('print """%s"""\n'%result, uid)
+    request.send_response(200)
+    request.end_headers()
 
 def code_setup_process(page, elem, uid):
     """Style and saves a copy of the setup code"""
     vlam = elem.attrib["title"]
-
+    name = extract_name(vlam)
     # next, we style the code, also extracting it in a useful form
     setup_code, markup, error = plugin['services'].style_pycode(page, elem)
     if error is not None:
         markup = copy.deepcopy(elem)
     # which we store
-    code_setups[uid] = setup_code
+    code_setups[name] = setup_code
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -66,18 +76,27 @@ def code_setup_process(page, elem, uid):
     elem.append(markup)
     # Create a title
     h4 = Element('h4')
-    h4.text = "Setup code; name= %s"%vlam.split(' ')[1]
+    h4.text = "Setup code; name= %s"%name
     elem.insert(0, h4)
 
 def code_sample_process(page, elem, uid):
     """Style and saves a copy of the sample code"""
     vlam = elem.attrib["title"]
-
+    name = extract_name(vlam)
+    names[uid] = name
+    # When a security mode is set to "display ...", we only parse the
+    # page, but no Python execution from is allowed from that page.
+    # If that is the case, we won't include javascript either, to make
+    # thus making the source easier to read.
+    if 'display' not in config['page_security_level'](page.url):
+        if not page.includes("code_test_included") :
+            page.add_include("code_test_included")
+            page.add_js_code(code_test_jscode)
     # next, we style the code, also extracting it in a useful form
     sample_code, markup, error = plugin['services'].style_pycode(page, elem)
     if error is not None:
         markup = copy.deepcopy(elem)    # which we store
-    code_samples[uid] = sample_code
+    code_samples[name] = sample_code
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -92,15 +111,37 @@ def code_sample_process(page, elem, uid):
     elem.append(markup)
     # Create a title
     h4 = Element('h4')
-    h4.text = "Sample code; name= %s"%vlam.split(' ')[1]
+    h4.text = "Sample code; name= %s"%name
     elem.insert(0, h4)
+    #some spacing:
+    SubElement(elem, "br")
+    # the actual button used for code execution:
+    btn = SubElement(elem, "button")
+    btn.text = "Run code check"
+    btn.attrib["onclick"] = "exec_code_check('%s')" % uid
+    SubElement(elem, "br")
+    # finally, an output subwidget:
+    plugin['services'].insert_io_subwidget(page, elem, uid)
 
 def expected_output_process(dummy, elem, uid):
     """Displays and saves a copy of the expected output"""
     vlam = elem.attrib["title"]
+    name = extract_name(vlam)
     expected_output = elem.text
+    # We assume that the author has written the expected output as
+    # <pre ...>
+    # starts on this line...
+    # </pre>
+    # When doing so, the newline at the end of the opening <pre...> needs
+    # to be discarded so that it can be compared with the real output.
+    if expected_output.startswith("\r\n"):
+        expected_output = expected_output[2:]
+    elif expected_output.startswith("\n\r"):
+        expected_output = expected_output[2:]
+    elif expected_output.startswith("\n"):
+        expected_output = expected_output[1:]
     # which we store
-    expected_outputs[uid] = expected_output
+    expected_outputs[name] = expected_output
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -113,25 +154,30 @@ def expected_output_process(dummy, elem, uid):
     elem.attrib['class'] = "crunchy"
     # Create a title
     h4 = SubElement(elem, 'h4')
-    h4.text = "Expected output; name= %s"%vlam.split(' ')[1]
+    h4.text = "Expected output; name= %s"%name
     # a container with the expected output
     pre = SubElement(elem, "pre")
     pre.text = expected_output
-
 
 def run_sample(name):
     '''Given a setup script, as a precursor, executes a code sample
     and compares the output with some expected result.'''
     if name in code_setups:
-        complete_code = code_setups[name] + '\n' + code_samples[name]
+        try:
+            complete_code = code_setups[name] + '\n' + code_samples[name]
+        except:
+            sys.__stderr__.write("There was an error in run_sample().")
     else:
-        complete_code = code_samples[name]
+        try:
+            complete_code = code_samples[name]
+        except:
+            sys.__stderr__.write("There was an error in run_sample.")
     saved_stdout = sys.stdout # Crunchy often redefines sys.stdout
     redirected = StringIO()
     sys.stdout = redirected
     exec(complete_code)
     sys.stdout = saved_stdout
-    print(compare(expected_outputs[name], redirected.getvalue()))
+    return compare(expected_outputs[name], redirected.getvalue())
 
 def compare(s1, s2):
     '''compares two strings for equality'''
@@ -145,3 +191,22 @@ def compare(s1, s2):
             result = '\n'.join(comparison)
             break
     return result
+
+name_pattern = re.compile("name\s*=\s*([a-zA-Z0-9_]+)")
+def extract_name(vlam):
+    '''extracts the value of name in a vlam title attribute'''
+    # assume vlam is something like "some_keyword junk name=some_name"
+    # possibly with some spaces around the equal sign
+    result = name_pattern.search(vlam)
+    return result.groups()[0]
+
+# we need some unique javascript in the page; note how the
+# /code_test handler mentioned above appears here, together with the
+# random session id.
+code_test_jscode= """
+function exec_code_check(uid){
+    var j = new XMLHttpRequest();
+    j.open("POST", "/check_code?uid="+uid, false);
+    j.send('');
+};
+"""

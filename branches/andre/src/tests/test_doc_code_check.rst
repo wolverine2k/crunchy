@@ -58,18 +58,33 @@ First, we create a simple example.
     >>> dcc.code_samples['1'] = "print(a)"
     >>> dcc.expected_outputs['1'] = "1\n"
     >>> dcc.run_sample('1')
-    Checked!
+    'Checked!'
 
 A second example with no setup code.
 
     >>> dcc.code_samples['2'] = "print(1)"
     >>> dcc.expected_outputs['2'] = "1\n"
     >>> dcc.run_sample('2')
-    Checked!
+    'Checked!'
 
 
 
-1. Testing register()
----------------------
+3. Testing extract_name()
+-------------------------
+
+    >>> s1 = "junk name=some_name1 ok"
+    >>> print(dcc.extract_name(s1))
+    some_name1
+
+Same example as s1 but with spaces on each side of the equal sign.
+    >>> s2 = "junk name  =  some_name2 ok"
+    >>> print(dcc.extract_name(s2))
+    some_name2
+
+Same example as s2 but with other equal signs.
+    >>> s3 = "junk name  =  some_name3 ok= not"
+    >>> print(dcc.extract_name(s3))
+    some_name3
+
 
 # Test - check that the two http_handlers have been registered

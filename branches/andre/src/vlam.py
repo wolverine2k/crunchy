@@ -93,9 +93,9 @@ class CrunchyPage(object):
                 # Used the processed file as our input
                 #
                 _temp_file_path = os.path.join(config['temp_dir'], 'out.html')
-                _temp_file = open(_temp_file_path)              
+                _temp_file = open(_temp_file_path)
                 self.tree = XmlFile(_temp_file)
-        
+
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
         self.tree = security.remove_unwanted(self.tree, self)
@@ -142,7 +142,7 @@ class CrunchyPage(object):
         js.set("type", "text/javascript")
         js.text = code
         self.head.append(js)
-        
+
     def add_charset(self):
         c = et.Element("meta")
         c.set("http-equiv", "Content-Type")
@@ -264,12 +264,17 @@ class CrunchyPage(object):
                 attributes = dict(elem.attrib)
                 for attr in attributes:
                     if attr in CrunchyPage.handlers3[tag]:
-                        keywords = elem.attrib[attr].split(" ")
-                        for keyword in keywords:
-                            if keyword in CrunchyPage.handlers3[tag][attr]:
-                                CrunchyPage.handlers3[tag][attr][keyword](
-                                self, elem, self.pageid + ":" + uidgen())
-                                break
+                        keyword = [x for x in elem.attrib[attr].split(" ")
+                                    if x != ''][0]
+                        #for keyword in keywords:
+                        #    if keyword in CrunchyPage.handlers3[tag][attr]:
+                        #        CrunchyPage.handlers3[tag][attr][keyword](
+                        #        self, elem, self.pageid + ":" + uidgen())
+                        #        break
+                        if keyword in CrunchyPage.handlers3[tag][attr]:
+                            CrunchyPage.handlers3[tag][attr][keyword]( self,
+                                            elem, self.pageid + ":" + uidgen())
+                            break
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value
