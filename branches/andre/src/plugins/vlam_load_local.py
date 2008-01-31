@@ -26,8 +26,7 @@ def register():
                                                  insert_load_local)
 
 def insert_load_local(dummy_page, parent, dummy_uid):
-    # in general, page and uid are used by similar plugins, but they are
-    # redundant here.
+    "Inserts a javascript browser object to load a local (html) file."
     name1 = 'browser_'
     name2 = 'submit_'
     form1 = SubElement(parent, 'form', name=name1,

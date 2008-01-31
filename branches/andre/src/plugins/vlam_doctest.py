@@ -75,7 +75,7 @@ def doctest_widget_callback(page, elem, uid):
     # next, we style the code, also extracting it in a useful form ...
     doctestcode, markup = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
-        config['log'][log_id]= [tostring(markup)]
+        config['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
     # reset the original element to use it as a container.  For those
@@ -105,14 +105,14 @@ def doctest_widget_callback(page, elem, uid):
 # we need some unique javascript in the page; note how the
 # "/doctest" handler mentioned above appears here, together with the
 # random session id.
-doctest_jscode= """
+doctest_jscode = """
 function exec_doctest(uid){
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);
 };
-"""%plugin['session_random_id']
+""" % plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
 doctest_pycode = """

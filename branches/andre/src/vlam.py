@@ -10,20 +10,19 @@ from time import sleep
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.interface import python_version, ElementTree, parse, XmlFile, StringIO, config, plugin
+from src.interface import python_version, ElementTree, XmlFile, StringIO, config, plugin
 if python_version < 3:
     from src.element_tree import ElementSoup
 et = ElementTree
 
 from src.cometIO import register_new_page
 import src.configuration as configuration
-import src.utilities as utilities
 from src.plugins.file_service import exec_external_python_version
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
-count = 0
 
+count = 0
 def uidgen():
     """an suid (session unique ID) generator
     """
@@ -32,6 +31,8 @@ def uidgen():
     return str(count)
 
 class CrunchyPage(object):
+    '''class used to store an html page processed by Crunchy so
+       as to add interactive elements.'''
 
     # We could do with defining a single variable "handlers" but doing
     # it this way makes it a bit easier to distinguish the various cases
@@ -130,9 +131,11 @@ class CrunchyPage(object):
         return
 
     def add_include(self, include_str):
+        '''keeps track of information included on a page'''
         self.included.add(include_str)
 
     def includes(self, include_str):
+        '''returns information about string included on a page'''
         return include_str in self.included
 
     def add_js_code(self, code):
@@ -144,6 +147,7 @@ class CrunchyPage(object):
         self.head.append(js)
 
     def add_charset(self):
+        '''adds utf-8 charset information on a page'''
         c = et.Element("meta")
         c.set("http-equiv", "Content-Type")
         c.set("content", "text/html; charset=UTF-8")
@@ -162,6 +166,7 @@ class CrunchyPage(object):
         return
 
     def add_css_code(self, code):
+        '''inserts styling code in <head>'''
         css = et.Element("style")
         css.set("type", "text/css")
         css.text = code
@@ -295,6 +300,8 @@ class CrunchyPage(object):
         return
 
     def read(self):
+        '''create fake file from a tree, adding DTD and charset information
+           and return its value as a string'''
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
         self.add_charset()

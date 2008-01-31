@@ -37,10 +37,28 @@ def register():
                                           expected_output_process)
     plugin['register_http_handler']("/check_code", doc_code_check_callback)
 
+FAKE_UID = 0
+FAKE_PAGEID = 0
+def dummy_pageid():
+    '''used to simulate a function that returns a pageid'''
+    return FAKE_PAGEID
+
+def dummy_uid():
+    '''used to simulate a function that returns a uid'''
+    return FAKE_UID
+
 def doc_code_check_callback(request):
     '''execute the required test code, with setup code prepended,
     and compare with expected output'''
-    uid = request.args["uid"]
+    global FAKE_UID, FAKE_PAGEID
+    FAKE_UID = uid = request.args["uid"]
+    FAKE_PAGEID = uid.split(":")[0]
+    # save original values
+    _get_pageid = plugin['get_pageid']
+    _get_uid = plugin['get_uid']
+    plugin['get_uid'] = dummy_uid
+    plugin['get_pageid'] = dummy_pageid
+
     name = names[uid]
     #script = ["code_setups = {%s:%s}"%(name, code_setups[name]),
     #          "code_samples = {%s:%s}"%(name, code_samples[name]),
@@ -48,9 +66,17 @@ def doc_code_check_callback(request):
     #          "from src.plugins.doc_code_check import run_sample",
     #          "run_sample('%s')"%name]
     result = run_sample(name)
-    plugin['exec_code']('print """%s"""\n'%result, uid)
+    #plugin['exec_code']('print """%s"""\n'%result, uid)
+    if result == "Checked!":
+        dhtml.image("/ok.png", width=16, height=16)
+    else:
+        #dhtml.image("/warning.png", width=16, height=16)
+        plugin['exec_code']('print """%s"""\n'%result, uid)
     request.send_response(200)
     request.end_headers()
+    # restore original values
+    plugin['get_uid'] = _get_uid
+    plugin['get_pageid'] = _get_pageid
 
 def code_setup_process(page, elem, uid):
     """Style and saves a copy of the setup code"""
@@ -76,7 +102,7 @@ def code_setup_process(page, elem, uid):
     elem.append(markup)
     # Create a title
     h4 = Element('h4')
-    h4.text = "Setup code; name= %s"%name
+    h4.text = "Setup code; name= %s" % name
     elem.insert(0, h4)
 
 def code_sample_process(page, elem, uid):
@@ -111,7 +137,7 @@ def code_sample_process(page, elem, uid):
     elem.append(markup)
     # Create a title
     h4 = Element('h4')
-    h4.text = "Sample code; name= %s"%name
+    h4.text = "Sample code; name= %s" % name
     elem.insert(0, h4)
     #some spacing:
     SubElement(elem, "br")
@@ -154,7 +180,7 @@ def expected_output_process(dummy, elem, uid):
     elem.attrib['class'] = "crunchy"
     # Create a title
     h4 = SubElement(elem, 'h4')
-    h4.text = "Expected output; name= %s"%name
+    h4.text = "Expected output; name= %s" % name
     # a container with the expected output
     pre = SubElement(elem, "pre")
     pre.text = expected_output
@@ -165,12 +191,12 @@ def run_sample(name):
     if name in code_setups:
         try:
             complete_code = code_setups[name] + '\n' + code_samples[name]
-        except:
+        except KeyError:
             sys.__stderr__.write("There was an error in run_sample().")
     else:
         try:
             complete_code = code_samples[name]
-        except:
+        except KeyError:
             sys.__stderr__.write("There was an error in run_sample.")
     saved_stdout = sys.stdout # Crunchy often redefines sys.stdout
     redirected = StringIO()
@@ -203,7 +229,7 @@ def extract_name(vlam):
 # we need some unique javascript in the page; note how the
 # /code_test handler mentioned above appears here, together with the
 # random session id.
-code_test_jscode= """
+code_test_jscode = """
 function exec_code_check(uid){
     var j = new XMLHttpRequest();
     j.open("POST", "/check_code?uid="+uid, false);

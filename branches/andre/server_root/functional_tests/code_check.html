@@ -6,13 +6,24 @@
 <h1>Code check test Test</h1>
 <p>Ok, here's the first simple test.</p>
 <pre title="setup_code name=first">
-a=1
+a=42
 </pre>
 <pre title="check_code name=first">
 print(a) # Python 3.0 compatible
 </pre>
 <pre title="code_output name=first">
-1
+42
+</pre>
+
+<p>The second one will be a failing test.</p>
+<pre title="setup_code name=second">
+a=1
+</pre>
+<pre title="check_code name=second">
+print(a) # Python 3.0 compatible
+</pre>
+<pre title="code_output name=second">
+42
 </pre>
 
 <h2>Bugs</h2>
