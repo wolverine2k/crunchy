@@ -11,12 +11,18 @@ import re
 import sys
 
 from src.interface import StringIO, plugin, config, Element, SubElement
-import src.imports.dhtml as dhtml
+from src.utilities import append_checkmark, append_warning
 
 code_setups = {}
 code_samples = {}
 expected_outputs = {}
 names = {}
+
+css = """
+.test_output{background-color:#ccffcc}
+
+.test_setup{background-color:#cccccc}
+"""
 
 def register():
     """The register() function is required for all plugins.
@@ -36,47 +42,81 @@ def register():
     plugin['register_tag_handler']("pre", "title", "code_output",
                                           expected_output_process)
     plugin['register_http_handler']("/check_code", doc_code_check_callback)
+    plugin['register_http_handler']("/check_all_code_samples",
+                                    all_code_samples_check_callback)
 
-FAKE_UID = 0
-FAKE_PAGEID = 0
-def dummy_pageid():
-    '''used to simulate a function that returns a pageid'''
-    return FAKE_PAGEID
+class MockPageInfo(object):
+    '''used to mock information normally obtained from a vlam page'''
+    fake_uid = 0
+    fake_pageid = 0
+    saved_get_pageid = None
+    saved_get_uid = None
 
-def dummy_uid():
-    '''used to simulate a function that returns a uid'''
-    return FAKE_UID
+    def dummy_pageid(self):
+        '''used to simulate a function that returns a pageid'''
+        return str(self.fake_pageid)
+
+    def dummy_uid(self):
+        '''used to simulate a function that returns a uid'''
+        return str(self.fake_uid)
+
+    def set(self):
+        '''redirects the normal page functions to use the fake ones'''
+        self.saved_get_pageid = plugin['get_pageid']
+        self.saved_get_uid = plugin['get_uid']
+        plugin['get_uid'] = mock_page.dummy_uid
+        plugin['get_pageid'] = mock_page.dummy_pageid
+
+    def restore(self):
+        '''restore the normal page functions to their normal values'''
+        plugin['get_uid'] = self.saved_get_uid
+        plugin['get_pageid'] = self.saved_get_pageid
+
+mock_page = MockPageInfo()
+
+def all_code_samples_check_callback(request):
+    '''tests all the code samples on a given page'''
+    pageid = request.args["pageid"]
+    failed = False
+    for uid in names:
+        if uid.startswith(pageid+":"):
+            result = do_single_test(pageid, uid)
+            if result == 'Failed':
+                failed = True
+    if failed:
+        append_warning(pageid, "btn1_"+pageid)
+        append_warning(pageid, "btn2_"+pageid)
+    else:
+        append_checkmark(pageid, "btn1_"+pageid)
+        append_checkmark(pageid, "btn2_"+pageid)
+    request.send_response(200)
+    request.end_headers()
+
 
 def doc_code_check_callback(request):
     '''execute the required test code, with setup code prepended,
     and compare with expected output'''
-    global FAKE_UID, FAKE_PAGEID
-    FAKE_UID = uid = request.args["uid"]
-    FAKE_PAGEID = uid.split(":")[0]
-    # save original values
-    _get_pageid = plugin['get_pageid']
-    _get_uid = plugin['get_uid']
-    plugin['get_uid'] = dummy_uid
-    plugin['get_pageid'] = dummy_pageid
-
-    name = names[uid]
-    #script = ["code_setups = {%s:%s}"%(name, code_setups[name]),
-    #          "code_samples = {%s:%s}"%(name, code_samples[name]),
-    #          "expected_outputs = {%s:%s}"%(name, expected_outputs[name]),
-    #          "from src.plugins.doc_code_check import run_sample",
-    #          "run_sample('%s')"%name]
-    result = run_sample(name)
-    #plugin['exec_code']('print """%s"""\n'%result, uid)
-    if result == "Checked!":
-        dhtml.image("/ok.png", width=16, height=16)
-    else:
-        #dhtml.image("/warning.png", width=16, height=16)
-        plugin['exec_code']('print """%s"""\n'%result, uid)
+    uid = request.args["uid"]
+    pageid = uid.split(":")[0]
+    dummy = do_single_test(pageid, uid)
     request.send_response(200)
     request.end_headers()
-    # restore original values
-    plugin['get_uid'] = _get_uid
-    plugin['get_pageid'] = _get_pageid
+
+def do_single_test(pageid, uid):
+    '''runs a single test and updates the page to indicate the result'''
+    name = names[uid]
+    result = run_sample(name)
+    if result == "Checked!":
+        append_checkmark(pageid, "div_"+uid)
+        return None
+    else:
+        append_warning(pageid, "div_"+uid)
+        mock_page.fake_uid = uid
+        mock_page.fake_pageid = pageid
+        mock_page.set()
+        plugin['exec_code']('print """%s"""\n'%result, uid)
+        mock_page.restore()
+        return 'Failed'
 
 def code_setup_process(page, elem, uid):
     """Style and saves a copy of the setup code"""
@@ -97,7 +137,7 @@ def code_setup_process(page, elem, uid):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
+    elem.attrib['class'] = "test_setup"
     # We insert the styled setup code inside this container element:
     elem.append(markup)
     # Create a title
@@ -118,6 +158,9 @@ def code_sample_process(page, elem, uid):
         if not page.includes("code_test_included") :
             page.add_include("code_test_included")
             page.add_js_code(code_test_jscode)
+            page.add_js_code(complete_test_jscode)
+            page.add_css_code(css)
+            insert_comprehensive_test_button(page)
     # next, we style the code, also extracting it in a useful form
     sample_code, markup, error = plugin['services'].style_pycode(page, elem)
     if error is not None:
@@ -148,6 +191,16 @@ def code_sample_process(page, elem, uid):
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
+    return
+
+# javascript code for individual tests
+code_test_jscode = """
+function exec_code_check(uid){
+    var j = new XMLHttpRequest();
+    j.open("POST", "/check_code?uid="+uid, false);
+    j.send('');
+};
+"""
 
 def expected_output_process(dummy, elem, uid):
     """Displays and saves a copy of the expected output"""
@@ -177,13 +230,46 @@ def expected_output_process(dummy, elem, uid):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
+    elem.attrib['class'] = "test_output"
     # Create a title
     h4 = SubElement(elem, 'h4')
     h4.text = "Expected output; name= %s" % name
     # a container with the expected output
     pre = SubElement(elem, "pre")
     pre.text = expected_output
+
+def insert_comprehensive_test_button(page):
+    '''inserts a button to enable all tests on a page be executed with
+       a single click'''
+    style = "margin-left: 400px; font-size: 40pt"
+    text = "Run all tests"
+    action = "check_all_code_samples('%s')" % page.pageid
+
+    btn1 = Element("button")
+    btn1.text = text
+    btn1.attrib['style'] = style
+    btn1.attrib['onclick'] = action
+    btn1.attrib['id'] = 'btn1_' + page.pageid
+    btn1.attrib['label'] = 'btn1_' + page.pageid
+    page.body.insert(0, btn1)  # inserted at the top
+
+    btn2 = Element("button")
+    btn2.text = text
+    btn2.attrib['style'] = style
+    btn2.attrib['onclick'] = action
+    btn2.attrib['id'] = 'btn2_' + page.pageid
+    btn1.attrib['label'] = 'btn2_' + page.pageid
+    page.body.append(btn2)  # inserted at the bottom
+    return
+
+# javascript code for all the tests on a page
+complete_test_jscode = """
+function check_all_code_samples(pageid){
+    var j = new XMLHttpRequest();
+    j.open("POST", "/check_all_code_samples?pageid="+pageid, false);
+    j.send('');
+};
+"""
 
 def run_sample(name):
     '''Given a setup script, as a precursor, executes a code sample
@@ -198,7 +284,9 @@ def run_sample(name):
             complete_code = code_samples[name]
         except KeyError:
             sys.__stderr__.write("There was an error in run_sample.")
-    saved_stdout = sys.stdout # Crunchy often redefines sys.stdout
+    # since Crunchy often redefines sys.stdout, we can't simply set
+    # it back to sys.__stdout__ after redirection
+    saved_stdout = sys.stdout
     redirected = StringIO()
     sys.stdout = redirected
     exec(complete_code)
@@ -225,14 +313,3 @@ def extract_name(vlam):
     # possibly with some spaces around the equal sign
     result = name_pattern.search(vlam)
     return result.groups()[0]
-
-# we need some unique javascript in the page; note how the
-# /code_test handler mentioned above appears here, together with the
-# random session id.
-code_test_jscode = """
-function exec_code_check(uid){
-    var j = new XMLHttpRequest();
-    j.open("POST", "/check_code?uid="+uid, false);
-    j.send('');
-};
-"""

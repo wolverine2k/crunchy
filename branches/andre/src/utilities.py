@@ -3,7 +3,7 @@
    a collection of functions used in other modules.
 '''
 import re
-from src.interface import python_version, config
+from src.interface import python_version, config, plugin
 
 def extract_log_id(vlam):
     '''given a vlam of the form
@@ -84,7 +84,7 @@ def remove_script(text):
     text = script_pattern.sub('', text)
     return text
 
-begin_html ="""
+begin_html = """
 <head>
 <head>
 <title>Crunchy Log</title>
@@ -100,12 +100,13 @@ will change but not log_id.
 Crunchy defaults.
 </p>
 """
-end_html ="""
+end_html = """
 </body>
 </html>
 """
 
 def log_session():
+    '''create a log of a session in a file'''
     f = open(config['log_filename'], 'w')
     f.write(begin_html)
     for uid in config['logging_uids']:
@@ -116,3 +117,34 @@ def log_session():
         f.write("<pre>"+content+"</pre>")
     f.write(end_html)
     f.close()
+
+
+
+# Some useful function for including some images "dynamically" within
+# web pages.  See doc_code_check.py for a sample use.
+
+def append_checkmark(pageid, parent_uid):
+    '''appends a checkmark image'''
+    attributes = {'width':32, 'height':32, 'src':"/ok.png"}
+    append_image(pageid, parent_uid, attributes)
+
+def append_warning(pageid, parent_uid):
+    '''appends a warning image'''
+    attributes = {'width':32, 'height':32, 'src':"/warning.png"}
+    append_image(pageid, parent_uid, attributes)
+
+def append_image(pageid, parent_uid, attributes):
+    '''appends an image using dhtml techniques
+    '''
+    child_uid = parent_uid + "_child"
+    plugin['exec_js'](pageid,
+                      """var currentDiv = document.getElementById("%s");
+                      var newTag = document.createElement("img");
+                      newTag.setAttribute('id', '%s');
+                      currentDiv.appendChild(newTag);
+                      """%(parent_uid, child_uid))
+    tag_attr = []
+    for key in attributes:
+        tag_attr.append("document.getElementById('%s').%s='%s';"%(
+                                child_uid, key, attributes[key]))
+    plugin['exec_js'](pageid, '\n'.join(tag_attr))
