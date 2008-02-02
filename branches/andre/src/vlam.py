@@ -269,13 +269,11 @@ class CrunchyPage(object):
                 attributes = dict(elem.attrib)
                 for attr in attributes:
                     if attr in CrunchyPage.handlers3[tag]:
-                        keyword = [x for x in elem.attrib[attr].split(" ")
+                        try:
+                            keyword = [x for x in elem.attrib[attr].split(" ")
                                     if x != ''][0]
-                        #for keyword in keywords:
-                        #    if keyword in CrunchyPage.handlers3[tag][attr]:
-                        #        CrunchyPage.handlers3[tag][attr][keyword](
-                        #        self, elem, self.pageid + ":" + uidgen())
-                        #        break
+                        except IndexError:
+                            keyword = None
                         if keyword in CrunchyPage.handlers3[tag][attr]:
                             CrunchyPage.handlers3[tag][attr][keyword]( self,
                                             elem, self.pageid + ":" + uidgen())

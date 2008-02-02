@@ -41,7 +41,8 @@ def path_to_filedata(path, root):
             return get_directory(npath)
     else:
         try:
-            if npath.endswith(".html") or npath.endswith(".htm"):
+            extension = npath.split('.')[-1]
+            if extension in ["htm", "html"]:
                 return plugin['create_vlam_page'](open(npath), path).read()
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)

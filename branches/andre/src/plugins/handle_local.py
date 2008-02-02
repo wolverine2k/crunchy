@@ -21,10 +21,12 @@ def local_loader(request):
     creates a new vlam page from it and, if not already present, adds the
     base path to sys.path - so that any python file located in the same
     directory could be imported.
-    
+
     If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
-    if ".htm" in url:  # should make sure that it is in the extension
+    extension = url.split('.')[-1]
+    print extension
+    if "htm" in extension:
         page = plugin['create_vlam_page'](open(url), url, local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
@@ -59,7 +61,3 @@ def add_to_path(page, elem, *dummy):
     added_path = os.path.normpath(os.path.join(base_url, import_path))
     if added_path not in sys.path:
         sys.path.insert(0, added_path)
-
-
-
-
