@@ -156,7 +156,7 @@ def nostrip_style(elem, css_class='crunchy'):
     tail = elem.tail
     # styling
     offset = get_linenumber_offset(elem.attrib['title'])
-    py_code, styled_code, error_found = _style(py_code, offset)
+    dummy, styled_code, error_found = _style(py_code, offset)
     # re-creating element
     tag = elem.tag
     new_html = "<%s>\n%s\n</%s>" % (tag, styled_code, tag)
