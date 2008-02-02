@@ -45,12 +45,12 @@ def register():
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
-    
+
     # First, some definitions that need to be made as local variables
     # since they will use a local variable, pageid
     prefix = config['_prefix']
     crunchy_help = _("Type %s.help for more information."%prefix)
-    
+
     BorgInterpreter_js = r"""
     function init_BorgInterpreter(uid){
         code = "import src.configuration as configuration\n";
@@ -65,7 +65,7 @@ def insert_interpreter(page, elem, uid):
     };
     """%(prefix, page.pageid, (sys.version.split(" ")[0]), crunchy_help,
                plugin['session_random_id'])
-    
+
     SingleInterpreter_js = r"""
     function init_SingleInterpreter(uid){
         code = "import src.configuration as configuration\n";
@@ -79,7 +79,7 @@ def insert_interpreter(page, elem, uid):
         j.send(code);
     };
     """%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
-    
+
     parrot_js = r"""
     function init_parrotInterpreter(uid){
         code = "import src.configuration as configuration\n";
@@ -93,7 +93,7 @@ def insert_interpreter(page, elem, uid):
         j.send(code);
     };
     """%(prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
-    
+
     Parrots_js = r"""
     function init_ParrotsInterpreter(uid){
         code = "import src.configuration as configuration\n";
@@ -107,7 +107,7 @@ def insert_interpreter(page, elem, uid):
         j.send(code);
     };
     """%(prefix, page.pageid, (sys.version.split(" ")[0]), plugin['session_random_id'])
-    
+
     TypeInfoConsole_js = r"""
     function init_TypeInfoConsole(uid){
         code = "import src.configuration as configuration\n";
@@ -121,7 +121,7 @@ def insert_interpreter(page, elem, uid):
         j.send(code);
     };
     """%(prefix, page.pageid, (sys.version.split(" ")[0]), plugin['session_random_id'])
-    
+
     #
     # We are now ready to proceed with the actual code.
 
@@ -211,8 +211,6 @@ def insert_interpreter(page, elem, uid):
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
     code, markup, error = plugin['services'].style_pycode(page, elem)
-    if error is not None:
-        markup = copy.deepcopy(elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
@@ -225,11 +223,10 @@ def insert_interpreter(page, elem, uid):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "crunchy"
-    elem.insert(0, markup)
-    if error is not None:
-        try:  # usually the error is a warning meant to be inserted
-            elem.insert(0, error)
-        except:
+    if not "no-pre" in vlam:
+        try:
+            elem.insert(0, markup)
+        except AssertionError:
             pass
     plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)

@@ -25,7 +25,6 @@ def local_loader(request):
     If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
-    print extension
     if "htm" in extension:
         page = plugin['create_vlam_page'](open(url), url, local=True)
         # The following will make it possible to include python modules

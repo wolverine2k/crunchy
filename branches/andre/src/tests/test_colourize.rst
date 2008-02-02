@@ -112,7 +112,7 @@ instance of the Colourizer class directly.
 UPDATE: this function also strips empty lines; so to compare with the
 previous cases, we may need to add an extra line "\n" by hand.
 
-    >>> print(styled_code1 == colourize._style(code_sample1)[0] + "\n")
+    >>> print(styled_code1 == colourize._style(code_sample1)[1] + "\n")
     True
 
 After adding a line numbering option, we can reproduce a second example.
@@ -121,7 +121,7 @@ however, this does not mean that the code does not work as intended in this case
 just that we deal with empty lines differently with the style() function as
 we do with the simple parseListing method)
 
-    >>> print(styled_code2a == colourize._style(code_sample2, offset=0)[0])
+    >>> print(styled_code2a == colourize._style(code_sample2, offset=0)[1])
     True
 
 Extracting code from an interpreter session.
@@ -138,6 +138,7 @@ and commas to represent the prompt), to be embedded in an html page.
     print 'Hello world!'
     >>> print(extracted3)
     [('&gt;&gt;&gt; ', 1)]
+
 
 ]]] print "Hello world!"
 Hello world!
@@ -158,15 +159,15 @@ Hello world!
 
 
 We can style the code as before.
-    >>> styled_code3 = colourize._style(python_code3)[0]
-    >>> styled_code4 = colourize._style(python_code4)[0]
+    >>> styled_code3 = colourize._style(python_code3)[1]
+    >>> styled_code4 = colourize._style(python_code4)[1]
 
 For future reference, we will document as tests here styling examples
 with line numbers added of the previous two cases.
 
-    >>> print(colourize._style(code_sample3, offset=4)[0])  #doctest:+ELLIPSIS
+    >>> print(colourize._style(code_sample3, offset=4)[1])  #doctest:+ELLIPSIS
     <span class='py_linenumber'>  5 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
-    >>> print(colourize._style(code_sample4, offset=0)[0])  #doctest:+ELLIPSIS
+    >>> print(colourize._style(code_sample4, offset=0)[1])  #doctest:+ELLIPSIS
     <span class='py_linenumber'>  1 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_linenumber'>    </span><span class="py_output">Hello world!</span>
     <span class='py_linenumber'>  2 </span><span class="py_prompt">&gt;&gt;&gt; </span><span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
@@ -193,9 +194,9 @@ see if we have to take care of this in this version.
 
     >>> end_comment6 = '''>>> # this is a comment'''
     >>> python_code6, extracted6 = colourize.extract_code_from_interpreter(end_comment6)
-    >>> print(colourize._style(python_code6)[0])
+    >>> print(colourize._style(python_code6)[1])
     <span class='py_comment'># this is a comment</span>
-    >>> styled6, py6 = colourize._style(end_comment6) # letting style do its thing
+    >>> py6, styled6, error_found = colourize._style(end_comment6) # letting style do its thing
     >>> print(styled6)
     <span class="py_prompt">&gt;&gt;&gt; </span><span class='py_comment'># this is a comment</span>
     >>> print(py6)
@@ -208,7 +209,7 @@ This looks ok; let us try a slightly longer example.
     ... ...     print i*i
     ... >>> # another comment."""
     >>> python_code7, extracted7 = colourize.extract_code_from_interpreter(end_comment7)
-    >>> print(colourize._style(python_code7)[0])  #doctest:+ELLIPSIS
+    >>> print(colourize._style(python_code7)[1])  #doctest:+ELLIPSIS
     <span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
     <span class='py_keyword'>for</span><span class='py_variable'> i</span><span class='py_keyword'> in</span><span class='py_builtins'> range</span><span class='py_op'>(</span><span class='py_number'>3</span><span class='py_op'>)</span><span class='py_op'>:</span>
     <span>    </span><span class='...'>print</span><span class='py_variable'> i</span><span class='py_op'>*</span><span class='py_variable'>i</span>
@@ -246,13 +247,13 @@ examples introduced previously.  We know, from the tests done above,
 that the new version still works with non-interpreter code.  We can use
 some previous examples to test the interpreter version.
 
-    >>> print(colourize._style(code_sample3)[0] == fully_styled3)
+    >>> print(colourize._style(code_sample3)[1] == fully_styled3)
     True
-    >>> print(colourize._style(code_sample4)[0] == fully_styled4)
+    >>> print(colourize._style(code_sample4)[1] == fully_styled4)
     True
 
 In case we find a discrepancy, we compare with the expected result.
-    >>> print(colourize._style(code_sample3)[0])  #doctest:+ELLIPSIS
+    >>> print(colourize._style(code_sample3)[1])  #doctest:+ELLIPSIS
     <span class="py_prompt">&gt;&gt;&gt; </span><span class='...'>print</span><span class='py_string'> 'Hello world!'</span>
 
 Using this code with sample pages, we noted that sometimes blank lines

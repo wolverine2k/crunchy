@@ -53,14 +53,16 @@ def register():
 def plugin_style(dummy_page, elem, dummy_uid, css_class='crunchy'):
     '''Handles the vlam py_code elements'''
     code, markup, error = style(elem, css_class=css_class)
-    if error is None:
-        replace_element(elem, markup)
-    else:
-        br = et.Element("br")
-        br.tail = elem.text
-        elem.text = ''
-        elem.insert(0, br)
-        elem.insert(0, error)
+    replace_element(elem, markup)
+    return
+    #if not error:
+    #    replace_element(elem, markup)
+    #else:
+    #    br = et.Element("br")
+    #    br.tail = elem.text
+    #    elem.text = ''
+    #    elem.insert(0, br)
+    #    elem.insert(0, markup)
 
 def service_style(dummy_page, elem, css_class='crunchy'):
     return style(elem, css_class=css_class)
@@ -111,11 +113,11 @@ def style(elem, css_class='crunchy'):
 
     # styling
     offset = get_linenumber_offset(elem.attrib['title'])
-    styled_code, py_code = _style(py_code, offset)
+    py_code, styled_code, error_found = _style(py_code, offset)
 
     # re-creating element
     tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    new_html = "<%s>\n%s\n</%s>" % (tag, styled_code, tag)
     try:
         new_elem = et.fromstring(new_html)
     except:
@@ -134,7 +136,7 @@ def style(elem, css_class='crunchy'):
     else:
         new_elem.attrib['class'] = css_class
     new_elem.tail = tail
-    return py_code, new_elem, None
+    return py_code, new_elem, error_found
 
 def nostrip_style(elem, css_class='crunchy'):
     """performs exactly the same as style(elem) except that the python
@@ -149,15 +151,15 @@ def nostrip_style(elem, css_class='crunchy'):
     py_code = extract_code(elem)
     if "no_style" in elem.attrib['title']:
         new_elem = copy.deepcopy(elem)
-        return py_code, new_elem
+        return py_code, new_elem, None
 
     tail = elem.tail
     # styling
     offset = get_linenumber_offset(elem.attrib['title'])
-    styled_code, dummy = _style(py_code, offset)
+    py_code, styled_code, error_found = _style(py_code, offset)
     # re-creating element
     tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>"%(tag, styled_code, tag)
+    new_html = "<%s>\n%s\n</%s>" % (tag, styled_code, tag)
     try:
         new_elem = et.fromstring(new_html)
     except:
@@ -178,7 +180,7 @@ def nostrip_style(elem, css_class='crunchy'):
     else:
         new_elem.attrib['class'] = css_class
     new_elem.tail = tail
-    return py_code, new_elem
+    return py_code, new_elem, error_found
 
 def extract_code(elem, trim=False):
     """extract all the text (Python code) from a marked up
@@ -240,9 +242,8 @@ def replace_element(elem, replacement):
 
 # The following are introduced so as to be somewhat similar to EditArea
 reserved = ['True', 'False', 'None']
-"""
-	builtins : see http://python.org/doc/current/lib/built-in-funcs.html
-"""
+
+###	builtins : see http://python.org/doc/current/lib/built-in-funcs.html
 builtins = ['__import__', 'abs', 'basestring', 'bool', 'callable', 'chr', 'classmethod', 'cmp',
 			'compile', 'complex', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'execfile',
 			'file', 'filter', 'float', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help',
@@ -272,9 +273,8 @@ builtins = ['__import__', 'abs', 'basestring', 'bool', 'callable', 'chr', 'class
 			'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title',
 			'translate', 'upper', 'zfill'
 ]
-"""
-	standard library; see  http://python.org/doc/current/lib/modindex.html
-"""
+
+###	standard library; see  http://python.org/doc/current/lib/modindex.html
 stdlib = [	'__builtin__', '__future__', '__main__', '_winreg', 'aifc', 'AL', 'al', 'anydbm',
 			'array', 'asynchat', 'asyncore', 'atexit', 'audioop', 'base64', 'BaseHTTPServer',
 			'Bastion', 'binascii', 'binhex', 'bisect', 'bsddb', 'bz2', 'calendar', 'cd', 'cgi',
@@ -371,7 +371,7 @@ class Colourizer(object):
             temp_out = temp_in[0]
             for substring in temp_in[1:]:
                 line_num += 1
-                temp_out += "\n<span class='py_linenumber'>%3d </span>"%line_num \
+                temp_out += "\n<span class='py_linenumber'>%3d </span>" % line_num \
                             + substring
             self.tokenString = temp_out
         if self.lastTokenType == token.OP:
@@ -452,7 +452,7 @@ class Colourizer(object):
 def _style(text, offset=None):
     """remove prompts and output (if interpreter session)
        and return code with html markup for styling as well as raw Python
-       code."""
+       code, and indication if an error was found."""
     colourizer = Colourizer(offset)
     raw_code = trim_empty_lines_from_end(text)
     interpreter = is_interpreter_session(raw_code)
@@ -465,11 +465,11 @@ def _style(text, offset=None):
                                                      offset)
         # \r is unnecesary and causes bugs!
         raw_code = raw_code.replace('\r', '')
-        return styled_code, raw_code
+        return raw_code, styled_code, False
     except Exception:#, parsingErrorMessage:
-        error_message = parsing_error_dialog()#parsingErrorMessage)
-        return "<span class='py_warning'>%s</span>\n<span>%s</span>"%(
-                                       error_message, raw_code), None
+        error_message = parsing_error_dialog()
+        return raw_code, "<span class='py_warning'>%s</span>\n<span>%s</span>" % (
+                                       error_message, raw_code), True
 
 def extract_code_from_interpreter(text):
     """ Strips fake interpreter prompts from html code meant to
