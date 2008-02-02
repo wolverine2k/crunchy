@@ -123,7 +123,8 @@ def code_setup_process(page, elem, uid):
     vlam = elem.attrib["title"]
     name = extract_name(vlam)
     # next, we style the code, also extracting it in a useful form
-    setup_code, markup, error = plugin['services'].style_pycode(page, elem)
+    setup_code, markup, error = plugin['services'].style_pycode(page, elem,
+                                                                css_class='test_setup')
     if error is not None:
         markup = copy.deepcopy(elem)
     # which we store

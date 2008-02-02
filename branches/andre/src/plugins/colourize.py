@@ -50,9 +50,9 @@ def register():
 
 
 
-def plugin_style(dummy_page, elem, dummy_uid):
+def plugin_style(dummy_page, elem, dummy_uid, css_class='crunchy'):
     '''Handles the vlam py_code elements'''
-    code, markup, error = style(elem)
+    code, markup, error = style(elem, css_class=css_class)
     if error is None:
         replace_element(elem, markup)
     else:
@@ -62,17 +62,17 @@ def plugin_style(dummy_page, elem, dummy_uid):
         elem.insert(0, br)
         elem.insert(0, error)
 
-def service_style(dummy_page, elem):
-    return style(elem)
+def service_style(dummy_page, elem, css_class='crunchy'):
+    return style(elem, css_class=css_class)
 
-def service_style_nostrip(dummy_page, elem):
-    return nostrip_style(elem)
+def service_style_nostrip(dummy_page, elem, css_class='crunchy'):
+    return nostrip_style(elem, css_class=css_class)
 
 #---------end plugin specific-------------------------
 
 #--------Begin ElementTree dependent part-------------
 
-def style(elem):
+def style(elem, css_class='crunchy'):
     """
     style some Python code (adding html markup) and return it inside the
     original html element (<pre> or <code>, most likely) with attributes
@@ -130,13 +130,13 @@ def style(elem):
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
         if 'crunchy' not in new_elem.attrib['class']:
-            new_elem.attrib['class'] += ' crunchy'
+            new_elem.attrib['class'] += ' ' + css_class
     else:
-        new_elem.attrib['class'] = 'crunchy'
+        new_elem.attrib['class'] = css_class
     new_elem.tail = tail
     return py_code, new_elem, None
 
-def nostrip_style(elem):
+def nostrip_style(elem, css_class='crunchy'):
     """performs exactly the same as style(elem) except that the python
     code it returns is intended to be the exact copy of an original
     interpreter session (stripped of any html markup).
@@ -174,9 +174,9 @@ def nostrip_style(elem):
                                 # if return a tuple as second argument
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
-        new_elem.attrib['class'] += ' crunchy'
+        new_elem.attrib['class'] += ' ' + css_class
     else:
-        new_elem.attrib['class'] = 'crunchy'
+        new_elem.attrib['class'] = css_class
     new_elem.tail = tail
     return py_code, new_elem
 
@@ -569,5 +569,3 @@ def parsing_error_dialog():
     '''Information given when the code colourizer fails.'''
     #return _("Parsing error occurred in the following Python code.\nInfo: %s.")%info
     return _("Parsing error occurred in the following Python code.")
-
-
