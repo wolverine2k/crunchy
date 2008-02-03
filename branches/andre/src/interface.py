@@ -43,6 +43,7 @@ exec_code = tools.exec_code
 
 config = {}  # initialized by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
+preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
 

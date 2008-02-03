@@ -1,12 +1,12 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
-from imp import find_module
-from os.path import normpath, join, isdir, dirname, exists
+from os.path import normpath, join, isdir,  exists
 from dircache import listdir, annotate
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import python_version, translate, plugin, server, debug, debug_msg
+from src.interface import python_version, translate, plugin, server, debug, \
+                      debug_msg, preprocessor
 
 _ = translate['_']
 
@@ -44,6 +44,9 @@ def path_to_filedata(path, root):
             extension = npath.split('.')[-1]
             if extension in ["htm", "html"]:
                 return plugin['create_vlam_page'](open(npath), path).read()
+            elif extension in preprocessor:
+                return plugin['create_vlam_page'](preprocessor[extension](npath),
+                                                  path).read()
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -79,7 +82,7 @@ def handler(request):
         try:
             request.wfile.write(data)
         except:
-            if python_version >=3:
+            if python_version >= 3:
                 try:
                     data = bytes(data, sys.getdefaultencoding())
                 except:
@@ -96,7 +99,6 @@ def handler(request):
                         pass
 
 def get_directory(npath):
-    _ = translate['_']
     childs = listdir(npath)
     annotate(npath, childs)
     for i in default_pages:

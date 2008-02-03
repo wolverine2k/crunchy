@@ -35,6 +35,7 @@ def link_handler(page, elem):
        remote pages"""
     if "href" not in elem.attrib:
         return
+    ### To do: deal better with .rst, .txt and .py files
     if elem.attrib["href"].startswith("/"):
         return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
@@ -54,13 +55,14 @@ def link_handler(page, elem):
 
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
+        return
 
     href = elem.attrib["href"]
     if "://" in href:
         elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
         return
 
-    if page.is_local:
+    if page.is_local: # loaded via local browser
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
                 return
@@ -83,6 +85,8 @@ def link_handler(page, elem):
             href = urljoin(page.url, elem.attrib["href"])
             elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
             return
+    #extension = elem.attrib["href"].split('.')[-1]
+
 
 def src_handler(page, elem):
     """used for elements that have an src attribute not loaded from the

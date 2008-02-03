@@ -1,0 +1,93 @@
+========================================
+ Crunchy/reStructuredText Demonstration
+========================================
+
+Interpreters
+============
+
+The following is an example of a borg interpreter.
+If you type the above text into the box, you will see
+that "answer" can be defined and then printed
+
+.. interpreter:: interpreter
+   :linenumber:
+
+   >>> answer = 42
+   >>> print answer
+   42
+
+If you type 'answer' into this text box, then it will be
+evaluated to 42. Try it:
+
+.. interpreter:: interpreter
+   
+   >>> answer
+   42
+
+If, however, we make an isolated interpreter, we can see
+that the variable 'answer' does not exist:
+
+.. interpreter:: isolated
+   :linenumber:
+
+   >>> answer
+   Error on line 1:
+   NameError: name 'answer' is not defined
+
+As you can see, isolated interpreters don't have access to the
+same environment as the rest.
+
+Editors
+=======
+
+Editors are spaces on the page where code can be edited and
+subsequently executed. If you try clicking on the "Toggle editor"
+checkbox, you will be presented with a nifty little editor. By
+typing the above code into the editor and clicking "Execute",
+you will see the results below:
+
+.. editor:: no-copy
+   :linenumber:
+
+   >>> print "He's not the Messiah, he's a very naughty boy!"
+
+Alternatively, the editor can come pre-loaded with a few lines of
+code, like so:
+
+.. editor::
+
+    >>> print "Pining for the fjords!"
+
+
+Alternate Python Versions
+=========================
+
+If you're feeling a little bit old school, and want to try out
+Python 2.3, or if you have the bleeding edge Py3K SVN snapshot
+installed, then you can test out different versions of Python
+like so:
+
+.. alt_py::
+
+   >>> print "Hello from the past!"
+   Hello from the past!
+
+Just enter the path to the Python executable you wish to use
+and Crunchy will execute it and return the value.
+
+DocTests
+========
+
+Crunchy can also embed DocTests within a page:
+
+.. doctest::
+   :linenumber:
+
+   >>> print "Hello, World!"
+   Hello, World!
+   >>> fun = lambda x: x.strip()
+   >>> print repr(fun(" string "))
+   'string'
+
+For more info, see the `DocTest Documentation 
+<http://docs.python.org/lib/module-doctest.html>`_.

@@ -16,7 +16,7 @@ import src.PluginServices as services
 # any working plugin, as long as we maintain the API here.
 
 from src.interface import Element, SubElement, fromstring, tostring, parse, \
-                          plugin, server
+                          plugin, server, preprocessor
 plugin['services'] = services
 
 # We generate a random string that will be appended to javascript functions
@@ -38,6 +38,13 @@ def register_http_handler(pattern, handler):
         server['server'].register_handler(pattern, handler)
         pass
 plugin['register_http_handler'] = register_http_handler
+
+def register_preprocessor(extension, handler):
+    '''register a handler used to preprocess a file, based on a
+       registered extension, prior to creating a vlam page from it.'''
+    preprocessor[extension] = handler
+    return
+plugin['register_preprocessor'] = register_preprocessor
 
 def register_tag_handler(tag, attribute, keyword, handler):
     """register a new tag handler, a generalisation of vlam handlers

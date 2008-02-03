@@ -8,6 +8,7 @@
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, SubElement
+from urllib import urlopen
 
 _docutils_installed = True
 try:
@@ -27,6 +28,8 @@ def register():
     if _docutils_installed:
         plugin['register_http_handler']("/rst", load_rst)
         plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
+        #plugin['register_preprocessor']('rst', convert_rst)
+        plugin['register_preprocessor']('txt', convert_rst)
 
 if _docutils_installed:
     def int_or_one(argument):
@@ -36,12 +39,12 @@ if _docutils_installed:
             return int(argument)
         else:
             return 1
-    
+
     class pre(nodes.raw):
         def __init__(self, *args, **kwargs):
             nodes.raw.__init__(self, *args, **kwargs)
             self.tagname = "pre"
-    
+
     class InterpreterDirective(rst.Directive):
         required_arguments = 1
         optional_arguments = 1
@@ -65,7 +68,7 @@ if _docutils_installed:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class EditorDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 5
@@ -87,7 +90,7 @@ if _docutils_installed:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class DocTestDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 1
@@ -108,7 +111,7 @@ if _docutils_installed:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class ImageFileDirective(rst.Directive):
         required_arguments = 1
         optional_arguments = 3
@@ -126,7 +129,7 @@ if _docutils_installed:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class PythonCodeDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 0
@@ -141,7 +144,7 @@ if _docutils_installed:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class AltPythonVersionDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 5
@@ -161,7 +164,7 @@ if _docutils_installed:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     class NoVLAMDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 0
@@ -174,7 +177,7 @@ if _docutils_installed:
             listOut = ['no-vlam']
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
-    
+
     DIRECTIVE_DICT = {
         'interpreter' : InterpreterDirective,
         'editor' : EditorDirective,
@@ -186,17 +189,17 @@ if _docutils_installed:
         'alt_py' : AltPythonVersionDirective,
         'no-vlam' : NoVLAMDirective
         }
-    
+
     def visit_pre(translator, node):
         attrDict = {}
         for key, value in node.attributes.items():
             if value and (key is not "xml:space"):
                 attrDict[key] = value
         translator.body.append(translator.starttag(node, 'pre', **attrDict))
-    
+
     def depart_pre(translator, node):
         translator.body.append('\n</pre>\n')
-    
+
     HTMLTranslator.visit_pre = visit_pre
     HTMLTranslator.depart_pre = depart_pre
 
@@ -213,17 +216,26 @@ class ReST_file(object):
         return self._data
 
 def load_rst(request):
-    """Loads rst file from disk, 
+    """Loads rst file from disk,
     transforms it into html and then creates new page"""
     url = request.args["url"]
     file_ = open(url)
 
     rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
     page = plugin['create_vlam_page'](rst_file, url, local=True)
-    
+
     request.send_response(200)
     request.end_headers()
     request.wfile.write(page.read())
+
+def convert_rst(path, local=True):
+    '''converts an rst file into a proper crunchy-ready html page'''
+    if local:
+        file_ = open(path)
+    else:
+        file_ = urlopen(path)
+    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
+    return rst_file
 
 def insert_load_rst(dummy_page, parent, dummy_uid):
     """Creates new widget for loading rst files.
