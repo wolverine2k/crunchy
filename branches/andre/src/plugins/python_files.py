@@ -1,6 +1,6 @@
 """Plugin for loading and transforming python files."""
 
-from src.interface import plugin, SubElement
+from src.interface import plugin, SubElement, interactive
 from src.utilities import changeHTMLspecialCharacters
 
 def register():
@@ -25,6 +25,10 @@ def load_python(request):
     python_code = open(url).read()
     python_code = changeHTMLspecialCharacters(python_code)
 
+    if interactive:
+        interpreter_python_code = "__name__ = '__main__'\n" + python_code
+    else:
+        interpreter_python_code = python_code
     html_template = """
     <html>
     <head><title>%s</title></head>
@@ -42,7 +46,7 @@ def load_python(request):
 
     </body>
     </html>
-    """%(url, url, python_code, python_code)
+    """%(url, url, interpreter_python_code, python_code)
 
     fake_file = Python_file(html_template)
     page = plugin['create_vlam_page'](fake_file, url, local=True)

@@ -77,7 +77,7 @@ fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
 
 
-
+interactive = False # used with python crunchy -i option
 
 # In the absence of either HTMLTreeBuilder or, even better,
 # ElementSoup/BeautifulSoup in Python 3.x, we provide a basic, but extremely
@@ -97,5 +97,4 @@ else:
                 if entity not in parser.entity:
                     parser.entity[entity] = ent[entity]
             self.parse(source=file, parser=parser)
-            return 
-
+            return

@@ -72,16 +72,25 @@ Copy this in and press enter - Crunchy's first page should be displayed.'''
 def parse_options():
     '''parse command line options'''
     parser = OptionParser(usage)
+    url_help = """Uses a different start page when starting Crunchy
+                    Remote files: http://... (example: http://docs.python.org)
+                    Local files: absolute_path.[htm, html, rst, txt, py, pyw]
+               """
+    interactive_help = """Somewhat equivalent to normal "python -i script.py".
+                          Ignored if --url is used.
+                          """
+    parser.add_option("--url", action="store", type="string", dest="url",
+            help=url_help)
+    parser.add_option("--i", action="store", type="string", dest="interactive",
+            help=interactive_help)
+    parser.add_option("--port", action="store", type="int", dest="port",
+            help="Specifies the port number to try first (default is 8001) ")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
             help="Enables interactive settings of debug flags "+\
                  "(useful for developers)")
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
-                 "(useful for developers in case of major problems)")
-    parser.add_option("--url", action="store", type="string", dest="url",
-            help="Uses a different start page (not implemented yet) ")
-    parser.add_option("--port", action="store", type="int", dest="port",
-            help="Specifies the port number to try first (default is 8001) ")
+                 "(useful for developers in case of major problems; not fully implemented)")
     (options, args) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True
@@ -94,6 +103,9 @@ def parse_options():
     url = None
     if options.url:
         url = convert_url(options.url)
+    elif options.interactive:
+        src.interface.interactive = True
+        url = convert_url(options.interactive)
     port = None
     if options.port:
         port = options.port
@@ -101,6 +113,13 @@ def parse_options():
 
 def convert_url(url):
     '''converts a url into a form used by Crunchy'''
+    if src.interface.interactive:
+        if 'py' in url.split('.')[-1]:
+            url = "/py?url=%s" %  urllib.quote_plus(url)
+            return url
+        else:
+            print("invalid file type for --i option.")
+            raise SystemExit
     if url.startswith("http:"):
         url = "/remote?url=%s" % urllib.quote_plus(url)
     elif os.path.exists(url):
@@ -108,6 +127,8 @@ def convert_url(url):
             url = "/local?url=%s" % urllib.quote_plus(url)
         elif url.split('.')[-1] in ['rst', 'txt']:
             url = "/rst?url=%s" %  urllib.quote_plus(url)
+        elif 'py' in url.split('.')[-1]:
+            url = "/py?url=%s" %  urllib.quote_plus(url)
         else:
             print("unknown url file type")
             raise SystemExit

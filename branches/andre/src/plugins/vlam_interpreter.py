@@ -223,6 +223,7 @@ def insert_interpreter(page, elem, uid):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "crunchy"
+    code += "\n"
     if not "no-pre" in vlam:
         try:
             elem.insert(0, markup)
