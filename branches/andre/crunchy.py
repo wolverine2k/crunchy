@@ -2,6 +2,7 @@
 
 """
 from optparse import OptionParser
+import os
 import socket
 import urllib
 import webbrowser
@@ -102,7 +103,17 @@ def convert_url(url):
     '''converts a url into a form used by Crunchy'''
     if url.startswith("http:"):
         url = "/remote?url=%s" % urllib.quote_plus(url)
-        print url
+    elif os.path.exists(url):
+        if 'htm' in url.split('.')[-1]:
+            url = "/local?url=%s" % urllib.quote_plus(url)
+        elif url.split('.')[-1] in ['rst', 'txt']:
+            url = "/rst?url=%s" %  urllib.quote_plus(url)
+        else:
+            print("unknown url file type")
+            raise SystemExit
+    else:
+        print("url specified can not be found.")
+        raise SystemExit
     return url
 
 if __name__ == "__main__":
