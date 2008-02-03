@@ -3,6 +3,7 @@
 """
 from optparse import OptionParser
 import socket
+import urllib
 import webbrowser
 
 import src.interface
@@ -37,11 +38,16 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     import src.pluginloader as pluginloader
     if port is None:
         port = find_port()
+    else:
+        port = find_port(start=port)
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
     pluginloader.init_plugin_system(server)
+    base_url = 'http://' + host + ':' + str(port)
     if url is None:
-        url = 'http://' + host + ':' + str(port) + '/'
+        url =  base_url + '/'
+    else:
+        url = base_url + url
     webbrowser.open(url)
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
@@ -71,7 +77,11 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems)")
-    (options, dummy) = parser.parse_args()
+    parser.add_option("--url", action="store", type="string", dest="url",
+            help="Uses a different start page (not implemented yet) ")
+    parser.add_option("--port", action="store", type="int", dest="port",
+            help="Specifies the port number to try first (default is 8001) ")
+    (options, args) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True
     else:
@@ -80,7 +90,21 @@ def parse_options():
         src.interface.debug_flag = True
         for key in src.interface.debug:
             src.interface.debug[key] = True
+    url = None
+    if options.url:
+        url = convert_url(options.url)
+    port = None
+    if options.port:
+        port = options.port
+    return url, port
+
+def convert_url(url):
+    '''converts a url into a form used by Crunchy'''
+    if url.startswith("http:"):
+        url = "/remote?url=%s" % urllib.quote_plus(url)
+        print url
+    return url
 
 if __name__ == "__main__":
-    parse_options()
-    run_crunchy()
+    url, port = parse_options()
+    run_crunchy(port=port, url=url)
