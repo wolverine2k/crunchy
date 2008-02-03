@@ -74,7 +74,7 @@ def link_handler(page, elem):
                 else:  # remove trailing #... which Crunchy can't handle
                     elem.attrib["href"] = splitted[0]
         extension = elem.attrib["href"].split(".")[-1]
-        if extension in [".rst", ".txt"]:# in elem.attrib["href"] or ".txt" in elem.attrib["href"]:
+        if extension in ["rst", "txt"]:
             elem.attrib["href"] = "/rst?url=%s" % \
                 os.path.dirname(page.url) + "/" + \
                 urllib.quote_plus(elem.attrib["href"])

@@ -20,6 +20,8 @@ The following are the actual links to existing test files.
 #. test_colourize.rst_
 #. test_comet.rst_
 #. test_configuration.rst_
+#. test_dhtml.rst_
+#. test_doc_code_check.rst_
 #. test_editarea.rst_
 #. test_execution.rst_
 #. test_file_service.rst_
@@ -39,6 +41,8 @@ The following are the actual links to existing test files.
 .. _test_colourize.rst: test_colourize.rst
 .. _test_comet.rst: test_comet.rst
 .. _test_configuration.rst: test_configuration.rst
+.. _test_dhtml.rst: test_dhtml.rst
+.. _test_doc_code_check.rst: test_doc_code_check.rst
 .. _test_editarea.rst: test_editarea.rst
 .. _test_execution.rst: test_execution.rst
 .. _test_file_service.rst: test_file_service.rst
@@ -200,6 +204,13 @@ Crunchy Python files listing::
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
                 ### to include the services provided by cometIO {"/comet", "/input"}
                 ### in the plugin directory so that they were easier to find.
+            doc_cod_check.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+                import: interface, utilities
+                plugin['register_tag_handler']("pre", "title", "setup_code", code_setup_process)
+                plugin['register_tag_handler']("pre", "title", "check_code", code_sample_process)
+                plugin['register_tag_handler']("pre", "title", "code_output", expected_output_process)
+                plugin['register_http_handler']("/check_code", doc_code_check_callback)
+                plugin['register_http_handler']("/check_all_code_samples", all_code_samples_check_callback)
             editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
                 import: interface
                 requires: {"/save_file", "/load_file"}

@@ -52,22 +52,17 @@ def register():
 
 def plugin_style(dummy_page, elem, dummy_uid, css_class='crunchy'):
     '''Handles the vlam py_code elements'''
-    code, markup, error = style(elem, css_class=css_class)
+    dummy, markup, dummy = style(elem, css_class=css_class)
     replace_element(elem, markup)
     return
-    #if not error:
-    #    replace_element(elem, markup)
-    #else:
-    #    br = et.Element("br")
-    #    br.tail = elem.text
-    #    elem.text = ''
-    #    elem.insert(0, br)
-    #    elem.insert(0, markup)
+
 
 def service_style(dummy_page, elem, css_class='crunchy'):
+    '''style() as called by other plugins as a service'''
     return style(elem, css_class=css_class)
 
 def service_style_nostrip(dummy_page, elem, css_class='crunchy'):
+    '''style_nostrip() as called by other plugins as a service'''
     return nostrip_style(elem, css_class=css_class)
 
 #---------end plugin specific-------------------------
@@ -308,7 +303,7 @@ stdlib = [	'__builtin__', '__future__', '__main__', '_winreg', 'aifc', 'AL', 'al
 ]
 
 class Colourizer(object):
-
+    '''class usually used as singleton to style/colorize Python code'''
     def __init__(self, offset=None):
         self.tokenString = ''
         self.beginLine, self.beginColumn = (0, 0)

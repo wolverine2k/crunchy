@@ -73,7 +73,7 @@ def doctest_widget_callback(page, elem, uid):
             page.add_js_code(doctest_jscode)
 
     # next, we style the code, also extracting it in a useful form ...
-    doctestcode, markup, error = plugin['services'].style_pycode_nostrip(page, elem)
+    doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # which we store
