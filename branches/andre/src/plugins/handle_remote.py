@@ -19,11 +19,11 @@ def remote_loader(request):
     '''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
-    if extension in ['htm', 'html']:
-        page = plugin['create_vlam_page'](urlopen(url), url, remote=True)
-    elif extension in preprocessor:
+    if extension in preprocessor:
         page = plugin['create_vlam_page'](
                          preprocessor[extension](url, local=False), url)
+    else:
+        page = plugin['create_vlam_page'](urlopen(url), url, remote=True)
     request.send_response(200)
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;

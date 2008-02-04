@@ -14,6 +14,9 @@ provides = set(["/allow_site", "/set_trusted", "/remove_all"])
 DEBUG = False
 
 def register():
+    '''
+    register a tag handler and two http handlers: /set_trusted and /remove_all
+    '''
     plugin['register_tag_handler']("no_tag", "security", None, insert_security_info)
     plugin['register_http_handler']("/set_trusted", set_security_list)
     plugin['register_http_handler']("/remove_all", empty_security_list)
@@ -63,12 +66,12 @@ def insert_security_info(page, *dummy):
         view.attrib["href"] = "#"
         view.attrib['style'] = "text-decoration: underline;"
         view.text = _(" View report ")
-    br = SubElement(span, "br")
+    SubElement(span, "br")
     hide = SubElement(span, "a")
     hide.attrib["onclick"] = "hide_security_report();"
     hide.attrib["href"] = "#"
     hide.attrib['style'] = "text-decoration: underline overline;"
-    
+
     hide.text = _(" | Hide summary |")
 
     # make the advisory draggable; insert the required code
@@ -110,7 +113,7 @@ def insert_security_info(page, *dummy):
             # in case list gets too long, we include buttons at top and bottom
             approve_btn = SubElement(info_container, "button")
             site_num = len(config['site_security'])
-            approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
+            approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
             approve_btn.text = _("Approve")
             SubElement(info_container, "span").text = " "
             deny_btn = SubElement(info_container, "button")
@@ -147,7 +150,7 @@ def insert_security_info(page, *dummy):
                         inp.attrib['checked'] = 'checked'
             # in case list gets too long, we include buttons at top and bottom
             approve_btn = SubElement(info_container, "button")
-            approve_btn.attrib["onclick"] = "app_approve('%d')"%site_num
+            approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
             approve_btn.text = _("Approve")
             SubElement(info_container, "span").text = " "
             deny_btn = SubElement(info_container, "button")
@@ -167,7 +170,7 @@ def insert_security_info(page, *dummy):
 def format_report(page, div):
     '''puts the security information (extracted material) into a table
        for display'''
-    global netloc
+    #global netloc
     if page.security_info['tags removed']:
         h2 = SubElement(div, 'h2')
         h2.text = _('Removed: tag not allowed')
@@ -240,7 +243,7 @@ def format_report(page, div):
 
     #netloc = urlsplit(page.url).netloc # localhost will return empty string
     # urlsplit().netloc == urlsplit()[1] is not Python 2.4 compatible
-    netloc = urlsplit(page.url)[1]     
+    netloc = urlsplit(page.url)[1]
 
     if page.security_info['number removed'] != 0 and netloc:
         h2 = SubElement(div, 'h2')
