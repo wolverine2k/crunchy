@@ -10,6 +10,10 @@ This document currently has four main sections:
  
  It also contain a fifth section of lesser importance.
  - Future work
+ 
+ To find out how to write tests, please read how_to.rst_
+ 
+ .. _how_to.rst: how_to.rst
 
 Available unit tests files
 --------------------------
@@ -66,10 +70,12 @@ one can write a simple Python module and put it in the plugins directory.
 Provided that module has a register() function, Crunchy will identify it
 and incorporate its capabilities.
 
-At the moment, plugins can add three different types of capabilities:
-1. Services
-2. Tag handler
-3. Http handler.
+At the moment, plugins can add four different types of capabilities:
+
+ 1. Services
+ 2. Tag handler
+ 3. Http handler
+ 4. Extension handler
 
 1. Services, in Crunchy terminology, are simply functions that are made
 available to other parts of code (for example, to other plugins).  An
@@ -104,7 +110,15 @@ the following http handler::
 
    plugin['register_http_handler']("/save_file", save_file_request_handler)
 
+4. Extension handlers are functions that "pre-process" a file, 
+based on its extension, before creating an html page for display.  
+This is something that is only useful when linking to a file
+of that type directly from the Crunchy tutorial with an absolute path
+from the server root.  Furthermore, the file type (based on the extension)
+needs to be recognized by Firefox for this to work. Still, for the sake of
+completeness, we mention it here.  To register an extension, we do it as follows:
 
+    plugin['register_preprocessor']('txt', convert_rst)
 
 Reducing dependencies & Testing
 -------------------------------
@@ -314,8 +328,6 @@ Crunchy Python files listing::
                 import: interface
             graphics.py
                 import: interface
-            dhtml.py
-                import: interface
             math_graphics.py
                 import: interface
             turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
@@ -338,8 +350,6 @@ The following are not likely to be tested by us::
                 import: ElementPath
             HTMLTreeBuilder.py
                 import: ElementTree
-
-
 
 
 Design philosophy

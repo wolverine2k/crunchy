@@ -28,8 +28,11 @@ def register():
     if _docutils_installed:
         plugin['register_http_handler']("/rst", load_rst)
         plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
-        #plugin['register_preprocessor']('rst', convert_rst)
         plugin['register_preprocessor']('txt', convert_rst)
+        # the following does nothing as Firefox does not recognize rst files as
+        # something it can deal with - we may have to find a way to tell
+        # Firefox that these are equivalent to text files.
+        plugin['register_preprocessor']('rst', convert_rst)
 
 if _docutils_installed:
     def int_or_one(argument):

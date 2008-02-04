@@ -14,8 +14,9 @@ _default_menu = None
 _css = None
 
 def register():
-    """The register() function is required for all plugins.
-       """
+    """
+       registers two tag handlers for inserting custom menus
+    """
     plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
     plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
 
@@ -89,4 +90,3 @@ def extract_menu(filename, page, safe_menus=False):
     menu.attrib['id'] = 'menu_box'
     menu.attrib['onmousedown'] = "dragStart(event, 'menu_box')"
     return menu, css
-
