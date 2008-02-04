@@ -11,6 +11,7 @@ from src.interface import python_version, translate, plugin, server, debug, \
 _ = translate['_']
 
 def register():
+    '''registers a default http handler'''
     plugin['register_http_handler'](None, handler)
 
 def path_to_filedata(path, root):
@@ -99,6 +100,7 @@ def handler(request):
                         pass
 
 def get_directory(npath):
+    '''gets a directory listing from a path'''
     childs = listdir(npath)
     annotate(npath, childs)
     for i in default_pages:
@@ -151,6 +153,7 @@ dir_list_page = """
 """
 
 def error_page(path):
+    '''returns a page with an error message; used when a path is not found'''
     return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
                                  _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
                                  _("The page doesn't exist."),

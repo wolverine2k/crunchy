@@ -11,13 +11,14 @@ import os
 from src.interface import plugin, SubElement
 
 def register():
+    '''registers a series of tag handlers, all related to html links '''
     plugin['register_tag_handler']("a", None, None, link_handler)
     plugin['register_tag_handler']("img", None, None, src_handler)
     plugin['register_tag_handler']("link", None, None, href_handler)
     plugin['register_tag_handler']("style", None, None, style_handler)
-    plugin['register_tag_handler']("a","title", "external_link", external_link)
+    plugin['register_tag_handler']("a", "title", "external_link", external_link)
 
-def external_link(dummy_page, elem, *dummies):
+def external_link(dummy_page, elem, *dummy):
     '''handler which totally ignores the link being passed to it, other than
     inserting an image to indicate it leads outside of Crunchy'''
     if elem.tail:
@@ -100,7 +101,7 @@ def src_handler(page, elem):
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/local?url=%s"%urllib.quote_plus(
+        elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
 def href_handler(page, elem):
@@ -114,7 +115,7 @@ def href_handler(page, elem):
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local:
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/local?url=%s"%urllib.quote_plus(
+        elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))
 
 def secure_url(url):
@@ -135,6 +136,7 @@ css_import_re = re.compile('@import\s+"(.+?)"')
 def style_handler(page, elem):
     """replace @import statements in style elements"""
     def css_import_replace(imp_match):
+        '''replaces the relative path found by its absolute value'''
         path = imp_match.group(1)
         return '@import "%s"' % urljoin(page.url, path)
     elem.text = css_import_re.sub(css_import_replace, elem.text)

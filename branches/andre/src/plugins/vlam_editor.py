@@ -9,11 +9,10 @@ Crunchy plugin; it probably contains more comments than necessary
 for people familiar with the Crunchy plugin architecture.
 """
 
-import copy
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, translate, tostring
+from src.interface import config, plugin, Element, SubElement, translate, tostring
 from src.utilities import extract_log_id
 _ = translate['_']
 
@@ -78,26 +77,18 @@ def insert_editor(page, elem, uid):
             page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    code, markup, error = plugin['services'].style_pycode(page, elem)
+    code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_doctest() method extracted all of the existing
+    # note that the style_pycode() method extracted all of the existing
     # text, removing any original markup (and other elements), so that we
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
-    # determine where the code should appear; we can't have both
-    # no-pre and no-copy at the same time
-    if not "no-pre" in vlam:
-        try:
-            elem.insert(0, markup)
-        except AssertionError:
-            pass
+
+    insert_markup(elem, uid, vlam, markup)
+
     if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
@@ -152,19 +143,12 @@ def insert_alternate_python(page, elem, uid):
             page.add_include("exec_included")
             page.add_js_code(exec_jscode)
 
-    code, markup, error = plugin['services'].style_pycode(page, elem)
+    code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
 
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
-    if not "no-pre" in vlam:
-        try:
-            elem.insert(0, markup)
-        except AssertionError:
-            pass
+    insert_markup(elem, uid, vlam, markup)
+
     if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
@@ -212,17 +196,10 @@ def _test_sanitize_for_ElementTree(page, elem, uid):
     filepath = os.path.join(plugin['get_root_dir'](), 'sanitize.py')
     f = open(filepath)
     elem.text = f.read()
-    code, markup, error = plugin['services'].style_pycode(page, elem)
+    code, markup, dummy = plugin['services'].style_pycode(page, elem)
 
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
-    if not "no-pre" in vlam:
-        try:
-            elem.insert(0, markup)
-        except AssertionError:
-            pass
+    insert_markup(elem, uid, vlam, markup)
+
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
 
     btn = SubElement(elem, "button")
@@ -235,11 +212,28 @@ def _test_sanitize_for_ElementTree(page, elem, uid):
     btn.text = _("Execute as external program")
     path_label.attrib['class'] = 'path_info'
 
+def insert_markup(elem, uid, vlam, markup):
+    '''clears an element and inserts the new markup inside it'''
+    elem.clear()
+    elem.tag = "div"
+    elem.attrib["id"] = "div_"+uid
+    elem.attrib['class'] = "crunchy"
+    if not "no-pre" in vlam:
+        try:
+            elem.insert(0, markup)
+        except AssertionError:  # this should never happen
+            elem.insert(0, Element("br"))
+            bold = Element("b")
+            span = Element("span")
+            span.text = "AssertionError from ElementTree"
+            bold.append(span)
+            elem.insert(1, bold)
+
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required
 # services appear here
 # with a random session id appended for security reasons.
-exec_jscode= """
+exec_jscode = """
 function exec_code(uid){
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
@@ -270,4 +264,5 @@ function exec_code_externally_python_interpreter(uid){
     inp = document.getElementById("input1_"+uid).value;
     j.send(inp+"_::EOF::_"+path+"_::EOF::_"+code);
 };
-"""%(plugin['session_random_id'], plugin['session_random_id'], plugin['session_random_id'])
+""" % (plugin['session_random_id'], plugin['session_random_id'],
+       plugin['session_random_id'])

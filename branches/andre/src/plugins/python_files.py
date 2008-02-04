@@ -14,6 +14,9 @@ class Python_file(object):
     def __init__(self, data):
         self._data = data
     def read(self):
+        '''
+        return the only class attribute as a string; used to simulate a file
+        '''
         return self._data
 
 def load_python(request):
@@ -46,7 +49,7 @@ def load_python(request):
 
     </body>
     </html>
-    """%(url, url, interpreter_python_code, python_code)
+    """ % (url, url, interpreter_python_code, python_code)
 
     fake_file = Python_file(html_template)
     page = plugin['create_vlam_page'](fake_file, url, local=True)

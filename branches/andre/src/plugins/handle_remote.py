@@ -10,9 +10,13 @@ from src.interface import plugin, preprocessor
 provides = set(["/remote"])
 
 def register():
+    '''registers http handler for dealing with remote files'''
     plugin['register_http_handler']("/remote", remote_loader)
 
 def remote_loader(request):
+    '''
+    create a vlam page from a request to get a remote file
+    '''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
     if extension in ['htm', 'html']:
