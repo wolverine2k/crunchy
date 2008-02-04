@@ -10,7 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
-from src.interface import python_version, python_minor_version
+from src.interface import python_version
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -122,7 +122,7 @@ def comet(request):
     try:
         request.wfile.write(data)
     except:
-        if python_version >=3:
+        if python_version >= 3:
             try:
                 data = bytes(data, sys.getdefaultencoding())
             except:
@@ -142,6 +142,7 @@ def write_js(pageid, jscode):
     output_buffers[pageid].put(jscode)
 
 def write_output(pageid, uid, output):
+    '''write some simple output to an element identified by its uid'''
     output_buffers[pageid].put_output(output, uid)
 
 def do_exec(code, uid, doctest=False):
@@ -156,7 +157,7 @@ def do_exec(code, uid, doctest=False):
         # need to figure out the new string handling; the above
         # code always returns using Python 3k
         pass
-       
+
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
@@ -180,7 +181,7 @@ def push_input(request):
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
-    if python_version >=3:
+    if python_version >= 3:
         request.data = str(request.data)
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
@@ -218,6 +219,11 @@ class ThreadedBuffer(object):
     # the following is defined as a dummy function to make IPython work;
     # it is currently ignored by Crunchy.
     def flush(self):
+        '''
+        dummy function required by IPython; otherwised ignored by Crunchy.
+
+        Currently unused.
+        '''
         return
 #====     end of IPython stuff
 
@@ -227,7 +233,7 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-        
+
         # the following does not seem to work for py3k...
         if python_version < 3:
             output_buffers[pageid].put(reset_js % (uid, uid))
@@ -293,8 +299,8 @@ class ThreadedBuffer(object):
         else:
             self.default_out.write(data)
 
-    def read(self, length=0):
-        """len is ignored, N.B. this function is rarely, if ever, used - and is probably untested"""
+    def read(self):
+        """N.B. this function is rarely, if ever, used - and is probably untested"""
         uid = threading.currentThread().getName()
         if self.__redirect(uid):
             #read the data
@@ -303,17 +309,17 @@ class ThreadedBuffer(object):
             data = self.default_in.read()
         return data
 
-    def readline(self, length=0):
-        """len is ignored, can block, complex and oft-used, needs a testcase"""
-        # used by Interactive Console - raw_input(">>>")
+    def readline(self):
+        """used by Interactive Console - raw_input(">>>")"""
+
         uid = threading.currentThread().getName()
         new_id = "none"
-        debug_msg("entering readline, uid=%s"%uid, 7)
+        debug_msg("entering readline, uid=%s" % uid, 7)
         if self.__redirect(uid):
             new_id, data = input_buffers[uid].getline(uid)
         else:
             data = self.default_in.readline()
-        debug_msg("leaving readline, uid=%s, new_id=%s\ndata=%s"%(uid,
+        debug_msg("leaving readline, uid=%s, new_id=%s\ndata=%s" % (uid,
                                                            new_id, data), 7)
         return data
 
@@ -326,9 +332,9 @@ class ThreadedBuffer(object):
         """write to the default output"""
         self.default_out.write(data)
 
-def debug_msg(data, id=None):
+def debug_msg(data, id_=None):
     """write a debug message, debug messages always appear on stderr"""
-    if id in debug_ids:
+    if id_ in debug_ids:
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)

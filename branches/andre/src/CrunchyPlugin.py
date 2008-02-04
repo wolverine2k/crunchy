@@ -15,8 +15,7 @@ import src.PluginServices as services
 # use something else than ElementTree, we can avoid having to change
 # any working plugin, as long as we maintain the API here.
 
-from src.interface import Element, SubElement, fromstring, tostring, parse, \
-                          plugin, server, preprocessor
+from src.interface import plugin, server, preprocessor
 plugin['services'] = services
 
 # We generate a random string that will be appended to javascript functions
@@ -36,7 +35,7 @@ def register_http_handler(pattern, handler):
         server['server'].register_default_handler(handler)
     else:
         server['server'].register_handler(pattern, handler)
-        pass
+
 plugin['register_http_handler'] = register_http_handler
 
 def register_preprocessor(extension, handler):
@@ -148,5 +147,6 @@ def get_root_dir():
 plugin['get_root_dir'] = get_root_dir
 
 def gen_uid():
+    '''returns a unique id'''
     return vlam.uidgen()
 plugin['gen_uid'] = gen_uid

@@ -7,8 +7,9 @@ from src.interface import plugin
 provides = set(["/exec"])
 
 def register():
-    # ... whereas we add a random number for security in the actual code used
-    plugin['register_http_handler']("/exec%s"%plugin['session_random_id'], exec_handler)
+    '''registers a single http handler: /exec'''
+    plugin['register_http_handler']("/exec%s" % plugin['session_random_id'],
+                                    exec_handler)
 
 def exec_handler(request):
     """handle an execution request"""

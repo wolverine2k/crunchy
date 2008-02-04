@@ -10,6 +10,7 @@ _ = translate['_']
 provides = set(["io_widget"])
 
 def register():
+    '''register a service'''
     plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
@@ -48,8 +49,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
     if interp_kind is not None:
         editor_link = SubElement(span_input, "a")
-        editor_link.attrib["onclick"]= "return convertToEditor(this,'%s')"\
-                                      %_("Execute")
+        editor_link.attrib["onclick"] = "return convertToEditor(this,'%s')" \
+                                      % _("Execute")
         editor_link.attrib["id"] = "ed_link_" + uid
         image = SubElement(editor_link, 'img')
         image.attrib["src"] = "/editor.png"
@@ -81,7 +82,7 @@ function push_keys(event, uid){
 
     return true;
 };
-"""%plugin['session_random_id']
+""" % plugin['session_random_id']
 
 push_input = r"""
 function push_input(uid){
@@ -93,7 +94,7 @@ function push_input(uid){
     convertFromEditor(uid);
     return true;
 };
-"""%plugin['session_random_id']
+""" % plugin['session_random_id']
 
 # moved most style information to crunchy.css
 io_css = r"""

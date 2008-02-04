@@ -10,6 +10,7 @@ provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])
 
 def register():
+    '''registers a single service: enable_editarea'''
     plugin['register_service']("enable_editarea", enable_editarea)
 
 def enable_editarea(page, elem, textarea_id):
@@ -32,6 +33,9 @@ def enable_editarea(page, elem, textarea_id):
     return
 
 def add_hidden_load_and_save(elem, textarea_id):
+    '''
+    adds hidden load and save javascript objects on a page
+    '''
     hidden_load_id = 'hidden_load' + textarea_id
     hidden_load = SubElement(elem, 'div', id=hidden_load_id)
     hidden_load.attrib['class'] = 'load_python'
@@ -49,7 +53,7 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     '''
     filename = 'filename' + hidden_load_id
     path = 'path' + hidden_load_id
-    br = SubElement(parent, 'br')
+    SubElement(parent, 'br')
     form1 = SubElement(parent, 'form',
                 onblur = "a=getElementById('%s');b=getElementById('%s');a.value=b.value"%(path, filename))
     SubElement(form1, 'input', type='file', id=filename, size='80')
@@ -169,7 +173,7 @@ function save_and_run(path, id)
     var obj = document.getElementById('hidden_save'+id);
 	obj.style.visibility = "hidden";
     obj.style.zIndex = -1;
-};"""%plugin['session_random_id']
+};""" % plugin['session_random_id']
 
 # Some javascript code
 editAreaLoader_js = """

@@ -94,7 +94,7 @@ def insert_security_info(page, *dummy):
 
         # prompt user to approve sites as soon as the first page is loaded
         # if there are sites for which to confirm the security level.
-        if (page.url.startswith("/index")
+        if ((page.url.startswith("/index") or page.url=="/")
                   # will work with /index_fr.html ...
               and config['site_security']
                   # something to confirm
@@ -145,7 +145,7 @@ def insert_security_info(page, *dummy):
                     inp.attrib['type'] = 'radio'
                     inp.attrib['name'] = "rad"
                     inp.attrib['id'] = site + option[0]
-                    br = SubElement(form, 'br')
+                    SubElement(form, 'br')
                     if option[1] == config['site_security'][site]:
                         inp.attrib['checked'] = 'checked'
             # in case list gets too long, we include buttons at top and bottom
@@ -170,7 +170,6 @@ def insert_security_info(page, *dummy):
 def format_report(page, div):
     '''puts the security information (extracted material) into a table
        for display'''
-    #global netloc
     if page.security_info['tags removed']:
         h2 = SubElement(div, 'h2')
         h2.text = _('Removed: tag not allowed')
@@ -331,6 +330,9 @@ appealing.
     return
 
 def set_security_list(request):
+    '''
+    sets the security level for a number of sites on a list
+    '''
     site_list_info = request.data.strip(',').split(',')
     if DEBUG:
         print(site_list_info)
@@ -365,6 +367,9 @@ def set_security_list(request):
     request.wfile.flush()
 
 def empty_security_list(request):
+    '''
+    removes all the sites from the list of sites with security level assigned
+    '''
     sites = []
     for site in config['site_security']:
         sites.append(site)
