@@ -1,4 +1,7 @@
-"""HTML character entity references."""
+"""HTML character entity references.
+
+This is a modification of the module in the standard library
+so that Crunchy can work properly using Python 3.0"""
 
 from htmlentitydefs import name2codepoint
 

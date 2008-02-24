@@ -1,7 +1,7 @@
 .crunchy_menu_container
 {
 height: 56px;
-position:fixed; 
+position:fixed;
 /* right: 0;  set in menu.py */
 top: 0;
 z-index: 10;
@@ -15,11 +15,10 @@ padding: 0;
 
 .security_report {
     position: absolute;
-    cursor: move;
     height: 60px;
-    top: 0;
+    bottom: 0;
     z-index:10;
-    left: 0;
+    right: 0;
     color: black;
     border: 3px solid #FFBC29;
     background-color: white;
@@ -74,5 +73,3 @@ color: white;
 background: #369;
 border: 2px solid #369;
 }
-
-

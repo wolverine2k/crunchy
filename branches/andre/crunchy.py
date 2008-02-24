@@ -5,6 +5,7 @@ from optparse import OptionParser
 import os
 import socket
 import urllib
+from urlparse import urlsplit
 import webbrowser
 
 import src.interface
@@ -75,12 +76,22 @@ def parse_options():
     url_help = """Uses a different start page when starting Crunchy
                     Remote files: http://... (example: http://docs.python.org)
                     Local files: absolute_path.[htm, html, rst, txt, py, pyw]
-               """
+                """
+    safe_url_help = """Uses a different start page when starting Crunchy
+                    and treats the site as completely trusted; this means that
+                    nothing (including scripts) is removed from the pages.
+
+                    Use ONLY if you absolutely trust the site.
+                    Remote files: http://... (example: http://docs.python.org)
+                    Local files: absolute_path.[htm, html, rst, txt, py, pyw]
+                    """
     interactive_help = """Somewhat equivalent to normal "python -i script.py".
                           Ignored if --url is used.
                           """
     parser.add_option("--url", action="store", type="string", dest="url",
             help=url_help)
+    parser.add_option("--completely_trusted", action="store", type="string",
+                      dest="safe_url", help=safe_url_help)
     parser.add_option("--i", action="store", type="string", dest="interactive",
             help=interactive_help)
     parser.add_option("--port", action="store", type="int", dest="port",
@@ -101,8 +112,12 @@ def parse_options():
         for key in src.interface.debug:
             src.interface.debug[key] = True
     url = None
+    src.interface.completely_safe_url = None
     if options.url:
         url = convert_url(options.url)
+    if options.safe_url:
+        src.interface.completely_safe_url = urlsplit(options.safe_url)[1]
+        url = convert_url(options.safe_url)
     elif options.interactive:
         src.interface.interactive = True
         url = convert_url(options.interactive)

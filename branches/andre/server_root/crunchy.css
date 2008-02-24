@@ -2,7 +2,7 @@
  inspired by the new Python doc style
 */
 
-body { 
+body {
 font-family: 'Arial', sans-serif;
 font-weight: normal;
 font-size: 12pt;
@@ -27,12 +27,12 @@ div.crunchy{
 
 /* Basic Python Elements. This version uses choices that are "somewhat" similar to the
    new Python.org doc style.
-   Color choices for the editor (EditArea) are found in file python.js of the EditArea 
+   Color choices for the editor (EditArea) are found in file python.js of the EditArea
    distribution and can not be set via a style sheet.*/
-.py_keyword{font: 12pt monospace; color: #007020; font-weight: bold;} 
+.py_keyword{font: 12pt monospace; color: #007020; font-weight: bold;}
 .py_number{font: 12pt monospace; color: #207030;}
 .py_comment{
-    color: grey; 
+    color: grey;
     font: 12pt monospace, sans-serif; /*keep monospace to have proper indentation */
     font-style: italic;
     }
@@ -54,7 +54,7 @@ pre.crunchy{
     border-bottom: 1px solid #ac9;
 	font-size:12pt;
 	}
-code.crunchy{    
+code.crunchy{
     background-color: #f8fff0;
     padding: 0 1px 0 1px;
     font: 12pt monospace;
@@ -206,9 +206,9 @@ padding:1px;
 .security_info{
 background-color: white;
 color: darkblue;
-top:0px; 
-left:50px; 
-font-size:10pt; 
-position:absolute; 
+bottom:0px;
+left:50px;
+font-size:10pt;
+position:absolute;
 z-index:2
 }

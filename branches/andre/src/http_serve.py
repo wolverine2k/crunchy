@@ -110,4 +110,3 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def send_response(self, code):
         BaseHTTPRequestHandler.send_response(self, code)
         self.send_header("Connection", "close")
-

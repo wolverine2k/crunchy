@@ -1,7 +1,7 @@
 doc_code_check.py tests
 ================================
 
-Not tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 
 It contains one method that need to be tested:
