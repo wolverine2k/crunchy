@@ -102,7 +102,7 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems; not fully implemented)")
-    (options, args) = parser.parse_args()
+    (options, dummy) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True
     else:
@@ -153,5 +153,5 @@ def convert_url(url):
     return url
 
 if __name__ == "__main__":
-    url, port = parse_options()
-    run_crunchy(port=port, url=url)
+    _url, _port = parse_options()
+    run_crunchy(port=_port, url=_url)

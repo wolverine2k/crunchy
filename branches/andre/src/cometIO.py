@@ -123,14 +123,16 @@ def comet(request):
         request.wfile.write(data)
     except:
         if python_version >= 3:
-            try:
-                data = bytes(data, sys.getdefaultencoding())
-            except:
-                print("could not convert data to bytes")
-            try:
-                request.wfile.write(data)
-            except:
-                print("failed writing data in cometIO.comet")
+            print("Python 3.x not currently supported.")
+            raise SystemExit
+            #try:
+            #    data = bytes(data, sys.getdefaultencoding())
+            #except:
+            #    print("could not convert data to bytes")
+            #try:
+            #    request.wfile.write(data)
+            #except:
+            #    print("failed writing data in cometIO.comet")
     request.wfile.flush()
 
 def register_new_page(pageid):
@@ -181,8 +183,8 @@ def push_input(request):
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
-    if python_version >= 3:
-        request.data = str(request.data)
+    #if python_version >= 3:
+    #    request.data = str(request.data)
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
 
@@ -237,8 +239,8 @@ class ThreadedBuffer(object):
         # the following does not seem to work for py3k...
         if python_version < 3:
             output_buffers[pageid].put(reset_js % (uid, uid))
-        else:
-            output_buffers[pageid].put(reset_js_3k.format(uid, uid))
+        #else:
+        #    output_buffers[pageid].put(reset_js_3k.format(uid, uid))
 
     def unregister_thread(self):
         """

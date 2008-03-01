@@ -5,8 +5,8 @@ from dircache import listdir, annotate
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import python_version, translate, plugin, server, debug, \
-                      debug_msg, preprocessor
+from src.interface import translate, plugin, server, debug, \
+                      debug_msg, preprocessor #,python_version
 
 _ = translate['_']
 
@@ -83,21 +83,25 @@ def handler(request):
         try:
             request.wfile.write(data)
         except:
-            if python_version >= 3:
-                try:
-                    data = bytes(data, sys.getdefaultencoding())
-                except:
-                    if debug['handle_default'] or debug['handle_default.handler']:
-                        debug_msg("could not convert data to bytes")
-                    else:
-                        pass
-                try:
-                    request.wfile.write(data)
-                except:
-                    if debug['handle_default'] or debug['handle_default.handler']:
-                        debug_msg("failed writing data in handler")
-                    else:
-                        pass
+            # commenting out, keeping around for future reference
+            #if python_version >= 3:
+                #try:
+                #    data = bytes(data, sys.getdefaultencoding())
+                #except:
+                #    if debug['handle_default'] or debug['handle_default.handler']:
+                #        debug_msg("could not convert data to bytes")
+                #    else:
+                #        pass
+                #try:
+                #    request.wfile.write(data)
+                #except:
+                #    if debug['handle_default'] or debug['handle_default.handler']:
+                #        debug_msg("failed writing data in handler")
+                #    else:
+                #        pass
+            # placeholder until Python 3.x supported
+            print("should not have happened")
+            raise
 
 def get_directory(npath):
     '''gets a directory listing from a path'''

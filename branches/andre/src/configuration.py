@@ -26,6 +26,8 @@ except:
 if python_version < 3:
     import cPickle
 else:
+    print("Python 3.x not supported")
+    raise SystemExit
     import pickle as cPickle
 
 _ = translate['_']
@@ -105,6 +107,10 @@ class Defaults(object):
             self.debug = debug
 
     def _load_settings(self):
+        '''
+        loads the user settings from a configuration file; uses default
+        values if file specific settings is not found.
+        '''
         success = False
         pickled_path = os.path.join(self.__user_dir, "settings.pkl")
         try:
@@ -175,6 +181,7 @@ class Defaults(object):
         return
 
     def _save_settings(self):
+        '''save user settings to a configuration file'''
         saved = {}
         saved['no_markup'] = self.__no_markup
         saved['language'] = self.__language
@@ -252,6 +259,7 @@ class Defaults(object):
 
     #==============
     def _get_user_dir(self):
+        '''returns the user directory'''
         return self.__user_dir
 
     user_dir = property(_get_user_dir, None, None,
@@ -259,6 +267,7 @@ class Defaults(object):
     #==============
 
     def _get_temp_dir(self):
+        '''returns a temporary directory specific to Crunchy'''
         if python_version < 3:
             return self.__temp_dir.decode(sys.getfilesystemencoding())
         else:
@@ -348,8 +357,15 @@ You can change some of the default values by Crunchy, just like
                         value = "'" + value + "'"
                     else:
                         value = str(value)
-                    __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
-                        self._prefix + "." +  key + " = " + value
+                    try:
+                        __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
+                            self._prefix + "." +  key + " = " + value
+                    except:
+                        # the following appears to be needed if the path
+                        # contains non-ascii characters
+                        __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
+                                    self._prefix + "." +  key + " = " + \
+                                    value.decode('utf-8')
         return __help + "\n"
 
     help = property(_get_help, None, None, 'help')
@@ -573,7 +589,7 @@ You can change some of the default values by Crunchy, just like
 
     def page_security_level(self, url):
         info = urlsplit(url)
-        # info.netloc == info[1] is not Python 2.4 compatible
+        # info.netloc == info[1] is not Python 2.4 compatible; we "fake it"
         info_netloc = info[1]
         if info_netloc == '':
             level = self.local_security
