@@ -109,7 +109,7 @@ specific_allowed = {
 
 # text structure
     'br' : ['clear'],
-    'div': ['align', 'width'],
+    'div': ['align', 'width', 'name'],
     'h1': ['align'],
     'h2': ['align'],
     'h3': ['align'],
