@@ -697,7 +697,9 @@ class ElementTree:
                     file.write(" %s=\"%s\"" % (_encode(k, encoding),
                                                _escape_attrib(v, encoding)))
             ### following line modified from original for Crunchy
-            if node.text != None or len(node):
+            # by preventing divs from self-closing, we can display
+            # sites such as www.python.org properly.
+            if node.text != None or len(node) or tag=='div':
                 file.write(">")
                 if node.text:
                     file.write(_escape_cdata(node.text, encoding))

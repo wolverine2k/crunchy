@@ -63,15 +63,14 @@ def debug_msg(data):
 # BeautifulSoup, in order to parse and process files.
 
 ElementTree = None
-# ElementTree is part of Python as of version 2.5; however, HTMLTreebuilder
-# is not part of the standard distribution - but we may not need to retain it...
-# ... this needs to be explored further at a later time.
-if python_version == 2.4:
-    from src.element_tree import ElementTree, HTMLTreeBuilder
-    parse = HTMLTreeBuilder.parse
-else:
-    from xml.etree import ElementTree
-    parse = ElementTree.parse
+# ElementTree is part of Python as of version 2.5;
+# however, HTMLTreeBuilder is not included in 2.5
+# (but another version of parse is included)
+# Nonetheless, we use a customized version.  We might be able to simply
+# redefine a method or two ... but we'll use the one we customized for now.
+
+from src.element_tree import ElementTree, HTMLTreeBuilder
+parse = HTMLTreeBuilder.parse
 Element = ElementTree.Element
 SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
