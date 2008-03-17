@@ -13,6 +13,7 @@ Currently, the unit test coverage for the Crunchy code is less than half done.  
 
 The following are some ideas of varying complexity.  Some are suitable for a full project; others are shorter ones, doable in a few days by someone familiar with Crunchy and Python (and, possibly, a bit of Javascript):
   * Having the option to use unittest instead of doctest as an interactive element (would be a simple plugin, no more than 2 weeks).
+  * Implement a Silverlight plugin for Crunchy.
   * Session logging exist in a primitive form; extend them with possible automated emailing of log to teacher. Again should be only a subproject.
   * Timed doctests (with the "Evaluate button" appearing only for a fixed amount of time) (should be a relatively simple change to the doctest plugin). This is also a short project.
   * Implementing rur-ple [http://rur-ple.sf.net] within Crunchy; this *might* be an ambitious SoC project.
