@@ -21,5 +21,6 @@ The following are some ideas of varying complexity.  Some are suitable for a ful
   * Creating a new Crunchy version compatible with Python 3.0.  Some experimental work has been done showing that it should be doable in just a few weeks.
   * Finding a way to stop an interpreter running thread.  This is apparently done by Sage, and would likely require the use of ctypes.
   * Creating a classroom server to keep track of student's responses to tests.
+  * Create a collection of doctest-based problems for simple (and not so simple) Python exercises for list, strings, dicts, math functions, etc.  The beginning of a collection can be found at [http://code.google.com/p/doctests/source/browse]; this is the list referred to at [http://wiki.python.org/moin/ProblemSets/99_Prolog_Problems_Solutions] for problems 1 to 6.
 
 These are just some ideas; feel free to make your own suggestions!
