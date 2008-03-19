@@ -1,9 +1,12 @@
-Documentation for the Crunchy Plugin API *This does not apply to the current 0.8a release*
-
+Documentation for the Crunchy Plugin API 
 
 = Introduction =
 
-Crunchy is turning into a web framework with plugins.  These plugins handle almost all of the Crunchy-specific work, so the core application could easily be adapted for other uses (although it really is pretty basic).
+Starting with version 0.8, Crunchy has been redesigned to be extensible via plugins.  Many of Crunchy's functions have been re-written as plugins.
+
+In order to allow isolated testing of individual plugins, a special module (interface.py) has been defined as a bridge between Crunchy's core and plugins.  
+
+The following document provides a quick overview of Crunchy's plugin API.
 
 == What is a plugin? ==
 
@@ -19,14 +22,14 @@ There are only three elements of a plugin module specified by the API:
 Example plugin file:
 {{{
 # import the API:
-from CrunchyPlugin import *
+from src.interface import plugin
 
 provides = set(["http_hello"])
 requires = set()
 
 def register():
     """Go ahead and register the plugin"""
-    register_http_handler(None, hello_handler)
+    plugin['register_http_handler'](None, hello_handler)
     
 ...
 }}}
@@ -34,9 +37,8 @@ def register():
 
 This contains virtually all of the API.
 
-*Note: Whereas the API used to be object-oriented, this was overkill and it is now just plain procedural.*
 
-The `CrunchyPlugin` module provides the following functions:
+The `CrunchyPlugin`, which module provides the following functions:
 
 == register_http_handler(pattern, handler) ==
 
@@ -54,23 +56,25 @@ def mypath_handler(request):
     print "handling /mypage"
 }}}
 
-== register_vlam_handler(elem_type, option, handler) ==
+== register_tag_handler(tag, attribute, keyword, handler) ==
 
-Used to register a custom handler for an VLAM element.
+Used to register a custom handler for an html element.
 
-`elem_type` and `option` should be Strings. `elem_type` should match the tag of the html object and `option` should match the value of its type attribute.
+`tag`, `attribute` and `keyword` should be Strings. `tag` and `attribute` are the normal html tag and attribute whereas `keyword` is taken to be the first "word" in the attribute string. For example, in <pre title="interpreter linenumber">, `pre` is the tag, `title` is the attribute, and `interpreter` would be the keyword.
+
 
 `handler` should be a callable object that takes three arguments: A CrunchyPage object (see below), an elementtree.Element object and a unique string ID (uid).
 
 Example:
 {{{
 def register(self):
-    register_vlam_handler("pre", "editor", self.insert_editor)
+    plugin['register_tag_handler']("pre", "title", "editor", insert_editor)
     
 def insert_editor(page, elem, uid):
     print "inserting an editor..."
 }}}
 
+=*The following needs to be updated*=
 == create_vlam_page(filehandle) ==
 
 Creates (and returns) a CrunchyPage object from filehandle. CrunchyPage objects should not be created directly but via this factory function.
