@@ -62,7 +62,7 @@ override_default_interpreter_allowed_values = ['default', # ipython,
         'interpreter', 'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
 
 no_markup_allowed_values = ["none", "editor", 'python_tutorial',
-            "python_code", "image_file", "alternate_python_version", "alt_py"]
+            "python_code", "doctest", "alternate_python_version", "alt_py"]
                                   # image_file needs an optional argument
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
