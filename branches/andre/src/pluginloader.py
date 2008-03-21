@@ -50,13 +50,17 @@ def init_plugin_system(server):
     """load the plugins and has them self-register."""
     plugins = gen_plugin_list()
     interface.server['server'] = server
-    if not "src/plugins/" in sys.path:
-        sys.path.insert(0, "src/plugins")
-    # for the above, we only need the relative path at this point.
-    
+
+    # In case Crunchy was not started from its root directory via
+    # python crunchy.py, but instead from another directory like
+    # python /this/path/to/crunchy.py
+    # we need to add explictly the path to the
+    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
+                                    "src", "plugins"))
+
     # In addition, add the same for the non-plugins files that are meant to be
     # imported by the user, such as graphics.py, etc.
-    # This time, need the absolute path as the base path may be changed
+    # For this, we always need the absolute path as the base path may be changed
     # by the user through some code execution.
     sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
                                     "src", "imports"))
