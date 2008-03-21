@@ -56,6 +56,7 @@ def link_handler(page, elem):
 
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
+            elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(elem.attrib["href"])
         return
 
     href = elem.attrib["href"]
