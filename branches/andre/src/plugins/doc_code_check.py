@@ -20,8 +20,7 @@ names = {}
 
 css = """
 .test_output{background-color:#ccffcc}
-
-.test_setup{background-color:#cccccc}
+.test_setup{background-color:#bbccff}
 """
 
 def register():
@@ -123,8 +122,8 @@ def code_setup_process(page, elem, uid):
     vlam = elem.attrib["title"]
     name = extract_name(vlam)
     # next, we style the code, also extracting it in a useful form
-    setup_code, markup, error = plugin['services'].style_pycode(page, elem,
-                                                                css_class='test_setup')
+    setup_code, markup, error = plugin['services'].style_pycode(page,
+                                                   elem, css_class='test_setup')
     if error is not None:
         markup = copy.deepcopy(elem)
     # which we store
@@ -137,7 +136,7 @@ def code_setup_process(page, elem, uid):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
+    elem.attrib["id"] = "div_" + uid
     elem.attrib['class'] = "test_setup"
     # We insert the styled setup code inside this container element:
     elem.append(markup)
@@ -175,7 +174,7 @@ def code_sample_process(page, elem, uid):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
+    elem.attrib["id"] = "div_" + uid
     elem.attrib['class'] = "crunchy"
     # We insert the styled sample code inside this container element:
     elem.append(markup)
@@ -230,7 +229,7 @@ def expected_output_process(dummy, elem, uid):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
+    elem.attrib["id"] = "div_" + uid
     elem.attrib['class'] = "test_output"
     # Create a title
     h4 = SubElement(elem, 'h4')
@@ -246,21 +245,15 @@ def insert_comprehensive_test_button(page):
     text = "Run all tests"
     action = "check_all_code_samples('%s')" % page.pageid
 
-    btn1 = Element("button")
+    label = 'btn1_' + page.pageid
+    btn1 = Element("button", style=style, onclick=action, id=label, label=label)
     btn1.text = text
-    btn1.attrib['style'] = style
-    btn1.attrib['onclick'] = action
-    btn1.attrib['id'] = 'btn1_' + page.pageid
-    btn1.attrib['label'] = 'btn1_' + page.pageid
-    page.body.insert(0, btn1)  # inserted at the top
+    page.body.insert(0, btn1)  # insert at the top
 
-    btn2 = Element("button")
+    label = 'btn2_' + page.pageid
+    btn2 = Element("button", style=style, onclick=action, id=label, label=label)
     btn2.text = text
-    btn2.attrib['style'] = style
-    btn2.attrib['onclick'] = action
-    btn2.attrib['id'] = 'btn2_' + page.pageid
-    btn1.attrib['label'] = 'btn2_' + page.pageid
-    page.body.append(btn2)  # inserted at the bottom
+    page.body.append(btn2)  # append at the bottom
     return
 
 # javascript code for all the tests on a page
