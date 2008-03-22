@@ -48,14 +48,11 @@ def register():
     # ... or the simulated interactive session, usable as a doctest.
     plugin['register_service']("style_pycode_nostrip", service_style_nostrip)
 
-
-
 def plugin_style(dummy_page, elem, dummy_uid, css_class='crunchy'):
     '''Handles the vlam py_code elements'''
     dummy, markup, dummy = style(elem, css_class=css_class)
     replace_element(elem, markup)
     return
-
 
 def service_style(dummy_page, elem, css_class='crunchy'):
     '''style() as called by other plugins as a service'''
@@ -63,13 +60,13 @@ def service_style(dummy_page, elem, css_class='crunchy'):
 
 def service_style_nostrip(dummy_page, elem, css_class='crunchy'):
     '''style_nostrip() as called by other plugins as a service'''
-    return nostrip_style(elem, css_class=css_class)
+    return style(elem, css_class=css_class, no_strip=True)
 
 #---------end plugin specific-------------------------
 
 #--------Begin ElementTree dependent part-------------
 
-def style(elem, css_class='crunchy'):
+def style(elem, css_class='crunchy', no_strip=False):
     """
     style some Python code (adding html markup) and return it inside the
     original html element (<pre> or <code>, most likely) with attributes
@@ -108,7 +105,12 @@ def style(elem, css_class='crunchy'):
 
     # styling
     offset = get_linenumber_offset(elem.attrib['title'])
-    py_code, styled_code, error_found = _style(py_code, offset)
+    if no_strip:  # meant to be used with doctest-like plugins
+                  # keep the original python code (interpreter session)
+                  # so that it can be executed by the doctest module if needed
+        dummy, styled_code, error_found = _style(py_code, offset)
+    else:
+        py_code, styled_code, error_found = _style(py_code, offset)
 
     # re-creating element
     tag = elem.tag
@@ -128,50 +130,6 @@ def style(elem, css_class='crunchy'):
     if 'class' in new_elem.attrib:
         if 'crunchy' not in new_elem.attrib['class']:
             new_elem.attrib['class'] += ' ' + css_class
-    else:
-        new_elem.attrib['class'] = css_class
-    new_elem.tail = tail
-    return py_code, new_elem, error_found
-
-def nostrip_style(elem, css_class='crunchy'):
-    """performs exactly the same as style(elem) except that the python
-    code it returns is intended to be the exact copy of an original
-    interpreter session (stripped of any html markup).
-    It is intended to be used with 'doctest' - and any other similar
-    future plugin.  Note: we could have included this functionality
-    within style() by parsing elem.attrib['title'] for 'doctest',
-    but this would have prevented the creation of a doctest-like plugin
-    independently of changing the code for style().
-    """
-    py_code = extract_code(elem)
-    if "no_style" in elem.attrib['title']:
-        new_elem = copy.deepcopy(elem)
-        return py_code, new_elem, None
-
-    tail = elem.tail
-    # styling
-    offset = get_linenumber_offset(elem.attrib['title'])
-    dummy, styled_code, error_found = _style(py_code, offset)
-    # re-creating element
-    tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>" % (tag, styled_code, tag)
-    try:
-        new_elem = et.fromstring(new_html)
-    except:
-        new_html = new_html.encode('utf-8')
-        try:
-            new_elem = et.fromstring(new_html)
-        except:
-            sp = et.Element("span")
-            sp.attrib['class'] = "py_warning"
-            sp.text = _("Crunchy: could not style the following code")
-            return '', '', sp   # will be treated as special case in vlam_image_file.py
-                                # Need to treat this more consistently i.e. have the
-                                # same number of arguments returned - perhaps check
-                                # if return a tuple as second argument
-    new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
-    if 'class' in new_elem.attrib:
-        new_elem.attrib['class'] += ' ' + css_class
     else:
         new_elem.attrib['class'] = css_class
     new_elem.tail = tail
