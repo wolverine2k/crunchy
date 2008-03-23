@@ -9,9 +9,15 @@ import re
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin
+import src.imports.graphics as graphics
+
+validate_colour = graphics.validate_colour
+set_line_colour = graphics.set_line_colour
+set_line_color = set_line_colour
+set_fill_colour = graphics.set_fill_colour
+set_fill_color = set_fill_colour
 
 created_uids = []
-
 HEIGHTS = {}
 
 def init_graphics(width=400, height=400, border_color='red'):
@@ -38,22 +44,6 @@ def init_graphics(width=400, height=400, border_color='red'):
 def clear_graphics():
     '''remove existing graphics from a page'''
     init_graphics(0, 0)
-
-def set_line_colour(col):
-    '''Sets the default line colour using a valid value given as a string.'''
-    uid = plugin['get_uid']()
-    if not validate_colour(col):
-        col = "DeepPink" # make it stand out for now
-    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').strokeStyle = %r;""" % (uid, col))
-set_line_color = set_line_colour # American spelling == British/Canadian spelling
-
-def set_fill_colour(col):
-    '''Sets the default fill colour using a valid value given as a string.'''
-    uid = plugin['get_uid']()
-    if not validate_colour(col):
-        col = "DeepPink" # make it stand out for now
-    plugin['exec_js'](plugin['get_pageid'](), """document.getElementById("canvas_%s").getContext('2d').fillStyle = %r;""" % (uid, col))
-set_fill_color = set_fill_colour
 
 def line(point_1, point_2):
     '''Draws a line from point_1 = (x1, y1) to point_2 (x2, y2) in the default line colour.'''
@@ -140,51 +130,4 @@ def point(x, y):
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, uid, x+1, y+1, uid))
 
-
-
-#--- colour validation
-named_colour = re.compile('^[a-zA-Z]*[a-zA-Z]$') # only letters
-hex_code = re.compile('^#[a-fA-F0-9]{5,5}[a-fA-F0-9]$') # begin with "#", then 6 hexadecimal values
-rgb_pattern = re.compile('^rgb\s*\((.+?),(.+?),(.+?)\)$') #begins with rgb(, etc
-rgba_pattern = re.compile('^rgba\s*\((.+?),(.+?),(.+?),(.+?)\)$')
-
-def validate_colour(colour):
-    '''verifies that the colour given follows an acceptable pattern'''
-    colour = colour.strip()
-    if hex_code.match(colour):
-        return True
-    elif named_colour.match(colour): # ; assume valid as colour name;
-        return True           # javascript would treat it as black otherwise.
-    elif rgb_pattern.match(colour):
-        res = rgb_pattern.search(colour)
-        try:
-            r = int(res.groups()[0])
-            g = int(res.groups()[1])
-            b = int(res.groups()[2])
-            if r >= 0 and r <= 255 and g >= 0 and g <= 255 and b >= 0 and b <= 255:
-                return True
-            else:
-                return False
-                #raise errors.ColourNameError(colour)
-        except:
-            return False
-            #raise errors.ColourNameError(colour)
-    elif rgba_pattern.match(colour):
-        res = rgba_pattern.search(colour)
-        try:
-            r = int(res.groups()[0])
-            g = int(res.groups()[1])
-            b = int(res.groups()[2])
-            a = float(res.groups()[3])
-            if r >= 0 and r <= 255 and g >= 0 and g <= 255 and b >= 0 and b <= 255 \
-                and a >= 0. and a <= 1.0:
-                return True
-            else:
-                return False
-                #raise errors.ColourNameError(colour)
-        except:
-            return False
-            #raise errors.ColourNameError(colour)
-    return False
-    #raise errors.ColourNameError(colour)
 
