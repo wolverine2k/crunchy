@@ -3,7 +3,7 @@
    a collection of functions used in other modules.
 '''
 import re
-from src.interface import python_version, config, plugin
+from src.interface import python_version, config, plugin, SubElement
 
 def extract_log_id(vlam):
     '''given a vlam of the form
@@ -21,6 +21,24 @@ def extract_log_id(vlam):
         return res.groups()[0].strip()
     else:
         return ''
+
+def insert_file_browser(parent, text, action):
+    '''inserts a local file browser object in an html page'''
+    name1 = 'browser_%s' % action[1:]
+    name2 = 'submit_%s' % action[1:]
+    form1 = SubElement(parent, 'form', name=name1,
+                        onblur = "document.%s.url.value="%name2+\
+                        "document.%s.filename.value"%name1)
+    SubElement(form1, 'input', type='file',
+                 name='filename', size='80')
+    SubElement(form1, 'br')
+
+    form2 = SubElement(parent, 'form', name=name2, method='get',
+                action=action)
+    SubElement(form2, 'input', type='hidden', name='url')
+    input3 = SubElement(form2, 'input', type='submit', value=text)
+    input3.attrib['class'] = 'crunchy'
+    return
 
 def trim_empty_lines_from_end(text):
     '''remove blank lines at beginning and end of code sample'''

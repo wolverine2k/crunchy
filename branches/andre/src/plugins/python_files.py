@@ -1,7 +1,7 @@
 """Plugin for loading and transforming python files."""
 
-from src.interface import plugin, SubElement, interactive
-from src.utilities import changeHTMLspecialCharacters
+from src.interface import plugin, interactive
+from src.utilities import changeHTMLspecialCharacters, insert_file_browser
 
 def register():
     """Registers new http handler and new widget for loading ReST files"""
@@ -61,16 +61,5 @@ def load_python(request):
 def insert_load_python(dummy_page, parent, dummy_uid):
     """Creates new widget for loading python files.
     Only include <span title="load_python"> </span>"""
-    name1 = 'browser_python'
-    name2 = 'submit_python'
-    form1 = SubElement(parent, 'form', name=name1,
-                        onblur = "document.%s.url.value="%name2+\
-                        "document.%s.filename.value"%name1)
-    SubElement(form1, 'input', type='file', name='filename', size='80')
-    SubElement(form1, 'br')
-
-    form2 = SubElement(parent, 'form', name=name2, method='get', action='/py')
-    SubElement(form2, 'input', type='hidden', name='url')
-    input3 = SubElement(form2, 'input', type='submit',
-                        value='Load local Python file')
-    input3.attrib['class'] = 'crunchy'
+    insert_file_browser(parent, 'Load local Python file', '/py')
+    return

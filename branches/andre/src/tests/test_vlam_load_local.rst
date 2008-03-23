@@ -28,7 +28,7 @@ See how_to.rst_ for details.
 ---------------------
 
 # Test - check that tag handler, and service have been registered
-    >>> vlam_load_local.register() 
+    >>> vlam_load_local.register()
     >>> print(mocks.registered_tag_handler['span']['title']['load_local'] == vlam_load_local.insert_load_local)
     True
 
@@ -36,7 +36,7 @@ See how_to.rst_ for details.
 ------------------------------
 
 This method inserts two forms inside a <span> element.
-    
+
     >>> fake_page = ''  # unused
     >>> fake_uid = '2'  # unused
     >>> span = Element("span")
@@ -51,7 +51,7 @@ This method inserts two forms inside a <span> element.
 Testing the first generated form
 
     >>> forms[0].attrib["name"]
-    'browser_'
+    'browser_local'
     >>> input = forms[0].find("input")
     >>> input.attrib["name"]
     'filename'
@@ -65,7 +65,7 @@ Testing the first generated form
 Now the second one
 
     >>> forms[1].attrib["name"]
-    'submit_'
+    'submit_local'
     >>> forms[1].attrib["method"]
     'get'
     >>> forms[1].attrib["action"]

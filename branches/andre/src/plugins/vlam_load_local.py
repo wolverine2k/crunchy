@@ -9,7 +9,8 @@ for people familiar with the Crunchy plugin architecture.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, SubElement
+from src.interface import plugin
+from src.utilities import insert_file_browser
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["/local"])
@@ -27,18 +28,5 @@ def register():
 
 def insert_load_local(dummy_page, parent, dummy_uid):
     "Inserts a javascript browser object to load a local (html) file."
-    name1 = 'browser_'
-    name2 = 'submit_'
-    form1 = SubElement(parent, 'form', name=name1,
-                        onblur = "document.%s.url.value="%name2+\
-                        "document.%s.filename.value"%name1)
-    SubElement(form1, 'input', type='file',
-                 name='filename', size='80')
-    SubElement(form1, 'br')
-
-    form2 = SubElement(parent, 'form', name=name2, method='get',
-                action='/local')
-    SubElement(form2, 'input', type='hidden', name='url')
-    input3 = SubElement(form2, 'input', type='submit',
-             value='Load local tutorial')
-    input3.attrib['class'] = 'crunchy'
+    insert_file_browser(parent, 'Load local html tutorial', '/local')
+    return
