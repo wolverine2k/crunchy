@@ -26,5 +26,6 @@ The following are some ideas of varying complexity.  Some are suitable for a ful
   * add a history to a Python interpreter so that commands previously typed in can be recalled by pressing the up arrow key.  (Note: this used to be part of Crunchy prior to version 0.8 - so it would just be a matter of retrieving the old [javascript] code and adapting it to the newer Crunchy.)
   * do live logging of Crunchy session accessible via a hackystat plugin.
   * incorporate pylint as an option to doctests so as to give an evaluation of the code "quality" at the same time as evaluating its correctness.
+  * add a notebook (like Mathematics) feature for Crunchy where a user can create a simple tutorial inside a browser, with alternating text and Python code.
 
 These are just some ideas; feel free to make your own suggestions!
