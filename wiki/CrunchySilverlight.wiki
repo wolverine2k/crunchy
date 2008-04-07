@@ -14,5 +14,7 @@ Here is a list of the advantages that Silverlight can bring to Crunchy (please a
   * It makes the code run faster, because there is less overhead associated with setting up and tearing down IO connections.
   * If we do continue to communicate with the server, we can use a proper TCP connection - not some hacked layer on top of HTTP (yes, I mean you: COMET).
   * Better Graphics: we would have much more flexibility in terms of what we can draw (3D acceleration here we come...)
+  * Easier to debug through VS (if you like that kind of thing) - thanks Amit
+  * We can write unitests in python that run in the browser - see Issue 103
 
 Does anyone else have any ideas...?
