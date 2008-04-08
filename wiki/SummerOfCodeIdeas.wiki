@@ -1,4 +1,3 @@
-#labels Featured
 = Introduction =
 
 If you have reached this page, chances are that you are familiar with Google's Summer of Code (SoC).  Crunchy was largely born out of the Summer of Code in 2006 and has become an exciting collaboration.
