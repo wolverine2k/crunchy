@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+        <title>
+            Crunchy Silverlight Demo
+        </title>
+    </head>
+    <body>
+        <object data="data:application/x-silverlight," type="application/x-silverlight-2-b1" width="0" height="0">
+            <param name="source" value="app.xap">
+            <param name="onerror" value="onSilverlightError">
+            <param name="background" value="white">
+            <param name="initParams" value="reportErrors=errorLocation">
+            <param name="windowless" value="true"> 
+             <a href="http://go.microsoft.com/fwlink/?LinkID=108182" style="text-decoration: none;"><img src="http://go.microsoft.com/fwlink/?LinkId=108181" alt="Get Microsoft Silverlight" style="border-style: none" /></a>
+        </object>
+        <h1>
+            Crunchy Silverlight Demo
+        </h1>
+        <p>
+            Created by Johannes Woolard - just me playing around really...
+        </p>
+        <p id="test">
+            Error, Silverlight has not loaded
+        </p>
+            <div id="dipsy"> </div> 
+            
+        <div id='errorLocation' style="font-size: small;color: Gray;"></div>
+        
+        <h2>Some Stuff to try</h2>
+        <pre>
+            >>> from System.Windows.Browser.HtmlPage import Document, Window, BrowserInformation
+            >>> Document.test.innerHTML = "Boo!"
+            >>> Document.Body.SetStyleAttribute("color", "green")
+            >>> Document.test.Parent.TagName
+            >>> Window.Alert("Hello World!")
+            >>> BrowserInformation.UserAgent
+            >>> Window.Eval('alert("Hi")')
+        </pre>
+    </body>
+</html>
