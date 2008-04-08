@@ -12,9 +12,9 @@ from src.interface import plugin, SubElement
 
 def register():
     '''registers a series of tag handlers, all related to html links '''
-    plugin['register_tag_handler']("a", None, None, link_handler)
+    plugin['register_tag_handler']("a", None, None, a_tag_handler)
     plugin['register_tag_handler']("img", None, None, src_handler)
-    plugin['register_tag_handler']("link", None, None, href_handler)
+    plugin['register_tag_handler']("link", None, None, link_tag_handler)
     plugin['register_tag_handler']("style", None, None, style_handler)
     plugin['register_tag_handler']("a", "title", "external_link", external_link)
 
@@ -31,7 +31,7 @@ def external_link(dummy_page, elem, *dummy):
     img.attrib['alt'] = "external_link.png"
     return
 
-def link_handler(page, elem):
+def a_tag_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in
        remote pages"""
     if "href" not in elem.attrib:
@@ -40,7 +40,7 @@ def link_handler(page, elem):
     if elem.attrib["href"].startswith("/"):
         return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
-    if is_remote_url(page.url):
+    if page.is_remote: #is_remote_url(page.url):
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
                 return
@@ -97,7 +97,7 @@ def src_handler(page, elem):
         return
     # not needed as we validate images in security.py
     ##elem.attrib["src"] = secure_url(elem.attrib["src"])
-    if is_remote_url(page.url):
+    if page.is_remote: #is_remote_url(page.url):
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
@@ -105,13 +105,12 @@ def src_handler(page, elem):
         elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
-def href_handler(page, elem):
-    """used for elements that have an href attribute not loaded from the
-       server root"""
+def link_tag_handler(page, elem):
+    """resolves html <link> URLs"""
     if "href" not in elem.attrib:
         return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
-    if is_remote_url(page.url):
+    if page.is_remote: #is_remote_url(page.url):
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local:
@@ -127,10 +126,10 @@ def secure_url(url):
         return url
     info = urlsplit(url)
     return urlunsplit((info[0], info[1], info[2], '', ''))
-
-def is_remote_url(url):
-    """test if a url is remote or not"""
-    return not url.startswith("/")
+#
+#def is_remote_url(url):
+#    """test if a url is remote or not"""
+#    return not url.startswith("/")
 
 css_import_re = re.compile('@import\s+"(.+?)"')
 

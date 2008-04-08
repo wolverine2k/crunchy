@@ -50,6 +50,10 @@ class CrunchyPage(object):
            the full URL if it is remote"""
         self.is_remote = remote # True if remote tutorial, on the web
         self.is_local = local  # True if local tutorial, not from the server root
+        if not (remote or local):
+            self.is_from_root = True # if local tutorial from server root; default
+        else:
+            self.is_from_root = False
         self.pageid = uidgen()
         self.url = url
         register_new_page(self.pageid)
@@ -257,11 +261,9 @@ class CrunchyPage(object):
         for tag in CrunchyPage.handlers1:
             for elem in self.tree.getiterator(tag):
             # vlam option <a title="external_link"> needs special treatment
-                if 'title' not in elem.attrib:
-                    CrunchyPage.handlers1[tag](self, elem)
-                elif elem.attrib['title'] != 'external_link':
-                    CrunchyPage.handlers1[tag](self, elem)
-
+                if ('title' not in elem.attrib) or \
+                   (elem.attrib['title'] != 'external_link'):
+                      CrunchyPage.handlers1[tag](self, elem)
 
         #  The following for loop deals with examples 1 and 2
         for tag in CrunchyPage.handlers3:
@@ -308,29 +310,21 @@ class CrunchyPage(object):
         return fake_file.getvalue()
 
 comet_js = """
-function runOutput(channel)
-{
+function runOutput(channel){
     var h = new XMLHttpRequest();
     h.onreadystatechange = function(){
-        if (h.readyState == 4)
-        {
-            try
-            {
+        if (h.readyState == 4){
+            try{
                 var status = h.status;
             }
-            catch(e)
-            {
+            catch(e){
                 var status = "NO HTTP RESPONSE";
             }
-            switch (status)
-            {
-            case 200:
-                //alert(h.responseText);
-                eval(h.responseText);
-                runOutput(channel);
-                break;
-            default:
-                //alert("Output seems to have finished");
+            switch (status){
+                case 200:
+                    eval(h.responseText);
+                    runOutput(channel);
+                    break;
             }
         }
     };
