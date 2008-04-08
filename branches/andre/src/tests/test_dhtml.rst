@@ -134,8 +134,8 @@ Afterwards, we will manipulate this tree to remove elements.
 ------------------
 
 Try creating an image with default values.
-    >>> dhtml.image('foo.png')
+    >>> dhtml.image('foo.png') # doctest:+ELLIPSIS
     ['div_42', 'img', ('id', 'dhtml_42_')]
-    [('dhtml_42_', 'width', '400'), ('dhtml_42_', 'src', 'foo.png'), ('dhtml_42_', 'height', '400')]
+    [('dhtml_42_', 'width', '400'), ('dhtml_42_', 'src', 'foo.png...'), ('dhtml_42_', 'height', '400')]
     
 

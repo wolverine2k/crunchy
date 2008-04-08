@@ -90,7 +90,7 @@ important definitions.  To correct this, we need to call the init() function
 from that module
 
     >>> import src.tests.mocks as mocks
-    >>> mocks.init
+    >>> mocks.init()
 
 Note that, with Python 2.x, we could have used reload(mocks) instead - but
 this is no longer an option with Python 3.x.

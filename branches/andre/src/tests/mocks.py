@@ -24,7 +24,10 @@ class Page(object):
     def __init__(self):
         self.pageid = 1
         self.added_info = []
-        self.url = ''
+        self.url = 'crunchy_server'
+        self.is_remote = False
+        self.is_local = False
+        self.is_from_root = False
 
     def includes(self, dummy):
         self.added_info.append('includes')
