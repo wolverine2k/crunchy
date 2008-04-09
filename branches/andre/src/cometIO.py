@@ -10,7 +10,6 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
-from src.interface import python_version
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -118,21 +117,7 @@ def comet(request):
     # OK, data found
     request.send_response(200)
     request.end_headers()
-    #request.wfile.write(data)
-    try:
-        request.wfile.write(data)
-    except:
-        if python_version >= 3:
-            print("Python 3.x not currently supported.")
-            raise SystemExit
-            #try:
-            #    data = bytes(data, sys.getdefaultencoding())
-            #except:
-            #    print("could not convert data to bytes")
-            #try:
-            #    request.wfile.write(data)
-            #except:
-            #    print("failed writing data in cometIO.comet")
+    request.wfile.write(data)
     request.wfile.flush()
 
 def register_new_page(pageid):
@@ -152,13 +137,9 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if python_version < 3:
-        if 'display' in configuration.defaults.current_page_security_level:
-            return
-    else:
-        # need to figure out the new string handling; the above
-        # code always returns using Python 3k
-        pass
+
+    if 'display' in configuration.defaults.current_page_security_level:
+        return
 
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
@@ -183,8 +164,6 @@ def push_input(request):
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
-    #if python_version >= 3:
-    #    request.data = str(request.data)
     if request.data.startswith("help("):
         output_buffers[pageid].help_flag = True
 
@@ -235,12 +214,7 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-
-        # the following does not seem to work for py3k...
-        if python_version < 3:
-            output_buffers[pageid].put(reset_js % (uid, uid))
-        #else:
-        #    output_buffers[pageid].put(reset_js_3k.format(uid, uid))
+        output_buffers[pageid].put(reset_js % (uid, uid))
 
     def unregister_thread(self):
         """
