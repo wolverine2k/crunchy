@@ -61,6 +61,37 @@ class Interpreter(Widget):
     """
     Implements the Crunchy Interpreter.
     """
+    class History(object):
+        """
+        A class to keep track of interpreter history
+        """
+        def __init__(self, input):
+            self.buffer = []
+            self.pos = 0
+            self.input = input
+        
+        def move_up(self):
+            """move the history up one"""
+            if self.pos > 0:
+                self.pos -= 1
+                self.update()
+        
+        def update(self):
+            if 0 <= self.pos < len(self.buffer):
+                self.input.value = self.buffer[self.pos]
+            else:
+                self.input.value = ""    # if in doubt, blank it
+        
+        def move_down(self):
+            """docstring for move_down"""
+            if self.pos < len(self.buffer):
+                self.pos += 1
+                self.update()
+        
+        def push(self, line):
+            self.buffer.append(line)
+            self.pos = len(self.buffer)
+            
     def insert(self, elem):
         # create the input elements:
         self.input = self.Document.CreateElement("input")
@@ -69,8 +100,15 @@ class Interpreter(Widget):
         
         def handle_keys(obj, args):
             #print args.CharacterCode
-            if args.CharacterCode == 13:
+            if args.CharacterCode == 13:    # return or enter
                 self._exec_handler(None, None)
+                return
+            if args.CharacterCode == 38:    # up arrow
+                self.history.move_up()
+                return
+            if args.CharacterCode == 40:    # down arrow
+                self.history.move_down()
+                return
                 
         self.input.AttachEvent("onkeypress", EventHandler[HtmlEventArgs](handle_keys))
         self.exec_btn = self.Document.CreateElement("button")
@@ -81,6 +119,10 @@ class Interpreter(Widget):
         self.output = OutputWidget(elem)
         elem.AppendChild(self.input)
         elem.AppendChild(self.exec_btn)
+        
+        # create the history buffer
+        self.history = Interpreter.History(self.input)
+        
         # create the actual interpreter:
         self.interp = code.InteractiveConsole(filename="<Crunchy Interpreter>")
         # And print the first prompt:
@@ -91,6 +133,7 @@ class Interpreter(Widget):
         code = self.input.value
         self.input.value = ""
         print code
+        self.history.push(code)
         try:
             t = self.interp.push(code)
         except:
