@@ -29,8 +29,9 @@ class widget_api(widget_tests):
         "Test if the Document attribute is present"
         widget = Widget(self.test_elem)
         self.assert_(hasattr(widget, "Document"))
+        widget.remove()
 
-class interpreter(unittest.TestCase):
+class interpreter(widget_tests):
     def test_insertion_and_removal(self):
         """Test that the widget was correctly inserted and removed"""
         self.fail("This test is not yet implemented")

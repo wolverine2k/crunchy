@@ -14,6 +14,7 @@ import sys
 import traceback
 
 from System.Windows.Browser.HtmlPage import Document
+from System.Windows.Browser import HtmlEventArgs
 from System import EventHandler
 
 from debug_client import send_debug
@@ -35,36 +36,51 @@ class Widget(object):
     """
     def __init__(self, elem):
         """
-        Initialises the widget, should be overridden (maintaining the same signature) in every
-        derived widget class, and must be called on initialising every class (this initialisation
-        sets up some of the API - such as the Document variable)
+        Initialises the widget, should not be overridden an any
+        derived widget class.
+        Widget initialisation should be done in the insert method
         """
         self.__elem = elem
         self.Document = Document
+        # go ahead and insert the element:
+        self.insert(elem)
+        
+    def insert(self, elem):
+        """
+        This should be overridden in derived classes to add the widget to the page.
+        """
+        pass
+        
+    def remove(self):
+        """
+        This should be overidden in derived classes to remove the widget from the page.
+        """
+        pass
     
 class Interpreter(Widget):
     """
     Implements the Crunchy Interpreter.
     """
-    def __init__(self, elem):
-        Widget.__init__(self, elem)
-        
+    def insert(self, elem):
         # create the input elements:
         self.input = self.Document.CreateElement("input")
         self.input.SetAttribute("type", "text")
         self.input.SetStyleAttribute("width", "60%")
         
         def handle_keys(obj, args):
-            print(args.keyCode)
-        self.input.AttachEvent("onkeypress", EventHandler(handle_keys))
-        exec_btn = self.Document.CreateElement("button")
-        exec_btn.innerHTML = "Execute"
-        exec_btn.AttachEvent("onclick", EventHandler(self._exec_handler))
+            #print args.CharacterCode
+            if args.CharacterCode == 13:
+                self._exec_handler(None, None)
+                
+        self.input.AttachEvent("onkeypress", EventHandler[HtmlEventArgs](handle_keys))
+        self.exec_btn = self.Document.CreateElement("button")
+        self.exec_btn.innerHTML = "Execute"
+        self.exec_btn.AttachEvent("onclick", EventHandler(self._exec_handler))
         
         # insert the elements:
-        OutputWidget(elem)
+        self.output = OutputWidget(elem)
         elem.AppendChild(self.input)
-        elem.AppendChild(exec_btn)
+        elem.AppendChild(self.exec_btn)
         # create the actual interpreter:
         self.interp = code.InteractiveConsole(filename="<Crunchy Interpreter>")
         # And print the first prompt:
@@ -85,22 +101,34 @@ class Interpreter(Widget):
             print">>> ",
         self.input.Focus()
         
+    def remove(self):
+        self.output.remove()
+        self.input.Parent.RemoveChild(self.input)
+        self.exec_btn.Parent.RemoveChild(self.exec_btn)
+        
 class OutputWidget(Widget):
     """
     An output widget, at present there cannot be more than 1 in a page.
-    
     This represents the old style Crunchy output widget, which cannot handle input
     """
-    def __init__(self, elem):
-        Widget.__init__(self, elem)
+    def insert(self, elem):
         self.output = self.Document.CreateElement("pre")
         self.output.SetStyleAttribute("display", "inline")
-        self.output.SetStyleAttribute("width", "80%")
+        self.output.SetStyleAttribute("width", "80%")     
         elem.AppendChild(self.output)
+        self.oldout = sys.stdout
         sys.stdout = self
+        self.olderr = sys.stderr
         sys.stderr = self
         
     def write(self, data):
         t = self.Document.CreateElement("span")
         t.innerHTML = data
         self.output.AppendChild(t)
+        
+    def remove(self):
+        """Removes the output widget from the page and resets stderr and stdout"""
+        sys.stderr = self.olderr
+        sys.stdout = self.oldout
+        self.output.Parent.RemoveChild(self.output)
+        
