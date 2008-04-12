@@ -13,16 +13,18 @@ import code
 import sys
 import traceback
 
-from System.Windows.Browser.HtmlPage import Document
+from System.Windows.Browser.HtmlPage import Document, Window
 from System.Windows.Browser import HtmlEventArgs
 from System import EventHandler
 
 from debug_client import send_debug
+from cross_browser import current_browser
 
 class Widget(object):
     """
-    Base class for all widgets, also defines some useful helper functions 
-    This class defines the Crunchy API (not that this is much simpler under Silverlight because
+    Base class for all widgets, also defines some useful helper functions.
+    
+    This class defines the Crunchy API (note that this is much simpler under Silverlight because
     there is no longer any need for the hideous COMET hack :-)
     
     The self.Document instance variable gives access to the DOM - which is an instance of 
@@ -103,14 +105,15 @@ class Interpreter(Widget):
             if args.CharacterCode == 13:    # return or enter
                 self._exec_handler(None, None)
                 return
-            if args.CharacterCode == 38:    # up arrow
+            if args.CharacterCode == 38:    # up arrow - note that safari does not fire an event
                 self.history.move_up()
                 return
             if args.CharacterCode == 40:    # down arrow
                 self.history.move_down()
                 return
                 
-        self.input.AttachEvent("onkeypress", EventHandler[HtmlEventArgs](handle_keys))
+        self.input.AttachEvent(current_browser.keypress_event, 
+            EventHandler[HtmlEventArgs](handle_keys))
         self.exec_btn = self.Document.CreateElement("button")
         self.exec_btn.innerHTML = "Execute"
         self.exec_btn.AttachEvent("onclick", EventHandler(self._exec_handler))
@@ -175,3 +178,39 @@ class OutputWidget(Widget):
         sys.stdout = self.oldout
         self.output.Parent.RemoveChild(self.output)
         
+class EditorWidget(Widget):
+    def insert(self, elem):
+        """docstring for insert"""
+        self.elem = elem
+        self.input = self.Document.CreateElement("textarea")
+        self.input.SetAttribute("rows", "20")
+        self.input.SetAttribute("cols", "80")
+        self.output = None
+        self.exec_btn = self.Document.CreateElement("button")
+        self.exec_btn.innerHTML = "Execute"
+        self.exec_btn.AttachEvent("onclick", EventHandler(self._exec_handler))
+        self.br1 = self.Document.CreateElement("br")
+        self.br2 = self.Document.CreateElement("br")
+        
+        elem.AppendChild(self.input)
+        elem.AppendChild(self.br1)
+        elem.AppendChild(self.exec_btn)
+        elem.AppendChild(self.br2)
+
+    def _exec_handler(self, obj, args):
+        """docstring for _exec_handler"""
+        try:
+            code = self.input.value
+            if self.output != None:
+                self.output.remove()
+            self.output = OutputWidget(self.elem)
+            exec code
+        except:
+            Window.Alert(traceback.format_exc())
+    def remove(self):
+        if self.output != None:
+            self.output.remove()
+        self.exec_btn.Parent.RemoveChild(self.exec_btn)
+        self.input.Parent.RemoveChild(self.input)
+        self.br1.Parent.RemoveChild(self.br1)
+        self.br2.Parent.RemoveChild(self.br2)
