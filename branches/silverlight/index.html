@@ -4,6 +4,7 @@
         <title>
             Crunchy Silverlight Demo
         </title>
+        
         <style type="text/css" media="screen">
             pre {
              white-space: pre-wrap;       /* css-3 */
@@ -14,6 +15,8 @@
             }
             
         </style>
+    
+    
     </head>
     <body>
         <object data="data:application/x-silverlight," type="application/x-silverlight-2-b1" width="0" height="0">
@@ -37,15 +40,15 @@
             
         <div id='errorLocation' style="font-size: small;color: Gray;"></div>
         
-        <h2>Some Stuff to try</h2>
+        <h2>Some stuff to try:</h2>
         <pre>
-            >>> from System.Windows.Browser.HtmlPage import Document, Window, BrowserInformation
-            >>> Document.test.innerHTML = "Boo!"
-            >>> Document.Body.SetStyleAttribute("color", "green")
-            >>> Document.test.Parent.TagName
-            >>> Window.Alert("Hello World!")
-            >>> BrowserInformation.UserAgent
-            >>> Window.Eval('alert("Hi")')
+from System.Windows.Browser.HtmlPage import Document, Window, BrowserInformation
+Document.test.innerHTML = "Boo!"
+Document.Body.SetStyleAttribute("color", "green")
+print Document.test.Parent.TagName
+Window.Alert("Hello World!")
+print BrowserInformation.UserAgent
+Window.Eval('alert("Hi")')
         </pre>
     </body>
 </html>

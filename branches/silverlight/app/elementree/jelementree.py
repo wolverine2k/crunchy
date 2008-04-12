@@ -5,6 +5,8 @@ jelementree.py
 Created by Johannes Woolard on 2008-04-10.
 
 This is a port of Elementree built on top of the Silverlight DOM
+
+I have abandoned this for now until I figure out how text elements behave in the Silverlight DOM
 """
 
 from System.Windows.Browser.HtmlPage import Document
