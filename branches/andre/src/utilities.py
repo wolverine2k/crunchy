@@ -5,6 +5,14 @@
 import re
 from src.interface import python_version, config, plugin, SubElement
 
+COUNT = 0
+def uidgen():
+    """an suid (session unique ID) generator
+    """
+    global COUNT
+    COUNT += 1
+    return str(COUNT)
+
 def extract_log_id(vlam):
     '''given a vlam of the form
        "keyword  ... log_id=(some id) ..."
@@ -24,8 +32,12 @@ def extract_log_id(vlam):
 
 def insert_file_browser(parent, text, action):
     '''inserts a local file browser object in an html page'''
-    name1 = 'browser_%s' % action[1:]
-    name2 = 'submit_%s' % action[1:]
+    # add a unique id to allow more than one file_browser of a given type
+    # on a page; use the "action" [e.g. /local, /rst, etc.] as part of the
+    # name so that it can be easily parsed by a human reader when viewing
+    # the html source.
+    name1 = 'browser_%s' % action[1:] + uidgen()
+    name2 = 'submit_%s' % action[1:] + uidgen()
     form1 = SubElement(parent, 'form', name=name1,
                         onblur = "document.%s.url.value="%name2+\
                         "document.%s.filename.value"%name1)
@@ -59,51 +71,8 @@ def changeHTMLspecialCharacters(text):
     text = text.replace('>', '&gt;')
     return text
 
-def sanitize_html_for_elementtree(text):
-    '''performs a number of replacements on some html content so that
-    it can hopefully be parsed appropriately by ElementTree.
-    In a way, this is intended to be a very poor replacement for a subset of BeautifulSoup,
-    to be used with Py3k'''
-    # as of December 27, this is still work in progress...
-    text = close_link(text)
-    text = close_meta(text)
-    text = close_input(text)
-    text = close_img(text)
-    text = remove_script(text)
-    return text
-
-link_pattern = re.compile('<link([^>]*)>')
-def close_link(text):
-    '''replace <link ....> by <link .../>'''
-    text = link_pattern.sub( r'<link\1/>', text)
-    return text
-
-meta_pattern = re.compile('<meta([^>]*)>')
-def close_meta(text):
-    '''replace <meta ....> by <meta .../>'''
-    text = meta_pattern.sub( r'<meta\1/>', text)
-    return text
-
-input_pattern = re.compile('<input([^>]*)>')
-def close_input(text):
-    '''replace <input ....> by <input .../>'''
-    text = input_pattern.sub( r'<input\1/>', text)
-    return text
-
-img_pattern = re.compile('<img([^>]*)>')
-def close_img(text):
-    '''replace <img ....> by <img .../>'''
-    text = img_pattern.sub( r'<img\1/>', text)
-    return text
-
-script_pattern = re.compile('<script([^<]*)</script>')
-def remove_script(text):
-    '''removing <script ....> ...</script>'''
-    text = script_pattern.sub('', text)
-    return text
-
 begin_html = """
-<head>
+<html>
 <head>
 <title>Crunchy Log</title>
 <link rel="stylesheet" type="text/css" href="/crunchy.css">
@@ -135,8 +104,6 @@ def log_session():
         f.write("<pre>"+content+"</pre>")
     f.write(end_html)
     f.close()
-
-
 
 # Some useful function for including some images "dynamically" within
 # web pages.  See doc_code_check.py for a sample use.

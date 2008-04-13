@@ -15,17 +15,10 @@ et = ElementTree
 
 from src.cometIO import register_new_page
 import src.configuration as configuration
+from src.utilities import uidgen
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
-
-count = 0
-def uidgen():
-    """an suid (session unique ID) generator
-    """
-    global count
-    count += 1
-    return str(count)
 
 class CrunchyPage(object):
     '''class used to store an html page processed by Crunchy so

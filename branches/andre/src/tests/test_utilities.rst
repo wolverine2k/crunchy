@@ -1,11 +1,41 @@
 utilities.py tests
 ==================
 
-Tested successfully with Python 2.4, 2.5 and 3.0a1
+Tested successfully with Python 2.4, 2.5
+
+utilities.py is a module that contains the following functions, many of 
+which are used by more than one module:
+
+1. uidgen()
+2. extract_log_id(vlam)
+3. insert_file_browser(parent, text, action)
+4. trim_empty_lines_from_end(text)
+5. changeHTMLspecialCharacters(text)
+6. log_session()
+7. append_checkmark(pageid, parent_uid)
+8. append_warning(pageid, parent_uid)
+9. append_image(pageid, parent_uid, attributes)
+
+We begin by importing the module.
 
     >>> import src.utilities as utilities
+    >>> from src.interface import Element, SubElement
 
-First, testing some log id.
+1. Testing uidgen()
+-------------------
+
+uidgen() generates a unique integer id (returned as a string).
+The current implementation is such that consecutive integers are generated.
+
+    >>> first = int(utilities.uidgen())
+    >>> second = int(utilities.uidgen())
+    >>> second - first
+    1
+
+2. Testing extract_log_id()
+---------------------------
+
+First, creating some test log id.
     >>> fake_id1 = "id"
     >>> fake_id2 = "id with space"
     >>> fake_id3 = "_id: with 8.66, _numbers123"
@@ -37,9 +67,56 @@ It's probably a good idea to check at some failing tests as well
     >>> print(utilities.extract_log_id("Move along, there is nothing here"))
     <BLANKLINE>
 
+3. Testing insert_file_browser()
+--------------------------------
 
-Testing how well empty lines are stripped from the end of code segments.
-------------------------------------------------------------------------
+This function inserts two forms inside an html element.  We will use
+the "usual" <span> choice.
+    
+    >>> span = Element("span")
+    >>> utilities.insert_file_browser(span, "Some text", "/dummy")
+    >>> forms = []
+    >>> for el in span.getiterator():
+    ...     if el.tag == "form": forms.append(el)
+    ...
+    >>> len(forms)
+    2
+
+Testing the first generated form
+
+    >>> forms[0].attrib["name"][:13]
+    'browser_dummy'
+    >>> input = forms[0].find("input")
+    >>> input.attrib["name"]
+    'filename'
+    >>> input.attrib["size"]
+    '80'
+    >>> input.attrib["type"]
+    'file'
+    >>> forms[0].find("br") == None
+    False
+
+Now the second one
+
+    >>> forms[1].attrib["name"][:12]
+    'submit_dummy'
+    >>> forms[1].attrib["method"]
+    'get'
+    >>> forms[1].attrib["action"]
+    '/dummy'
+    >>> inputs2 = forms[1].findall("input")
+    >>> len(inputs2)
+    2
+    >>> inputs2[0].attrib["type"]
+    'hidden'
+    >>> inputs2[0].attrib["name"]
+    'url'
+    >>> inputs2[1].attrib["type"]
+    'submit'
+
+4. Testing trim_empty_lines_from_end()
+--------------------------------------
+
 
 Define test data.
 
@@ -64,10 +141,10 @@ Carry out tests on test data, checking that results were correct.
 	True
 	>>> print(utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!")
 	True
-	
 
-Testing conversion of HTML special characters
----------------------------------------------
+
+5. Testing changeHTMLspecialCharacters()
+----------------------------------------
 
 Define tests and expected results.
 
@@ -90,49 +167,22 @@ Carry out tests
 	>>> print(utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result)
 	True
 
+6. Testing log_session()
+------------------------
 
-Testing the "sanitization" of HTML
-----------------------------------
+To do
 
-When using Py3k, BeautifulSoup is not available ... and the only parser
-we can use successfully with ElementTree is an xml parser.  This means that
-it does require all tags to be closed, even those that are not required by html.
-So, we "sanitize" the html code by either removing such tags altogether, or
-closing them if possible.
+7. Testing append_checkmark()
+-----------------------------
 
-Closing <link>
-    >>> in1 = "some junk <link more junk here> more <junk>"
-    >>> print(utilities.close_link(in1))
-    some junk <link more junk here/> more <junk>
-    >>> print(utilities.sanitize_html_for_elementtree(in1))
-    some junk <link more junk here/> more <junk>
-   
-Closing <input>
-    >>> in2 = "some junk <input more junk here> more <junk>"
-    >>> print(utilities.close_input(in2))
-    some junk <input more junk here/> more <junk>
-    >>> print(utilities.sanitize_html_for_elementtree(in2))
-    some junk <input more junk here/> more <junk>
+To do.
 
-Closing <meta>
-    >>> in3 = "some junk <meta more junk here> more <junk>"
-    >>> print(utilities.close_meta(in3))
-    some junk <meta more junk here/> more <junk>
-    >>> print(utilities.sanitize_html_for_elementtree(in3))
-    some junk <meta more junk here/> more <junk>
+8. Testing append_warning()
+---------------------------
 
-Closing <img>
-    >>> in4 = "some junk <img more junk here> more <junk>"
-    >>> print(utilities.close_img(in4))
-    some junk <img more junk here/> more <junk>
-    >>> print(utilities.sanitize_html_for_elementtree(in4))
-    some junk <img more junk here/> more <junk>
+To do
 
-Removing <script>
-    >>> in5 = "junk <script> some junk </script> junk"
-    >>> print(utilities.remove_script(in5))
-    junk  junk
-    >>> print(utilities.sanitize_html_for_elementtree(in5))
-    junk  junk
+9. Testing append_image()
+-------------------------
 
-    
+To do

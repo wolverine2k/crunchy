@@ -137,8 +137,7 @@ Crunchy includes a number of doctest based (.rst files) unit files which it can 
 and display, using the default crunchy.no_markup option.  (We suggest to use "python_code"
 as that option when viewing these files).  These tests can be run via
 
-- python all_tests.py, if using a Python version less than 3.0
-- python all_tests_py3k.py, if using a Python version 3.x
+- python all_tests.py
 
 In terms of test coverage, this is just a first draft which needs to be verified.
 
@@ -159,15 +158,12 @@ a given plugin, and which ones are required by it.
 Crunchy Python files listing::
 
     all_tests.py
-    all_tests_py3k.py
     crunchy.py
         import: interface, http_serve, pluginloader
-    sanitize.py
-        import: configuration, security, interface, element_tree
     src:
         cometIO.py
             import: configuration, interpreter, interface, utilities
-        configuration.py  # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
+        configuration.py  # PARTIAL tests: 2.4, 2.5
             import: interface
         CrunchyPlugin.py
             import: cometIO, PluginServices, interface, vlam
@@ -177,13 +173,13 @@ Crunchy Python files listing::
             import: configuration, translation
         http_serve.py
             import: CrunchyPlugin, interface
-        interface.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+        interface.py # tests :2.4, 2.5
             import: tools_2k, tools_3k,  my_htmlentitydefs, translation, ElementTree++
         interpreter.py
             import: interface, utilities, configuration, errors
         my_htmlentitydefs.py
             import: None
-        pluginloader.py   # partial tests: 2.4, 2.5, 3.0a1, 3.0a2
+        pluginloader.py   # partial tests: 2.4, 2.5
             import: interface
         PluginServices.py # empty file by design - no need to test.
             import: None
@@ -195,7 +191,7 @@ Crunchy Python files listing::
             import: None
         translation.py
             import: interface
-        utilities.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+        utilities.py # tests :2.4, 2.5
             import: interface
         vlam.py
             import: security, interface, ElementSoup, cometIO, configuration, utilities
@@ -203,7 +199,7 @@ Crunchy Python files listing::
     src/plugins:
             ### Note: in the following plugins, r_id is used as a synonym for
             ### plugin['session_random_id']
-            colourize.py # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
+            colourize.py # PARTIAL tests: 2.4, 2.5
                 import: interface, utilities
                 plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
                 plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
@@ -211,28 +207,28 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
                 plugin['register_service']("style_pycode", service_style)
                 plugin['register_service']("style_pycode_nostrip", service_style_nostrip)
-            comet.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            comet.py # tests: 2.4, 2.5
                 import: interface, cometIO
                 plugin['register_http_handler']("/input%s"%r_id, push_input)
                 plugin['register_http_handler']("/comet", comet)
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
                 ### to include the services provided by cometIO {"/comet", "/input"}
                 ### in the plugin directory so that they were easier to find.
-            doc_cod_check.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            doc_cod_check.py # tests: 2.4, 2.5
                 import: interface, utilities
                 plugin['register_tag_handler']("pre", "title", "setup_code", code_setup_process)
                 plugin['register_tag_handler']("pre", "title", "check_code", code_sample_process)
                 plugin['register_tag_handler']("pre", "title", "code_output", expected_output_process)
                 plugin['register_http_handler']("/check_code", doc_code_check_callback)
                 plugin['register_http_handler']("/check_all_code_samples", all_code_samples_check_callback)
-            editarea.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            editarea.py # tests: 2.4, 2.5
                 import: interface
                 requires: {"/save_file", "/load_file"}
                 plugin['register_service']("enable_editarea", enable_editarea)
-            execution.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            execution.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/exec%s"%r_id, exec_handler)
-            file_service.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            file_service.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/save_file", save_file_request_handler)
                 plugin['register_http_handler']("/load_file", load_file_request_handler)
@@ -244,18 +240,18 @@ Crunchy Python files listing::
             handle_default.py
                 import: interface
                 plugin['register_http_handler'](None, handler)
-            handle_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            handle_local.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/local", local_loader)
                 plugin['register_http_handler']("/generated_image", image_loader)
                 plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
-            handle_remote.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            handle_remote.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/remote", remote_loader)
-            io_widget.py # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
+            io_widget.py # PARTIAL tests: 2.4, 2.5
                 import: interface, editarea
                 plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
-            links.py  # PARTIAL tests: 2.4, 2.5, 3.0a1, 3.0a2
+            links.py  # PARTIAL tests: 2.4, 2.5
                 import: interface
                 plugin['register_tag_handler']("a", None, None, link_handler)
                 plugin['register_tag_handler']("img", None, None, src_handler)
@@ -272,7 +268,7 @@ Crunchy Python files listing::
                 import: interface, python_files, rst, vlam_load_local, vlam_load_remote
             python_files.py
                 import: interface
-            rst.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            rst.py # tests: 2.4, 2.5
                 import: interface
                 # this plugin won't be activated if docutils is not available.
                 plugin['register_http_handler']("/rst", load_rst)
@@ -294,7 +290,7 @@ Crunchy Python files listing::
                 requires:  {"editor_widget", "io_widget"}
                 plugin['register_tag_handler']("pre", "title", "doctest", doctest_widget_callback)
                 plugin['register_http_handler']("/doctest%s"%r_id, doctest_runner_callback)
-            vlam_editor.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            vlam_editor.py  # tests: 2.4, 2.5
                 import: interface, utilities
                 requires: {"io_widget", "/exec", "/run_external", "style_pycode", "editarea"}
                 plugin['register_tag_handler']("pre", "title", "editor", insert_editor)
@@ -313,16 +309,16 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("pre", "title", "Parrots", insert_interpreter)
                 plugin['register_tag_handler']("pre", "title", "TypeInfoConsole", insert_interpreter)
                 plugin['register_tag_handler']("pre", "title", "python_tutorial", insert_interpreter)
-            vlam_load_local.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            vlam_load_local.py # tests: 2.4, 2.5
                 import: interface
                 requires: {"/local"}
                 plugin['register_tag_handler']("span", "title", "load_local", insert_load_local)
-            vlam_load_remote.py # tests :2.4, 2.5, 3.0a1, 3.0a2
+            vlam_load_remote.py # tests :2.4, 2.5
                 import: interface
                 requires: {"/remote"}
                 plugin['register_tag_handler']("span", "title", "load_remote", insert_load_remote)
     src/imports:
-            c_turtle.py # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            c_turtle.py # tests: 2.4, 2.5
                 import: None
             dhtml.py
                 import: interface
@@ -330,7 +326,7 @@ Crunchy Python files listing::
                 import: interface
             math_graphics.py
                 import: interface
-            turtle_js.py  # tests: 2.4, 2.5, 3.0a1, 3.0a2
+            turtle_js.py  # tests: 2.4, 2.5
                 import: interface, c_turtle
             turtle_tk.py  # empty file for now...
     src/tests:

@@ -50,7 +50,7 @@ This method inserts two forms inside a <span> element.
 
 Testing the first generated form
 
-    >>> forms[0].attrib["name"]
+    >>> forms[0].attrib["name"][:13]
     'browser_local'
     >>> input = forms[0].find("input")
     >>> input.attrib["name"]
@@ -64,7 +64,7 @@ Testing the first generated form
 
 Now the second one
 
-    >>> forms[1].attrib["name"]
+    >>> forms[1].attrib["name"][:12]
     'submit_local'
     >>> forms[1].attrib["method"]
     'get'
