@@ -3,21 +3,18 @@ perform vlam substitution
 
 sets up the page and calls appropriate plugins
 """
-import os
-from urllib import urlopen
-from time import sleep
+
+from StringIO import StringIO
 
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.interface import python_version, ElementTree, XmlFile, StringIO, config, plugin
-if python_version < 3:
-    from src.element_tree import ElementSoup
+from src.interface import ElementTree
+from src.element_tree import ElementSoup
 et = ElementTree
 
 from src.cometIO import register_new_page
 import src.configuration as configuration
-from src.plugins.file_service import exec_external_python_version
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
@@ -59,48 +56,8 @@ class CrunchyPage(object):
         register_new_page(self.pageid)
         # "old" method using ElementTree directly
         #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
-        if python_version < 3:
-            #self.tree = parse(filehandle, encoding = 'utf-8')
-            html = ElementSoup.parse(filehandle, encoding = 'utf-8')
-            self.tree = et.ElementTree(html)
-        else:
-            try:
-                self.tree = XmlFile(filehandle)
-            except:
-                # try with processing the file using an external process
-                # that assumes the default Python version is 2.x
-                #
-                # Read the original file and make a local copy to a set location
-                new_filehandle = urlopen(self.url)
-                html_text = new_filehandle.read()
-                _temp_file_path = os.path.join(config['temp_dir'], 'in.html')
-                _temp_file = open(_temp_file_path, 'w')
-                _temp_file.write(str(html_text))
-                _temp_file.close()
-                #
-                # Get the minimal information required by security.py
-                _page_file_path = os.path.join(config['temp_dir'], 'page.info')
-                _temp_file = open(_page_file_path, 'w')
-                _temp_file.write(self.url + ',' + str(self.is_local) + ',' +
-                                 str(self.is_remote))
-                _temp_file.close()
-                #
-                # Call an external process to clean up the file; note that this
-                # should take care of all the security removal.
-                sanitize_path = os.path.join(plugin['get_root_dir'](), 'sanitize.py')
-                exec_external_python_version(path=sanitize_path,
-                                             alternate_version=False,
-                                             write_over=False)
-                #
-                # Give some time for the above external process to finish
-                #
-                sleep(2)
-                 #
-                # Used the processed file as our input
-                #
-                _temp_file_path = os.path.join(config['temp_dir'], 'out.html')
-                _temp_file = open(_temp_file_path)
-                self.tree = XmlFile(_temp_file)
+        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+        self.tree = et.ElementTree(html)
 
         # The security module removes all kinds of potential security holes
         # including some meta tags with an 'http-equiv' attribute.
@@ -261,9 +218,9 @@ class CrunchyPage(object):
         for tag in CrunchyPage.handlers1:
             for elem in self.tree.getiterator(tag):
             # vlam option <a title="external_link"> needs special treatment
-                if ('title' not in elem.attrib) or \
-                   (elem.attrib['title'] != 'external_link'):
-                      CrunchyPage.handlers1[tag](self, elem)
+                if (('title' not in elem.attrib) or
+                           (elem.attrib['title'] != 'external_link')):
+                    CrunchyPage.handlers1[tag](self, elem)
 
         #  The following for loop deals with examples 1 and 2
         for tag in CrunchyPage.handlers3:
