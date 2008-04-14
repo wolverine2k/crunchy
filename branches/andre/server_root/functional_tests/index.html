@@ -47,6 +47,9 @@ Existing bugs can (and should) be documented here as well.</p>
 <li><a href="logging.html">Session logging</a></li>
 
 <li>A <a href="rst_directives.txt">reStructuredText file with Crunchy directives</a></li>
+<li> An external <a href="http://andre.roberge.googlepages.com/rst_directives.txt">reStructuredText
+file with Crunchy directives</a>. Remember to set the security mode
+to an appropriate value so that it works properly!</li>
 </ul>
 
 <h2>Comprehensive test</h2>
@@ -56,16 +59,9 @@ complete vlam reference; chances are, it's not up to date.</li>
 </ul>
 
 
-<<<<<<< .mine
-<h2>To do</h2>
-<p>Add a test with at least two identical file browsers on the same page.</p>
-<p>Add a test for rst file located on the web.</p>
-
-=======
 <h2>To do</h2>
 <p>Add a test with at least two identical file browsers on the same page.</p>
 
->>>>>>> .r625
 <h2>Error handling</h2>
 <ul>
 <li><a href="brokentree.html">Broken html tree</a>: The new (0.9+) version of Crunchy can now display pages with some errors in it, but not with Python 3.0; previously, when errors were found (such as missing closing tags) it was only displaying a blank page. Ideally, it Should display the original page with an error message (in a popup window?)  A previous version displayed a custom alert (on top of a blank page); somehow this is now broken - but is probably not the behaviour we wanted anyway.</li>
@@ -77,16 +73,9 @@ be added by Crunchy, together with a very visible warning.</li>
 
 <h2>Others</h2>
 <ul>
-<li>Not a test as such, but the <a href="roadmap.rst">Roadmap</a> document is something that should be looked at periodically and updated as we go along.</li>
 <li>IPython is a fairly advanced replacement for the normal Python console.
 Unfortunately, it messes up Crunchy rather badly when used as an alternative shell.
 Assuming you have it installed on your system, you can <a href="ipython.html">try it out</a>. </li>
-<li><b>Sound:</b> The old Crunchy used to have some minimal sound support on Linux and Windows.
-However, this was not suitable for any serious demonstration and the sound capabilities
-are better provided by specialised libraries.</li>
-<li>As an aid to developing a new <a href="launch_sanitize.html">sanitize</a> 
-module used internally by Crunchy, a special plugin was created and can
-be tested.  However it should be only of interest for Crunchy developers.</li>
 <li>A new plugin is being developed in order to do automated code checking
 in documentation. To see one failing and one passing test: 
 <a href="code_check.html">one failing test</a>; 

@@ -49,7 +49,7 @@ you will see the results below:
 .. editor:: no-copy
    :linenumber:
 
-   >>> print "He's not the Messiah, he's a very naughty boy!"
+   >>> print "Ni! Ni! Ni!"
 
 Alternatively, the editor can come pre-loaded with a few lines of
 code, like so:
@@ -83,11 +83,9 @@ Crunchy can also embed DocTests within a page:
 .. doctest::
    :linenumber:
 
-   >>> print "Hello, World!"
+   >>> print greeting
    Hello, World!
-   >>> fun = lambda x: x.strip()
-   >>> print repr(fun(" string "))
-   'string'
+
 
 For more info, see the `DocTest Documentation 
 <http://docs.python.org/lib/module-doctest.html>`_.

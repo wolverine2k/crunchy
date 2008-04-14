@@ -21,7 +21,7 @@ def remote_loader(request):
     extension = url.split('.')[-1]
     if extension in preprocessor:
         page = plugin['create_vlam_page'](
-                         preprocessor[extension](url, local=False), url)
+                    preprocessor[extension](url, local=False), url, remote=True)
     else:
         page = plugin['create_vlam_page'](urlopen(url), url, remote=True)
     request.send_response(200)
