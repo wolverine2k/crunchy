@@ -43,7 +43,13 @@ def gen_plugin_list():
     that they are all "plugins".'''
     pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]),
                              "src", "plugins/")
-    pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
+    try:
+        pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
+    except OSError:
+        # if we get here, then pluginpath doesn't exist: try again with a slightly different one
+        # (this is a fix for the .app distro)
+        pluginpath = os.path.join(os.path.dirname(find_module("crunchy")[1]),"plugins/")
+        pluginfiles = pluginfiles = [x[:-3] for x in os.listdir(pluginpath) if x.endswith(".py")]
     return pluginfiles
 
 def init_plugin_system(server):
@@ -54,9 +60,11 @@ def init_plugin_system(server):
     # In case Crunchy was not started from its root directory via
     # python crunchy.py, but instead from another directory like
     # python /this/path/to/crunchy.py
-    # we need to add explictly the path to the
+    # we need to add explictly the path to the    
     sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
                                     "src", "plugins"))
+    # another hack to make it work on a mac
+    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](), "plugins"))
 
     # In addition, add the same for the non-plugins files that are meant to be
     # imported by the user, such as graphics.py, etc.
@@ -64,7 +72,9 @@ def init_plugin_system(server):
     # by the user through some code execution.
     sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
                                     "src", "imports"))
-
+    # another hack to make it work on a mac
+    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](), "imports"))
+    
     imported_plugins = []
     if DEBUG:
         print("Importing plugins.")

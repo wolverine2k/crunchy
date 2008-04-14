@@ -102,6 +102,8 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems; not fully implemented)")
+    # a dummy option to get it to work with py2app:
+    parser.add_option("-p")
     (options, dummy) = parser.parse_args()
     if options.debug:
         src.interface.debug_flag = True

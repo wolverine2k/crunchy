@@ -14,7 +14,7 @@ import sys
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, tostring, Element
 import src.utilities as utilities
-import src.plugins.colourize as colourize
+import colourize as colourize
 
 _ = translate['_']
 
