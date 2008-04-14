@@ -42,6 +42,9 @@ def main(argv=None):
     
     create_zip(version)
     
+    create_targz(version)
+    #this doesn't work yet :(
+    #build_mac_app(version)
     return 0
 
 def create_zip(version):
@@ -52,5 +55,31 @@ def create_zip(version):
     else:
         raise "zip returned error code %s" % retcode
 
+def create_targz(version):
+    print "Creating crunchy-%s.tar.gz" % version
+    retcode = call(["/usr/bin/tar", "-czf", "crunchy-%s.tar.gz" % version, "crunchy-%s/" % version])
+    if retcode == 0:
+        print "tar.gz file succesfully created"
+    else:
+        raise "tar returned error code %s" % retcode
+        
+def build_mac_app(version):
+    print "Creating setup.py for OSX .app"
+    f = open("setup.py", 'w')
+    f.write("""
+from setuptools import setup
+setup(app=["crunchy-%s/crunchy.py"],
+    	setup_requires=["py2app"],
+        )
+    """ % version)
+    f.close()
+    print "Created setup.py, running py2app"
+    retcode = call(["/usr/bin/python", "setup.py", "py2app", "-A"])
+    if retcode == 0:
+        print ".app file succesfully created"
+    else:
+        raise ("py2app returned error code %s" % retcode)
+    
+    
 if __name__ == "__main__":
     sys.exit(main())
