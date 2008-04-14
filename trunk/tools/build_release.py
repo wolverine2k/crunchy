@@ -96,11 +96,11 @@ def build_mac_app(version):
     f.write("""
 from setuptools import setup
 
-APP = ['../crunchy/branches/andre/crunchy.py']
-DATA_FILES = ['../crunchy/branches/andre/translations',
- '../crunchy/branches/andre/server_root',
- '../crunchy/branches/andre/LICENSE.txt',
- '../crunchy/branches/andre/src/plugins']
+APP = ['crunchy-%s/crunchy.py']
+DATA_FILES = ['crunchy-%s/translations',
+ 'crunchy-%s/server_root',
+ 'crunchy-%s/LICENSE.txt',
+ 'crunchy-%s/src/plugins']
 OPTIONS = {'argv_emulation': True}
 
 setup(
@@ -109,10 +109,10 @@ setup(
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
-    """ % version)
+    """ % (version, version, version, version, version))
     f.close()
     print "Created setup.py, running py2app"
-    retcode = call(["/usr/bin/python", "setup.py", "py2app", "-A"])
+    retcode = call(["/usr/bin/python", "setup.py", "py2app", "-s"])
     if retcode == 0:
         print ".app file succesfully created - you will have to put it into a .dmg manually"
     else:
