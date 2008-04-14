@@ -33,8 +33,6 @@ else:
 _ = translate['_']
 translate['init_translation']()
 
-initial_security_set = False
-
 # Existing translations for Crunchy messages
 trans_path = os.path.join(os.path.dirname(
                                     find_module("crunchy")[1]), "translations")
@@ -605,12 +603,9 @@ for key in dir(defaults):
     if '__' not in key[0:2]:
         val = getattr(defaults, key)
         config[key] = val
-config['initial_security_set'] = initial_security_set
-# Sample usage:
-#config['language'] == 'fr'
-#config['add_site']()
 
-#import pprint
-#pprint.pprint(config)
+# the following may be set as an option when starting Crunchy
+if 'initial_security_set' not in config:
+    config['initial_security_set'] = False
 
 del keys

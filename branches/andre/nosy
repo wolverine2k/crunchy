@@ -1,0 +1,8 @@
+echo "==============================================="
+echo "functional testing using nose and selenium"
+echo "make sure selenium server is running via"
+echo "java -jar selenium-server.jar"
+echo " "
+echo "start Crunchy via:"
+echo "python crunchy.py --port=8888 --automated=True"
+nosetests server_root/functional_tests
