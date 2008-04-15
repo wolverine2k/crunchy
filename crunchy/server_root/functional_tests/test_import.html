@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta title="python_import" name="test_import" />
+<title>Import testing</title>
+</head>
+<body>
+<h1>Local tutorial: <code title="py_code">import</code>tests</h1>
+<p>
+When Crunchy loads a local tutorial (using the file browser), it adds the
+path where that tutorial is loaded to <code title="py_code">sys.path</code>;
+as a result, any Python module found in the same directory can be imported.
+In addition, it is possible to specify one or more relative paths,
+using the <code>meta</code> tag, to be also added to the Python
+path (see the source of this file for an example).
+</p>
+<pre title="interpreter">
+&gt;&gt;&gt; # The following is a module found in the same directory as this file.
+&gt;&gt;&gt; import hello
+&gt;&gt;&gt; hello.hello()
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # The following is a module found in a relative directory
+&gt;&gt;&gt; import bye
+&gt;&gt;&gt; bye.bye()
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # You can view the updated path
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; sys.path
+</pre>
+
+
+</body>
+</html>
