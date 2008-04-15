@@ -93,6 +93,8 @@ Testing the first generated form
     '80'
     >>> input.attrib["type"]
     'file'
+    >>> "onblur" in input.attrib
+    True
     >>> forms[0].find("br") == None
     False
 

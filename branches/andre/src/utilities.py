@@ -38,11 +38,10 @@ def insert_file_browser(parent, text, action):
     # the html source.
     name1 = 'browser_%s' % action[1:] + uidgen()
     name2 = 'submit_%s' % action[1:] + uidgen()
-    form1 = SubElement(parent, 'form', name=name1,
-                        onblur = "document.%s.url.value="%name2+\
+    form1 = SubElement(parent, 'form', name=name1)
+    SubElement(form1, 'input', type='file', name='filename', size='80',
+               onblur = "document.%s.url.value="%name2+\
                         "document.%s.filename.value"%name1)
-    SubElement(form1, 'input', type='file',
-                 name='filename', size='80')
     SubElement(form1, 'br')
 
     form2 = SubElement(parent, 'form', name=name2, method='get',
