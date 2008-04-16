@@ -4,25 +4,132 @@ See note at the bottom of the file for successful execution.
 '''
 
 import unittest
+import time
 
 # Third party modules
 from selenium import selenium
 
+# Suggestion on writing tests
+
+# 1. Avoid using id's to locate elements; most of these are automatically
+#    assigned by Crunchy and their value may change as more tests are added.
+#    Use fully qualified xpath instead.
+
+# 2. Ensure that enough processing time is given for the browser/Crunchy
+#    to produce the appropriate output - otherwise a test may fail.
+
+# 3. Note that it has been observed that some unexpected failing tests occur
+#    when the server has been running for too long.
+
+def click_link_and_wait(clickable):
+    '''clicks on a series of link, waiting for an appropriate time for a
+       page to load before continuing.'''
+    for elem in clickable:
+        selenium_server.click(elem)
+        selenium_server.wait_for_page_to_load(5000)
+
+
 class InterpreterTest(unittest.TestCase):
-    def setUp(self):
+    '''Ensures that code is run through various interpreter and verifies the
+    output meet some expectations.
+    '''
+    def test_interpreters(self):
+        '''Compares the output of the interpreters, after execution, with
+        what is expected'''
         self.verificationErrors = []
+        # go to relevant page and store some initial values
+        click_link_and_wait(["//img[@alt='Home']", "link=Tests",
+                             "link=Interpreter"])
 
-    def test_new(self):
-        sel = selenium_server
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Tests")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Interpreter")
-        sel.wait_for_page_to_load(5000)
-        sel.key_press('xpath=//div[3]/span[2]/input', '42')
+        # Store some information about text initially on the page.
+        all_text = selenium_server.get_body_text()
+        forty_twos = all_text.count("42")
+        fifty_six = all_text.count("56")
+        range_5 = all_text.count("[0, 1, 2, 3, 4]")
+        name_errors = all_text.count("NameError")
+        system_exits = all_text.count("SystemExit")
 
-    def tearDown(self):
+        # first interpreter; execute the code and give time for Crunchy
+        # to process it
+        editor_link = "xpath=//div[3]/span[2]/a"
+        execute_button = "xpath=//div[3]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        # update to expected values and compare
+        forty_twos += 3
+        range_5 += 1
+        self.assertTrue(all_text.count("[0, 1, 2, 3, 4]") == range_5)
+        self.assertTrue(all_text.count("42") == forty_twos)
+
+        # second interpreter
+        editor_link = "xpath=//div[4]/span[2]/a"
+        execute_button = "xpath=//div[4]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        # update to expected values and compare
+        forty_twos += 1
+        name_errors += 1
+        system_exits += 1
+        self.assertTrue(all_text.count("42") == forty_twos)
+        self.assertTrue(all_text.count("NameError") == name_errors)
+        self.assertTrue(all_text.count("SystemExit") == system_exits)
+
+        # third interpreter
+        editor_link = "xpath=//div[5]/span[2]/a"
+        execute_button = "xpath=//div[5]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        forty_twos += 1
+        self.assertTrue(all_text.count("42") == forty_twos)
+
+        # fourth interpreter
+        editor_link = "xpath=//div[6]/span[2]/a"
+        execute_button = "xpath=//div[6]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        name_errors += 1
+        self.assertTrue(all_text.count("NameError") == name_errors)
+
+        # fifth interpreter
+        editor_link = "xpath=//div[7]/span[2]/a"
+        execute_button = "xpath=//div[7]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        name_errors += 1
+        self.assertTrue(all_text.count("NameError") == name_errors)
+
+        # sixth interpreter
+        editor_link = "xpath=//div[8]/span[2]/a"
+        execute_button = "xpath=//div[8]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        fifty_six += 1
+        self.assertTrue(all_text.count("56") == fifty_six)
+
+        # seventh interpreter
+        editor_link = "xpath=//div[9]/span[2]/a"
+        execute_button = "xpath=//div[9]/button"
+        selenium_server.click(editor_link)
+        selenium_server.click(execute_button)
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        forty_twos += 1
+        fifty_six += 1
+        self.assertTrue(all_text.count("42") == forty_twos)
+        self.assertTrue(all_text.count("56") == fifty_six)
+
         self.assertEqual([], self.verificationErrors)
 
 
@@ -34,58 +141,21 @@ class LeftMenuLinkTest(unittest.TestCase):
     It is just there to make sure that all the pages in the Crunchy tutorial
     are found.
     '''
-    def setUp(self):
+    def test_links(self):
         self.verificationErrors = []
-
-    def test_new(self):
-        sel = selenium_server
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Begin tutorial")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Interpreter")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Editor")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=DocTest")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Graphics")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Image files")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=External applications")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Browsing")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Configuring Crunchy")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=FAQ, bugs, etc.")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-        sel.wait_for_page_to_load(5000)
-        sel.click("link=Writing tutorials")
-        sel.wait_for_page_to_load(5000)
-        sel.click("//img[@alt='Home']")
-
-    def tearDown(self):
+        click_link_and_wait([
+            "//img[@alt='Home']", "link=Begin tutorial",
+            "//img[@alt='Home']", "link=Interpreter",
+            "//img[@alt='Home']", "link=Editor",
+            "//img[@alt='Home']", "link=DocTest",
+            "//img[@alt='Home']", "link=Graphics",
+            "//img[@alt='Home']", "link=Image files",
+            "//img[@alt='Home']", "link=External applications",
+            "//img[@alt='Home']", "link=Browsing",
+            "//img[@alt='Home']", "link=Configuring Crunchy",
+            "//img[@alt='Home']", "link=FAQ, bugs, etc.",
+            "//img[@alt='Home']", "link=Writing tutorials",
+            "//img[@alt='Home']"])
         self.assertEqual([], self.verificationErrors)
 
 if __name__ == "__main__":
