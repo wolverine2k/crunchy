@@ -28,6 +28,59 @@ def click_link_and_wait(clickable):
         selenium_server.click(elem)
         selenium_server.wait_for_page_to_load(5000)
 
+def common_tear_down(self):
+    '''All tests end with resuming at the start page and determine if any
+    test has failed.'''
+    selenium_server.open('/')
+    selenium_server.wait_for_page_to_load(5000)
+    self.assertEqual([], self.verificationErrors)
+
+class DoctestTest(unittest.TestCase):
+    '''Ensures that various code samples run to satisfy (or not) a given
+    doctest are executed and the result is compared with the
+    expected output.
+    '''
+    def test_doctest(self):
+        '''Compares the output of the doctest, after execution, with
+        what is expected'''
+        self.verificationErrors = []
+        # go to relevant page and store some initial values
+        click_link_and_wait(["//img[@alt='Home']", "link=Tests",
+                             "link=Doctest"])
+
+        # first run; execute the doctest with no user code
+        selenium_server.click("xpath=//div[3]/button") # execute button
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        self.assertTrue(all_text.count("NameError") == 4)
+
+        # second run; a different failing test
+        selenium_server.type("xpath=//div[3]/textarea",
+                             "class Animal(object):\n    pass")
+        selenium_server.click("xpath=//div[3]/button") # execute button
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        self.assertTrue(all_text.count("NameError") == 3)
+        self.assertTrue(all_text.count("TypeError") == 1)
+
+        # Third run: success; make sure we set language to English to compare
+        selenium_server.type("xpath=//div[3]/textarea",
+                             "crunchy.language='en'\n" +
+                             "class Animal(object):\n" +
+                             "   def __init__(self, name):\n" +
+                             "       self.name = name\n" +
+                             "       self.friends = []\n" +
+                             "   def addFriend(self, friend):\n" +
+                             "       self.friends.append(friend)\n")
+        selenium_server.click("xpath=//div[3]/button") # execute button
+        time.sleep(0.1)
+        all_text = selenium_server.get_body_text()
+        self.assertTrue(all_text.count("Congratulations") == 1)
+
+    def tearDown(self):
+        '''final verification'''
+        common_tear_down(self)
+
 
 class InterpreterTest(unittest.TestCase):
     '''Ensures that code is run through various interpreter and verifies the
@@ -51,10 +104,8 @@ class InterpreterTest(unittest.TestCase):
 
         # first interpreter; execute the code and give time for Crunchy
         # to process it
-        editor_link = "xpath=//div[3]/span[2]/a"
-        execute_button = "xpath=//div[3]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[3]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[3]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
@@ -64,10 +115,8 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # second interpreter
-        editor_link = "xpath=//div[4]/span[2]/a"
-        execute_button = "xpath=//div[4]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[4]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[4]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
@@ -79,50 +128,40 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("SystemExit") == system_exits)
 
         # third interpreter
-        editor_link = "xpath=//div[5]/span[2]/a"
-        execute_button = "xpath=//div[5]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[5]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[5]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # fourth interpreter
-        editor_link = "xpath=//div[6]/span[2]/a"
-        execute_button = "xpath=//div[6]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[6]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[6]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # fifth interpreter
-        editor_link = "xpath=//div[7]/span[2]/a"
-        execute_button = "xpath=//div[7]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[7]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[7]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # sixth interpreter
-        editor_link = "xpath=//div[8]/span[2]/a"
-        execute_button = "xpath=//div[8]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[8]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[8]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         fifty_six += 1
         self.assertTrue(all_text.count("56") == fifty_six)
 
         # seventh interpreter
-        editor_link = "xpath=//div[9]/span[2]/a"
-        execute_button = "xpath=//div[9]/button"
-        selenium_server.click(editor_link)
-        selenium_server.click(execute_button)
+        selenium_server.click("xpath=//div[9]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[9]/button") # execute button
         time.sleep(0.1)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
@@ -130,7 +169,9 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("42") == forty_twos)
         self.assertTrue(all_text.count("56") == fifty_six)
 
-        self.assertEqual([], self.verificationErrors)
+    def tearDown(self):
+        '''final verification'''
+        common_tear_down(self)
 
 
 class LeftMenuLinkTest(unittest.TestCase):
@@ -156,7 +197,11 @@ class LeftMenuLinkTest(unittest.TestCase):
             "//img[@alt='Home']", "link=FAQ, bugs, etc.",
             "//img[@alt='Home']", "link=Writing tutorials",
             "//img[@alt='Home']"])
-        self.assertEqual([], self.verificationErrors)
+
+    def tearDown(self):
+        '''final verification'''
+        common_tear_down(self)
+
 
 if __name__ == "__main__":
     print "functional testing using nose and selenium"
@@ -169,5 +214,6 @@ if __name__ == "__main__":
     selenium_server = selenium("localhost", 4444, "*chrome", base_url)
     selenium_server.start()
     selenium_server.open('/')
+    selenium_server.wait_for_page_to_load(5000)
     unittest.main()
     selenium_server.stop()
