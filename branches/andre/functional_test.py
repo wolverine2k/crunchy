@@ -183,6 +183,8 @@ class LeftMenuLinkTest(unittest.TestCase):
     are found.
     '''
     def test_links(self):
+        '''tests all the links on the left hand side of the index page,
+        coming back to that page each time.'''
         self.verificationErrors = []
         click_link_and_wait([
             "//img[@alt='Home']", "link=Begin tutorial",
