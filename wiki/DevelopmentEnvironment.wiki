@@ -1,20 +1,35 @@
-#summary Ideas for using Silverlight in Crunchy.
-#labels Silverlight,Phase-Design
+#summary How to use the project site on Google Code.
+#labels
 
 = Introduction =
 
-Microsoft Silverlight can run IronPython. This is a Good Thing. We would like to take advantage of this Good Thing!
+So, you are ready to start working on Crunchy development. Here's what you need to do to use the repository.
 
 
-= Taking advantage of a Good Thing =
+= Accounts you will need =
 
-Here is a list of the advantages that Silverlight can bring to Crunchy (please add our own ideas):
-  * Using Silverlight we can execute code securely, in the browser - and it will be properly sandboxed.
-  * It means that we wuld never have to write a single line in javascript again - we ca write it all in IronPython.
-  * It makes the code run faster, because there is less overhead associated with setting up and tearing down IO connections.
-  * If we do continue to communicate with the server, we can use a proper TCP connection - not some hacked layer on top of HTTP (yes, I mean you: COMET).
-  * Better Graphics: we would have much more flexibility in terms of what we can draw (3D acceleration here we come...)
-  * Easier to debug through VS (if you like that kind of thing) - thanks Amit
-  * We can write unitests in python that run in the browser - see Issue 103 - actually, Selenium is a much better way of doing this.
+You will need the following accounts/subscriptions (all require a google account):
+  * An account on the Crunchy Google Code Project Site - email Johannes or André to get one.
+  * We ask you to sign up to the crunchy-discuss and crunchy-notify maillinglists (links are on the front page)
+  * You will need to know your google code SVN password (go to http://code.google.com/hosting/settings to find this)
+  
+= Now that you are all set, here's how to do it =
 
-Does anyone else have any ideas...?
+First of all, you need to know basic SVN. You can either use a command line client or a GUI (the svn integration into Eclipse is particularly good). If you haven't used SVN before, just google svn tutorial - there are plenty good ones out there.
+
+== Committing to SVN ==
+
+We ask that everyone commit stuff into their own branch - so before you start you will need to do an svn copy from the most up to date branch (usually André's) to a new folder in the branches folder. Please name this folder something useful, like johannes or muriel (i.e. use your own name!).
+
+André and Johannes will take care of merging your branch into the trunk at regular intervals.
+
+== Bugs and Clever Ideas ==
+
+If you come across a bug, or have a clever idea, please create an issue for it in the issue tracker. Make sure you use sensible labels and if its a bug, please tell write down how to reproduce it. When you start working on an issue, please change the status to Started and when you are close an issue please mark it as Fixed. Never mark your own issues as Verified - let someone else come along and run tests - this is because two people are always better at testing than one!
+
+= Things to do if you don't know what else to do... =
+
+Here are a few of ideas (please add some more...):
+  * Take a bug from the issue tracker and fix it
+  * Write some tests
+  * Take a bug from the tracker that has been marked as Fixed and test the hell out of it - if you are satisfied that it is indeed fixed, then mark the bug as Verified.
