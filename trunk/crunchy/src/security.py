@@ -273,7 +273,9 @@ allowed_attributes['display strict'] = strict
 # in style attributes or in style sheets in "normal" security level;
 # styles are not permitted in "severe" or "strict".
 
-dangerous_strings = ['url(', '&#']
+# we need to be less specific here: this breaks styles that use background-image among other things
+#dangerous_strings = ['url(', '&#']
+dangerous_strings=[]
 
 __dangerous_text = ''
 
