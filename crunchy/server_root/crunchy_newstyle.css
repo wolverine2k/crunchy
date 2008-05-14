@@ -7,14 +7,15 @@ The palette is based on the tango icon palette
 
 
 html {
-    background-color: #204a87;
+    background-color: #f8f8ff;
+    background-color: white;
 }
 
 body {
 font-family: 'Arial', sans-serif;
 font-weight: normal;
 color: #2e3436;
-font-size: 12pt;
+font-size: 11pt;
 }
 
 p {
@@ -37,38 +38,60 @@ h1 {
 blockquote {
     padding: 0.2em 1em 0.2em 1em;
 }
+
+img {
+    border : none;
+    margin: 0px;
+    padding: 0px;
+}
+
 #container {
     padding: 0px 1em 0px 1em;
-    max-width: 760px;
+    width: 900px;
     margin: 0 auto 0 auto;
-    background-color: #eeeeec;
-    border-left: 3px solid #555753;
-    border-right: 3px solid #555753;
+    /*border-left: 3px solid #555753;*/
+    /*border-right: 3px solid #555753;*/
     min-height: 600px;
 }
 
 #titlebar {
     height: 100px;
-    background-image: url(crunchy-python-powered.png);
+    /*background-image: url(crunchy-python-powered.png);*/
+    margin-top: 25px;
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center left;
 }
 
+#titlebar img {
+    display: inline;
+    margin-top: 24px;
+    width : 300px;
+    margin-left: 7px;
+    vertical-align: middle;
+    
+}
+
+#titlebar h1 {
+    display: inline;
+    font-size: 50px;
+    text-align: center;
+    padding-left: 1em;
+    vertical-align: bottom;
+}
 #navbar {
+    border-right: 1px solid #2e3436;
     min-width: 100px;
     float: left;
     margin-bottom: 1em;
     margin-right: 1em;
-    background-color: #d3d7cf;
 }
 
 #navbar span.heading {
     text-align: center;
 	display: block;
 	font-weight: bold;
-	background-color: #fce94f;
 	padding: 3px 1em 3px 1em;
-	font-size: 14pt;
+	/*font-size: 14pt;*/
 	font-family: 'Trebuchet MS', sans-serif;
 }
 
@@ -76,9 +99,8 @@ blockquote {
 	display: block;
 	padding: 0.15em 0.5em;
 	margin: 1px 0;
-	font-weight: bold;
 	text-decoration: none;
-	font-size: 12pt;
+	/*font-size: 12pt;*/
 }
 
 #navbar a:hover {
@@ -86,13 +108,3 @@ blockquote {
 	text-decoration: none;
 }
 
-#navbar .me {
-	display: block;
-	color: black;
-	background: white;
-	padding: 0.15em 0.5em;
-	border: 1px solid white;
-	margin: 1px 0;
-	text-decoration: none;
-	font-style: italic;
-}
