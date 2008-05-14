@@ -1,15 +1,17 @@
 <html>
 <head>
-<link href="/menu_basic.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/crunchy_menu.css" type="text/css" charset="utf-8">
 </head>
 <body>
 
 <!-- specify width and right values so that it can be dragged properly -->
-<div class="crunchy_menu_container" style="width:306px;right:0;">
-<ul>
-<li> <a href="/"><img src="/crunchy.png" alt="Home"/></a></li>
-<li><a href="/exit">Quit</a></li>
-</ul>
+<div id="crunchy_menu">
+<div id="menu_title">Crunchy Menu</div>
+<a href="/">Crunchy Home</a>
+<a href="#" onclick="show_security_info();">Security Report ...</a>
+<a href="#" onclick="alert('This functionality has not been implemented.')">Set Security Level ...</a>
+<span class="menu_separator" > </span>
+<a href="/exit">Quit Crunchy</a>
 </div>
 </body>
 </html>
