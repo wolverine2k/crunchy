@@ -80,6 +80,7 @@ img {
 }
 #navbar {
     border-right: 1px solid #2e3436;
+    border-bottom: 1px solid #2e3436;
     min-width: 100px;
     float: left;
     margin-bottom: 1em;

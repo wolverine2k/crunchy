@@ -9,6 +9,7 @@
     z-index: 300;
     background-color: #3465a4;
     color: black;
+    font-size:11pt;
 }
 
 #menu_box:hover {
@@ -22,6 +23,7 @@
 }
 
 #menu_box a {
+    text-decoration: none;
     display: block;
     background-color: #729fcf;
     color: black;
