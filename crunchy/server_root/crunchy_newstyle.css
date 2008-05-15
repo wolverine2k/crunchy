@@ -1,10 +1,12 @@
-/* This is a set of css styles to go with template.html 
+/* 
+This is a set of css styles to go with template.html 
 
 The palette is based on the tango icon palette
 
 */
 
 
+/* All the stuff for the crunchy pages themselves */
 
 html {
     background-color: #f8f8ff;
@@ -80,11 +82,10 @@ img {
 }
 #navbar {
     border-right: 1px solid #2e3436;
-    border-bottom: 1px solid #2e3436;
-    min-width: 100px;
+    width: 171px;
     float: left;
     margin-bottom: 1em;
-    margin-right: 1em;
+    margin-right: 10px;
 }
 
 #navbar span.heading {
@@ -109,3 +110,27 @@ img {
 	text-decoration: none;
 }
 
+
+/* The content */
+
+#content {
+    margin-left: 182px;
+}
+
+#content p {
+    /* put the margin at the bottom rather than the top: */
+    margin: 0px 0px 1em 0px;
+    text-align: justify;
+}
+
+#content h2 {
+    color: #204a87;
+}
+
+#content h3 {
+    color: #204a87;
+}
+
+#content h4 {
+    color: #204a87;
+}
