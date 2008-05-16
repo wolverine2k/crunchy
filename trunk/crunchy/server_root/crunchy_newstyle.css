@@ -134,3 +134,21 @@ img {
 #content h4 {
     color: #204a87;
 }
+
+/* special notes */
+.notes {
+    border: 1px solid #2e3436;
+    float: right;
+    background-color: #729fcf;
+    width: 250px;
+    margin: 1em 0em 1em 1em;
+    padding: 0em 1em 1em 1em;
+}
+
+.wide-warning {
+    border: 1px solid #a40000;
+    background-color: #fce94f;
+    margin: 1em 0em 1em 0em;
+    padding: 0em 1em 0em 1em;
+}
+

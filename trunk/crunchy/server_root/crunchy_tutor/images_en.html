@@ -1,33 +1,47 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--  
+Here is a template that we an use to beautify the Crunchy main page.   
+
+Its very simple, just put your content in the content div, your navigation elements in the navbar
+div and and your header text in the titlebar div.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Image files</title>
-<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
-<link href="tutor_bw.css" title="Black and white" type="text/css" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Images</title>
+	
+	<link rel="stylesheet" href="/crunchy_newstyle.css" type="text/css" charset="utf-8">
 </head>
+
 <body>
-<div id="topbar">
-<img alt="" src="maths.gif" class="titleimage"/>
-<span class="title">Playing with images</span>
-</div>
+
+<div id="container">
+<div id="titlebar">
+<a href="/"><img src="/crunchy-python-powered.png" /> </a><h1>Playing with Images</h1>
+</div>    
+
 <div id="navbar">
-<span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Begin tutorial</a>
-<a href="interpreter_en.html">Interpreter</a>
-<a href="editor_en.html">Editor</a>
-<a href="doctest_en.html">DocTest</a>
-<a href="canvas_en.html">Graphics</a>
-<a href="images_en.html">Image files</a>
-<a href="external_en.html">External applications</a>
-<span class="heading">Advanced Topics</span>
-<a href="remote_en.html">Browsing</a>
-<a href="config_en.html">Configuring Crunchy</a>
-<a href="faq_en.html">FAQ, bugs, etc.</a>
-<a href="writing_en.html">Writing tutorials</a>
-<a href="/functional_tests">Tests</a>
+    <span class="heading">The Crunchy Tutorial</span>
+    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
+    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
+    <a href="/crunchy_tutor/editor_en.html">Editor</a>
+    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
+    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
+    <a href="/crunchy_tutor/images_en.html">Image files</a>
+    <a href="/crunchy_tutor/external_en.html">External applications</a>
+    <span class="heading">Advanced Topics</span>
+    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
+    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
+    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
+    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
+    <a href="/functional_tests">Tests</a>
 </div>
-<div id="main">
-<h3 class="crunchy">Dynamically inserting images into a page</h3>
+<div id="content">
+<h3 >Dynamically inserting images into a page</h3>
 <p>Crunchy allow a user to insert one or more images interactively below
 an interpreter or any other elements.  The technique used to do this kind of
 web page transformation is known as <i>dynamic html</i> or <i>dhtml</i> for short.
@@ -104,7 +118,7 @@ images and could be showcased by Crunchy, let us know.
 </p>
 </div>
 
-<h3 class="crunchy">Advanced dhtml</h3>
+<h3 >Advanced dhtml</h3>
 <p>More to write</p>
 <pre title="editor">
 # comprehensive example
@@ -208,5 +222,7 @@ Some more explanation will follow.
 
 
 </div>
+</div>
+
 </body>
 </html>

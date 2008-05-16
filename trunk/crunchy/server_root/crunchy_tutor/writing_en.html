@@ -1,37 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--  
+Here is a template that we an use to beautify the Crunchy main page.   
+
+Its very simple, just put your content in the content div, your navigation elements in the navbar
+div and and your header text in the titlebar div.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Writing tutorials</title>
-<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
-<link href="tutor_bw.css" title="Black and white" type="text/css" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+	<title>Crunchy :: Writing Tutorials</title>
+	
+	<link rel="stylesheet" href="/crunchy_newstyle.css" type="text/css" charset="utf-8">
 </head>
+
 <body>
-<div id="topbar">
-<img alt="" src="argh.gif" class="titleimage"/>
-<span class="title">Writing tutorials</span>
-</div>
+
+<div id="container">
+<div id="titlebar">
+<a href="/"><img src="/crunchy-python-powered.png" /> </a><h1>Writing Tutorials</h1>
+</div>    
+
 <div id="navbar">
-<span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Begin tutorial</a>
-<a href="interpreter_en.html">Interpreter</a>
-<a href="editor_en.html">Editor</a>
-<a href="doctest_en.html">DocTest</a>
-<a href="canvas_en.html">Graphics</a>
-<a href="images_en.html">Image files</a>
-
-<a href="external_en.html">External applications</a>
-<span class="heading">Advanced Topics</span>
-
-<a href="remote_en.html">Browsing</a>
-
-<a href="config_en.html">Configuring Crunchy</a>
-<a href="faq_en.html">FAQ, bugs, etc.</a>
-<a href="writing_en.html">Writing tutorials</a>
-
-<a href="/functional_tests">Tests</a>
+    <span class="heading">The Crunchy Tutorial</span>
+    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
+    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
+    <a href="/crunchy_tutor/editor_en.html">Editor</a>
+    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
+    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
+    <a href="/crunchy_tutor/images_en.html">Image files</a>
+    <a href="/crunchy_tutor/external_en.html">External applications</a>
+    <span class="heading">Advanced Topics</span>
+    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
+    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
+    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
+    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
+    <a href="/functional_tests">Tests</a>
 </div>
-<div id="main">
+<div id="content">
 <p>So you wrote a Python tutorial, either about the language or about some library (like pygame)
 or module.  Congratulations, this is hard work.  If your tutorial was written in html, with
 relevant Python code inside  <code>&lt;pre&gt;</code> elements, then Crunchy can be used
@@ -43,7 +52,7 @@ with Crunchy much richer.</p>
 </p>
 </div>
 
-<h3 class="crunchy">Extremely Advanced Stuff</h3>
+<h3 >Extremely Advanced Stuff</h3>
 <p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
  VLAM is essentially just an extended set of attributes for some common HTML tags. 
  Any .htm or .html file loaded through Crunchy 
@@ -58,7 +67,7 @@ with Crunchy much richer.</p>
 </ul>
 <p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
 
-<h1 class="crunchy">Crunchy attributes</h1>
+<h1 >Crunchy attributes</h1>
 <p>The following table is a summary of available "crunchy attributes"; these 
 are attributes of the html tag "title".  Please refer to the <em>Crunchy user Tutorial</em>
 on the left for some actual examples.</p>
@@ -160,7 +169,7 @@ of the different types mentioned above)</th></tr>
 </table>
 
 
-<h2 class="crunchy"><a id="interpreter">Interpreter</a></h2>
+<h2 ><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
 <code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
@@ -193,7 +202,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <dt>#input</dt>
 	<dd>The textbox used for input</dd>
 </dl>
-<h2 class="crunchy"><a id="editor">Code Editor</a></h2>
+<h2 ><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="no_vlam">
 &lt;pre title="editor [no_style] [no-copy] [no-pre] 
@@ -221,7 +230,7 @@ code.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2 class="crunchy"><a id="doctest">DocTest</a></h2>
+<h2 ><a id="doctest">DocTest</a></h2>
 <p><code>&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
@@ -238,7 +247,7 @@ friendlier to beginners.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2 class="crunchy"><a id="styling">Simple code styling</a></h2>
+<h2 ><a id="styling">Simple code styling</a></h2>
 <p>Crunchy will automatically colourize the Python code between the <code>&lt;pre ...&gt; ...&lt;/pre&gt;</code> tags, unless the combination <code>title="no_vlam"</code> appears as
 an attribute to the <code>pre</code>.  Sometimes, you may want simply to 
 colourize the Python code without actually inserting an interactive element.  You can do so by writing:</p>
@@ -262,7 +271,7 @@ colourize the Python code without actually inserting an interactive element.  Yo
 </dl>
 
 
-<h2 class="crunchy"><a id="alternate">Alternate Python version</a></h2>
+<h2 ><a id="alternate">Alternate Python version</a></h2>
 <p>Insert an editor, an input box to specify the Python version to use,
 and a button to execute the code externally using the specified Python version.</p>
 <pre title="no_vlam">
@@ -291,10 +300,10 @@ code.</p>
 </dl>
 
 
-<h2 class="crunchy"><a id="advanced">Advanced options</a></h2>
+<h2 ><a id="advanced">Advanced options</a></h2>
 <p>Some "advanced" options require hand-coding and should rarely be used by
 tutorial writers.</p>
-<h3 class="crunchy">Fetching a local tutorial</h3>
+<h3 >Fetching a local tutorial</h3>
 <p>If one wants to insert a "browser" object to load a local tutorial,
 all that is required is to write:<br/>
 <code>&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
@@ -304,12 +313,12 @@ to the Python path (sys.path)
 the directory where the tutorial is located; this will allow importing
 modules that are distributed with the tutorial - as long as they are in the
 same directory.</p>
-<h3 class="crunchy">Fetching a remote tutorial</h3>
+<h3 >Fetching a remote tutorial</h3>
 <p>If one wants to insert a input box to load a remote tutorial,
 all that is required is to write:<br/>
 <code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
 
-<h4 class="crunchy">Adding a path to <code title="py_code">sys.path</code></h4>
+<h4 >Adding a path to <code title="py_code">sys.path</code></h4>
 <p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
 above, its path is added to <code title="py_code">sys.path</code>.  Other relative
 paths can be added via the following syntax<br/>
@@ -318,7 +327,7 @@ paths can be added via the following syntax<br/>
 </code>
 </p>
 
-<h3 class="crunchy">Changing the default menu</h3>
+<h3 >Changing the default menu</h3>
 <p>Changing the default menu can be done by including<br/>
 <code>&lt;meta name="crunchy_menu" content="filename"&gt;</code> in the html <code>&lt;head&gt;</code> element.  The file designated by <code>filename</code> must be a valid
 html file having a well defined structure.  The following is the file currently used by
@@ -346,7 +355,7 @@ Crunchy.</p>
 in the <code>&lt;head&gt;</code>.  Note that we have to specify styles values for "width"
 and "right" so that the menu can be clicked and dragged.  Alternatively, we could specify
 a value for the "left" attribute.</p>
-
+</div>
 </div>
 </body>
 </html>
