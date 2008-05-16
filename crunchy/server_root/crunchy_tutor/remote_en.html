@@ -1,33 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-<title>Browsing</title>
-<link href="tutor.css" title="Tutor Style" type="text/css" rel="stylesheet" />
-<link href="tutor_bw.css" title="Black and white" type="text/css" rel="stylesheet" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<!--  
+Here is a template that we an use to beautify the Crunchy main page.   
+
+Its very simple, just put your content in the content div, your navigation elements in the navbar
+div and and your header text in the titlebar div.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Browsing</title>
+	
+	<link rel="stylesheet" href="/crunchy_newstyle.css" type="text/css" charset="utf-8">
 </head>
+
 <body>
-<div id="topbar">
-<img alt="" src="argh.gif" class="titleimage"/>
-<span class="title">A tangled web</span>
-</div>
+
+<div id="container">
+<div id="titlebar">
+<a href="/"><img src="/crunchy-python-powered.png" /> </a><h1>A Tangled Web</h1>
+</div>    
+
 <div id="navbar">
-<span class="heading">Crunchy user tutorial</span>
-<a href="welcome_en.html">Begin tutorial</a>
-<a href="interpreter_en.html">Interpreter</a>
-<a href="editor_en.html">Editor</a>
-<a href="doctest_en.html">DocTest</a>
-<a href="canvas_en.html">Graphics</a>
-<a href="images_en.html">Image files</a>
-<a href="external_en.html">External applications</a>
-<span class="heading">Advanced Topics</span>
-<a href="remote_en.html">Browsing</a>
-<a href="config_en.html">Configuring Crunchy</a>
-<a href="faq_en.html">FAQ, bugs, etc.</a>
-<a href="writing_en.html">Writing tutorials</a>
-<a href="/functional_tests">Tests</a>
+    <span class="heading">The Crunchy Tutorial</span>
+    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
+    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
+    <a href="/crunchy_tutor/editor_en.html">Editor</a>
+    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
+    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
+    <a href="/crunchy_tutor/images_en.html">Image files</a>
+    <a href="/crunchy_tutor/external_en.html">External applications</a>
+    <span class="heading">Advanced Topics</span>
+    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
+    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
+    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
+    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
+    <a href="/functional_tests">Tests</a>
 </div>
-<div id="main">
+<div id="content">
 
 <div class="wide-warning">
 <h4>Safe browsing!</h4>
@@ -49,7 +62,7 @@ to purposely select a different security level for that site yourself if you
 want to execute some Python code while broswing that site.
 </p>
 </div>
-<h3 class="crunchy">Officially learning Python</h3>
+<h3 >Officially learning Python</h3>
 <p> To learn about Python, it might be a good idea to through either
 <a href="http://docs.python.org/tut/tut.html">the old official Python tutorial</a> or
 <a href="http://docs.python.org/dev/tutorial/index.html">the NEW official Python tutorial</a>.
@@ -72,7 +85,7 @@ code you find somewhere before trying it out on your computer.  <b>YOU</b> are r
 for asking Python to execute some code - not Crunchy's designers.</p>
 </div>
 
-<h3 class="crunchy">Elsewhere on the planet</h3>
+<h3 >Elsewhere on the planet</h3>
 <p>
 Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
 If you do so, you might want to look at them using this:</p>
@@ -96,7 +109,7 @@ However, if you are planning to browse the official Python tutorial, I suggest y
 leave the current default (<code title="py_code">'python_tutorial'</code>) unchanged.</p>
 
 
-<h3 class="crunchy">Closer to home</h3>
+<h3 >Closer to home</h3>
 <p> What if you already have some Python tutorial (html documents) on your own computer
 and you would like to use Crunchy to go through them.  You can first browse for them and then load 
 them from here.</p>
@@ -128,6 +141,7 @@ that could possibly be used to inject malicious javascript code.
 <span title="load_python"> </span>
 
 <p><b>If you are aware of any potential security holes, please let us know.</b></p>
+</div>
 </div>
 </body>
 
