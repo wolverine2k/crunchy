@@ -1,0 +1,59 @@
+/* CSS Code for the new menu */
+
+#menu_box {
+    position: fixed;
+    width: 150px;
+    height:18px;
+    right: 0px;
+    top: 0px;
+    overflow: hidden;
+    z-index: 300;
+    background-color: #3465a4;
+    color: black;
+    font-size:11pt;
+}
+
+#menu_box:hover {
+    overflow:visible;
+}
+
+#menu_title {
+    text-align: center;
+    border: 1px solid black;
+    height: 16px;
+}
+
+#menu_box a {
+    text-decoration: none;
+    display: block;
+    background-color: #729fcf;
+    color: black;
+    padding-left: 3px;
+    padding: 2px 0px;
+}
+
+.menu_separator {
+    display: block;
+    height: 0px;
+    border-top: 1px solid #2e3436;
+    background-color: #729fcf;
+    
+}
+
+.security_report {
+    display: none;
+    position: absolute;
+    height: 60px;
+    bottom: 0;
+    z-index:10;
+    right: 0;
+    color: black;
+    border: 3px solid #FFBC29;
+    background-color: white;
+    font: 10pt monospace;
+    margin: 0;
+    max-width: 600px;
+}
+.security_report a:hover{
+font:bold;
+}
