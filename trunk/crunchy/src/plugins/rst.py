@@ -14,6 +14,10 @@ from urllib import urlopen
 _docutils_installed = True
 try:
     from docutils.core import publish_string
+    from docutils.parsers import rst as rst_test
+    if "Directive" not in dir(rst_test):
+        print("rst plugin disabled: docutils installed but version too old.")
+        _docutils_installed = False
 except:
     _docutils_installed = False
 
