@@ -41,10 +41,10 @@ def load_python(request):
     Python file, or the editor.  To "feed" the file to the interpreter,
     first click on the editor icon next to it, and then click on the
     "Execute" button.
-    <h3 class="crunchy"> Using the interpreter </h3>
+    <h3 > Using the interpreter </h3>
     <p>Click on the editor icon and feed the code to the interpreter.</p>
     <pre title="interpreter no-pre"> %s </pre>
-     <h3 class="crunchy"> Using the editor</h3>
+     <h3 > Using the editor</h3>
     <pre title="editor"> %s </pre>
 
     </body>
