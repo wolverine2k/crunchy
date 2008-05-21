@@ -8,8 +8,8 @@
     top: 0px;
     overflow: hidden;
     z-index: 300;
-    background-color: #3465a4;
-    color: black;
+    background-color: #369;/*#3465a4;*/
+    color: white;
     font-size:11pt;
 }
 
@@ -26,10 +26,17 @@
 #menu_box a {
     text-decoration: none;
     display: block;
-    background-color: #729fcf;
-    color: black;
+    background-color: #4682b4;/*#729fcf;*/
+    color: white;
     padding-left: 3px;
     padding: 2px 0px;
+}
+#menu_box a:visited{
+    color: white;
+}
+#menu_box a:hover{
+    background-color: #c2cfdf;
+    color: black;
 }
 
 .menu_separator {
@@ -37,7 +44,7 @@
     height: 0px;
     border-top: 1px solid #2e3436;
     background-color: #729fcf;
-    
+
 }
 
 .security_report {
@@ -55,5 +62,5 @@
     max-width: 600px;
 }
 .security_report a:hover{
-font:bold;
+    font: bold;
 }
