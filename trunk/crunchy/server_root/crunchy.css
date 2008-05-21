@@ -10,12 +10,28 @@ All the CSS needed to make Crunchy whirr
     font-family: monospace;
 }
 pre.crunchy {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #f8f8f0; /*temporary choice*/
     padding: 5px 0px;
-    border-bottom:1px solid #ccc;
+    /*border-bottom:1px solid #ccc;*/
 }
 div.crunchy {
-    border-bottom: 1px solid #ccc;
+    /*border-bottom: 1px solid #ccc;*/
+    padding-bottom: 10px;
+}
+
+.interpreter{
+    background-color: #ccffff; /*temporary choice*/
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.doctest{
+    background-color: #ffccff; /*temporary choice*/
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.editor{
+    background-color: #ffffcc; /*temporary choice*/
+    font-family: monospace;
     padding-bottom: 10px;
 }
 /* Basic Python Elements.

@@ -77,9 +77,14 @@ def insert_interpreter(page, elem, uid):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
+<<<<<<< .mine
+    elem.attrib["id"] = "div_"+uid
+    elem.attrib['class'] = "interpreter"
+=======
     if interp_kind is not None:
         elem.attrib["id"] = "div_"+uid
         elem.attrib['class'] = "crunchy"
+>>>>>>> .r664
     code += "\n"
     if not "no-pre" in vlam:
         try:

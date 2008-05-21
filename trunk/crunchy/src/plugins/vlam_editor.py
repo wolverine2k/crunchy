@@ -217,7 +217,7 @@ def insert_markup(elem, uid, vlam, markup):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
+    elem.attrib['class'] = "editor"
     if not "no-pre" in vlam:
         try:
             elem.insert(0, markup)
