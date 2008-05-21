@@ -10,7 +10,7 @@
     z-index: 300;
     background-color: #369;/*#3465a4;*/
     color: white;
-    font:11pt sans-serif;
+    font-size:11pt;
 }
 
 #menu_box:hover {
