@@ -4,18 +4,25 @@ All the CSS needed to make Crunchy whirr
 
 */
 
-
+/* default used with <code> tag */
 .crunchy {
     background-color: #eeeeec;
-    padding: 5px 00px;
     font-family: monospace;
 }
-
+pre.crunchy {
+    border-top: 1px solid #ccc;
+    padding: 5px 0px;
+    border-bottom:1px solid #ccc;
+}
+div.crunchy {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
 /* Basic Python Elements.
    Color choices for the editor (EditArea) are found in file python.js of the EditArea
    distribution and can not be set via a style sheet.
    I deliberately have not set the font size - this should follow the enclosing text.
-   The palette is taken from the tango icom palette.
+   The palette is taken from the tango icon palette.
 */
 
 .py_comment{
@@ -41,7 +48,7 @@ All the CSS needed to make Crunchy whirr
     white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
     white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
                             http://www.w3.org/TR/css3-text/#white-space */
-                            
+
     color: #2e3436; /* dark grey */
     font-weight: normal;
    	font-family: monospace;
@@ -51,12 +58,12 @@ All the CSS needed to make Crunchy whirr
 
 }
 .stdout {
-
+    font-style: italic;
 }
 
 .stderr {
     color: #a40000; /* red */
-	font-family: monospace;
+    font-family: monospace;
 }
 
 .input {

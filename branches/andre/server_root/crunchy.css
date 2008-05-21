@@ -82,7 +82,7 @@ code.crunchy{
     max-width: 800px;
     font: 11pt monospace;
     font-weight: bold;
-    border: solid 1px
+    border: solid 1px;
     border-width: 2px;
     background-color: #eff;
     border-color: #369;
@@ -113,7 +113,7 @@ input.alt_python{
     /*display: none;*/
     font: 11pt monospace;
     font-weight: bold;
-    border: solid 1px
+    border: solid 1px;
     border-width: 2px;
     background-color: #FFFFCC;
     border-color: #369;}
