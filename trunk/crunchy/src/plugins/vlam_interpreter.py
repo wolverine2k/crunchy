@@ -51,7 +51,8 @@ def insert_interpreter(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if not ('display' in config['page_security_level'](page.url) or
+           interp_kind == None ):
         include_interpreter(interp_kind, page, uid)
         log_id = utilities.extract_log_id(vlam)
         if log_id:
@@ -76,8 +77,9 @@ def insert_interpreter(page, elem, uid):
     # before resetting the element.
     elem.clear()
     elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
+    if interp_kind is not None:
+        elem.attrib["id"] = "div_"+uid
+        elem.attrib['class'] = "crunchy"
     code += "\n"
     if not "no-pre" in vlam:
         try:
@@ -89,7 +91,8 @@ def insert_interpreter(page, elem, uid):
             span.text = "AssertionError from ElementTree"
             bold.append(span)
             elem.insert(1, bold)
-
+    if interp_kind is None:
+        return
     plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     plugin['services'].insert_tooltip(page, elem, uid)
@@ -116,7 +119,7 @@ def select_type(vlam, c, elem):
             if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
                 interp_kind = 'borg'
             else:
-                return   # assume it is not an interpreter session.
+                return # assume it is not an interpreter session.
         else:
             interp_kind = "borg"
     else:
