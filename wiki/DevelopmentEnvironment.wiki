@@ -1,5 +1,4 @@
 #summary How to use the project site on Google Code.
-#labels
 
 = Introduction =
 
@@ -24,7 +23,7 @@ First of all, you need to know basic SVN. You can either use a command line clie
 
 == Committing to SVN ==
 
-We ask that everyone commit stuff into their own branch - so before you start you will need to do an svn copy from the most up to date branch (usually André's) to a new folder in the branches folder. Please name this folder something useful, like johannes or Muriel (i.e. use your own name!).
+We ask that everyone commit stuff into their own branch - so before you start you will need to do an svn copy from the most up to date branch (it used to be André's, but it should be the trunk as of May 26 2008) to a new folder in the branches folder. Please name this folder something useful, like johannes or Muriel (i.e. use your own name!).
 
 André and Johannes will take care of merging your branch into the trunk at regular intervals.
 
