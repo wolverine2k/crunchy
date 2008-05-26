@@ -1,0 +1,93 @@
+/*
+
+All the CSS needed to make Crunchy whirr
+
+*/
+
+/* default used with <code> tag */
+.crunchy {
+    background-color: #eeeeec;
+    font-family: monospace;
+}
+pre.crunchy {
+    border-top: 1px solid #f8f8f0; /*temporary choice*/
+    padding: 5px 0px;
+    /*border-bottom:1px solid #ccc;*/
+}
+div.crunchy {
+    /*border-bottom: 1px solid #ccc;*/
+    padding-bottom: 10px;
+}
+
+.interpreter{
+    background-color: #ccffff; /*temporary choice*/
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.doctest{
+    background-color: #ffccff; /*temporary choice*/
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.editor{
+    background-color: #ffffcc; /*temporary choice*/
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+/* Basic Python Elements.
+   Color choices for the editor (EditArea) are found in file python.js of the EditArea
+   distribution and can not be set via a style sheet.
+   I deliberately have not set the font size - this should follow the enclosing text.
+   The palette is taken from the tango icon palette.
+*/
+
+.py_comment{
+    color: #555753; /* medium grey */
+    font-family: monospace, sans-serif; /*keep monospace to have proper indentation */
+    font-style: italic;
+    }
+.py_variable{color: #2e3436;} /* Dark grey */
+.py_op{color: #ce5c00; font-weight:bold;} /* Orange */
+.py_builtins{color: #204a87;} /* builtins and string functions - dark blue like keywords */
+.py_stdlib{color: #204a87;} /* standard library modules - dark blue like keywords*/
+.py_special{color: #5c3566;} /* special method of the form __x__ - purple*/
+.py_linenumber{font: 70% monospace; color: #888a85; font-style:normal;} /* medium grey */
+.py_output{color:#2e3436; font-style:italic;}
+.py_warning{background-color: #fce94f; font-size: 130%; color: #2e3436; padding: 2px;}
+.py_keyword {color: #204a87;} /* dark blue */
+.py_string {color: #4e9a06;} /* green */
+.py_prompt {color: #ce5c00;} /* orange */
+.py_number {color: #5c3566;} /* medium blue */
+
+/* Here's the CSS for the output elements: */
+.output {
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+
+    color: #2e3436; /* dark grey */
+    font-weight: normal;
+   	font-family: monospace;
+}
+
+.stdin {
+
+}
+.stdout {
+    font-style: italic;
+}
+
+.stderr {
+    color: #a40000; /* red */
+    font-family: monospace;
+}
+
+.input {
+    display: none;
+    width: 80%;
+    max-width: 800px;
+    font-family: monospace;
+    border: solid 1px;
+    background-color: white;
+    border-color: #d3d7cf;
+}

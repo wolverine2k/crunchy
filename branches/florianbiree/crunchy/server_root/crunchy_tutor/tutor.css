@@ -1,0 +1,135 @@
+html {
+	font-family: sans-serif;
+}
+/* --------------------------- topbar ------------------------------- */
+#topbar {
+	width: 100%;
+	max-width: 1400px;  /* leave enough room for long title */
+	height: 4em;
+	left: 0;
+	border-bottom-style: dashed;
+	border-width: 1px;
+	border-color: #369;  /* old Crunchy color: #99B3E6 */
+}
+
+#topbar .titleimage {
+	display: inline;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+}
+
+
+#topbar .title {
+	vertical-align: 20%;
+	margin-left: 150px;
+	font-size: 3em;
+	}
+/* --------------------------- navbar ------------------------------- */
+
+/* try to aim for width of navbar + main content below to be <= 1024 px */
+
+#navbar {
+	position: fixed;
+	top: 6em;
+	left: 0;
+	width: 200px;
+	padding: 10px;
+	overflow: auto; /* this and the following value ensure that the menu will be scrollable */
+	bottom: 1%;     /* if it becomes too big to be displayed vertically. */
+}
+
+#navbar span.heading {
+	display: block;
+	font-weight: bold;
+	background: white;
+	margin-top: 1em;
+	padding: 3px 3px 3px 3px;
+	font-size: 14pt;
+	font-family: 'Trebuchet MS', sans-serif;
+	background-color: #F2F2F2;
+	border-bottom: 2px solid #CCC;
+	color: #20435C;
+}
+#navbar a {
+	display: block;
+	color: #257;
+	background: white;
+	padding: 0.15em 0.5em;
+	margin: 1px 0;
+	font-weight: bold;
+	text-decoration: none;
+	font-size: 12pt;
+}
+
+#navbar a:hover {
+	background: #369;
+	text-decoration: none;
+	font-weight: bold;
+	color: white;
+}
+
+#navbar .me {
+	display: block;
+	color: black;
+	background: white;
+	padding: 0.15em 0.5em;
+	border: 1px solid white;
+	margin: 1px 0;
+	text-decoration: none;
+	font-style: italic;
+}
+/* --------------------------- main content ------------------------------- */
+/* try to aim for width of navbar + main content below to be <= 1024 px */
+#main {
+	position: absolute;
+	top: 5em;
+	left: 200px;
+	margin: 20px;
+	padding: 10px;
+	border-left-style: dashed;
+	border-width: 1px;
+	border-color: #369;
+}
+p{max-width:750px;}
+div{max-width:750px;}
+
+.question {
+	font-weight: bold;
+	}
+	
+.answer {
+	margin-left: 1em;
+	}
+	
+.code {
+	font-family: monospace;
+	margin: 1em;
+	padding: 1em;
+	border-style: dashed;
+	border-color: #369;
+	border-width: 1px;
+	white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+   white-space: -pre-wrap; /* Opera 4 - 6 */
+   white-space: -o-pre-wrap; /* Opera 7 */
+   white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+   word-wrap: break-word; /* IE 5.5+ */
+}
+
+span.def {
+	font-weight: bold;
+	font-family: monospace;
+}
+span.notes {
+	color: green;
+	font-family: sans-serif;
+}
+
+button {background-color: #369; color: white; }
+button:hover{background-color: #369; border-bottom-color: #fe0; color:#fe0;}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+}
