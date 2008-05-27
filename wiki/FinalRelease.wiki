@@ -9,6 +9,12 @@ In preparation for the final 1.0 release, the following must be completed.
 
 Resolve all relevant issues - all remaining open issues must have been tagged as being "beyond 1.0".
 
+====Useful lists of Issues====
+  * Open Release 1.0 issues: http://code.google.com/p/crunchy/issues/list?q=label%3AMilestone-Release1.0&can=2
+  * Release 1.0 issues that need verification: http://code.google.com/p/crunchy/issues/list?can=7&q=label%3AMilestone-Release1.0&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&cells=tiles
+
+Both of those lists should be empty.
+
 ==Appearance==
 
 Crunchy's "look" must have been finalized, with everyone (well... at least both Johannes
