@@ -92,7 +92,102 @@ has a subelement.
 3. Testing a_tag_handler()
 --------------------------
 
-To do.
+    >>> fake_url_2 = "http://docs.python.org/tut/tut.html#hash"
+
+leave link start with / untouch 
+
+    >>> a_link = Element('a', href="/path/to/")
+    >>> links.a_tag_handler(page_default, a_link) 
+    >>> a_link.attrib['href']
+    '/path/to/'
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '/path/to/'
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    '/path/to/'
+
+3a. Testing a_tag_handler for default page 
+--------------------------
+External link  
+
+    >>> a_link = Element('a', href=fake_url_1)
+    >>> links.a_tag_handler(page_default, a_link) 
+    >>> a_link.attrib['href']
+    '/remote?url=http%3A%2F%2Fwww.python.org'
+
+Relative link , leave untouch (?)
+
+    >>> a_link = Element('a', href="crunchy_tutor/welcome_en.html")
+    >>> links.a_tag_handler(page_default, a_link) 
+    >>> a_link.attrib['href']
+    'crunchy_tutor/welcome_en.html'
+
+3a. Testing a_tag_handler for local page
+--------------------------
+External link (with ://)
+
+    >>> a_link = Element('a', href=fake_url_1)
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '/remote?url=http%3A%2F%2Fwww.python.org'
+
+
+Relative link 
+
+    >>> a_link = Element('a', href="path/to/some_file.htm#hash")
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '/local?url=path%2Fto%2Fsome_file.htm'
+    >>> page_local.url = a_link.attrib['href']
+    >>> a_link = Element('a', href="some_file.htm#hash")
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '#hash'
+
+Files with extesnion 'rst' and 'txt'
+
+    >>> a_link = Element('a', href="path/to/some_rst.rst")
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '/rst?url=//path%2Fto%2Fsome_rst.rst'
+    >>> a_link = Element('a', href="path/to/some_txt.txt")
+    >>> links.a_tag_handler(page_local, a_link) 
+    >>> a_link.attrib['href']
+    '/rst?url=//path%2Fto%2Fsome_txt.txt'
+
+3c. Testing a_tag_handler for remote page
+--------------------------
+
+External link (with ://)
+
+    >>> a_link = Element('a', href=fake_url_1)
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    'http://www.python.org'
+
+External link with hash 
+
+    >>> a_link = Element('a', href=fake_url_2)
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    'http://docs.python.org/tut/tut.html'
+
+Relative link 
+    >>> page_remote.url = ""
+    >>> a_link = Element('a', href="path/to/some_file.htm")
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    '/remote?url=path%2Fto%2Fsome_file.htm'
+    >>> a_link = Element('a', href="path/to/some_file.htm#hash")
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    '/remote?url=path%2Fto%2Fsome_file.htm'
+    >>> page_remote.url = a_link.attrib['href']
+    >>> a_link = Element('a', href="some_file.htm#hash")
+    >>> links.a_tag_handler(page_remote, a_link) 
+    >>> a_link.attrib['href']
+    '#hash'
 
 4. Testing link_tag_handler()
 -----------------------------
