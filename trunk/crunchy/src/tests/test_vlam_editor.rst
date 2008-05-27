@@ -263,7 +263,7 @@ included this time.
 
   >>> elem.tag == "div"
   True
-  >>> elem.attrib == {'class': 'crunchy', 'id': 'div_2'}
+  >>> elem.attrib == {'class': 'editor', 'id': 'div_2'}
   True
 
 # Test - br
