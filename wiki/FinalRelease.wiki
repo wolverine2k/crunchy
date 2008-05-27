@@ -1,0 +1,41 @@
+#summary Preparing for the 1.0 release
+#labels Phase-Requirements,Featured
+
+= Towards 1.0 release =
+
+In preparation for the final 1.0 release, the following must be completed.
+
+==Issues==
+
+Resolve all relevant issues - all remaining open issues must have been tagged as being "beyond 1.0".
+
+==Appearance==
+
+Crunchy's "look" must have been finalized, with everyone (well... at least both Johannes
+and André) agreeing about all styling issues.
+
+  * Note: must determine if some visual symbol has to be re-introduced to indicate the
+security level on the page (or on the menu?).
+
+==Testing==
+
+Ensure that Crunchy has been tested under
+  # At least one Linux flavor
+  # Windows
+  # Windows with path for user containing non-ascii character (André!)
+  # Mac OS
+
+"Tested" means that Crunchy must have been run by a user, that all existing unit tests
+have been executed as well as all the existing functional tests (using selenium).
+This should be noted below, including the platform and the user.
+
+
+==Content==
+
+All html pages directly assessible from the left-hand-side menu must have been determined 
+to be completed.  Each of these should be noted below, indicating the page name and the
+user who performed the official check.
+
+==Open issues==
+
+Question: should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
