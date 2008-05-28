@@ -39,7 +39,24 @@ This should be noted below, including the platform and the user.
 
 All html pages directly assessible from the left-hand-side menu must have been determined 
 to be completed.  Each of these should be noted below, indicating the page name and the
-user who performed the official check.
+user who performed the official check.  *Note: this should be the very last thing done prior to a release, to ensure that the information is up to date and reflect all the changes made.  Do not update the table until then.*  A _bug fix_ release could be done without this QA check being made.
+
+|| *Page* || *Release target* || *Verified by*||
+|| index.html ||  0.9.9.3 || Andre ||
+|| crunchy_tutor/welcome_en.html ||   ||   ||
+|| crunchy_tutor/interpreter_en.html ||   ||   ||
+|| crunchy_tutor/editor_en.html ||   ||   ||
+|| crunchy_tutor/doctest_en.html ||   ||   ||
+|| crunchy_tutor/canvas_en.html ||   ||   ||
+|| crunchy_tutor/images_en.html ||   ||   ||
+|| crunchy_tutor/external_en.html ||   ||   ||
+|| crunchy_tutor/remote_en.html ||   ||   ||
+|| crunchy_tutor/config_en.html ||   ||   ||
+|| crunchy_tutor/faq_en.html ||   ||   ||
+|| crunchy_tutor/writing_en.html ||   ||   ||
+|| functional_tests/index.html ||   ||   ||
+
+
 
 Ensure that documentation is complete: for example, there is a simple turtle module included in the Crunchy distribution that should be documented.
 
