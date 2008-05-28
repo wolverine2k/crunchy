@@ -20,8 +20,7 @@ Both of those lists should be empty.
 Crunchy's "look" must have been finalized, with everyone (well... at least both Johannes
 and André) agreeing about all styling issues.
 
-  * Note: must determine if some visual symbol has to be re-introduced to indicate the
-security level on the page (or on the menu?).
+  * Note: must determine if some visual symbol has to be re-introduced to indicate the security level on the page (or on the menu?).
 
 ==Testing==
 
@@ -42,6 +41,9 @@ All html pages directly assessible from the left-hand-side menu must have been d
 to be completed.  Each of these should be noted below, indicating the page name and the
 user who performed the official check.
 
+Ensure that documentation is complete: for example, there is a simple turtle module included in the Crunchy distribution that should be documented.
+
 ==Open issues==
 
-Question: should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
+  * Should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
+  * Should we remove all styling "hard-coded" information in .py files, like what was done when addressing issue 112, prior to the 1.0 release?
