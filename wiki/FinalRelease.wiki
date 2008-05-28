@@ -64,3 +64,8 @@ Ensure that documentation is complete: for example, there is a simple turtle mod
 
   * Should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
   * Should we remove all styling "hard-coded" information in .py files, like what was done when addressing issue 112, prior to the 1.0 release?
+
+== See also ==
+
+  * BuildingReleases
+  * issue 112
