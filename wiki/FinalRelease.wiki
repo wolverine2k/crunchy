@@ -5,6 +5,8 @@
 
 This document outlines the various checks that must be performed before an official release is made.  Some points mentioned here are specific to the final 1.0 release.
 
+In some tables below, a release target version is listed.  This will always denote the latest (planned) release version for which the verification has been made.
+
 ==Issues==
 
 Resolve all relevant issues - all remaining open issues must have been tagged as being "beyond 1.0".  For releases beyond 1.0, we will have to update the tag as appropriate.
@@ -73,9 +75,17 @@ user who performed the official check.  *Note: this should be the very last thin
 || crunchy_tutor/writing_en.html ||   ||   ||
 || functional_tests/index.html ||   ||   ||
 
-
-
 Ensure that documentation is complete: for example, there is a simple turtle module included in the Crunchy distribution that should be documented.
+
+====Translations====
+
+Translations should be verified and, if possible, brought up to date.
+
+|| *Language* || *Release target* || *Status* || *Verified by* ||
+|| English || || || ||
+|| French || || || André ||
+
+To be completed later.
 
 ==Open issues==
 
