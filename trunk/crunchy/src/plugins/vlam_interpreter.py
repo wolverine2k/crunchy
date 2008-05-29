@@ -148,12 +148,12 @@ def include_interpreter(interp_kind, page, uid):
     Parrots_js = parrots_javascript(prefix, page)
     TypeInfoConsole_js = type_info_javascript(prefix, page)
     # first we need to make sure that the required javacript code is in the page:
-    if interp_kind == "borg":
+    if interp_kind == "borg" or interp_kind == "interpreter":
         if not page.includes("BorgInterpreter_included"):
             page.add_include("BorgInterpreter_included")
             page.add_js_code(BorgInterpreter_js)
         page.add_js_code('init_BorgInterpreter("%s");' % uid)
-    elif interp_kind == "isolated":
+    elif interp_kind == "isolated" or interp_kind == "Human":
         if not page.includes("SingleInterpreter_included"):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)
