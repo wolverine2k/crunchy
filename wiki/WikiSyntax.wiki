@@ -1,0 +1,31 @@
+#summary Wiki syntax to write crunchy tutorials
+
+This page describe the wiki syntax which will be available to write tutorials.
+
+= General wiki syntax =
+
+For general elements, the wiki syntax will be the same as the [http://moinmo.in/ MoinMoin] one.
+Read the [http://moinmo.in/HelpOnMoinWikiSyntax Syntax reference].
+
+The MoinMoin syntax is used because MoinMoin is the major wiki engine in the python world.
+
+= Management of python code =
+
+The most important change in the wiki syntax is the addition of a new "parser syntax" for VLAM <pre> markup, like (without spaces between bracket) this:
+{{{
+{ { {#!crunchy vlam stuff
+ Python code
+} } }
+}}}
+where "vlam stuff" can be the same parameters than the one in the "title" attribute of <pre> markups in html.
+
+= Other VLAM makup =
+
+Some other VLAM makup like:
+  * <a title="external_link" ...></a>
+  * <span title="load local"> one or more spaces </span>
+  * <span title="load remote"> optional url </span>
+can be implemented through macros, like:
+  * <<external_link(url name)>>
+  * <<load_local>>
+  * <<load_remote(optional url)>>
