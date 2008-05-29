@@ -15,6 +15,7 @@ import src.interface as _interface
 _plugin = _interface.plugin
 _config = _interface.config
 
+# The following three variables are provided for the convenience of end users.
 home = _os.path.expanduser("~")
 temp_dir = _config['temp_dir']
 join_path = _os.path.join
@@ -67,8 +68,8 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
     or a relative path (or filename) from the current working directory
     if from_cwd is set to True.
 
-    Different values for name allow to display more than one image; the
-    last loaded image for a given name replaces the previous one.
+    Different values for label allow to display more than one image; the
+    last loaded image for a given label replaces the previous one.
     '''
 
     if from_cwd:
@@ -77,15 +78,15 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
     # Note: we append a random string as a parameter (after a ?) to prevent
     # the browser from loading a previously cached image.
     file_path = file_path + '?' + str(int(random.random()*1000000000))
-    
+
     append('img', attributes={'width':width, 'height':height, 'src':file_path},
            label=label, parent_label=parent_label)
 
 def append(tag, attributes=None, label='', parent_label=None):
     ''' dynamically creates an html object with the given attribute (as a dict).
 
-    Different values for name allow to display more than one object; the
-    last loaded object for a given name replaces the previous one.
+    Different values for label allow to display more than one object; the
+    last loaded object for a given label replaces the previous one.
 
     If parent_label is None, the objects gets appended to the main <div> of
     the Python output element; otherwise, it gets appended to the specified
