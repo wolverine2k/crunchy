@@ -145,12 +145,12 @@ of the different types mentioned above)</th></tr>
 </tr>
 
 <tr>
-	<td><code>no-pre</code></td>
-	<td><code>no-pre</code> does not show the code inside the &lt;pre&gt; 
+	<td><code>no_pre</code></td>
+	<td><code>no_pre</code> does not show the code inside the &lt;pre&gt; 
 	element, only inside the &lt;textarea&gt;.  Since this does not make sense 
 	for a doctest option, or if 
 	<code>no_copy</code> is present, it is ignored in these cases.  A 
-	typical use of <code>no-pre</code> is to include a complete (long)
+	typical use of <code>no_pre</code> is to include a complete (long)
 	listing for execution at the end of a tutorial, after the main sections 
 	have been explained separately.<br/>
 	Can be used with: <code>editor, image_file</code>.</td>
@@ -205,7 +205,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <h2 ><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="no_vlam">
-&lt;pre title="editor [no_style] [no_copy] [no-pre] 
+&lt;pre title="editor [no_style] [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no-internal]]"&gt;
 Some Python code
 
@@ -275,7 +275,7 @@ colourize the Python code without actually inserting an interactive element.  Yo
 <p>Insert an editor, an input box to specify the Python version to use,
 and a button to execute the code externally using the specified Python version.</p>
 <pre title="no_vlam">
-&lt;pre title="alternate_python_version [no_style] [no_copy] [no-pre] 
+&lt;pre title="alternate_python_version [no_style] [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no-internal]]"&gt;
 Some Python code
 

@@ -231,7 +231,7 @@ Create also a fake configuration variable.
 Set object attributes for an untrusted page
 
   >>> page.url = "display_only_url"
-  >>> elem.attrib = {'title': 'no-pre'}
+  >>> elem.attrib = {'title': 'no_pre'}
 
 Run the Function
 
@@ -247,7 +247,7 @@ included this time.
 
   >>> page.url = "trusted_url"
   >>> page.added_info = []
-  >>> elem.attrib = {'title': 'no-pre'}
+  >>> elem.attrib = {'title': 'no_pre'}
 
 #  Run the Function
 

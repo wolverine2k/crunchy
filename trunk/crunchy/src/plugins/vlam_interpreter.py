@@ -81,7 +81,7 @@ def insert_interpreter(page, elem, uid):
         elem.attrib["id"] = "div_"+uid
         elem.attrib['class'] = "interpreter"
     code += "\n"
-    if not "no-pre" in vlam:
+    if not "no_pre" in vlam:
         try:
             elem.insert(0, markup)
         except AssertionError:

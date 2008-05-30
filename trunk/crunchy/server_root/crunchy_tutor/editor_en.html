@@ -73,7 +73,7 @@ If you click on it, you will see appear on the page a real editor, provided by C
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
 the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="editor [no_style] [no_copy] [no-pre]
+&lt;pre title="editor [no_style] [no_copy] [no_pre]
             [linenumber [=start_number]] [external [no-internal]]"&gt;
 Some Python code
 
@@ -81,7 +81,7 @@ Some Python code
 adds a code editor (html &lt;textarea&gt;) to the current page.
 <p>By default, Crunchy copies the contents of the <code>pre</code> in the original file
 into a new <code>pre</code> above the editor; however, this is prevented if
-<code>no-pre</code> is present.
+<code>no_pre</code> is present.
 Also by default, Crunchy copies the contents of the <code>pre</code> in the original file
 into the editor; however, this is prevented if
 <code>no_copy</code> is present.
