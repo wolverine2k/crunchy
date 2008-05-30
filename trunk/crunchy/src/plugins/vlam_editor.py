@@ -89,7 +89,7 @@ def insert_editor(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     #some spacing if buttons are needed, they appear below.
@@ -149,7 +149,7 @@ def insert_alternate_python(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no-pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
 
