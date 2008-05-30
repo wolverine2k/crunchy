@@ -182,7 +182,7 @@ if _docutils_installed:
         def run(self):
             self.assert_has_content()
             code = linesep.join(self.content)
-            listOut = ['no-vlam']
+            listOut = ['no_vlam']
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
 
@@ -195,7 +195,7 @@ if _docutils_installed:
         'python_code' : PythonCodeDirective,
         'alternate_python_version' : AltPythonVersionDirective,
         'alt_py' : AltPythonVersionDirective,
-        'no-vlam' : NoVLAMDirective
+        'no_vlam' : NoVLAMDirective
         }
 
     def visit_pre(translator, node):
