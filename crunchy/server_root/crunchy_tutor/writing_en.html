@@ -161,8 +161,8 @@ of the different types mentioned above)</th></tr>
 	Can be used with: <code>editor</code>. </td>
 </tr>
 <tr>
-	<td><code>no-internal</code></td>
-	<td><code>no-internal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window, in which case this option
+	<td><code>no_internal</code></td>
+	<td><code>no_internal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window, in which case this option
 	should <b>not</b> be used.<br/>
 	Can be used with: <code>editor</code>.</td>
 </tr>
@@ -206,7 +206,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="no_vlam">
 &lt;pre title="editor [no_style] [no_copy] [no_pre] 
-            [linenumber [=start_number]] [external [no-internal]]"&gt;
+            [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
@@ -276,7 +276,7 @@ colourize the Python code without actually inserting an interactive element.  Yo
 and a button to execute the code externally using the specified Python version.</p>
 <pre title="no_vlam">
 &lt;pre title="alternate_python_version [no_style] [no_copy] [no_pre] 
-            [linenumber [=start_number]] [external [no-internal]]"&gt;
+            [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
