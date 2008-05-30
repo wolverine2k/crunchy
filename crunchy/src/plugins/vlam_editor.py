@@ -89,7 +89,7 @@ def insert_editor(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no_copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     #some spacing if buttons are needed, they appear below.
@@ -149,7 +149,7 @@ def insert_alternate_python(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no_copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
 
@@ -218,7 +218,7 @@ def insert_markup(elem, uid, vlam, markup):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "editor"
-    if not "no-pre" in vlam:
+    if not "no_pre" in vlam:
         try:
             elem.insert(0, markup)
         except AssertionError:  # this should never happen
