@@ -46,7 +46,7 @@ checkbox, you will be presented with a nifty little editor. By
 typing the above code into the editor and clicking "Execute",
 you will see the results below:
 
-.. editor:: no-copy
+.. editor:: no_copy
    :linenumber:
 
    >>> print "Ni! Ni! Ni!"
