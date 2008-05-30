@@ -105,7 +105,7 @@ hello.main()
 <p>Our fourth example requires pygame.  If it works, you might
 be interested in launching more than one!  Note that we used a VLAM option
 so that it's only possible to launch it externally.</p>
-<pre title="editor no-internal external">
+<pre title="editor no_internal external">
 import sys, pygame
 pygame.init()
 clock = pygame.time.Clock()
@@ -135,7 +135,7 @@ For this example to work, you <b>must</b> save the file in the crunchy_tutor dir
 This directory is found at crunchy/server_root/crunchy_tutorial, where "crunchy"
 is the base directory for ... you can guess.</p>
 
-<pre title="editor external no-internal">
+<pre title="editor external no_internal">
 '''
 noisy
 =====
@@ -254,12 +254,12 @@ running programs and the files it needs to use.</p>
 <h3 >Advanced stuff, for tutorial writers</h3>
 <p>We have already seen the syntax for this:</p>
 <pre title="no_vlam">
-&lt;pre title="editor external [no-internal] 
+&lt;pre title="editor external [no_internal] 
             [no_copy] [no_pre]  [linenumber [=start_number]] "&gt;
 Some Python code
 &lt;/pre&gt;</pre>
 <p>Note that any of the vlam option can appear in an arbitrary order.
-When <code>no-internal</code> is specified, the user does not have the option
+When <code>no_internal</code> is specified, the user does not have the option
 to execute the program as a separate thread: it must be executed as a separate
 process, with the code saved in a file first.</p>
 </div>

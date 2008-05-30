@@ -93,7 +93,7 @@ def insert_editor(page, elem, uid):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     #some spacing if buttons are needed, they appear below.
-    if "external in vlam" or not "no-internal" in vlam:
+    if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
     # button for external execution, if required, appear first.
@@ -116,7 +116,7 @@ def insert_editor(page, elem, uid):
             t = 'run_external_editor'
             config['logging_uids'][uid] = (log_id, t)
         path_label.attrib['class'] = 'path_info'
-        if not "no-internal" in vlam:
+        if not "no_internal" in vlam:
             SubElement(elem, "br")
             btn2 = SubElement(elem, "button")
             btn2.attrib["onclick"] = "exec_code('%s')" % uid
