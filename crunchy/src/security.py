@@ -104,7 +104,7 @@ specific_allowed = {
     'head': [],
     'html': ['xmlns', 'xml:lang'],
     'link': ['charset', 'href', 'hreflang', 'media', 'rel', 'rev', 'type'],
-    'meta': ['content', 'name'], #  'http-equiv' can be a potential problem
+    'meta': ['http-equiv', 'content', 'name'], #  'http-equiv' can be a potential problem
     'title': [],
 
 # text structure
@@ -338,6 +338,14 @@ def remove_unwanted(tree, page):
                         element.tag = None
                         page.security_info['number removed'] += 1
                         continue
+            if tag == "meta":
+                for attr in list(element.attrib.items()):
+                    if (attr[0].lower() == 'http-equiv' and
+                        attr[1].lower() != 'content-type'):
+                        page.security_info['attributes removed'].append(
+                                                [tag, attr[0], attr[1]])
+                        del element.attrib[attr[0]]
+                        page.security_info['number removed'] += 1
             for attr in list(element.attrib.items()):
                 if attr[0].lower() not in _allowed[tag]:
                     if DEBUG:
