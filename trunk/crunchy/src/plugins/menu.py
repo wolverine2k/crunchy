@@ -49,7 +49,7 @@ def insert_default_menu(page):
     for elem in _default_menu.getiterator('img'):
         if 'id' in elem.attrib:
             if elem.attrib['id'] == "security_result_image":
-                elem.attrib['src'] = page.security_result
+                elem.attrib['src'] = page.security_result_image
                 image_found = True
                 break
     # otherwise, add the image in the first place
@@ -59,7 +59,7 @@ def insert_default_menu(page):
                 if elem.attrib['id'] == "security_info_link":
                     elem.text = "Security: "
                     img = Element('img')
-                    img.attrib['src'] = page.security_result
+                    img.attrib['src'] = page.security_result_image
                     img.attrib['id'] = "security_result_image"
                     elem.append(img)
                     break
