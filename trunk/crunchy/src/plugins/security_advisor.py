@@ -35,6 +35,13 @@ def insert_security_info(page, *dummy):
     elif 'strict' in page.security_info['level']:
         src = '/paranoid.png'
 
+    if 'display' in page.security_info['level']:
+        page.security_result = '/display.png'
+    elif page.security_info['number removed'] == 0:
+        page.security_result = '/ok.png'
+    else:
+        page.security_result = '/warning.png'
+
     span = Element("div")
     span.attrib['class'] = "security_report" # in file menu_basic.css
     span.attrib['id'] = "security_report"

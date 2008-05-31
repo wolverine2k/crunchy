@@ -7,11 +7,8 @@ by tutorial writers using a custom meta declaration.
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, parse
+from src.interface import plugin, parse, Element
 import src.security as security
-
-_default_menu = None
-_css = None
 
 def register():
     """
@@ -46,13 +43,26 @@ def insert_special_menu(page, elem, dummy):
 def insert_default_menu(page):
     """inserts the default Crunchy menu"""
     global _default_menu, _css
-    if _default_menu is None:  # Note: for now we only assume we have
-                              # one default menu (in English)
-                              # This will need to be changed later.
-        menu_file = os.path.join(plugin['get_root_dir'](),
-                                 "server_root", "menu_en.html")
-        # we trust our own menus to be safe
-        _default_menu, _css = extract_menu(menu_file, page, safe_menus=True)
+
+    image_found = False
+    # First, attempt to update the image identifying the security result
+    for elem in _default_menu.getiterator('img'):
+        if 'id' in elem.attrib:
+            if elem.attrib['id'] == "security_result_image":
+                elem.attrib['src'] = page.security_result
+                image_found = True
+                break
+    # otherwise, add the image in the first place
+    if not image_found:
+        for elem in _default_menu.getiterator('a'):
+            if 'id' in elem.attrib:
+                if elem.attrib['id'] == "security_info_link":
+                    elem.text = "Security: "
+                    img = Element('img')
+                    img.attrib['src'] = page.security_result
+                    img.attrib['id'] = "security_result_image"
+                    elem.append(img)
+                    break
     if page.body:
         page.body.insert(0, _default_menu) # make sure we insert at 0 i.e.
         # it appears first -
@@ -62,17 +72,13 @@ def insert_default_menu(page):
     except Exception:#, info:
         print("Cannot append css code in the head") # info
         print("_css= " + _css)
-    # insert the required code to make the menu draggable
-    if not page.includes("drag_included"):
-        page.add_include("drag_included")
-        page.insert_js_file("/drag.js")
 
 def extract_menu(filename, page, safe_menus=False):
     '''extract a menu and css information from an html file.
 
        It assumes that the menu (usually an unordered list) is
-       contained within the only <div> present in the file
-       whereas the css information is contained in the single
+       contained within the first <div> found in the file
+       whereas the css information is contained in the first
        <link> in that file.'''
     try:
         tree = parse(filename)
@@ -81,12 +87,13 @@ def extract_menu(filename, page, safe_menus=False):
     # Treat menus just as suspiciously as the original file
     if not safe_menus:
         tree = security.remove_unwanted(tree, page)
-
     # extract menu for use in other files
     menu = tree.find(".//div")
     css = tree.find(".//link")
-
-    # make the menu draggable
-    menu.attrib['id'] = 'menu_box'
-    menu.attrib['onmousedown'] = "dragStart(event, 'menu_box')"
     return menu, css
+
+# Note: for now we only assume we have one default menu (in English)
+# This will need to be changed later.
+menu_file = os.path.join(plugin['get_root_dir'](), "server_root", "menu_en.html")
+# we trust our own menus to be safe
+_default_menu, _css = extract_menu(menu_file, "dummy", safe_menus=True)
