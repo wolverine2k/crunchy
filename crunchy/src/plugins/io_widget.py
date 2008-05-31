@@ -12,6 +12,13 @@ provides = set(["io_widget"])
 def register():
     '''register a service'''
     plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
+    # register the function for killing threads:
+    plugin['register_http_handler']("/kill_thread%s" % plugin['session_random_id'],
+                                    kill_thread_handler)
+
+def kill_thread_handler(request):
+    """Kills the thread associated with uid"""
+    plugin['kill_thread'](request.args["uid"])
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
@@ -38,7 +45,13 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
                 page.add_include("editarea_included")
                 page.add_js_code(editArea_load_and_save)
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
-
+                
+    btn2 = SubElement(elem, "button")
+    btn2.attrib["id"] = "kill_%s" % uid
+    btn2.attrib["onclick"] = "kill_thread('%s')" % uid
+    btn2.attrib["style"] = "display:none;"
+    btn2.text = _("Send ctrl+C")
+    
     output = SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
@@ -82,7 +95,12 @@ function push_keys(event, uid){
 
     return true;
 };
-""" % plugin['session_random_id']
+function kill_thread(uid){
+    var j = new XMLHttpRequest();
+    j.open("GET", "/kill_thread%s?uid="+uid, false);
+    j.send("");
+};
+""" % (plugin['session_random_id'], plugin['session_random_id'])
 
 push_input = r"""
 function push_input(uid){
