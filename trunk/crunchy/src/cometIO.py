@@ -106,7 +106,13 @@ class CrunchyIOBuffer(StringBuffer):
 output_buffers = {}
 # and one StringBuffer per input widget:
 input_buffers = {}
+# and also one thread per input widget:
+threads = {}
 
+def kill_thread(uid):
+    """Kill a thread, given an associated uid"""
+    threads[uid].terminate()
+    
 def comet(request):
     """An http path handler, called from the page - blocks until there is data
     to be sent.
@@ -214,6 +220,7 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
+        threads[uid] = threading.currentThread()
         output_buffers[pageid].put(reset_js % (uid, uid))
 
     def unregister_thread(self):
@@ -295,7 +302,7 @@ class ThreadedBuffer(object):
     def default_write(self, data):
         """write to the default output"""
         self.default_out.write(data)
-
+        
 def debug_msg(data, id_=None):
     """write a debug message, debug messages always appear on stderr"""
     if id_ in debug_ids:

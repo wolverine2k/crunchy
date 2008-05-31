@@ -44,7 +44,14 @@ def register():
     # for testing purposes
     plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
                                                         _test_sanitize_for_ElementTree)
+    # register the function for killing threads:
+    plugin['register_http_handler']("/kill_thread%s" % plugin['session_random_id'],
+                                    kill_thread_handler)
 
+def kill_thread_handler(request):
+    """Kills the thread associated with uid"""
+    plugin['kill_thread'](request.args["uid"])
+    
 def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
@@ -125,6 +132,11 @@ def insert_editor(page, elem, uid):
         path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
+        # we can't kill external processes, so don't even try:
+        btn2 = SubElement(elem, "button")
+        btn2.attrib["onclick"] = "kill_thread('%s')" % uid
+        btn2.text = _("Stop Execution")
+        
     # leaving some space to start output on next line, below last button
     SubElement(elem, "br")
     # an output subwidget:
@@ -264,5 +276,10 @@ function exec_code_externally_python_interpreter(uid){
     inp = document.getElementById("input1_"+uid).value;
     j.send(inp+"_::EOF::_"+path+"_::EOF::_"+code);
 };
+function kill_thread(uid){
+    var j = new XMLHttpRequest();
+    j.open("GET", "/kill_thread%s?uid="+uid, false);
+    j.send("");
+}
 """ % (plugin['session_random_id'], plugin['session_random_id'],
-       plugin['session_random_id'])
+       plugin['session_random_id'], plugin['session_random_id'])

@@ -150,3 +150,8 @@ def gen_uid():
     '''returns a unique id'''
     return vlam.uidgen()
 plugin['gen_uid'] = gen_uid
+
+def kill_thread(uid):
+    """kill a thread, given its assocated uid"""
+    cometIO.kill_thread(uid)
+plugin['kill_thread'] = kill_thread
