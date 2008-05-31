@@ -221,7 +221,7 @@ class ThreadedBuffer(object):
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
         threads[uid] = threading.currentThread()
-        output_buffers[pageid].put(reset_js % (uid, uid))
+        output_buffers[pageid].put(reset_js % (uid, uid, uid))
 
     def unregister_thread(self):
         """
@@ -236,7 +236,10 @@ class ThreadedBuffer(object):
         pageid = uid.split(":")[0]
         del input_buffers[uid]
         # hide the input box:
-        output_buffers[pageid].put("""document.getElementById("in_%s").style.display="none";""" % uid)
+        output_buffers[pageid].put("""
+            document.getElementById("in_%s").style.display="none";
+            document.getElementById("kill_%s").style.display="none";
+            """ % (uid,uid))
 
 
     def write(self, data):
@@ -313,6 +316,7 @@ sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
 
 reset_js = """
+document.getElementById("kill_%s").style.display="block";
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 """

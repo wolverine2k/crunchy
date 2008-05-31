@@ -50,7 +50,7 @@ class KillableThread(threading.Thread):
     def terminate(self):
         # must raise the SystemExit type, instead of a SystemExit() instance
         # due to a bug in PyThreadState_SetAsyncExc
-        self.raise_exc(SystemExit)
+        self.raise_exc(KeyboardInterrupt)
 
 class Interpreter(KillableThread):
     """
