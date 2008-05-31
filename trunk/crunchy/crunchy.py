@@ -50,7 +50,7 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         url =  base_url + '/'
     else:
         url = base_url + url
-    webbrowser.open(url)
+    open_browser(url)
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
     print('\nCrunchy Server: serving up interactive tutorials at URL ' +
@@ -165,6 +165,16 @@ def convert_url(url):
         print("url specified can not be found.")
         raise SystemExit
     return url
+
+def open_browser(url):
+    """
+    Open the browser. This function does its best to open firefox.
+    """
+    try:
+        client = webbrowser.get("firefox")
+    except:
+        client = webbrowser.get()
+    client.open(url)
 
 if __name__ == "__main__":
     _url, _port = parse_options()

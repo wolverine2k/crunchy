@@ -99,5 +99,5 @@ div.crunchy {
     position: relative;
     bottom: -10px;
     height: 25px;
-    margin-top: -11px; /*get rid of that pesky gap - see bug 112 */
+    margin-top: -11px; /*get rid of that pesky gap - see issue 112 */
 }
