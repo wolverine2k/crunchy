@@ -145,23 +145,16 @@ def countdown(message):
 def generic(file_path, position):
     return dhtml.image(file_path, width=32, height=32,
                       label="b_%s"%position, parent_label=position)
-def blue(position):
-    return generic("../normal.png", position)
+
+# We use images that are part of the Crunchy distribution.
+def yellow(position):
+    return generic("../warning_big.png", position)
 
 def green(position):
-    return generic("../trusted.png", position)
+    return generic("../ok_big.png", position)
 
 def red(position):
-    return generic("../paranoid.png", position)
-
-def gold(position):
-    return generic("../severe.png", position)
-
-def ok(position):
-    return generic("../ok.png", position)
-
-def warning(position):
-    return generic("../warning.png", png)
+    return generic("../display_big.png", position)
 
 dhtml.append("br") # start on a new line
 
@@ -176,11 +169,11 @@ red("1_2")
 red("1_3")
 
 countdown("Changing first element")
-ok("1_1")
+green("1_1")
 countdown("Changing second element")
-ok("1_2")
+green("1_2")
 countdown("Changing third element")
-ok("1_3")
+green("1_3")
 
 countdown("Adding a second row")
 dhtml.append("tr", label="row2", parent_label="table")
@@ -196,9 +189,9 @@ dhtml.append("tr", label="row3", parent_label="table")
 dhtml.append("td", label="3_1", parent_label="row3")
 dhtml.append("td", label="3_2", parent_label="row3")
 dhtml.append("td", label="3_3", parent_label="row3")
-blue("3_1")
-blue("3_2")
-blue("3_3")
+yellow("3_1")
+yellow("3_2")
+yellow("3_3")
 
 countdown("Removing the second row")
 dhtml.remove("row2")
