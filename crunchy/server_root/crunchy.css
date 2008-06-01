@@ -3,6 +3,41 @@
 All the CSS needed to make Crunchy whirr
 
 */
+img{
+    border:0;
+}
+table.summary {
+border:1px outset gray;
+border-collapse:separate;
+border-spacing:1px;
+}
+table.summary th, td {
+border:1px inset gray;
+padding:1px;
+}
+
+/* For the security advisory, follow the style from "#content" in crunchy_docs.css */
+#security_info {
+    margin-left: 182px;
+}
+
+#security_info p {
+    /* put the margin at the bottom rather than the top: */
+    margin: 0px 0px 1em 0px;
+    text-align: justify;
+}
+
+#security_info h2 {
+    color: #204a87;
+}
+
+#security_info h3 {
+    color: #204a87;
+}
+
+#security_info h4 {
+    color: #204a87;
+}
 
 /* default used with <code> tag */
 .crunchy {

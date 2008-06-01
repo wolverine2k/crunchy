@@ -133,11 +133,14 @@ def format_report(page, div):
     '''puts the security information (extracted material) into a table
        for display'''
 
-    security_level = SubElement(div, 'h4')
+    security_level = SubElement(div, 'h2')
+    security_level.attrib['class'] = 'crunchy'
     security_level.text = "Security level: " + page.security_info['level']
 
     security_summary = SubElement(div, 'h4')
     s_image = SubElement(security_summary, 'img')
+    # make sure src link is not transformed:
+    s_image.attrib['title'] = 'crunchy_leave_alone'
 
     if 'display' in page.security_info['level']:
         s_image.attrib['src'] = '/display_big.png'
