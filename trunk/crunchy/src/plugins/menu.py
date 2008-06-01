@@ -36,6 +36,7 @@ def insert_special_menu(page, elem, dummy):
     menu, css = extract_menu(menu_file, page)
     if page.body:
         page.body.insert(0, menu)
+        activate_security_info(page, menu)
     if css is not None:
         page.head.append(css)
     page.add_include("menu_included")
@@ -44,25 +45,7 @@ def insert_default_menu(page):
     """inserts the default Crunchy menu"""
     global _default_menu, _css
 
-    image_found = False
-    # First, attempt to update the image identifying the security result
-    for elem in _default_menu.getiterator('img'):
-        if 'id' in elem.attrib:
-            if elem.attrib['id'] == "security_result_image":
-                elem.attrib['src'] = page.security_result_image
-                image_found = True
-                break
-    # otherwise, add the image in the first place
-    if not image_found:
-        for elem in _default_menu.getiterator('a'):
-            if 'id' in elem.attrib:
-                if elem.attrib['id'] == "security_info_link":
-                    elem.text = "Security: "
-                    img = Element('img')
-                    img.attrib['src'] = page.security_result_image
-                    img.attrib['id'] = "security_result_image"
-                    elem.append(img)
-                    break
+    activate_security_info(page, _default_menu)
     if page.body:
         page.body.insert(0, _default_menu) # make sure we insert at 0 i.e.
         # it appears first -
@@ -72,6 +55,43 @@ def insert_default_menu(page):
     except Exception:#, info:
         print("Cannot append css code in the head") # info
         print("_css= " + _css)
+
+def activate_security_info(page, menu):
+    '''
+    Insert javascript call in link so that the security report is displayed,
+    as well as image showing security status.
+    '''
+    # First, add javascript code to display security report.
+    # While one can include such a link in the standard menu file included
+    # in the Crunchy distribution, custom menus would have such call
+    # removed for security reasons.
+    for elem in menu.getiterator('a'):
+        if 'id' in elem.attrib:
+            if elem.attrib['id'] == "security_info_link":
+                elem.attrib['onclick'] = "show_security_info();"
+                break
+
+    # Second, include image to indicate security status
+    image_found = False
+    # First, attempt to update the image identifying the security result
+    for elem in menu.getiterator('img'):
+        if 'id' in elem.attrib:
+            if elem.attrib['id'] == "security_result_image":
+                elem.attrib['src'] = page.security_result_image
+                image_found = True
+                break
+    # otherwise, add the image in the first place
+    if not image_found:
+        for elem in menu.getiterator('a'):
+            if 'id' in elem.attrib:
+                if elem.attrib['id'] == "security_info_link":
+                    elem.text = "Security: "
+                    img = Element('img')
+                    img.attrib['src'] = page.security_result_image
+                    img.attrib['id'] = "security_result_image"
+                    elem.append(img)
+                    break
+    return
 
 def extract_menu(filename, page, safe_menus=False):
     '''extract a menu and css information from an html file.
