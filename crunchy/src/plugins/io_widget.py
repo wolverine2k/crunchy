@@ -31,6 +31,15 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     # thus making the source easier to read.
     if 'display' not in config['page_security_level'](page.url):
 
+        kill_link = SubElement(elem, "a")
+        kill_link.attrib["id"] = "kill_%s" % uid
+        kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
+        image = SubElement(kill_link, 'img')
+        image.attrib["src"] = "/display_big.png"
+        image.attrib["alt"] = "Interrupt thread"
+        image.attrib["class"] = "kill_thread_image"
+        image.attrib["id"] = "kill_image_%s" % uid
+
         if not page.includes("io_included"):
             page.add_include("io_included")
             page.add_js_code(io_js)
@@ -45,13 +54,9 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
                 page.add_include("editarea_included")
                 page.add_js_code(editArea_load_and_save)
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
-                
-    btn2 = SubElement(elem, "button")
-    btn2.attrib["id"] = "kill_%s" % uid
-    btn2.attrib["onclick"] = "kill_thread('%s')" % uid
-    btn2.attrib["style"] = "display:none;"
-    btn2.text = _("Send ctrl+C")
-    
+        else:
+            image.attrib['style'] = 'display:none;'  # revealed by Execute button
+
     output = SubElement(elem, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
