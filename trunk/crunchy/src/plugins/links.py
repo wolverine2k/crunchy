@@ -107,6 +107,9 @@ def src_handler(page, elem):
        server root"""
     if "src" not in elem.attrib:
         return
+    if 'title' in elem.attrib:
+        if elem.attrib['title'] == 'crunchy_leave_alone':
+            return
     # not needed as we validate images in security.py
     ##elem.attrib["src"] = secure_url(elem.attrib["src"])
     if page.is_remote: #is_remote_url(page.url):
