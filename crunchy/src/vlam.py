@@ -206,7 +206,12 @@ class CrunchyPage(object):
         # IMPORTANT: we must convert existing links on the page
         # before creating new ones - but not those that have been identified
         # as external links.  This means that handlers1 must
-        # be dealt with first.
+        # be dealt with first - with one exception.
+        
+        # First, we insert the security advisory, so that security information
+        # is available to other plugins if required (like custom menus...)
+        CrunchyPage.handlers2["no_tag"]["security"](self)
+
         #  The following for loop deals with example 3
         for tag in CrunchyPage.handlers1:
             for elem in self.tree.getiterator(tag):
@@ -242,9 +247,6 @@ class CrunchyPage(object):
                     elem.attrib["title"] = n_m
                     CrunchyPage.handlers3["pre"]["title"][keyword](self, elem,
                                                 self.pageid + ":" + uidgen())
-        # finally, we insert the security advisory (almost) last so that
-        # none of its links get converted.
-        CrunchyPage.handlers2["no_tag"]["security"](self)
         #  The following for loop deals with example 5; we do need the
         # security information to be included in the menu...
         if "menu_included" not in self.included:
