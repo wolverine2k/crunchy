@@ -87,6 +87,10 @@ Translations should be verified and, if possible, brought up to date.
 
 To be completed later.
 
+====Included files====
+
+Try to make sure that included 3rd party code (e.g. editarea) are the latest version.
+
 ==Open issues==
 
   * Should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
