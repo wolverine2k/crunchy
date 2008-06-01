@@ -17,6 +17,7 @@ def register():
     plugin['register_tag_handler']("link", None, None, link_tag_handler)
     plugin['register_tag_handler']("style", None, None, style_handler)
     plugin['register_tag_handler']("a", "title", "external_link", external_link)
+    plugin['register_tag_handler']("a", "title", "crunchy_leave_alone", fixed_link)
 
 def external_link(dummy_page, elem, *dummy):
     '''handler which totally ignores the link being passed to it, other than
@@ -31,16 +32,23 @@ def external_link(dummy_page, elem, *dummy):
     img.attrib['alt'] = "external_link.png"
     return
 
+def fixed_link(dummy_page, elem, *dummy):
+    '''handler which totally ignores the link being passed to it.'''
+    # This is useful if one Crunchy widget needs to insert a link, usually
+    # with respect to the server root, that is not meant to be altered - which
+    # otherwise might have occurred because of the other link handlers.
+    return
+
 def a_tag_handler(page, elem):
     """convert remote links if necessary, need to deal with all links in
        remote pages"""
     if "href" not in elem.attrib:
         return
-    ### To do: deal better with .rst, .txt and .py files
-    if elem.attrib["href"].startswith("/"):
-        return
     elem.attrib["href"] = secure_url(elem.attrib["href"])
     if page.is_remote: #is_remote_url(page.url):
+        if 'title' in elem.attrib:
+            if elem.attrib['title'] == 'crunchy_leave_alone':
+                return
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
                 return
@@ -62,6 +70,10 @@ def a_tag_handler(page, elem):
     href = elem.attrib["href"]
     if "://" in href:
         elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+        return
+
+    ### To do: deal better with .rst, .txt and .py files
+    if elem.attrib["href"].startswith("/"):
         return
 
     if page.is_local: # loaded via local browser

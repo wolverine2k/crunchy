@@ -10,11 +10,12 @@ It has the following functions that require testing:
 1. register(): registers some tag handlers.
 2. external_link(): deal with links that point to external file meant
    to be unprocessed by Crunchy.
-3. a_tag_handler():
-4. link_tag_handler():
-5. src_handler():
-6. style_handler()
-7. secure_url():
+3. fixed_link(): deal with links that are meant to be left alone by Crunchy
+4. a_tag_handler():
+5. link_tag_handler():
+6. src_handler():
+7. style_handler()
+8. secure_url():
 
 0. Setting things up
 --------------------
@@ -89,12 +90,28 @@ has a subelement.
     >>> print a_link[1].tag, a_link[1].attrib['src']
     img /external_link.png
 
-3. Testing a_tag_handler()
+3. Testing fixed_link()
+-----------------------
+
+This function leaves the links unchanged.
+
+    >>> a_link = Element('a', href="path/to/", title="crunchy_leave_alone")
+    >>> links.fixed_link(page_default, a_link)
+    >>> a_link.attrib['href']
+    'path/to/'
+    >>> links.fixed_link(page_local, a_link)
+    >>> a_link.attrib['href']
+    'path/to/'
+    >>> links.fixed_link(page_remote, a_link)
+    >>> a_link.attrib['href']
+    'path/to/'
+
+4. Testing a_tag_handler()
 --------------------------
 
     >>> fake_url_2 = "http://docs.python.org/tut/tut.html#hash"
 
-leave link starting with / unchanged
+leave link starting with / unchanged except for remote sites.
 
     >>> a_link = Element('a', href="/path/to/")
     >>> links.a_tag_handler(page_default, a_link)
@@ -103,11 +120,18 @@ leave link starting with / unchanged
     >>> links.a_tag_handler(page_local, a_link)
     >>> a_link.attrib['href']
     '/path/to/'
+    >>> page_remote.url = "http://www.python.org"
     >>> links.a_tag_handler(page_remote, a_link)
     >>> a_link.attrib['href']
-    '/path/to/'
+    '/remote?url=http%3A%2F%2Fwww.python.org%2Fpath%2Fto%2F'
 
-3a. Testing a_tag_handler for default page
+An exception is if the link has been inserted by Crunchy
+    >>> a_link = Element('a', href="path/to/", title="crunchy_leave_alone")
+    >>> links.a_tag_handler(page_remote, a_link)
+    >>> a_link.attrib['href']
+    'path/to/'
+
+4a. Testing a_tag_handler for default page
 ------------------------------------------
 External link
 
@@ -123,7 +147,7 @@ Relative link, leave unchanged
     >>> a_link.attrib['href']
     'crunchy_tutor/welcome_en.html'
 
-3b. Testing a_tag_handler for local page
+4b. Testing a_tag_handler for local page
 ----------------------------------------
 External link (with ://)
 
@@ -156,7 +180,7 @@ Files with extension 'rst' and 'txt'
     >>> a_link.attrib['href']
     '/rst?url=//path%2Fto%2Fsome_txt.txt'
 
-3c. Testing a_tag_handler for remote page
+4c. Testing a_tag_handler for remote page
 -----------------------------------------
 
 External link (with ://)
@@ -189,10 +213,21 @@ Relative link
     >>> a_link.attrib['href']
     '#hash'
 
-4. Testing link_tag_handler()
+5. Testing link_tag_handler()
 -----------------------------
 
 To do.
 
-5. Testing src_handler()
+6. Testing src_handler()
 ------------------------
+
+7. Testing style_handler()
+--------------------------
+
+To do.
+
+
+8. Testing secure_url():
+------------------------
+
+To do.
