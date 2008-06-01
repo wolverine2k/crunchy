@@ -44,12 +44,12 @@ def register():
     # for testing purposes
     plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
                                                         _test_sanitize_for_ElementTree)
-    
+
 
 def kill_thread_handler(request):
     """Kills the thread associated with uid"""
     plugin['kill_thread'](request.args["uid"])
-    
+
 def insert_editor_subwidget(page, elem, uid, code="\n"):
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
@@ -130,7 +130,7 @@ def insert_editor(page, elem, uid):
         path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
-        
+
     # leaving some space to start output on next line, below last button
     SubElement(elem, "br")
     # an output subwidget:
@@ -241,6 +241,7 @@ def insert_markup(elem, uid, vlam, markup):
 # with a random session id appended for security reasons.
 exec_jscode = """
 function exec_code(uid){
+    document.getElementById("kill_image_"+uid).style.display = "block";
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
