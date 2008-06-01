@@ -1,5 +1,4 @@
 #summary Introduction and organisation page for the Crunchy Wiki
-#labels Featured
 
 = Introduction =
 
@@ -27,4 +26,3 @@ There are of course a number of other pages sitting around here, some more relev
   * ThirdPartyApplications - Third party applications in some way relevant to Crunchy.
   * [Examples] - ideas for tutorials using Crunchy.
   * SummerOfCodeIdeas - some suggestions for the Summer of Code 2007.
-
