@@ -24,21 +24,26 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
-
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
     if 'display' not in config['page_security_level'](page.url):
 
+        # for some reason, we must create the link/image and hide it if
+        # ctypes is not available, rather than not create it at all;
+        # if we attempt to not create it, the io widget does not appear... ?!?
         kill_link = SubElement(elem, "a")
         kill_link.attrib["id"] = "kill_%s" % uid
         kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
-        image = SubElement(kill_link, 'img')
-        image.attrib["src"] = "/display_big.png"
-        image.attrib["alt"] = "Interrupt thread"
-        image.attrib["class"] = "kill_thread_image"
-        image.attrib["id"] = "kill_image_%s" % uid
+        kill_image = SubElement(kill_link, 'img')
+        kill_image.attrib["src"] = "/display_big.png"
+        kill_image.attrib["alt"] = "Interrupt thread"
+        kill_image.attrib["class"] = "kill_thread_image"
+        kill_image.attrib["id"] = "kill_image_%s" % uid
+        if not config['ctypes_available']:
+            kill_image.attrib['style'] = 'display: none;'
+            kill_link.attrib['style'] = 'display: none;'
 
         if not page.includes("io_included"):
             page.add_include("io_included")
@@ -54,8 +59,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
                 page.add_include("editarea_included")
                 page.add_js_code(editArea_load_and_save)
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
-        else:
-            image.attrib['style'] = 'display:none;'  # revealed by Execute button
+        elif config['ctypes_available']:
+            kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
 
     output = SubElement(elem, "span")
     output.attrib["class"] = "output"
