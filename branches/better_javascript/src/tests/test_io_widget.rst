@@ -29,6 +29,11 @@ config['editarea_language'].
     >>> import src.plugins.io_widget as io_widget
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
+    >>> try:
+    ...     import ctypes
+    ...     config['ctypes_available'] = True
+    ... except:
+    ...     config['ctypes_available'] = False
 
 We also need to define some mock functions and values.
 
