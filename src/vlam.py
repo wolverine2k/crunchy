@@ -74,12 +74,12 @@ class CrunchyPage(object):
             except AttributeError:
                 html = self.tree.getroot()
                 self.body = et.SubElement(html, "body")
-            self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
             warning = et.SubElement(self.body, 'h1')
             warning.text = "Missing body from original file"
         self.process_tags()
-        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        self.add_js_code(comet_js)
+        # load the jquery js file:
+        self.insert_js_file("/javascript/jquery.js")
+        self.add_js_code(comet_js % self.pageid)
         # first crunchy's style, then user's so it can override crunchy's
         self.add_crunchy_style()
         self.add_user_style()
@@ -117,7 +117,7 @@ class CrunchyPage(object):
         js.set("src", filename)
         js.set("type", "text/javascript")
         js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
-        self.head.insert(0, js)
+        self.head.append(js)
         return
 
     def add_css_code(self, code):
@@ -262,26 +262,24 @@ class CrunchyPage(object):
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
+# jquery compatible javascript:
 comet_js = """
 function runOutput(channel){
-    var h = new XMLHttpRequest();
-    h.onreadystatechange = function(){
-        if (h.readyState == 4){
-            try{
-                var status = h.status;
+    $.ajax({type : "GET", 
+            url : "/comet?pageid=" + channel, 
+            cache : false,
+            dataType: "script",
+            success : function(data, status){
+                // the script will ot have been run because we don't set MIME
+                // types correctly
+                //eval(data);
+                runOutput(channel);
             }
-            catch(e){
-                var status = "NO HTTP RESPONSE";
-            }
-            switch (status){
-                case 200:
-                    eval(h.responseText);
-                    runOutput(channel);
-                    break;
-            }
-        }
-    };
-    h.open("GET", "/comet?pageid="+channel, true);
-    h.send("");
+            })
 };
+
+$(document).ready(function(){
+    runOutput("%s");
+});
+
 """
