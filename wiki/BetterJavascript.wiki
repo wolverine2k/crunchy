@@ -1,4 +1,5 @@
 #summary A description of the efforts ongoing to use a better Javascript library.
+#labels Phase-Implementation
 
 = Introduction =
 
@@ -10,4 +11,6 @@ I will track progress in the comments to issue 122, and I will document work don
 
 = Changelog =
 
-_2008-06-02_ I have decided to initially focus on jQuery. I have created the better_javascript branch in the repository, and will be using it for updates. -- _Johannes__
+_2008-06-02_ I have decided to initially focus on jQuery. I have created the better_javascript branch in the repository, and will be using it for updates.
+
+_2008-06-02_ I have vlam.py so that the COMET call is run using jQuery. this should solve 9/10ths of our problems with IE. See revision 719 for more details.
