@@ -1,8 +1,0 @@
-Merged revisions 716 via svnmerge from 
-https://crunchy.googlecode.com/svn/trunk/crunchy
-
-........
-  r716 | andre.roberge | 2008-06-02 12:38:14 +0100 (Mon, 02 Jun 2008) | 1 line
-  
-  Updating the docs.  Also fixing a failing test.
-........

@@ -91,10 +91,12 @@ class CrunchyIOBuffer(StringBuffer):
         elif self.help_flag == True:
             self.put(help_js)
             pdata = pdata.replace("stdout", "help_menu") # replacing css class
-            self.put("""document.getElementById("help_menu").innerHTML = "%s";\n""" % (pdata))
+            # use jQuery:
+            self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
         else:
-            self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
+            #use jQuery:
+            self.put("""$("#out_%s").append("%s");//output\n""" % (escape_colon(uid), pdata))
             # Saving session; first line...
             if uid in configuration.defaults.logging_uids:
                 log_id = configuration.defaults.logging_uids[uid][0]
@@ -221,7 +223,8 @@ class ThreadedBuffer(object):
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
         threads[uid] = threading.currentThread()
-        output_buffers[pageid].put(reset_js % (uid, uid, uid))
+        jquery_uid = escape_colon(uid)
+        output_buffers[pageid].put(reset_js % (jquery_uid, jquery_uid, jquery_uid))
 
     def unregister_thread(self):
         """
@@ -235,11 +238,12 @@ class ThreadedBuffer(object):
             return
         pageid = uid.split(":")[0]
         del input_buffers[uid]
-        # hide the input box:
+        # hide the input box (using jQuery, could be animated...):
+        jquery_uid = escape_colon(uid)
         output_buffers[pageid].put("""
-            document.getElementById("in_%s").style.display="none";
-            document.getElementById("kill_%s").style.display="none";
-            """ % (uid,uid))
+            $("#in_%s").hide();
+            $("#kill_%s").hide();
+            """ % (jquery_uid,jquery_uid))
 
 
     def write(self, data):
@@ -315,17 +319,23 @@ sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
 
+# use jQuery, note:
+# http://docs.jquery.com/Frequently_Asked_Questions#How_do_I_select_an_element_that_has_weird_characters_in_its_ID.3F
+# the escape_colon function gets around this
 reset_js = """
-document.getElementById("kill_%s").style.display="block";
-document.getElementById("in_%s").style.display="inline";
-document.getElementById("out_%s").innerHTML="";
+$("#in_%s").show();
+$("#kill_%s").show();
+$("#out_%s").html("");
 """
 reset_js_3k = """
-document.getElementById("in_{0}").style.display="inline";
-document.getElementById("out_{1}").innerHTML="";
+$("#in_{0}").show();
+$("#out_{1}").html("");
 """
 
+# this should probably be animated:
 help_js = """
-document.getElementById("help_menu").style.display = "block";
-document.getElementById("help_menu_x").style.display = "block";
+$("#help_menu").show();
+$("#help_menu_x").show();
 """
+def escape_colon(text):
+    return text.replace(":", "\\\\:")
