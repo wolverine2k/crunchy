@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Writing Tutorials</title>
+	
+	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
+</head>
+
+<body>
+
+<div id="container">
+<div id="titlebar">
+<a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>Writing Tutorials</h1>
+</div>    
+
+<div id="navbar">
+    <span class="heading">The Crunchy Tutorial</span>
+    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
+    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
+    <a href="/crunchy_tutor/editor_en.html">Editor</a>
+    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
+    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
+    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
+    <a href="/crunchy_tutor/external_en.html">External applications</a>
+    <span class="heading">Advanced Topics</span>
+    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
+    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
+    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
+    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
+    <a href="/functional_tests">Miscellaneous</a>
+</div>
+<div id="content">
+<p>So you wrote a Python tutorial, either about the language or about some library (like pygame)
+or module.  Congratulations, this is hard work.  If your tutorial was written in html, with
+relevant Python code inside  <code>&lt;pre&gt;</code> elements, then Crunchy can be used
+to interact with it.  However, with just a tiny bit more work, you can make the interaction
+with Crunchy much richer.</p>
+<div class="notes">
+<h4>Note</h4>
+<p> This document has <b><em>not</em></b> been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.  Please, let us know if you do find any.
+</p>
+</div>
+
+<h3 >Extremely Advanced Stuff</h3>
+<p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
+ VLAM is essentially just an extended set of attributes for some common HTML tags. 
+ Any .htm or .html file loaded through Crunchy 
+ will have its VLAM code processed. Here's what VLAM can describe:</p>
+<ul>
+<li><a href="#interpreter">Interpreter</a></li>
+<li><a href="#editor">Code editor</a></li>
+<li><a href="#doctest">DocTest</a></li>
+<li><a href="#styling">Simple code styling</a></li>
+<li><a href="#alternate">Launching programs using alternate Python version</a></li>
+<li><a href="#advanced">Advanced options</a></li>
+</ul>
+<p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
+
+<h1 >Crunchy attributes</h1>
+<p>The following table is a summary of available "crunchy attributes"; these 
+are attributes of the html tag "title".  Please refer to the <em>Crunchy user Tutorial</em>
+on the left for some actual examples.</p>
+<table summary="Cruncy attributes" class='summary'>
+<tr><th colspan='2'>Basic Crunchy elements</th></tr>
+<tr>
+	<td><code>no_vlam</code></td>
+	<td>Leaves the &lt;pre&gt; element <em>as is</em>.
+	</td>
+</tr>
+<tr>
+	<td><code>py_code</code> or <code>python_code</code></td>
+	<td>Style the Python code inside a &lt;pre&gt; or &lt;code &gt; element.
+	</td>
+</tr>
+<tr>
+	<td><code>editor</code></td>
+	<td>Inserts an editor after the &lt;pre&gt; element.</td>
+</tr>
+<tr>
+	<td><code>doctest</code></td>
+	<td>Treats the code inside the &lt;pre&gt; element as a python doctest to 
+	be executed together with the user-code inside the editor.</td>
+</tr>
+<tr>
+	<td><code>interpreter</code> or
+	<code>isolated</code> or
+	<code>parrot</code> or
+	<code>Parrots</code>
+	<code>TypeInfoConsole</code>
+	</td>
+	<td>Inserts a Python interpreter after the &lt;pre&gt; element.  There are
+	four different types of interpreters, some (interpreter, Parrots, TypeInfoConsole) that 
+	share a common environment and the others have their own unique environment.</td>
+</tr>
+<tr>
+	<td><code>alternate_python_version</code> <i>or</i> <code>alt_py</code></td>
+	<td>Inserts an editor after the &lt;pre&gt; element, an input box to specify
+	which (installed) Python version to use and a button to launch an
+	program externally.</td>
+</tr>
+<tr>
+    <td><code>external_link</code></td>
+    <td>Used with an html anchor &lt;a&gt;; tells Crunchy to leave the link <em>as is</em>.
+    If a user clicks on it, the browser will handle it directly, without Crunchy interfering.
+    </td>
+</tr>
+<tr><th colspan='2'>Options (note that <code>interpreter</code> can be replaced by any
+of the different types mentioned above)</th></tr>
+<tr>
+	<td><code>no_style</code></td>
+	<td>Prevents the Python code inside the &lt;pre&gt; element from being
+	styled by Crunchy.<br/>
+	Can be used with: <code>interpreter, editor, doctest, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>no_copy</code></td>
+	<td>Prevents the Python code inside the &lt;pre&gt; element from being
+	copied into the editor.<br/>
+	Can be used with: <code> editor, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>linenumber</code></td>
+	<td>Inserts line numbers before each code line inside the &lt;pre&gt; 
+	element. An optional starting number can be given.<br/>
+	Can be used with: <code>python_code, py_code, interpreter, editor, doctest, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>log_id = (some unique name)</code></td>
+	<td>Instructs Crunchy to log the input and the output obtained when interacting
+	with this element.  The result will be saved in the file crunchy_log.html located
+	in the user's home directory.<br/>
+	Can be used with: <code>interpreter, editor, doctest</code>.  No result is recorded
+	if the <code>external</code> option is used.</td>
+</tr>
+
+<tr>
+	<td><code>no_pre</code></td>
+	<td><code>no_pre</code> does not show the code inside the &lt;pre&gt; 
+	element, only inside the &lt;textarea&gt;.  Since this does not make sense 
+	for a doctest option, or if 
+	<code>no_copy</code> is present, it is ignored in these cases.  A 
+	typical use of <code>no_pre</code> is to include a complete (long)
+	listing for execution at the end of a tutorial, after the main sections 
+	have been explained separately.<br/>
+	Can be used with: <code>editor, image_file</code>.</td>
+</tr>
+<tr>
+	<td><code>external</code></td>
+	<td><code>external</code> tells Python to spawn a new process, as an external application.<br/>
+	Can be used with: <code>editor</code>. </td>
+</tr>
+<tr>
+	<td><code>no_internal</code></td>
+	<td><code>no_internal</code>, can be used with <code>external</code> to only allow spawning an application as a separate process.  Sometimes (for example: if a tutorial makes use of a module that may not exist on the user's computer) it is useful to be able to launch a process "internally", so that error messages appear in the browser window, in which case this option
+	should <b>not</b> be used.<br/>
+	Can be used with: <code>editor</code>.</td>
+</tr>
+</table>
+
+
+<h2 ><a id="interpreter">Interpreter</a></h2>
+<p>You can request Crunchy to add a Python interpreter via <br/>
+<code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
+<code>Some Python code</code><br/>
+<code>&lt;/pre&gt;</code></p> <p> where the square brackets
+indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
+be any value taken from the following list:
+<code>[interpreter, isolated, parrot, Parrots, TypeInfoConsole]</code>; the standard choice
+should be <code>interpreter</code>.</p>
+
+<p>
+Any number of interpreter "prompts" can 
+appear within a page; if <code>interpreter</code> has been selected, every
+such interpreter used on the same page 
+shares the same environment; if <code>isolated</code> is chosen, then
+each such interpreter will have its own environment.  
+Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code; the line numbering will start at 1 unless a different starting value is given.</p>
+
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled. If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code; the line numbering will start at 1 unless a different starting value is given.</p>
+<p>Interpreters use the following CSS classes:</p>
+<dl>
+<dt>#output pre</dt>
+	<dd>The output.</dd>
+<dt>#output pre.stdin</dt>
+	<dd>Input echoed back to the page.</dd>
+<dt>#input</dt>
+	<dd>The textbox used for input</dd>
+</dl>
+<h2 ><a id="editor">Code Editor</a></h2>
+<p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
+<pre title="no_vlam">
+&lt;pre title="editor [no_style] [no_copy] [no_pre] 
+            [linenumber [=start_number]] [external [no_internal]]"&gt;
+Some Python code
+
+&lt;/pre&gt;</pre>
+<p>
+adds a code editor (html &lt;textarea&gt;) to the current page.
+</p>
+<p>By default, Crunchy copies the contents of the <code>pre</code> into a new 
+<code>pre</code> above the editor; however, this is prevented if 
+<code>no_copy</code> is present. 
+If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code.</p>
+<p>Any text between the <code>pre</code> tags is placed before the editor, in a <code>pre</code> element to serve as a constant reference for the user.</p>
+<p>Code Editors use the following CSS classes:</p>
+<dl>
+<dt>span.stdout</dt>
+	<dd>Output from stdout (ie. normal output).</dd>
+<dt>span.stderr</dt>
+	<dd>Output from stderr (ie. error output).</dd>
+<dt>div.term_out</dt>
+	<dd>The div containing all the output.</dd>
+</dl>
+
+<h2 ><a id="doctest">DocTest</a></h2>
+<p><code>&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
+between the <code>pre</code> tags is always placed before the textarea and 
+used as the doctest.</p>
+<p>The output from the doctest result is further processed by Crunchy to make error messages a bit
+friendlier to beginners.</p>
+
+<p>Doctests use the following CSS classes:</p>
+<dl>
+<dt>span.stdout</dt>
+	<dd>Output from stdout (ie. normal output).</dd>
+<dt>span.stderr</dt>
+	<dd>Output from stderr (ie. error output).</dd>
+<dt>div.doctest_out</dt>
+	<dd>The div containing all the output.</dd>
+</dl>
+
+<h2 ><a id="styling">Simple code styling</a></h2>
+<p>Crunchy will automatically colourize the Python code between the <code>&lt;pre ...&gt; ...&lt;/pre&gt;</code> tags, unless the combination <code>title="no_vlam"</code> appears as
+an attribute to the <code>pre</code>.  Sometimes, you may want simply to 
+colourize the Python code without actually inserting an interactive element.  You can do so by writing:</p>
+<pre title="no_vlam">
+&lt;pre title="py_code or python_code [linenumber [=startnumber]]"&gt;
+...
+&lt;/pre&gt;
+</pre>
+
+<p>The Python code is styled according to the following classes:</p>
+<dl>
+<dt>span.py_keyword</dt>
+<dt>span.py_number</dt>
+<dt>span.py_comment</dt>
+<dt>span.py_string</dt>
+<dt>span.py_variable</dt>
+<dt>span.py_op</dt>
+<dt>span.py_linenumber</dt>
+<dt>span.py_prompt</dt>
+<dt>span.py_output</dt>
+</dl>
+
+
+<h2 ><a id="alternate">Alternate Python version</a></h2>
+<p>Insert an editor, an input box to specify the Python version to use,
+and a button to execute the code externally using the specified Python version.</p>
+<pre title="no_vlam">
+&lt;pre title="alternate_python_version [no_style] [no_copy] [no_pre] 
+            [linenumber [=start_number]] [external [no_internal]]"&gt;
+Some Python code
+
+&lt;/pre&gt;</pre>
+<p>Note that the shorter <code>alt_py</code> can be used instead of
+<code>alternate_python_version</code></p>
+
+<p>By default, Crunchy copies the contents of the <code>pre</code> into a new 
+<code>pre</code> above the editor; however, this is prevented if 
+<code>no_copy</code> is present. 
+If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code.</p>
+
+<p>Any text between the <code>pre</code> tags is placed before the editor, in a <code>pre</code> element to serve as a constant reference for the user.</p>
+<p>The input box for specifying the Python version uses the following CSS classes:</p>
+<dl>
+<dt>span.alt_python</dt>
+	<dd>For the text before the input box.</dd>
+<dt>input.alt_python</dt>
+	<dd>For the input box itself.</dd>
+</dl>
+
+
+<h2 ><a id="advanced">Advanced options</a></h2>
+<p>Some "advanced" options require hand-coding and should rarely be used by
+tutorial writers.</p>
+<h3 >Fetching a local tutorial</h3>
+<p>If one wants to insert a "browser" object to load a local tutorial,
+all that is required is to write:<br/>
+<code>&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
+<code>&lt;/span&gt;</code>.  
+In addition to loading the tutorial, Crunchy will also adds as the first item 
+to the Python path (sys.path)
+the directory where the tutorial is located; this will allow importing
+modules that are distributed with the tutorial - as long as they are in the
+same directory.</p>
+<h3 >Fetching a remote tutorial</h3>
+<p>If one wants to insert a input box to load a remote tutorial,
+all that is required is to write:<br/>
+<code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
+
+<h4 >Adding a path to <code title="py_code">sys.path</code></h4>
+<p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
+above, its path is added to <code title="py_code">sys.path</code>.  Other relative
+paths can be added via the following syntax<br/>
+<code>
+&lt;meta title="python_import" name="<em>relative_path</em>" /&gt;
+</code>
+</p>
+
+<h3 >Changing the default menu</h3>
+<p>Changing the default menu can be done by including<br/>
+<code>&lt;meta name="crunchy_menu" content="filename"&gt;</code> in the html <code>&lt;head&gt;</code> element.  The file designated by <code>filename</code> must be a valid
+html file having a well defined structure.  The following is the file currently used by
+Crunchy.</p>
+<pre title="no_vlam">
+&lt;html&gt;
+&lt;head&gt;
+&lt;link href="/menu_basic.css" rel="stylesheet" type="text/css" /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;!-- specify width and right values so that it can be dragged properly --&gt;
+&lt;div class="crunchy_menu_container" style="width:306px;right:0;"&gt;
+&lt;ul&gt;
+&lt;li&gt; &lt;a href="/"&gt;&lt;img src="/crunchy.png" 
+             alt="Home"/&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="/exit"&gt;Quit&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Crunchy looks for the menu inside the <code>&lt;div&gt;</code>, and the menu styling
+in the <code>&lt;head&gt;</code>.  Note that we have to specify styles values for "width"
+and "right" so that the menu can be clicked and dragged.  Alternatively, we could specify
+a value for the "left" attribute.</p>
+</div>
+</div>
+</body>
+</html>

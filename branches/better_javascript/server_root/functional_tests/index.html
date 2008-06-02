@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Miscellaneous</title>
+
+	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
+</head>
+
+<body>
+
+<div id="container">
+    <div id="titlebar">
+    <a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a>
+    <h1>Miscellaneous</h1>
+    </div>
+
+<div id="navbar">
+    <span class="heading">The Crunchy Tutorial</span>
+    <a href="/crunchy_tutor/welcome_en.html">Begin Tutorial</a>
+    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
+    <a href="/crunchy_tutor/editor_en.html">Editor</a>
+    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
+    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
+    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
+    <a href="/crunchy_tutor/external_en.html">External applications</a>
+    <span class="heading">Advanced Topics</span>
+    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
+    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
+    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
+    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
+    <a href="/functional_tests">Miscellaneous</a>
+</div>
+<div id="content">
+
+<h1 class="crunchy">Introduction</h1>
+
+<p>This file contains various stuff including the Crunchy functional test suite.</p>
+
+<p>More to come...</p>
+
+
+<h2 class="crunchy">The Crunchy Test Suite</h2>
+
+<p>The following is a list of links to pages that test different features of Crunchy.  
+Each of these tests should be exercised before a new release is created.  
+Existing bugs can (and should) be documented here as well.</p>
+
+<h3 class="crunchy">Normal operation</h3>
+<ul>
+<li>IMPORTANT TEST: <a href="security_test.html">Javascript security test</a></li>
+<li><a href="menus.html">Alternate menu</a> from hard link (with css from server_root)
+  <ul><li><a href="menus2.html">Alternate menu</a> from browsing local tutorial (with css 
+  in location relative to this file.)</li></ul>
+</li>
+<li><a href="colourizer.html">Colourizer Test</a>
+
+  <ul>
+  <li><a href="special.html">Special characters</a>; does not work with Python 3.0 - try the next one.</li>
+    <li><a href="special_3k.html">Special characters</a></li>
+  </ul>
+</li>
+<li><a href="css_override.html">css override test</a></li>
+
+<li><a href="doctest.html">Doctest</a></li>
+<li><a href="editor.html">Editor</a></li>
+<li><a href="external.html">External execution</a>
+  <ul>
+  <li><a href="external_test.html">External execution using alternate Python version.</a></li>
+  </ul>
+</li>
+<li><a href="graphics.html">Graphics</a></li>
+<li><a href="images.html">Image tests</a></li>
+
+<li><a href="interpreter.html">Interpreter</a></li>
+<li>i18n: testing files with different encodings (non-escaped special characters)</li>
+<ul>
+  <li><a href="iso-8859-1.html">iso-8859-1</a>; does not work properly with Python 3.0.</li>
+  <li><a href="utf-8.html">utf-8</a>; does not work properly with Python 3.0.</li>
+</ul>
+<li><a href="links.html">Links</a></li>
+<li><a href="load_tutorials.html">Loading arbitrary tutorials</a></li>
+
+<li><a href="logging.html">Session logging</a></li>
+
+<li>A <a href="rst_directives.txt">reStructuredText file with Crunchy directives</a></li>
+<li> An external <a href="http://andre.roberge.googlepages.com/rst_directives.txt">reStructuredText
+file with Crunchy directives</a>. Remember to set the security mode
+to an appropriate value so that it works properly!</li>
+<li><a href="no_markup.html">No markup test</a>: automatically adding markup
+based on default choice.</li>
+<li><a href="kill_execution.html">Stopping execution</a>: make sure that we can get out of infinite loops.</li>
+</ul>
+
+<h3 class="crunchy">Comprehensive test</h3>
+<ul>
+<li><a href="comprehensive.html">comprehensive test</a>: meant to be used a
+complete vlam reference; chances are, it's not up to date.</li>
+</ul>
+
+
+<h3 class="crunchy">To do</h3>
+<p>Add a test with at least two identical file browsers on the same page.</p>
+
+<h3 class="crunchy">Error handling</h3>
+<ul>
+<li><a href="brokentree.html">Broken html tree</a>: The new (0.9+) version of Crunchy can now display pages with some errors in it, but not with Python 3.0; previously, when errors were found (such as missing closing tags) it was only displaying a blank page. Ideally, it Should display the original page with an error message (in a popup window?)  A previous version displayed a custom alert (on top of a blank page); somehow this is now broken - but is probably not the behaviour we wanted anyway.</li>
+<li><a href="does_not_exist.html">Non-existent file</a>: currently displays a custom page whose appearance could be improved upon (perhaps with images, in a humourous way) and which should be translated to the default language - when the i18n features are working.</li>
+<li><a href="empty.html">Empty file</a>: file with no head nor body; these will
+be added by Crunchy, together with a very visible warning.</li>
+</ul>
+
+
+<h2 class="crunchy">Others</h2>
+<ul>
+<li>IPython is a fairly advanced replacement for the normal Python console.
+Unfortunately, it messes up Crunchy rather badly when used as an alternative shell.
+Assuming you have it installed on your system, you can <a href="ipython.html">try it out</a>. </li>
+<li>A new plugin is being developed in order to do automated code checking
+in documentation. To see one failing and one passing test: 
+<a href="code_check.html">one failing test</a>; 
+you can also see what happens when all tests pass: 
+<a href="code_check_pass.html">passing tests</a>
+</ul>
+
+
+
+
+</div>
+</div>
+
+</body>
+</html>
