@@ -328,26 +328,25 @@ Crunchy.</p>
 <pre title="no_vlam">
 &lt;html&gt;
 &lt;head&gt;
-&lt;link href="/menu_basic.css" rel="stylesheet" type="text/css" /&gt;
+&lt;link rel="stylesheet" href="/crunchy_menu.css" type="text/css" charset="utf-8"&gt;
 &lt;/head&gt;
 &lt;body&gt;
 
-&lt;!-- specify width and right values so that it can be dragged properly --&gt;
-&lt;div class="crunchy_menu_container" style="width:306px;right:0;"&gt;
-&lt;ul&gt;
-&lt;li&gt; &lt;a href="/"&gt;&lt;img src="/crunchy.png" 
-             alt="Home"/&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="/exit"&gt;Quit&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;div id="menu_box"&gt;
+&lt;div id="menu_title"&gt;Crunchy Menu&lt;/div&gt;
+&lt;a href="/"&gt;Crunchy Home&lt;/a&gt;
+&lt;a href="#" id="security_info_link"&gt;Security ...&lt;/a&gt;
+&lt;span class="menu_separator" &gt; &lt;/span&gt;
+&lt;a href="/exit"&gt;Quit Crunchy&lt;/a&gt;
 &lt;/div&gt;
-
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
 <p>Crunchy looks for the menu inside the <code>&lt;div&gt;</code>, and the menu styling
-in the <code>&lt;head&gt;</code>.  Note that we have to specify styles values for "width"
-and "right" so that the menu can be clicked and dragged.  Alternatively, we could specify
-a value for the "left" attribute.</p>
+in the <code>&lt;head&gt;</code>.  You can see examples of using alternate menus, with
+slightly different files structures (and very different styling)
+<a href="/functional_tests/menus.html">here</a> and 
+<a href="/functional_tests/menus2.html">here</a>.</p>
 </div>
 </div>
 </body>
