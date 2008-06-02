@@ -1,0 +1,13 @@
+#summary A description of the efforts ongoing to use a better Javascript library.
+
+= Introduction =
+
+This sub-project started out as issue 122. It is now tracked in the better_javascript branch. Hopefully, by using a modern Javascript library like jQuery or Mochikit we can make crunchy more responsive, more reliable, more cross-platform and generally prettier (see, for example, issue 124).
+
+== Notes==
+
+I will track progress in the comments to issue 122, and I will document work done on this page.
+
+= Changelog =
+
+_2008-06-02_ I have decided to initially focus on jQuery. I have created the better_javascript branch in the repository, and will be using it for updates. -- _Johannes__
