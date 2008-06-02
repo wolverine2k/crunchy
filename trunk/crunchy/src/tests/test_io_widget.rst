@@ -81,8 +81,6 @@ have been inserted (and none unexpected).
     ...         inputs.append(el)
     ...     elif el.tag == "parent":
     ...         parent.append(el)
-    ...     elif el.tag == "button":
-    ...         buttons.append(el)
     ...     else:
     ...         print("Unexpected element found")
     ...
@@ -91,8 +89,6 @@ have been inserted (and none unexpected).
     >>> len(inputs)
     1
     >>> len(parent)
-    1
-    >>> len(buttons)
     1
     >>> page.added_info
     []
@@ -138,7 +134,6 @@ have been inserted (and none unexpected).
 
     >>> spans = []
     >>> inputs = []
-    >>> buttons = []
     >>> imgs = []
     >>> textareas = []
     >>> a_s = []
@@ -156,8 +151,6 @@ have been inserted (and none unexpected).
     ...         imgs.append(el)
     ...     elif el.tag == "textarea":
     ...         textareas.append(el)
-    ...     elif el.tag == "button":
-    ...         buttons.append(el)
     ...     else:
     ...         print("Unexpected element found: " + str(el.tag))
     ...
@@ -168,13 +161,11 @@ have been inserted (and none unexpected).
     >>> len(parent)
     1
     >>> len(a_s)
-    1
+    2
     >>> len(textareas)
     1
     >>> len(imgs)
-    1
-    >>> len(buttons)
-    1
+    2
 
 Note that we also need to check if the proper "includes" have been inserted.
 
