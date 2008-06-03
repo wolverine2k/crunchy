@@ -16,3 +16,5 @@ _2008-06-02_ I have decided to initially focus on jQuery. I have created the bet
 _2008-06-02_ I have vlam.py so that the COMET call is run using jQuery. this should solve 9/10ths of our problems with IE. See revision 719 for more details.
 
 _2008-06-02_ In revision 721 I have over the output system to jQuery. This means that all of the javascript in cometIO.py has been converted.
+
+_2008-06-03_ Widget uids are now separated by underscores instead of colons. This is because jQuery selectors have trouble with colons.
