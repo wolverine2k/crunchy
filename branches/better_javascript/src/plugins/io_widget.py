@@ -114,7 +114,7 @@ function kill_thread(uid){
 
 push_input = r"""
 function push_input(uid){
-    data = document.getElementById("code_"+uid).value;
+    data = $("#code_"+uid).val();
     document.getElementById("in_"+uid).value = "";
     var i = new XMLHttpRequest()
     i.open("POST", "/input%s?uid="+uid, true);
