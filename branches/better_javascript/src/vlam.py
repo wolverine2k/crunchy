@@ -76,10 +76,11 @@ class CrunchyPage(object):
                 self.body = et.SubElement(html, "body")
             warning = et.SubElement(self.body, 'h1')
             warning.text = "Missing body from original file"
-        self.process_tags()
         # load the jquery js file:
         self.insert_js_file("/javascript/jquery.js")
         self.add_js_code(comet_js % self.pageid)
+        # do the actual processing
+        self.process_tags()
         # first crunchy's style, then user's so it can override crunchy's
         self.add_crunchy_style()
         self.add_user_style()

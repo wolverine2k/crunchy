@@ -152,27 +152,27 @@ def include_interpreter(interp_kind, page, uid):
         if not page.includes("BorgInterpreter_included"):
             page.add_include("BorgInterpreter_included")
             page.add_js_code(BorgInterpreter_js)
-        page.add_js_code('init_BorgInterpreter("%s");' % uid)
+        page.add_js_code('$(document).ready(function(){init_BorgInterpreter("%s");});' % uid)
     elif interp_kind == "isolated" or interp_kind == "Human":
         if not page.includes("SingleInterpreter_included"):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)
-        page.add_js_code('init_SingleInterpreter("%s");' % uid)
+        page.add_js_code('$(document).ready(function(){init_SingleInterpreter("%s");});' % uid)
     elif interp_kind == "parrot":
         if not page.includes("parrot_included"):
             page.add_include("parrot_included")
             page.add_js_code(parrot_js)
-        page.add_js_code('init_parrotInterpreter("%s");' % uid)
+        page.add_js_code('$(document).ready(function(){init_parrotInterpreter("%s");});' % uid)
     elif interp_kind == "Parrots":
         if not page.includes("Parrots_included"):
             page.add_include("Parrots_included")
             page.add_js_code(Parrots_js)
-        page.add_js_code('init_ParrotsInterpreter("%s");' % uid)
+        page.add_js_code('$(document).ready(function(){init_ParrotsInterpreter("%s");});' % uid)
     elif interp_kind == "TypeInfoConsole":
         if not page.includes("TypeInfoConsole_included"):
             page.add_include("TypeInfoConsole_included")
             page.add_js_code(TypeInfoConsole_js)
-        page.add_js_code('init_TypeInfoConsole("%s");' % uid)
+        page.add_js_code('$(document).ready(function(){init_TypeInfoConsole("%s");});' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##        else:
 ##          if not page.includes("IPythonInterpreter_included"):
@@ -190,9 +190,12 @@ def borg_javascript(prefix, page, crunchy_help):
         code += "\nborg.push('print(";
         code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact()\n";
-        var j = new XMLHttpRequest();
-        j.open("POST", "/exec%s?uid="+uid, false);
-        j.send(code);
+        $.ajax({type : "POST",
+                url : "/exec%s?uid="+uid,
+                // TODO get rid of this seperator stuff and use a proper post request
+                data : code,
+                processData : false
+                });
     };
     """ % (prefix, page.pageid, (sys.version.split(" ")[0]), crunchy_help,
                plugin['session_random_id'])
@@ -208,9 +211,12 @@ def single_javascript(prefix):
         code += "\nisolated.push('print(";
         code += '"Crunchy: Individual Interpreter (Python version %s)."';
         code += ")')\nisolated.interact(ps1='--> ')\n";
-        var j = new XMLHttpRequest();
-        j.open("POST", "/exec%s?uid="+uid, false);
-        j.send(code);
+        $.ajax({type : "POST",
+                url : "/exec%s?uid="+uid,
+                // TODO get rid of this seperator stuff and use a proper post request
+                data : code,
+                processData : false
+                });
     };
     """ % (prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
@@ -225,9 +231,12 @@ def parrot_javascript(prefix):
         code += "\nisolated.push('print(";
         code += '"Crunchy: [dead] parrot Interpreter (Python version %s)."';
         code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
-        var j = new XMLHttpRequest();
-        j.open("POST", "/exec%s?uid="+uid, false);
-        j.send(code);
+        $.ajax({type : "POST",
+                url : "/exec%s?uid="+uid,
+                // TODO get rid of this seperator stuff and use a proper post request
+                data : code,
+                processData : false
+                });
     };
     """ % (prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
 
@@ -242,9 +251,12 @@ def parrots_javascript(prefix, page):
         code += "\nborg.push('print(";
         code += '"Crunchy: [dead] Parrots Interpreter (Python version %s)."';
         code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
-        var j = new XMLHttpRequest();
-        j.open("POST", "/exec%s?uid="+uid, false);
-        j.send(code);
+        $.ajax({type : "POST",
+                url : "/exec%s?uid="+uid,
+                // TODO get rid of this seperator stuff and use a proper post request
+                data : code,
+                processData : false
+                });
     };
     """ % (prefix, page.pageid, (sys.version.split(" ")[0]),
            plugin['session_random_id'])
@@ -260,9 +272,12 @@ def type_info_javascript(prefix, page):
         code += "\nborg.push('print(";
         code += '"Crunchy: TypeInfoConsole (Python version %s)."';
         code += ")')\nborg.interact(ps1='<t>>> ')\n";
-        var j = new XMLHttpRequest();
-        j.open("POST", "/exec%s?uid="+uid, false);
-        j.send(code);
+        $.ajax({type : "POST",
+                url : "/exec%s?uid="+uid,
+                // TODO get rid of this seperator stuff and use a proper post request
+                data : code,
+                processData : false
+                });
     };
     """ % (prefix, page.pageid, (sys.version.split(" ")[0]),
            plugin['session_random_id'])

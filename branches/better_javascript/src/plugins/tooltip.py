@@ -66,7 +66,7 @@ def dir_handler(request):
     # has clicked on a few more keys.
     line = ".".join(line.split(".")[:-1])
 
-    pageid = request.args['uid'].split(":")[0]
+    pageid = request.args['uid'].split("_")[0]
     try:
         result = eval("dir(%s)" % line, {}, borg_console[pageid].__dict__['locals'])
     except:
@@ -92,7 +92,7 @@ def doc_handler(request):
         request.end_headers()
         return
 
-    pageid = request.args['uid'].split(":")[0]
+    pageid = request.args['uid'].split("_")[0]
 
     if python_version < 3:
         line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()

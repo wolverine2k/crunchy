@@ -107,11 +107,14 @@ def doctest_widget_callback(page, elem, uid):
 # random session id.
 doctest_jscode = """
 function exec_doctest(uid){
-    document.getElementById("kill_image_"+uid).style.display = "block";
-    code=editAreaLoader.getValue("code_"+uid);
-    var j = new XMLHttpRequest();
-    j.open("POST", "/doctest%s?uid="+uid, false);
-    j.send(code);
+    // TODO is this really necessary - surely this is handled by the code in cometIO.py? (it certainly should be)
+    $("#kill_image_"+uid).show();
+    var code = editAreaLoader.getValue("code_"+uid);
+    $.ajax({type : "POST",
+            url : "/doctest%s?uid="+uid, 
+            data : code,
+            processData : false
+            });
 };
 """ % plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
