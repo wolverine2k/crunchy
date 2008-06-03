@@ -31,14 +31,15 @@ def register():
     # <pre title='interpreter ...'>
     plugin['register_tag_handler']("pre", "title", "interpreter", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "isolated", insert_interpreter)
-    # just for fun, we define these; they are case-sensitive.
     plugin['register_tag_handler']("pre", "title", "Borg", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "parrot", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "Parrots", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "TypeInfoConsole", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "python_tutorial", insert_interpreter)
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    # Guess what this is equivalent to:
+    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out,
+#  keeping it in as a reference.
 ##    plugin['register_tag_handler']("pre", "title", "ipython", insert_interpreter)
 
 def insert_interpreter(page, elem, uid):

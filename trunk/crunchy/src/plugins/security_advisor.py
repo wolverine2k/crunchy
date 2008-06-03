@@ -11,7 +11,7 @@ _ = translate['_']
 
 provides = set(["/allow_site", "/set_trusted", "/remove_all"])
 
-DEBUG = True
+DEBUG = False
 
 def register():
     '''
@@ -326,7 +326,6 @@ def set_security_list(request):
         mode = site[1].strip()
         site = site[0].strip()
 
-        print "site =", site
         site_list.append(site)
         to_be_deleted = []
         if site.strip() != '':

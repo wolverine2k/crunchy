@@ -7,8 +7,10 @@ by tutorial writers using a custom meta declaration.
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, parse, Element
+from src.interface import plugin, parse, Element, config
 import src.security as security
+
+current_language = None
 
 def register():
     """
@@ -30,9 +32,8 @@ def insert_special_menu(page, elem, dummy):
         raise NotImplementedError
     else:
         local_path = os.path.split(page.url)[0][1:]
-        menu_file = os.path.join(plugin['get_root_dir'](),
-                                 "server_root", local_path,
-                                 elem.attrib["content"])
+        menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
+                                       local_path, elem.attrib["content"])
     menu, css = extract_menu(menu_file, page)
     if page.body:
         page.body.insert(0, menu)
@@ -43,8 +44,9 @@ def insert_special_menu(page, elem, dummy):
 
 def insert_default_menu(page):
     """inserts the default Crunchy menu"""
-    global _default_menu, _css
-
+    global current_language, _default_menu, _css
+    if config['language'] != current_language:
+        _default_menu, _css = select_language(config['language'])
     activate_security_info(page, _default_menu)
     if page.body:
         page.body.insert(0, _default_menu) # make sure we insert at 0 i.e.
@@ -85,7 +87,6 @@ def activate_security_info(page, menu):
         for elem in menu.getiterator('a'):
             if 'id' in elem.attrib:
                 if elem.attrib['id'] == "security_info_link":
-                    elem.text = "Security: "
                     img = Element('img')
                     img.attrib['src'] = page.security_result_image
                     img.attrib['id'] = "security_result_image"
@@ -97,15 +98,14 @@ def activate_security_info(page, menu):
 def extract_menu(filename, page, safe_menus=False):
     '''extract a menu and css information from an html file.
 
-       It assumes that the menu (usually an unordered list) is
-       contained within the first <div> found in the file
-       whereas the css information is contained in the first
+       It assumes that the menu is contained within the first <div> found in
+       the file whereas the css information is contained in the first
        <link> in that file.'''
     try:
         tree = parse(filename)
     except Exception:#, info:
         print("cannot create a tree from the file")# info
-    # Treat menus just as suspiciously as the original file
+    # Treat menus just as suspiciously as other files
     if not safe_menus:
         tree = security.remove_unwanted(tree, page)
     # extract menu for use in other files
@@ -113,8 +113,20 @@ def extract_menu(filename, page, safe_menus=False):
     css = tree.find(".//link")
     return menu, css
 
-# Note: for now we only assume we have one default menu (in English)
-# This will need to be changed later.
-menu_file = os.path.join(plugin['get_root_dir'](), "server_root", "menu_en.html")
-# we trust our own menus to be safe
-_default_menu, _css = extract_menu(menu_file, "dummy", safe_menus=True)
+def select_language(lang):
+    '''
+    Select a default menu based on a language choice. If the menu for the
+    chosen language can not be found, an English menu is selected instead.
+    '''
+    global current_language
+    menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
+                                 lang, "menu.html")
+    if os.path.exists(menu_file):
+        current_language = config['language']
+    else:
+        menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
+                                 "en", "menu.html")
+        if current_language == None:
+            current_language = 'en'
+    # default menus, provided by Crunchy developers, are assumed to be safe.
+    return extract_menu(menu_file, "dummy", safe_menus=True)

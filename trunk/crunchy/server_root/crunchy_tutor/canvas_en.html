@@ -100,10 +100,15 @@ for i in range(10):
     filled_circle((x, y), r)
 </pre>
 
-<p>Rather than going straight to the next page, if you want, you can make a little detour and have a look at <a href="named_colours_en.html">valid colour names</a> used in Crunchy.</p>
+<p>Rather than going straight to the next page, if you want, you can make a little detour and have a look at <a href="named_colours_en.html">valid colour names</a> used in Crunchy.
+If you do so, I suggest you ctrl-click the link (or cmd-click on a Mac) to open
+the page in a new tab.</p>
 
 <h3 >Using the interpreter</h3>
-<p>You can also create graphics using the interpreter.  Try the following:</p>
+<p>You can also create graphics using the interpreter.  
+<small>If you clicked on the link above, and used the back button of your browser
+to come restore this page, you will find that you need to reload this page to see
+the interpreter.</small> Try the following:</p>
 <pre title="interpreter">
 &gt;&gt;&gt; import graphics as g
 &gt;&gt;&gt; g.init_graphics()
@@ -113,7 +118,7 @@ for i in range(10):
 <h3 >Advanced stuff</h3>
 <p>The new "comet-based" Crunchy has not only static graphics capabilities but 
 also supports simple animations.  However, sometimes the animation may seem to 
-stall.  In this example, we use the <code title="py_code">math_graphics</code>
+stall (for example, with Firefox 2.x, but not 3.0).  In this example, we use the <code title="py_code">math_graphics</code>
 module instead of the <code title="py_code">graphics</code> module, which 
 means that the origin is at the bottom left corner.</p>
 
@@ -179,7 +184,7 @@ for i in range(40):
 <tr><td>'rgba(<em>red, green, blue, alpha</em>)'</td><td>Similar to rgb(<em>red</em>, <em>green</em>, or <em>blue</em>), but with the addition of a transparency parameter (<em>alpha</em>). The valid range of values is from 0.0 (fully transparent) to 1.0 (fully opaque). By default, this property is set to 1.0 (fully opaque). </td></tr>
 </table>
 <h3 >Advanced stuff, for tutorial writers</h3>
-<p>Surprise, there is nothing special to do.  Every interactive object (interpreter and editor) can use the graphics.</p>
+<p>Surprise, there is nothing special to do.  Every interactive object (interpreter and editor) can use the graphics module.</p>
 
 </div>
 </div>
