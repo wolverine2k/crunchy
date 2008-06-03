@@ -241,35 +241,44 @@ def insert_markup(elem, uid, vlam, markup):
 # with a random session id appended for security reasons.
 exec_jscode = """
 function exec_code(uid){
-    document.getElementById("kill_image_"+uid).style.display = "block";
-    code=editAreaLoader.getValue("code_"+uid);
+    // TODO check this still works
+    //document.getElementById("kill_image_"+uid).style.display = "block";
+    var code = editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
-        code = document.getElementById("code_"+uid).value;
-    }
-    var j = new XMLHttpRequest();
-    j.open("POST", "/exec%s?uid="+uid, false);
-    j.send(code);
+        code = $("#code_"+uid).val();
+    };
+    $.ajax({type : "POST",
+            url : "/exec%s?uid="+uid, 
+            data : code,
+            processData : false
+            });
 };
 function exec_code_externally(uid){
-    code=editAreaLoader.getValue("code_"+uid);
+    var code = editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
-        code = document.getElementById("code_"+uid).value;
-    }
-    path = document.getElementById("path_"+uid).innerHTML;
-    var j = new XMLHttpRequest();
-    j.open("POST", "/save_and_run%s?uid="+uid, false);
-    j.send(path+"_::EOF::_"+code);
+        code = $("#code_"+uid).val();
+    };
+    var path = $("#path_"+uid).html();
+    $.ajax({type : "POST",
+            url : "/save_and_run%s?uid="+uid,
+            // TODO get rid of this seperator stuff and use a proper post request
+            data : path+"_::EOF::_"+code,
+            processData : false
+            });
 };
 function exec_code_externally_python_interpreter(uid){
-    code=editAreaLoader.getValue("code_"+uid);
+    var code = editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
-        code = document.getElementById("code_"+uid).value;
-    }
-    path = document.getElementById("path_"+uid).innerHTML;
-    var j = new XMLHttpRequest();
-    j.open("POST", "/save_and_run_python_interpreter%s?uid="+uid, false);
-    inp = document.getElementById("input1_"+uid).value;
-    j.send(inp+"_::EOF::_"+path+"_::EOF::_"+code);
+        code = $("#code_"+uid).val();
+    };
+    var path = $("#path_"+uid).html();
+    var inp = $("#input1_"+uid).val();
+    $.ajax({type : "POST",
+            url : "/save_and_run%s?uid="+uid,
+            // TODO get rid of this seperator stuff and use a proper post request
+            data : inp+"_::EOF::_"+path+"_::EOF::_"+code,
+            processData : false
+            });
 };
 
 """ % (plugin['session_random_id'], plugin['session_random_id'],

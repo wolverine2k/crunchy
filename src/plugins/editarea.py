@@ -55,18 +55,18 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     path = 'path' + hidden_load_id
     SubElement(parent, 'br')
     form1 = SubElement(parent, 'form',
-                onblur = "a=getElementById('%s');b=getElementById('%s');a.value=b.value"%(path, filename))
+                onblur = "$('#%s').val($('#%s').val());"%(path, filename)) # path.val = filename.val
     SubElement(form1, 'input', type='file', id=filename, size='80')
     SubElement(form1, 'br')
-
+    
     form2 = SubElement(parent, 'form')
     SubElement(form2, 'input', type='hidden', id=path)
     btn = SubElement(parent, 'button',
-        onclick="c=getElementById('%s');path=c.value;load_python_file('%s');"%(path, textarea_id))
+        onclick="load_python_file($('#&s').val(), '%s');" % (path, textarea_id))
     btn.text = _("Load Python file")
     btn2 = SubElement(parent, 'button',
-        onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_load_id)
-    btn2.text = _("Cancel")
+        onclick="$('#%s').hide();"%hidden_load_id)
+    btn2.text = _("Cancel");
     return
 
 def addSavePython(parent, hidden_save_id, textarea_id):
@@ -84,113 +84,81 @@ def addSavePython(parent, hidden_save_id, textarea_id):
     form2.text = _("Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally.")
     SubElement(form2, 'input', type='hidden', id=path)
     btn = SubElement(parent, 'button',
-        onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
-        "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))
+        onclick="$('#%s').val($('#%s').val());"%(path, filename)+
+        "save_python_file($('#%s').val(), '%s');"%(path, textarea_id))
     btn.text = _("Save Python file")
     btn2 = SubElement(parent, 'button',
-        onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_save_id)
+        onclick="$('#%s').hide();"%hidden_save_id)
     btn2.text = _("Cancel")
     btn3 = SubElement(parent, 'button',
-        onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
-        "c=getElementById('%s');path=c.value;save_and_run(path,'%s');"%(path, textarea_id))
+        onclick="$('#%s').val($('#%s').val());"%(path, filename)+
+        "save_and_run($('#%s').val(), '%s');"%(path, textarea_id))
     btn3.text = _("Save and Run")
     return
 
-
 editArea_load_and_save = """
 function my_load_file(id){
-var obj = document.getElementById('hidden_load'+id);
-obj.style.zIndex = 99999;
-obj.style.visibility = "visible";
-}
+    $("#hidden_load"+id).show();
+};
+
 function my_save_file(id){
-var obj = document.getElementById('hidden_save'+id);
-obj.style.zIndex = 99999;
-obj.style.visibility = "visible";
+    $("#hidden_save"+id).show();
 }
 
-function load_python_file(obj_id)
+function load_python_file(path, obj_id)
 {
-    e = document.getElementById(obj_id);
-    e.innerHTML = '';
-    var h = new XMLHttpRequest()
-    h.onreadystatechange = function()
-        {
-            if (h.readyState == 4)
-            {
-                try
-                {
-                    var status = h.status;
-                }
-                catch(e)
-                {
-                    var status = "NO HTTP RESPONSE";
-                }
-                switch (status)
-                {
-                case 200:
-                    //alert(h.responseText);
-                    editAreaLoader.setValue(obj_id, h.responseText);
-                    var obj = document.getElementById('hidden_load'+obj_id);
-                    obj.style.visibility = "hidden";
-                    obj.style.zIndex = -1;
-                    break;
-                case 12029:
-                    //IE could not connect to server
-                    status = "NO HTTP RESPONSE";
-                default:
-                    alert(status + ": " + h.responseText);
-                }
-            }
-        };
-    h.open("GET", "/load_file"+"?"+"path="+path, true);
-    document.getElementById("path_"+obj_id.substring(5)).innerHTML = path;
-    h.send('');
-}
+    $("#"+obj_id).html("");
+    $("#path_"+id.substring(5)).html(path);
+    $.get("/load_file", {path : path}, function(data, status){
+        editAreaLoader.setValue(obj_id, data);
+        $('#hidden_save'+id).hide();
+    });
+};
+
 function save_python_file(path, id)
 {
-    data = document.getElementById(id).value;
-    document.getElementById("path_"+id.substring(5)).innerHTML = path;
-    var j = new XMLHttpRequest();
-	j.open("POST", "/save_file", true);
-	// Use an unlikely part of a filename (path) as a separator between file
-	// path and file content.
-	j.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
-    var obj = document.getElementById('hidden_save'+id);
-    obj.style.visibility = "hidden";
-    obj.style.zIndex = -1;
+    var data = $("#"+id).val();
+    $("#path_"+id.substring(5)).html(path);
+    $.ajax({type : "POST",
+            url : "/save_file",
+            // Use an unlikely part of a filename (path) as a separator between file
+        	// path and file content.
+            data : path+"_::EOF::_"+editAreaLoader.getValue(id),
+            processData : false
+            });
+    $('#hidden_save'+id).hide();
 };
 
 function save_and_run(path, id)
 {
-	data = document.getElementById(id).value;
-    document.getElementById("path_"+id.substring(5)).innerHTML = path;
-	var h = new XMLHttpRequest();
-	h.open("POST", "/save_and_run%s", true);
-	// Use an unlikely part of a filename (path) as a separator between file
-	// path and file content.
-	h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
-    var obj = document.getElementById('hidden_save'+id);
-	obj.style.visibility = "hidden";
-    obj.style.zIndex = -1;
+    data = $("#"+id).val();
+    $("#path_"+id.substring(5)).html(path);
+    $.ajax({type : "POST",
+            url : "/save_and_run%s",
+            // Use an unlikely part of a filename (path) as a separator between file
+        	// path and file content.
+            data : path+"_::EOF::_"+editAreaLoader.getValue(id),
+            processData : false
+            });
+    var obj =$('#hidden_save'+id).hide();
 };""" % plugin['session_random_id']
 
 # Some javascript code
 editAreaLoader_js = """
 editAreaLoader.init({
-id: "%s",
-font_size: "11",
-allow_resize: "both",
-allow_toggle: true,
-language: "%s",
-toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
-syntax: "python",
-start_highlight: true,
-load_callback:"my_load_file",
-save_callback:"my_save_file",
-display: "later",
-replace_tab_by_spaces:4,
-min_height: 150});"""
+    id: "%s",
+    font_size: "11",
+    allow_resize: "both",
+    allow_toggle: true,
+    language: "%s",
+    toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, change_smooth_selection, highlight, reset_highlight, |, help",
+    syntax: "python",
+    start_highlight: true,
+    load_callback:"my_load_file",
+    save_callback:"my_save_file",
+    display: "later",
+    replace_tab_by_spaces:4,
+    min_height: 150});"""
 
 # css stuff
 load_save_css = """
