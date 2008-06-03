@@ -234,7 +234,7 @@ class CrunchyPage(object):
                             keyword = None
                         if keyword in CrunchyPage.handlers3[tag][attr]:
                             CrunchyPage.handlers3[tag][attr][keyword]( self,
-                                            elem, self.pageid + ":" + uidgen())
+                                            elem, self.pageid + "_" + uidgen())
                             break
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
@@ -246,7 +246,7 @@ class CrunchyPage(object):
                 if "title" not in elem.attrib:
                     elem.attrib["title"] = n_m
                     CrunchyPage.handlers3["pre"]["title"][keyword](self, elem,
-                                                self.pageid + ":" + uidgen())
+                                                self.pageid + "_" + uidgen())
         #  The following for loop deals with example 5; we do need the
         # security information to be included in the menu...
         if "menu_included" not in self.included:

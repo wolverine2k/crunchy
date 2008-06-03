@@ -96,7 +96,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.help_flag = False
         else:
             #use jQuery:
-            self.put("""$("#out_%s").append("%s");//output\n""" % (escape_colon(uid), pdata))
+            self.put("""$("#out_%s").append("%s");//output\n""" % (uid, pdata))
             # Saving session; first line...
             if uid in configuration.defaults.logging_uids:
                 log_id = configuration.defaults.logging_uids[uid][0]
@@ -166,7 +166,8 @@ def do_exec(code, uid, doctest=False):
 def push_input(request):
     """An http request handler to deal with stdin"""
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
+    # use underscore instead of colon so that jQuery selectors work more reliably
+    pageid = uid.split("_")[0]
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
@@ -218,7 +219,7 @@ class ThreadedBuffer(object):
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
@@ -236,7 +237,7 @@ class ThreadedBuffer(object):
         uid = threading.currentThread().getName()
         if not self.__redirect(uid):
             return
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         del input_buffers[uid]
         # hide the input box (using jQuery, could be animated...):
         jquery_uid = escape_colon(uid)
@@ -255,7 +256,7 @@ class ThreadedBuffer(object):
         # Borg interpreter, there can be exchange of input or output between
         # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
         #Note: in the following, it is important to ensure that the
@@ -334,8 +335,8 @@ $("#out_{1}").html("");
 
 # this should probably be animated:
 help_js = """
-$("#help_menu").show();
-$("#help_menu_x").show();
+$("#help_menu,#help_menu_x").show();
+//$("#help_menu_x").show();
 """
 def escape_colon(text):
     return text.replace(":", "\\\\:")
