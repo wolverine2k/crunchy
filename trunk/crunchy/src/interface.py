@@ -12,7 +12,8 @@ and the Crunchy core so that these modules can be tested as independently
 as possible from those in Crunchy's core.
 
 '''
-
+import imp
+import os
 import sys
 version = sys.version.split('.')
 python_version = float(version[0] + '.' + version[1][0])
@@ -41,11 +42,13 @@ exec_code = tools.exec_code
 # to artificially populate it as well from other sources enabling
 # independent unit testing.
 
-config = {}  # initialized by configuration.py
+config = {}  # initialized mostly by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
+
+config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1])
 
 import src.translation
 translate['_'] = src.translation._

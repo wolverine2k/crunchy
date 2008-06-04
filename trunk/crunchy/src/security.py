@@ -14,7 +14,6 @@ caused by insertion of malicious javascript code within a web page.
 
 # Note: a 2nd layer of security is implemented through a random session
 # id generated in CrunchyPlugin.py
-import imp
 import os
 import imghdr
 import urllib
@@ -26,7 +25,7 @@ from src.interface import python_version, config, ElementTree
 DEBUG = False
 DEBUG2 = False
 # the root of the server is in a separate directory:
-root_path = os.path.join(os.path.dirname(imp.find_module("crunchy")[1]), "server_root/")
+root_path = os.path.join(config['crunchy_base_dir'], "server_root/")
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
