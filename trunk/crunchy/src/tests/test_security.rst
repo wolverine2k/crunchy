@@ -63,6 +63,8 @@ We first start with a totally acceptable tree, making sure that nothing is remov
 and that the object identity is not changed in the process.
 
     >>> tree, tree_string = new_tree()
+    >>> print tree_string
+    <html><head><title /></head><body>Crunchy is neat!</body></html>
     >>> page.url = 'trusted'
     >>> cleaned_tree = security.remove_unwanted(tree, page)
     >>> cleaned_string = to_string(cleaned_tree)
@@ -73,7 +75,10 @@ and that the object identity is not changed in the process.
     >>> id(tree) == id(cleaned_tree)
     True
 
-Next, we add some javascript which should definitely be removed.
+Note how we need to compare the "strings" - they are like an html page.
+We will continue with more tests, comparing "strings" before and after the security purge.
+
+For the next step, we add some javascript which should definitely be removed.
 
     >>> script = Element('script')
     >>> script.text = "nasty stuff"
@@ -102,6 +107,136 @@ Next, we repeat this for all security levels.
     ...        print "Problem with removing unwanted stuff."
     ...    if cleaned_string == bad_tree_string:
     ...        print "Nothing was removed."
+
+
+We now move to even more comprehensive tests.
+We create a tree with all allowed attributes under 'strict' conditions.
+We then clean up this tree.  Nothing should be removed.
+
+    >>> div = Element('div')
+    >>> page.url = 'strict'
+    >>> allowed = security.allowed_attributes['strict']
+    >>> for tag in allowed:
+    ...     elem = SubElement(div, tag)
+    ...     for attr in allowed[tag]:
+    ...         elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> strict_tree, strict_tree_string = new_tree(add_to_body=div)
+    >>> cleaned_tree = security.remove_unwanted(strict_tree, page)
+    >>> cleaned_string = to_string(cleaned_tree)
+    >>> cleaned_string == strict_tree_string
+    True
+
+A tree created under 'display strict' conditions should yield the same result.
+
+    >>> div = Element('div')
+    >>> page.url = 'display strict'
+    >>> allowed = security.allowed_attributes['display strict']
+    >>> for tag in allowed:
+    ...     elem = SubElement(div, tag)
+    ...     for attr in allowed[tag]:
+    ...         elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> d_strict_tree, d_strict_tree_string = new_tree(add_to_body=div)
+    >>> d_strict_tree_string == strict_tree_string
+    True
+
+Let's repeat this test with "normal" and "display normal".
+First, with 'normal'.  Note that we can't validate images (so we'll skip the tag <img>)
+nor can we validate <link>, and we only allow some specific values for <meta>.  
+We will need to treat these separately later.
+
+    >>> div = Element('div')
+    >>> page.url = 'normal'
+    >>> allowed = security.allowed_attributes['normal']
+    >>> for tag in allowed:
+    ...     if tag not in ['img', 'meta', 'link']:
+    ...         elem = SubElement(div, tag)
+    ...         for attr in allowed[tag]:
+    ...            elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> normal_tree, normal_tree_string = new_tree(add_to_body=div)
+    >>> cleaned_normal_tree = security.remove_unwanted(normal_tree, page)
+    >>> cleaned_normal_string = to_string(cleaned_normal_tree)
+    >>> cleaned_normal_string == normal_tree_string
+    True
+
+Then the 'display normal' test which should yield the same result as "normal".
+
+    >>> div = Element('div')
+    >>> page.url = 'display normal'
+    >>> allowed = security.allowed_attributes['display normal']
+    >>> for tag in allowed:
+    ...     if tag not in ['img', 'meta', 'link']:
+    ...         elem = SubElement(div, tag)
+    ...         for attr in allowed[tag]:
+    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> d_normal_tree, d_normal_tree_string = new_tree(add_to_body=div)
+    >>> d_normal_tree_string == normal_tree_string
+    True
+
+We finally do the same for "trusted" and "display trusted".  The allowed content is
+basically the same as for normal, except that we do not validate <img> nor <link>. 
+Therefore, we can keep them in.
+
+    >>> div = Element('div')
+    >>> page.url = 'trusted'
+    >>> allowed = security.allowed_attributes['trusted']
+    >>> for tag in allowed:
+    ...     if tag != 'meta':
+    ...         elem = SubElement(div, tag)
+    ...         for attr in allowed[tag]:
+    ...            elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> trusted_tree, trusted_tree_string = new_tree(add_to_body=div)
+    >>> cleaned_trusted_tree = security.remove_unwanted(trusted_tree, page)
+    >>> cleaned_trusted_string = to_string(cleaned_trusted_tree)
+    >>> cleaned_trusted_string == trusted_tree_string
+    True
+
+Then the 'display trusted'
+
+    >>> div = Element('div')
+    >>> page.url = 'display trusted'
+    >>> allowed = security.allowed_attributes['display trusted']
+    >>> for tag in allowed:
+    ...     if tag != 'meta':
+    ...         elem = SubElement(div, tag)
+    ...         for attr in allowed[tag]:
+    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> d_trusted_tree, d_trusted_tree_string = new_tree(add_to_body=div)
+    >>> d_trusted_tree_string == trusted_tree_string
+    True
+
+
+Now, something more fun.  We should be able to clean our "trusted" tree to make it the
+same as a "normal" one, by selecting a different security mode for the page.
+
+    >>> trusted_tree_string == normal_tree_string  # they are not the same originally
+    False
+    >>> page.url = 'normal'
+    >>> trusted_to_normal_tree = security.remove_unwanted(trusted_tree, page)
+    >>> trusted_to_normal_string = to_string(trusted_to_normal_tree)
+    >>> trusted_to_normal_string == normal_tree_string  # now, they should be the same
+    True
+
+Finally, let's do another comparison...  
+We first create a "normal" tree with no <style> tag.
+
+    >>> div = Element('div')
+    >>> page.url = 'normal'
+    >>> allowed = security.allowed_attributes['normal']
+    >>> for tag in allowed:
+    ...     if tag != 'style':
+    ...         elem = SubElement(div, tag)
+    ...         for attr in allowed[tag]:
+    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    >>> new_normal_tree, new_normal_tree_string = new_tree(add_to_body=div)
+
+
+    >>> new_normal_tree_string == strict_tree_string # originally different
+    False
+    >>> page.url = 'strict'
+    >>> normal_to_strict_tree = security.remove_unwanted(new_normal_tree, page)
+    >>> normal_to_strict_string = to_string(normal_to_strict_tree)
+    >>> normal_to_strict_string == strict_tree_string  # now, they should be the same
+    True
 
 
 

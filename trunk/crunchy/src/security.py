@@ -211,40 +211,25 @@ allowed_attributes = {}
 # - normal
 normal = {}
 for key in specific_allowed:
-    normal[key] = []
+    normal[key] = ['title']  # always allow title
     for item in specific_allowed[key]:
         normal[key].append(item)
     if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
             'style', 'title']:
-        for item in ['class', 'id', 'style', 'title', 'xml:id']:
+        for item in ['class', 'id', 'style', 'xml:id']:
             # harmless xml:id added for Python tutorial
             normal[key].append(item)
     if key not in ['br', 'hr']:
         for item in ['dir', 'lang']:
             normal[key].append(item)
-normal['meta'].append('title')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal
 
-# - trusted
-trusted = {}
-for key in specific_allowed:
-    trusted[key] = []
-    for item in specific_allowed[key]:
-        trusted[key].append(item)
-    if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
-            'style', 'title']:
-        for item in ['class', 'id', 'style', 'title', 'xml:id']:
-            # harmless xml:id added for Python tutorial
-            trusted[key].append(item)
-    if key not in ['br', 'hr']:
-        for item in ['dir', 'lang']:
-            trusted[key].append(item)
-trusted['meta'].append('title')
-
-allowed_attributes['trusted'] = trusted
-allowed_attributes['display trusted'] = trusted
+# - trusted only differs from normal by the validation of some
+# links, images, etc.  The allowed content is the same.
+allowed_attributes['trusted'] = normal
+allowed_attributes['display trusted'] = normal
 
 # - strict -
 strict = {}
@@ -253,7 +238,7 @@ for key in specific_allowed:
         strict[key] = ['title']  # only harmless vlam-specific attribute
 
 strict['a'] = ['href', 'id', 'title'] # only items required for navigation
-strict['meta'] = ['title', 'name']  # needed for appending path to sys.path
+strict['meta'] = ['title', 'name']  # name needed for appending path to sys.path
 
 allowed_attributes['strict'] = strict
 allowed_attributes['display strict'] = strict
@@ -375,8 +360,9 @@ def remove_unwanted(tree, page):
                                                 [tag, attr[0], attr[1]])
                                 del element.attrib[attr[0]]
                                 page.security_info['number removed'] += 1
-            # Filtering for possible dangerous content in "styles..."
-            if tag == 'style':
+            # Filtering for possible dangerous content in "styles...", but
+            # skipping over empty <style/> element.
+            if tag == 'style' and element.text is not None:
                 if not 'trusted' in security_level:
                     text = element.text.lower().replace(' ', '').replace('\t', '')
                     for x in dangerous_strings:
@@ -413,6 +399,7 @@ def remove_unwanted(tree, page):
                     element.clear()
                     element.tag = None
                     _rem = True
+                    src = 'No src attribute included.'
                 if _rem:
                     page.security_info['number removed'] += 1
                     page.security_info['attributes removed'].append(
