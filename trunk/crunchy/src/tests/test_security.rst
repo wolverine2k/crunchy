@@ -1,18 +1,19 @@
+=================
 security.py tests
-================================
+=================
 
 security.py is a module which removes unwanted tags/attributes from html files.
 It has the following functions that require testing:
 
-1. remove_unwanted(): the main function, called by other modules.
-2. __cleanup(): See http://effbot.org/zone/element-bits-and-pieces.htm
-3. validate_image(): verifies that the file contents is consistent with an image
-4. is_link_safe(): evaluate if <link> referring to style sheets appears to be safe
-5. find_url(): combines relative url of "child" with base url of "parent"
-6. open_local_file():   wrong name; need to fix
-7. scan_for_unwanted(): scan for potentially unsafe strings.
+#. remove_unwanted_: the main function, called by other modules.
+#. cleanup_: See http://effbot.org/zone/element-bits-and-pieces.htm
+#. validate_image_: verifies that the file contents is consistent with an image
+#. is_link_safe_: evaluate if <link> referring to style sheets appears to be safe
+#. find_url_: combines relative url of "child" with base url of "parent"
+#. open_local_file_:   wrong name; need to fix
+#. scan_for_unwanted_: scan for potentially unsafe strings.
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -56,7 +57,9 @@ Finally, we will create some utility functions that we will use repeatedly.
     >>> def to_string(tree):
     ...    return ElementTree.tostring(tree.getroot())
 
-1. Testing remove_unwanted()
+.. _remove_unwanted:
+
+Testing remove_unwanted()
 -----------------------------
 
 We first start with a totally acceptable tree, making sure that nothing is removed
@@ -238,5 +241,45 @@ We first create a "normal" tree with no <style> tag.
     >>> normal_to_strict_string == strict_tree_string  # now, they should be the same
     True
 
+.. _cleanup:
+
+Testing __cleanup()
+-------------------
+
+to do
 
 
+.. _is_link_safe:
+
+Testing is_link_safe()
+----------------------
+
+to do
+
+.. _validate_image:
+
+Testing validate_image()
+------------------------
+
+to do
+
+.. _find_url:
+
+Testing find_url()
+------------------
+
+to do
+
+.. _open_local_file:
+
+Testing open_local_file()
+-------------------------
+
+to do
+
+.. _scan_for_unwanted:
+
+Testing scan_for_unwanted()
+---------------------------
+
+to do

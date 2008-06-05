@@ -1,18 +1,16 @@
 dhtml.py tests
-================================
-
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+================
 
 dhtml.py is a module which is meant to be imported by a Crunchy user
 to add elements (such as images) dynamically on an html page.
 It has the following elements that require testing:
 
-1. _Tree class
-2. append() & remove()  # we need to test them together
-3. image() - a special case of append()
+#. `\_Tree class`_
+#. `append() and remove()`_  # we need to test them together
+#. `image()`_ - a special case of append()
 
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -45,9 +43,10 @@ See how_to.rst_ for details.
     >>> config['temp_dir'] = os.path.expanduser('~') # only for tests
     >>> import src.imports.dhtml as dhtml
 
+.. _\_Tree class:
 
-1. Testing the _Tree class
---------------------------
+Testing the _Tree class
+------------------------
 
 Let us create a Tree with the following structure::
 
@@ -107,8 +106,9 @@ Afterwards, we will manipulate this tree to remove elements.
     >>> root.deletedlabels
     [(9, 0), (1, 0), (5, 4), (6, 4), (4, 2), (3, 2), (8, 7), (7, 2), (2, 0), (10, 0)]
     
-    
-2. Testing append() and remove()
+.. _append() and remove():
+
+Testing append() and remove()
 --------------------------------
     
     >>> dhtml._nodes = {}  # start from fresh
@@ -130,7 +130,9 @@ Afterwards, we will manipulate this tree to remove elements.
     >>> dhtml._nodes['div_42'].deletedlabels # cleared internally
     []
 
-3. Testing image()
+.. _image():
+
+Testing image()
 ------------------
 
 Try creating an image with default values.

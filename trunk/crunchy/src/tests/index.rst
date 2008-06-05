@@ -33,8 +33,10 @@ The following are the actual links to existing test files.
 #. test_handle_remote.rst_
 #. test_interface.rst_
 #. test_io_widget.rst_
+#. test_links.rst_
 #. test_pluginloader.rst_
 #. test_rst.rst_
+#. test_security.rst_
 #. test_turtle_js.rst_
 #. test_utilities.rst_
 #. test_vlam_editor.rst_
@@ -52,11 +54,13 @@ The following are the actual links to existing test files.
 .. _test_file_service.rst: test_file_service.rst
 .. _test_handle_local.rst: test_handle_local.rst
 .. _test_handle_remote.rst: test_handle_remote.rst
+.. _test_interface.rst: test_interface.rst
 .. _test_io_widget.rst: test_io_widget.rst
+.. _test_links.rst: test_links.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
-.. _test_interface.rst: test_interface.rst
 .. _test_rst.rst: test_rst.rst
+.. _test_security.rst: test_security.rst
 .. _test_utilities.rst: test_utilities.rst
 .. _test_vlam_editor.rst: test_vlam_editor.rst
 .. _test_vlam_load_local.rst: test_vlam_load_local.rst
@@ -163,6 +167,30 @@ Crunchy Python files listing::
     src:
         cometIO.py
             import: configuration, interpreter, interface, utilities
+            class StringBuffer:
+                get()
+                getline()
+                put()
+            class CrunchIOBuffer
+                put_output()
+            class ThreadedBuffer:
+                flush()
+                register_thread()
+                unregister_thread()
+                write()
+                read()
+                readline()
+                __redirect()
+                default_write()
+            functions:
+                comet()
+                kill_thread()
+                register_new_page()
+                write_js()
+                write_output()
+                do_exec()
+                push_input()
+                debug_msg()
         configuration.py  # PARTIAL tests: 2.4, 2.5
             import: interface
         CrunchyPlugin.py
@@ -185,6 +213,14 @@ Crunchy Python files listing::
             import: None
         security.py
             import: interface
+            functions:
+                remove_unwanted()  # partial test
+                __cleanup()
+                validate_image()
+                is_link_safe()
+                find_url()
+                open_local_file()
+                scan_for_unwanted()
         tools_2k.py
             import: errors
         tools_3k.py
@@ -214,6 +250,8 @@ Crunchy Python files listing::
                 ### cometIO dependency unavoidable - the entire purpose of this plugin was
                 ### to include the services provided by cometIO {"/comet", "/input"}
                 ### in the plugin directory so that they were easier to find.
+                functions:
+                    register(): tested
             doc_cod_check.py # tests: 2.4, 2.5
                 import: interface, utilities
                 plugin['register_tag_handler']("pre", "title", "setup_code", code_setup_process)
@@ -322,6 +360,10 @@ Crunchy Python files listing::
                 import: None
             dhtml.py
                 import: interface
+                class _Tree:
+                    append()
+                    remove()
+                    image()
             graphics.py
                 import: interface
             math_graphics.py
