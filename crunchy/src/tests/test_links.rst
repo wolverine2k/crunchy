@@ -174,6 +174,7 @@ External link with hash
     'http://docs.python.org/tut/tut.html'
 
 Relative link 
+
     >>> page_remote.url = ""
     >>> a_link = Element('a', href="path/to/some_file.htm")
     >>> links.a_tag_handler(page_remote, a_link) 
@@ -192,10 +193,54 @@ Relative link
 4. Testing link_tag_handler()
 -----------------------------
 
-To do.
+For remote page , only relative path will be converted . 
+
+    >>> link_ele = Element('link', href='http://python.org/path/to/some_file.css')
+    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> link_ele.attrib['href']
+    'http://python.org/path/to/some_file.css'
+    >>> page_remote.url = "http://python.org/"
+    >>> link_ele = Element('link', href="path/to/some_file.css")
+    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> link_ele.attrib['href']
+    'http://python.org/path/to/some_file.css'
+
+For locale page, relative path will be coverted absoulte local path.
+Note: link_tag_handler() may act differently among different OSs , as it use os.path.join. 
+TODO:write this test.
 
 5. Testing src_handler()
 ------------------------
 
+It will work just the same as link element.
 
+    >>> src_ele = Element('script', src='http://python.org/path/to/some_js.js')
+    >>> links.src_handler(page_remote, src_ele) 
+    >>> src_ele.attrib['src']
+    'http://python.org/path/to/some_js.js'
+    >>> page_remote.url = "http://python.org/"
+    >>> src_ele = Element('script', src="path/to/some_js.js")
+    >>> links.src_handler(page_remote, src_ele) 
+    >>> src_ele.attrib['src']
+    'http://python.org/path/to/some_js.js'
 
+TODO: test local page
+
+6. Testing style_handler()
+------------------------
+
+    >>> page_default.url = "/crunchy/"
+    >>> css_import = Element('style')
+    >>> css_import.text = '@import "some_file.css"'
+    >>> links.style_handler(page_default, css_import)
+    >>> css_import.text
+    '@import "/crunchy/some_file.css"'
+
+7. Testing secure_url()
+
+    >>> safe_url = 'http://python.org/some/path/some_file.html'
+    >>> links.secure_url(safe_url)
+    'http://python.org/some/path/some_file.html'
+    >>> un_safe_url = 'http://python.org/some/path/some_file.html?act=xxx'
+    >>> links.secure_url(un_safe_url)
+    'http://python.org/some/path/some_file.html'
