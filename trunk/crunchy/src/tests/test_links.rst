@@ -7,17 +7,16 @@ links.py is a plugin whose main purpose is to rewrite urls in a form that
 can be used by Crunchy.
 It has the following functions that require testing:
 
-1. register(): registers some tag handlers.
-2. external_link(): deal with links that point to external file meant
-   to be unprocessed by Crunchy.
-3. fixed_link(): deal with links that are meant to be left alone by Crunchy
-4. a_tag_handler():
-5. link_tag_handler():
-6. src_handler():
-7. style_handler()
-8. secure_url():
+1. `register()`_
+#. `external_link()`_
+#. `fixed_link()`_
+#. `a_tag_handler()`_
+#. `link_tag_handler()`_
+#. `src_handler()`_
+#. `style_handler()`_
+#. `secure_url()`_
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -36,8 +35,9 @@ See how_to.rst_ for details.
     >>> page_local = mocks.Page()
     >>> page_local.is_local = True
 
+.. _`register()`:
 
-1. Testing register()
+Testing register()
 ----------------------
 
     >>> links.register()
@@ -53,8 +53,9 @@ See how_to.rst_ for details.
     >>> mocks.registered_tag_handler['style'][None][None] == links.style_handler
     True
 
+.. _`external_link()`:
 
-2. Testing external_link()
+Testing external_link()
 --------------------------
 
 This function leaves an external link, of the form http://... unchanged,
@@ -90,7 +91,9 @@ has a subelement.
     >>> print a_link[1].tag, a_link[1].attrib['src']
     img /external_link.png
 
-3. Testing fixed_link()
+.. _`fixed_link()`:
+
+Testing fixed_link()
 -----------------------
 
 This function leaves the links unchanged.
@@ -106,7 +109,9 @@ This function leaves the links unchanged.
     >>> a_link.attrib['href']
     'path/to/'
 
-4. Testing a_tag_handler()
+.. _`a_tag_handler()`:
+
+Testing a_tag_handler()
 --------------------------
 
     >>> fake_url_2 = "http://docs.python.org/tut/tut.html#hash"
@@ -131,8 +136,9 @@ An exception is if the link has been inserted by Crunchy
     >>> a_link.attrib['href']
     'path/to/'
 
-4a. Testing a_tag_handler for default page
+Testing a_tag_handler() for default page
 ------------------------------------------
+
 External link
 
     >>> a_link = Element('a', href=fake_url_1)
@@ -147,8 +153,9 @@ Relative link, leave unchanged
     >>> a_link.attrib['href']
     'crunchy_tutor/welcome_en.html'
 
-4b. Testing a_tag_handler for local page
+Testing a_tag_handler() for local page
 ----------------------------------------
+
 External link (with ://)
 
     >>> a_link = Element('a', href=fake_url_1)
@@ -180,7 +187,7 @@ Files with extension 'rst' and 'txt'
     >>> a_link.attrib['href']
     '/rst?url=//path%2Fto%2Fsome_txt.txt'
 
-4c. Testing a_tag_handler for remote page
+Testing a_tag_handler() for remote page
 -----------------------------------------
 
 External link (with ://)
@@ -213,21 +220,69 @@ Relative link
     >>> a_link.attrib['href']
     '#hash'
 
-5. Testing link_tag_handler()
+.. _`link_tag_handler()`:
+
+Testing link_tag_handler()
 -----------------------------
 
-To do.
+For remote page , only relative path will be converted . 
 
-6. Testing src_handler()
+    >>> page_remote.url = "http://python.org/"
+    >>> link_ele = Element('link', href='http://python.org/path/to/some_file.css')
+    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> link_ele.attrib['href']
+    'http://python.org/path/to/some_file.css'
+    >>> link_ele = Element('link', href="path/to/some_file.css")
+    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> link_ele.attrib['href']
+    'http://python.org/path/to/some_file.css'
+
+For locale page, relative path will be coverted absoulte local path.
+Note: link_tag_handler() may act differently among different OSs , as it use os.path.join. 
+TODO:write this test.
+
+.. _`src_handler()`:
+
+Testing src_handler()
 ------------------------
 
-7. Testing style_handler()
+
+It will work just the same as link element.
+
+    >>> src_ele = Element('script', src='http://python.org/path/to/some_js.js')
+    >>> links.src_handler(page_remote, src_ele) 
+    >>> src_ele.attrib['src']
+    'http://python.org/path/to/some_js.js'
+    >>> page_remote.url = "http://python.org/"
+    >>> src_ele = Element('script', src="path/to/some_js.js")
+    >>> links.src_handler(page_remote, src_ele) 
+    >>> src_ele.attrib['src']
+    'http://python.org/path/to/some_js.js'
+
+TODO: test local page
+
+
+.. _`style_handler()`:
+
+Testing style_handler()
 --------------------------
 
-To do.
 
+    >>> page_default.url = "/crunchy/"
+    >>> css_import = Element('style')
+    >>> css_import.text = '@import "some_file.css"'
+    >>> links.style_handler(page_default, css_import)
+    >>> css_import.text
+    '@import "/crunchy/some_file.css"'
 
-8. Testing secure_url():
+.. _`secure_url()`:
+
+Testing secure_url():
 ------------------------
 
-To do.
+    >>> safe_url = 'http://python.org/some/path/some_file.html'
+    >>> links.secure_url(safe_url)
+    'http://python.org/some/path/some_file.html'
+    >>> un_safe_url = 'http://python.org/some/path/some_file.html?act=xxx'
+    >>> links.secure_url(un_safe_url)
+    'http://python.org/some/path/some_file.html'

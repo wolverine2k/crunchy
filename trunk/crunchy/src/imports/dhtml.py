@@ -1,4 +1,4 @@
-'''dhtml.py
+'''dhtml.py : unit tests in test_dhtml.rst
 
 Enables dynamic display of images (from files) and other html tags/objects
 on a page where no such object was preloaded.

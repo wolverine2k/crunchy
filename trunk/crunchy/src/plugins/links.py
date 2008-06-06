@@ -1,5 +1,7 @@
 """
 Rewrites links so that crunchy can access remote pages.
+
+unit tests in in test_links.rst
 """
 
 import urllib

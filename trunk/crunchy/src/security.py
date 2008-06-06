@@ -1,5 +1,5 @@
 '''
-security.py
+security.py: unit tests in test_security.rst
 
 Javascript code is normally executed in a web-browser "sandbox", preventing
 access to the user's computer.  Crunchy creates a link between the browser and

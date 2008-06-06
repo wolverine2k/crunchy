@@ -1,22 +1,32 @@
-Boring Work
-===========
+Crunchy: documentation, testing, and all that.
+==============================================
 
-This document currently has four main sections:
+This document is meant to keep track of all modules and their dependencies and
+of the available unit tests; it has three main sections:
 
- - List of available unit tests
+ - Testing
  - The ins and outs of Crunchy plugins
  - Reducing dependencies & Testing
- - Design philosophy
- 
- It also contain a fifth section of lesser importance.
- - Future work
+
  
  To find out how to write tests, please read how_to.rst_
  
  .. _how_to.rst: how_to.rst
 
-Available unit tests files
---------------------------
+Testing
+---------
+
+All modules should be unit tested; we preferably use doctest-based unit tests that can be
+used as supplementary documentation.
+
+In addition, we have some functional testing, some of which is automated using Selenium.
+This will need to be documented at a later time.
+
+Crunchy includes a number of doctest based (.rst files) unit files which it can style 
+and display, using the default crunchy.no_markup option.  (We suggest to use "python_code"
+as that option when viewing these files).  These tests can be run via
+
+- python all_tests.py
 
 The following are the actual links to existing test files.
 
@@ -120,7 +130,7 @@ This is something that is only useful when linking to a file
 of that type directly from the Crunchy tutorial with an absolute path
 from the server root.  Furthermore, the file type (based on the extension)
 needs to be recognized by Firefox for this to work. Still, for the sake of
-completeness, we mention it here.  To register an extension, we do it as follows:
+completeness, we mention it here.  To register an extension, we do it as follows::
 
     plugin['register_preprocessor']('txt', convert_rst)
 
@@ -131,21 +141,7 @@ In order to reduce the interdependencies between the modules, and allow isolated
 as much as possible, we use a module named interface.py which is normally initialized by
 crunchy but can be initialized with mock values by a user.
 
-This document is meant to keep track of all modules and their dependencies and
-of the available unit tests.
-
-All modules should be unit tested; we preferably use doctest-based unit tests that can be
-used as supplementary documentation.
-
-Crunchy includes a number of doctest based (.rst files) unit files which it can style 
-and display, using the default crunchy.no_markup option.  (We suggest to use "python_code"
-as that option when viewing these files).  These tests can be run via
-
-- python all_tests.py
-
-In terms of test coverage, this is just a first draft which needs to be verified.
-
-As a rule, every plugin should import the interface module - and
+As a rule, every plugin should import the interface module and, if possible,
 nothing else other than other plugins (and, perhaps, utilities.py) 
 and/or modules from the Python standard library. 
 
@@ -155,9 +151,9 @@ More details can be found in how_to.rst_
 
 In the following, we indicate which modules that are imported, with the exclusion of
 modules from the standard library.
-
 We also indicate which "services", "tag handlers" or "http handlers" are registered by
 a given plugin, and which ones are required by it.
+Finally, we also indicate the functions/methods for which unit tests exist.
 
 Crunchy Python files listing::
 
@@ -296,6 +292,15 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("link", None, None, href_handler)
                 plugin['register_tag_handler']("style", None, None, style_handler)
                 plugin['register_tag_handler']("a","title", "external_link", external_link)
+                functions:
+                    register()         # tested
+                    external_link()    # tested
+                    fixed_link()       # tested
+                    a_tag_handler()    # tested
+                    link_tag_handler() # partially tested
+                    src_handler()      # partially tested
+                    style_handler()    # tested
+                    secure_url()       # tested
             menu.py
                 import: interface, security
                 ### security dependency unavoidable; used to scan non-standard menus for
@@ -361,9 +366,16 @@ Crunchy Python files listing::
             dhtml.py
                 import: interface
                 class _Tree:
-                    append()
-                    remove()
-                    image()
+                    append_child()  # indirectly tested
+                    remove_child()  # tested
+                    remove_all_children()  # tested
+                    delete()  # indirectly tested
+                functions:
+                    append()  # tested
+                    remove()  # tested
+                    image()  # tested
+                    _js_append_html()
+                    _js_remove_html()
             graphics.py
                 import: interface
             math_graphics.py
@@ -389,24 +401,3 @@ The following are not likely to be tested by us::
             HTMLTreeBuilder.py
                 import: ElementTree
 
-
-Design philosophy
------------------
-
-Talk about the design philosophy from the point of view of 
-
- - an end user
- - a tutorial writer
- - a developer
- 
-
-Future work
------------
-
-Whereas we should use the main site (code.google.com) and the "issues" as a repository for
-desired features, this section can be used as a quick off-line reminder until it is
-noted as an "issue".
-
-  - debug "print" statements should be made more robust (like they are in cometIO.py); currently
-    they can be interfered with apparently by changes to sys.stdout that occur while Crunchy
-    is running.
