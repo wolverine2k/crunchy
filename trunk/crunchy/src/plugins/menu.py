@@ -90,7 +90,7 @@ def activate_security_info(page, menu):
                     img = Element('img')
                     img.attrib['src'] = page.security_result_image
                     img.attrib['id'] = "security_result_image"
-                    elem.attrib['title'] = 'crunchy_leave_alone'
+                    elem.attrib['title'] = 'security_link'
                     elem.append(img)
                     break
     return

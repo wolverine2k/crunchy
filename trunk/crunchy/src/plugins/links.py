@@ -19,7 +19,7 @@ def register():
     plugin['register_tag_handler']("link", None, None, link_tag_handler)
     plugin['register_tag_handler']("style", None, None, style_handler)
     plugin['register_tag_handler']("a", "title", "external_link", external_link)
-    plugin['register_tag_handler']("a", "title", "crunchy_leave_alone", fixed_link)
+    plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
 
 def external_link(dummy_page, elem, *dummy):
     '''handler which totally ignores the link being passed to it, other than
@@ -49,7 +49,7 @@ def a_tag_handler(page, elem):
     elem.attrib["href"] = secure_url(elem.attrib["href"])
     if page.is_remote: #is_remote_url(page.url):
         if 'title' in elem.attrib:
-            if elem.attrib['title'] == 'crunchy_leave_alone':
+            if elem.attrib['title'] == 'security_link':
                 return
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
@@ -110,7 +110,7 @@ def src_handler(page, elem):
     if "src" not in elem.attrib:
         return
     if 'title' in elem.attrib:
-        if elem.attrib['title'] == 'crunchy_leave_alone':
+        if elem.attrib['title'] == 'security_link':
             return
     # not needed as we validate images in security.py
     ##elem.attrib["src"] = secure_url(elem.attrib["src"])

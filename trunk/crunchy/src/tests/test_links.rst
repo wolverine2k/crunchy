@@ -98,7 +98,7 @@ Testing fixed_link()
 
 This function leaves the links unchanged.
 
-    >>> a_link = Element('a', href="path/to/", title="crunchy_leave_alone")
+    >>> a_link = Element('a', href="path/to/", title="security_link")
     >>> links.fixed_link(page_default, a_link)
     >>> a_link.attrib['href']
     'path/to/'
@@ -131,7 +131,7 @@ leave link starting with / unchanged except for remote sites.
     '/remote?url=http%3A%2F%2Fwww.python.org%2Fpath%2Fto%2F'
 
 An exception is if the link has been inserted by Crunchy
-    >>> a_link = Element('a', href="path/to/", title="crunchy_leave_alone")
+    >>> a_link = Element('a', href="path/to/", title="security_link")
     >>> links.a_tag_handler(page_remote, a_link)
     >>> a_link.attrib['href']
     'path/to/'

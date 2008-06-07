@@ -1,8 +1,8 @@
 """
-comet.py
+comet.py:  unit tests in test_comet.rst
 
 Simple plugin whose only role is to register the cometIO basic handlers.
-For consistency, we register all handlers via a plugin in the plugins
+For consistency, we register all handlers via plugins located in the plugins
 directory so that they are easier to locate, and that names duplication
 can be avoided.
 """

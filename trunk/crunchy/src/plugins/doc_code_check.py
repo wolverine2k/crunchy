@@ -1,4 +1,4 @@
-'''doc_code_check.py
+'''doc_code_check.py:  unit tests in test_doc_code_check.rst
 
 Plugin designed to perform automatic checks on Python code included in
 documentation.  It can handle the case where the Python code has to

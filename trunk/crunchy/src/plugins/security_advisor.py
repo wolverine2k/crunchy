@@ -140,7 +140,7 @@ def format_report(page, div):
     security_summary = SubElement(div, 'h4')
     s_image = SubElement(security_summary, 'img')
     # make sure src link is not transformed:
-    s_image.attrib['title'] = 'crunchy_leave_alone'
+    s_image.attrib['title'] = 'security_link'
 
     if 'display' in page.security_info['level']:
         s_image.attrib['src'] = '/display_big.png'

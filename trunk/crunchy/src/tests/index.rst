@@ -239,22 +239,36 @@ Crunchy Python files listing::
                 plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
                 plugin['register_service']("style_pycode", service_style)
                 plugin['register_service']("style_pycode_nostrip", service_style_nostrip)
-            comet.py # tests: 2.4, 2.5
+            comet.py
                 import: interface, cometIO
                 plugin['register_http_handler']("/input%s"%r_id, push_input)
                 plugin['register_http_handler']("/comet", comet)
-                ### cometIO dependency unavoidable - the entire purpose of this plugin was
-                ### to include the services provided by cometIO {"/comet", "/input"}
-                ### in the plugin directory so that they were easier to find.
                 functions:
-                    register(): tested
-            doc_cod_check.py # tests: 2.4, 2.5
+                    register()  # tested
+            doc_code_check.py
                 import: interface, utilities
                 plugin['register_tag_handler']("pre", "title", "setup_code", code_setup_process)
                 plugin['register_tag_handler']("pre", "title", "check_code", code_sample_process)
                 plugin['register_tag_handler']("pre", "title", "code_output", expected_output_process)
                 plugin['register_http_handler']("/check_code", doc_code_check_callback)
                 plugin['register_http_handler']("/check_all_code_samples", all_code_samples_check_callback)
+                class MockPageInfo:
+                    dummy_pageid()
+                    dummy_uid()
+                    set()
+                    restore()
+                functions:
+                    register()
+                    all_code_samples_check_callback()
+                    doc_code_check_callback()
+                    do_single_test()
+                    code_setup_process()
+                    code_sample_process()
+                    expected_output_process()
+                    insert_comprehensive_test_button()
+                    run_sample()   # tested
+                    compare()      # tested
+                    extract_name() # tested
             editarea.py # tests: 2.4, 2.5
                 import: interface
                 requires: {"/save_file", "/load_file"}
@@ -285,7 +299,7 @@ Crunchy Python files listing::
             io_widget.py # PARTIAL tests: 2.4, 2.5
                 import: interface, editarea
                 plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
-            links.py  # PARTIAL tests: 2.4, 2.5
+            links.py
                 import: interface
                 plugin['register_tag_handler']("a", None, None, link_handler)
                 plugin['register_tag_handler']("img", None, None, src_handler)
@@ -303,8 +317,6 @@ Crunchy Python files listing::
                     secure_url()       # tested
             menu.py
                 import: interface, security
-                ### security dependency unavoidable; used to scan non-standard menus for
-                ### security holes.
                 plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
                 plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
             power_browser.py
