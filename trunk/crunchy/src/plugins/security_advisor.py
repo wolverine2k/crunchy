@@ -84,7 +84,7 @@ def confirm_at_start(page, info_container):
     # in case list gets too long, we include buttons at top and bottom
     approve_btn = SubElement(info_container, "button")
     site_num = len(config['site_security'])
-    approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
+    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
     approve_btn.text = _("Approve")
     SubElement(info_container, "span").text = " "
     deny_btn = SubElement(info_container, "button")
@@ -121,7 +121,7 @@ def confirm_at_start(page, info_container):
                 inp.attrib['checked'] = 'checked'
     # in case list gets too long, we include buttons at top and bottom
     approve_btn = SubElement(info_container, "button")
-    approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
+    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
     approve_btn.text = _("Approve")
     SubElement(info_container, "span").text = " "
     deny_btn = SubElement(info_container, "button")
@@ -319,6 +319,7 @@ def set_security_list(request):
     if DEBUG:
         print(site_list_info)
     site_list = []
+    to_be_deleted = []
     for site_info in site_list_info:
         if "::" not in site_info:
             continue
@@ -327,7 +328,7 @@ def set_security_list(request):
         site = site[0].strip()
 
         site_list.append(site)
-        to_be_deleted = []
+
         if site.strip() != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
@@ -336,8 +337,12 @@ def set_security_list(request):
                     print(str(site) + ' has been set to ' + str(mode))
             else:
                 to_be_deleted.append(site)
+                if DEBUG:
+                    print(str(site) + ' is going to be removed.')
     for site in to_be_deleted:
         del config['site_security'][site]
+    if DEBUG:
+        print config['site_security']
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
