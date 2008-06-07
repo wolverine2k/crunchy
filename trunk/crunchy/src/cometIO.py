@@ -112,7 +112,7 @@ threads = {}
 def kill_thread(uid):
     """Kill a thread, given an associated uid"""
     threads[uid].terminate()
-    
+
 def comet(request):
     """An http path handler, called from the page - blocks until there is data
     to be sent.
@@ -305,7 +305,7 @@ class ThreadedBuffer(object):
     def default_write(self, data):
         """write to the default output"""
         self.default_out.write(data)
-        
+
 def debug_msg(data, id_=None):
     """write a debug message, debug messages always appear on stderr"""
     if id_ in debug_ids:
@@ -316,7 +316,10 @@ sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
 
 reset_js = """
+try{
 document.getElementById("kill_%s").style.display="block";
+}
+catch(err){ ;}  //needed as the element may not exist.
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 """
