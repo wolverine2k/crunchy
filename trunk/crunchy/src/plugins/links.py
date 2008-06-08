@@ -12,7 +12,7 @@ import os
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, SubElement
 
-def register():
+def register():  # tested
     '''registers a series of tag handlers, all related to html links '''
     plugin['register_tag_handler']("a", None, None, a_tag_handler)
     plugin['register_tag_handler']("img", None, None, src_handler)
@@ -21,7 +21,7 @@ def register():
     plugin['register_tag_handler']("a", "title", "external_link", external_link)
     plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
 
-def external_link(dummy_page, elem, *dummy):
+def external_link(dummy_page, elem, *dummy):  # tested
     '''handler which totally ignores the link being passed to it, other than
     inserting an image to indicate it leads outside of Crunchy'''
     if elem.tail:
@@ -34,14 +34,14 @@ def external_link(dummy_page, elem, *dummy):
     img.attrib['alt'] = "external_link.png"
     return
 
-def fixed_link(dummy_page, elem, *dummy):
+def fixed_link(dummy_page, elem, *dummy):  # tested
     '''handler which totally ignores the link being passed to it.'''
     # This is useful if one Crunchy widget needs to insert a link, usually
     # with respect to the server root, that is not meant to be altered - which
     # otherwise might have occurred because of the other link handlers.
     return
 
-def a_tag_handler(page, elem):
+def a_tag_handler(page, elem):  # tested
     """convert remote links if necessary, need to deal with all links in
        remote pages"""
     if "href" not in elem.attrib:
@@ -104,7 +104,7 @@ def a_tag_handler(page, elem):
     #extension = elem.attrib["href"].split('.')[-1]
 
 
-def src_handler(page, elem):
+def src_handler(page, elem):  # partially tested
     """used for elements that have an src attribute not loaded from the
        server root"""
     if "src" not in elem.attrib:
@@ -122,7 +122,7 @@ def src_handler(page, elem):
         elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
-def link_tag_handler(page, elem):
+def link_tag_handler(page, elem):  # partially tested
     """resolves html <link> URLs"""
     if "href" not in elem.attrib:
         return
@@ -135,7 +135,7 @@ def link_tag_handler(page, elem):
         elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))
 
-def secure_url(url):
+def secure_url(url):  # tested
     '''For security reasons, restricts a link to its simplest form if it
     contains a query ("?") so that it can't be used to pass arguments
     to the Python server'''
@@ -150,7 +150,7 @@ def secure_url(url):
 
 css_import_re = re.compile('@import\s+"(.+?)"')
 
-def style_handler(page, elem):
+def style_handler(page, elem):  # tested
     """replace @import statements in style elements"""
     def css_import_replace(imp_match):
         '''replaces the relative path found by its absolute value'''

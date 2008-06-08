@@ -11,7 +11,7 @@ _ = translate['_']
 
 provides = set(["io_widget"])
 
-def register():
+def register():   # tested
     '''register a service'''
     plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
     # register the function for killing threads:
@@ -22,7 +22,8 @@ def kill_thread_handler(request):
     """Kills the thread associated with uid"""
     plugin['kill_thread'](request.args["uid"])
 
-def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
+def insert_io_subwidget(page, elem, uid, interp_kind=None,
+                        sample_code=''):  # partially tested
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """

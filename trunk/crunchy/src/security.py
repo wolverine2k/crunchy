@@ -266,7 +266,7 @@ __dangerous_text = ''
 good_images = set()
 bad_images = set()
 
-def remove_unwanted(tree, page):
+def remove_unwanted(tree, page):  # partially tested
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
     global __dangerous_text

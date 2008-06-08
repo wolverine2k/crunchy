@@ -12,7 +12,7 @@ import os.path
 import src.interface as interface
 
 DEBUG = False
-def gen_register_list(initial_list):
+def gen_register_list(initial_list):  # tested
     """generates a registration ordering from the dependencies.
     It could happen that some plugin would require (at loading time)
     some services provided by others.

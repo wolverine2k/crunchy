@@ -11,11 +11,11 @@ _ = translate['_']
 provides = set(["editarea"])
 requires = set(["/save_file", "/load_file"])
 
-def register():
+def register():  # tested
     '''registers a single service: enable_editarea'''
     plugin['register_service']("enable_editarea", enable_editarea)
 
-def enable_editarea(page, elem, textarea_id):
+def enable_editarea(page, elem, textarea_id):  # tested
     """enables an editarea editor on a given element (textarea) of a page.
     """
     if not page.includes("editarea_included"):
@@ -34,7 +34,7 @@ def enable_editarea(page, elem, textarea_id):
     add_hidden_load_and_save(elem, textarea_id)
     return
 
-def add_hidden_load_and_save(elem, textarea_id):
+def add_hidden_load_and_save(elem, textarea_id):  # tested
     '''
     adds hidden load and save javascript objects on a page
     '''
@@ -49,7 +49,7 @@ def add_hidden_load_and_save(elem, textarea_id):
     addSavePython(hidden_save, hidden_save_id, textarea_id)
     return
 
-def addLoadPython(parent, hidden_load_id, textarea_id):
+def addLoadPython(parent, hidden_load_id, textarea_id):  # tested
     '''Inserts the two forms required to browse for and load a local Python
        file.  This is intended to be used to load a file in the editor.
     '''
@@ -71,7 +71,7 @@ def addLoadPython(parent, hidden_load_id, textarea_id):
     btn2.text = _("Cancel")
     return
 
-def addSavePython(parent, hidden_save_id, textarea_id):
+def addSavePython(parent, hidden_save_id, textarea_id):  # tested
     '''Inserts the two forms required to browse for and load a local Python
        file.  This is intended to be used to load a file in the editor.
     '''

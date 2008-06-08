@@ -12,7 +12,7 @@ from src.cometIO import comet, push_input
 
 provides = set(["/comet", "/input"])
 
-def register():
+def register():  # tested
     '''registers two http handlers: /input and /comet'''
     plugin['register_http_handler'](
                     "/input%s" % plugin['session_random_id'], push_input)

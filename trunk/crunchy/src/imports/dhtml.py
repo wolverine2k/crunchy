@@ -34,23 +34,23 @@ class _Tree(object):
         self.deletedlabels = [] # for cleanup
         _nodes[label] = self
 
-    def append_child(self, child):
+    def append_child(self, child):  # indirectly tested
         '''adds a child'''
         self.children.append(child)
 
-    def remove_child(self, child):
+    def remove_child(self, child):  # tested
         '''removes a single child and all of its children, grand-children, etc.'''
         child.delete()
         self.children.remove(child)
         del child
 
-    def remove_all_children(self):
+    def remove_all_children(self):  # tested
         '''removes all children, grand-children, etc., from a tree'''
         for child in self.children:
             child.delete()
         self.children = []
 
-    def delete(self):
+    def delete(self):  # indirectly tested
         '''deletes self and all children'''
         self.remove_all_children()
         for label in self.deletedlabels:
@@ -59,7 +59,7 @@ class _Tree(object):
         del _nodes[self.label]
 
 def image(file_path, width=400, height=400, label='', parent_label=None,
-          from_cwd=False):
+          from_cwd=False):  # tested
     ''' dynamically creates an html <img> tag displaying the resulting image.
 
     file_path can be either an absolute path on the local server,
@@ -82,7 +82,7 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
     append('img', attributes={'width':width, 'height':height, 'src':file_path},
            label=label, parent_label=parent_label)
 
-def append(tag, attributes=None, label='', parent_label=None):
+def append(tag, attributes=None, label='', parent_label=None):  # tested
     ''' dynamically creates an html object with the given attribute (as a dict).
 
     Different values for label allow to display more than one object; the
@@ -121,7 +121,7 @@ def append(tag, attributes=None, label='', parent_label=None):
     _Tree(child_uid, parent)
     _js_append_html(pid, tag, child_uid, attributes)
 
-def remove(label=''):
+def remove(label=''):  # tested
     ''' dynamically removes an html object that was previously created.
     '''
     uid = _plugin['get_uid']()
