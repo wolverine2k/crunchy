@@ -84,7 +84,10 @@ def insert_interpreter(page, elem, uid):
     code += "\n"
     if not "no_pre" in vlam:
         try:
-            elem.insert(0, markup)
+            new_div = Element("div")
+            new_div.append(markup)
+            new_div.attrib['class'] = 'sample_python_code'
+            elem.insert(0, new_div)
         except AssertionError:
             elem.insert(0, Element("br"))
             bold = Element("b")

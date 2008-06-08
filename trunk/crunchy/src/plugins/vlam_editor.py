@@ -226,7 +226,10 @@ def insert_markup(elem, uid, vlam, markup):
     elem.attrib['class'] = "editor"
     if not "no_pre" in vlam:
         try:
-            elem.insert(0, markup)
+            new_div = Element("div")
+            new_div.append(markup)
+            new_div.attrib['class'] = 'sample_python_code'
+            elem.insert(0, new_div)
         except AssertionError:  # this should never happen
             elem.insert(0, Element("br"))
             bold = Element("b")

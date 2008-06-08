@@ -2,19 +2,28 @@
 <html>
 <head>
 <style>
-pre.crunchy{
+div.sample_python_code{
   float: right;
-  }
+}
+div.io_div{
+  float: left;
+  width: 600px;
+  background-color: #eeeee0; /*temporary choice*/
+}
+div.end_io_widget{
+  clear:both;
+}
 </style>
 <title>Two columns test</title>
 </head>
 <body>
 <h1>Two columns test</h1>
 <p>This document contains a test for two column layout, based on
-custom css.  This is work in progress - it does not behave as desired.</p>
+custom css.  This is work in progress.  It requires a reasonably wide display
+to work as expected.</p>
 
 <h3>Code only</h3>
-<p>Python code should be only in one column, aligned left.  This is obviously not working.</p>
+<p>Python code should be only in one column, aligned left.</p>
 <pre title="py_code">
 >>> print 'title = "py_code"'
 >>> for i in range(10):
@@ -23,7 +32,7 @@ custom css.  This is work in progress - it does not behave as desired.</p>
 </pre>
 
 <h3>Interpreter</h3>
-<p>Interpreter should be on the left, with code sample on the right. This is not working.</p>
+<p>Interpreter should be on the left, with code sample on the right.</p>
 <pre title="interpreter">
 >>> print 'title = "interpreter"'
 >>> for i in range(10):

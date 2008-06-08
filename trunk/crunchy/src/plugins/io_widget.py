@@ -27,13 +27,23 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
+    # embed the io widget inside a div so that it could be floated left
+    # or right ... or whatever.
+    # insert another div below, that can have it style set to "clear:both;"
+    # so that it can work together with the floated io widget
+    # (and python code sample) to have a two-column display if desired.
+    new_div = SubElement(elem, "div")
+    clear_div = SubElement(elem, "div")
+    clear_div.attrib['class'] = "end_io_widget"
+    new_div.attrib['class'] = "io_div"
+
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
     if 'display' not in config['page_security_level'](page.url):
         if config['ctypes_available']:
-            kill_link = SubElement(elem, "a")
+            kill_link = SubElement(new_div, "a")
             kill_link.attrib["id"] = "kill_%s" % uid
             kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
@@ -62,11 +72,11 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         elif config['ctypes_available']:
             kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
 
-    output = SubElement(elem, "span")
+    output = SubElement(new_div, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
     output.text = "\n"
-    span_input = SubElement(elem, "span")
+    span_input = SubElement(new_div, "span")
     inp = SubElement(span_input, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
@@ -79,7 +89,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         image.attrib["src"] = "/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["class"] = "interpreter_image"
-        code_sample = SubElement(elem, "textarea")
+        code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
         if sample_code:

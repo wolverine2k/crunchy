@@ -317,7 +317,7 @@ crunchy/src/plugins
         dir_handler(request)
         doc_handler(request)
     vlam_doctest.py
-        from src.interface import config, plugin, SubElement, tostring
+        from src.interface import config, plugin, Element, SubElement, tostring
         from src.utilities import extract_log_id
         register():
             plugin['register_tag_handler']("pre", "title", "doctest",
