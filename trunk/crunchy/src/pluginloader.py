@@ -1,5 +1,7 @@
 """
 pluginloader.py: Loading plugins
+
+unit tests in test_pluginloader.rst
 """
 
 import sys
@@ -60,7 +62,7 @@ def init_plugin_system(server):
     # In case Crunchy was not started from its root directory via
     # python crunchy.py, but instead from another directory like
     # python /this/path/to/crunchy.py
-    # we need to add explictly the path to the    
+    # we need to add explictly the path to the
     sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
                                     "src", "plugins"))
     # another hack to make it work on a mac
@@ -74,7 +76,7 @@ def init_plugin_system(server):
                                     "src", "imports"))
     # another hack to make it work on a mac
     sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](), "imports"))
-    
+
     imported_plugins = []
     if DEBUG:
         print("Importing plugins.")

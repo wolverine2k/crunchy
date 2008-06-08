@@ -203,8 +203,12 @@ Crunchy Python files listing::
             import: interface, utilities, configuration, errors
         my_htmlentitydefs.py
             import: None
-        pluginloader.py   # partial tests: 2.4, 2.5
+        pluginloader.py
             import: interface
+            functions:
+                gen_register_list()  # tested
+                gen_plugin_list()
+                init_plugin_system()
         PluginServices.py # empty file by design - no need to test.
             import: None
         security.py
@@ -223,8 +227,18 @@ Crunchy Python files listing::
             import: None
         translation.py
             import: interface
-        utilities.py # tests :2.4, 2.5
+        utilities.py
             import: interface
+            functions:
+                uidgen()                         # tested
+                extract_log_id()                 # tested
+                insert_file_browser()            # tested
+                trim_empty_lines_from_end()      # tested
+                changeHTMLspecialCharacters()    # tested
+                log_session()
+                append_checkmark()
+                append_warning()
+                append_image()
         vlam.py
             import: security, interface, ElementSoup, cometIO, configuration, utilities
                

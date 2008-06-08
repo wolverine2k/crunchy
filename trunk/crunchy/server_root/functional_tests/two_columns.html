@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<style>
+pre.crunchy{
+  float: right;
+  }
+</style>
+<title>Two columns test</title>
+</head>
+<body>
+<h1>Two columns test</h1>
+<p>This document contains a test for two column layout, based on
+custom css.  This is work in progress - it does not behave as desired.</p>
+
+<h3>Code only</h3>
+<p>Python code should be only in one column, aligned left.  This is obviously not working.</p>
+<pre title="py_code">
+>>> print 'title = "py_code"'
+>>> for i in range(10):
+...     print i
+...
+</pre>
+
+<h3>Interpreter</h3>
+<p>Interpreter should be on the left, with code sample on the right. This is not working.</p>
+<pre title="interpreter">
+>>> print 'title = "interpreter"'
+>>> for i in range(10):
+...     print i
+...
+</pre>
+
+<h3>Editor</h3>
+<p>Editor should be on the left, with code sample on the right. 
+This is working ... if the window is wide enough.</p>
+<pre title="editor">
+>>> print 'title = "editor"'
+>>> for i in range(10):
+...     print i
+...
+</pre>
+
+
+<h3>Doctest</h3>
+<p>Editor should be on the left, with code sample on the right.
+This is working ... if the window is wide enough.</p>
+<pre title="doctest">
+>>> double(3)
+6
+>>> double(double(3))
+12
+</pre>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

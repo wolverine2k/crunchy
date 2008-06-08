@@ -1,6 +1,8 @@
 '''utilities.py
 
    a collection of functions used in other modules.
+
+   unit tests in test_utilities.rst
 '''
 import re
 from src.interface import python_version, config, plugin, SubElement
