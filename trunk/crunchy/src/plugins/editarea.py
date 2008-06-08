@@ -1,5 +1,7 @@
 """editarea plugin.  Provides better editing facilities than a
 simple textarea.
+
+unit tests in test_editarea.rst
 """
 
 # All plugins should import the crunchy plugin API via interface.py

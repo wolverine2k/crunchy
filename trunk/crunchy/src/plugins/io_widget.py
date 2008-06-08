@@ -1,5 +1,7 @@
 """The IO widget, handles text and graphical IO
 This is just the UI part, the communication code is defined in the core
+
+unit tests in test_io_widget.rst
 """
 
 # All plugins should import the crunchy plugin API via interface.py

@@ -269,10 +269,16 @@ Crunchy Python files listing::
                     run_sample()   # tested
                     compare()      # tested
                     extract_name() # tested
-            editarea.py # tests: 2.4, 2.5
+            editarea.py
                 import: interface
                 requires: {"/save_file", "/load_file"}
                 plugin['register_service']("enable_editarea", enable_editarea)
+                functions:
+                    register()           # tested
+                    enable_editarea()    # tested
+                    add_hidden_load_and_save()  # tested
+                    addLoadPython()      # tested
+                    addSavePython()      # tested
             execution.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/exec%s"%r_id, exec_handler)
@@ -296,9 +302,14 @@ Crunchy Python files listing::
             handle_remote.py # tests: 2.4, 2.5
                 import: interface
                 plugin['register_http_handler']("/remote", remote_loader)
-            io_widget.py # PARTIAL tests: 2.4, 2.5
+            io_widget.py
                 import: interface, editarea
                 plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
+                plugin['register_http_handler']("/kill_thread%s"%r_id, kill_thread_handler)
+                functions:
+                    register()             # tested
+                    kill_thread_handler()
+                    insert_io_subwidget()  # partially tested
             links.py
                 import: interface
                 plugin['register_tag_handler']("a", None, None, link_handler)

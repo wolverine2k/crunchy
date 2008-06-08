@@ -1,15 +1,12 @@
 io_widget.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 io_widget.py is a plugin which handles text and graphical IO
 It has the following functions that require testing:
 
-1. register(): registers a service available to other plugins.
-2. insert_io_subwidget(): insert an output widget into elem, usable for editors
-    interpreters and  includes a canvas
-
+1. `register()`_
+#. `kill_thread_handler()`_
+#. `insert_io_subwidget()`_
 
 0. Setting things up
 --------------------
@@ -44,20 +41,30 @@ We also need to define some mock functions and values.
     >>> config['page_security_level'] = get_security_level
 
 
-1. Testing register()
+.. _`register()`:
+
+Testing register()
 ----------------------
 
     >>> io_widget.register()
     >>> mocks.registered_services['insert_io_subwidget'] == io_widget.insert_io_subwidget
     True
 
+.. _`kill_thread_handler()`:
 
-2. Testing insert_io_subwidget()
+Testing kill_thread_handler()
+-----------------------------
+
+To do.
+
+.. _`insert_io_subwidget()`:
+
+Testing insert_io_subwidget()
 --------------------------------
 
 There are various options that we need to tests, depending on the page content.
 
-2a. Testing the display only option.
+a. Testing the display only option.
 ------------------------------------
 
 We first consider the simplest possible case (in terms of information 
@@ -120,7 +127,7 @@ Next, we look at each elements in a bit more detail.
     >>> inp.attrib['type'] == 'text'
     True
 
-2b. Testing a non-Borg interpreter
+b. Testing a non-Borg interpreter
 ----------------------------------
 
 We now consider a page that does include an
@@ -165,11 +172,17 @@ have been inserted (and none unexpected).
     1
     >>> len(parent)
     1
-    >>> len(a_s)
+    >>> if config['ctypes_available']:
+    ...     print(len(a_s))
+    ... else:
+    ...     print(len(a_s) + 1)
     2
     >>> len(textareas)
     1
-    >>> len(imgs)
+    >>> if config['ctypes_available']:
+    ...     print(len(imgs))
+    ... else:
+    ...     print(len(imgs) + 1)
     2
 
 Note that we also need to check if the proper "includes" have been inserted.
@@ -180,7 +193,7 @@ Note that we also need to check if the proper "includes" have been inserted.
 todo: we need to conclude this test as we did with the previous one, to check
 the content of the new elements.
 
-2c. Testing with a Borg interpreter
+c. Testing with a Borg interpreter
 ------------------------------------
 
 to do
