@@ -15,7 +15,7 @@ from src.utilities import insert_file_browser
 # The set of other "widgets/services" required from other plugins
 requires = set(["/local"])
 
-def register():
+def register():  # tested
     """The register() function is required for all plugins.
        In this case, we need to register a single type of 'action':
           a custom 'vlam handler' designed to tell Crunchy how to
@@ -26,7 +26,7 @@ def register():
     plugin['register_tag_handler']("span", "title", "load_local",
                                                  insert_load_local)
 
-def insert_load_local(dummy_page, parent, dummy_uid):
+def insert_load_local(dummy_page, parent, dummy_uid):  # tested
     "Inserts a javascript browser object to load a local (html) file."
     insert_file_browser(parent, 'Load local html tutorial', '/local')
     return

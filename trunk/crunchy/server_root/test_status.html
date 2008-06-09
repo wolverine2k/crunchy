@@ -125,10 +125,10 @@ crunchy/src/plugins
         addSavePython(parent, hidden_save_id, textarea_id)  # tested
     execution.py
         from src.interface import plugin
-        register():
+        register():  # tested
             plugin['register_http_handler']("/exec%s" % plugin['session_random_id'],
                                             exec_handler)
-        exec_handler(request)
+        exec_handler(request)  # tested
     file_service.py
         from subprocess import Popen
         import os
@@ -150,8 +150,8 @@ crunchy/src/plugins
         save_and_run_request_handler(request)
         run_external_request_handler(request)
         load_file_request_handler(request)
-        save_file(full_path, content)
-        read_file(full_path)
+        save_file(full_path, content)  # tested
+        read_file(full_path)  # tested
         exec_external(code=None,  path=None)
         save_file_python_interpreter_request_handler(request)
         save_and_run_python_interpreter_request_handler(request)
@@ -174,19 +174,19 @@ crunchy/src/plugins
         import sys
         from urllib import unquote_plus
         from src.interface import config, plugin
-        register():
+        register():  # tested
             plugin['register_http_handler']("/local", local_loader)
             plugin['register_http_handler']("/generated_image", image_loader)
             plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
-        local_loader(request)
-        image_loader(request)
-        add_to_path(page, elem, *dummy)
+        local_loader(request)  # tested
+        image_loader(request)  # tested
+        add_to_path(page, elem, *dummy)  # tested
     handle_remote.py
         from urllib import urlopen, unquote_plus
         from src.interface import plugin, preprocessor
-        register():
+        register():  # tested
             plugin['register_http_handler']("/remote", remote_loader)
-        remote_loader(request)
+        remote_loader(request)  # tested
     io_widget.py
         from src.interface import config, plugin, translate, SubElement
         from editarea import editArea_load_and_save
@@ -332,7 +332,7 @@ crunchy/src/plugins
         import os
         from src.interface import config, plugin, Element, SubElement, translate, tostring
         from src.utilities import extract_log_id
-        register():
+        register():  # tested
             plugin['register_tag_handler']("pre", "title", "editor",
                                                                 insert_editor)
             plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
@@ -343,8 +343,8 @@ crunchy/src/plugins
             plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
                                                                 _test_sanitize_for_ElementTree)
         kill_thread_handler(request)
-        insert_editor_subwidget(page, elem, uid, code="\n")
-        insert_editor(page, elem, uid)
+        insert_editor_subwidget(page, elem, uid, code="\n")  # tested
+        insert_editor(page, elem, uid)  # tested
         insert_alternate_python(page, elem, uid)
         _test_sanitize_for_ElementTree(page, elem, uid)
         insert_markup(elem, uid, vlam, markup)
@@ -373,16 +373,16 @@ crunchy/src/plugins
     vlam_load_local.py
         from src.interface import plugin
         from src.utilities import insert_file_browser
-        register():
+        register():  # tested
             plugin['register_tag_handler']("span", "title", "load_local",
                                                          insert_load_local)
-        insert_load_local(dummy_page, parent, dummy_uid)
+        insert_load_local(dummy_page, parent, dummy_uid)  # tested
     vlam_load_remote.py
         from src.interface import plugin, SubElement
-        register():
+        register(): # tested
             plugin['register_tag_handler']("span", "title", "load_remote",
                                                             insert_load_remote)
-        insert_load_remote(dummy_page, parent, dummy_uid)
+        insert_load_remote(dummy_page, parent, dummy_uid) # tested
 crunchy/src/imports
     __init__.py
     c_turtle.py

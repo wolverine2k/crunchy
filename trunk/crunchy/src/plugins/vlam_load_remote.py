@@ -14,7 +14,7 @@ from src.interface import plugin, SubElement
 # The set of other "widgets/services" required from other plugins
 requires = set(["/remote"])
 
-def register():
+def register(): # tested
     """The register() function is required for all plugins.
        In this case, we need to register a single type of 'action':
           a custom 'vlam handler' designed to tell Crunchy how to
@@ -25,7 +25,7 @@ def register():
     plugin['register_tag_handler']("span", "title", "load_remote",
                                                     insert_load_remote)
 
-def insert_load_remote(dummy_page, parent, dummy_uid):
+def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     '''inserts a form to load a remote page'''
     # in general, page and uid are used by similar plugins, but they are
     # redundant here.

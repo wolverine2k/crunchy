@@ -22,7 +22,7 @@ provides = set(["editor_widget"])
 requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
                "editarea"])
 
-def register():
+def register():  # tested
     """The register() function is required for all plugins.
        In this case, we need to register two types of 'actions':
        1. a custom 'vlam handler' designed to tell Crunchy how to
@@ -50,7 +50,7 @@ def kill_thread_handler(request):
     """Kills the thread associated with uid"""
     plugin['kill_thread'](request.args["uid"])
 
-def insert_editor_subwidget(page, elem, uid, code="\n"):
+def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
     """
@@ -64,7 +64,7 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
     inp.text = code
     plugin['services'].enable_editarea(page, elem, editor_id)
 
-def insert_editor(page, elem, uid):
+def insert_editor(page, elem, uid):  # tested
     """handles the editor widget"""
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)

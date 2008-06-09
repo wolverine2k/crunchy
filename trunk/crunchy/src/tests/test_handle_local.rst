@@ -1,17 +1,15 @@
 handle_local.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 handle_local.py is a plugin whose main purpose is to load local tutorials.  
 It has the following functions that require testing:
 
-1. register(): registers two http handlers and one tag handler.
-2. local_loader(): loads a file following a request, and sends it to the browser
-3. image_loader(): loads an image from the "temp" directory
-4. add_to_path(): adds a new path to sys.path
+#. `register()`_
+#. `local_loader()`_
+#. `image_loader()`_
+#. `add_to_path()`_
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -27,8 +25,9 @@ See how_to.rst_ for details.
     >>> import os
     >>> current_dir = os.getcwd()
 
+.. _`register()`:
 
-1. Testing register()
+Testing register()
 ----------------------
 
     >>> handle_local.register()
@@ -40,7 +39,9 @@ See how_to.rst_ for details.
     >>> mocks.registered_http_handler['/generated_image'] == handle_local.image_loader
     True
 
-2. Testing local_loader()
+.. _`local_loader()`:
+
+Testing local_loader()
 -------------------------
 
 We need to test loading of both html and other types of files.  To make the test
@@ -121,8 +122,9 @@ We are now ready for the test as such.
     True
     >>> sys.path.remove(cwd)  # cleaning up
 
+.. _`image_loader()`:
 
-3. Testing image_loader()
+Testing image_loader()
 -------------------------
 
 Essentially same process as 2, except we need to define a fake temp_dir 
@@ -150,8 +152,9 @@ for config.
     This is just a test.
     >>> os.remove(filepath)
 
+.. _`add_to_path()`:
 
-4. Testing add_to_path()
+Testing add_to_path()
 ------------------------
 
 Make sure that test path not in sys.path; remove if needed

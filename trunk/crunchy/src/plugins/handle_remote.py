@@ -9,11 +9,11 @@ from src.interface import plugin, preprocessor
 
 provides = set(["/remote"])
 
-def register():
+def register():  # tested
     '''registers http handler for dealing with remote files'''
     plugin['register_http_handler']("/remote", remote_loader)
 
-def remote_loader(request):
+def remote_loader(request):  # tested
     '''
     create a vlam page from a request to get a remote file
     '''

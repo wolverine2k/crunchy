@@ -8,6 +8,9 @@ import os.path
 
 info = {}
 OFFSET = '    '
+functions_tested = 0
+functions_total = 0
+nb_files = 0
 
 def visit(arg, dirname, names):
     new_dir = {}
@@ -41,6 +44,7 @@ def extract_lines(filename):
     - lines with function/methods definitions
     - lines with plugin registration [inside register() if present]
     '''
+    global functions_total, functions_tested
     functions = []
     lines = open(filename).readlines()
     close_paren = True
@@ -78,6 +82,9 @@ def extract_lines(filename):
             functions.append(text)
             if ')' not in line:
                 close_paren = False
+            functions_total += 1
+            if 'tested' in line:
+                functions_tested += 1
 
         # extract lines with plugin information
         if line.strip().startswith('plugin[') and inside_register:
@@ -121,6 +128,7 @@ for dirname in info:
     if info[dirname]['python_files']:
         report.write(info[dirname]['name'].replace('../', '') + '\n')
         for filename in info[dirname]['python_files']:
+            nb_files += 1
             report.write(OFFSET + filename + '\n')
             full_path = os.path.join(info[dirname]['name'], filename)
             lines = extract_lines(full_path)
@@ -129,3 +137,7 @@ for dirname in info:
 
 report.write(end_file)
 report.close()
+print "total number of Python files: ", nb_files
+print "-----------------------------------------"
+print "total number of functions/methods: ", functions_total
+print "total number tested: ", functions_tested
