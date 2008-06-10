@@ -9,12 +9,10 @@ from StringIO import StringIO
 import src.security as security
 
 # Third party modules - included in crunchy distribution
-from src.interface import ElementTree
 from src.element_tree import ElementSoup
+from src.interface import ElementTree, config, from_comet
 et = ElementTree
 
-from src.cometIO import register_new_page
-import src.configuration as configuration
 from src.utilities import uidgen
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
@@ -46,7 +44,7 @@ class CrunchyPage(object):
             self.is_from_root = False
         self.pageid = uidgen()
         self.url = url
-        register_new_page(self.pageid)
+        from_comet['register_new_page'](self.pageid)
         # "old" method using ElementTree directly
         #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
         html = ElementSoup.parse(filehandle, encoding = 'utf-8')
@@ -139,9 +137,9 @@ class CrunchyPage(object):
     def add_user_style(self):
         '''adds user style meant to replace Crunchy's default if
         so desired by the user'''
-        if not configuration.defaults.my_style:
+        if not config['my_style']:
             return
-        styles = configuration.defaults.styles
+        styles = config['styles']
         if styles == {}:
             return
         style = et.Element("style")
@@ -207,7 +205,7 @@ class CrunchyPage(object):
         # before creating new ones - but not those that have been identified
         # as external links.  This means that handlers1 must
         # be dealt with first - with one exception.
-        
+
         # First, we insert the security advisory, so that security information
         # is available to other plugins if required (like custom menus...)
         CrunchyPage.handlers2["no_tag"]["security"](self)
@@ -239,7 +237,7 @@ class CrunchyPage(object):
         #  The following for loop deals with example 4
         # Crunchy can treat <pre> that have no markup as though they
         # are marked up with a default value
-        n_m = configuration.defaults.no_markup.lower()
+        n_m = config['no_markup'].lower()
         if n_m != 'none':
             keyword = n_m.split(" ")[0]
             for elem in self.tree.getiterator("pre"):

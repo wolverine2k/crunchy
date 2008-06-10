@@ -513,6 +513,7 @@ crunchy/src
         import src.configuration as configuration
         import src.interpreter as interpreter
         import src.utilities as utilities
+        import src.interface as interface
         class StringBuffer(object):
             __init__(self)
             get(self)
@@ -720,7 +721,7 @@ crunchy/src
         u_print(*args)
         exec_code(code, local_dict, source='')
             import src.errors as errors   # prevent premature import
-            import sys                    # 
+            import sys                    #
     tools_3k.py
         import traceback
         import sys
@@ -750,10 +751,8 @@ crunchy/src
     vlam.py
         from StringIO import StringIO
         import src.security as security
-        from src.interface import ElementTree
         from src.element_tree import ElementSoup
-        from src.cometIO import register_new_page
-        import src.configuration as configuration
+        from src.interface import ElementTree, config, from_comet
         from src.utilities import uidgen
         class CrunchyPage(object):
             __init__(self, filehandle, url, remote=False, local=False)

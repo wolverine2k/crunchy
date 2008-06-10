@@ -47,6 +47,7 @@ plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
+from_comet = {} # initialized from cometIO.py
 
 config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1])
 

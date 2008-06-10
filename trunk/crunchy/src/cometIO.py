@@ -10,6 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
+import src.interface as interface
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -129,6 +130,7 @@ def comet(request):
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
     output_buffers[pageid] = CrunchyIOBuffer()
+interface.from_comet['register_new_page'] = register_new_page
 
 def write_js(pageid, jscode):
     """write some javascript to a page"""
