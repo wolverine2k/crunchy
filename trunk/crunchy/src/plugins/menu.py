@@ -107,7 +107,7 @@ def extract_menu(filename, page, safe_menus=False):
         print("cannot create a tree from the file")# info
     # Treat menus just as suspiciously as other files
     if not safe_menus:
-        tree = security.remove_unwanted(tree, page)
+        security.remove_unwanted(tree, page)
     # extract menu for use in other files
     menu = tree.find(".//div")
     css = tree.find(".//link")

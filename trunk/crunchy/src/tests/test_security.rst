@@ -62,20 +62,17 @@ Finally, we will create some utility functions that we will use repeatedly.
 Testing remove_unwanted()
 -----------------------------
 
-We first start with a totally acceptable tree, making sure that nothing is removed
-and that the object identity is not changed in the process.
+We first start with a totally acceptable tree, making sure that nothing is removed.
 
     >>> tree, tree_string = new_tree()
     >>> print tree_string
     <html><head><title /></head><body>Crunchy is neat!</body></html>
     >>> page.url = 'trusted'
-    >>> cleaned_tree = security.remove_unwanted(tree, page)
-    >>> cleaned_string = to_string(cleaned_tree)
+    >>> security.remove_unwanted(tree, page)
+    >>> cleaned_string = to_string(tree)
     >>> tree_string == cleaned_string
     True
     >>> id(tree_string) != id(cleaned_string)
-    True
-    >>> id(tree) == id(cleaned_tree)
     True
 
 Note how we need to compare the "strings" - they are like an html page.
@@ -88,8 +85,8 @@ For the next step, we add some javascript which should definitely be removed.
     >>> bad_tree, bad_tree_string = new_tree(add_to_head=script)
     >>> 'script' in bad_tree_string
     True
-    >>> cleaned_tree = security.remove_unwanted(bad_tree, page)
-    >>> cleaned_string = to_string(cleaned_tree)
+    >>> security.remove_unwanted(bad_tree, page)
+    >>> cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
     >>> cleaned_string == tree_string
     True
     >>> cleaned_string != bad_tree_string # obvious, but we do not take any chances with tests.
@@ -104,8 +101,8 @@ Next, we repeat this for all security levels.
     ...    bad_tree, bad_tree_string = new_tree(add_to_head=script)
     ...    if not 'script' in bad_tree_string:
     ...        print "javascript not inserted properly"
-    ...    cleaned_tree = security.remove_unwanted(bad_tree, page)
-    ...    cleaned_string = to_string(cleaned_tree)
+    ...    security.remove_unwanted(bad_tree, page)
+    ...    cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
     ...    if cleaned_string != tree_string:
     ...        print "Problem with removing unwanted stuff."
     ...    if cleaned_string == bad_tree_string:
@@ -124,8 +121,8 @@ We then clean up this tree.  Nothing should be removed.
     ...     for attr in allowed[tag]:
     ...         elem.attrib[attr] = tag + '_' + attr   # just because...
     >>> strict_tree, strict_tree_string = new_tree(add_to_body=div)
-    >>> cleaned_tree = security.remove_unwanted(strict_tree, page)
-    >>> cleaned_string = to_string(cleaned_tree)
+    >>> security.remove_unwanted(strict_tree, page)
+    >>> cleaned_string = to_string(strict_tree)
     >>> cleaned_string == strict_tree_string
     True
 
@@ -156,8 +153,8 @@ We will need to treat these separately later.
     ...         for attr in allowed[tag]:
     ...            elem.attrib[attr] = tag + '_' + attr   # just because...
     >>> normal_tree, normal_tree_string = new_tree(add_to_body=div)
-    >>> cleaned_normal_tree = security.remove_unwanted(normal_tree, page)
-    >>> cleaned_normal_string = to_string(cleaned_normal_tree)
+    >>> security.remove_unwanted(normal_tree, page)
+    >>> cleaned_normal_string = to_string(normal_tree)
     >>> cleaned_normal_string == normal_tree_string
     True
 
@@ -188,8 +185,8 @@ Therefore, we can keep them in.
     ...         for attr in allowed[tag]:
     ...            elem.attrib[attr] = tag + '_' + attr   # just because...
     >>> trusted_tree, trusted_tree_string = new_tree(add_to_body=div)
-    >>> cleaned_trusted_tree = security.remove_unwanted(trusted_tree, page)
-    >>> cleaned_trusted_string = to_string(cleaned_trusted_tree)
+    >>> security.remove_unwanted(trusted_tree, page)
+    >>> cleaned_trusted_string = to_string(trusted_tree)
     >>> cleaned_trusted_string == trusted_tree_string
     True
 
@@ -214,8 +211,8 @@ same as a "normal" one, by selecting a different security mode for the page.
     >>> trusted_tree_string == normal_tree_string  # they are not the same originally
     False
     >>> page.url = 'normal'
-    >>> trusted_to_normal_tree = security.remove_unwanted(trusted_tree, page)
-    >>> trusted_to_normal_string = to_string(trusted_to_normal_tree)
+    >>> security.remove_unwanted(trusted_tree, page)
+    >>> trusted_to_normal_string = to_string(trusted_tree)
     >>> trusted_to_normal_string == normal_tree_string  # now, they should be the same
     True
 
@@ -236,8 +233,8 @@ We first create a "normal" tree with no <style> tag.
     >>> new_normal_tree_string == strict_tree_string # originally different
     False
     >>> page.url = 'strict'
-    >>> normal_to_strict_tree = security.remove_unwanted(new_normal_tree, page)
-    >>> normal_to_strict_string = to_string(normal_to_strict_tree)
+    >>> security.remove_unwanted(new_normal_tree, page)
+    >>> normal_to_strict_string = to_string(new_normal_tree)
     >>> normal_to_strict_string == strict_tree_string  # now, they should be the same
     True
 

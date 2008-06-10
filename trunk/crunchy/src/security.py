@@ -409,7 +409,7 @@ def remove_unwanted(tree, page):  # partially tested
     if DEBUG:
         print("These unwanted attributes have been removed:")
         print(unwanted)
-    return tree
+    return
 
 def __cleanup(elem, filter):
     ''' See http://effbot.org/zone/element-bits-and-pieces.htm'''

@@ -750,22 +750,27 @@ crunchy/src
         append_image(pageid, parent_uid, attributes)
     vlam.py
         from StringIO import StringIO
-        import src.security as security
+        from src.security import remove_unwanted
         from src.element_tree import ElementSoup
         from src.interface import ElementTree, config, from_comet
         from src.utilities import uidgen
-        class CrunchyPage(object):
-            __init__(self, filehandle, url, remote=False, local=False)
-            add_include(self, include_str)
-            includes(self, include_str)
-            add_js_code(self, code)
+        class _BasePage(object):
+            __init__(self)  # tested
+            create_tree(self, filehandle, encoding='utf-8')  # tested
+            find_head(self)  # tested
+            find_body(self)  # tested
+            add_include(self, include_str)  # tested
+            includes(self, include_str)  # tested
+            add_css_code(self, code)  # tested
+            add_crunchy_style(self)  # tested
+            add_user_style(self)  # tested
+            add_js_code(self, code)  # tested
+            insert_js_file(self, filename)  # tested
             add_charset(self)
-            insert_js_file(self, filename)
-            add_css_code(self, code)
-            add_crunchy_style(self)
-            add_user_style(self)
-            process_tags(self)
             read(self)
+        class CrunchyPage(_BasePage):
+            __init__(self, filehandle, url, remote=False, local=False)
+            process_tags(self)
 crunchy/server_root/edit_area
     adapt_for_crunchy.py
         break_into_lines(text)

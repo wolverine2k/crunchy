@@ -48,6 +48,7 @@ The following are the actual links to existing test files.
 #. test_security.rst_
 #. test_turtle_js.rst_
 #. test_utilities.rst_
+#. test_vlam.rst_
 #. test_vlam_editor.rst_
 #. test_vlam_load_local.rst_
 #. test_vlam_load_remote.rst_
@@ -71,6 +72,7 @@ The following are the actual links to existing test files.
 .. _test_rst.rst: test_rst.rst
 .. _test_security.rst: test_security.rst
 .. _test_utilities.rst: test_utilities.rst
+.. _test_vlam.rst: test_vlam.rst
 .. _test_vlam_editor.rst: test_vlam_editor.rst
 .. _test_vlam_load_local.rst: test_vlam_load_local.rst
 .. _test_vlam_load_remote.rst: test_vlam_load_remote.rst
