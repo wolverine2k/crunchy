@@ -11,7 +11,7 @@ from SocketServer import ThreadingMixIn, TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import urllib
 from traceback import format_exc
-
+import base64
 from src.interface import python_version, python_minor_version
 import src.CrunchyPlugin as CrunchyPlugin
 
@@ -54,6 +54,8 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 class HTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         """handle an HTTP request"""
+        if not self.check_authenticate():
+            return
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
         if python_version >=3:
@@ -110,3 +112,21 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def send_response(self, code):
         BaseHTTPRequestHandler.send_response(self, code)
         self.send_header("Connection", "close")
+
+    def check_authenticate(self):
+        if not hasattr(self, 'authenticated'):
+            self.authenticated = False
+        if not self.authenticated and 'Authorization' in self.headers:
+            auth_word = self.headers['Authorization'].split()
+            if auth_word[0] != 'Basic':
+                self.authenticated = False 
+            elif len(auth_word) > 1:
+                user,password = base64.b64decode(auth_word[1]).split(':')
+                if user == 'crunchy' and password == 'crunchypassword':
+                    self.authenticated = True
+        if not self.authenticated:
+            self.send_response(401)
+            self.send_header('WWW-Authenticate','Basic realm="Crunchy Access"')
+            self.end_headers()
+       
+        return self.authenticated
