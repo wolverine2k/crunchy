@@ -1,20 +1,21 @@
 function hide_security_info() {
-    document.getElementById("security_info").style.display = "none";
-    document.getElementById("security_info_x").style.display = "none";
+    //use jQuery
+    $("#security_info,#security_info_x").hide();
 };
 
 function show_security_info() {
-    document.getElementById("security_info").style.display = "block";
-    document.getElementById("security_info_x").style.display = "block";
+    //use jQuery
+    $("#security_info,#security_info_x").hide();
 }
 
 function hide_security_report() {
-    document.getElementById("security_report").style.display = "none";
+    $("#security_report").hide();
 };
 
 function app_approve(nb_item) {
     hide_security_info();
-    approved_sites = "";
+    var approved_sites = "";
+    var site_name = "";
     if (nb_item == 0){   // used for single site approval from verify_site()
       site_name = "single_site_";
       nb_item = 1;
@@ -22,8 +23,9 @@ function app_approve(nb_item) {
     else{
       site_name = "site_";
       }
-    for (site_num = 1; site_num <= nb_item; site_num++) {
-    	site_form = document.getElementById(site_name+site_num);
+    var chosen;
+    for (var site_num = 1; site_num <= nb_item; site_num++) {
+    	var site_form = document.getElementById(site_name+site_num);
     	len = site_form.rad.length;
     	for (i = 0; i < len; i++){
     		if (site_form.rad[i].checked){
@@ -33,30 +35,22 @@ function app_approve(nb_item) {
     	}
     }
 
-    // send approval
-    var j = new XMLHttpRequest();
-    j.open("POST", "/set_trusted");
-    // disabling the annoying alert.
-    /*j.onreadystatechange = function() {
-        if (j.readyState == 4 && j.status == 200) {
-            alert("The following values have been selected:\n\n"+approved_sites.replace(',',"\n"));
-        }
-    }*/
-    j.send(approved_sites);
+    //send approval
+    $.ajax({type : "POST",
+            url : "/set_trusted", 
+            data : approved_sites,
+            processData : false
+            });
 }
 
 function app_remove_all() {
     hide_security_info();
-    var j = new XMLHttpRequest();
-    j.open("POST", "/remove_all");
-    // disabling the annoying alert.
-    /*
-    j.onreadystatechange = function() {
-        if (j.readyState == 4 && j.status == 200) {
-            alert("All sites will be removed from list");
-        }
-    }*/
-    j.send("");
+    //send approval
+    $.ajax({type : "POST",
+            url : "/remove_all", 
+            data : approved_sites,
+            processData : false
+            });
 }
 
 
