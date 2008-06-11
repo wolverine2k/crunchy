@@ -17,7 +17,7 @@ def register():
        registers two tag handlers for inserting custom menus
     """
     plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
-    plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
+    plugin['register_end_pagehandler'](insert_default_menu)
 
 def insert_special_menu(page, elem, dummy):
     '''inserts a menu different from the Crunchy default based.
@@ -43,8 +43,10 @@ def insert_special_menu(page, elem, dummy):
     page.add_include("menu_included")
 
 def insert_default_menu(page):
-    """inserts the default Crunchy menu"""
+    """inserts the default Crunchy menu, if no other menu is present."""
     global current_language, _default_menu, _css
+    if page.includes("menu_included"):
+        return
     if config['language'] != current_language:
         _default_menu, _css = select_language(config['language'])
     activate_security_info(page, _default_menu)

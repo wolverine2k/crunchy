@@ -118,6 +118,9 @@ It should be noted that Crunchy uses ElementTree to parse html files, transformi
 documents into a series of Element [each Element corresponding to an html tag with
 various pairs of attributes and values, as well as some content (text).]
 
+All tag handlers are passed three arguments: the calling CrunchyPage; the Element
+to which the processing applies; a unique id.
+
 3. Http handlers are instructions from the webbrowser (usually triggered via
 some javascript code) that are sent back to the Crunchy server for processing.
 For example, to save a Python file from the editor, the file_service.py module defines

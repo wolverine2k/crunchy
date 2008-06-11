@@ -41,7 +41,7 @@ def fixed_link(dummy_page, elem, *dummy):  # tested
     # otherwise might have occurred because of the other link handlers.
     return
 
-def a_tag_handler(page, elem):  # tested
+def a_tag_handler(page, elem, *dummy):  # tested
     """convert remote links if necessary, need to deal with all links in
        remote pages"""
     if "href" not in elem.attrib:
@@ -104,7 +104,7 @@ def a_tag_handler(page, elem):  # tested
     #extension = elem.attrib["href"].split('.')[-1]
 
 
-def src_handler(page, elem):  # partially tested
+def src_handler(page, elem, *dummy):  # partially tested
     """used for elements that have an src attribute not loaded from the
        server root"""
     if "src" not in elem.attrib:
@@ -122,7 +122,7 @@ def src_handler(page, elem):  # partially tested
         elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
-def link_tag_handler(page, elem):  # partially tested
+def link_tag_handler(page, elem, *dummy):  # partially tested
     """resolves html <link> URLs"""
     if "href" not in elem.attrib:
         return
@@ -150,7 +150,7 @@ def secure_url(url):  # tested
 
 css_import_re = re.compile('@import\s+"(.+?)"')
 
-def style_handler(page, elem):  # tested
+def style_handler(page, elem, *dummy):  # tested
     """replace @import statements in style elements"""
     def css_import_replace(imp_match):
         '''replaces the relative path found by its absolute value'''

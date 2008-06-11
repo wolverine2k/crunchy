@@ -17,7 +17,7 @@ def register():
     '''
     register a tag handler and two http handlers: /set_trusted and /remove_all
     '''
-    plugin['register_tag_handler']("no_tag", "security", None, insert_security_info)
+    plugin['register_begin_pagehandler'](insert_security_info)
     plugin['register_http_handler']("/set_trusted", set_security_list)
     plugin['register_http_handler']("/remove_all", empty_security_list)
 

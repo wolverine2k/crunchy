@@ -18,6 +18,10 @@ It contains two classes and a number of methods that need to be tested:
 #. `add_user_style()`_
 #. `add_js_code()`_
 #. `insert_js_file()`_
+#. `add_charset()`_
+#. `read()`_
+#. An introduction to the processing of  `handlers`_
+
 
 Setting things up
 --------------------
@@ -324,5 +328,138 @@ proper insertion of javascript code.
     >>> output(page_no_body)
     '<html><head> <script src="smart.js" type="text/javascript"> </script></head></html>'
 
+.. _`add_charset()`:
+
+Testing add_charset()
+---------------------
+
+We test this method with a very simple page.
+
+    >>> html = '<html><head>brain</head><body><p>This is a test.</p></body></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.add_charset()
+    >>> output(page)
+    '<html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>'
+
+Next, we redo this test with a page that has no head (nor body).
+A head should be added automatically.
+
+    >>> html = '<html></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.add_charset()
+    >>> output(page)
+    '<html><head> <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head></html>'
+
+.. _`read()`:
+
+Testing read()
+--------------
+
+Before we do this test, we will record the value of the DTD in case some
+accidental editing is done.  This might help us identify the source of an error,
+if ever one occurs in the test for read().
+
+    >>> vlam.DTD
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
+
+Next, we create a simple page.
+
+    >>> html = '<html><head>brain</head><body><p>This is a test.</p></body></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.read()
+    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n<html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>'
+
+
+.. _`handlers`:
+
+Processing handlers: an introduction
+-------------------------------------
+
+The processing of handlers can be a bit tricky to understand the
+first time around.  By handlers, we mean one of the following three types:
+
+-  handlers1 = {} # tag -> handler function
+-  handlers2 = {} # tag -> attribute -> handler function
+-  handlers3 = {} # tag -> attribute -> keyword -> handler function
+
+We do not consider here the "page handlers" (begin_pagehandler and end_pagehandler).
+To simplify the processing, the same 3 arguments are passed to each handler: 
+
+1. the CrunchyPage instance
+2. an Element to which the processing is meant to be applied
+3. a unique id.
+
+Not all three elements are necessarily required by every handler,
+but they must ensure that they can handle receiving 3 elements.
+
+As a rule, the more specific an instruction is, the higher its precedence.
+Thus, if a (tag, attribute, keyword) is registered by a handler of type 3,
+any element with this combination must be ignored by handlers of type 1 and 2.
+
+Note that, at the time this test was written (Crunchy version 0.9.9.3),
+no handler of type 2 were required; their role had been taken over by
+"page handlers".
+
+Before we begin testing some functions, let us create some fictitious handlers,
+and a test function.
+
+    >>> def func(page, elem, id):
+    ...    print elem.text
+    ...    return
+    >>> handlers1 = {'a': func, 'b': func, 'c': func}
+    >>> handlers2 = {'a': {'aa': func}, 'b': {'aa': func}}
+    >>> handlers3 = {'a': {'aa': {'aaa': func, 'bbb': func}}, 'c': {'aa': {'aaa': func}, 'cc': {'ccc': func}}}
+    >>> vlam._BasePage.handlers1 = handlers1
+    >>> vlam._BasePage.handlers2 = handlers2
+    >>> vlam._BasePage.handlers3 = handlers3
+
+Next, let us create a tree with these tags, and some others.  The text we put inside
+each element will be a number chosen, by inspection of the above handlers structure, 
+to be the handler type (1, 2 or 3).
+
+    >>> open_html = "<html><head> </head><body>"
+    >>> end_html = "</body></html>"
+    >>> inner = "<a>1</a><a ee='eee'>1</a>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> output(page)
+    '<html><head> </head><body><a>1</a><a ee="eee">1</a></body></html>'
+
+    >>> page.process_handlers1()
+    1
+    1
+    >>> page.process_handlers2()
+    >>> page.process_handlers3()
+
+    >>> inner = "<a>1</a><a aa='eee'>2</a>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> page.process_handlers1()
+    1
+    >>> page.process_handlers2()
+    2
+    >>> page.process_handlers3()
+
+    >>> inner = "<a>1</a><a aa='aaa'>3</a>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> page.process_handlers1()
+    1
+    >>> page.process_handlers2()
+    >>> page.process_handlers3()
+    3
+
+    >>> inner = "<a>1</a><c aa='aaa'>3</c>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> page.process_handlers1()
+    1
+    >>> page.process_handlers2()
+    >>> page.process_handlers3()
+    3
+
+    >>> inner = "<a>1</a><c aa='ignore'>1</c>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> page.process_handlers1()
+    1
+    1
+    >>> page.process_handlers2()
+    >>> page.process_handlers3()
 
 

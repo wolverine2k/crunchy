@@ -212,11 +212,11 @@ crunchy/src/plugins
             plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
         external_link(dummy_page, elem, *dummy)  # tested
         fixed_link(dummy_page, elem, *dummy)  # tested
-        a_tag_handler(page, elem)  # tested
-        src_handler(page, elem)  # partially tested
-        link_tag_handler(page, elem)  # partially tested
+        a_tag_handler(page, elem, *dummy)  # tested
+        src_handler(page, elem, *dummy)  # partially tested
+        link_tag_handler(page, elem, *dummy)  # partially tested
         secure_url(url)  # tested
-        style_handler(page, elem)  # tested
+        style_handler(page, elem, *dummy)  # tested
             css_import_replace(imp_match)
     menu.py
         import os
@@ -224,12 +224,17 @@ crunchy/src/plugins
         import src.security as security
         register():
             plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
-            plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
+            plugin['register_end_pagehandler'](insert_default_menu)
         insert_special_menu(page, elem, dummy)
         insert_default_menu(page)
         activate_security_info(page, menu)
         extract_menu(filename, page, safe_menus=False)
         select_language(lang)
+    no_markup.py
+        from src.interface import plugin, config
+        register():
+            plugin['register_final_tag_handler']("pre", power_vlam)
+        power_vlam(page, elem, uid)
     power_browser.py
         from src.interface import plugin, config, Element
         import python_files
@@ -238,7 +243,7 @@ crunchy/src/plugins
         import vlam_load_remote
         register():
             plugin['register_tag_handler']("body", None, None, insert_browser)
-        insert_browser(page, body)
+        insert_browser(page, body, *dummy)
     python_files.py
         from src.interface import plugin, interactive
         from src.utilities import changeHTMLspecialCharacters, insert_file_browser
@@ -294,7 +299,7 @@ crunchy/src/plugins
         from urlparse import urlsplit
         from src.interface import config, translate, plugin, Element, SubElement
         register():
-            plugin['register_tag_handler']("no_tag", "security", None, insert_security_info)
+            plugin['register_begin_pagehandler'](insert_security_info)
             plugin['register_http_handler']("/set_trusted", set_security_list)
             plugin['register_http_handler']("/remove_all", empty_security_list)
         insert_security_info(page, *dummy)
@@ -597,7 +602,9 @@ crunchy/src
         register_http_handler(pattern, handler)
         register_preprocessor(extension, handler)
         register_tag_handler(tag, attribute, keyword, handler)
-        register_page_handler(handler)
+        register_final_tag_handler(tag, handler)
+        register_begin_pagehandler(handler)
+        register_end_pagehandler(handler)
         create_vlam_page(filehandle, url, remote=False, local=False)
         exec_code(code, uid, doctest=False)
         register_service(servicename, function)
@@ -766,8 +773,14 @@ crunchy/src
             add_user_style(self)  # tested
             add_js_code(self, code)  # tested
             insert_js_file(self, filename)  # tested
-            add_charset(self)
-            read(self)
+            add_charset(self)  # tested
+            extract_keyword(self, elem, attr)
+            process_handlers3(self)  # tested
+            process_handlers2(self)  # tested
+            process_type1(self, handlers)  # tested
+            process_final_handlers1(self)
+            process_handlers1(self)
+            read(self)  # tested
         class CrunchyPage(_BasePage):
             __init__(self, filehandle, url, remote=False, local=False)
             process_tags(self)
