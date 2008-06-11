@@ -177,11 +177,13 @@ class _BasePage(object):
             self.head.append(meta)
         return
 
-    def extract_keyword(self, elem, attr):
+    def extract_keyword(self, elem, attr): # tested
         '''extract a "keyword" from a vlam string.
 
         A "keyword" is the first complete word in a vlam string; for
         example: vlam="keyword some other options"
+
+        attr is assumed to be a valid key for elem[].
         '''
         try:
             keyword = [x for x in elem.attrib[attr].split(" ") if x != ''][0]
@@ -230,8 +232,6 @@ class _BasePage(object):
                             self.handlers2[tag][attr](self, elem, uid)
         return
 
-
-
     def process_type1(self, handlers):  # tested
         '''
         For all registered "tags" of "type 1", this method
@@ -255,15 +255,16 @@ class _BasePage(object):
                             keyword = self.extract_keyword(elem, attr)
                             if keyword in self.handlers3[tag][attr]:
                                 do_it = False
+                                break
                 if do_it:
                     uid = self.pageid + ":" + uidgen()
                     handlers[tag](self, elem, uid)
         return
 
-    def process_final_handlers1(self):
+    def process_final_handlers1(self):  # tested
         self.process_type1(self.final_handlers1)
 
-    def process_handlers1(self):
+    def process_handlers1(self):  # tested
         self.process_type1(self.handlers1)
 
     def read(self):  # tested

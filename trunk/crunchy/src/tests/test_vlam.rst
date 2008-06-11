@@ -20,7 +20,10 @@ It contains two classes and a number of methods that need to be tested:
 #. `insert_js_file()`_
 #. `add_charset()`_
 #. `read()`_
-#. An introduction to the processing of  `handlers`_
+#. An introduction to the processing of  `handlers`_.  It covers testing of
+   process_handlers1(), process_handlers2(), process_handlers3(), 
+   process_final_handlers1(), process_type1().
+#. `extract_keyword()`_
 
 
 Setting things up
@@ -409,9 +412,11 @@ and a test function.
     >>> handlers1 = {'a': func, 'b': func, 'c': func}
     >>> handlers2 = {'a': {'aa': func}, 'b': {'aa': func}}
     >>> handlers3 = {'a': {'aa': {'aaa': func, 'bbb': func}}, 'c': {'aa': {'aaa': func}, 'cc': {'ccc': func}}}
+    >>> final_handlers1 = {'a': func, 'd': func}
     >>> vlam._BasePage.handlers1 = handlers1
     >>> vlam._BasePage.handlers2 = handlers2
     >>> vlam._BasePage.handlers3 = handlers3
+    >>> vlam._BasePage.final_handlers1 = final_handlers1
 
 Next, let us create a tree with these tags, and some others.  The text we put inside
 each element will be a number chosen, by inspection of the above handlers structure, 
@@ -461,5 +466,60 @@ to be the handler type (1, 2 or 3).
     1
     >>> page.process_handlers2()
     >>> page.process_handlers3()
+
+There are two equivalent ways to process handlers of type 1.
+
+    >>> inner = "<a>1</a><c aa='ignore'>not final 1</c>"
+    >>> page, out_html = process_html(open_html+inner+end_html)
+    >>> page.process_handlers1()
+    1
+    not final 1
+    >>> page.process_type1(page.handlers1)
+    1
+    not final 1
+
+There is also the "final handlers" case.
+
+    >>> page.process_final_handlers1()
+    1
+    >>> page.process_type1(page.final_handlers1)
+    1
+
+
+
+.. _`extract_keyword()`:
+
+Testing extract_keyword()
+-------------------------
+
+A vlam keyword is the first complete word in an attribute string value.
+Words are separated by blank spaces.
+
+    >>> html = '<html><head a="keyword">brain</head></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.find_head()
+    >>> print page.extract_keyword(page.head, 'a')
+    keyword
+    >>> html = '<html><head a=" keyword ">brain</head></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.find_head()
+    >>> print page.extract_keyword(page.head, 'a')
+    keyword
+    >>> html = '<html><head a="    keyword ignore the rest">brain</head></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.find_head()
+    >>> print page.extract_keyword(page.head, 'a')
+    keyword
+    >>> html = '<html><head a="keyword      ignore the rest">brain</head></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.find_head()
+    >>> print page.extract_keyword(page.head, 'a')
+    keyword
+    >>> html = '<html><head a="">brain</head></html>'
+    >>> page, out_html = process_html(html)
+    >>> page.find_head()
+    >>> print page.extract_keyword(page.head, 'a')
+    None
+
 
 
