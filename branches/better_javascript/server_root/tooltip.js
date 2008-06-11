@@ -1,6 +1,31 @@
 /*------------------------------- tooltip -------------------------------- */
 
 function tooltip_display(event, interp_id) {
+    switch(event.keyCode){
+        case 13:            // enter
+        case 27:            // escape
+        case 48:            // close paren
+        case 41:            // close paren on win32 safari
+            /*
+                TODO close tooltip
+            */
+            break;
+        case 40:            // open paren on safari
+        case 57:            // open paren
+            /*
+                TODO show doc tooltip
+            */
+            break;
+        case 46:            // dot . on safari
+        case 190:           // dot .
+            /*
+                TODO show dir tooltip
+            */
+            break;
+    }
+    
+    
+    //------------------------------------------------------
 	// help menu prevents tooltip from displaying
     if (document.getElementById("help_menu").style.display == "block") {
 	    return;
