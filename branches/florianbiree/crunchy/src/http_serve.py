@@ -19,6 +19,10 @@ import src.CrunchyPlugin as CrunchyPlugin
 
 DEBUG = False
 
+# FIXME: where should this dictionarry be put (instead of being blobal for
+# the module?
+users = {"crunchy" : "password"}
+
 def require_basic_authenticate(func):
     '''A decorate  to addd  basic http authorization check to HTTP Request Handlers'''
     def wrapped(self):
@@ -48,8 +52,7 @@ def require_digest_access_authenticate(func):
         method = "GET"
     else:
         method = "POST"
-    realm = "Crunchy Access"          
-    users = {"crunchy" : "password"}
+    realm = "Crunchy Access"
 
     def wrapped(self):
         #if not hasattr(self, 'need_authenticated'):
