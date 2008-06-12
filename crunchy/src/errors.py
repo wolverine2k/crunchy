@@ -34,7 +34,7 @@ def simplify_traceback(code=None):
     if ex_type is SyntaxError:
         return simplify_syntax_error(code, ex_type, value, trace, lineno)
     if ex_type is SystemExit:
-        value = "Your program tried to exit Crunchy.\n"
+        value = "Your program exited.\n"
 
     tblist = traceback.extract_tb(trace)
     del tblist[:1]
@@ -77,8 +77,8 @@ def simplify_traceback(code=None):
     retval = StringIO()
     map(retval.write, tb_list)
     if ex_type is SystemExit:
-        out = retval.getvalue().replace("Your program tried to exit Crunchy.\n",
-                             _(u"Your program tried to exit Crunchy.\n") )
+        out = retval.getvalue().replace("Your program exited.",
+                             _(u"Your program exited.") )
         return out.encode("utf-8")
     return retval.getvalue().encode("utf-8")
 

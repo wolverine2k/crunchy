@@ -3,6 +3,41 @@
 All the CSS needed to make Crunchy whirr
 
 */
+img{
+    border:0;
+}
+table.summary {
+border:1px outset gray;
+border-collapse:separate;
+border-spacing:1px;
+}
+table.summary th, td {
+border:1px inset gray;
+padding:1px;
+}
+
+/* For the security advisory, follow the style from "#content" in crunchy_docs.css */
+#security_info {
+    margin-left: 182px;
+}
+
+#security_info p {
+    /* put the margin at the bottom rather than the top: */
+    margin: 0px 0px 1em 0px;
+    text-align: justify;
+}
+
+#security_info h2 {
+    color: #204a87;
+}
+
+#security_info h3 {
+    color: #204a87;
+}
+
+#security_info h4 {
+    color: #204a87;
+}
 
 /* default used with <code> tag */
 .crunchy {
@@ -10,7 +45,7 @@ All the CSS needed to make Crunchy whirr
     font-family: monospace;
 }
 pre.crunchy {
-    border-top: 1px solid #f8f8f0; /*temporary choice*/
+    border-top: 1px solid #eeeeec; /*temporary choice*/
     padding: 5px 0px;
     /*border-bottom:1px solid #ccc;*/
 }
@@ -20,17 +55,17 @@ div.crunchy {
 }
 
 .interpreter{
-    background-color: #ccffff; /*temporary choice*/
+    background-color: #eeeee0; /*temporary choice*/
     font-family: monospace;
     padding-bottom: 10px;
 }
 .doctest{
-    background-color: #ffccff; /*temporary choice*/
+    background-color: #eeeee0; /*temporary choice*/
     font-family: monospace;
     padding-bottom: 10px;
 }
 .editor{
-    background-color: #ffffcc; /*temporary choice*/
+    background-color: #eeeee0; /*temporary choice*/
     font-family: monospace;
     padding-bottom: 10px;
 }
@@ -54,7 +89,7 @@ div.crunchy {
 .py_linenumber{font: 70% monospace; color: #888a85; font-style:normal;} /* medium grey */
 .py_output{color:#2e3436; font-style:italic;}
 .py_warning{background-color: #fce94f; font-size: 130%; color: #2e3436; padding: 2px;}
-.py_keyword {color: #204a87;} /* dark blue */
+.py_keyword {color: #204a87; font-weight:bold;} /* dark blue */
 .py_string {color: #4e9a06;} /* green */
 .py_prompt {color: #ce5c00;} /* orange */
 .py_number {color: #5c3566;} /* medium blue */
@@ -75,6 +110,7 @@ div.crunchy {
 }
 .stdout {
     font-style: italic;
+    bottom: -32px;
 }
 
 .stderr {
@@ -83,11 +119,29 @@ div.crunchy {
 }
 
 .input {
-    display: none;
+    display: none; /* required to hide below editor */
     width: 80%;
     max-width: 800px;
     font-family: monospace;
     border: solid 1px;
     background-color: white;
     border-color: #d3d7cf;
+    padding-top: 0;
+}
+
+.interpreter_image{
+    border: 0;
+    padding: 0;
+    position: relative;
+    bottom: -10px;
+    height: 25px;
+    margin-top: -11px; /*get rid of that pesky gap - see issue 112 */
+}
+.kill_thread_image{
+    border: 0;
+    padding: 0;
+    margin: 0;
+    float: left;
+    bottom: 0px;
+    height: 32px;
 }

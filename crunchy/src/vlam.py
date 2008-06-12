@@ -6,58 +6,55 @@ sets up the page and calls appropriate plugins
 
 from StringIO import StringIO
 
-import src.security as security
+from src.security import remove_unwanted
 
 # Third party modules - included in crunchy distribution
-from src.interface import ElementTree
 from src.element_tree import ElementSoup
+from src.interface import ElementTree, config, from_comet
 et = ElementTree
 
-from src.cometIO import register_new_page
-import src.configuration as configuration
 from src.utilities import uidgen
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
-'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n'
+'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
 
-class CrunchyPage(object):
-    '''class used to store an html page processed by Crunchy so
-       as to add interactive elements.'''
+# The purpose of the following class is to facilitate unit testing.  It can
+# be initialized with no further action taking place, and each method
+# has then to be called explicitly.
+# In production code, we invoke CrunchyPage instead which does all
+# the required processing automatically.
 
-    # We could do with defining a single variable "handlers" but doing
-    # it this way makes it a bit easier to distinguish the various cases
-    # (sorry, a weird mix of haskell and OCaml notation in a python program :)
-    # handler1 ::  tag -> handler function
-    handlers1 = {}
-    # handler2 ::  tag -> attribute -> handler function
-    handlers2 = {}
-    # handler3 ::  tag -> attribute -> keyword -> handler function
-    handlers3 = {}
-    pagehandlers = []
+class _BasePage(object):
+    '''
+       Base class used to store html pages and the methods to process them.
+    '''
+    # We define some class variables that will be shared amongst all instances;
+    # they are initialized via CrunchyPlugin.py
+    handlers1 = {} # tag -> handler function
+    handlers2 = {} # tag -> attribute -> handler function
+    handlers3 = {} # tag -> attribute -> keyword -> handler function
+    final_handlers1 = {}  # tag -> handler function
+    begin_pagehandlers = []
+    end_pagehandlers = []
 
-    def __init__(self, filehandle, url, remote=False, local=False):
-        """url should be just a path if crunchy accesses the page locally, or
-           the full URL if it is remote"""
-        self.is_remote = remote # True if remote tutorial, on the web
-        self.is_local = local  # True if local tutorial, not from the server root
-        if not (remote or local):
-            self.is_from_root = True # if local tutorial from server root; default
-        else:
-            self.is_from_root = False
+    def __init__(self):  # tested
+        '''initialises a few values, and registers the page for comet i/o.'''
+        self.included = set([])
         self.pageid = uidgen()
-        self.url = url
-        register_new_page(self.pageid)
-        # "old" method using ElementTree directly
-        #self.tree = HTMLTreeBuilder.parse(filehandle, encoding = 'utf-8')
+        from_comet['register_new_page'](self.pageid)
+        return
+
+    def create_tree(self, filehandle, encoding='utf-8'):  # tested
+        '''creates a tree (elementtree object) from an html file'''
+        # note: this process removes the existing DTD
         html = ElementSoup.parse(filehandle, encoding = 'utf-8')
         self.tree = et.ElementTree(html)
 
-        # The security module removes all kinds of potential security holes
-        # including some meta tags with an 'http-equiv' attribute.
-        self.tree = security.remove_unwanted(self.tree, self)
-        self.included = set([])
+    def find_head(self):  # tested
+        '''finds the head in an html tree; adds one in if none is found.
+        '''
         self.head = self.tree.find("head")
-        if not self.head:
+        if self.head is None:
             self.head = et.Element("head")
             self.head.text = " "
             html = self.tree.find("html")
@@ -65,192 +62,212 @@ class CrunchyPage(object):
                 html.insert(0, self.head)
             except AttributeError:
                 html = self.tree.getroot()
+                assert html.tag == 'html'
                 html.insert(0, self.head)
+        return
+
+    def find_body(self):  # tested
+        '''finds the body in an html tree; adds one if none is found.
+        '''
         self.body = self.tree.find("body")
-        if not self.body:
+        if self.body is None:
             html = self.tree.find("html")
             try:
                 self.body = et.SubElement(html, "body")
             except AttributeError:
                 html = self.tree.getroot()
+                assert html.tag == 'html'
                 self.body = et.SubElement(html, "body")
-            self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
             warning = et.SubElement(self.body, 'h1')
             warning.text = "Missing body from original file"
-        self.process_tags()
-        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        self.add_js_code(comet_js)
-        # first crunchy's style, then user's so it can override crunchy's
-        self.add_crunchy_style()
-        self.add_user_style()
         return
 
-    def add_include(self, include_str):
+    def add_include(self, include_str):  # tested
         '''keeps track of information included on a page'''
         self.included.add(include_str)
 
-    def includes(self, include_str):
+    def includes(self, include_str):  # tested
         '''returns information about string included on a page'''
         return include_str in self.included
 
-    def add_js_code(self, code):
-        ''' includes some javascript code in the <head>.
-            This is the preferred method.'''
-        js = et.Element("script")
-        js.set("type", "text/javascript")
-        js.text = code
-        self.head.append(js)
-
-    def add_charset(self):
-        '''adds utf-8 charset information on a page'''
-        c = et.Element("meta")
-        c.set("http-equiv", "Content-Type")
-        c.set("content", "text/html; charset=UTF-8")
-        self.head.append(c)
-
-    def insert_js_file(self, filename):
-        '''Inserts a javascript file link in the <head>.
-           This should only be used for really big scripts
-           (like editarea); the preferred method is to add the
-           javascript code directly'''
-        js = et.Element("script")
-        js.set("src", filename)
-        js.set("type", "text/javascript")
-        js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
-        self.head.insert(0, js)
-        return
-
-    def add_css_code(self, code):
+    def add_css_code(self, code):  # tested
         '''inserts styling code in <head>'''
-        css = et.Element("style")
-        css.set("type", "text/css")
+        css = et.Element("style", type="text/css")
         css.text = code
-        self.head.insert(0, css)
-
-    def add_crunchy_style(self):
-        '''inserts a link to the standard Crunchy style file'''
-        css = et.Element("link")
-        css.set("type", "text/css")
-        css.set("rel", "stylesheet")
-        css.set("href", "/crunchy.css")
-        self.head.insert(0, css)
+        try:
+            self.head.insert(0, css)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.insert(0, css)
         return
 
-    def add_user_style(self):
+    def add_crunchy_style(self):  # tested
+        '''inserts a link to the standard Crunchy style file'''
+        css = et.Element("link", type= "text/css", rel="stylesheet",
+                         href="/crunchy.css")
+        try:
+            self.head.insert(0, css)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.insert(0, css)
+        # we inserted first so that it can be overriden by tutorial writer's
+        # style and by user's preferences.
+        return
+
+    def add_user_style(self):  # tested
         '''adds user style meant to replace Crunchy's default if
         so desired by the user'''
-        if not configuration.defaults.my_style:
+        if 'my_style' not in config:   # should normally be found
             return
-        styles = configuration.defaults.styles
+        if not config['my_style']:
+            return
+        if 'styles' not in config:    # should normally be found
+            return
+        else:
+            styles = config['styles']
+
         if styles == {}:
             return
-        style = et.Element("style")
-        style = et.Element("style")
-        style.set("type", "text/css")
+        style = et.Element("style", type="text/css")
         style.text = ''
         for key in styles:
             if key != 'name':
                 style.text += key + "{" + styles[key] + "}\n"
-        self.head.append(style)  # has to appear last to override choices
+        try:
+            self.head.append(style) # has to appear last to override all others.
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.append(style)
+        return
 
-    def process_tags(self):
-        """process all the customised tags in the page"""
+    def add_js_code(self, code):  # tested
+        ''' includes some javascript code in the <head>.
+            This is the preferred method.'''
+        js = et.Element("script", type="text/javascript")
+        js.text = code
+        try:
+            self.head.append(js)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.append(js)
+        return
 
-        #==================================================
-        #
-        # The following is the core of Crunchy processing - as such
-        # it deserves a bit of an explanation.
-        #
-        # We will consider 5 examples:
-        #
-        # 1. <pre title="interpreter isolated"> ...</pre>
-        #
-        # 2. <meta name="crunchy_menu" content="filename.html"/>
-        #
-        # 3. <a href="some_file.html"> ...</a>
-        #
-        # 4. <pre> ...</pre>
-        #
-        # 5. No <meta> tag for a special menu
-        #
-        # Handlers are registered in CrunchyPlugin.py via the function
-        # register_tag_handler(tag, attribute, keyword, handler)
-        #
-        # In example 1, we would have registered
-        # tag = "pre"
-        # attribute = "title"
-        # The corresponding value would be: "interpreter isolated"
-        # The keyword would be: "interpreter"
-        #
-        # In example 2, we would have registered
-        # tag = "meta"
-        # attribute = "name"
-        # The corresponding value would be: "crunchy_menu"
-        # The keyword would be: "crunchy_menu"
-        #
-        # In example 3, we would have registered
-        # tag = "a"
-        # attribute = None
-        # This would register a null_handler
-        #
-        # In example 4, we would not have registered anything; instead
-        # we could instruct Crunchy to add some custom markup based
-        # on a user's choice so that, for example, it could reproduce
-        # example 1.
-        #
-        # Example 5 refers to the absence of a special menu;
-        # we thus use a default Crunchy value.
-        #
-        #============================================
-        #
-        # IMPORTANT: we must convert existing links on the page
-        # before creating new ones - but not those that have been identified
-        # as external links.  This means that handlers1 must
-        # be dealt with first.
-        #  The following for loop deals with example 3
-        for tag in CrunchyPage.handlers1:
-            for elem in self.tree.getiterator(tag):
-            # vlam option <a title="external_link"> needs special treatment
-                if (('title' not in elem.attrib) or
-                           (elem.attrib['title'] != 'external_link')):
-                    CrunchyPage.handlers1[tag](self, elem)
+    def insert_js_file(self, filename):  # tested
+        '''Inserts a javascript file link in the <head>.
+           This should only be used for really big scripts
+           (like editarea); the preferred method is to add the
+           javascript code directly'''
+        js = et.Element("script", src=filename, type="text/javascript")
+        js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
+        try:
+            self.head.insert(0, js)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.insert(0, js)
+        return
 
-        #  The following for loop deals with examples 1 and 2
-        for tag in CrunchyPage.handlers3:
+    def add_charset(self):  # tested
+        '''adds utf-8 charset information on a page'''
+        meta = et.Element("meta", content="text/html; charset=UTF-8")
+        meta.set("http-equiv", "Content-Type")
+        try:
+            self.head.append(meta)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.append(meta)
+        return
+
+    def extract_keyword(self, elem, attr): # tested
+        '''extract a "keyword" from a vlam string.
+
+        A "keyword" is the first complete word in a vlam string; for
+        example: vlam="keyword some other options"
+
+        attr is assumed to be a valid key for elem[].
+        '''
+        try:
+            keyword = [x for x in elem.attrib[attr].split(" ") if x != ''][0]
+        except IndexError:
+            keyword = None
+        return keyword
+
+    def process_handlers3(self):  # tested
+        '''
+        For all registered "tags" of "type 3", this method
+        processes:  (tag, attribute, keyword) -> handler function
+        '''
+        for tag in self.handlers3:
             for elem in self.tree.getiterator(tag):
                 # elem.attrib  size may change during the loop
                 attributes = dict(elem.attrib)
                 for attr in attributes:
-                    if attr in CrunchyPage.handlers3[tag]:
-                        try:
-                            keyword = [x for x in elem.attrib[attr].split(" ")
-                                    if x != ''][0]
-                        except IndexError:
-                            keyword = None
-                        if keyword in CrunchyPage.handlers3[tag][attr]:
-                            CrunchyPage.handlers3[tag][attr][keyword]( self,
+                    if attr in self.handlers3[tag]:
+                        keyword = self.extract_keyword(elem, attr)
+                        if keyword in self.handlers3[tag][attr]:
+                            self.handlers3[tag][attr][keyword]( self,
                                             elem, self.pageid + ":" + uidgen())
                             break
-        #  The following for loop deals with example 4
-        # Crunchy can treat <pre> that have no markup as though they
-        # are marked up with a default value
-        n_m = configuration.defaults.no_markup.lower()
-        if n_m != 'none':
-            keyword = n_m.split(" ")[0]
-            for elem in self.tree.getiterator("pre"):
-                if "title" not in elem.attrib:
-                    elem.attrib["title"] = n_m
-                    CrunchyPage.handlers3["pre"]["title"][keyword](self, elem,
-                                                self.pageid + ":" + uidgen())
-        #  The following for loop deals with example 5
-        if "menu_included" not in self.included:
-            CrunchyPage.handlers2["no_tag"]["menu"](self)
-        # finally, we insert the security advisory last so that
-        # none of its links get converted.
-        CrunchyPage.handlers2["no_tag"]["security"](self)
+
+    def process_handlers2(self):  # tested
+        '''
+        For all registered "tags" of "type 2", this method
+        processes:  (tag, attribute) -> handler function
+        as long as more specific instructions of
+        "type 3" : (tag, attribute, keyword) -> handler function
+        have not been defined.
+        '''
+        for tag in self.handlers2:
+            for elem in self.tree.getiterator(tag):
+                # elem.attrib size may change during the loop
+                attributes = dict(elem.attrib)
+                for attr in attributes:
+                    if attr in self.handlers2[tag]:
+                        do_it = True
+                        if attr in self.handlers3[tag]:
+                            keyword = self.extract_keyword(elem, attr)
+                            if keyword in self.handlers3[tag][attr]:
+                                do_it = False
+                        if do_it:
+                            uid = self.pageid + ":" + uidgen()
+                            self.handlers2[tag][attr](self, elem, uid)
         return
 
-    def read(self):
+    def process_type1(self, handlers):  # tested
+        '''
+        For all registered "tags" of "type 1", this method
+        processes:  tag -> handler function
+        as long as more specific instructions of either
+        "type 2" : (tag, attribute) -> handler function, or
+        "type 3" : (tag, attribute, keyword) -> handler function
+        have not been defined.
+        '''
+        for tag in handlers:
+            for elem in self.tree.getiterator(tag):
+                do_it = True
+                if tag in self.handlers2:  # may need to skip
+                    for attr in elem.attrib:
+                        if attr in self.handlers2[tag]:
+                            do_it = False
+                            break
+                if tag in self.handlers3:  # may need to skip
+                    for attr in elem.attrib:
+                        if attr in self.handlers3[tag]:
+                            keyword = self.extract_keyword(elem, attr)
+                            if keyword in self.handlers3[tag][attr]:
+                                do_it = False
+                                break
+                if do_it:
+                    uid = self.pageid + ":" + uidgen()
+                    handlers[tag](self, elem, uid)
+        return
+
+    def process_final_handlers1(self):  # tested
+        self.process_type1(self.final_handlers1)
+
+    def process_handlers1(self):  # tested
+        self.process_type1(self.handlers1)
+
+    def read(self):  # tested
         '''create fake file from a tree, adding DTD and charset information
            and return its value as a string'''
         fake_file = StringIO()
@@ -258,6 +275,76 @@ class CrunchyPage(object):
         self.add_charset()
         self.tree.write(fake_file)
         return fake_file.getvalue()
+
+
+class CrunchyPage(_BasePage):
+    '''class used to store an html page processed by Crunchy with added
+       interactive elements.
+    '''
+    def __init__(self, filehandle, url, remote=False, local=False):
+        """
+        read a page, processes it and outputs a completely transformed one,
+        ready for display in browser.
+
+        url should be just a path if crunchy accesses the page locally, or
+        the full URL if it is remote.
+        """
+        _BasePage.__init__(self)
+        self.url = url
+
+        # Assign tutorial type
+        self.is_remote = remote # True if remote tutorial, on the web
+        self.is_local = local  # True if local tutorial, not from the server root
+        if not (remote or local):
+            self.is_from_root = True # if local tutorial from server root
+        else:
+            self.is_from_root = False
+
+        # Create the proper tree structure from the html file
+        self.create_tree(filehandle)  # assigns self.tree
+
+        # Removing pre-existing javascript, unwanted objects and
+        # all kinds of other potential security holes
+        remove_unwanted(self.tree, self) # from the security module
+
+        self.find_head()  # assigns self.head
+        self.find_body()  # assigns self.body
+
+        # Crunchy's main work: processing vlam instructions, etc.
+        self.process_tags()
+
+        # adding the javascript for communication between the browser and the server
+        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
+        self.add_js_code(comet_js)
+
+        # Extra styling
+        self.add_crunchy_style() # first Crunchy's style
+        self.add_user_style()    # user's preferences can override Crunchy's
+        return
+
+    def process_tags(self):
+        """process all the customised tags in the page"""
+
+        for handler in CrunchyPage.begin_pagehandlers:
+            handler(self)
+
+        # Since handlers of type 2 or 3 can, in principle, add elements (tags)
+        # with no vlam, and since such elements could be processed by
+        # handlers of type 1, we must make sure we process the type 1
+        # elements before type 2, and finish with type 3.
+        self.process_handlers1()
+        self.process_handlers2()
+        self.process_handlers3()
+
+        # An exception to the above is the case of handling the "no markup"
+        # where we add interactive elements when no vlam was present -
+        # for example, to transform the official Python tutorial into
+        # an interactive session.
+        self.process_final_handlers1()
+
+        for handler in CrunchyPage.end_pagehandlers:
+            handler(self)
+        return
 
 comet_js = """
 function runOutput(channel){

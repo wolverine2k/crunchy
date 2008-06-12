@@ -1,19 +1,22 @@
 dhtml.py tests
-================================
-
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+================
 
 dhtml.py is a module which is meant to be imported by a Crunchy user
 to add elements (such as images) dynamically on an html page.
 It has the following elements that require testing:
 
-1. _Tree class
-2. append() & remove()  # we need to test them together
-3. image() - a special case of append()
+#. `\_Tree class`_
+#. `\_Tree.append_child()`_
+#. `\_Tree.remove_child()`_
+#. `\_Tree.remove_all_children()`_
+#. `\_Tree.delete()`_
+#. `append() and remove()`_  # we need to test them together
+#. `image()`_ - a special case of append()
+#. `_js_append_html()`_
+#. `_js_remove_html()`_
 
-
-0. Setting things up
---------------------
+Setting things up
+------------------
 
 See how_to.rst_ for details.
 
@@ -45,9 +48,17 @@ See how_to.rst_ for details.
     >>> config['temp_dir'] = os.path.expanduser('~') # only for tests
     >>> import src.imports.dhtml as dhtml
 
+.. _\_Tree class:
 
-1. Testing the _Tree class
---------------------------
+Testing the _Tree class
+------------------------
+
+The _Tree class has the following methods:
+
+- append_child()
+- remove_child()
+- remove_all_children()
+- delete()
 
 Let us create a Tree with the following structure::
 
@@ -84,6 +95,11 @@ Afterwards, we will manipulate this tree to remove elements.
     ...    ids.append(child.label)
     >>> ids
     [1, 2, 9, 10]
+
+.. _\_Tree.remove_child():
+
+Testing remove_child().
+
     >>> root.remove_child(c9)
     >>> ids = []
     >>> for child in root.children:
@@ -101,14 +117,26 @@ Afterwards, we will manipulate this tree to remove elements.
     >>> all_labels = list(dhtml._nodes.keys())
     >>> all_labels
     [0, 1, 2, 3, 7, 8, 10]
+
+
+.. _\_Tree.remove_all_children():
+
+Testing remove_all_children().
+
     >>> root.remove_all_children()
     >>> root.children
     []
     >>> root.deletedlabels
     [(9, 0), (1, 0), (5, 4), (6, 4), (4, 2), (3, 2), (8, 7), (7, 2), (2, 0), (10, 0)]
     
-    
-2. Testing append() and remove()
+.. _append() and remove():
+
+.. _\_Tree.append_child():
+.. _\_Tree.delete():
+
+Unit tests for \_Tree.append() and \_Tree.delete() are to be done.
+
+Testing append() and remove()
 --------------------------------
     
     >>> dhtml._nodes = {}  # start from fresh
@@ -130,12 +158,26 @@ Afterwards, we will manipulate this tree to remove elements.
     >>> dhtml._nodes['div_42'].deletedlabels # cleared internally
     []
 
-3. Testing image()
+.. _image():
+
+Testing image()
 ------------------
 
 Try creating an image with default values.
     >>> dhtml.image('foo.png') # doctest:+ELLIPSIS
     ['div_42', 'img', ('id', 'dhtml_42_')]
     [('dhtml_42_', 'width', '400'), ('dhtml_42_', 'src', 'foo.png...'), ('dhtml_42_', 'height', '400')]
-    
 
+.. _\_js_append_html():
+
+Testing \_js_append_html()
+--------------------------
+
+to do.
+
+.. _\_js_remove_html():
+
+Testing \_js_remove_html()
+--------------------------
+
+to do.

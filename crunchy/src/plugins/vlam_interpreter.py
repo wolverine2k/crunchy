@@ -31,14 +31,15 @@ def register():
     # <pre title='interpreter ...'>
     plugin['register_tag_handler']("pre", "title", "interpreter", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "isolated", insert_interpreter)
-    # just for fun, we define these; they are case-sensitive.
     plugin['register_tag_handler']("pre", "title", "Borg", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "parrot", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "Parrots", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "TypeInfoConsole", insert_interpreter)
     plugin['register_tag_handler']("pre", "title", "python_tutorial", insert_interpreter)
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
+    # Guess what this is equivalent to:
+    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
+#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out,
+#  keeping it in as a reference.
 ##    plugin['register_tag_handler']("pre", "title", "ipython", insert_interpreter)
 
 def insert_interpreter(page, elem, uid):
@@ -81,9 +82,12 @@ def insert_interpreter(page, elem, uid):
         elem.attrib["id"] = "div_"+uid
         elem.attrib['class'] = "interpreter"
     code += "\n"
-    if not "no-pre" in vlam:
+    if not "no_pre" in vlam:
         try:
-            elem.insert(0, markup)
+            new_div = Element("div")
+            new_div.append(markup)
+            new_div.attrib['class'] = 'sample_python_code'
+            elem.insert(0, new_div)
         except AssertionError:
             elem.insert(0, Element("br"))
             bold = Element("b")
@@ -148,12 +152,12 @@ def include_interpreter(interp_kind, page, uid):
     Parrots_js = parrots_javascript(prefix, page)
     TypeInfoConsole_js = type_info_javascript(prefix, page)
     # first we need to make sure that the required javacript code is in the page:
-    if interp_kind == "borg":
+    if interp_kind == "borg" or interp_kind == "interpreter":
         if not page.includes("BorgInterpreter_included"):
             page.add_include("BorgInterpreter_included")
             page.add_js_code(BorgInterpreter_js)
         page.add_js_code('init_BorgInterpreter("%s");' % uid)
-    elif interp_kind == "isolated":
+    elif interp_kind == "isolated" or interp_kind == "Human":
         if not page.includes("SingleInterpreter_included"):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)

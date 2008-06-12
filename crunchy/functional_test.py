@@ -21,6 +21,11 @@ from selenium import selenium
 # 3. Note that it has been observed that some unexpected failing tests occur
 #    when the server has been running for too long.
 
+def go_home():
+    '''Loads the Crunchy home page 
+       (and waits until it has loaded before returning).'''
+    selenium_server.open("/")
+    
 def click_link_and_wait(clickable):
     '''clicks on a series of link, waiting for an appropriate time for a
        page to load before continuing.'''
@@ -45,8 +50,10 @@ class DoctestTest(unittest.TestCase):
         what is expected'''
         self.verificationErrors = []
         # go to relevant page and store some initial values
-        click_link_and_wait(["//img[@alt='Home']", "link=Tests",
-                             "link=Doctest"])
+        go_home()
+        click_link_and_wait(["link=Tests",  # the main tests page
+                             "link=Doctest" # the doctests page
+                             ])
 
         # first run; execute the doctest with no user code
         selenium_server.click("xpath=//div[3]/button") # execute button
@@ -91,7 +98,8 @@ class InterpreterTest(unittest.TestCase):
         what is expected'''
         self.verificationErrors = []
         # go to relevant page and store some initial values
-        click_link_and_wait(["//img[@alt='Home']", "link=Tests",
+        go_home()
+        click_link_and_wait(["link=Tests",
                              "link=Interpreter"])
 
         # Store some information about text initially on the page.
@@ -186,19 +194,28 @@ class LeftMenuLinkTest(unittest.TestCase):
         '''tests all the links on the left hand side of the index page,
         coming back to that page each time.'''
         self.verificationErrors = []
-        click_link_and_wait([
-            "//img[@alt='Home']", "link=Begin tutorial",
-            "//img[@alt='Home']", "link=Interpreter",
-            "//img[@alt='Home']", "link=Editor",
-            "//img[@alt='Home']", "link=DocTest",
-            "//img[@alt='Home']", "link=Graphics",
-            "//img[@alt='Home']", "link=Image files",
-            "//img[@alt='Home']", "link=External applications",
-            "//img[@alt='Home']", "link=Browsing",
-            "//img[@alt='Home']", "link=Configuring Crunchy",
-            "//img[@alt='Home']", "link=FAQ, bugs, etc.",
-            "//img[@alt='Home']", "link=Writing tutorials",
-            "//img[@alt='Home']"])
+        go_home()
+        click_link_and_wait(["link=Begin Tutorial"])
+        go_home()
+        click_link_and_wait(["link=Interpreter"])
+        go_home()
+        click_link_and_wait(["link=Editor"])
+        go_home()
+        click_link_and_wait(["link=DocTest"])
+        go_home()
+        click_link_and_wait(["link=Graphics"])
+        go_home()
+        click_link_and_wait(["link=Image files"])
+        go_home()
+        click_link_and_wait(["link=External applications"])
+        go_home()
+        click_link_and_wait(["link=Browsing"])
+        go_home()
+        click_link_and_wait(["link=Configuring Crunchy"])
+        go_home()
+        click_link_and_wait(["link=FAQ, bugs, etc."])
+        go_home()
+        click_link_and_wait(["link=Writing tutorials"])
 
     def tearDown(self):
         '''final verification'''

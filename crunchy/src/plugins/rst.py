@@ -89,8 +89,8 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments:
-                if arg.strip() not in ['no_style', 'no-copy', 'no-pre',
-                                       'external', 'no-internal']:
+                if arg.strip() not in ['no_style', 'no_copy', 'no_pre',
+                                       'external', 'no_internal']:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['editor'] + self.arguments ]
             for key in [ "linenumber", "log_id" ]:
@@ -130,7 +130,7 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments[1:]:
-                if arg.strip() not in [ 'no_style', 'no-copy', 'no-pre' ]:
+                if arg.strip() not in [ 'no_style', 'no_copy', 'no_pre' ]:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
             if self.options.has_key("linenumber"):
@@ -164,8 +164,8 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments:
-                if arg.strip() not in ['no_style', 'no-copy', 'no-pre',
-                                       'external', 'no-internal']:
+                if arg.strip() not in ['no_style', 'no_copy', 'no_pre',
+                                       'external', 'no_internal']:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
             if self.options.has_key("linenumber"):
@@ -182,7 +182,7 @@ if _docutils_installed:
         def run(self):
             self.assert_has_content()
             code = linesep.join(self.content)
-            listOut = ['no-vlam']
+            listOut = ['no_vlam']
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
 
@@ -195,7 +195,7 @@ if _docutils_installed:
         'python_code' : PythonCodeDirective,
         'alternate_python_version' : AltPythonVersionDirective,
         'alt_py' : AltPythonVersionDirective,
-        'no-vlam' : NoVLAMDirective
+        'no_vlam' : NoVLAMDirective
         }
 
     def visit_pre(translator, node):

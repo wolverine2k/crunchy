@@ -1,18 +1,20 @@
 vlam_editor.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 vlam_editor.py is a plugin whose purpose is to insert an editor in a page (calling
 editarea.py for some functions in doing so).  It has the following functions
 that require testing:
 
-1. register(): registers a service available to other plugins.
-2. insert_editor_subwidget()
-3. insert_editor()
+#. `register()`_
+#. kill_thread_handler()
+#. `insert_editor_subwidget()`_
+#. `insert_editor()`_
+#. insert_alternate_python()
+#. _test_sanitize_for_ElementTree()
+#. insert_markup()
 
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -34,7 +36,9 @@ See how_to.rst_ for details.
   ...     return site_security[url]
   >>> config['page_security_level'] = get_security_level
 
-1.)  Test (Register)
+.. _`register()`:
+
+Testing register()
 ------------------------------------
 
 # Test - check that tag handler, and service have been registered
@@ -51,8 +55,9 @@ See how_to.rst_ for details.
   >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
   True
 
+.. _`insert_editor_subwidget()`:
 
-2.)  Test (insert_editor_subwidget)
+Testing insert_editor_subwidget()
 ------------------------------------
 
 First, we need to fake some services that are expected by insert_editor_subwidget
@@ -217,9 +222,9 @@ Create also a fake configuration variable.
   >>> elem[2][5].attrib == {'onclick': "a=getElementById('pathhidden_savecode_2');b=getElementById('filenamehidden_savecode_2');a.value=b.value;c=getElementById('pathhidden_savecode_2');path=c.value;save_and_run(path,'code_2');"}
   True
 
+.. _`insert_editor()`:
 
-
-3.)  Test (insert_editor)
+Testing  insert_editor()
 ------------------------------------
 
 #  Create Objects needed
@@ -231,7 +236,7 @@ Create also a fake configuration variable.
 Set object attributes for an untrusted page
 
   >>> page.url = "display_only_url"
-  >>> elem.attrib = {'title': 'no-pre'}
+  >>> elem.attrib = {'title': 'no_pre'}
 
 Run the Function
 
@@ -247,7 +252,7 @@ included this time.
 
   >>> page.url = "trusted_url"
   >>> page.added_info = []
-  >>> elem.attrib = {'title': 'no-pre'}
+  >>> elem.attrib = {'title': 'no_pre'}
 
 #  Run the Function
 
@@ -263,7 +268,7 @@ included this time.
 
   >>> elem.tag == "div"
   True
-  >>> elem.attrib == {'class': 'crunchy', 'id': 'div_2'}
+  >>> elem.attrib == {'class': 'editor', 'id': 'div_2'}
   True
 
 # Test - br

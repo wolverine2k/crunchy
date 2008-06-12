@@ -18,7 +18,7 @@ def register():
        """
     plugin['register_tag_handler']("body", None, None, insert_browser)
 
-def insert_browser(page, body):
+def insert_browser(page, body, *dummy):
     '''Inserts a default file/url browser at the top of a page'''
     span = Element("span")
     span.text = ' '

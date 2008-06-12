@@ -12,7 +12,7 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring
+from src.interface import config, plugin, Element, SubElement, tostring
 from src.utilities import extract_log_id
 
 # The set of other "widgets/services" required from other plugins
@@ -89,7 +89,18 @@ def doctest_widget_callback(page, elem, uid):
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "doctest"
     # We insert the styled doctest code inside this container element:
-    elem.insert(0, markup)
+    try:
+        new_div = Element("div")
+        new_div.append(markup)
+        new_div.attrib['class'] = 'sample_python_code'
+        elem.insert(0, new_div)
+    except AssertionError:  # this should never happen
+        elem.insert(0, Element("br"))
+        bold = Element("b")
+        span = Element("span")
+        span.text = "AssertionError from ElementTree"
+        bold.append(span)
+        elem.insert(1, bold)
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid)
     #some spacing:
@@ -107,6 +118,7 @@ def doctest_widget_callback(page, elem, uid):
 # random session id.
 doctest_jscode = """
 function exec_doctest(uid){
+    document.getElementById("kill_image_"+uid).style.display = "block";
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/doctest%s?uid="+uid, false);

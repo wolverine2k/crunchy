@@ -119,7 +119,7 @@ def load_file_request_handler(request):
     request.wfile.write(content)
     request.wfile.flush()
 
-def save_file(full_path, content):
+def save_file(full_path, content):  # tested
     """saves a file
     """
     if DEBUG:
@@ -137,7 +137,7 @@ def save_file(full_path, content):
     if DEBUG:
         print("Leaving save_file")
 
-def read_file(full_path):
+def read_file(full_path):  # tested
     """reads a file
     """
     if DEBUG:

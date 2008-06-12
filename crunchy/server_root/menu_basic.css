@@ -1,14 +1,12 @@
 .crunchy_menu_container
 {
-height: 56px;
+height: 25px;
 position:fixed;
-/* right: 0;  set in menu.py */
 top: 0;
+right: 0;
+width: 100px;
 z-index: 10;
 border: 2px solid #FFBC29;
-/* make a visible top bar, giving a target to drag */
-border-top: 10px solid #369;
-cursor: move;
 margin: 0;
 padding: 0;
 }
@@ -50,15 +48,16 @@ margin: 0;
 .crunchy_menu_container ul li a
 {
 background: #fff;
-width: 149px;
-height: 54px;
+width: 100px;
+height: 22px;
 border: 2px solid #FFBC29;
 padding: 0;
 color: #369;
 text-decoration: none;
 display: block;
 text-align: center;
-font: 50px sans-serif;
+font: 14pt sans-serif;
+margin: 0;
 }
 
 .crunchy_menu_container ul li a img

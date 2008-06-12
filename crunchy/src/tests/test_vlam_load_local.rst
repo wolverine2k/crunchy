@@ -1,16 +1,15 @@
 vlam_load_local.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 vlam_load_local.py is a plugin whose purpose is to create a form
 allowing a user to browse for a local tutorial to be loaded by Crunchy.
 
 It contains two methods that need to be tested:
-1. register()
-2. insert_load_local()
 
-0. Setting things up
+#. `register()`_
+#. `insert_load_local()`_
+
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -23,8 +22,9 @@ See how_to.rst_ for details.
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
 
+.. _`register()`:
 
-1. Testing register()
+Testing register()
 ---------------------
 
 # Test - check that tag handler, and service have been registered
@@ -32,7 +32,9 @@ See how_to.rst_ for details.
     >>> print(mocks.registered_tag_handler['span']['title']['load_local'] == vlam_load_local.insert_load_local)
     True
 
-2. Testing insert_load_local()
+.. _`insert_load_local()`:
+
+Testing insert_load_local()
 ------------------------------
 
 This method inserts two forms inside a <span> element.

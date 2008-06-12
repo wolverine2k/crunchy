@@ -1,5 +1,5 @@
 '''
-security.py
+security.py: unit tests in test_security.rst
 
 Javascript code is normally executed in a web-browser "sandbox", preventing
 access to the user's computer.  Crunchy creates a link between the browser and
@@ -14,7 +14,6 @@ caused by insertion of malicious javascript code within a web page.
 
 # Note: a 2nd layer of security is implemented through a random session
 # id generated in CrunchyPlugin.py
-import imp
 import os
 import imghdr
 import urllib
@@ -26,7 +25,7 @@ from src.interface import python_version, config, ElementTree
 DEBUG = False
 DEBUG2 = False
 # the root of the server is in a separate directory:
-root_path = os.path.join(os.path.dirname(imp.find_module("crunchy")[1]), "server_root/")
+root_path = os.path.join(config['crunchy_base_dir'], "server_root/")
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -104,7 +103,7 @@ specific_allowed = {
     'head': [],
     'html': ['xmlns', 'xml:lang'],
     'link': ['charset', 'href', 'hreflang', 'media', 'rel', 'rev', 'type'],
-    'meta': ['content', 'name'], #  'http-equiv' can be a potential problem
+    'meta': ['http-equiv', 'content', 'name'], #  'http-equiv' can be a potential problem
     'title': [],
 
 # text structure
@@ -212,40 +211,25 @@ allowed_attributes = {}
 # - normal
 normal = {}
 for key in specific_allowed:
-    normal[key] = []
+    normal[key] = ['title']  # always allow title
     for item in specific_allowed[key]:
         normal[key].append(item)
     if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
             'style', 'title']:
-        for item in ['class', 'id', 'style', 'title', 'xml:id']:
+        for item in ['class', 'id', 'style', 'xml:id']:
             # harmless xml:id added for Python tutorial
             normal[key].append(item)
     if key not in ['br', 'hr']:
         for item in ['dir', 'lang']:
             normal[key].append(item)
-normal['meta'].append('title')
 
 allowed_attributes['normal'] = normal
 allowed_attributes['display normal'] = normal
 
-# - trusted
-trusted = {}
-for key in specific_allowed:
-    trusted[key] = []
-    for item in specific_allowed[key]:
-        trusted[key].append(item)
-    if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
-            'style', 'title']:
-        for item in ['class', 'id', 'style', 'title', 'xml:id']:
-            # harmless xml:id added for Python tutorial
-            trusted[key].append(item)
-    if key not in ['br', 'hr']:
-        for item in ['dir', 'lang']:
-            trusted[key].append(item)
-trusted['meta'].append('title')
-
-allowed_attributes['trusted'] = trusted
-allowed_attributes['display trusted'] = trusted
+# - trusted only differs from normal by the validation of some
+# links, images, etc.  The allowed content is the same.
+allowed_attributes['trusted'] = normal
+allowed_attributes['display trusted'] = normal
 
 # - strict -
 strict = {}
@@ -254,7 +238,7 @@ for key in specific_allowed:
         strict[key] = ['title']  # only harmless vlam-specific attribute
 
 strict['a'] = ['href', 'id', 'title'] # only items required for navigation
-strict['meta'] = ['title', 'name']  # needed for appending path to sys.path
+strict['meta'] = ['title', 'name']  # name needed for appending path to sys.path
 
 allowed_attributes['strict'] = strict
 allowed_attributes['display strict'] = strict
@@ -282,7 +266,7 @@ __dangerous_text = ''
 good_images = set()
 bad_images = set()
 
-def remove_unwanted(tree, page):
+def remove_unwanted(tree, page):  # partially tested
     '''Removes unwanted tags and or attributes from a "tree" created by
     ElementTree from an html page.'''
     global __dangerous_text
@@ -338,6 +322,14 @@ def remove_unwanted(tree, page):
                         element.tag = None
                         page.security_info['number removed'] += 1
                         continue
+            if tag == "meta":
+                for attr in list(element.attrib.items()):
+                    if (attr[0].lower() == 'http-equiv' and
+                        attr[1].lower() != 'content-type'):
+                        page.security_info['attributes removed'].append(
+                                                [tag, attr[0], attr[1]])
+                        del element.attrib[attr[0]]
+                        page.security_info['number removed'] += 1
             for attr in list(element.attrib.items()):
                 if attr[0].lower() not in _allowed[tag]:
                     if DEBUG:
@@ -368,8 +360,9 @@ def remove_unwanted(tree, page):
                                                 [tag, attr[0], attr[1]])
                                 del element.attrib[attr[0]]
                                 page.security_info['number removed'] += 1
-            # Filtering for possible dangerous content in "styles..."
-            if tag == 'style':
+            # Filtering for possible dangerous content in "styles...", but
+            # skipping over empty <style/> element.
+            if tag == 'style' and element.text is not None:
                 if not 'trusted' in security_level:
                     text = element.text.lower().replace(' ', '').replace('\t', '')
                     for x in dangerous_strings:
@@ -406,6 +399,7 @@ def remove_unwanted(tree, page):
                     element.clear()
                     element.tag = None
                     _rem = True
+                    src = 'No src attribute included.'
                 if _rem:
                     page.security_info['number removed'] += 1
                     page.security_info['attributes removed'].append(
@@ -415,7 +409,7 @@ def remove_unwanted(tree, page):
     if DEBUG:
         print("These unwanted attributes have been removed:")
         print(unwanted)
-    return tree
+    return
 
 def __cleanup(elem, filter):
     ''' See http://effbot.org/zone/element-bits-and-pieces.htm'''

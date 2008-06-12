@@ -1,19 +1,17 @@
 editarea.py tests
 ==================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 editarea.py is a plugin whose purpose is to insert the appropriate code in 
 a page to enable the javascript based editor "editarea".  It has the following functions
 that require testing:
 
-1. register(): registers a service available to other plugins.
-2. enable_editarea(): enables an editarea editor on a given element (textarea) of a page.
-3. add_hidden_load_and_save(): inserts the appropriate html/javascript code required to
+#. `register()`_: registers a service available to other plugins.
+#. `enable_editarea()`_: enables an editarea editor on a given element (textarea) of a page.
+#. `add_hidden_load_and_save()`_: inserts the appropriate html/javascript code required to
    load and save (Python) files.
-4. addLoadPython(): Inserts the two forms required to browse for and load a local Python
+#. `addLoadPython()`_: Inserts the two forms required to browse for and load a local Python
    file.
-5. addSavePython(): Inserts the two forms required to browse for and load a local Python
+#. `addSavePython()`_: Inserts the two forms required to browse for and load a local Python
    file.
 
 Since enable_editarea() calls add_hidden_load_and_save() which, in turns, calls the
@@ -25,7 +23,7 @@ with various attributes.  As a result, the tests that need to be performed are
 rather simplistic and tedious.  They also have been written "after the fact" since
 the real test for developing the code was in looking at the UI that was generated.
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -41,15 +39,18 @@ See how_to.rst_ for details.
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
 
+.. _`register()`:
 
-1. Testing register()
+Testing register()
 ---------------------
 
    >>> editarea.register()
    >>> print(mocks.registered_services['enable_editarea'] == editarea.enable_editarea)
    True
 
-5. Testing addSavePython():
+.. _`addSavePython()`:
+
+Testing addSavePython():
 ---------------------------
 
 We start by creating an Element which will be manipulated by the function we wish to test.
@@ -126,7 +127,9 @@ The second form has also one 'input' as a sub-element.
 This second form has also 3 buttons which we have found previously.
 Some explicit test for their content will need to be added.
 
-4. Testing addLoadPython():
+.. _`addLoadPython()`:
+
+Testing addLoadPython():
 ---------------------------
 
 Testing addLoadPython() is very similar to testing addSavePython().
@@ -207,7 +210,9 @@ The second form has also one 'input' as a sub-element.
 This second form has also 2 buttons which we have found previously.
 Some explicit test for their content will need to be added.
 
-3. Testing add_hidden_load_and_save():
+.. _`add_hidden_load_and_save()`:
+
+Testing add_hidden_load_and_save():
 --------------------------------------
 
 This is actually a bit simpler to test than the previous two as the function is shorter.
@@ -270,8 +275,9 @@ We then check for the explicit content
     >>> divs[1].attrib['class'] == 'save_python'
     True
 
+.. _`enable_editarea()`:
 
-2. enable_editarea():
+enable_editarea():
 ---------------------
 
 Now that we have unit test for all of the functions that are called by enable_editarea(),

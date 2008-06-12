@@ -22,7 +22,7 @@ provides = set(["editor_widget"])
 requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
                "editarea"])
 
-def register():
+def register():  # tested
     """The register() function is required for all plugins.
        In this case, we need to register two types of 'actions':
        1. a custom 'vlam handler' designed to tell Crunchy how to
@@ -45,7 +45,12 @@ def register():
     plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
                                                         _test_sanitize_for_ElementTree)
 
-def insert_editor_subwidget(page, elem, uid, code="\n"):
+
+def kill_thread_handler(request):
+    """Kills the thread associated with uid"""
+    plugin['kill_thread'](request.args["uid"])
+
+def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
     """
@@ -59,7 +64,7 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):
     inp.text = code
     plugin['services'].enable_editarea(page, elem, editor_id)
 
-def insert_editor(page, elem, uid):
+def insert_editor(page, elem, uid):  # tested
     """handles the editor widget"""
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)
@@ -89,11 +94,11 @@ def insert_editor(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     #some spacing if buttons are needed, they appear below.
-    if "external in vlam" or not "no-internal" in vlam:
+    if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
     # button for external execution, if required, appear first.
@@ -116,7 +121,7 @@ def insert_editor(page, elem, uid):
             t = 'run_external_editor'
             config['logging_uids'][uid] = (log_id, t)
         path_label.attrib['class'] = 'path_info'
-        if not "no-internal" in vlam:
+        if not "no_internal" in vlam:
             SubElement(elem, "br")
             btn2 = SubElement(elem, "button")
             btn2.attrib["onclick"] = "exec_code('%s')" % uid
@@ -125,6 +130,7 @@ def insert_editor(page, elem, uid):
         path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
+
     # leaving some space to start output on next line, below last button
     SubElement(elem, "br")
     # an output subwidget:
@@ -149,7 +155,7 @@ def insert_alternate_python(page, elem, uid):
 
     insert_markup(elem, uid, vlam, markup)
 
-    if (("no-copy" in vlam) and not ("no-pre" in vlam)) or (not code):
+    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
 
@@ -218,9 +224,12 @@ def insert_markup(elem, uid, vlam, markup):
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
     elem.attrib['class'] = "editor"
-    if not "no-pre" in vlam:
+    if not "no_pre" in vlam:
         try:
-            elem.insert(0, markup)
+            new_div = Element("div")
+            new_div.append(markup)
+            new_div.attrib['class'] = 'sample_python_code'
+            elem.insert(0, new_div)
         except AssertionError:  # this should never happen
             elem.insert(0, Element("br"))
             bold = Element("b")
@@ -235,6 +244,7 @@ def insert_markup(elem, uid, vlam, markup):
 # with a random session id appended for security reasons.
 exec_jscode = """
 function exec_code(uid){
+    document.getElementById("kill_image_"+uid).style.display = "block";
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
@@ -264,5 +274,6 @@ function exec_code_externally_python_interpreter(uid){
     inp = document.getElementById("input1_"+uid).value;
     j.send(inp+"_::EOF::_"+path+"_::EOF::_"+code);
 };
+
 """ % (plugin['session_random_id'], plugin['session_random_id'],
        plugin['session_random_id'])

@@ -10,12 +10,12 @@ from src.interface import config, plugin
 
 provides = set(["/local", "/generated_image"])
 
-def register():
+def register():  # tested
     plugin['register_http_handler']("/local", local_loader)
     plugin['register_http_handler']("/generated_image", image_loader)
     plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
 
-def local_loader(request):
+def local_loader(request):  # tested
     '''loads a local file;
     if it determines that it is an html file (based on the extension), it
     creates a new vlam page from it and, if not already present, adds the
@@ -40,7 +40,7 @@ def local_loader(request):
     # this interferes with unit tests
     __irrelevant = request.wfile.write(page.read())
 
-def image_loader(request):
+def image_loader(request):  # tested
     url = unquote_plus(request.args["url"])
     fname = os.path.join(config['temp_dir'], url)
     page = open(fname, 'rb')
@@ -50,7 +50,7 @@ def image_loader(request):
     # this interferes with unit tests
     __irrelevant = request.wfile.write(page.read())
 
-def add_to_path(page, elem, *dummy):
+def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''
     base_url, fname = os.path.split(page.url)
     try:
