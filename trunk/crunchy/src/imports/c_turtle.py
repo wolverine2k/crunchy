@@ -20,7 +20,7 @@ import math as _math
 
 class CTurtle(object):
 
-    def __init__(self, x=0, y=0, angle=0, visible=True):
+    def __init__(self, x=0, y=0, angle=0, visible=True): # tested indirectly
         self._x = x
         self._y = y
         self._angle = angle
@@ -31,14 +31,14 @@ class CTurtle(object):
         self._line_width = 1.0
         return
 
-    def home(self):
+    def home(self):  # tested
         """resets the position to (0, 0) and orientation (angle) to 0.
         """
         self._angle = 0.0
         self._x = 0.0
         self._y = 0.0
 
-    def degrees(self, fullcircle=360.0):
+    def degrees(self, fullcircle=360.0):  # tested
         """ Set angle measurement units to degrees.
         """
         # Don't try to change _angle if it is 0, because
@@ -48,67 +48,67 @@ class CTurtle(object):
         self._fullcircle = fullcircle
         self._invradian = _math.pi / (fullcircle * 0.5)
 
-    def radians(self):
+    def radians(self):  # tested
         """ Set the angle measurement units to radians.
         """
         self.degrees(2.0*_math.pi)
 
-    def default_colors(self):
+    def default_colors(self):  # tested indirectly
         """sets the default line color and fill color"""
         self._line_color = 'black'
         self._fill_color = 'white'
         self._background_color = 'white'
-    
-    def width(self, number):
+
+    def width(self, number):  # tested
         """set the pen width"""
         self._line_width = number
 
-    def visible(self, choice):
+    def visible(self, choice):  # tested
         """determine if the turtle is going to be drawn or not"""
         if choice in [True, False]:
             self._visible = choice
         else:
             self._visible = True
 
-    def left(self, angle):
+    def left(self, angle):  # tested
         """ Turn left angle units (units are by default degrees,
         but can be set via the degrees() and radians() functions.)
         """
         self._angle = (self._angle + angle) % self._fullcircle
 
-    def right(self, angle):
+    def right(self, angle):  # tested
         """ Turn right angle units (units are by default degrees,
         but can be set via the degrees() and radians() functions.)
         """
         self.left(-angle)
 
-    def goto(self, x, y):
+    def goto(self, x, y):  # tested
         '''goto or setposition or setpos: moves turtle to specified coordinates,
         without changing its orientation'''
         self._x, self._y = x, y
     setpos = goto
     setposition = goto
 
-    def forward(self, len):
+    def forward(self, len):  # tested
         '''forward or fd: sends turtle forward'''
         delta_x = len * _math.cos(_math.radians(self._angle))
         delta_y = len * _math.sin(_math.radians(self._angle))
         self.goto(self._x + delta_x, self._y + delta_y)
     fd = forward
-    
-    def backward(self, len):
+
+    def backward(self, len):  # tested
         '''backward or backw or bk:
            sends turtle backward, keeping same orientation'''
         self.forward(-len)
     back = backward
     bk = backward
 
-    def heading(self):
+    def heading(self):  # tested
         """ Return the turtle's current heading.
         """
         return self._angle
 
-    def setheading(self, angle):
+    def setheading(self, angle):  # tested
         """ Set the turtle facing the given angle.
 
         Here are some common directions in degrees:
@@ -119,20 +119,20 @@ class CTurtle(object):
         """
         self._angle = angle
 
-    def setx(self, xpos):
+    def setx(self, xpos):  # tested
         """ Set the turtle's x coordinate to be xpos."""
         self.goto(xpos, self._y)
 
-    def sety(self, ypos):
+    def sety(self, ypos):  # tested
         """ Set the turtle's y coordinate to be ypos."""
         self.goto(self._x, ypos)
 
-    def position(self):
+    def position(self):  # tested
         """ Return the current [x, y] location of the turtle as a list
         """
         return [self._x, self._y]
 
-    def towards(self, *args):
+    def towards(self, *args):  # tested
         """Returs the angle, which corresponds to the line
         from turtle-position to point (x,y).
 
@@ -151,9 +151,9 @@ class CTurtle(object):
         dy = y - self._y
         return (_math.atan2(dy,dx) / self._invradian) % self._fullcircle
 
-    def penup(self):
+    def penup(self):  # tested
         """penup or pen_up or pu or up:
-           
+
            pull the pen up -- no drawing when moving.
         """
         if not self._drawing:
@@ -163,9 +163,9 @@ class CTurtle(object):
     pu = penup
     up = penup
 
-    def pendown(self):
+    def pendown(self):  # tested
         """pendown or pen_down or pd or down:
-           
+
            push the pen down -- draws when moving.
         """
         if self._drawing:
@@ -175,9 +175,9 @@ class CTurtle(object):
     pd = pendown
     down = pendown
 
-    def color(self, *args):
+    def color(self, *args):  # tested
         """ color or colour or set_line_color or set_line_colour:
-        
+
             set the pen color.
 
         Three input formats are allowed:
@@ -208,7 +208,7 @@ class CTurtle(object):
 
     def fill_color(self, *args):
         """ fill_color or fill_colour or set_fill_color or set_fill_colour:
-        
+
             set the pen (fill) color
 
         Three input formats are allowed:
@@ -263,7 +263,7 @@ class CTurtle(object):
         self._background_color = self._parse_color(*args)
         return
 
-    def _parse_color(self, *args):
+    def _parse_color(self, *args):  # tested
         """ does the parsing for color(), set_fill_colour(), background()
             and their various synonyms"""
         if not args:
@@ -303,4 +303,3 @@ class CTurtle(object):
         pass
     def speed(self, speed):
         pass
-

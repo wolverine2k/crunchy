@@ -393,30 +393,30 @@ crunchy/src/imports
     c_turtle.py
         import math as _math
         class CTurtle(object):
-            __init__(self, x=0, y=0, angle=0, visible=True)
-            home(self)
-            degrees(self, fullcircle=360.0)
-            radians(self)
-            default_colors(self)
-            width(self, number)
-            visible(self, choice)
-            left(self, angle)
-            right(self, angle)
-            goto(self, x, y)
-            forward(self, len)
-            backward(self, len)
-            heading(self)
-            setheading(self, angle)
-            setx(self, xpos)
-            sety(self, ypos)
-            position(self)
-            towards(self, *args)
-            penup(self)
-            pendown(self)
-            color(self, *args)
+            __init__(self, x=0, y=0, angle=0, visible=True) # tested indirectly
+            home(self)  # tested
+            degrees(self, fullcircle=360.0)  # tested
+            radians(self)  # tested
+            default_colors(self)  # tested indirectly
+            width(self, number)  # tested
+            visible(self, choice)  # tested
+            left(self, angle)  # tested
+            right(self, angle)  # tested
+            goto(self, x, y)  # tested
+            forward(self, len)  # tested
+            backward(self, len)  # tested
+            heading(self)  # tested
+            setheading(self, angle)  # tested
+            setx(self, xpos)  # tested
+            sety(self, ypos)  # tested
+            position(self)  # tested
+            towards(self, *args)  # tested
+            penup(self)  # tested
+            pendown(self)  # tested
+            color(self, *args)  # tested
             fill_color(self, *args)
             background(self, *args)
-            _parse_color(self, *args)
+            _parse_color(self, *args)  # tested
             begin_fill(self)
             end_fill(self)
             circle(self, radius, extent=None)
@@ -628,10 +628,17 @@ crunchy/src
     http_serve.py
         from SocketServer import ThreadingMixIn, TCPServer
         from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-        import urllib
+        import urllib,urllib2
         from traceback import format_exc
+        import base64,md5
+        import time
         from src.interface import python_version, python_minor_version
+        from src.utilities import uidgen
         import src.CrunchyPlugin as CrunchyPlugin
+        require_basic_authenticate(func)
+            wrapped(self)
+        require_digest_access_authenticate(func)
+            wrapped(self)
         class MyHTTPServer(ThreadingMixIn, HTTPServer):
             __init__(self, addr, rqh)
             register_default_handler(self, handler)
