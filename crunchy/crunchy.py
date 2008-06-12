@@ -7,6 +7,8 @@ import socket
 import urllib
 from urlparse import urlsplit
 import webbrowser
+import string
+import random
 
 import src.interface
 REQUIRED = 2.4
@@ -42,10 +44,13 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         port = find_port()
     else:
         port = find_port(start=port)
+    # Choose a couple of (login, password), and give them to http_serve
+    login, password = get_login_and_password()
+    http_serve.users[login] = password
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
     pluginloader.init_plugin_system(server)
-    base_url = 'http://' + host + ':' + str(port)
+    base_url = 'http://' + login + ':' + password + '@' + host + ':' + str(port)
     if url is None:
         url =  base_url + '/'
     else:
@@ -54,7 +59,9 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
     print('\nCrunchy Server: serving up interactive tutorials at URL ' +
-            url + '\n')
+            url)
+    print('Login: %s' % login)
+    print('Password: %s\n' % password)
     server.still_serving = True
     while server.still_serving:
         try:
@@ -175,6 +182,16 @@ def open_browser(url):
     except:
         client = webbrowser.get()
     client.open(url)
+
+def get_login_and_password():
+    """
+    Return a randomly chosen (login, password).
+    """
+    character_set = string.digits + string.letters
+    return (
+        ''.join(random.Random().sample(character_set, 12)),
+        ''.join(random.Random().sample(character_set, 12))
+    )
 
 if __name__ == "__main__":
     _url, _port = parse_options()
