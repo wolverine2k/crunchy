@@ -1,17 +1,15 @@
 handle_local.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 handle_remote.py is a plugin whose main purpose is to load remote tutorials,
 i.e. those from some external website.  
 It has the following functions that require testing:
 
-1. register(): registers a handler.
-2. remote_loader(): loads a file following a request, and sends it to the browser
+1. `register()`_
+2. `remote_loader()`_
 
 
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -25,16 +23,18 @@ See how_to.rst_ for details.
     >>> mocks.init()
     >>> import os
 
+.. _`register()`:
 
-1. Testing register()
+Testing register()
 ----------------------
 
     >>> handle_remote.register()
     >>> mocks.registered_http_handler['/remote'] == handle_remote.remote_loader
     True
 
+.. _`remote_loader()`:
 
-2. Testing remote_loader()
+Testing remote_loader()
 -------------------------
 
 We need to test loading of html files only; note that remote_loader uses

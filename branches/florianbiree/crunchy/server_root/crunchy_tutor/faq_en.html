@@ -1,27 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<!--  
-Here is a template that we an use to beautify the Crunchy main page.   
-
-Its very simple, just put your content in the content div, your navigation elements in the navbar
-div and and your header text in the titlebar div.
--->
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>Crunchy :: FAQ, Bugs, etc.</title>
 	
-	<link rel="stylesheet" href="/crunchy_newstyle.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
 </head>
 
 <body>
 
 <div id="container">
 <div id="titlebar">
-<a href="/"><img src="/crunchy-python-powered.png" /> </a><h1>FAQ, Bugs, etc.</h1>
+<a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>FAQ, Bugs, etc.</h1>
 </div>    
 
 <div id="navbar">
@@ -31,14 +24,14 @@ div and and your header text in the titlebar div.
     <a href="/crunchy_tutor/editor_en.html">Editor</a>
     <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
     <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Image files</a>
+    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
     <a href="/crunchy_tutor/external_en.html">External applications</a>
     <span class="heading">Advanced Topics</span>
     <a href="/crunchy_tutor/remote_en.html">Browsing</a>
     <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
     <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
     <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Tests</a>
+    <a href="/functional_tests">Miscellaneous</a>
 </div>
 <div id="content">
 <blockquote><i>
@@ -90,16 +83,16 @@ Unfortunately, Crunchy sometimes does not do a very good job of processing and r
 to its creator, not to us! 
 If you do find a W3C compliant page that Crunchy does not interpret properly, <em>then</em> 
 let us know.  However, be aware that there are two reasons that may cause Crunchy
-not to display a W3C compliant page properly</p>
+not to display a W3C compliant page properly:</p>
 <ul>
 <li>In its normal "paranoid" mode, Crunchy can filter out a lot of styling instructions
 that only <em>look</em> like they may open the door to some malicious javascript code.
 We make no apology for this: security trumps appearance in our books.
 </li>
-<li>Crunchy moves the body of a page down slightly so that its menu
-does not interfere with the rest of the material on the page when it is
-first loaded.  If a page contains absolutely position objects, then the relative
-positioning of certain elements may be off.</li>
+<li>There used to be a known second reason, which is no longer valid.  However,
+just in case the above explanation is not the true cause of display problems, this 
+new second <em>undisclosed</em> reason can be blamed. Just let us know if
+you encounter problems associated with it.</li>
 </ul>
 
 <a id="colours"> </a><br/>
@@ -107,8 +100,7 @@ positioning of certain elements may be off.</li>
 <p> If you are wondering, we did obtain permission from officials of the 
 Python Software Foundation (PSF)
 for adapting the official Python logo for Crunchy.  However, this work is not endorsed officially
-by the PSF and our choice of color scheme should only be seen as a sign of 
-<b><em>our</em></b> enthusiastic support of the work of the PSF - not the other way around.
+by the PSF.
 </p>
 
 
@@ -136,7 +128,7 @@ don't believe us, look at
 <a id="selenium"> </a><br/>
 <h4 >No syntax coloring in editor and weird shadow for each character.</h4>
 <p>
-A similar bug has been observed on a Mac with the selenium plugin enabled in Firefox.
+A similar bug has been observed on a Mac with the Selenium IDE plugin enabled in Firefox.
 Try disabling your Firefox plugins to see if one is causing that problem.  
 Please report any problem you find with a given Firefox plugin to us so we can add
 it to the FAQ.
@@ -163,8 +155,9 @@ If you want to be more discrete you can write to either
 <h4 >You want to use IPython with Crunchy?</h4>
 <p>
 Sorry, IPython messes things up - it inserts its tentacles everywhere and prevent the other
-intepreters from working properly.  If you have IPython installed, you can 
-<a href="/functional_tests/ipython.html">check here</a>.
+intepreters from working properly.  This was at least the case with IPython version 0.8.1.
+If you have IPython installed, you can 
+<a href="/functional_tests/ipython.html">see for yourself</a>.
 </p>
 
 <a id="secure"> </a><br/>
@@ -270,7 +263,7 @@ They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
 </p>
 
 <dl>
-<dt><img src="/paranoid.png" alt="strict" height="20" /> strict</dt>
+<dt><b>strict</b></dt>
 <dd>With the strict level (previously named <em>paranoid</em>), 
 the following html tags are not included
 in our white list: applet, basefont, base, button, form, frameset,
@@ -286,7 +279,7 @@ be used in conjunction with the <em>title</em> attribute to add a relative path 
 can be used.  If they don't contain Crunchy objects, pages displayed
 with the strict level selected are essentially the same as old-fashioned html
 text only documents.</dd>
-<dt><img src="/severe.png" alt="normal" height="20" /> normal</dt>
+<dt><b>normal</b></dt>
 <dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
 attribute.  However, we scan either the file being linked or the content 
 inside the &lt;style&gt; tag, or style attribute
@@ -299,7 +292,8 @@ and
 links already mentioned for an explanation].  We treat such content as automatically
 suspicious and remove automatically these tags entirely when such content is met.<br/>
 We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy 
-to allow a tutorial writer to design an alternate menu for Crunchy.
+to allow a tutorial writer to design an alternate menu for Crunchy; we also allow the 
+<em>http-equiv</em> only together with the value <em>content-type</em>.
 Finally, we allow the img tag; however, we pre-scan each image
 to make sure that it is indeed an image file and not some cleverly disguised javascript
 code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
@@ -307,17 +301,15 @@ a page containing many external images.  However, we normally need to verify the
 validity of a given image only once per Crunchy session.<br/>
 The normal level is currently the default level used when starting Crunchy.  
 With this level, you can browse the official Python tutorial and it will look
-just the same <small>[better, actually!]</small> as if you viewed it
+just the same <small>[better, actually! ... at least for versions prior to 2.6]</small> 
+as if you viewed it
 directly in your browser without Crunchy's help.  However, a site like python.org
 will look very different, as most styling will be removed.</dd>
-<dt><img src="/trusted.png" alt="trusted" height="20" /> trusted</dt>
+<dt><b>trusted</b></dt>
 <dd>Finally, at the trusted level, we allow the same content as with the normal level,
 except that we don't scan for suspicious styling information and assume that all images
-are safe.  Using the trusted
-level, a site like python.org will look almost as intended when viewed through
-Crunchy; the only difference comes about due to the fact that Crunchy shifts
-the page body down, to create some blank space at the top of the page
-for its menu.<br/>
+are safe.  Using the trusted level, a site like python.org will look almost identical as 
+intended when viewed through Crunchy.<br/>
 </dd>
 </dl>
 <p>In addition to the above described steps, we do the following:</p>
@@ -424,8 +416,9 @@ implemented by <b>Robert Brewer</b> using CherryPy.</li>
 was the main driving force behind the security advisor feature.</li>
 <li><b>Edin Salkovic</b> worked briefly on Crunchy during Google's Summer of Code 2007; he
 implemented the prototype for the image file plugin.</li>
-<li><b>Nic Freeman</b> did the images (blue line drawings) displayed on the right hand side
-at the top of the Crunchy tutorial pages.</li>
+<li><b>Nic Freeman</b> did the images (blue line drawings) that were displayed on the 
+right hand side at the top of the original Crunchy tutorial pages.  While we no
+longer use these images, they contributed to giving a friendly face to the original Crunchy.</li>
 <li>As part of Google's Highly Open Participation contest 2007 (currently on-going at
 the time this is written), many students contributed to Crunchy.  They are:
  <ul>

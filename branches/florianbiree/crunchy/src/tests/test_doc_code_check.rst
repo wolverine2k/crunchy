@@ -1,13 +1,27 @@
 doc_code_check.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+
+doc_code_check.py has the following methods that need to be tested:
+
+1. `register()`_
+#. `all_code_samples_check_callback()`_
+#. `doc_code_check_callback()`_
+#. `do_single_test()`_
+#. `code_setup_process()`_
+#. `code_sample_process()`_
+#. `expected_output_process()`_
+#. `insert_comprehensive_test_button()`_
+#. `run_sample()`_
+#. `compare()`_
+#. `extract_name()`_
+#. `MockPageInfo.dummy_pageid()`_
+#. `MockPageInfo.dummy_uid()`_
+#. `MockPageInfo.set()`_
+#. `MockPageInfo.restore()`_
 
 
-It contains one method that need to be tested:
-1. register()
-
-0. Setting things up
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -18,8 +32,9 @@ See how_to.rst_ for details.
    >>> plugin.clear()
    >>> import src.plugins.doc_code_check as dcc
 
+.. _`compare()`:
 
-1. Testing compare()
+Testing compare()
 --------------------
 
 compare() is a function used to compare two strings.  In order to test
@@ -48,8 +63,9 @@ it, we need to set up a few cases.
     ?                               ++++++++++++
     <BLANKLINE>
 
+.. _`run_sample()`:
 
-2. Testing run_sample()
+Testing run_sample()
 -----------------------
 
 First, we create a simple example.
@@ -68,8 +84,9 @@ A second example with no setup code.
     'Checked!'
 
 
+.. _`extract_name()`:
 
-3. Testing extract_name()
+Testing extract_name()
 -------------------------
 
     >>> s1 = "junk name=some_name1 ok"

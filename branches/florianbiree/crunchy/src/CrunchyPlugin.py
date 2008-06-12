@@ -91,10 +91,23 @@ created, that conflicts with an existing one."""%(tag, attribute, keyword))
     return
 plugin['register_tag_handler'] = register_tag_handler
 
-def register_page_handler(handler):
-    """register a callback that is called when each page is created"""
-    vlam.CrunchyPage.pagehandlers.append(handler)
-plugin['register_page_handler'] = register_page_handler
+def register_final_tag_handler(tag, handler):
+    vlam.CrunchyPage.final_handlers1[tag] = handler
+plugin['register_final_tag_handler'] = register_final_tag_handler
+
+def register_begin_pagehandler(handler):
+    """register a callback that is called when each page is created,
+       as part of the first processing steps of that page.
+    """
+    vlam.CrunchyPage.begin_pagehandlers.append(handler)
+plugin['register_begin_pagehandler'] = register_begin_pagehandler
+
+def register_end_pagehandler(handler):
+    """register a callback that is called when each page is created,
+       as part of the last processing steps of that page.
+    """
+    vlam.CrunchyPage.end_pagehandlers.append(handler)
+plugin['register_end_pagehandler'] = register_end_pagehandler
 
 def create_vlam_page(filehandle, url, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
@@ -150,3 +163,8 @@ def gen_uid():
     '''returns a unique id'''
     return vlam.uidgen()
 plugin['gen_uid'] = gen_uid
+
+def kill_thread(uid):
+    """kill a thread, given its assocated uid"""
+    cometIO.kill_thread(uid)
+plugin['kill_thread'] = kill_thread

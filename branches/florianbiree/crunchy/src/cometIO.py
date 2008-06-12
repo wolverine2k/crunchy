@@ -10,6 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
+import src.interface as interface
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -106,6 +107,12 @@ class CrunchyIOBuffer(StringBuffer):
 output_buffers = {}
 # and one StringBuffer per input widget:
 input_buffers = {}
+# and also one thread per input widget:
+threads = {}
+
+def kill_thread(uid):
+    """Kill a thread, given an associated uid"""
+    threads[uid].terminate()
 
 def comet(request):
     """An http path handler, called from the page - blocks until there is data
@@ -123,6 +130,7 @@ def comet(request):
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
     output_buffers[pageid] = CrunchyIOBuffer()
+interface.from_comet['register_new_page'] = register_new_page
 
 def write_js(pageid, jscode):
     """write some javascript to a page"""
@@ -214,7 +222,8 @@ class ThreadedBuffer(object):
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
-        output_buffers[pageid].put(reset_js % (uid, uid))
+        threads[uid] = threading.currentThread()
+        output_buffers[pageid].put(reset_js % (uid, uid, uid))
 
     def unregister_thread(self):
         """
@@ -229,7 +238,10 @@ class ThreadedBuffer(object):
         pageid = uid.split(":")[0]
         del input_buffers[uid]
         # hide the input box:
-        output_buffers[pageid].put("""document.getElementById("in_%s").style.display="none";""" % uid)
+        output_buffers[pageid].put("""
+            document.getElementById("in_%s").style.display="none";
+            document.getElementById("kill_%s").style.display="none";
+            """ % (uid,uid))
 
 
     def write(self, data):
@@ -306,6 +318,10 @@ sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
 
 reset_js = """
+try{
+document.getElementById("kill_%s").style.display="block";
+}
+catch(err){ ;}  //needed as the element may not exist.
 document.getElementById("in_%s").style.display="inline";
 document.getElementById("out_%s").innerHTML="";
 """

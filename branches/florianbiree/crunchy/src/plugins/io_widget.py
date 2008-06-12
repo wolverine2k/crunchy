@@ -1,5 +1,7 @@
 """The IO widget, handles text and graphical IO
 This is just the UI part, the communication code is defined in the core
+
+unit tests in test_io_widget.rst
 """
 
 # All plugins should import the crunchy plugin API via interface.py
@@ -9,20 +11,49 @@ _ = translate['_']
 
 provides = set(["io_widget"])
 
-def register():
+def register():   # tested
     '''register a service'''
     plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
+    # register the function for killing threads:
+    plugin['register_http_handler']("/kill_thread%s" % plugin['session_random_id'],
+                                    kill_thread_handler)
 
-def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
+def kill_thread_handler(request):
+    """Kills the thread associated with uid"""
+    plugin['kill_thread'](request.args["uid"])
+
+def insert_io_subwidget(page, elem, uid, interp_kind=None,
+                        sample_code=''):  # partially tested
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
+    # embed the io widget inside a div so that it could be floated left
+    # or right ... or whatever.
+    # insert another div below, that can have it style set to "clear:both;"
+    # so that it can work together with the floated io widget
+    # (and python code sample) to have a two-column display if desired.
+    new_div = SubElement(elem, "div")
+    clear_div = SubElement(elem, "div")
+    clear_div.attrib['class'] = "end_io_widget"
+    new_div.attrib['class'] = "io_div"
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
     if 'display' not in config['page_security_level'](page.url):
+        if config['ctypes_available']:
+            kill_link = SubElement(new_div, "a")
+            kill_link.attrib["id"] = "kill_%s" % uid
+            kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
+            kill_image = SubElement(kill_link, 'img')
+            kill_image.attrib["src"] = "/display_big.png"
+            kill_image.attrib["alt"] = "Interrupt thread"
+            kill_image.attrib["class"] = "kill_thread_image"
+            kill_image.attrib["id"] = "kill_image_%s" % uid
+            # hide them initially
+            kill_image.attrib['style'] = 'display: none;'
+            kill_link.attrib['style'] = 'display: none;'
 
         if not page.includes("io_included"):
             page.add_include("io_included")
@@ -38,12 +69,14 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
                 page.add_include("editarea_included")
                 page.add_js_code(editArea_load_and_save)
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
+        elif config['ctypes_available']:
+            kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
 
-    output = SubElement(elem, "span")
+    output = SubElement(new_div, "span")
     output.attrib["class"] = "output"
     output.attrib["id"] = "out_" + uid
     output.text = "\n"
-    span_input = SubElement(elem, "span")
+    span_input = SubElement(new_div, "span")
     inp = SubElement(span_input, "input")
     inp.attrib["id"] = "in_" + uid
     inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
@@ -55,8 +88,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None, sample_code=''):
         image = SubElement(editor_link, 'img')
         image.attrib["src"] = "/editor.png"
         image.attrib["alt"] = "copy existing code"
-        image.attrib["style"] = "border:0;padding:0;position:relative;top:12px;height:30px;"
-        code_sample = SubElement(elem, "textarea")
+        image.attrib["class"] = "interpreter_image"
+        code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
         if sample_code:
@@ -79,10 +112,21 @@ function push_keys(event, uid){
     var i = new XMLHttpRequest()
     i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
+// try-catch needed as the elements may not exist.
+try{
+document.getElementById("kill_image_"+uid).style.display="block";
+document.getElementById("kill_"+uid).style.display="block";
+}
+catch(err){ ;}
 
     return true;
 };
-""" % plugin['session_random_id']
+function kill_thread(uid){
+    var j = new XMLHttpRequest();
+    j.open("GET", "/kill_thread%s?uid="+uid, false);
+    j.send("");
+};
+""" % (plugin['session_random_id'], plugin['session_random_id'])
 
 push_input = r"""
 function push_input(uid){
@@ -92,6 +136,13 @@ function push_input(uid){
     i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
     convertFromEditor(uid);
+// try-catch needed as the elements may not exist.
+try{
+document.getElementById("kill_image_"+uid).style.display="block";
+document.getElementById("kill_"+uid).style.display="block";
+}
+catch(err){ ;}
+
     return true;
 };
 """ % plugin['session_random_id']

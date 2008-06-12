@@ -9,17 +9,20 @@ in tools_3k.py
 
 def u_print(*args):
     '''u_print is short for unicode_print
-    
+
     Encodes a series of string arguments in utf-8, concatenate them
     and prints out the resulting string.'''
     to_print = []
     for arg in args:
-        to_print.append(arg.encode("utf-8"))
+        try:
+            to_print.append(arg.encode("utf-8"))
+        except:
+            to_print.append(str(arg))
     print ''.join(to_print)
 
 def exec_code(code, local_dict, source=''):
     import src.errors as errors   # prevent premature import
-    import sys                    # 
+    import sys                    #
     try:
         exec code in local_dict
     except:

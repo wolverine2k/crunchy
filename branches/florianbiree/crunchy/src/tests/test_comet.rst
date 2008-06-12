@@ -1,15 +1,14 @@
 comet.py tests
-================================
-
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
+================
 
 comet.py is a plugin whose purpose is simply to register links
 to two services provided by cometIO.py.
 
 It contains one method that need to be tested:
-1. register()
 
-0. Setting things up
+#. register_
+
+Setting things up
 --------------------
 
 See how_to.rst_ for details.
@@ -24,10 +23,13 @@ See how_to.rst_ for details.
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
 
-1. Testing register()
+.. _register:
+
+Testing register()
 ---------------------
 
-# Test - check that the two http_handlers have been registered
+Verify that the two http_handlers have been registered.
+
     >>> src.plugins.comet.register()
     >>> print(mocks.registered_http_handler['/input42'] == cometIO.push_input)
     True

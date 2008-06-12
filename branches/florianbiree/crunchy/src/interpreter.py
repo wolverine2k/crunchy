@@ -4,17 +4,54 @@ import threading, sys
 import sys
 import traceback
 from codeop import CommandCompiler, compile_command
+try:
+    import ctypes
+    ctypes_available = True
+except:
+    ctypes_available = False
 
-from src.interface import StringIO, exec_code, python_version, translate
+from src.interface import StringIO, exec_code, python_version, translate, config
+config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
 import src.configuration as configuration
-if python_version < 3:
-    import src.errors as errors
+import src.errors as errors
 
 _ = translate['_']
 
-class Interpreter(threading.Thread):
+# The following function and class are taken from
+# http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/496960
+# but modified to behave nicely if ctypes is not present
+def _async_raise(tid, excobj):
+    if not ctypes_available:
+        return      # exit nicely of ctypes isn't available
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(excobj))
+    if res == 0:
+        raise ValueError("nonexistent thread id")
+    elif res > 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+class KillableThread(threading.Thread):
+    def raise_exc(self, excobj):
+        assert self.isAlive(), "thread must be started"
+        for tid, tobj in threading._active.items():
+            if tobj is self:
+                _async_raise(tid, excobj)
+                return
+
+        # the thread was alive when we entered the loop, but was not found
+        # in the dict, hence it must have been already terminated. should we raise
+        # an exception here? silently ignore?
+
+    def terminate(self):
+        # must raise the SystemExit type, instead of a SystemExit() instance
+        # due to a bug in PyThreadState_SetAsyncExc
+        self.raise_exc(KeyboardInterrupt)
+
+class Interpreter(KillableThread):
     """
     Run python source asynchronously
     """

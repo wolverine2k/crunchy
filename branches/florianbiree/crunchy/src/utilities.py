@@ -1,19 +1,21 @@
 '''utilities.py
 
    a collection of functions used in other modules.
+
+   unit tests in test_utilities.rst
 '''
 import re
 from src.interface import python_version, config, plugin, SubElement
 
 COUNT = 0
-def uidgen():
+def uidgen():  # tested
     """an suid (session unique ID) generator
     """
     global COUNT
     COUNT += 1
     return str(COUNT)
 
-def extract_log_id(vlam):
+def extract_log_id(vlam):  # tested
     '''given a vlam of the form
        "keyword  ... log_id=(some id) ..."
        extracts the value of the log id which would be "some id" in the
@@ -30,7 +32,7 @@ def extract_log_id(vlam):
     else:
         return ''
 
-def insert_file_browser(parent, text, action):
+def insert_file_browser(parent, text, action):  # tested
     '''inserts a local file browser object in an html page'''
     # add a unique id to allow more than one file_browser of a given type
     # on a page; use the "action" [e.g. /local, /rst, etc.] as part of the
@@ -51,7 +53,7 @@ def insert_file_browser(parent, text, action):
     input3.attrib['class'] = 'crunchy'
     return
 
-def trim_empty_lines_from_end(text):
+def trim_empty_lines_from_end(text):  # tested
     '''remove blank lines at beginning and end of code sample'''
     # this is needed to prevent indentation error if a blank line
     # with spaces at different levels is inserted at the end or beginning
@@ -59,7 +61,7 @@ def trim_empty_lines_from_end(text):
     # This function is used in interpreter.py and colourize.py.
     return text.strip(' \r\n')
 
-def changeHTMLspecialCharacters(text):
+def changeHTMLspecialCharacters(text):  # tested
     '''replace <>& by their escaped valued so they are displayed properly
        in browser.'''
     # this function is used in colourize.py and cometIO.py

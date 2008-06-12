@@ -1,12 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<!--
-Here is a template that we an use to beautify the Crunchy main page.
-
-Its very simple, just put your content in the content div, your navigation elements in the navbar
-div and and your header text in the titlebar div.
--->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -14,14 +8,14 @@ div and and your header text in the titlebar div.
 
 	<title>Crunchy :: Editor</title>
 
-	<link rel="stylesheet" href="/crunchy_newstyle.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
 </head>
 
 <body>
 
 <div id="container">
 <div id="titlebar">
-<a href="/"><img src="/crunchy-python-powered.png" /> </a><h1>Writing Code</h1>
+<a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>Writing Code</h1>
 </div>
 
 <div id="navbar">
@@ -31,14 +25,14 @@ div and and your header text in the titlebar div.
     <a href="/crunchy_tutor/editor_en.html">Editor</a>
     <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
     <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Image files</a>
+    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
     <a href="/crunchy_tutor/external_en.html">External applications</a>
     <span class="heading">Advanced Topics</span>
     <a href="/crunchy_tutor/remote_en.html">Browsing</a>
     <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
     <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
     <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Tests</a>
+    <a href="/functional_tests">Miscellaneous</a>
 </div>
 <div id="content">
 
@@ -58,10 +52,7 @@ print a
 <div class="notes">
 <h4>Save and run</h4>
 <p> Using the editor, you can click on the save program icon and will be given the possibility
-to save a program
-in a specific location and have Python execute it from there.
-This is useful if your program needs access to some files (say, some images for a game)
-that are located at that location.
+to save a program in a specific location and have Python execute it from there.
 </p>
 </div>
 <p>However, if you read this page using Crunchy and your favourite browser, you will see that a "text box" with a handy button is located just in between this paragraph and the piece of code above.  So, by using Crunchy, you don't need to use an editor to actually try the above <i> long</i> example. Furthermore, you will notice a check box labeled "Toggle editor".
@@ -73,20 +64,20 @@ If you click on it, you will see appear on the page a real editor, provided by C
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
 the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
 <pre title="no_vlam">
-&lt;pre title="editor [no_style] [no-copy] [no-pre]
-            [linenumber [=start_number]] [external [no-internal]]"&gt;
+&lt;pre title="editor [no_style] [no_copy] [no_pre]
+            [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
-adds a code editor (html &lt;textarea&gt;) to the current page.
+adds a code editor (enhanced html &lt;textarea&gt;) to the current page.
 <p>By default, Crunchy copies the contents of the <code>pre</code> in the original file
 into a new <code>pre</code> above the editor; however, this is prevented if
-<code>no-pre</code> is present.
-Also by default, Crunchy copies the contents of the <code>pre</code> in the original file
+<code>no_pre</code> is present.
+Also by default, Crunchy copies the contents of the original <code>pre</code>
 into the editor; however, this is prevented if
-<code>no-copy</code> is present.
+<code>no_copy</code> is present.
 If the <code>linenumber</code> option is present, a line number will appear before each line of input code.</p>
-<p>The <code>[external [no-internal]]</code> options will be explained later.</p>
+<p>The <code>[external [no_internal]]</code> options will be explained later.</p>
 
 
 </div>

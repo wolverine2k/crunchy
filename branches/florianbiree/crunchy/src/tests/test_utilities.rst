@@ -1,27 +1,28 @@
 utilities.py tests
 ==================
 
-Tested successfully with Python 2.4, 2.5
 
 utilities.py is a module that contains the following functions, many of 
 which are used by more than one module:
 
-1. uidgen()
-2. extract_log_id(vlam)
-3. insert_file_browser(parent, text, action)
-4. trim_empty_lines_from_end(text)
-5. changeHTMLspecialCharacters(text)
-6. log_session()
-7. append_checkmark(pageid, parent_uid)
-8. append_warning(pageid, parent_uid)
-9. append_image(pageid, parent_uid, attributes)
+#. `uidgen()`_
+#. `extract_log_id()`_
+#. `insert_file_browser()`_
+#. `trim_empty_lines_from_end()`_
+#. `changeHTMLspecialCharacters()`_
+#. `log_session()`_
+#. `append_checkmark()`_
+#. `append_warning()`_
+#. `append_image()`_
 
 We begin by importing the module.
 
     >>> import src.utilities as utilities
     >>> from src.interface import Element, SubElement
 
-1. Testing uidgen()
+.. _`uidgen()`:
+
+Testing uidgen()
 -------------------
 
 uidgen() generates a unique integer id (returned as a string).
@@ -32,7 +33,9 @@ The current implementation is such that consecutive integers are generated.
     >>> second - first
     1
 
-2. Testing extract_log_id()
+.. _`extract_log_id()`:
+
+Testing extract_log_id()
 ---------------------------
 
 First, creating some test log id.
@@ -67,7 +70,9 @@ It's probably a good idea to check at some failing tests as well
     >>> print(utilities.extract_log_id("Move along, there is nothing here"))
     <BLANKLINE>
 
-3. Testing insert_file_browser()
+.. _`insert_file_browser()`:
+
+Testing insert_file_browser()
 --------------------------------
 
 This function inserts two forms inside an html element.  We will use
@@ -116,7 +121,9 @@ Now the second one
     >>> inputs2[1].attrib["type"]
     'submit'
 
-4. Testing trim_empty_lines_from_end()
+.. _`trim_empty_lines_from_end()`:
+
+Testing trim_empty_lines_from_end()
 --------------------------------------
 
 
@@ -144,8 +151,9 @@ Carry out tests on test data, checking that results were correct.
 	>>> print(utilities.trim_empty_lines_from_end(strip_with_spaces) == "Hello World!")
 	True
 
+.. _`changeHTMLspecialCharacters()`:
 
-5. Testing changeHTMLspecialCharacters()
+Testing changeHTMLspecialCharacters()
 ----------------------------------------
 
 Define tests and expected results.
@@ -169,22 +177,30 @@ Carry out tests
 	>>> print(utilities.changeHTMLspecialCharacters(html_combo_test) == html_combo_result)
 	True
 
-6. Testing log_session()
+.. _`log_session()`:
+
+Testing log_session()
 ------------------------
 
 To do
 
-7. Testing append_checkmark()
+.. _`append_checkmark()`:
+
+Testing append_checkmark()
 -----------------------------
 
 To do.
 
-8. Testing append_warning()
+.. _`append_warning()`:
+
+Testing append_warning()
 ---------------------------
 
 To do
 
-9. Testing append_image()
+.. _`append_image()`:
+
+Testing append_image()
 -------------------------
 
 To do

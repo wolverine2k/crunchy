@@ -1,4 +1,4 @@
-'''dhtml.py
+'''dhtml.py : unit tests in test_dhtml.rst
 
 Enables dynamic display of images (from files) and other html tags/objects
 on a page where no such object was preloaded.
@@ -15,6 +15,7 @@ import src.interface as _interface
 _plugin = _interface.plugin
 _config = _interface.config
 
+# The following three variables are provided for the convenience of end users.
 home = _os.path.expanduser("~")
 temp_dir = _config['temp_dir']
 join_path = _os.path.join
@@ -33,23 +34,23 @@ class _Tree(object):
         self.deletedlabels = [] # for cleanup
         _nodes[label] = self
 
-    def append_child(self, child):
+    def append_child(self, child):  # indirectly tested
         '''adds a child'''
         self.children.append(child)
 
-    def remove_child(self, child):
+    def remove_child(self, child):  # tested
         '''removes a single child and all of its children, grand-children, etc.'''
         child.delete()
         self.children.remove(child)
         del child
 
-    def remove_all_children(self):
+    def remove_all_children(self):  # tested
         '''removes all children, grand-children, etc., from a tree'''
         for child in self.children:
             child.delete()
         self.children = []
 
-    def delete(self):
+    def delete(self):  # indirectly tested
         '''deletes self and all children'''
         self.remove_all_children()
         for label in self.deletedlabels:
@@ -58,7 +59,7 @@ class _Tree(object):
         del _nodes[self.label]
 
 def image(file_path, width=400, height=400, label='', parent_label=None,
-          from_cwd=False):
+          from_cwd=False):  # tested
     ''' dynamically creates an html <img> tag displaying the resulting image.
 
     file_path can be either an absolute path on the local server,
@@ -67,8 +68,8 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
     or a relative path (or filename) from the current working directory
     if from_cwd is set to True.
 
-    Different values for name allow to display more than one image; the
-    last loaded image for a given name replaces the previous one.
+    Different values for label allow to display more than one image; the
+    last loaded image for a given label replaces the previous one.
     '''
 
     if from_cwd:
@@ -77,15 +78,15 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
     # Note: we append a random string as a parameter (after a ?) to prevent
     # the browser from loading a previously cached image.
     file_path = file_path + '?' + str(int(random.random()*1000000000))
-    
+
     append('img', attributes={'width':width, 'height':height, 'src':file_path},
            label=label, parent_label=parent_label)
 
-def append(tag, attributes=None, label='', parent_label=None):
+def append(tag, attributes=None, label='', parent_label=None):  # tested
     ''' dynamically creates an html object with the given attribute (as a dict).
 
-    Different values for name allow to display more than one object; the
-    last loaded object for a given name replaces the previous one.
+    Different values for label allow to display more than one object; the
+    last loaded object for a given label replaces the previous one.
 
     If parent_label is None, the objects gets appended to the main <div> of
     the Python output element; otherwise, it gets appended to the specified
@@ -120,7 +121,7 @@ def append(tag, attributes=None, label='', parent_label=None):
     _Tree(child_uid, parent)
     _js_append_html(pid, tag, child_uid, attributes)
 
-def remove(label=''):
+def remove(label=''):  # tested
     ''' dynamically removes an html object that was previously created.
     '''
     uid = _plugin['get_uid']()

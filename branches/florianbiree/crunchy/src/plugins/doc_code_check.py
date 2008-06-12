@@ -1,4 +1,4 @@
-'''doc_code_check.py
+'''doc_code_check.py:  unit tests in test_doc_code_check.rst
 
 Plugin designed to perform automatic checks on Python code included in
 documentation.  It can handle the case where the Python code has to
@@ -265,7 +265,7 @@ function check_all_code_samples(pageid){
 };
 """
 
-def run_sample(name):
+def run_sample(name):  # tested
     '''Given a setup script, as a precursor, executes a code sample
     and compares the output with some expected result.'''
     if name in code_setups:
@@ -287,7 +287,7 @@ def run_sample(name):
     sys.stdout = saved_stdout
     return compare(expected_outputs[name], redirected.getvalue())
 
-def compare(s1, s2):
+def compare(s1, s2):  # tested
     '''compares two strings for equality'''
     t1 = s1.splitlines()
     t2 = s2.splitlines()
@@ -301,7 +301,7 @@ def compare(s1, s2):
     return result
 
 name_pattern = re.compile("name\s*=\s*([a-zA-Z0-9_]+)")
-def extract_name(vlam):
+def extract_name(vlam):  # tested
     '''extracts the value of name in a vlam title attribute'''
     # assume vlam is something like "some_keyword junk name=some_name"
     # possibly with some spaces around the equal sign

@@ -17,7 +17,7 @@ def register():
     '''
     register a tag handler and two http handlers: /set_trusted and /remove_all
     '''
-    plugin['register_tag_handler']("no_tag", "security", None, insert_security_info)
+    plugin['register_begin_pagehandler'](insert_security_info)
     plugin['register_http_handler']("/set_trusted", set_security_list)
     plugin['register_http_handler']("/remove_all", empty_security_list)
 
@@ -26,54 +26,12 @@ def insert_security_info(page, *dummy):
     if not page.body:
         return
 
-    #===First, the static display at the top
-
-    if 'trusted' in page.security_info['level']:
-        src = '/trusted.png'
-    elif 'normal' in page.security_info['level']:
-        src = '/severe.png'
-    elif 'strict' in page.security_info['level']:
-        src = '/paranoid.png'
-
-    span = Element("div")
-    span.attrib['class'] = "security_report" # in file menu_basic.css
-    span.attrib['id'] = "security_report"
-    level_img = SubElement(span, "img")
-    level_img.attrib["src"] = src
-    level_img.attrib["alt"] = "security level image"
-    level_img.attrib["style"] = "border:0;height:12pt"
-    level_img.tail = _(" Crunchy security level: ") +\
-                        page.security_info['level']
-
-    SubElement(span, "br")
-
-    img = SubElement(span, "img")
-    img.attrib["alt"] = "security result"
-    img.attrib["style"] = "border:0;height:12pt"
-    if page.security_info['number removed'] == 0:
-        img.attrib["src"] = "/ok.png"
-        img.tail = _(" No elements were removed. ")
-    elif page.security_info['number removed'] == 1:
-        img.attrib["src"] = "/warning.png"
-        img.tail = _(" One element was removed. - ")
+    if 'display' in page.security_info['level']:
+        page.security_result_image = '/display.png'
+    elif page.security_info['number removed'] == 0:
+        page.security_result_image = '/ok.png'
     else:
-        img.attrib["src"] = "/warning.png"
-        img.tail = _(" %d elements were removed. - ")%page.security_info['number removed']
-#    if not page.url.startswith("/"):
-    if not page.security_info['number removed'] == 0:
-        view = SubElement(span, "a")
-        view.attrib["onclick"] = "show_security_info();"
-        view.attrib["href"] = "#"
-        view.attrib['style'] = "text-decoration: underline;"
-        view.text = _(" View report ")
-    SubElement(span, "br")
-    hide = SubElement(span, "a")
-    hide.attrib["onclick"] = "hide_security_report();"
-    hide.attrib["href"] = "#"
-    hide.attrib['style'] = "text-decoration: underline overline;"
-
-    hide.text = _(" | Hide summary |")
-    page.body.insert(0, span)
+        page.security_result_image = '/warning.png'
 
     # Next, the hidden container for the full security information
 
@@ -93,62 +51,8 @@ def insert_security_info(page, *dummy):
                   # something to confirm
               and not config['initial_security_set']):
                   # only do it once per session
+            confirm_at_start(page, info_container)
             config['initial_security_set'] = True
-            page.add_css_code(security_css%('block','block'))
-            h2 = SubElement(info_container, 'h2')
-            h2.text = _('Confirm the security levels')
-            h2.attrib['class'] = "crunchy"
-            directions = SubElement(info_container, "h4")
-            directions.text = _("Before browsing any further ...\n\n")
-            directions.text += _("Do you wish to retain the existing settings for these sites?\n\n")
-            directions.text += _("You can change any of them before clicking on the approve button.\n\n")
-
-            # in case list gets too long, we include buttons at top and bottom
-            approve_btn = SubElement(info_container, "button")
-            site_num = len(config['site_security'])
-            approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
-            approve_btn.text = _("Approve")
-            SubElement(info_container, "span").text = " "
-            deny_btn = SubElement(info_container, "button")
-            deny_btn.attrib["onclick"] = "app_remove_all()"
-            deny_btn.text = _("Remove all")
-
-            site_num = 0
-            options = [['trusted', 'trusted'],
-                        ['normal', 'normal'],
-                        ['strict', 'strict'],
-                        ['display trusted', 'display trusted'],
-                        ['display normal', 'display normal'],
-                        ['display strict', 'display strict'],
-                        ['remove', _('remove from list')]]
-            for site in config['site_security']:
-                site_num += 1
-                fieldset = SubElement(info_container, "fieldset")
-                site_label = SubElement(fieldset, "legend")
-                site_label.text = site
-                form = SubElement(fieldset, "form")
-                form.attrib['id'] = "site_" + str(site_num)
-                form.attrib['name'] = site
-                for option in options:
-                    label = SubElement(form, 'label')
-                    label.text = option[1]
-                    label.attrib['for'] = site + option[0]
-                    inp = SubElement(label, 'input')
-                    inp.attrib['value'] = option[0]
-                    inp.attrib['type'] = 'radio'
-                    inp.attrib['name'] = "rad"
-                    inp.attrib['id'] = site + option[0]
-                    SubElement(form, 'br')
-                    if option[1] == config['site_security'][site]:
-                        inp.attrib['checked'] = 'checked'
-            # in case list gets too long, we include buttons at top and bottom
-            approve_btn = SubElement(info_container, "button")
-            approve_btn.attrib["onclick"] = "app_approve('%d')" % site_num
-            approve_btn.text = _("Approve")
-            SubElement(info_container, "span").text = " "
-            deny_btn = SubElement(info_container, "button")
-            deny_btn.attrib["onclick"] = "app_remove_all()"
-            deny_btn.text = _("Remove all")
         else:
             page.add_css_code(security_css%('none','none'))
 
@@ -160,9 +64,94 @@ def insert_security_info(page, *dummy):
         info_container_x.text = "X"
         page.body.append(info_container_x)
 
+def confirm_at_start(page, info_container):
+    '''
+    Asks for confirmation from the user for any pre-existing settings
+    regarding security level for known sites.
+
+    This is meant to be called only at the start of a given Crunchy session
+    (hence the name of the function).
+    '''
+    page.add_css_code(security_css%('block','block'))
+    h2 = SubElement(info_container, 'h2')
+    h2.text = _('Confirm the security levels')
+    h2.attrib['class'] = "crunchy"
+    directions = SubElement(info_container, "h4")
+    directions.text = _("Before browsing any further ...\n\n")
+    directions.text += _("Do you wish to retain the existing settings for these sites?\n\n")
+    directions.text += _("You can change any of them before clicking on the approve button.\n\n")
+
+    # in case list gets too long, we include buttons at top and bottom
+    approve_btn = SubElement(info_container, "button")
+    site_num = len(config['site_security'])
+    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
+    approve_btn.text = _("Approve")
+    SubElement(info_container, "span").text = " "
+    deny_btn = SubElement(info_container, "button")
+    deny_btn.attrib["onclick"] = "app_remove_all()"
+    deny_btn.text = _("Remove all")
+
+    site_num = 0
+    options = [['trusted', 'trusted'],
+                ['normal', 'normal'],
+                ['strict', 'strict'],
+                ['display trusted', 'display trusted'],
+                ['display normal', 'display normal'],
+                ['display strict', 'display strict'],
+                ['remove', _('remove from list')]]
+    for site in config['site_security']:
+        site_num += 1
+        fieldset = SubElement(info_container, "fieldset")
+        site_label = SubElement(fieldset, "legend")
+        site_label.text = site
+        form = SubElement(fieldset, "form")
+        form.attrib['id'] = "site_" + str(site_num)
+        form.attrib['name'] = site
+        for option in options:
+            label = SubElement(form, 'label')
+            label.text = option[1]
+            label.attrib['for'] = site + option[0]
+            inp = SubElement(label, 'input')
+            inp.attrib['value'] = option[0]
+            inp.attrib['type'] = 'radio'
+            inp.attrib['name'] = "rad"
+            inp.attrib['id'] = site + option[0]
+            SubElement(form, 'br')
+            if option[1] == config['site_security'][site]:
+                inp.attrib['checked'] = 'checked'
+    # in case list gets too long, we include buttons at top and bottom
+    approve_btn = SubElement(info_container, "button")
+    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
+    approve_btn.text = _("Approve")
+    SubElement(info_container, "span").text = " "
+    deny_btn = SubElement(info_container, "button")
+    deny_btn.attrib["onclick"] = "app_remove_all()"
+    deny_btn.text = _("Remove all")
+    return
+
 def format_report(page, div):
     '''puts the security information (extracted material) into a table
        for display'''
+
+    security_level = SubElement(div, 'h2')
+    security_level.attrib['class'] = 'crunchy'
+    security_level.text = "Security level: " + page.security_info['level']
+
+    security_summary = SubElement(div, 'h4')
+    s_image = SubElement(security_summary, 'img')
+    # make sure src link is not transformed:
+    s_image.attrib['title'] = 'security_link'
+
+    if 'display' in page.security_info['level']:
+        s_image.attrib['src'] = '/display_big.png'
+        s_image.tail = " : display mode selected; Python code execution forbidden."
+    elif page.security_info['number removed'] == 0:
+        s_image.attrib['src'] = '/ok_big.png'
+        s_image.tail = " : clean page; nothing was removed by Crunchy."
+    else:
+        s_image.tail = " : Some html tags and/or attributes were removed by Crunchy."
+        s_image.attrib['src'] = '/warning_big.png'
+
     if page.security_info['tags removed']:
         h2 = SubElement(div, 'h2')
         h2.text = _('Removed: tag not allowed')
@@ -237,7 +226,7 @@ def format_report(page, div):
     # urlsplit().netloc == urlsplit()[1] is not Python 2.4 compatible
     netloc = urlsplit(page.url)[1]
 
-    if page.security_info['number removed'] != 0 and netloc:
+    if netloc:
         h2 = SubElement(div, 'h2')
         h2.text = _('You may select a site specific security level:')
         h2.attrib['class'] = "crunchy"
@@ -330,14 +319,16 @@ def set_security_list(request):
     if DEBUG:
         print(site_list_info)
     site_list = []
+    to_be_deleted = []
     for site_info in site_list_info:
-        if ":" not in site_info:
+        if "::" not in site_info:
             continue
-        site = site_info.split(':')
+        site = site_info.split('::')
         mode = site[1].strip()
         site = site[0].strip()
+
         site_list.append(site)
-        to_be_deleted = []
+
         if site.strip() != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
@@ -346,8 +337,12 @@ def set_security_list(request):
                     print(str(site) + ' has been set to ' + str(mode))
             else:
                 to_be_deleted.append(site)
+                if DEBUG:
+                    print(str(site) + ' is going to be removed.')
     for site in to_be_deleted:
         del config['site_security'][site]
+    if DEBUG:
+        print config['site_security']
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True

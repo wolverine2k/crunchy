@@ -28,7 +28,7 @@ function app_approve(nb_item) {
     	for (i = 0; i < len; i++){
     		if (site_form.rad[i].checked){
     		chosen = site_form.rad[i].value;
-    		approved_sites += site_form.name + " : " + chosen + ",";
+    		approved_sites += site_form.name + " :: " + chosen + ",";
     		}
     	}
     }
@@ -63,5 +63,3 @@ function app_remove_all() {
 function allow_site() {
         app_approve(0);
 }
-
-

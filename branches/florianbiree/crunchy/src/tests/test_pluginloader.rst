@@ -1,15 +1,21 @@
 pluginloader.py tests
 =====================
 
-Tested successfully with Python 2.4, 2.5 and 3.0a1
+The pluginloader.py module has the following functions that need to be tested:
 
-This file contains a few tests for pluginloader.py.
+#. `gen_register_list()`_
+#. `gen_plugin_list()`_
+#. `init_plugin_system()`_
+
+Settings things up
+-------------------
+
+First, we do the required imports.
 
     >>> import src.pluginloader as pl
     >>> from src.interface import python_version
 
-We begin by making a few mock modules that would provide services and
-require others.
+Next, we create a few mock modules that would provide services and require others.
 
     >>> class Mock(object):
     ...    def __repr__(self):
@@ -59,6 +65,11 @@ We then define a few mock object that we will use in tests.
     >>> prov_g = Provides_Mock(['G'])
     >>> req_g_c = Requires_Mock(['G', 'C'])
 
+
+.. _`gen_register_list()`:
+
+Testing get_register_list()
+----------------------------
 
 The first test is one in which an object "b" is provided and required.
 It should pass silently.
@@ -116,3 +127,17 @@ so far.
     >>> set_a.add(req_c_g_prov_d_e_f); set_a.add(prov_g); set_a.add(prov_b_c)
     >>> a_list = pl.gen_register_list(set_a)
     >>> test_ordering(a_list)
+
+.. _`gen_plugin_list()`:
+
+Testing gen_plugin_list()
+--------------------------
+
+To do.
+
+.. _`init_plugin_system()`:
+
+Testing init_plugin_system()
+-----------------------------
+
+To do.

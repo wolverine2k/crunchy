@@ -27,6 +27,8 @@ _ = translate['_']
 # The set of other "widgets/services" provided by this plugin
 provides = set(["style_pycode", "style_pycode_nostrip"])
 
+CURRENT_LINE = None
+
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register two types of 'actions':
@@ -50,8 +52,12 @@ def register():
 
 def plugin_style(dummy_page, elem, dummy_uid, css_class='crunchy'):
     '''Handles the vlam py_code elements'''
-    dummy, markup, dummy = style(elem, css_class=css_class)
-    replace_element(elem, markup)
+    dummy, markup, error_found = style(elem, css_class=css_class)
+    try:
+        dummy = markup.text
+        replace_element(elem, markup)
+    except:
+        elem.text = "ERROR FOUND IN MARKUP NEAR: line %s " % CURRENT_LINE + elem.text
     return
 
 def service_style(dummy_page, elem, css_class='crunchy'):
@@ -263,6 +269,8 @@ stdlib = [	'__builtin__', '__future__', '__main__', '_winreg', 'aifc', 'AL', 'al
 class Colourizer(object):
     '''class usually used as singleton to style/colorize Python code'''
     def __init__(self, offset=None):
+        global CURRENT_LINE
+        CURRENT_LINE = 0
         self.tokenString = ''
         self.beginLine, self.beginColumn = (0, 0)
         self.endOldLine, self.endOldColumn = (0, 0)
@@ -375,6 +383,7 @@ class Colourizer(object):
 # inp.readline reads a "logical" line;
 # the continuation character '\' is gobbled up.
     def parseListing(self, code):
+        global CURRENT_LINE
         self.inp = StringIO(code)
         self.outp = StringIO()
         for tok in tokenize.generate_tokens(self.inp.readline):
@@ -383,6 +392,7 @@ class Colourizer(object):
             self.lastTokenString = self.tokenString
             self.tokenString = tok[1]
             self.beginLine, self.beginColumn = tok[2]
+            CURRENT_LINE = self.beginLine
             self.endOldLine, self.endOldColumn = self.endLine, self.endColumn
             self.endLine, self.endColumn = tok[3]
 
