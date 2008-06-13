@@ -44,8 +44,9 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         port = find_port()
     else:
         port = find_port(start=port)
-    # Choose a couple of (login, password), and give them to http_serve
-    login, password = get_login_and_password()
+    # Choose a random password and give it to http_serve
+    login = "crunchy"
+    password = random_password()
     http_serve.users[login] = password
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
@@ -183,15 +184,13 @@ def open_browser(url):
         client = webbrowser.get()
     client.open(url)
 
-def get_login_and_password():
+def random_password():
     """
-    Return a randomly chosen (login, password).
+    Return a randomly chosen password.
     """
     character_set = string.digits + string.letters
-    return (
-        ''.join(random.Random().sample(character_set, 12)),
-        ''.join(random.Random().sample(character_set, 12))
-    )
+    password_length = 12
+    return ''.join(random.Random().sample(character_set, password_length))
 
 if __name__ == "__main__":
     _url, _port = parse_options()
