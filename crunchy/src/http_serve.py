@@ -13,9 +13,10 @@ import urllib,urllib2
 from traceback import format_exc
 import base64,md5
 import time
-from src.interface import python_version, python_minor_version
-from src.utilities import uidgen
+from src.interface import python_version, python_minor_version,server_mode
 import src.CrunchyPlugin as CrunchyPlugin
+
+from src.account_manager import accounts as users #it will be used by require_digest_access_authenticate
 
 DEBUG = False
 
@@ -49,11 +50,8 @@ def require_digest_access_authenticate(func):
     else:
         method = "POST"
     realm = "Crunchy Access"          
-    users = {"crunchy" : "password"}
 
     def wrapped(self):
-        #if not hasattr(self, 'need_authenticated'):
-        #    return func(self)
         md5hex = lambda x:md5.md5(x).hexdigest()
 
         if not hasattr(self, 'authenticated'):
@@ -102,6 +100,11 @@ def require_digest_access_authenticate(func):
 
     return wrapped
 
+if server_mode:
+    require_authenticate = require_digest_access_authenticate
+else:
+    require_authenticate = lambda x: x
+
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     def __init__(self, addr, rqh):
@@ -138,8 +141,7 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
 
-    #@require_basic_authenticate
-    @require_digest_access_authenticate
+    @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
@@ -191,8 +193,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 ##            import sys
 ##            sys.exit()
 
-    #@require_basic_authenticate
-    @require_digest_access_authenticate
+    @require_authenticate
     def do_GET(self):
         """the same as POST, we draw no distinction"""
         self.do_POST()
