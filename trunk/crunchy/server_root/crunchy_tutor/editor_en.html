@@ -43,8 +43,8 @@ for n in range(2, 10):
         if n % x == 0:
             print n, 'equals', x, '*', n/x
             break
-        else:
-            print n, 'is a prime number'
+    else: # loop fell through without finding a factor
+        print n, 'is a prime number'
 
 # The following will raise an error
 print a
@@ -69,7 +69,7 @@ the "save and run" feature is used, in which case a separate process is started.
 Some Python code
 
 &lt;/pre&gt;</pre>
-adds a code editor (enhanced html &lt;textarea&gt;) to the current page.
+This adds a code editor (enhanced html &lt;textarea&gt;) to the current page.
 <p>By default, Crunchy copies the contents of the <code>pre</code> in the original file
 into a new <code>pre</code> above the editor; however, this is prevented if
 <code>no_pre</code> is present.

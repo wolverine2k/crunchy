@@ -134,7 +134,7 @@ def simplify_doctest_error_message(msg):
         elif failures == total:
             summary = (_(u"Your code failed all (%d) tests.")%total).encode("utf-8")
         else:
-            summary = (_(u"Your code failed %s out of %s tests.")%(failures, total)).encode("utf-8")
+            summary = (_(u"Your code passed %s out of %s tests.")%(total-failures, total)).encode("utf-8")
 
     if failures == 0:
         return summary, success
