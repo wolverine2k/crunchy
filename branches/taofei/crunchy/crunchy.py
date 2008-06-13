@@ -112,7 +112,9 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems; not fully implemented)")
-    # a dummy option to get it to work with py2app:
+    parser.add_option("--server_mode", action="store_true", dest="server_mode",
+            help="Start crunchy in server mode.")
+   # a dummy option to get it to work with py2app:
     parser.add_option("-p")
     (options, dummy) = parser.parse_args()
     if options.debug:
@@ -123,6 +125,10 @@ def parse_options():
         src.interface.debug_flag = True
         for key in src.interface.debug:
             src.interface.debug[key] = True
+    if options.server_mode:
+        src.interface.server_mode = True
+    else:
+        src.interface.server_mode = False
     url = None
     src.interface.completely_safe_url = None
     if options.url:
