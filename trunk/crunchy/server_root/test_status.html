@@ -41,7 +41,7 @@ crunchy/src/plugins
         import keyword
         import token
         import tokenize
-        from src.interface import StringIO, ElementTree, python_version, translate, plugin
+        from src.interface import StringIO, ElementTree, translate, plugin
         from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
         register():
             plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
@@ -133,7 +133,7 @@ crunchy/src/plugins
         from subprocess import Popen
         import os
         import sys
-        from src.interface import python_version, config, plugin
+        from src.interface import config, plugin
         register():
             plugin['register_http_handler']("/save_file", save_file_request_handler)
             plugin['register_http_handler']("/load_file", load_file_request_handler)
@@ -311,7 +311,7 @@ crunchy/src/plugins
         import re
         import urllib
         import src.interpreter as interpreter
-        from src.interface import python_version, config, translate, plugin, Element
+        from src.interface import config, translate, plugin, Element
         register():
             plugin['register_service']("insert_tooltip", insert_tooltip)
             plugin['register_http_handler']("/dir%s" % plugin['session_random_id'],
@@ -549,7 +549,7 @@ crunchy/src
         import sys
         from urlparse import urlsplit
         from imp import find_module
-        from src.interface import config, python_version, u_print, translate, debug
+        from src.interface import config, u_print, translate, python_version, debug
             from src.interface import debug_flag
             import cPickle
             import pickle as cPickle
@@ -632,7 +632,6 @@ crunchy/src
         from traceback import format_exc
         import base64,md5
         import time
-        from src.interface import python_version, python_minor_version
         from src.utilities import uidgen
         import src.CrunchyPlugin as CrunchyPlugin
         require_basic_authenticate(func)
@@ -655,15 +654,11 @@ crunchy/src
         import sys
             from StringIO import StringIO
             from io import StringIO
-            import src.tools_2k as tools
-            import src.tools_3k as tools
+        import src.tools_2k as tools
         import src.translation
         from src.debug import debug
         debug_msg(data)
         from src.element_tree import ElementTree, HTMLTreeBuilder
-            import src.my_htmlentitydefs
-            class XmlFile(ElementTree.ElementTree):
-                __init__(self, file=None)
     interpreter.py
         import inspect
         import threading, sys
@@ -671,7 +666,7 @@ crunchy/src
         import traceback
         from codeop import CommandCompiler, compile_command
             import ctypes
-        from src.interface import StringIO, exec_code, python_version, translate, config
+        from src.interface import StringIO, exec_code, translate, config
         from src.utilities import trim_empty_lines_from_end, log_session
         import src.configuration as configuration
         import src.errors as errors
@@ -723,7 +718,7 @@ crunchy/src
         import urllib
         import urlparse
         import sys
-        from src.interface import python_version, config, ElementTree
+        from src.interface import config, ElementTree
         remove_unwanted(tree, page)  # partially tested
         __cleanup(elem, filter)
         validate_image(src, page)
@@ -745,14 +740,14 @@ crunchy/src
     translation.py
         import os.path
         from imp import find_module
-        from src.interface import python_version, u_print
+        from src.interface import u_print
         init_translation(lang=None)
                 import pprint
         _(message)
         build_dict(filename)
     utilities.py
         import re
-        from src.interface import python_version, config, plugin, SubElement
+        from src.interface import config, plugin, SubElement
         uidgen()  # tested
         extract_log_id(vlam)  # tested
         insert_file_browser(parent, text, action)  # tested
@@ -837,7 +832,7 @@ crunchy/src/tests
     __init__.py
     mocks.py
         import sys
-        from src.interface import plugin, python_version, python_minor_version
+        from src.interface import plugin
         class Page(object):
             __init__(self)
             includes(self, dummy)

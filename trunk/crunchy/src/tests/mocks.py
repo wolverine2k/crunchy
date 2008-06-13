@@ -7,7 +7,7 @@ can be reused can save a fair bit of time and ensure a greater consistency
 in the various tests.
 '''
 import sys
-from src.interface import plugin, python_version, python_minor_version
+from src.interface import plugin
 
 registered_tag_handler = {}
 registered_http_handler = {}
@@ -51,16 +51,7 @@ class Page(object):
 class Wfile(object):
     '''fake Wfile added as attribute of Request object.'''
     def write(self, text):
-        # required to make this work when the file is read in binary mode
-        if python_version >= 3 and python_minor_version == 'a2':
-            if isinstance(text, bytes):
-                str_text = str(text.decode(sys.getfilesystemencoding()))
-                print(str_text)
-            else:
-                print(text)
-        else:
-            print(text)
-
+        print(text)
 
 class Request(object):
     '''Totally fake request object'''

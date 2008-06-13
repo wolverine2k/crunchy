@@ -15,7 +15,7 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.interface import config, python_version, u_print, translate, debug
+from src.interface import config, u_print, translate, python_version, debug
 # the following is needed for unit tests, since debug_flag is normally
 # set when crunchy is started.
 try:
@@ -23,6 +23,7 @@ try:
 except:
     debug_flag = False
 
+# TODO remove all check for Python_version, from all files EXCEPT this one.
 if python_version < 3:
     import cPickle
 else:
@@ -266,10 +267,7 @@ class Defaults(object):
 
     def _get_temp_dir(self):
         '''returns a temporary directory specific to Crunchy'''
-        if python_version < 3:
-            return self.__temp_dir.decode(sys.getfilesystemencoding())
-        else:
-            return self.__temp_dir  #untested
+        return self.__temp_dir.decode(sys.getfilesystemencoding())
 
     # note: should allow user to select different temp dir; when doing so,
     # make sure to update config[]

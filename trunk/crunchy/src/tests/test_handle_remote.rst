@@ -16,7 +16,7 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-    >>> from src.interface import plugin, python_version
+    >>> from src.interface import plugin
     >>> plugin.clear()
     >>> import src.plugins.handle_remote as handle_remote
     >>> import src.tests.mocks as mocks

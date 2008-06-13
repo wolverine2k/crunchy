@@ -17,20 +17,16 @@ import os
 import sys
 version = sys.version.split('.')
 python_version = float(version[0] + '.' + version[1][0])
-python_minor_version = version[1][1:3]
 
 # StringIO is used for creating in-memory files
-if python_version < 3:
+if python_version < 3:  # kept for reference
     from StringIO import StringIO
 else:
     from io import StringIO
 
 # Some special functions, specific to a given
 # Python version are defined below
-if python_version < 3:
-    import src.tools_2k as tools
-else:
-    import src.tools_3k as tools
+import src.tools_2k as tools
 u_print = tools.u_print
 exec_code = tools.exec_code
 
@@ -82,23 +78,3 @@ tostring = ElementTree.tostring
 
 
 interactive = False # used with python crunchy -i option
-
-# In the absence of either HTMLTreeBuilder or, even better,
-# ElementSoup/BeautifulSoup in Python 3.x, we provide a basic, but extremely
-# strict, x(h)tml parser.
-
-if python_version < 3:
-    XmlFile = None
-else:
-    import src.my_htmlentitydefs
-    class XmlFile(ElementTree.ElementTree):
-        def __init__(self, file=None):
-            ElementTree.ElementTree.__init__(self)
-            parser = ElementTree.XMLTreeBuilder(
-                target=ElementTree.TreeBuilder(ElementTree.Element))
-            ent = src.my_htmlentitydefs.entitydefs
-            for entity in ent:
-                if entity not in parser.entity:
-                    parser.entity[entity] = ent[entity]
-            self.parse(source=file, parser=parser)
-            return

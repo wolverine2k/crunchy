@@ -6,7 +6,7 @@ Translation infrastructure for Crunchy.
 import os.path
 from imp import find_module
 
-from src.interface import python_version, u_print
+from src.interface import u_print
 
 current_locale = None
 DEBUG = False
@@ -93,4 +93,3 @@ def build_dict(filename):
                 msgid = False
                 msgstr = False
     return translation
-

@@ -20,7 +20,7 @@ import urllib
 import urlparse
 import sys
 
-from src.interface import python_version, config, ElementTree
+from src.interface import config, ElementTree
 
 DEBUG = False
 DEBUG2 = False
@@ -282,8 +282,6 @@ def remove_unwanted(tree, page):  # partially tested
                           'attributes removed': [],
                           'styles removed': []
                         }
-    #if python_version >= 3:
-    #    return
 
 # first, removing unwanted tags
     unwanted = set()
@@ -413,8 +411,6 @@ def remove_unwanted(tree, page):  # partially tested
 
 def __cleanup(elem, filter):
     ''' See http://effbot.org/zone/element-bits-and-pieces.htm'''
-    if python_version >= 3:
-        return
     out = []
     for e in elem:
         __cleanup(e, filter)
@@ -448,7 +444,7 @@ def validate_image(src, page):
         print("root_path "+ root_path)
 
     # try solving encoding problems
-    if page.is_local and python_version < 3:
+    if page.is_local:
         try:
             page.url = page.url.encode(sys.getfilesystemencoding())
         except:  # alreay encoded?
@@ -552,7 +548,7 @@ def is_link_safe(elem, page):
     #--If we reach this point we have in principle a valid style sheet.
 
     # try solving encoding problems
-    if page.is_local and python_version < 3:
+    if page.is_local:
         try:
             url = url.encode(sys.getfilesystemencoding())
         except:  # alreay encoded?

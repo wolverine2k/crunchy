@@ -13,7 +13,6 @@ import urllib,urllib2
 from traceback import format_exc
 import base64,md5
 import time
-from src.interface import python_version, python_minor_version
 from src.utilities import uidgen
 import src.CrunchyPlugin as CrunchyPlugin
 
@@ -29,7 +28,7 @@ def require_basic_authenticate(func):
         if not self.authenticated and 'Authorization' in self.headers:
             auth_word = self.headers['Authorization'].split()
             if auth_word[0] != 'Basic':
-                self.authenticated = False 
+                self.authenticated = False
             elif len(auth_word) > 1:
                 user,password = base64.b64decode(auth_word[1]).split(':')
                 if user == 'crunchy' and password == 'crunchypassword':
@@ -38,7 +37,7 @@ def require_basic_authenticate(func):
             self.send_response(401)
             self.send_header('WWW-Authenticate','Basic realm="Crunchy Access"')
             self.end_headers()
-            self.wfile.write("You are not allowed to access this page.") 
+            self.wfile.write("You are not allowed to access this page.")
     return wrapped
 
 def require_digest_access_authenticate(func):
@@ -48,7 +47,7 @@ def require_digest_access_authenticate(func):
         method = "GET"
     else:
         method = "POST"
-    realm = "Crunchy Access"          
+    realm = "Crunchy Access"
     users = {"crunchy" : "password"}
 
     def wrapped(self):
@@ -69,11 +68,11 @@ def require_digest_access_authenticate(func):
                     self.authenticated = False
                 elif cred['realm'] != realm or cred['username'] not in users:
                     self.authenticated = False
-                elif 'qop' in cred and ('nc' not in cred or 'cnonce' not in cred): 
+                elif 'qop' in cred and ('nc' not in cred or 'cnonce' not in cred):
                     self.authenticated = False
                 else:
                     if 'qop' in cred:
-                        expect_response = md5hex('%s:%s'%( 
+                        expect_response = md5hex('%s:%s'%(
                             md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
                             ':'.join([cred['nonce'],cred['nc'],cred['cnonce'],cred['qop'], md5hex('%s:%s' %(method, self.path))])
                             )
@@ -96,7 +95,7 @@ def require_digest_access_authenticate(func):
             self._nonce = md5hex("%d:%s" % (time.time(), realm))
             self.send_header('WWW-Authenticate','Digest realm="%s", qop="auth", algorithm="MD5", nonce="%s"' %(realm, self._nonce))
             self.end_headers()
-            self.wfile.write(msg) 
+            self.wfile.write(msg)
         else:
             return func(self)
 
@@ -144,8 +143,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
-        if python_version >=3:
-            realpath = str(realpath)
         if DEBUG:
             print(realpath)
         argstring = ""
@@ -177,11 +174,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         try:
             self.server.get_handler(realpath)(self)
         except:
-            # if there is an error, say so
-            if python_minor_version == 'a2':
-                print('problem found in do_POST')
-                print('self.data = ' + str(self.data))
-                print('realpath = ' + str(realpath))
             self.send_response(500)
             self.end_headers()
             self.wfile.write(format_exc())
@@ -200,5 +192,3 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def send_response(self, code):
         BaseHTTPRequestHandler.send_response(self, code)
         self.send_header("Connection", "close")
-
-

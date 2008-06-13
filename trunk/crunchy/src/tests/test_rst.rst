@@ -1,8 +1,6 @@
 rst.py tests
 ================================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
-
 rst.py is a plugin whose purpose is to create a form allowing a user to browse 
 for a local tutorial written in reStructuredText to be loaded by Crunchy.
 

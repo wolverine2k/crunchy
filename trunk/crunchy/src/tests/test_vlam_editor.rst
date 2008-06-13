@@ -21,7 +21,7 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-  >>> from src.interface import Element, plugin, config, python_version
+  >>> from src.interface import Element, plugin, config
   >>> plugin.clear()
   >>> plugin['session_random_id'] = 42
   >>> config.clear()

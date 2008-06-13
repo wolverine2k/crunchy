@@ -5,7 +5,7 @@
    unit tests in test_utilities.rst
 '''
 import re
-from src.interface import python_version, config, plugin, SubElement
+from src.interface import config, plugin, SubElement
 
 COUNT = 0
 def uidgen():  # tested
@@ -65,8 +65,6 @@ def changeHTMLspecialCharacters(text):  # tested
     '''replace <>& by their escaped valued so they are displayed properly
        in browser.'''
     # this function is used in colourize.py and cometIO.py
-    if python_version >= 3:
-        text = str(text)
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
