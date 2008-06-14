@@ -436,22 +436,22 @@ crunchy/src/imports
     graphics.py
         import re
         from src.interface import plugin
-        init(width=400, height=400, border_color='red', origin = 'top')
-        clear()
-        set_line_colour(col)
-        set_fill_colour(col)
-        line(point_1, point_2)
-        _circle(centre, r, filled=False)
-        circle(centre, r)
-        filled_circle(centre, r)
-        _rectangle(corner, w, h, filled=False)
-        rectangle(corner, w, h)
-        filled_rectangle(corner, w, h)
-        _triangle(point_1, point_2, point_3, filled=False)
-        triangle(point_1, point_2, point_3)
-        filled_triangle(point_1, point_2, point_3)
-        point(x, y)
-        validate_colour(colour)
+        init(width=400, height=400, border_color='red', origin = 'top') # partially tested
+        clear() # tested
+        set_line_colour(col) # tested
+        set_fill_colour(col) # tested
+        line(point_1, point_2) # tested
+        _circle(centre, r, filled=False) # tested
+        circle(centre, r) # tested
+        filled_circle(centre, r) # tested
+        _rectangle(corner, w, h, filled=False) # tested
+        rectangle(corner, w, h) # tested
+        filled_rectangle(corner, w, h) # tested
+        _triangle(point_1, point_2, point_3, filled=False) # tested
+        triangle(point_1, point_2, point_3) # tested
+        filled_triangle(point_1, point_2, point_3) # tested
+        point(x, y) # tested
+        validate_colour(colour) # tested
     turtle_js.py
         import math as _math
         from src.interface import plugin
