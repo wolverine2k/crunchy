@@ -8,6 +8,7 @@ that require testing:
 #. `register()`_
 #. kill_thread_handler()
 #. `insert_editor_subwidget()`_
+#. insert_bare_editor()
 #. `insert_editor()`_
 #. insert_alternate_python()
 #. insert_markup()

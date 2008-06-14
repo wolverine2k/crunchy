@@ -60,8 +60,11 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
     inp.text = code
     plugin['services'].enable_editarea(page, elem, editor_id)
 
-def insert_editor(page, elem, uid):  # tested
-    """handles the editor widget"""
+def insert_bare_editor(page, elem, uid):
+    """inserts a 'bare' editor, python code, but no execution buttons.
+
+    Common code to both insert_editor() and insert_alternate_python().
+    """
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)
     if log_id:
@@ -93,7 +96,13 @@ def insert_editor(page, elem, uid):  # tested
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
-    #some spacing if buttons are needed, they appear below.
+    return vlam
+
+def insert_editor(page, elem, uid):  # tested
+    """handles the editor widget"""
+
+    vlam = insert_bare_editor(page, elem, uid)
+     #some spacing if buttons are needed, they appear below.
     if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
@@ -133,27 +142,11 @@ def insert_editor(page, elem, uid):  # tested
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 def insert_alternate_python(page, elem, uid):
-    """handles the python widget"""
-    vlam = elem.attrib["title"]
-    log_id = extract_log_id(vlam)
-    if log_id:
-        t = 'editor'
-        config['logging_uids'][uid] = (log_id, t)
+    """inserts the required widget to launch a Python script using
+    an alternate Python version.
+    """
 
-    if 'display' not in config['page_security_level'](page.url):
-        if not page.includes("exec_included"):
-            page.add_include("exec_included")
-            page.add_js_code(exec_jscode)
-
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
-    if log_id:
-        config['log'][log_id] = [tostring(markup)]
-
-    insert_markup(elem, uid, vlam, markup)
-
-    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
-        code = "\n"
-    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
+    vlam = insert_bare_editor(page, elem, uid)
 
     form1 = SubElement(elem, 'form', name='form1_')
     span = SubElement(form1, 'span')
@@ -165,12 +158,11 @@ def insert_alternate_python(page, elem, uid):
     SubElement(elem, "br")
 
     btn = SubElement(elem, "button")
-    path_label = SubElement(elem, "span")
-    path_label.attrib['id'] = 'path_' + uid
-    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
-
     btn.attrib["onclick"] = "exec_code_externally_python_interpreter('%s')" % uid
     btn.text = _("Execute as external program")
+
+    path_label = SubElement(elem, "span", id= 'path_'+uid)
+    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
     path_label.attrib['class'] = 'path_info'
 
 def insert_markup(elem, uid, vlam, markup):
