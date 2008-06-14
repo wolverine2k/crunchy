@@ -7,7 +7,7 @@
 <p>The new "comet-based" Crunchy has not only static graphics capabilities but also supports simple animations.  Some bugs were observed when using a long running instance of Firefox after being disconnected from Internet. These bugs could be illustrated by changing the value of the sleep parameter (try numbers from 0.01 to 0.5) in the following example; the animation was seen to stall for a while.  </p>
 <pre title="editor">
 from graphics import *
-init_graphics()
+init()
 import time
 for i in range(40):
    set_fill_colour("black")
@@ -18,7 +18,8 @@ for i in range(40):
 </pre>
 <p>Here's another example, showing some <code>rgb</code> colour coding.</p>
 <pre title="editor">
-from graphics import *init_graphics()
+from graphics import *
+init()
 for i in range(50):
    for j in range(50):
        r = 255 - 5*i
@@ -29,7 +30,8 @@ for i in range(50):
 
 <p>Here's a test that illustrates various graphics primitives that are available:</p>
 <pre title="editor no_pre">
-from graphics import *init_graphics()
+from graphics import *
+init()
 circle((100, 100), 50)
 set_line_colour('red')   # Canadian/British spelling for "colour"
 circle((100, 100), 30)
@@ -55,11 +57,16 @@ filled_triangle((20, 320), (40, 330), (30, 300))
 set_line_colour('black')
 point(200, 200)
 </pre>
-<p>This is what it should look like (except that the dot in the middle of the yellow circle should be smaller, there should be no green "frame" and no red dot near the origin - the original image was that produced by the "old" Crunchy.):</p>
-<img src="test.png" width="402" height="403" border="0" alt="If you can't see this image, then image loading is broken!"/>
+<p>This is what it should look like 
+(except that the dot in the middle of the yellow circle should be smaller, 
+  there should be no green "frame" and no red dot near the origin - 
+  the original image was that produced by the "old" Crunchy.):</p>
+<img src="test.png" width="402" height="403" border="0" 
+alt="If you can't see this image, then image loading is broken!"/>
 <h2>Bugs</h2>
 <ul>
-  <li>Bugs with animated graphics - the server seems to "hang" for short periods.</li>
+  <li>Bugs with animated graphics - the server seems to "hang" for short periods.
+  This problem was observed with Firefox 2.x, but seems to be gone with Firefox 3.x.</li>
 </ul>
 <p><a href="index.html">Back to the test index</a></p>
 </body>

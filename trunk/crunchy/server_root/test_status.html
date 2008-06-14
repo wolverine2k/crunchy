@@ -436,33 +436,22 @@ crunchy/src/imports
     graphics.py
         import re
         from src.interface import plugin
-        init_graphics(width=400, height=400, border_color='red')
-        clear_graphics()
+        init(width=400, height=400, border_color='red', origin = 'top')
+        clear()
         set_line_colour(col)
         set_fill_colour(col)
         line(point_1, point_2)
+        _circle(centre, r, filled=False)
         circle(centre, r)
         filled_circle(centre, r)
+        _rectangle(corner, w, h, filled=False)
         rectangle(corner, w, h)
         filled_rectangle(corner, w, h)
+        _triangle(point_1, point_2, point_3, filled=False)
         triangle(point_1, point_2, point_3)
         filled_triangle(point_1, point_2, point_3)
         point(x, y)
         validate_colour(colour)
-    math_graphics.py
-        import re
-        from src.interface import plugin
-        import src.imports.graphics as graphics
-        init_graphics(width=400, height=400, border_color='red')
-        clear_graphics()
-        line(point_1, point_2)
-        circle(centre, r)
-        filled_circle(centre, r)
-        rectangle(corner, w, h)
-        filled_rectangle(corner, w, h)
-        triangle(point_1, point_2, point_3)
-        filled_triangle(point_1, point_2, point_3)
-        point(x, y)
     turtle_js.py
         import math as _math
         from src.interface import plugin
@@ -736,7 +725,7 @@ crunchy/src
         build_dict(filename)
     utilities.py
         import re
-        from src.interface import config, plugin, SubElement
+        from src.interface import config, plugin, Element, SubElement
         uidgen()  # tested
         extract_log_id(vlam)  # tested
         insert_file_browser(parent, text, action)  # tested

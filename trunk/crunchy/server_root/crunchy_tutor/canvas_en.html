@@ -36,9 +36,8 @@
 <div id="content">
 <div class="notes">
 <h4>Mathematical graphics</h4>
-<p> If you want graphics that have the origin at the bottom left corner, with increasing <i>y</i> coordinates going up, load up the 
-<code title="py_code">math_graphics</code> module instead of the 
-<code title="py_code">graphics</code> module.
+<p> If you want graphics that have the origin at the bottom left corner, with increasing <i>y</i> coordinates going up, use the option 
+<code title="py_code">origin = 'bottom'</code> when initializing the graphics.
 </p>
 </div>
 <p>Using Crunchy, you can draw the most incredible pictures. 
@@ -48,7 +47,7 @@ browser that supports the html <code>&lt;canvas&gt;</code> tag.]</p>
 
 <pre title="editor">
 import graphics
-graphics.init_graphics(300, 300)
+graphics.init(300, 300)
 for i in range(50):
    for j in range(50):
        r = 255 - 5*i
@@ -62,7 +61,7 @@ Drawing only squares, however colorful, might be boring.  Instead, you could try
 
 <pre title="editor">
 from graphics import *
-init_graphics()
+init()
 
 point(10, 10)
 point(100, 10)
@@ -100,7 +99,8 @@ for i in range(10):
     filled_circle((x, y), r)
 </pre>
 
-<p>Rather than going straight to the next page, if you want, you can make a little detour and have a look at <a href="named_colours_en.html">valid colour names</a> used in Crunchy.
+<p>Rather than going straight to the next page, if you want, you can make a little detour 
+and have a look at <a href="named_colours_en.html">valid colour names</a> used in Crunchy.
 If you do so, I suggest you ctrl-click the link (or cmd-click on a Mac) to open
 the page in a new tab.</p>
 
@@ -111,20 +111,19 @@ to come restore this page, you will find that you need to reload this page to se
 the interpreter.</small> Try the following:</p>
 <pre title="interpreter">
 &gt;&gt;&gt; import graphics as g
-&gt;&gt;&gt; g.init_graphics()
+&gt;&gt;&gt; g.init()
 &gt;&gt;&gt; g.line((100, 100), (200, 200))
 </pre>
 
 <h3 >Advanced stuff</h3>
 <p>Not only Crunchy has not only static graphics capabilities but it
 also supports simple animations.  However, sometimes the animation may seem to 
-stall (for example, with Firefox 2.x, but not 3.0).  In this example, we use the <code title="py_code">math_graphics</code>
-module instead of the <code title="py_code">graphics</code> module, which 
-means that the origin is at the bottom left corner.</p>
+stall (for example, with Firefox 2.x, but not 3.0).  In this example, we use an
+option setting the origin is at the bottom left corner.</p>
 
 <pre title="editor">
-from math_graphics import  *
-init_graphics()
+from graphics import  *
+init(origin='bottom')
 import time
 for i in range(40):
     set_fill_colour("black")
@@ -137,6 +136,14 @@ for i in range(40):
 <p>The following table is a summary of available graphics commands.</p>
 <table summary="Available graphics commands" class='summary'>
 <tr><th colspan='2'>Available graphics commands</th></tr>
+<tr>
+<td><code>init(width=400, height=400, border_color='red', origin='top')</code></td>
+<td>Initializes a canvas graphics.</td>
+</tr>
+<tr>
+<td><code>clear()</code></td>
+<td>Clear an existing graphics; equivalent to <code>init(0, 0)</code>.</td>
+</tr>
 <tr>
 <td><code>point(x, y)</code></td><td>Draws a point in the default line colour.</td>
 </tr>
