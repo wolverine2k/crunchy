@@ -40,11 +40,7 @@ def register():  # tested
     # shorter name version of the above
     plugin['register_tag_handler']("pre", "title", "alt_py",
                                                         insert_alternate_python)
-    # the following should never be used other than by Crunchy developers
-    # for testing purposes
-    plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
-                                                        _test_sanitize_for_ElementTree)
-
+    return
 
 def kill_thread_handler(request):
     """Kills the thread associated with uid"""
@@ -174,47 +170,6 @@ def insert_alternate_python(page, elem, uid):
     path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
 
     btn.attrib["onclick"] = "exec_code_externally_python_interpreter('%s')" % uid
-    btn.text = _("Execute as external program")
-    path_label.attrib['class'] = 'path_info'
-
-def _test_sanitize_for_ElementTree(page, elem, uid):
-    """the purpose of this function is ONLY to provide a separate way of
-       launching sanitize.py as a means of testing it.
-
-       From the (initial) description of sanitize.py:
-       The purpose of sanitize.py is to process an html file (that could be
-       malformed) using a combination of BeautifulSoup and ElementTree and
-       output a "cleaned up" file based on a given security level.
-
-       This script is meant to be run as a standalone module, using Python 2.x.
-       It is expected to be launched via exec_external_python_version() located
-       in file_service.py.
-
-       The input file name is expected to be in.html, located in Crunchy's temp
-       directory.  The output file name is out.html, also located in Crunchy's
-       temp directory.
-       """
-    vlam = elem.attrib["title"]
-    if 'display' not in config['page_security_level'](page.url):
-        if not page.includes("exec_included"):
-            page.add_include("exec_included")
-            page.add_js_code(exec_jscode)
-    filepath = os.path.join(plugin['get_root_dir'](), 'sanitize.py')
-    f = open(filepath)
-    elem.text = f.read()
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
-
-    insert_markup(elem, uid, vlam, markup)
-
-    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
-
-    btn = SubElement(elem, "button")
-    path_label = SubElement(elem, "span")
-    path_label.attrib['id'] = 'path_' + uid
-    filepath2 = os.path.join(plugin['get_root_dir'](), 'sanitize_new.py')
-    path_label.text = filepath2
-
-    btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
     btn.text = _("Execute as external program")
     path_label.attrib['class'] = 'path_info'
 

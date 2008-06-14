@@ -343,13 +343,10 @@ crunchy/src/plugins
                                                                 insert_alternate_python)
             plugin['register_tag_handler']("pre", "title", "alt_py",
                                                                 insert_alternate_python)
-            plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
-                                                                _test_sanitize_for_ElementTree)
         kill_thread_handler(request)
         insert_editor_subwidget(page, elem, uid, code="\n")  # tested
         insert_editor(page, elem, uid)  # tested
         insert_alternate_python(page, elem, uid)
-        _test_sanitize_for_ElementTree(page, elem, uid)
         insert_markup(elem, uid, vlam, markup)
     vlam_interpreter.py
         import sys

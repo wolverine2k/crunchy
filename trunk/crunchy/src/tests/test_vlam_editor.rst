@@ -10,7 +10,6 @@ that require testing:
 #. `insert_editor_subwidget()`_
 #. `insert_editor()`_
 #. insert_alternate_python()
-#. _test_sanitize_for_ElementTree()
 #. insert_markup()
 
 
@@ -49,8 +48,6 @@ Testing register()
   >>> mocks.registered_tag_handler['pre']['title']['alternate_python_version'] == vlam_editor.insert_alternate_python
   True
   >>> mocks.registered_tag_handler['pre']['title']['alt_py'] == vlam_editor.insert_alternate_python
-  True
-  >>> mocks.registered_tag_handler['pre']['title']['_test_sanitize_for_ElementTree'] == vlam_editor._test_sanitize_for_ElementTree
   True
   >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
   True
