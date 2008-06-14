@@ -64,9 +64,9 @@ user who performed the official check.  *Note: this should be the very last thin
 || index.html ||  0.9.9.3 || André ||
 || crunchy_tutor/welcome_en.html ||   ||   ||
 || crunchy_tutor/interpreter_en.html ||   ||   ||
-|| crunchy_tutor/editor_en.html ||   ||   ||
-|| crunchy_tutor/doctest_en.html ||   ||   ||
-|| crunchy_tutor/canvas_en.html ||   ||   ||
+|| crunchy_tutor/editor_en.html ||  0.9.9.3 || André  ||
+|| crunchy_tutor/doctest_en.html ||  0.9.9.3 || André  ||
+|| crunchy_tutor/canvas_en.html ||  0.9.9.3 ||André   ||
 || crunchy_tutor/images_en.html ||   ||   ||
 || crunchy_tutor/external_en.html ||   ||   ||
 || crunchy_tutor/remote_en.html ||   ||   ||
