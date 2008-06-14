@@ -79,6 +79,8 @@ def handler(request):
         request.end_headers()
     else:
         request.send_response(200)
+        if request.path == "/":
+            request.send_header ("Content-Type", "text/html; charset=UTF-8")
         request.end_headers()
         try:
             request.wfile.write(data)
