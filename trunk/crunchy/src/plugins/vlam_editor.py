@@ -13,7 +13,7 @@ import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, translate, tostring
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id, insert_markup
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -91,7 +91,7 @@ def insert_bare_editor(page, elem, uid):
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
 
-    insert_markup(elem, uid, vlam, markup)
+    insert_markup(elem, uid, vlam, markup, "editor")
 
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
@@ -164,26 +164,26 @@ def insert_alternate_python(page, elem, uid):
     path_label = SubElement(elem, "span", id= 'path_'+uid)
     path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
     path_label.attrib['class'] = 'path_info'
-
-def insert_markup(elem, uid, vlam, markup):
-    '''clears an element and inserts the new markup inside it'''
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "editor"
-    if not "no_pre" in vlam:
-        try:
-            new_div = Element("div")
-            new_div.append(markup)
-            new_div.attrib['class'] = 'sample_python_code'
-            elem.insert(0, new_div)
-        except AssertionError:  # this should never happen
-            elem.insert(0, Element("br"))
-            bold = Element("b")
-            span = Element("span")
-            span.text = "AssertionError from ElementTree"
-            bold.append(span)
-            elem.insert(1, bold)
+#
+#def insert_markup(elem, uid, vlam, markup):
+#    '''clears an element and inserts the new markup inside it'''
+#    elem.clear()
+#    elem.tag = "div"
+#    elem.attrib["id"] = "div_"+uid
+#    elem.attrib['class'] = "editor"
+#    if not "no_pre" in vlam:
+#        try:
+#            new_div = Element("div")
+#            new_div.append(markup)
+#            new_div.attrib['class'] = 'sample_python_code'
+#            elem.insert(0, new_div)
+#        except AssertionError:  # this should never happen
+#            elem.insert(0, Element("br"))
+#            bold = Element("b")
+#            span = Element("span")
+#            span.text = "AssertionError from ElementTree"
+#            bold.append(span)
+#            elem.insert(1, bold)
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required

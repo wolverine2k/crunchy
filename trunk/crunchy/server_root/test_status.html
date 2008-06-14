@@ -321,7 +321,7 @@ crunchy/src/plugins
         doc_handler(request)
     vlam_doctest.py
         from src.interface import config, plugin, Element, SubElement, tostring
-        from src.utilities import extract_log_id
+        from src.utilities import extract_log_id, insert_markup
         register():
             plugin['register_tag_handler']("pre", "title", "doctest",
                                                   doctest_widget_callback)
@@ -334,7 +334,7 @@ crunchy/src/plugins
     vlam_editor.py
         import os
         from src.interface import config, plugin, Element, SubElement, translate, tostring
-        from src.utilities import extract_log_id
+        from src.utilities import extract_log_id, insert_markup
         register():  # tested
             plugin['register_tag_handler']("pre", "title", "editor",
                                                                 insert_editor)
@@ -348,7 +348,6 @@ crunchy/src/plugins
         insert_bare_editor(page, elem, uid)
         insert_editor(page, elem, uid)  # tested
         insert_alternate_python(page, elem, uid)
-        insert_markup(elem, uid, vlam, markup)
     vlam_interpreter.py
         import sys
         from src.interface import config, plugin, translate, tostring, Element
@@ -743,6 +742,7 @@ crunchy/src
         insert_file_browser(parent, text, action)  # tested
         trim_empty_lines_from_end(text)  # tested
         changeHTMLspecialCharacters(text)  # tested
+        insert_markup(elem, uid, vlam, markup, interactive_type)
         log_session()
         append_checkmark(pageid, parent_uid)
         append_warning(pageid, parent_uid)
