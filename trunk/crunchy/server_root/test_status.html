@@ -176,10 +176,8 @@ crunchy/src/plugins
         from src.interface import config, plugin
         register():  # tested
             plugin['register_http_handler']("/local", local_loader)
-            plugin['register_http_handler']("/generated_image", image_loader)
             plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
         local_loader(request)  # tested
-        image_loader(request)  # tested
         add_to_path(page, elem, *dummy)  # tested
     handle_remote.py
         from urllib import urlopen, unquote_plus
@@ -731,12 +729,6 @@ crunchy/src
         exec_code(code, local_dict, source='')
             import src.errors as errors   # prevent premature import
             import sys                    #
-    tools_3k.py
-        import traceback
-        import sys
-        u_print(*args)
-        exec_code(code, local_dict, source="ignore")
-        showtraceback()
     translation.py
         import os.path
         from imp import find_module
