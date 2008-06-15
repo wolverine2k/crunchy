@@ -16,31 +16,12 @@ import time
 from src.interface import python_version, python_minor_version,server_mode
 import src.CrunchyPlugin as CrunchyPlugin
 
-from src.account_manager import accounts as users #it will be used by require_digest_access_authenticate
 
 DEBUG = False
 
-def require_basic_authenticate(func):
-    '''A decorate  to addd  basic http authorization check to HTTP Request Handlers'''
-    def wrapped(self):
-        #if not hasattr(self, 'need_authenticated'):
-        #    return func(self)
-        if not hasattr(self, 'authenticated'):
-            self.authenticated = False
-        if not self.authenticated and 'Authorization' in self.headers:
-            auth_word = self.headers['Authorization'].split()
-            if auth_word[0] != 'Basic':
-                self.authenticated = False 
-            elif len(auth_word) > 1:
-                user,password = base64.b64decode(auth_word[1]).split(':')
-                if user == 'crunchy' and password == 'crunchypassword':
-                    self.authenticated = True
-        if not self.authenticated:
-            self.send_response(401)
-            self.send_header('WWW-Authenticate','Basic realm="Crunchy Access"')
-            self.end_headers()
-            self.wfile.write("You are not allowed to access this page.") 
-    return wrapped
+if server_mode:
+    from src.account_manager import get_accounts
+    users  = get_accounts()
 
 def require_digest_access_authenticate(func):
     '''A decorate  to addd  deigest authorization check to HTTP Request Handlers'''
@@ -101,6 +82,8 @@ def require_digest_access_authenticate(func):
     return wrapped
 
 if server_mode:
+    from src.account_manager import get_accounts
+    users  = get_accounts()
     require_authenticate = require_digest_access_authenticate
 else:
     require_authenticate = lambda x: x
