@@ -21,25 +21,37 @@ InstallDir "$PROGRAMFILES\Crunchy"
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 
+UninstPage uninstConfirm
+UninstPage instfiles
+
 !insertmacro MUI_LANGUAGE "English"
 #----------------------------------------------------
 Section "Crunchy" SecMain
+
     SetOutPath "$INSTDIR"
-    
     File /r /x .svn /x *.pyc /x *.pyo crunchy\*
-    
+    WriteUninstaller "uninstall.exe"
+
 SectionEnd
+
 
 #----------------------------------------------------
 Section "Start Menus and Desktop Shortcut" SecShortcut
 
     CreateDirectory "$SMPROGRAMS\Crunchy"
     CreateShortCut "$SMPROGRAMS\Crunchy\Start Crunchy.lnk" "$INSTDIR\crunchy.py"
+    CreateShortCut "$SMPROGRAMS\Crunchy\Uninstall Crunchy.lnk" "$INSTDIR\uninstall.exe"
     CreateShortCut "$DESKTOP\Start Crunchy.lnk" "$INSTDIR\crunchy.py"
 
 SectionEnd
 
 #----------------------------------------------------
+Section "Uninstall"
+  Delete $INSTDIR\uninstall.exe
+  RMDir /r $INSTDIR
+  RMDir /r $SMPROGRAMS\Crunch
+  Delete "$DESKTOP\Start Crunchy.lnk"
+SectionEnd
 
 # we need an installer - this should probably be based on
 # http://nsis.sourceforge.net/Uninstall_only_installed_files
