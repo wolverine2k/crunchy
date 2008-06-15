@@ -28,10 +28,9 @@ def external_link(dummy_page, elem, *dummy):  # tested
         elem.tail += " "
     else:
         elem.text += " "
-    img = SubElement(elem, "img")
-    img.attrib['src'] = "/external_link.png"
-    img.attrib['style'] = "border:0;"
-    img.attrib['alt'] = "external_link.png"
+    img = SubElement(elem, "img", src="/external_link.png",
+                     style="border:0;", alt="external_link.png")
+    elem.attrib['target'] = "_blank" # opens in separate window/tab.
     return
 
 def fixed_link(dummy_page, elem, *dummy):  # tested
