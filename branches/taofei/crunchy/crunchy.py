@@ -2,7 +2,7 @@
 
 """
 from optparse import OptionParser
-import os
+import os,sys
 import socket
 import urllib
 from urlparse import urlsplit
@@ -125,10 +125,16 @@ def parse_options():
         src.interface.debug_flag = True
         for key in src.interface.debug:
             src.interface.debug[key] = True
+    #we are in server mode
+    #we have to ask for a  master password 
+    #if passwd file not exist , ask user to create one using account manager.
     if options.server_mode:
         src.interface.server_mode = True
+        if not check_for_password_file():
+            sys.exit(1)
     else:
         src.interface.server_mode = False
+
     url = None
     src.interface.completely_safe_url = None
     if options.url:
@@ -171,6 +177,14 @@ def convert_url(url):
         print("url specified can not be found.")
         raise SystemExit
     return url
+
+def check_for_password_file():
+    pwd_file_path = os.path.join(os.getcwd(), '.PASSWD') 
+    if not os.path.exists(pwd_file_path):
+        print("Password file not exisi, please create one using the accout manager")
+        return False
+    else:
+        return True
 
 if __name__ == "__main__":
     _url, _port = parse_options()
