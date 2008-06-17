@@ -23,9 +23,9 @@ where "vlam stuff" can be the same parameters than the one in the "title" attrib
 
 Some other VLAM makup like:
   * <a title="external_link" ...></a>
-  * <span title="load local"> one or more spaces </span>
-  * <span title="load remote"> optional url </span>
+  * <span title="load_local"> one or more spaces </span>
+  * <span title="load_remote"> optional url </span>
 can be implemented through macros, like:
-  * <<ExternalLink(url name)>>
+  * <<ExternalLink(url, name)>>
   * <<LoadLocal>>
-  * <<LoadRemote(optional url)>>
+  * <<LoadRemote(optional_url)>>
