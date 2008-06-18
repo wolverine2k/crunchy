@@ -13,15 +13,13 @@ import urllib,urllib2
 from traceback import format_exc
 import base64,md5
 import time
-from src.interface import python_version, python_minor_version,server_mode
+from src.interface import python_version, python_minor_version,server_mode,accounts
 import src.CrunchyPlugin as CrunchyPlugin
 
 
 DEBUG = False
 
-if server_mode:
-    from src.account_manager import get_accounts
-    users  = get_accounts()
+users = accounts
 
 def require_digest_access_authenticate(func):
     '''A decorate  to addd  deigest authorization check to HTTP Request Handlers'''
@@ -82,8 +80,6 @@ def require_digest_access_authenticate(func):
     return wrapped
 
 if server_mode:
-    from src.account_manager import get_accounts
-    users  = get_accounts()
     require_authenticate = require_digest_access_authenticate
 else:
     require_authenticate = lambda x: x
