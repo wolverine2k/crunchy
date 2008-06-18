@@ -102,6 +102,7 @@ def insert_editor(page, elem, uid):  # tested
     """handles the editor widget"""
 
     vlam = insert_bare_editor(page, elem, uid)
+    log_id = extract_log_id(vlam)
      #some spacing if buttons are needed, they appear below.
     if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
@@ -164,26 +165,6 @@ def insert_alternate_python(page, elem, uid):
     path_label = SubElement(elem, "span", id= 'path_'+uid)
     path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
     path_label.attrib['class'] = 'path_info'
-#
-#def insert_markup(elem, uid, vlam, markup):
-#    '''clears an element and inserts the new markup inside it'''
-#    elem.clear()
-#    elem.tag = "div"
-#    elem.attrib["id"] = "div_"+uid
-#    elem.attrib['class'] = "editor"
-#    if not "no_pre" in vlam:
-#        try:
-#            new_div = Element("div")
-#            new_div.append(markup)
-#            new_div.attrib['class'] = 'sample_python_code'
-#            elem.insert(0, new_div)
-#        except AssertionError:  # this should never happen
-#            elem.insert(0, Element("br"))
-#            bold = Element("b")
-#            span = Element("span")
-#            span.text = "AssertionError from ElementTree"
-#            bold.append(span)
-#            elem.insert(1, bold)
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required
