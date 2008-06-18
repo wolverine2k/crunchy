@@ -52,7 +52,7 @@ class AMCLI(object):
     '''Account Mamnager Command Line Interface'''
    
     def __init__(self):
-        self.welcome_msg = "Crunchy Account Manager\n"
+        self.welcome_msg = "Crunchy Account Manager"
         #print (self.welcome_msg)
 
     def start(self, master_password = None):
