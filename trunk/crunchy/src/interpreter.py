@@ -76,10 +76,13 @@ class Interpreter(KillableThread):
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
-                if configuration.defaults.friendly:
-                    sys.stderr.write(errors.simplify_traceback(self.code))
-                else:
-                    traceback.print_exc()
+                try:
+                    if configuration.defaults.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    else:
+                        traceback.print_exc()
+                except:
+                    sys.stderr.write("Recovering from internal error in Interpreter.run()")
             if not self.ccode:    #code does nothing
                 return
             try:
@@ -94,7 +97,7 @@ class Interpreter(KillableThread):
                             if not user_code.endswith('\n'):
                                 user_code += '\n'
                         else:
-                            user_code = _("# no code entered by user\n").encode("utf-8")
+                            user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
                         configuration.defaults.log[log_id].append(data)
                         log_session()
@@ -107,10 +110,13 @@ class Interpreter(KillableThread):
                 # we have commented out the {} as a reminder; self.symbols
                 # will be used for holding both global and local variables.
             except:
-                if configuration.defaults.friendly:
-                    sys.stderr.write(errors.simplify_traceback(self.code))
-                else:
-                    traceback.print_exc()
+                try:
+                    if configuration.defaults.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    else:
+                        traceback.print_exc()
+                except:
+                    sys.stderr.write("Recovering from internal error in Interpreter.run()")
         finally:
             if self.doctest:
                 # attempting to log
@@ -130,7 +136,7 @@ class Interpreter(KillableThread):
                         if not user_code.endswith('\n'):
                             user_code += '\n'
                     else:
-                        user_code = _("# no code entered by user\n").encode("utf-8")
+                        user_code = _("# no code entered by user\n")
                     # separating each attempts
                     user_code = "\n" + "- "*25 + "\n" + user_code
 

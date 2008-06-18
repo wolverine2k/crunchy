@@ -23,10 +23,13 @@ def simplify_traceback(code=None):
     The first stack item because it is our own code; it is removed in
     the standard traceback in the code module.
     '''
-    ex_type, value, trace = sys.exc_info()
-    sys.last_type = ex_type
-    sys.last_traceback = trace
-    sys.last_value = value
+    try:
+        ex_type, value, trace = sys.exc_info()
+        sys.last_type = ex_type
+        sys.last_traceback = trace
+        sys.last_value = value
+    except:
+        return "Internal error: could not retrieve traceback information."
     try:
         lineno = trace.tb_next.tb_lineno
     except:

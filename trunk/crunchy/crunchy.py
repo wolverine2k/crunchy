@@ -60,7 +60,7 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         try:
             server.handle_request()
         except KeyboardInterrupt:
-            print("Recieved Keyboard Interrupt, Quitting...")
+            print("Received Keyboard Interrupt, Quitting...")
             server.still_serving = False
     server.server_close()
 

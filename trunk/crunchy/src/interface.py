@@ -45,7 +45,8 @@ server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
 from_comet = {} # initialized from cometIO.py
 
-config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1])
+config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1]
+    ).decode(sys.getfilesystemencoding())
 
 import src.translation
 translate['_'] = src.translation._

@@ -25,7 +25,8 @@ from src.interface import config, ElementTree
 DEBUG = False
 DEBUG2 = False
 # the root of the server is in a separate directory:
-root_path = os.path.join(config['crunchy_base_dir'], "server_root/")
+
+root_path = os.path.join(config['crunchy_base_dir'], "server_root")
 
 # Better safe than sorry: we do not allow the following html tags for the
 # following reasons:
@@ -437,26 +438,26 @@ def validate_image(src, page):
 
     if DEBUG:
         print("entering validate_image")
-        print("page.is_local "+ page.is_local)
-        print("page.is_remote "+ page.is_remote)
+        print("page.is_local "+ str(page.is_local))
+        print("page.is_remote "+ str(page.is_remote))
         print("page.url "+ page.url)
         print("src "+ src)
         print("root_path "+ root_path)
 
-    # try solving encoding problems
-    if page.is_local:
-        try:
-            page.url = page.url.encode(sys.getfilesystemencoding())
-        except:  # alreay encoded?
-            pass
-        try:
-            root_path = root_path.encode(sys.getfilesystemencoding())
-        except:  # alreay encoded?
-            pass
-        try:
-            src = src.encode(sys.getfilesystemencoding())
-        except:  # alreay encoded?
-            pass
+##    # try solving encoding problems
+##    if page.is_local:
+##        try:
+##            page.url = page.url.encode(sys.getfilesystemencoding())
+##        except:  # alreay encoded?
+##            pass
+##        try:
+##            root_path = root_path.encode(sys.getfilesystemencoding())
+##        except:  # alreay encoded?
+##            pass
+##        try:
+##            src = src.encode(sys.getfilesystemencoding())
+##        except:  # alreay encoded?
+##            pass
 
     if src.startswith("http://"):
         # the image may be residing on a different site than the one
@@ -469,7 +470,8 @@ def validate_image(src, page):
         fn = urlparse.urljoin(page.url, src)
     else:
         src = urlparse.urljoin(page.url, src)[1:]
-        fn = os.path.join(root_path, src)
+        fn = os.path.join(root_path, src.decode('utf-8'))
+
     try:
         if DEBUG:
             print("opening fn="+ fn)
@@ -478,7 +480,7 @@ def validate_image(src, page):
                 h = urllib.urlopen(fn).read(32) #32 is all that's needed for
                                                 # imghrd.what
             else:
-                h = open(fn, 'rb').read(32)
+                h = open(fn.encode(sys.getfilesystemencoding()), 'rb').read(32)
             if DEBUG:
                 print("opened the file")
         except:
@@ -500,7 +502,6 @@ def validate_image(src, page):
             return False
     except:
         return False
-
 
 def is_link_safe(elem, page):
     '''only keep <link> referring to style sheets that are deemed to
@@ -547,18 +548,21 @@ def is_link_safe(elem, page):
         return False
     #--If we reach this point we have in principle a valid style sheet.
 
-    # try solving encoding problems
-    if page.is_local:
-        try:
-            url = url.encode(sys.getfilesystemencoding())
-        except:  # alreay encoded?
-            pass
-        try:
-            href = href.encode(sys.getfilesystemencoding())
-        except:  # alreay encoded?
-            pass
-
-    link_url = find_url(url, href, page)
+##    # try solving encoding problems
+##    if page.is_local:
+##        try:
+##            url = url.encode(sys.getfilesystemencoding())
+##        except:  # alreay encoded?
+##            pass
+##        try:
+##            href = href.encode(sys.getfilesystemencoding())
+##        except:  # alreay encoded?
+##            pass
+    try:
+        link_url = find_url(url, href, page)
+    except:
+        print "problem encountered in security.py (trying link_url = find_url)"
+        return False
     if DEBUG2:
         print("link url = "+ link_url)
     #--Scan for suspicious content
@@ -611,7 +615,19 @@ def find_url(url, href, page):
         return href
 
     elif href.startswith("/"):   # local css file from the root server
-        return os.path.normpath(os.path.join(root_path, os.path.normpath(href[1:])))
+        try:
+            href = os.path.normpath(os.path.join(root_path, os.path.normpath(href[1:])))
+        except:
+            try:
+                href = os.path.normpath(os.path.join(
+                root_path.encode(sys.getfilesystemencoding()), os.path.normpath(href[1:])))
+            except:
+                try:
+                    href = os.path.normpath(os.path.join(
+                          root_path.decode(sys.getfilesystemencoding()), os.path.normpath(href[1:])))
+                except:
+                    print "major problem encountered"
+        return href
     else:
         base, fname = os.path.split(url)
         if DEBUG2:

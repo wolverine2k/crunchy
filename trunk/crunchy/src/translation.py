@@ -44,7 +44,7 @@ def init_translation(lang=None):
 def _(message):
     ''' translate a message, taking care of encoding issues if needed.'''
     global _selected
-    message = message.replace("\n","")#.decode("utf-8")
+    message = message.replace("\n","")
     if message in _selected:
         return _selected[message]
     else:

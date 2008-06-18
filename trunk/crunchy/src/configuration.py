@@ -94,7 +94,8 @@ class Defaults(object):
     def __init__(self):
         self._set_dirs()
         self.current_page_security_level = 'display_trusted' # starting value
-        self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
+        self.log_filename = os.path.join(os.path.expanduser("~"),
+                                          "crunchy_log.html")
         self._load_settings()
         translate['init_translation'](self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
@@ -120,7 +121,6 @@ class Defaults(object):
         if success:
             saved = cPickle.load(pickled)
             pickled.close()
-
         try:
             self.__no_markup = saved['no_markup']
         except:
@@ -216,7 +216,10 @@ class Defaults(object):
     def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
-        self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
+        home = os.path.expanduser("~")
+        self.__user_dir = os.path.join(home, ".crunchy")
+        self.__temp_dir = os.path.join(home, ".crunchy", "temp")
+
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
@@ -228,7 +231,7 @@ class Defaults(object):
                         # sent to the terminal
                         u_print("Created successfully home directory.")
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = None
+                        self.__temp_dir = self.__user_dir
                     return
             except:
                 u_print("Could not create the user directory.")
@@ -239,20 +242,18 @@ class Defaults(object):
                         os.makedirs(self.__temp_dir)
                     except:
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = None
+                        self.__temp_dir = self.__user_dir
                     return
                 return
         # we may encounter a situation where a ".crunchy" directory
         # had been created by an old version without a temporary directory
-        self.__temp_dir = os.path.join(os.path.expanduser("~"), ".crunchy", "temp")
-
         if not os.path.exists(self.__temp_dir):
             try:
                 os.makedirs(self.__temp_dir)
             except:
                 u_print("home directory '.crunchy' exists; however, ")
                 u_print("could not create temporary directory.")
-                self.__temp_dir = None
+                self.__temp_dir = self.__user_dir
             return
         return
 
@@ -267,7 +268,7 @@ class Defaults(object):
 
     def _get_temp_dir(self):
         '''returns a temporary directory specific to Crunchy'''
-        return self.__temp_dir.decode(sys.getfilesystemencoding())
+        return self.__temp_dir
 
     # note: should allow user to select different temp dir; when doing so,
     # make sure to update config[]
@@ -339,29 +340,20 @@ You can change some of the default values by Crunchy, just like
                 if val.__doc__ != 'help':
                     value = val.fget(self)
 # we make sure that the choice is shown as a string if expected from the user
-                    if value not in [True, False]:
-                        try:
-                            value = str(value)
-                        except:
-                            try: # perhaps a path
-                                value = str(value.encode(sys.getfilesystemencoding()))
-                            except: # or translation
-                                try:
-                                    value = str(value.encode('utf-8'))
-                                except:
-                                    value = str(value.encode(sys.getdefaultencoding()))
-                        value = "'" + value + "'"
-                    else:
+                    if value in [True, False, None]:
                         value = str(value)
-                    try:
+                    elif key in ['user_dir', 'temp_dir']: # keep private
+                        # note: it also prevents all kind of nasty problems
+                        # when the path contains non-ascii characters
+                        pass
+                    else:
+                        value = "'" + value + "'"
+                    if key not in ['user_dir', 'temp_dir']: # keep private
+                        # note: it also prevents all kind of nasty problems
+                        # when the path contains non-ascii characters
                         __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
                             self._prefix + "." +  key + " = " + value
-                    except:
-                        # the following appears to be needed if the path
-                        # contains non-ascii characters
-                        __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
-                                    self._prefix + "." +  key + " = " + \
-                                    value.decode('utf-8')
+
         return __help + "\n"
 
     help = property(_get_help, None, None, 'help')
