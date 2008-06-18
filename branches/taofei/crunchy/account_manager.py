@@ -3,7 +3,7 @@
 import os,sys
 from getpass import getpass
 
-pwd_file_path = os.path.join(os.path.dirname(__file__), "..", ".PASSWD")
+pwd_file_path = os.path.join(os.path.dirname(__file__), ".PASSWD")
 
 
 class Accounts(dict):

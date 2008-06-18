@@ -8,7 +8,7 @@ import urllib
 from urlparse import urlsplit
 import webbrowser
 
-import src.account_manager
+import account_manager
 
 import src.interface
 REQUIRED = 2.4
@@ -134,7 +134,7 @@ def parse_options():
         src.interface.server_mode = True
         accounts = {}
         if not check_for_password_file():
-            am = src.account_manager.AMCLI()
+            am = account_manager.AMCLI()
             try:
                 am.start()
             except SystemExit,e:#exit from account manager
@@ -144,7 +144,7 @@ def parse_options():
                 else:
                     accounts = am.accounts
         else:
-            accounts = src.account_manager.get_accounts()
+            accounts = account_manager.get_accounts()
         src.interface.accounts = accounts
     else:
         src.interface.server_mode = False
