@@ -209,7 +209,7 @@ crunchy/src/plugins
             plugin['register_tag_handler']("a", "title", "external_link", external_link)
             plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
         external_link(dummy_page, elem, *dummy)  # tested
-        fixed_link(dummy_page, elem, *dummy)  # tested
+        fixed_link(*dummy)  # tested
         a_tag_handler(page, elem, *dummy)  # tested
         src_handler(page, elem, *dummy)  # partially tested
         link_tag_handler(page, elem, *dummy)  # partially tested
@@ -544,18 +544,18 @@ crunchy/src
             __init__(self)
             _load_settings(self)
             _save_settings(self)
-            _set_dirs(self)
-            _get_user_dir(self)
-            _get_temp_dir(self)
-            _get_dir_help(self)
-            _set_dir_help(self, choice)
-            _get_doc_help(self)
-            _set_doc_help(self, choice)
+            _set_dirs(self) # "tested"; i.e. called in unit tests.
+            _get_user_dir(self)  # tested
+            _get_temp_dir(self)  # tested
+            _get_dir_help(self) # tested
+            _set_dir_help(self, choice) # tested
+            _get_doc_help(self) # tested
+            _set_doc_help(self, choice) # tested
             _get_help(self)
             _get_nm(self)
             _set_nm(self, choice)
             _get_language(self)
-            _set_language(self, choice)
+            _set_language(self, choice, verbose=True)
             _get_power_browser(self)
             _set_power_browser(self, choice)
             _get_editarea_language(self)

@@ -62,7 +62,7 @@ override_default_interpreter_allowed_values = ['default', # ipython,
 
 no_markup_allowed_values = ["none", "editor", 'python_tutorial',
             "python_code", "doctest", "alternate_python_version", "alt_py"]
-                                  # image_file needs an optional argument
+
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
 
@@ -213,7 +213,7 @@ class Defaults(object):
         pickled.close()
         return
 
-    def _set_dirs(self):
+    def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         home = os.path.expanduser("~")
@@ -258,7 +258,7 @@ class Defaults(object):
         return
 
     #==============
-    def _get_user_dir(self):
+    def _get_user_dir(self):  # tested
         '''returns the user directory'''
         return self.__user_dir
 
@@ -266,7 +266,7 @@ class Defaults(object):
                        _("(Fixed) User home directory: "))
     #==============
 
-    def _get_temp_dir(self):
+    def _get_temp_dir(self):  # tested
         '''returns a temporary directory specific to Crunchy'''
         return self.__temp_dir
 
@@ -277,10 +277,10 @@ class Defaults(object):
                        _("(Fixed) Temporary working directory: "))
     #==============
 
-    def _get_dir_help(self):
+    def _get_dir_help(self): # tested
         return self.__dir_help
 
-    def _set_dir_help(self, choice):
+    def _set_dir_help(self, choice): # tested
         if choice not in dir_help_allowed_values:
             u_print((_("Invalid choice for %s.dir_help")%self._prefix))
             u_print(_("The valid choices are: "), str(dir_help_allowed_values))
@@ -296,10 +296,10 @@ class Defaults(object):
 
     #==============
 
-    def _get_doc_help(self):
+    def _get_doc_help(self): # tested
         return self.__doc_help
 
-    def _set_doc_help(self, choice):
+    def _set_doc_help(self, choice): # tested
         if choice not in doc_help_allowed_values:
             u_print((_("Invalid choice for %s.doc_help")%self._prefix))
             u_print(_("The valid choices are: "), str(doc_help_allowed_values))
@@ -367,44 +367,40 @@ You can change some of the default values by Crunchy, just like
 
     def _set_nm(self, choice):
         ch = choice.strip().split(' ')
-        valid = False
         if ch[0] in no_markup_allowed_values:
-            if ch[0] == 'image_file':
-                if len(ch) == 2: # valid filename needed, nothing else
-                    self.__no_markup = choice
-                    valid = True
-                else:  # no valid file name
-                    pass
-            else:
-                self.__no_markup = choice
-                valid = True
-
-        if not valid:
-            u_print((_("Invalid choice for %s.no_markup")%self._prefix))
-            u_print(_("The valid choices are: "), str(no_markup_allowed_values))
-            u_print(_('with "image_file   file_name" as a required option.'))
-            u_print(_("The current value is: "), self.__no_markup)
-        else:
+            self.__no_markup = choice
             self._save_settings()
             config['no_markup'] = self.__no_markup
+        else:
+            u_print((_("Invalid choice for %s.no_markup")%self._prefix))
+            u_print(_("The valid choices are: "), str(no_markup_allowed_values))
+            u_print(_("The current value is: "), self.__no_markup)
 
     no_markup = property(_get_nm, _set_nm, None,
-        (_('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values) +\
-        _('  The current value is: '))
+        (_('The choices for "pre" tag without Crunchy markup are %s\n') %
+         no_markup_allowed_values) +  _('  The current value is: '))
     #==============
 
     def _get_language(self):
         return self.__language
 
-    def _set_language(self, choice):
+    def _set_language(self, choice, verbose=True):
+        #
+        # the verbose flag is chosen so that tests can be run, and language be
+        # initially saved and reset (so that the user's choices are unaffected)
+        # without having to worry about the actual message normally printed
+        # as it would be language dependent.
+        #
         if choice in languages_allowed_values:
             self.__language = choice
             config['language'] = self.__language
             translate['init_translation'](self.__language)
-            u_print(_("language set to: ") , choice)
+            if verbose:
+                u_print(_("language set to: ") , choice)
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice
-                u_print(_("editarea_language also set to: ") , choice)
+                if verbose:
+                    u_print(_("editarea_language also set to: ") , choice)
                 config['editarea_language'] = self.__editarea_language
             else:
                 u_print(_("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\
