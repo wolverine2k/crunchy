@@ -55,11 +55,12 @@ class AMCLI(object):
         self.welcome_msg = "Crunchy Account Manager\n"
         #print (self.welcome_msg)
 
-    def start(self):
-        print (self.welcome_msg)
-        master_password = getpass("Please input the master password:") 
+    def start(self, master_password = None):
+        if not master_password:
+            print (self.welcome_msg)
+            master_password = getpass("Please input the master password:") 
         self.accounts = Accounts(pwd_file_path, master_password)        
-        print ("Password word file loaded.")
+        #print ("Password file loaded.")
         print ("type help for help")
         self.run()
 
@@ -89,8 +90,7 @@ class AMCLI(object):
 
     def cmd_exit(self):
         'exit : exit'
-        #Should we really exit ? 
-        sys.exit()
+        raise SystemExit
 
     def cmd_list(self):
         'list : list all users'
@@ -138,10 +138,11 @@ class AMGUI:
     pass
 
 
-def get_accounts():
-    #master_password = getpass("Please input the master password:") 
-    #There is some problme with getpass 
-    return Accounts(pwd_file_path, "")
+def get_accounts(master_password = None):
+    if not master_password:
+        master_password = getpass("Please input the master password:") 
+        #There is some problme with getpass 
+    return Accounts(pwd_file_path, master_password)
 
 if __name__ == '__main__':
     am = AMCLI()

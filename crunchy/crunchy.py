@@ -8,6 +8,8 @@ import urllib
 from urlparse import urlsplit
 import webbrowser
 
+import src.account_manager
+
 import src.interface
 REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
@@ -130,8 +132,20 @@ def parse_options():
     #if passwd file not exist , ask user to create one using account manager.
     if options.server_mode:
         src.interface.server_mode = True
+        accounts = {}
         if not check_for_password_file():
-            sys.exit(1)
+            am = src.account_manager.AMCLI()
+            try:
+                am.start()
+            except SystemExit,e:#exit from account manager
+                if len(am.accounts) == 0:
+                    print("no valid user account")
+                    raise SystemExit
+                else:
+                    accounts = am.accounts
+        else:
+            accounts = src.account_manager.get_accounts()
+        src.interface.accounts = accounts
     else:
         src.interface.server_mode = False
 
