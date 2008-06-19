@@ -22,10 +22,10 @@ from selenium import selenium
 #    when the server has been running for too long.
 
 def go_home():
-    '''Loads the Crunchy home page 
+    '''Loads the Crunchy home page
        (and waits until it has loaded before returning).'''
     selenium_server.open("/")
-    
+
 def click_link_and_wait(clickable):
     '''clicks on a series of link, waiting for an appropriate time for a
        page to load before continuing.'''
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     print "functional testing using nose and selenium"
     print "make sure selenium server is running via"
     print "java -jar selenium-server.jar"
-    print "start Crunchy via: python crunchy.py --automated=True"
+    print "start Crunchy via: python crunchy.py --automated"
     print "Note: it is assumed that we have one running Crunchy instance at port 8001"
     print "==============================\n"
     base_url = "http://127.0.0.1:8001/"

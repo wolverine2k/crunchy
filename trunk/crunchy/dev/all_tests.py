@@ -7,12 +7,15 @@ All the tests are asssumed to be located in the "src/tests" sub-directory.
 '''
 
 import doctest
-from os import listdir, getcwd
-from os.path import join, sep, dirname
-from imp import find_module
+import os
+import sys
 
-test_path = join(dirname(find_module("crunchy")[1]), "src", "tests")
-test_files = [f for f in listdir(test_path) if f.startswith("test_")]
+os.chdir("..")
+sys.path.insert(0, os.getcwd())
+test_path = os.path.join(os.getcwd(), "src", "tests")
+test_files = [f for f in os.listdir(test_path) if f.startswith("test_")]
+
+sep = os.path.sep
 
 nb_files = 0
 excluded = []#["test_colourize.rst"]

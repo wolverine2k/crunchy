@@ -1,5 +1,0 @@
-echo "testing with default version"
-python all_tests.py
-echo "testing with Python 2.4"
-python2.4 all_tests.py
-

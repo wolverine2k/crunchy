@@ -93,14 +93,15 @@ def parse_options():
     interactive_help = """Somewhat equivalent to normal "python -i script.py".
                           Ignored if --url is used.
                           """
-    automated_help = """Used when running automated tests to prevent security
+    automated_help = """Used when running automated tests to disable request
+                        for authentication and to prevent security
                         advisory confirmation from appearing when launching
                         Crunchy."""
     parser.add_option("--url", action="store", type="string", dest="url",
             help=url_help)
     parser.add_option("--completely_trusted", action="store", type="string",
                       dest="safe_url", help=safe_url_help)
-    parser.add_option("--automated", action="store", type="string",
+    parser.add_option("--automated", action="store_true",
                       dest="automated", help=automated_help)
     parser.add_option("--i", action="store", type="string", dest="interactive",
             help=interactive_help)
@@ -135,6 +136,7 @@ def parse_options():
         url = convert_url(options.interactive)
     if options.automated:
         src.interface.config['initial_security_set'] = True
+        src.interface.config['automated'] = True
     port = None
     if options.port:
         port = options.port

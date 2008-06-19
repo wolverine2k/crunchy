@@ -15,6 +15,7 @@ import base64,md5
 import time
 from src.utilities import uidgen
 import src.CrunchyPlugin as CrunchyPlugin
+from src.interface import config
 
 DEBUG = False
 
@@ -43,6 +44,8 @@ def require_basic_authenticate(func):
 def require_digest_access_authenticate(func):
     '''A decorate  to addd  deigest authorization check to HTTP Request Handlers'''
     #TODO:Find a bettter way to decide what method we are dealing with ..
+    if 'automated' in config:
+        return func
     if "GET" in func.__name__:
         method = "GET"
     else:
