@@ -21,14 +21,18 @@ DEBUG = False
 
 users = accounts
 
+if hasattr(users, 'realm'):
+    realm = users.realm         
+else:
+    realm = "Crunchy Access"
+
 def require_digest_access_authenticate(func):
-    '''A decorate  to addd  deigest authorization check to HTTP Request Handlers'''
+    '''A decorator to add  deigest authorization check to HTTP Request Handlers'''
     #TODO:Find a bettter way to decide what method we are dealing with ..
     if "GET" in func.__name__:
         method = "GET"
     else:
         method = "POST"
-    realm = "Crunchy Access"          
 
     def wrapped(self):
         md5hex = lambda x:md5.md5(x).hexdigest()
@@ -51,13 +55,15 @@ def require_digest_access_authenticate(func):
                 else:
                     if 'qop' in cred:
                         expect_response = md5hex('%s:%s'%( 
-                            md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
+                            users.get(cred['username'], ""),
+                            #md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
                             ':'.join([cred['nonce'],cred['nc'],cred['cnonce'],cred['qop'], md5hex('%s:%s' %(method, self.path))])
                             )
                         )
                     else:
                         expect_response = md5hex('%s:%s' %(
-                            md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
+                            users.get(cred['username'], ""),
+                            #md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
                             ':'.join([cred['nonce'], md5hex('%s:%s' %(method, self.path))])
                             )
                         )
