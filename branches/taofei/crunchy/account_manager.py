@@ -1,17 +1,17 @@
 '''Account Manager For Crunchy
 '''
-import os,sys
+import os,sys,md5
 from getpass import getpass
 
 pwd_file_path = os.path.join(os.path.dirname(__file__), ".PASSWD")
 
-
 class Accounts(dict):
     '''Account Mamnager'''
 
-    def __init__(self, pwp, key = None):
+    realm = 'Crunchy Access'
+
+    def __init__(self, pwp):
         self.pwd_file_path = pwp
-        self.key = key
         try:
             self.load()
         except IOError,e:
@@ -19,34 +19,23 @@ class Accounts(dict):
 
     def load(self):
         data = open(self.pwd_file_path, 'rb').read()
-        data = self.decrypt(data)
         for line in data.split('\n'):
             if line == "":
                 continue
             u,p = line.split(':',1)
-            self[u] = p
+            dict.__setitem__(self, u, p)
 
     def save(self):
         lines = []
         for item in self.items():
             lines.append(':'.join(item))
-        data = self.encrypt('\n'.join(lines))
+        data = '\n'.join(lines)
         f = open(self.pwd_file_path, 'w')
         f.write(data)
         f.close()
 
-    def add(self, username, password):
-        self[username] = password
-        self.save()
-
-    def encrypt(self, data):
-        #TODO: using a real algorithm
-        return data
-
-    def decrypt(self, data):
-        #TODO: using a real algorithm
-        return data
-
+    def __setitem__(self, key, item): 
+        dict.__setitem__(self, key, md5.md5('%s:%s:%s' %(key, self.realm, item)).hexdigest())
 
 class AMCLI(object):
     '''Account Mamnager Command Line Interface'''
@@ -55,12 +44,9 @@ class AMCLI(object):
         self.welcome_msg = "Crunchy Account Manager"
         #print (self.welcome_msg)
 
-    def start(self, master_password = None):
-        if not master_password:
-            print (self.welcome_msg)
-            master_password = getpass("Please input the master password:") 
-        self.accounts = Accounts(pwd_file_path, master_password)        
-        #print ("Password file loaded.")
+    def start(self):
+        print (self.welcome_msg)
+        self.accounts = Accounts(pwd_file_path)        
         print ("type help for help")
         self.run()
 
@@ -133,16 +119,15 @@ class AMCLI(object):
             if attr.startswith('cmd_'):
                 msg += "  %s\n" %(getattr(self, attr).__doc__)
         print (msg)
+
+
         
 class AMGUI:
     pass
 
 
-def get_accounts(master_password = None):
-    if not master_password:
-        master_password = getpass("Please input the master password:") 
-        #There is some problme with getpass 
-    return Accounts(pwd_file_path, master_password)
+def get_accounts():
+    return Accounts(pwd_file_path)
 
 if __name__ == '__main__':
     am = AMCLI()
