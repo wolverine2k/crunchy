@@ -114,8 +114,12 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems; not fully implemented)")
+
     parser.add_option("--server_mode", action="store_true", dest="server_mode",
             help="Start crunchy in server mode.")
+    parser.add_option("--pwd_file_path", action="store", type="string", dest="pwd_file_path",
+            help="Set the password file path.")
+
    # a dummy option to get it to work with py2app:
     parser.add_option("-p")
     (options, dummy) = parser.parse_args()
@@ -133,7 +137,9 @@ def parse_options():
     if options.server_mode:
         src.interface.server_mode = True
         accounts = {}
-        if not check_for_password_file():
+        if hasattr(options,'pwd_file_path') and options.pwd_file_path:#if user choose a different password file, use it
+            account_manager.pwd_file_path = options.pwd_file_path
+        if not account_manager.check_for_password_file():
             am = account_manager.AMCLI()
             try:
                 am.start()
@@ -192,13 +198,6 @@ def convert_url(url):
         raise SystemExit
     return url
 
-def check_for_password_file():
-    pwd_file_path = os.path.join(os.getcwd(), '.PASSWD') 
-    if not os.path.exists(pwd_file_path):
-        print("Password file not exisi, please create one using the accout manager")
-        return False
-    else:
-        return True
 
 if __name__ == "__main__":
     _url, _port = parse_options()

@@ -126,10 +126,23 @@ class AMGUI:
     pass
 
 
-def get_accounts():
+def get_accounts(path = None):
+    if path is None:
+        path = pwd_file_path
     return Accounts(pwd_file_path)
 
+def check_for_password_file(path = None):
+    if path is None:
+        path = pwd_file_path
+    if not os.path.exists(path):
+        print("Password file not exisi, please create one using the accout manager")
+        return False
+    else:
+        return True
+
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        pwd_file_path = sys.argv[1]
     am = AMCLI()
     am.start()
 
