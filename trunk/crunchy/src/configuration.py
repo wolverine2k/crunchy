@@ -384,23 +384,16 @@ You can change some of the default values by Crunchy, just like
     def _get_language(self):
         return self.__language
 
-    def _set_language(self, choice, verbose=True):
-        #
-        # the verbose flag is chosen so that tests can be run, and language be
-        # initially saved and reset (so that the user's choices are unaffected)
-        # without having to worry about the actual message normally printed
-        # as it would be language dependent.
+    def _set_language(self, choice):
         #
         if choice in languages_allowed_values:
             self.__language = choice
             config['language'] = self.__language
             translate['init_translation'](self.__language)
-            if verbose:
-                u_print(_("language set to: ") , choice)
+            u_print(_("language set to: ") , choice)
             if choice in editarea_languages_allowed_values:
                 self.__editarea_language = choice
-                if verbose:
-                    u_print(_("editarea_language also set to: ") , choice)
+                u_print(_("editarea_language also set to: ") , choice)
                 config['editarea_language'] = self.__editarea_language
             else:
                 u_print(_("Note: while this is a valid choice, this choice is not available for a language provided by editarea. ") +\

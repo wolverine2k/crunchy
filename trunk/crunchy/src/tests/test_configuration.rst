@@ -14,9 +14,9 @@ Setting things up
 
     >>> from src.configuration import defaults
     >>> import os
-    >>> def temp_set_lang(lang, verbose=True):
+    >>> def temp_set_lang(lang):
     ...    current = defaults._Defaults__language
-    ...    defaults._set_language(lang, verbose=verbose)
+    ...    defaults._set_language(lang)
     ...    return current
     >>>
 
@@ -90,7 +90,7 @@ Now testing with a different language.
 Finally restoring the initial values
 
     >>> defaults.dir_help = current
-    >>> dummy = temp_set_lang(saved, verbose=False)
+    >>> dummy = temp_set_lang(saved) #doctest: +IGNORE_OUTPUT
 
 .. _doc_help:
 
@@ -130,6 +130,6 @@ Now testing with a different language.
 Finally restoring the initial values
 
     >>> defaults.doc_help = current
-    >>> dummy = temp_set_lang(saved, verbose=False)
+    >>> dummy = temp_set_lang(saved) #doctest: +IGNORE_OUTPUT
 
 

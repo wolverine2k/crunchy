@@ -6,9 +6,27 @@ Runs a series of tests contained in text files, using the doctest framework.
 All the tests are asssumed to be located in the "src/tests" sub-directory.
 '''
 
+from doctest import OutputChecker
+original_check_output = OutputChecker.check_output
 import doctest
 import os
 import sys
+
+# sometime we want to ignore Crunchy's output as it may be in a
+# unpredictable language, based on user's preferences.
+
+# define a new doctest directive to ignore the output of a given test
+
+IGNORE_OUTPUT = doctest.register_optionflag("IGNORE_OUTPUT")
+
+class MyOutputChecker(doctest.OutputChecker):
+    def check_output(self, want, got, optionflags):
+        if optionflags & IGNORE_OUTPUT:
+            return True
+        return original_check_output(self, want, got, optionflags)
+
+doctest.OutputChecker = MyOutputChecker
+# end of new directive definition and replacement (monkeypatching)
 
 os.chdir("..")
 sys.path.insert(0, os.getcwd())
