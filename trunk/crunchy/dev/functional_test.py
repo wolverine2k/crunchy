@@ -1,6 +1,4 @@
-'''This file contains functional tests for Crunchy.
-
-See note at the bottom of the file for successful execution.
+'''This file contains functional tests for Crunchy; using Selenium.
 '''
 from optparse import OptionParser
 import sys
@@ -103,7 +101,7 @@ class InterpreterTest(unittest.TestCase):
         # go to relevant page and store some initial values
         go_home()
         click_link_and_wait(["link=Miscellaneous",
-                             "link=Interpreter"])
+                             "link=Interpreter test"])
 
         # Store some information about text initially on the page.
         all_text = selenium_server.get_body_text()
@@ -112,11 +110,10 @@ class InterpreterTest(unittest.TestCase):
         range_5 = all_text.count("[0, 1, 2, 3, 4]")
         name_errors = all_text.count("NameError")
         system_exits = all_text.count("SystemExit")
-
         # first interpreter; execute the code and give time for Crunchy
         # to process it
-        selenium_server.click("xpath=//div[3]/div[2]/span/a") # editor link
-        selenium_server.click("xpath=//div[3]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[2]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[2]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
@@ -126,8 +123,8 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # second interpreter
-        selenium_server.click("xpath=//div[4]/div[2]/a") # editor link
-        selenium_server.click("xpath=//div[4]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[3]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[3]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
@@ -139,40 +136,40 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("SystemExit") == system_exits)
 
         # third interpreter
-        selenium_server.click("xpath=//div[5]/dif[2]/a") # editor link
-        selenium_server.click("xpath=//div[5]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[4]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[4]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # fourth interpreter
-        selenium_server.click("xpath=//div[6]/div[2]/a") # editor link
-        selenium_server.click("xpath=//div[6]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[5]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[5]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # fifth interpreter
-        selenium_server.click("xpath=//div[7]/div[2]/a") # editor link
-        selenium_server.click("xpath=//div[7]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[6]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[6]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # sixth interpreter
-        selenium_server.click("xpath=//div[8]/div[2]/a") # editor link
-        selenium_server.click("xpath=//div[8]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[7]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[7]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         fifty_six += 1
         self.assertTrue(all_text.count("56") == fifty_six)
 
         # seventh interpreter
-        selenium_server.click("xpath=//div[9]/div[2]/a") # editor link
-        selenium_server.click("xpath=//div[9]/div[2]/button") # execute button
+        selenium_server.click("xpath=//div[8]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[8]/div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
@@ -260,7 +257,7 @@ By default, it is assumed that Crunchy is serving at port 8001.
 if __name__ == "__main__":
     dummy_browser, port = parse_options()
     base_url = "http://127.0.0.1:%s/" % port
-    selenium_server = selenium("localhost", 4444, "*safari", base_url)
+    selenium_server = selenium("localhost", 4444, "*chrome", base_url)
     selenium_server.start()
     selenium_server.open('/index.html')
     selenium_server.wait_for_page_to_load(5000)
