@@ -2,7 +2,8 @@
 
 See note at the bottom of the file for successful execution.
 '''
-
+from optparse import OptionParser
+import sys
 import unittest
 import time
 
@@ -224,17 +225,47 @@ class LeftMenuLinkTest(unittest.TestCase):
         common_tear_down(self)
 
 
+
+def parse_options():
+    '''parse command line options'''
+    parser = OptionParser(usage)
+    parser.add_option("--port", action="store", type="int", dest="port",
+            help="Specifies the port number served by Crunchy (default is 8001) ")
+    parser.add_option("--browser", action="store", type="string", dest="browser",
+            help="Not implemented: will be->Firefox=chrome (default); Safari=safari")
+
+    (options, dummy) = parser.parse_args()
+
+    port = 8001
+    if options.port:
+        port = options.port
+        # see comment about unittest.main() below
+        sys.argv.remove('--port=%s'%port)
+    browser = "chrome"
+    if options.browser:  # safari raises an error currently on my Mac...
+        browser = options.browser
+        # see comment about unittest.main() below
+        sys.argv.remove('--browser=%s'%browser)
+    return browser, port
+
+usage = '''python functional_test.py [--port=XXXX]
+Functional testing using Selenium.
+Make sure Selenium server is running via:
+    java -jar selenium-server.jar
+and that Crunchy has been started via
+    python crunchy.py --automated.
+By default, it is assumed that Crunchy is serving at port 8001.
+'''
+
 if __name__ == "__main__":
-    print "functional testing using nose and selenium"
-    print "make sure selenium server is running via"
-    print "java -jar selenium-server.jar"
-    print "start Crunchy via: python crunchy.py --automated"
-    print "Note: it is assumed that we have one running Crunchy instance at port 8001"
-    print "==============================\n"
-    base_url = "http://127.0.0.1:8001/"
-    selenium_server = selenium("localhost", 4444, "*chrome", base_url)
+    dummy_browser, port = parse_options()
+    base_url = "http://127.0.0.1:%s/" % port
+    selenium_server = selenium("localhost", 4444, "*safari", base_url)
     selenium_server.start()
-    selenium_server.open('/')
+    selenium_server.open('/index.html')
     selenium_server.wait_for_page_to_load(5000)
+    # unittest.main extract arguments from the command line; it would not
+    # recognize the arguments passed to functional_test.py. This is why
+    # we remove them above.
     unittest.main()
     selenium_server.stop()
