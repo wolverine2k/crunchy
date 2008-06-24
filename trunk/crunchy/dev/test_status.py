@@ -96,7 +96,7 @@ def extract_lines(filename):
     return functions
 
 
-os.path.walk('../crunchy/', visit, info)
+os.path.walk('../', visit, info)
 
 begin_file = '''
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -120,7 +120,7 @@ end_file = '''
 </body></html>
 '''
 
-filename = "../crunchy/server_root/test_status.html"
+filename = "../server_root/test_status.html"
 report = open(filename,'w')
 report.write(begin_file)
 

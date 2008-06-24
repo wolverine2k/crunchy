@@ -57,22 +57,22 @@ class DoctestTest(unittest.TestCase):
                              ])
 
         # first run; execute the doctest with no user code
-        selenium_server.click("xpath=//div[2]/div[3]/button") # execute button
+        selenium_server.click("xpath=//div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("NameError") == 4)
 
         # second run; a different failing test
-        selenium_server.type("xpath=//div[3]/textarea",
+        selenium_server.type("xpath=//div[2]/textarea",
                              "class Animal(object):\n    pass")
-        selenium_server.click("xpath=//div[3]/button") # execute button
+        selenium_server.click("xpath=//div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("NameError") == 3)
         self.assertTrue(all_text.count("TypeError") == 1)
 
         # Third run: success; make sure we set language to English to compare
-        selenium_server.type("xpath=//div[3]/textarea",
+        selenium_server.type("xpath=//div[2]/textarea",
                              "crunchy.language='en'\n" +
                              "class Animal(object):\n" +
                              "   def __init__(self, name):\n" +
@@ -80,7 +80,7 @@ class DoctestTest(unittest.TestCase):
                              "       self.friends = []\n" +
                              "   def addFriend(self, friend):\n" +
                              "       self.friends.append(friend)\n")
-        selenium_server.click("xpath=//div[3]/button") # execute button
+        selenium_server.click("xpath=//div[2]/button") # execute button
         time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("Congratulations") == 1)
@@ -257,7 +257,7 @@ By default, it is assumed that Crunchy is serving at port 8001.
 if __name__ == "__main__":
     dummy_browser, port = parse_options()
     base_url = "http://127.0.0.1:%s/" % port
-    selenium_server = selenium("localhost", 4444, "*chrome", base_url)
+    selenium_server = selenium("localhost", 4444, "*firefox", base_url)
     selenium_server.start()
     selenium_server.open('/index.html')
     selenium_server.wait_for_page_to_load(5000)

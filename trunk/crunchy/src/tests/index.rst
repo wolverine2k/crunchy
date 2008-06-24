@@ -45,6 +45,7 @@ The following are the actual links to existing test files.
 #. test_io_widget.rst_
 #. test_links.rst_
 #. test_pluginloader.rst_
+#. test_power_browser.rst_
 #. test_rst.rst_
 #. test_security.rst_
 #. test_turtle_js.rst_
@@ -70,6 +71,7 @@ The following are the actual links to existing test files.
 .. _test_io_widget.rst: test_io_widget.rst
 .. _test_links.rst: test_links.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
+.. _test_power_browser.rst: test_power_browser.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
 .. _test_rst.rst: test_rst.rst
 .. _test_security.rst: test_security.rst
