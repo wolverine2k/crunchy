@@ -18,7 +18,7 @@ config['editarea_language'].
 .. _how_to.rst: how_to.rst
 
 
-    >>> from src.interface import plugin, config, Element, python_version
+    >>> from src.interface import plugin, config, Element
     >>> plugin.clear()
     >>> plugin['session_random_id'] = 42
     >>> config.clear()

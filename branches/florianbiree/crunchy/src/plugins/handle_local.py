@@ -12,7 +12,6 @@ provides = set(["/local", "/generated_image"])
 
 def register():  # tested
     plugin['register_http_handler']("/local", local_loader)
-    plugin['register_http_handler']("/generated_image", image_loader)
     plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
 
 def local_loader(request):  # tested
@@ -34,16 +33,6 @@ def local_loader(request):  # tested
             sys.path.insert(0, base_url)
     else:
         page = open(url, 'rb')
-    request.send_response(200)
-    request.end_headers()
-    # write() in python 3.0 returns an int instead of None;
-    # this interferes with unit tests
-    __irrelevant = request.wfile.write(page.read())
-
-def image_loader(request):  # tested
-    url = unquote_plus(request.args["url"])
-    fname = os.path.join(config['temp_dir'], url)
-    page = open(fname, 'rb')
     request.send_response(200)
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;

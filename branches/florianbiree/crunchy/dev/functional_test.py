@@ -1,8 +1,7 @@
-'''This file contains functional tests for Crunchy.
-
-See note at the bottom of the file for successful execution.
+'''This file contains functional tests for Crunchy; using Selenium.
 '''
-
+from optparse import OptionParser
+import sys
 import unittest
 import time
 
@@ -21,11 +20,13 @@ from selenium import selenium
 # 3. Note that it has been observed that some unexpected failing tests occur
 #    when the server has been running for too long.
 
+SHORT_WAIT = 0.1
+
 def go_home():
-    '''Loads the Crunchy home page 
+    '''Loads the Crunchy home page
        (and waits until it has loaded before returning).'''
     selenium_server.open("/")
-    
+
 def click_link_and_wait(clickable):
     '''clicks on a series of link, waiting for an appropriate time for a
        page to load before continuing.'''
@@ -51,27 +52,27 @@ class DoctestTest(unittest.TestCase):
         self.verificationErrors = []
         # go to relevant page and store some initial values
         go_home()
-        click_link_and_wait(["link=Tests",  # the main tests page
+        click_link_and_wait(["link=Miscellaneous",  # the main tests page
                              "link=Doctest" # the doctests page
                              ])
 
         # first run; execute the doctest with no user code
-        selenium_server.click("xpath=//div[3]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("NameError") == 4)
 
         # second run; a different failing test
-        selenium_server.type("xpath=//div[3]/textarea",
+        selenium_server.type("xpath=//div[2]/textarea",
                              "class Animal(object):\n    pass")
-        selenium_server.click("xpath=//div[3]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("NameError") == 3)
         self.assertTrue(all_text.count("TypeError") == 1)
 
         # Third run: success; make sure we set language to English to compare
-        selenium_server.type("xpath=//div[3]/textarea",
+        selenium_server.type("xpath=//div[2]/textarea",
                              "crunchy.language='en'\n" +
                              "class Animal(object):\n" +
                              "   def __init__(self, name):\n" +
@@ -79,8 +80,8 @@ class DoctestTest(unittest.TestCase):
                              "       self.friends = []\n" +
                              "   def addFriend(self, friend):\n" +
                              "       self.friends.append(friend)\n")
-        selenium_server.click("xpath=//div[3]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         self.assertTrue(all_text.count("Congratulations") == 1)
 
@@ -99,8 +100,8 @@ class InterpreterTest(unittest.TestCase):
         self.verificationErrors = []
         # go to relevant page and store some initial values
         go_home()
-        click_link_and_wait(["link=Tests",
-                             "link=Interpreter"])
+        click_link_and_wait(["link=Miscellaneous",
+                             "link=Interpreter test"])
 
         # Store some information about text initially on the page.
         all_text = selenium_server.get_body_text()
@@ -109,12 +110,11 @@ class InterpreterTest(unittest.TestCase):
         range_5 = all_text.count("[0, 1, 2, 3, 4]")
         name_errors = all_text.count("NameError")
         system_exits = all_text.count("SystemExit")
-
         # first interpreter; execute the code and give time for Crunchy
         # to process it
-        selenium_server.click("xpath=//div[3]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[3]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[2]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[2]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
         forty_twos += 3
@@ -123,9 +123,9 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # second interpreter
-        selenium_server.click("xpath=//div[4]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[4]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[3]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[3]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         # update to expected values and compare
         forty_twos += 1
@@ -136,41 +136,41 @@ class InterpreterTest(unittest.TestCase):
         self.assertTrue(all_text.count("SystemExit") == system_exits)
 
         # third interpreter
-        selenium_server.click("xpath=//div[5]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[5]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[4]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[4]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
         self.assertTrue(all_text.count("42") == forty_twos)
 
         # fourth interpreter
-        selenium_server.click("xpath=//div[6]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[6]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[5]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[5]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # fifth interpreter
-        selenium_server.click("xpath=//div[7]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[7]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[6]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[6]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         name_errors += 1
         self.assertTrue(all_text.count("NameError") == name_errors)
 
         # sixth interpreter
-        selenium_server.click("xpath=//div[8]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[8]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[7]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[7]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         fifty_six += 1
         self.assertTrue(all_text.count("56") == fifty_six)
 
         # seventh interpreter
-        selenium_server.click("xpath=//div[9]/span[2]/a") # editor link
-        selenium_server.click("xpath=//div[9]/button") # execute button
-        time.sleep(0.1)
+        selenium_server.click("xpath=//div[8]/div[2]/span[2]/a") # editor link
+        selenium_server.click("xpath=//div[8]/div[2]/button") # execute button
+        time.sleep(SHORT_WAIT)
         all_text = selenium_server.get_body_text()
         forty_twos += 1
         fifty_six += 1
@@ -205,7 +205,7 @@ class LeftMenuLinkTest(unittest.TestCase):
         go_home()
         click_link_and_wait(["link=Graphics"])
         go_home()
-        click_link_and_wait(["link=Image files"])
+        click_link_and_wait(["link=Images and dhtml"])
         go_home()
         click_link_and_wait(["link=External applications"])
         go_home()
@@ -222,17 +222,47 @@ class LeftMenuLinkTest(unittest.TestCase):
         common_tear_down(self)
 
 
+
+def parse_options():
+    '''parse command line options'''
+    parser = OptionParser(usage)
+    parser.add_option("--port", action="store", type="int", dest="port",
+            help="Specifies the port number served by Crunchy (default is 8001) ")
+    parser.add_option("--browser", action="store", type="string", dest="browser",
+            help="Not implemented: will be->Firefox=chrome (default); Safari=safari")
+
+    (options, dummy) = parser.parse_args()
+
+    port = 8001
+    if options.port:
+        port = options.port
+        # see comment about unittest.main() below
+        sys.argv.remove('--port=%s'%port)
+    browser = "chrome"
+    if options.browser:  # safari raises an error currently on my Mac...
+        browser = options.browser
+        # see comment about unittest.main() below
+        sys.argv.remove('--browser=%s'%browser)
+    return browser, port
+
+usage = '''python functional_test.py [--port=XXXX]
+Functional testing using Selenium.
+Make sure Selenium server is running via:
+    java -jar selenium-server.jar
+and that Crunchy has been started via
+    python crunchy.py --automated.
+By default, it is assumed that Crunchy is serving at port 8001.
+'''
+
 if __name__ == "__main__":
-    print "functional testing using nose and selenium"
-    print "make sure selenium server is running via"
-    print "java -jar selenium-server.jar"
-    print "start Crunchy via: python crunchy.py --automated=True"
-    print "Note: it is assumed that we have one running Crunchy instance at port 8001"
-    print "==============================\n"
-    base_url = "http://127.0.0.1:8001/"
-    selenium_server = selenium("localhost", 4444, "*chrome", base_url)
+    dummy_browser, port = parse_options()
+    base_url = "http://127.0.0.1:%s/" % port
+    selenium_server = selenium("localhost", 4444, "*firefox", base_url)
     selenium_server.start()
-    selenium_server.open('/')
+    selenium_server.open('/index.html')
     selenium_server.wait_for_page_to_load(5000)
+    # unittest.main extract arguments from the command line; it would not
+    # recognize the arguments passed to functional_test.py. This is why
+    # we remove them above.
     unittest.main()
     selenium_server.stop()

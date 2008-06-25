@@ -13,7 +13,7 @@ for people familiar with the Crunchy plugin architecture.
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, tostring
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id, insert_markup
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -78,29 +78,9 @@ def doctest_widget_callback(page, elem, uid):
         config['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
-    # reset the original element to use it as a container.  For those
-    # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_pycode_nostrip() method extracted all of the existing
-    # text, removing any original markup (and other elements), so that we
-    # do not need to save either the "text" attribute or the "tail" one
-    # before resetting the element.
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "doctest"
-    # We insert the styled doctest code inside this container element:
-    try:
-        new_div = Element("div")
-        new_div.append(markup)
-        new_div.attrib['class'] = 'sample_python_code'
-        elem.insert(0, new_div)
-    except AssertionError:  # this should never happen
-        elem.insert(0, Element("br"))
-        bold = Element("b")
-        span = Element("span")
-        span.text = "AssertionError from ElementTree"
-        bold.append(span)
-        elem.insert(1, bold)
+
+    insert_markup(elem, uid, vlam, markup, "doctest")
+
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid)
     #some spacing:

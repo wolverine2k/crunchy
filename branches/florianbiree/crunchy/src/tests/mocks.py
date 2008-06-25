@@ -7,7 +7,7 @@ can be reused can save a fair bit of time and ensure a greater consistency
 in the various tests.
 '''
 import sys
-from src.interface import plugin, python_version, python_minor_version
+from src.interface import plugin
 
 registered_tag_handler = {}
 registered_http_handler = {}
@@ -51,16 +51,7 @@ class Page(object):
 class Wfile(object):
     '''fake Wfile added as attribute of Request object.'''
     def write(self, text):
-        # required to make this work when the file is read in binary mode
-        if python_version >= 3 and python_minor_version == 'a2':
-            if isinstance(text, bytes):
-                str_text = str(text.decode(sys.getfilesystemencoding()))
-                print(str_text)
-            else:
-                print(text)
-        else:
-            print(text)
-
+        print(text)
 
 class Request(object):
     '''Totally fake request object'''
@@ -92,6 +83,12 @@ def register_service(handle, function):
 def register_preprocessor(handle, function):
     registered_preprocessors[handle] = function
 
+def register_begin_pagehandler(handler):
+    registered_begin_pagehandlers[str(handler)] = handler
+
+def register_end_pagehandler(handler):
+    registered_end_pagehandlers[str(handler)] = handler
+
 def init():
     '''used to (re-)initialise some functions
 
@@ -100,11 +97,16 @@ def init():
     this would not be easily done in Python 3.x; it is easier and more
     accurate to use this function.
     '''
-    global registered_tag_handler, registered_http_handler, registered_services
+    global registered_tag_handler, registered_http_handler, registered_services,\
+            registered_begin_pagehandlers, registered_end_pagehandlers
     registered_tag_handler = {}
     registered_http_handler = {}
     registered_services = {}
+    registered_begin_pagehandlers = {}
+    registered_end_pagehandlers = {}
     plugin['register_tag_handler'] = register_tag_handler
     plugin['register_http_handler'] = register_http_handler
     plugin['register_service'] = register_service
     plugin['register_preprocessor'] = register_preprocessor
+    plugin['register_begin_pagehandler'] = register_begin_pagehandler
+    plugin['register_end_pagehandler'] = register_end_pagehandler

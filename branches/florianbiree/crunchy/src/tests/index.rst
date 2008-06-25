@@ -38,12 +38,14 @@ The following are the actual links to existing test files.
 #. test_editarea.rst_
 #. test_execution.rst_
 #. test_file_service.rst_
+#. test_graphics.rst_
 #. test_handle_local.rst_
 #. test_handle_remote.rst_
 #. test_interface.rst_
 #. test_io_widget.rst_
 #. test_links.rst_
 #. test_pluginloader.rst_
+#. test_power_browser.rst_
 #. test_rst.rst_
 #. test_security.rst_
 #. test_turtle_js.rst_
@@ -62,12 +64,14 @@ The following are the actual links to existing test files.
 .. _test_editarea.rst: test_editarea.rst
 .. _test_execution.rst: test_execution.rst
 .. _test_file_service.rst: test_file_service.rst
+.. _test_graphics.rst: test_graphics.rst
 .. _test_handle_local.rst: test_handle_local.rst
 .. _test_handle_remote.rst: test_handle_remote.rst
 .. _test_interface.rst: test_interface.rst
 .. _test_io_widget.rst: test_io_widget.rst
 .. _test_links.rst: test_links.rst
 .. _test_pluginloader.rst: test_pluginloader.rst
+.. _test_power_browser.rst: test_power_browser.rst
 .. _test_turtle_js.rst: test_turtle_js.rst
 .. _test_rst.rst: test_rst.rst
 .. _test_security.rst: test_security.rst

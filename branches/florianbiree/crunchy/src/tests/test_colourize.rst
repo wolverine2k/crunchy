@@ -1,8 +1,6 @@
 colourize.py tests
 ==================
 
-Tested successfully with Python 2.4, 2.5 and 3.0a1
-
 Note that in order to have tests compatible with Python 2.x and 3.x, we can not use "print"
 since it is a statement in 2.x and a function in 3.x; the same is true with "exec".
 Furthermore, parsing of code sample with comments appears to be done differently by the tokenizer;

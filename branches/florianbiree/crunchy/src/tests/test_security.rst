@@ -21,7 +21,7 @@ See how_to.rst_ for details.
 .. _how_to.rst: how_to.rst
 
 
-    >>> from src.interface import python_version, config, ElementTree, Element, SubElement
+    >>> from src.interface import config, ElementTree, Element, SubElement
     >>> et = ElementTree.ElementTree
     >>> config.clear()
     >>> import src.tests.mocks as mocks

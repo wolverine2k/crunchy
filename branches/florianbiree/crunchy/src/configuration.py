@@ -15,7 +15,7 @@ import sys
 from urlparse import urlsplit
 from imp import find_module
 
-from src.interface import config, python_version, u_print, translate, debug
+from src.interface import config, u_print, translate, python_version, debug
 # the following is needed for unit tests, since debug_flag is normally
 # set when crunchy is started.
 try:
@@ -23,6 +23,7 @@ try:
 except:
     debug_flag = False
 
+# TODO remove all check for Python_version, from all files EXCEPT this one.
 if python_version < 3:
     import cPickle
 else:
@@ -61,7 +62,7 @@ override_default_interpreter_allowed_values = ['default', # ipython,
 
 no_markup_allowed_values = ["none", "editor", 'python_tutorial',
             "python_code", "doctest", "alternate_python_version", "alt_py"]
-                                  # image_file needs an optional argument
+
 for interpreter in override_default_interpreter_allowed_values:
     no_markup_allowed_values.append(interpreter)
 
@@ -93,7 +94,8 @@ class Defaults(object):
     def __init__(self):
         self._set_dirs()
         self.current_page_security_level = 'display_trusted' # starting value
-        self.log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log.html")
+        self.log_filename = os.path.join(os.path.expanduser("~"),
+                                          "crunchy_log.html")
         self._load_settings()
         translate['init_translation'](self.__language)
         self.logging_uids = {}  # {uid : (name, type)}
@@ -119,7 +121,6 @@ class Defaults(object):
         if success:
             saved = cPickle.load(pickled)
             pickled.close()
-
         try:
             self.__no_markup = saved['no_markup']
         except:
@@ -212,10 +213,13 @@ class Defaults(object):
         pickled.close()
         return
 
-    def _set_dirs(self):
+    def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
-        self.__user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
+        home = os.path.expanduser("~")
+        self.__user_dir = os.path.join(home, ".crunchy")
+        self.__temp_dir = os.path.join(home, ".crunchy", "temp")
+
         if not os.path.exists(self.__user_dir):  # first time ever
             try:
                 os.makedirs(self.__user_dir)
@@ -227,7 +231,7 @@ class Defaults(object):
                         # sent to the terminal
                         u_print("Created successfully home directory.")
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = None
+                        self.__temp_dir = self.__user_dir
                     return
             except:
                 u_print("Could not create the user directory.")
@@ -238,25 +242,23 @@ class Defaults(object):
                         os.makedirs(self.__temp_dir)
                     except:
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = None
+                        self.__temp_dir = self.__user_dir
                     return
                 return
         # we may encounter a situation where a ".crunchy" directory
         # had been created by an old version without a temporary directory
-        self.__temp_dir = os.path.join(os.path.expanduser("~"), ".crunchy", "temp")
-
         if not os.path.exists(self.__temp_dir):
             try:
                 os.makedirs(self.__temp_dir)
             except:
                 u_print("home directory '.crunchy' exists; however, ")
                 u_print("could not create temporary directory.")
-                self.__temp_dir = None
+                self.__temp_dir = self.__user_dir
             return
         return
 
     #==============
-    def _get_user_dir(self):
+    def _get_user_dir(self):  # tested
         '''returns the user directory'''
         return self.__user_dir
 
@@ -264,12 +266,9 @@ class Defaults(object):
                        _("(Fixed) User home directory: "))
     #==============
 
-    def _get_temp_dir(self):
+    def _get_temp_dir(self):  # tested
         '''returns a temporary directory specific to Crunchy'''
-        if python_version < 3:
-            return self.__temp_dir.decode(sys.getfilesystemencoding())
-        else:
-            return self.__temp_dir  #untested
+        return self.__temp_dir
 
     # note: should allow user to select different temp dir; when doing so,
     # make sure to update config[]
@@ -278,10 +277,10 @@ class Defaults(object):
                        _("(Fixed) Temporary working directory: "))
     #==============
 
-    def _get_dir_help(self):
+    def _get_dir_help(self): # tested
         return self.__dir_help
 
-    def _set_dir_help(self, choice):
+    def _set_dir_help(self, choice): # tested
         if choice not in dir_help_allowed_values:
             u_print((_("Invalid choice for %s.dir_help")%self._prefix))
             u_print(_("The valid choices are: "), str(dir_help_allowed_values))
@@ -297,10 +296,10 @@ class Defaults(object):
 
     #==============
 
-    def _get_doc_help(self):
+    def _get_doc_help(self): # tested
         return self.__doc_help
 
-    def _set_doc_help(self, choice):
+    def _set_doc_help(self, choice): # tested
         if choice not in doc_help_allowed_values:
             u_print((_("Invalid choice for %s.doc_help")%self._prefix))
             u_print(_("The valid choices are: "), str(doc_help_allowed_values))
@@ -341,29 +340,20 @@ You can change some of the default values by Crunchy, just like
                 if val.__doc__ != 'help':
                     value = val.fget(self)
 # we make sure that the choice is shown as a string if expected from the user
-                    if value not in [True, False]:
-                        try:
-                            value = str(value)
-                        except:
-                            try: # perhaps a path
-                                value = str(value.encode(sys.getfilesystemencoding()))
-                            except: # or translation
-                                try:
-                                    value = str(value.encode('utf-8'))
-                                except:
-                                    value = str(value.encode(sys.getdefaultencoding()))
-                        value = "'" + value + "'"
-                    else:
+                    if value in [True, False, None]:
                         value = str(value)
-                    try:
+                    elif key in ['user_dir', 'temp_dir']: # keep private
+                        # note: it also prevents all kind of nasty problems
+                        # when the path contains non-ascii characters
+                        pass
+                    else:
+                        value = "'" + value + "'"
+                    if key not in ['user_dir', 'temp_dir']: # keep private
+                        # note: it also prevents all kind of nasty problems
+                        # when the path contains non-ascii characters
                         __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
                             self._prefix + "." +  key + " = " + value
-                    except:
-                        # the following appears to be needed if the path
-                        # contains non-ascii characters
-                        __help += "\n"  + "~"*50 +"\n" + (val.__doc__) +\
-                                    self._prefix + "." +  key + " = " + \
-                                    value.decode('utf-8')
+
         return __help + "\n"
 
     help = property(_get_help, None, None, 'help')
@@ -377,36 +367,25 @@ You can change some of the default values by Crunchy, just like
 
     def _set_nm(self, choice):
         ch = choice.strip().split(' ')
-        valid = False
         if ch[0] in no_markup_allowed_values:
-            if ch[0] == 'image_file':
-                if len(ch) == 2: # valid filename needed, nothing else
-                    self.__no_markup = choice
-                    valid = True
-                else:  # no valid file name
-                    pass
-            else:
-                self.__no_markup = choice
-                valid = True
-
-        if not valid:
-            u_print((_("Invalid choice for %s.no_markup")%self._prefix))
-            u_print(_("The valid choices are: "), str(no_markup_allowed_values))
-            u_print(_('with "image_file   file_name" as a required option.'))
-            u_print(_("The current value is: "), self.__no_markup)
-        else:
+            self.__no_markup = choice
             self._save_settings()
             config['no_markup'] = self.__no_markup
+        else:
+            u_print((_("Invalid choice for %s.no_markup")%self._prefix))
+            u_print(_("The valid choices are: "), str(no_markup_allowed_values))
+            u_print(_("The current value is: "), self.__no_markup)
 
     no_markup = property(_get_nm, _set_nm, None,
-        (_('The choices for "pre" tag without Crunchy markup are %s\n')% no_markup_allowed_values) +\
-        _('  The current value is: '))
+        (_('The choices for "pre" tag without Crunchy markup are %s\n') %
+         no_markup_allowed_values) +  _('  The current value is: '))
     #==============
 
     def _get_language(self):
         return self.__language
 
     def _set_language(self, choice):
+        #
         if choice in languages_allowed_values:
             self.__language = choice
             config['language'] = self.__language

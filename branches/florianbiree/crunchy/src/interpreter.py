@@ -10,7 +10,7 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, python_version, translate, config
+from src.interface import StringIO, exec_code, translate, config
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -57,10 +57,7 @@ class Interpreter(KillableThread):
     """
     def __init__(self, code, channel, symbols = {}, doctest=False):
         threading.Thread.__init__(self)
-        if python_version < 3:
-            self.code = trim_empty_lines_from_end(code) # problem with Py3k?
-        else:
-            self.code = code
+        self.code = trim_empty_lines_from_end(code)
         self.channel = channel
         self.symbols = symbols
         self.doctest = doctest
@@ -79,10 +76,13 @@ class Interpreter(KillableThread):
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
-                if configuration.defaults.friendly and python_version < 3:
-                    sys.stderr.write(errors.simplify_traceback(self.code))
-                else:
-                    traceback.print_exc()
+                try:
+                    if configuration.defaults.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    else:
+                        traceback.print_exc()
+                except:
+                    sys.stderr.write("Recovering from internal error in Interpreter.run()")
             if not self.ccode:    #code does nothing
                 return
             try:
@@ -97,7 +97,7 @@ class Interpreter(KillableThread):
                             if not user_code.endswith('\n'):
                                 user_code += '\n'
                         else:
-                            user_code = _("# no code entered by user\n").encode("utf-8")
+                            user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
                         configuration.defaults.log[log_id].append(data)
                         log_session()
@@ -110,10 +110,13 @@ class Interpreter(KillableThread):
                 # we have commented out the {} as a reminder; self.symbols
                 # will be used for holding both global and local variables.
             except:
-                if configuration.defaults.friendly and python_version < 3:
-                    sys.stderr.write(errors.simplify_traceback(self.code))
-                else:
-                    traceback.print_exc()
+                try:
+                    if configuration.defaults.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    else:
+                        traceback.print_exc()
+                except:
+                    sys.stderr.write("Recovering from internal error in Interpreter.run()")
         finally:
             if self.doctest:
                 # attempting to log
@@ -133,7 +136,7 @@ class Interpreter(KillableThread):
                         if not user_code.endswith('\n'):
                             user_code += '\n'
                     else:
-                        user_code = _("# no code entered by user\n").encode("utf-8")
+                        user_code = _("# no code entered by user\n")
                     # separating each attempts
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
@@ -224,11 +227,9 @@ class InteractiveInterpreter(object):
         try:
             code = self.compile(source, filename, symbol)
         except (OverflowError, SyntaxError, ValueError):
-            if python_version < 3:
-                sys.stderr.write(errors.simplify_traceback(source))
-            else:
-                traceback.print_exc()
+            sys.stderr.write(errors.simplify_traceback(source))
             return False
+
         if code is None:
             return True
         self.runcode(code, source)
@@ -352,17 +353,8 @@ class InteractiveConsole(InteractiveInterpreter):
         implementation.
 
         """
-        ## Getting ahead of ourselves: ready for Python 3000 ;-)
-        #if int(sys.version.split('.')[0]) > 2:
-        #    return input(prompt)
-        #return raw_input(prompt)
-        if python_version < 3:
-            return raw_input(prompt)
-        else:
-            return input(prompt)
-            sys.stdout.write(prompt)
-            sys.stdout.flush()
-            return sys.stdin.readline()
+        # will need to replace by input(prompt)... for Python 3.0
+        return raw_input(prompt)
 
 #===== End of modified code.py ========
 

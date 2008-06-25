@@ -13,7 +13,7 @@ import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, translate, tostring
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id, insert_markup
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -40,11 +40,7 @@ def register():  # tested
     # shorter name version of the above
     plugin['register_tag_handler']("pre", "title", "alt_py",
                                                         insert_alternate_python)
-    # the following should never be used other than by Crunchy developers
-    # for testing purposes
-    plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
-                                                        _test_sanitize_for_ElementTree)
-
+    return
 
 def kill_thread_handler(request):
     """Kills the thread associated with uid"""
@@ -64,8 +60,11 @@ def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
     inp.text = code
     plugin['services'].enable_editarea(page, elem, editor_id)
 
-def insert_editor(page, elem, uid):  # tested
-    """handles the editor widget"""
+def insert_bare_editor(page, elem, uid):
+    """inserts a 'bare' editor, python code, but no execution buttons.
+
+    Common code to both insert_editor() and insert_alternate_python().
+    """
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)
     if log_id:
@@ -92,12 +91,19 @@ def insert_editor(page, elem, uid):  # tested
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
 
-    insert_markup(elem, uid, vlam, markup)
+    insert_markup(elem, uid, vlam, markup, "editor")
 
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
-    #some spacing if buttons are needed, they appear below.
+    return vlam
+
+def insert_editor(page, elem, uid):  # tested
+    """handles the editor widget"""
+
+    vlam = insert_bare_editor(page, elem, uid)
+    log_id = extract_log_id(vlam)
+     #some spacing if buttons are needed, they appear below.
     if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
     # the actual buttons used for code execution; we make sure the
@@ -137,27 +143,11 @@ def insert_editor(page, elem, uid):  # tested
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 def insert_alternate_python(page, elem, uid):
-    """handles the python widget"""
-    vlam = elem.attrib["title"]
-    log_id = extract_log_id(vlam)
-    if log_id:
-        t = 'editor'
-        config['logging_uids'][uid] = (log_id, t)
+    """inserts the required widget to launch a Python script using
+    an alternate Python version.
+    """
 
-    if 'display' not in config['page_security_level'](page.url):
-        if not page.includes("exec_included"):
-            page.add_include("exec_included")
-            page.add_js_code(exec_jscode)
-
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
-    if log_id:
-        config['log'][log_id] = [tostring(markup)]
-
-    insert_markup(elem, uid, vlam, markup)
-
-    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
-        code = "\n"
-    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
+    vlam = insert_bare_editor(page, elem, uid)
 
     form1 = SubElement(elem, 'form', name='form1_')
     span = SubElement(form1, 'span')
@@ -169,74 +159,12 @@ def insert_alternate_python(page, elem, uid):
     SubElement(elem, "br")
 
     btn = SubElement(elem, "button")
-    path_label = SubElement(elem, "span")
-    path_label.attrib['id'] = 'path_' + uid
-    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
-
     btn.attrib["onclick"] = "exec_code_externally_python_interpreter('%s')" % uid
     btn.text = _("Execute as external program")
+
+    path_label = SubElement(elem, "span", id= 'path_'+uid)
+    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
     path_label.attrib['class'] = 'path_info'
-
-def _test_sanitize_for_ElementTree(page, elem, uid):
-    """the purpose of this function is ONLY to provide a separate way of
-       launching sanitize.py as a means of testing it.
-
-       From the (initial) description of sanitize.py:
-       The purpose of sanitize.py is to process an html file (that could be
-       malformed) using a combination of BeautifulSoup and ElementTree and
-       output a "cleaned up" file based on a given security level.
-
-       This script is meant to be run as a standalone module, using Python 2.x.
-       It is expected to be launched via exec_external_python_version() located
-       in file_service.py.
-
-       The input file name is expected to be in.html, located in Crunchy's temp
-       directory.  The output file name is out.html, also located in Crunchy's
-       temp directory.
-       """
-    vlam = elem.attrib["title"]
-    if 'display' not in config['page_security_level'](page.url):
-        if not page.includes("exec_included"):
-            page.add_include("exec_included")
-            page.add_js_code(exec_jscode)
-    filepath = os.path.join(plugin['get_root_dir'](), 'sanitize.py')
-    f = open(filepath)
-    elem.text = f.read()
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
-
-    insert_markup(elem, uid, vlam, markup)
-
-    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
-
-    btn = SubElement(elem, "button")
-    path_label = SubElement(elem, "span")
-    path_label.attrib['id'] = 'path_' + uid
-    filepath2 = os.path.join(plugin['get_root_dir'](), 'sanitize_new.py')
-    path_label.text = filepath2
-
-    btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
-    btn.text = _("Execute as external program")
-    path_label.attrib['class'] = 'path_info'
-
-def insert_markup(elem, uid, vlam, markup):
-    '''clears an element and inserts the new markup inside it'''
-    elem.clear()
-    elem.tag = "div"
-    elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "editor"
-    if not "no_pre" in vlam:
-        try:
-            new_div = Element("div")
-            new_div.append(markup)
-            new_div.attrib['class'] = 'sample_python_code'
-            elem.insert(0, new_div)
-        except AssertionError:  # this should never happen
-            elem.insert(0, Element("br"))
-            bold = Element("b")
-            span = Element("span")
-            span.text = "AssertionError from ElementTree"
-            bold.append(span)
-            elem.insert(1, bold)
 
 # we need some unique javascript in the page; note how the
 # "/exec"  and /run_external handlers referred to above as required

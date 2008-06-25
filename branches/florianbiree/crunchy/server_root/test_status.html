@@ -13,27 +13,10 @@ Note that the test information is only as good as it has been
 documented in the source files.  Try to help in keeping this up to date.
 </p>
 <pre title="python_code">
-crunchy/server_root/functional_tests
-    hello.py
-        hello()
-crunchy/src/imports/DOM
-    __init__.py
-        from document import Documen
-    document.py
-        import src.interface
-        freevar()
-        class Document(object): 
-            exec_jscript(self, code)
-            _get_body(self)
-            create_element(self, tagName)
-            getElementById(self, id)
-        class Element(object):
-            __init__(self, document, var)
-            _set_innerHTML(self, val)
-crunchy/server_root/functional_tests/test_import
+server_root/functional_tests/test_import
     bye.py
         bye()
-crunchy/src/plugins
+src/plugins
     __init__.py
     colourize.py
         import copy
@@ -41,7 +24,7 @@ crunchy/src/plugins
         import keyword
         import token
         import tokenize
-        from src.interface import StringIO, ElementTree, python_version, translate, plugin
+        from src.interface import StringIO, ElementTree, translate, plugin
         from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
         register():
             plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
@@ -133,7 +116,7 @@ crunchy/src/plugins
         from subprocess import Popen
         import os
         import sys
-        from src.interface import python_version, config, plugin
+        from src.interface import config, plugin
         register():
             plugin['register_http_handler']("/save_file", save_file_request_handler)
             plugin['register_http_handler']("/load_file", load_file_request_handler)
@@ -176,10 +159,8 @@ crunchy/src/plugins
         from src.interface import config, plugin
         register():  # tested
             plugin['register_http_handler']("/local", local_loader)
-            plugin['register_http_handler']("/generated_image", image_loader)
             plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
         local_loader(request)  # tested
-        image_loader(request)  # tested
         add_to_path(page, elem, *dummy)  # tested
     handle_remote.py
         from urllib import urlopen, unquote_plus
@@ -211,7 +192,7 @@ crunchy/src/plugins
             plugin['register_tag_handler']("a", "title", "external_link", external_link)
             plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
         external_link(dummy_page, elem, *dummy)  # tested
-        fixed_link(dummy_page, elem, *dummy)  # tested
+        fixed_link(*dummy)  # tested
         a_tag_handler(page, elem, *dummy)  # tested
         src_handler(page, elem, *dummy)  # partially tested
         link_tag_handler(page, elem, *dummy)  # partially tested
@@ -241,9 +222,9 @@ crunchy/src/plugins
         import rst
         import vlam_load_local
         import vlam_load_remote
-        register():
-            plugin['register_tag_handler']("body", None, None, insert_browser)
-        insert_browser(page, body, *dummy)
+        register(): # tested
+            plugin['register_end_pagehandler'](insert_browser)
+        insert_browser(page, *dummy) # tested
     python_files.py
         from src.interface import plugin, interactive
         from src.utilities import changeHTMLspecialCharacters, insert_file_browser
@@ -311,7 +292,7 @@ crunchy/src/plugins
         import re
         import urllib
         import src.interpreter as interpreter
-        from src.interface import python_version, config, translate, plugin, Element
+        from src.interface import config, translate, plugin, Element
         register():
             plugin['register_service']("insert_tooltip", insert_tooltip)
             plugin['register_http_handler']("/dir%s" % plugin['session_random_id'],
@@ -323,7 +304,7 @@ crunchy/src/plugins
         doc_handler(request)
     vlam_doctest.py
         from src.interface import config, plugin, Element, SubElement, tostring
-        from src.utilities import extract_log_id
+        from src.utilities import extract_log_id, insert_markup
         register():
             plugin['register_tag_handler']("pre", "title", "doctest",
                                                   doctest_widget_callback)
@@ -336,7 +317,7 @@ crunchy/src/plugins
     vlam_editor.py
         import os
         from src.interface import config, plugin, Element, SubElement, translate, tostring
-        from src.utilities import extract_log_id
+        from src.utilities import extract_log_id, insert_markup
         register():  # tested
             plugin['register_tag_handler']("pre", "title", "editor",
                                                                 insert_editor)
@@ -345,14 +326,11 @@ crunchy/src/plugins
                                                                 insert_alternate_python)
             plugin['register_tag_handler']("pre", "title", "alt_py",
                                                                 insert_alternate_python)
-            plugin['register_tag_handler']("pre", "title", "_test_sanitize_for_ElementTree",
-                                                                _test_sanitize_for_ElementTree)
         kill_thread_handler(request)
         insert_editor_subwidget(page, elem, uid, code="\n")  # tested
+        insert_bare_editor(page, elem, uid)
         insert_editor(page, elem, uid)  # tested
         insert_alternate_python(page, elem, uid)
-        _test_sanitize_for_ElementTree(page, elem, uid)
-        insert_markup(elem, uid, vlam, markup)
     vlam_interpreter.py
         import sys
         from src.interface import config, plugin, translate, tostring, Element
@@ -388,7 +366,36 @@ crunchy/src/plugins
             plugin['register_tag_handler']("span", "title", "load_remote",
                                                             insert_load_remote)
         insert_load_remote(dummy_page, parent, dummy_uid) # tested
-crunchy/src/imports
+src/tests
+    __init__.py
+    mocks.py
+        import sys
+        from src.interface import plugin
+        class Page(object):
+            __init__(self)
+            includes(self, dummy)
+            add_include(self, function)
+            add_js_code(self, dummy)
+            insert_js_file(self, filename)
+            add_css_file(self, filename)
+            add_css_code(self, dummy)
+        class Wfile(object):
+            write(self, text)
+        class Request(object):
+            __init__(self, data='data', args='args')
+            send_response(self, response=42)
+            end_headers(self)
+        register_tag_handler(tag, attribute, value, function)
+        register_http_handler(handle, function)
+        register_service(handle, function)
+        register_preprocessor(handle, function)
+        register_begin_pagehandler(handler)
+        register_end_pagehandler(handler)
+        init()
+server_root/crunchy_tutor
+    global_edit.py
+        import time
+src/imports
     __init__.py
     c_turtle.py
         import math as _math
@@ -441,33 +448,22 @@ crunchy/src/imports
     graphics.py
         import re
         from src.interface import plugin
-        init_graphics(width=400, height=400, border_color='red')
-        clear_graphics()
-        set_line_colour(col)
-        set_fill_colour(col)
-        line(point_1, point_2)
-        circle(centre, r)
-        filled_circle(centre, r)
-        rectangle(corner, w, h)
-        filled_rectangle(corner, w, h)
-        triangle(point_1, point_2, point_3)
-        filled_triangle(point_1, point_2, point_3)
-        point(x, y)
-        validate_colour(colour)
-    math_graphics.py
-        import re
-        from src.interface import plugin
-        import src.imports.graphics as graphics
-        init_graphics(width=400, height=400, border_color='red')
-        clear_graphics()
-        line(point_1, point_2)
-        circle(centre, r)
-        filled_circle(centre, r)
-        rectangle(corner, w, h)
-        filled_rectangle(corner, w, h)
-        triangle(point_1, point_2, point_3)
-        filled_triangle(point_1, point_2, point_3)
-        point(x, y)
+        init(width=400, height=400, border_color='red', origin='top') # tested
+        clear() # tested
+        set_line_colour(col) # tested
+        set_fill_colour(col) # tested
+        line(point_1, point_2) # tested
+        _circle(centre, r, filled=False) # tested
+        circle(centre, r) # tested
+        filled_circle(centre, r) # tested
+        _rectangle(corner, w, h, filled=False) # tested
+        rectangle(corner, w, h) # tested
+        filled_rectangle(corner, w, h) # tested
+        _triangle(point_1, point_2, point_3, filled=False) # tested
+        triangle(point_1, point_2, point_3) # tested
+        filled_triangle(point_1, point_2, point_3) # tested
+        point(x, y) # tested
+        validate_colour(colour) # tested
     turtle_js.py
         import math as _math
         from src.interface import plugin
@@ -510,7 +506,7 @@ crunchy/src/imports
         __point(x, y)
     turtle_tk.py
         import Tkinte
-crunchy/src
+src
     __init__.py
     cometIO.py
         import threading
@@ -549,7 +545,7 @@ crunchy/src
         import sys
         from urlparse import urlsplit
         from imp import find_module
-        from src.interface import config, python_version, u_print, translate, debug
+        from src.interface import config, u_print, translate, python_version, debug
             from src.interface import debug_flag
             import cPickle
             import pickle as cPickle
@@ -560,13 +556,13 @@ crunchy/src
             __init__(self)
             _load_settings(self)
             _save_settings(self)
-            _set_dirs(self)
-            _get_user_dir(self)
-            _get_temp_dir(self)
-            _get_dir_help(self)
-            _set_dir_help(self, choice)
-            _get_doc_help(self)
-            _set_doc_help(self, choice)
+            _set_dirs(self) # "tested"; i.e. called in unit tests.
+            _get_user_dir(self)  # tested
+            _get_temp_dir(self)  # tested
+            _get_dir_help(self) # tested
+            _set_dir_help(self, choice) # tested
+            _get_doc_help(self) # tested
+            _set_doc_help(self, choice) # tested
             _get_help(self)
             _get_nm(self)
             _set_nm(self, choice)
@@ -632,9 +628,9 @@ crunchy/src
         from traceback import format_exc
         import base64,md5
         import time
-        from src.interface import python_version, python_minor_version
         from src.utilities import uidgen
         import src.CrunchyPlugin as CrunchyPlugin
+        from src.interface import config
         require_basic_authenticate(func)
             wrapped(self)
         require_digest_access_authenticate(func)
@@ -655,15 +651,11 @@ crunchy/src
         import sys
             from StringIO import StringIO
             from io import StringIO
-            import src.tools_2k as tools
-            import src.tools_3k as tools
+        import src.tools_2k as tools
         import src.translation
         from src.debug import debug
         debug_msg(data)
         from src.element_tree import ElementTree, HTMLTreeBuilder
-            import src.my_htmlentitydefs
-            class XmlFile(ElementTree.ElementTree):
-                __init__(self, file=None)
     interpreter.py
         import inspect
         import threading, sys
@@ -671,7 +663,7 @@ crunchy/src
         import traceback
         from codeop import CommandCompiler, compile_command
             import ctypes
-        from src.interface import StringIO, exec_code, python_version, translate, config
+        from src.interface import StringIO, exec_code, translate, config
         from src.utilities import trim_empty_lines_from_end, log_session
         import src.configuration as configuration
         import src.errors as errors
@@ -723,7 +715,7 @@ crunchy/src
         import urllib
         import urlparse
         import sys
-        from src.interface import python_version, config, ElementTree
+        from src.interface import config, ElementTree
         remove_unwanted(tree, page)  # partially tested
         __cleanup(elem, filter)
         validate_image(src, page)
@@ -736,28 +728,23 @@ crunchy/src
         exec_code(code, local_dict, source='')
             import src.errors as errors   # prevent premature import
             import sys                    #
-    tools_3k.py
-        import traceback
-        import sys
-        u_print(*args)
-        exec_code(code, local_dict, source="ignore")
-        showtraceback()
     translation.py
         import os.path
         from imp import find_module
-        from src.interface import python_version, u_print
+        from src.interface import u_print
         init_translation(lang=None)
                 import pprint
         _(message)
         build_dict(filename)
     utilities.py
         import re
-        from src.interface import python_version, config, plugin, SubElement
+        from src.interface import config, plugin, Element, SubElement
         uidgen()  # tested
         extract_log_id(vlam)  # tested
         insert_file_browser(parent, text, action)  # tested
         trim_empty_lines_from_end(text)  # tested
         changeHTMLspecialCharacters(text)  # tested
+        insert_markup(elem, uid, vlam, markup, interactive_type)
         log_session()
         append_checkmark(pageid, parent_uid)
         append_warning(pageid, parent_uid)
@@ -791,17 +778,8 @@ crunchy/src
         class CrunchyPage(_BasePage):
             __init__(self, filehandle, url, remote=False, local=False)
             process_tags(self)
-crunchy/server_root/edit_area
-    adapt_for_crunchy.py
-        break_into_lines(text)
-        add_font_choices(text)
-crunchy/
+
     __init__.py
-    all_tests.py
-        import doctest
-        from os import listdir, getcwd
-        from os.path import join, sep, dirname
-        from imp import find_module
     crunchy.py
         from optparse import OptionParser
         import os
@@ -817,7 +795,21 @@ crunchy/
         parse_options()
         convert_url(url)
         open_browser(url)
+server_root/edit_area
+    adapt_for_crunchy.py
+        break_into_lines(text)
+        add_font_choices(text)
+dev
+    all_tests.py
+        from doctest import OutputChecker
+        import doctest
+        import os
+        import sys
+        class MyOutputChecker(doctest.OutputChecker):
+            check_output(self, want, got, optionflags)
     functional_test.py
+        from optparse import OptionParser
+        import sys
         import unittest
         import time
         from selenium import selenium
@@ -833,33 +825,29 @@ crunchy/
         class LeftMenuLinkTest(unittest.TestCase):
             test_links(self)
             tearDown(self)
-crunchy/src/tests
+        parse_options()
+    test_status.py
+        import os.path
+        visit(arg, dirname, names)
+        changeHTMLspecialCharacters(text)
+        extract_lines(filename)
+src/imports/DOM
     __init__.py
-    mocks.py
-        import sys
-        from src.interface import plugin, python_version, python_minor_version
-        class Page(object):
-            __init__(self)
-            includes(self, dummy)
-            add_include(self, function)
-            add_js_code(self, dummy)
-            insert_js_file(self, filename)
-            add_css_file(self, filename)
-            add_css_code(self, dummy)
-        class Wfile(object):
-            write(self, text)
-        class Request(object):
-            __init__(self, data='data', args='args')
-            send_response(self, response=42)
-            end_headers(self)
-        register_tag_handler(tag, attribute, value, function)
-        register_http_handler(handle, function)
-        register_service(handle, function)
-        register_preprocessor(handle, function)
-        init()
-crunchy/server_root/crunchy_tutor
-    global_edit.py
-        import time
+        from document import Documen
+    document.py
+        import src.interface
+        freevar()
+        class Document(object): 
+            exec_jscript(self, code)
+            _get_body(self)
+            create_element(self, tagName)
+            getElementById(self, id)
+        class Element(object):
+            __init__(self, document, var)
+            _set_innerHTML(self, val)
+server_root/functional_tests
+    hello.py
+        hello()
 
 </pre>
 </body></html>

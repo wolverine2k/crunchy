@@ -23,10 +23,13 @@ def simplify_traceback(code=None):
     The first stack item because it is our own code; it is removed in
     the standard traceback in the code module.
     '''
-    ex_type, value, trace = sys.exc_info()
-    sys.last_type = ex_type
-    sys.last_traceback = trace
-    sys.last_value = value
+    try:
+        ex_type, value, trace = sys.exc_info()
+        sys.last_type = ex_type
+        sys.last_traceback = trace
+        sys.last_value = value
+    except:
+        return "Internal error: could not retrieve traceback information."
     try:
         lineno = trace.tb_next.tb_lineno
     except:
@@ -134,7 +137,7 @@ def simplify_doctest_error_message(msg):
         elif failures == total:
             summary = (_(u"Your code failed all (%d) tests.")%total).encode("utf-8")
         else:
-            summary = (_(u"Your code failed %s out of %s tests.")%(failures, total)).encode("utf-8")
+            summary = (_(u"Your code passed %s out of %s tests.")%(total-failures, total)).encode("utf-8")
 
     if failures == 0:
         return summary, success
