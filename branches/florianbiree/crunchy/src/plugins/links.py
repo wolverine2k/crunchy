@@ -21,9 +21,9 @@ def register():  # tested
     plugin['register_tag_handler']("a", "title", "external_link", external_link)
     plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
 
-def external_link(dummy_page, elem, *dummy):  # tested
-    '''handler which totally ignores the link being passed to it, other than
-    inserting an image to indicate it leads outside of Crunchy'''
+def external_link(page, elem, *dummy):  # tested
+    '''force the link to be opened in a new window/tab, and
+    insert an image to indicate it leads outside of Crunchy'''
     if elem.tail:
         elem.tail += " "
     else:
@@ -31,6 +31,9 @@ def external_link(dummy_page, elem, *dummy):  # tested
     dummy = SubElement(elem, "img", src="/external_link.png",
                      style="border:0;", alt="external_link.png")
     elem.attrib['target'] = "_blank" # opens in separate window/tab.
+    # If the links is a relative link, make it absolute
+    if "://" not in elem.attrib["href"]:
+        elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     return
 
 def fixed_link(*dummy):  # tested
