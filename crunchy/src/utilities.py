@@ -5,7 +5,7 @@
    unit tests in test_utilities.rst
 '''
 import re
-from src.interface import python_version, config, plugin, SubElement
+from src.interface import config, plugin, Element, SubElement
 
 COUNT = 0
 def uidgen():  # tested
@@ -65,12 +65,31 @@ def changeHTMLspecialCharacters(text):  # tested
     '''replace <>& by their escaped valued so they are displayed properly
        in browser.'''
     # this function is used in colourize.py and cometIO.py
-    if python_version >= 3:
-        text = str(text)
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
     return text
+
+
+def insert_markup(elem, uid, vlam, markup, interactive_type):
+    '''clears an element and inserts the new markup inside it'''
+    elem.clear()
+    elem.tag = "div"
+    elem.attrib["id"] = "div_"+uid
+    elem.attrib['class'] = interactive_type # 'editor', 'doctest', 'interpreter'
+    if not "no_pre" in vlam:
+        try:
+            new_div = Element("div")
+            new_div.append(markup)
+            new_div.attrib['class'] = 'sample_python_code'
+            elem.insert(0, new_div)
+        except AssertionError:  # this should never happen
+            elem.insert(0, Element("br"))
+            bold = Element("b")
+            span = Element("span")
+            span.text = "AssertionError from ElementTree"
+            bold.append(span)
+            elem.insert(1, bold)
 
 begin_html = """
 <html>

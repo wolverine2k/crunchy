@@ -1,7 +1,6 @@
 file_service.py tests
 =====================
 
-Tested successfully with Python 2.4, 2.5, 3.0a1 and 3.0a2
 
 Testing saving and reading from a file.
 

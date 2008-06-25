@@ -28,13 +28,12 @@ def external_link(dummy_page, elem, *dummy):  # tested
         elem.tail += " "
     else:
         elem.text += " "
-    img = SubElement(elem, "img")
-    img.attrib['src'] = "/external_link.png"
-    img.attrib['style'] = "border:0;"
-    img.attrib['alt'] = "external_link.png"
+    dummy = SubElement(elem, "img", src="/external_link.png",
+                     style="border:0;", alt="external_link.png")
+    elem.attrib['target'] = "_blank" # opens in separate window/tab.
     return
 
-def fixed_link(dummy_page, elem, *dummy):  # tested
+def fixed_link(*dummy):  # tested
     '''handler which totally ignores the link being passed to it.'''
     # This is useful if one Crunchy widget needs to insert a link, usually
     # with respect to the server root, that is not meant to be altered - which

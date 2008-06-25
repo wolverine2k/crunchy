@@ -3,8 +3,6 @@ Testing c_turtle_js.py
 
 The first part of this file is essentially a copy of test_c_turtle.py.
 
-It has been tested with Python 2.4, 2.5 and 3.0a1.
-
 We start by initializing a simple Turtle; we also create a mock function to return a canvas
 uid for testing.
 

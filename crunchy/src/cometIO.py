@@ -12,7 +12,7 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-debug_ids = []#1, 2, 3, 4, 5]
+debug_ids = []#1, 2, 3, 4, 5, 6]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -138,7 +138,10 @@ def write_js(pageid, jscode):
 
 def write_output(pageid, uid, output):
     '''write some simple output to an element identified by its uid'''
-    output_buffers[pageid].put_output(output, uid)
+    try:
+        output_buffers[pageid].put_output(output, uid)
+    except:
+        debug_msg("Problem in write_output", 6)
 
 def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
@@ -273,7 +276,7 @@ class ThreadedBuffer(object):
         if self.__redirect(uid):
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
-            self.default_out.write(data)
+            self.default_out.write(data.encode(sys.getfilesystemencoding()))
 
     def read(self):
         """N.B. this function is rarely, if ever, used - and is probably untested"""

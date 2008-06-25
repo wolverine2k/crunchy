@@ -8,9 +8,9 @@ that require testing:
 #. `register()`_
 #. kill_thread_handler()
 #. `insert_editor_subwidget()`_
+#. insert_bare_editor()
 #. `insert_editor()`_
 #. insert_alternate_python()
-#. _test_sanitize_for_ElementTree()
 #. insert_markup()
 
 
@@ -21,7 +21,7 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-  >>> from src.interface import Element, plugin, config, python_version
+  >>> from src.interface import Element, plugin, config
   >>> plugin.clear()
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
@@ -49,8 +49,6 @@ Testing register()
   >>> mocks.registered_tag_handler['pre']['title']['alternate_python_version'] == vlam_editor.insert_alternate_python
   True
   >>> mocks.registered_tag_handler['pre']['title']['alt_py'] == vlam_editor.insert_alternate_python
-  True
-  >>> mocks.registered_tag_handler['pre']['title']['_test_sanitize_for_ElementTree'] == vlam_editor._test_sanitize_for_ElementTree
   True
   >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
   True

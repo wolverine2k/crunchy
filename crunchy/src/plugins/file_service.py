@@ -8,7 +8,7 @@ import os
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import python_version, config, plugin
+from src.interface import config, plugin
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
@@ -54,25 +54,11 @@ def save_file_request_handler(request):
     # containing the path length separated from the path and the content by
     # a separator where we check to make sure the path recreated
     # is of the correct length - but it probably would be an overkill.
-    if python_version >= 3:
-        data = str(data)
-        if DEBUG:
-            print('transformed data into str; data = ')
-            print(data)
-    if python_version >= 3:
-        try:
-            info = data.split("_::EOF::_")
-        except:
-            print('could not split data')
-    else:
-        info = data.split("_::EOF::_")
+    info = data.split("_::EOF::_")
     if DEBUG:
         print("info = ")
         print(info)
-    if python_version < 3:
-        path = info[0].decode("utf-8")
-    else:
-        path = info[0]
+    path = info[0].decode("utf-8")
     try:
         path = path.encode(sys.getfilesystemencoding())
     except:
@@ -125,8 +111,6 @@ def save_file(full_path, content):  # tested
     if DEBUG:
         print("Entering save_file.")
     #full_path = full_path.encode(sys.getfilesystemencoding)
-    if python_version >= 3:
-        full_path = str(full_path)
     try:
         f = open(full_path, 'w')
         f.write(content)
@@ -168,13 +152,8 @@ def save_file_python_interpreter_request_handler(request):
     data = request.data
     request.send_response(200)
     request.end_headers()
-    if python_version >= 3:
-        data = str(data)
     info = data.split("_::EOF::_")
-    if python_version < 3:
-        path = info[1].decode("utf-8")
-    else:
-        path = info[1]
+    path = info[1]
     try:
         path = path.encode(sys.getfilesystemencoding())
     except:
@@ -223,8 +202,6 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         print("Entering exec_external_python_interpreter.")
         print("path =" + str(path))
         print("alternate version = " + str(alternate_version))
-    if python_version >= 3:
-        path = str(path)
     if alternate_version:
         python_interpreter = config['alternate_python_version']
     else:

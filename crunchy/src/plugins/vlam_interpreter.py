@@ -70,31 +70,9 @@ def insert_interpreter(page, elem, uid):
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
-    # reset the original element to use it as a container.  For those
-    # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_pycode() method extracted all of the existing
-    # text, removing any original markup (and other elements), so that we
-    # do not need to save either the "text" attribute or the "tail" one
-    # before resetting the element.
-    elem.clear()
-    elem.tag = "div"
-    if interp_kind is not None:
-        elem.attrib["id"] = "div_"+uid
-        elem.attrib['class'] = "interpreter"
-    code += "\n"
-    if not "no_pre" in vlam:
-        try:
-            new_div = Element("div")
-            new_div.append(markup)
-            new_div.attrib['class'] = 'sample_python_code'
-            elem.insert(0, new_div)
-        except AssertionError:
-            elem.insert(0, Element("br"))
-            bold = Element("b")
-            span = Element("span")
-            span.text = "AssertionError from ElementTree"
-            bold.append(span)
-            elem.insert(1, bold)
+
+    utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
+
     if interp_kind is None:
         return
     plugin['services'].insert_io_subwidget(page, elem, uid,

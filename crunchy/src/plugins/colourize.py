@@ -19,7 +19,7 @@ import token
 import tokenize
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import StringIO, ElementTree, python_version, translate, plugin
+from src.interface import StringIO, ElementTree, translate, plugin
 from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
 et = ElementTree
 _ = translate['_']
@@ -184,17 +184,15 @@ def get_linenumber_offset(vlam):
 
 def replace_element(elem, replacement):
     '''replace the content of an ElementTree Element by that of another
-       one.'''
-    if python_version < 3:
-        elem.clear()
-        elem.text = replacement.text
-        elem.tail = replacement.tail
-        elem.tag = replacement.tag
-        elem.attrib = replacement.attrib
-        elem[:] = replacement[:]   # does not work with py3k
-    else:
-        elem.__dict__ = replacement.__dict__
-    return
+       one.
+    '''
+    elem.clear()
+    elem.text = replacement.text
+    elem.tail = replacement.tail
+    elem.tag = replacement.tag
+    elem.attrib = replacement.attrib
+    elem[:] = replacement[:]
+
 
 #--------End ElementTree dependent part-------------
 # ===== The following code deals with regular html encoded content.

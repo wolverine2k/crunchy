@@ -7,8 +7,6 @@ import socket
 import urllib
 from urlparse import urlsplit
 import webbrowser
-import string
-import random
 
 import src.interface
 REQUIRED = 2.4
@@ -44,14 +42,10 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         port = find_port()
     else:
         port = find_port(start=port)
-    # Choose a random password and give it to http_serve
-    login = "crunchy"
-    password = random_password()
-    http_serve.users[login] = password
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
     pluginloader.init_plugin_system(server)
-    base_url = 'http://' + login + ':' + password + '@' + host + ':' + str(port)
+    base_url = 'http://' + host + ':' + str(port)
     if url is None:
         url =  base_url + '/'
     else:
@@ -60,15 +54,13 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     # print this info so that, if the right browser does not open,
     # the user can copy and paste the URL
     print('\nCrunchy Server: serving up interactive tutorials at URL ' +
-            url)
-    print('Login: %s' % login)
-    print('Password: %s\n' % password)
+            url + '\n')
     server.still_serving = True
     while server.still_serving:
         try:
             server.handle_request()
         except KeyboardInterrupt:
-            print("Recieved Keyboard Interrupt, Quitting...")
+            print("Received Keyboard Interrupt, Quitting...")
             server.still_serving = False
     server.server_close()
 
@@ -101,14 +93,15 @@ def parse_options():
     interactive_help = """Somewhat equivalent to normal "python -i script.py".
                           Ignored if --url is used.
                           """
-    automated_help = """Used when running automated tests to prevent security
+    automated_help = """Used when running automated tests to disable request
+                        for authentication and to prevent security
                         advisory confirmation from appearing when launching
                         Crunchy."""
     parser.add_option("--url", action="store", type="string", dest="url",
             help=url_help)
     parser.add_option("--completely_trusted", action="store", type="string",
                       dest="safe_url", help=safe_url_help)
-    parser.add_option("--automated", action="store", type="string",
+    parser.add_option("--automated", action="store_true",
                       dest="automated", help=automated_help)
     parser.add_option("--i", action="store", type="string", dest="interactive",
             help=interactive_help)
@@ -143,6 +136,7 @@ def parse_options():
         url = convert_url(options.interactive)
     if options.automated:
         src.interface.config['initial_security_set'] = True
+        src.interface.config['automated'] = True
     port = None
     if options.port:
         port = options.port
@@ -183,14 +177,6 @@ def open_browser(url):
     except:
         client = webbrowser.get()
     client.open(url)
-
-def random_password():
-    """
-    Return a randomly chosen password.
-    """
-    character_set = string.digits + string.letters
-    password_length = 12
-    return ''.join(random.Random().sample(character_set, password_length))
 
 if __name__ == "__main__":
     _url, _port = parse_options()

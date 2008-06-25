@@ -6,7 +6,6 @@ It has the following functions that require testing:
 
 #. `register()`_
 #. `local_loader()`_
-#. `image_loader()`_
 #. `add_to_path()`_
 
 Setting things up
@@ -35,8 +34,6 @@ Testing register()
     >>> mocks.registered_tag_handler['meta']['title']['python_import'] == handle_local.add_to_path
     True
     >>> mocks.registered_http_handler['/local'] == handle_local.local_loader
-    True
-    >>> mocks.registered_http_handler['/generated_image'] == handle_local.image_loader
     True
 
 .. _`local_loader()`:
@@ -121,36 +118,6 @@ We are now ready for the test as such.
     >>> cwd in sys.path
     True
     >>> sys.path.remove(cwd)  # cleaning up
-
-.. _`image_loader()`:
-
-Testing image_loader()
--------------------------
-
-Essentially same process as 2, except we need to define a fake temp_dir 
-for config.
-
-
-    >>> file_content = "This is just a test."
-    >>> filename = "test_file0.txt"
-    >>> filepath = os.path.join(os.getcwd(), filename)
-    >>> index = 0
-    >>> # create non-existing file
-    >>> while os.path.exists(filepath):
-    ...    orig = "%d.txt"%index
-    ...    index += 1
-    ...    repl = "%d.txt"%index
-    ...    filepath.replace(orig, repl)
-    >>> handle = open(filepath, 'w')
-    >>> __irrelevant = handle.write(file_content)
-    >>> handle.close()
-    >>> config['temp_dir'] = ''
-    >>> request = mocks.Request(args={'url':filepath})
-    >>> handle_local.image_loader(request)
-    200
-    End headers
-    This is just a test.
-    >>> os.remove(filepath)
 
 .. _`add_to_path()`:
 

@@ -5,7 +5,7 @@ import urllib
 
 import src.interpreter as interpreter
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import python_version, config, translate, plugin, Element
+from src.interface import config, translate, plugin, Element
 _ = translate['_']
 
 borg_console = {}
@@ -56,10 +56,7 @@ def dir_handler(request):
         request.end_headers()
         return
 
-    if python_version < 3:
-        line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
-    else:
-        line = re.split(r"\s", urllib.unquote_plus(str(request.data)))[-1].strip()
+    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
 
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
@@ -93,11 +90,7 @@ def doc_handler(request):
         return
 
     pageid = request.args['uid'].split(":")[0]
-
-    if python_version < 3:
-        line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
-    else:
-        line = re.split(r"\s", urllib.unquote_plus(str(request.data)))[-1].strip()
+    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
 
     # Support lines like "func(text" as "func(", because the browser
     # may not finish calculating the partial line until after the user

@@ -6,7 +6,7 @@ Translation infrastructure for Crunchy.
 import os.path
 from imp import find_module
 
-from src.interface import python_version, u_print
+from src.interface import u_print
 
 current_locale = None
 DEBUG = False
@@ -44,7 +44,7 @@ def init_translation(lang=None):
 def _(message):
     ''' translate a message, taking care of encoding issues if needed.'''
     global _selected
-    message = message.replace("\n","")#.decode("utf-8")
+    message = message.replace("\n","")
     if message in _selected:
         return _selected[message]
     else:
@@ -93,4 +93,3 @@ def build_dict(filename):
                 msgid = False
                 msgstr = False
     return translation
-
