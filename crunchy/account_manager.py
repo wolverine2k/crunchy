@@ -87,7 +87,7 @@ class AMCLI(object):
         'new <username> : add a new user'
         password = getpass("Please input the password:") 
         if username in self.accounts:
-            print ("Error: user %s already exists")
+            print ("Error: user %s already exists" %(username))
         else:
             self.accounts[username] =  password
             self.accounts.save()
@@ -96,7 +96,7 @@ class AMCLI(object):
         "pwd <username> : change a user's password"
         password = getpass("Please input the new password:") 
         if username not in self.accounts:
-            print ("Error: user %s doesn't exist")
+            print ("Error: user %s doesn't exist" %(username))
         else:
             self.accounts[username] =  password
             self.accounts.save()
