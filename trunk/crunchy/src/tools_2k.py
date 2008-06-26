@@ -18,7 +18,13 @@ def u_print(*args):
             to_print.append(arg.encode("utf-8"))
         except:
             to_print.append(str(arg))
-    print ''.join(to_print)
+    try:  # exceptions appear to be catched silently elsewhere
+          # without this try/except block...
+          # likely a problem with printing encoded args
+        print ''.join(to_print)
+    except:
+        print "PROBLEM in u_print; could not print encoded args:"
+        print args
 
 def exec_code(code, local_dict, source=''):
     import src.errors as errors   # prevent premature import

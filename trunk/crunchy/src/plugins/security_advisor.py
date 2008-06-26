@@ -25,7 +25,7 @@ def insert_security_info(page, *dummy):
     """Inserts security information on a page"""
     if not page.body:
         return
-
+    # the following is used by menu.py
     if 'display' in page.security_info['level']:
         page.security_result_image = '/display.png'
     elif page.security_info['number removed'] == 0:
@@ -39,8 +39,7 @@ def insert_security_info(page, *dummy):
         page.add_include("security_included")
         page.insert_js_file("/security.js")
 
-        info_container = Element("div")
-        info_container.attrib["id"] = "security_info"
+        info_container = Element("div", id="security_info")
         format_report(page, info_container)
 
         # prompt user to approve sites as soon as the first page is loaded
@@ -57,10 +56,8 @@ def insert_security_info(page, *dummy):
             page.add_css_code(security_css%('none','none'))
 
         page.body.append(info_container)
-
-        info_container_x = Element("div")
-        info_container_x.attrib["id"] = "security_info_x"
-        info_container_x.attrib["onclick"] = "hide_security_info()"
+        info_container_x = Element("div", id="security_info_x",
+                                        onclick="hide_security_info()")
         info_container_x.text = "X"
         page.body.append(info_container_x)
 
@@ -82,50 +79,42 @@ def confirm_at_start(page, info_container):
     directions.text += _("You can change any of them before clicking on the approve button.\n\n")
 
     # in case list gets too long, we include buttons at top and bottom
-    approve_btn = SubElement(info_container, "button")
-    site_num = len(config['site_security'])
-    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
-    approve_btn.text = _("Approve")
-    SubElement(info_container, "span").text = " "
-    deny_btn = SubElement(info_container, "button")
-    deny_btn.attrib["onclick"] = "app_remove_all()"
-    deny_btn.text = _("Remove all")
+    nb_sites = len(config['site_security'])
+    add_button(info_container, nb_sites)
 
-    site_num = 0
-    options = [['trusted', 'trusted'],
-                ['normal', 'normal'],
-                ['strict', 'strict'],
-                ['display trusted', 'display trusted'],
-                ['display normal', 'display normal'],
-                ['display strict', 'display strict'],
-                ['remove', _('remove from list')]]
-    for site in config['site_security']:
-        site_num += 1
+    options = ['trusted', 'normal', 'strict', 'display trusted',
+               'display normal', 'display strict', 'remove']
+
+    for site_num, site in enumerate(config['site_security']):
         fieldset = SubElement(info_container, "fieldset")
         site_label = SubElement(fieldset, "legend")
         site_label.text = site
         form = SubElement(fieldset, "form")
-        form.attrib['id'] = "site_" + str(site_num)
+        form.attrib['id'] = "site_" + str(site_num+1)
         form.attrib['name'] = site
         for option in options:
             label = SubElement(form, 'label')
-            label.text = option[1]
-            label.attrib['for'] = site + option[0]
-            inp = SubElement(label, 'input')
-            inp.attrib['value'] = option[0]
-            inp.attrib['type'] = 'radio'
-            inp.attrib['name'] = "rad"
-            inp.attrib['id'] = site + option[0]
+            if option == 'remove':
+                label.text = _('remove from list')
+            else:
+                label.text = option
+            label.attrib['for'] = site + option
+            inp = SubElement(label, 'input', value=option, type='radio',
+                                            name='rad', id=site+option)
             SubElement(form, 'br')
-            if option[1] == config['site_security'][site]:
+            if option == config['site_security'][site]:
                 inp.attrib['checked'] = 'checked'
     # in case list gets too long, we include buttons at top and bottom
-    approve_btn = SubElement(info_container, "button")
-    approve_btn.attrib["onclick"] = "app_approve(%d)" % site_num
+    add_button(info_container, nb_sites)
+    return
+
+def add_button(info_container, nb_sites):
+    '''adds button for site approval or removal'''
+    approve_btn = SubElement(info_container, "button",
+                                onclick = "app_approve(%d)" % nb_sites)
     approve_btn.text = _("Approve")
     SubElement(info_container, "span").text = " "
-    deny_btn = SubElement(info_container, "button")
-    deny_btn.attrib["onclick"] = "app_remove_all()"
+    deny_btn = SubElement(info_container, "button", onclick="app_remove_all()")
     deny_btn.text = _("Remove all")
     return
 
@@ -288,7 +277,7 @@ javascript code.
 not attempt to insert malicious code.  Sites that allow users to post
 comments, or worse, that allow users to edit (such as wikis) should not
 be set to 'trusted'. With 'trusted' selected, Crunchy will display the
-site as closely as it can to the wayt the original looked using only
+site as closely as it can to the way the original looked using only
  your browser.
         """)
 
@@ -317,28 +306,30 @@ def set_security_list(request):
     '''
     site_list_info = request.data.strip(',').split(',')
     if DEBUG:
-        print(site_list_info)
-    site_list = []
+        print 'inside set_security_list', site_list_info
     to_be_deleted = []
     for site_info in site_list_info:
         if "::" not in site_info:
+            if DEBUG:
+                print(":: not in site_info")
             continue
         site = site_info.split('::')
         mode = site[1].strip()
         site = site[0].strip()
+        if DEBUG:
+            print "site = ", site
 
-        site_list.append(site)
-
-        if site.strip() != '':
+        if site != '':
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
                 config['_set_site_security'](site, mode)
                 if DEBUG:
-                    print(str(site) + ' has been set to ' + str(mode))
+                    print str(site) + ' has been set to ' + str(mode)
             else:
                 to_be_deleted.append(site)
                 if DEBUG:
-                    print(str(site) + ' is going to be removed.')
+                    print str(site) + ' is going to be removed.'
+
     for site in to_be_deleted:
         del config['site_security'][site]
     if DEBUG:
