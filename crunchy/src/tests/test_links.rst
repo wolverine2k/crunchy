@@ -91,6 +91,25 @@ has a subelement.
     >>> print a_link[1].tag, a_link[1].attrib['src']
     img /external_link.png
 
+For remote site, relative (ie without http://) links must be changed in
+absolute links. Here for relative to the root links:
+
+    >>> page_remote.url = "http://python.org/download/"
+    >>> a_link = Element('a', href='/doc/')
+    >>> a_link.text = ""
+    >>> links.external_link(page_remote, a_link)
+    >>> a_link.attrib['href']
+    'http://python.org/doc/'
+
+And here for relative to the current page:
+
+    >>> page_remote.url = "http://www.python.org/download/releases/"
+    >>> a_link = Element('a', href='../linux/')
+    >>> a_link.text = ""
+    >>> links.external_link(page_remote, a_link)
+    >>> a_link.attrib['href']
+    'http://www.python.org/download/releases/linux/'
+
 .. _`fixed_link()`:
 
 Testing fixed_link()
