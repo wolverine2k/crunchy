@@ -13,9 +13,9 @@ import urllib,urllib2
 from traceback import format_exc
 import base64,md5
 import time
-from src.interface import python_version, python_minor_version,server_mode,accounts
+from src.interface import python_version, python_minor_version,server_mode,accounts,thread_data
 import src.CrunchyPlugin as CrunchyPlugin
-
+import Cookie
 
 DEBUG = False
 
@@ -26,17 +26,12 @@ if hasattr(users, 'realm'):
 else:
     realm = "Crunchy Access"
 
+md5hex = lambda x:md5.md5(x).hexdigest()
 def require_digest_access_authenticate(func):
     '''A decorator to add  deigest authorization check to HTTP Request Handlers'''
-    #TODO:Find a bettter way to decide what method we are dealing with ..
-    if "GET" in func.__name__:
-        method = "GET"
-    else:
-        method = "POST"
 
     def wrapped(self):
-        md5hex = lambda x:md5.md5(x).hexdigest()
-
+        method = self.command
         if not hasattr(self, 'authenticated'):
             self.authenticated =  None
         auth = self.headers.getheader('authorization')
@@ -90,6 +85,7 @@ if server_mode:
 else:
     require_authenticate = lambda x: x
 
+
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
     def __init__(self, addr, rqh):
@@ -126,9 +122,27 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
 
+    def add_session_cookie(self):
+        '''enable session for http request
+        session id will be saved in cookie
+        '''
+        self.cookies = Cookie.BaseCookie(self.headers.getheader('Cookie',""))
+        #self.cookies.load(self.headers.getheader('Cookie',""))
+        if 'sid' not in self.cookies:
+            self.cookies['sid'] = md5hex("%d" % (time.time())) 
+
+        #register current thread to this session id
+        thread_data.session_id = self.cookies['sid'].value
+
+
+    def send_cookie(self):
+        if hasattr(self, 'cookies'):
+            self.send_header('Set-Cookie', self.cookies.output(header=''))
+
     @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
+        self.add_session_cookie()
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
         if python_version >=3:
@@ -187,4 +201,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         BaseHTTPRequestHandler.send_response(self, code)
         self.send_header("Connection", "close")
 
+    def end_headers(self):
+        self.send_cookie()
+        BaseHTTPRequestHandler.end_headers(self)
+        
 
