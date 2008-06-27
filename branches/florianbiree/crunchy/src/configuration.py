@@ -167,7 +167,7 @@ class Defaults(object):
         except:
             self.styles = {}
         try:
-            self.__alternate_python_version = saved['alternate_python_version']
+            self.__alternate_python_version = savec['alternate_python_version']
         except:
             self.__alternate_python_version = 'python'
         try:
@@ -175,7 +175,7 @@ class Defaults(object):
         except:
             self.__power_browser = 'None'
         try:
-            self.__forward_accept_language = savec['forward_accept_language']
+            self.__forward_accept_language = saved['forward_accept_language']
         except:
             self.__forward_accept_language = True
         
