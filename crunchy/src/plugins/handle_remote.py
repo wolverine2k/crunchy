@@ -5,7 +5,7 @@ Uses the /remote http request path.
 from urllib import FancyURLopener, unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, preprocessor
+from src.interface import plugin, preprocessor, config
 
 provides = set(["/remote"])
 
@@ -25,7 +25,7 @@ def remote_loader(request):  # tested
                     preprocessor[extension](url, local=False), url, remote=True)
     else:
         opener = FancyURLopener()
-        if "Accept-Language" in request.headers:
+        if config["forward_accept_language"] and "Accept-Language" in request.headers:
             opener.addheader("Accept-Language", request.headers["Accept-Language"])
         page = plugin['create_vlam_page'](opener.open(url), url, remote=True)
     request.send_response(200)
