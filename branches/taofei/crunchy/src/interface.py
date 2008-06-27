@@ -102,8 +102,3 @@ else:
             self.parse(source=file, parser=parser)
             return
 
-#This is experiment. 
-#Create a thread-local object to save local datas.
-#eg. current session id
-import threading
-thread_data = threading.local()
