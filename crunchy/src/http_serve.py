@@ -13,8 +13,9 @@ import urllib,urllib2
 from traceback import format_exc
 import base64,md5
 import time
-from src.interface import python_version, python_minor_version,server_mode,accounts,thread_data
+from src.interface import python_version, python_minor_version,server_mode,accounts
 import src.CrunchyPlugin as CrunchyPlugin
+import src.session as session
 import Cookie
 
 DEBUG = False
@@ -26,9 +27,10 @@ if hasattr(users, 'realm'):
 else:
     realm = "Crunchy Access"
 
-md5hex = lambda x:md5.md5(x).hexdigest()
 def require_digest_access_authenticate(func):
     '''A decorator to add  deigest authorization check to HTTP Request Handlers'''
+
+    md5hex = lambda x:md5.md5(x).hexdigest()
 
     def wrapped(self):
         method = self.command
@@ -127,13 +129,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         session id will be saved in cookie
         '''
         self.cookies = Cookie.BaseCookie(self.headers.getheader('Cookie',""))
-        #self.cookies.load(self.headers.getheader('Cookie',""))
         if 'sid' not in self.cookies:
-            self.cookies['sid'] = md5hex("%d" % (time.time())) 
-
-        #register current thread to this session id
-        thread_data.session_id = self.cookies['sid'].value
-
+            self.cookies['sid'] = session.start_session()
+        else:
+            self.cookies['sid'] = session.start_session(self.cookies['sid'].value)
 
     def send_cookie(self):
         if hasattr(self, 'cookies'):
