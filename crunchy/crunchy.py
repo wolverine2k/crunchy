@@ -132,7 +132,6 @@ def parse_options():
         for key in src.interface.debug:
             src.interface.debug[key] = True
     #we are in server mode
-    #we have to ask for a  master password 
     #if passwd file not exist , ask user to create one using account manager.
     if options.server_mode:
         src.interface.server_mode = True
