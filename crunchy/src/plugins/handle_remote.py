@@ -2,7 +2,7 @@
 Uses the /remote http request path.
 """
 
-from urllib import urlopen, unquote_plus
+from urllib import FancyURLopener, unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, preprocessor
@@ -20,10 +20,14 @@ def remote_loader(request):  # tested
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
     if extension in preprocessor:
+        # TODO: preprocessor don't forward Accept-Language HTTP headers
         page = plugin['create_vlam_page'](
                     preprocessor[extension](url, local=False), url, remote=True)
     else:
-        page = plugin['create_vlam_page'](urlopen(url), url, remote=True)
+        opener = FancyURLopener()
+        if "Accept-Language" in request.headers:
+            opener.addheader("Accept-Language", request.headers["Accept-Language"])
+        page = plugin['create_vlam_page'](opener.open(url), url, remote=True)
     request.send_response(200)
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
