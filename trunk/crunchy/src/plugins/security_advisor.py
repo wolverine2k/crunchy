@@ -236,7 +236,6 @@ def format_report(page, div):
         p = SubElement(div, 'p')
         p.text = _("If you want to preserve the existing selection, ")
         p.text += _("simply dismiss this window by clicking on the X above.")
-    site_num = 1
     format_site_security_options(div, site, 0)
 
     approve_btn = SubElement(div, "button")

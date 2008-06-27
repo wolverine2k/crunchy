@@ -11,7 +11,6 @@
 # out such methods from the display.
 
 import os
-import sys
 from urlparse import urlsplit
 from imp import find_module
 
@@ -23,13 +22,12 @@ try:
 except:
     debug_flag = False
 
-# TODO remove all check for Python_version, from all files EXCEPT this one.
 if python_version < 3:
     import cPickle
 else:
     print("Python 3.x not supported")
     raise SystemExit
-    import pickle as cPickle
+    #import pickle as cPickle
 
 _ = translate['_']
 translate['init_translation']()
@@ -69,6 +67,7 @@ for interpreter in override_default_interpreter_allowed_values:
 doc_help_allowed_values = [True, False]
 dir_help_allowed_values = [True, False]
 browser_choices =  ['None', 'python', 'rst', 'local_html', 'remote_html']
+forward_accept_language_allowed_values = [True, False]
 
 class Defaults(object):
     """
@@ -173,6 +172,10 @@ class Defaults(object):
             self.__power_browser = saved['power_browser']
         except:
             self.__power_browser = 'None'
+        try:
+            self.__forward_accept_language = saved['forward_accept_language']
+        except:
+            self.__forward_accept_language = True
 
         if not success:
             # save the file with the default values
@@ -202,6 +205,7 @@ class Defaults(object):
         saved['site_security'] = self.site_security
         saved['alternate_python_version'] = self.__alternate_python_version
         saved['power_browser'] = self.__power_browser
+        saved['forward_accept_language'] = self.__forward_accept_language
         # time to save
         pickled_path = os.path.join(self.__user_dir, "settings.pkl")
         try:
@@ -576,6 +580,27 @@ You can change some of the default values by Crunchy, just like
         return level
 
     #==============
+
+    def _get_forward_accept_language(self):
+        return self.__forward_accept_language
+
+    def _set_forward_accept_language(self, choice):
+        if choice not in forward_accept_language_allowed_values:
+            u_print((_("Invalid choice for %s.forward_accept_language")%self._prefix))
+            u_print(_("The valid choices are: "), str(forward_accept_language_allowed_values))
+            u_print(_("The current value is: "), self.__forward_accept_language)
+            return
+        self.__forward_accept_language = choice
+        self._save_settings()
+        config["forward_accept_language"] = choice
+        return
+
+    forward_accept_language = property(_get_forward_accept_language, _set_forward_accept_language, None,
+        (_('The choices for forward_accept_language are %s\n')% forward_accept_language_allowed_values) +\
+        _('  The current value is: '))
+
+    #==============
+
 defaults = Defaults()
 keys = []
 for key in dir(defaults):

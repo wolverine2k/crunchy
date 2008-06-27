@@ -58,6 +58,7 @@ class Request(object):
     def __init__(self, data='data', args='args'):
         self.data = data
         self.args = args
+        self.headers = {}
         self.wfile = Wfile()
 
     def send_response(self, response=42):
