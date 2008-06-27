@@ -40,7 +40,6 @@ def insert_security_info(page, *dummy):
         page.insert_js_file("/security.js")
 
         info_container = Element("div", id="security_info")
-        format_report(page, info_container)
 
         # prompt user to approve sites as soon as the first page is loaded
         # if there are sites for which to confirm the security level.
@@ -54,6 +53,7 @@ def insert_security_info(page, *dummy):
             config['initial_security_set'] = True
         else:
             page.add_css_code(security_css%('none','none'))
+            format_report(page, info_container)
 
         page.body.append(info_container)
         info_container_x = Element("div", id="security_info_x",
@@ -78,34 +78,39 @@ def confirm_at_start(page, info_container):
     directions.text += _("Do you wish to retain the existing settings for these sites?\n\n")
     directions.text += _("You can change any of them before clicking on the approve button.\n\n")
 
-    # in case list gets too long, we include buttons at top and bottom
+    # in case list gets too long, we include buttons at top and bottom of list
     nb_sites = len(config['site_security'])
     add_button(info_container, nb_sites)
-
-    options = ['trusted', 'normal', 'strict', 'display trusted',
-               'display normal', 'display strict', 'remove']
-
     for site_num, site in enumerate(config['site_security']):
-        fieldset = SubElement(info_container, "fieldset")
-        site_label = SubElement(fieldset, "legend")
-        site_label.text = site
-        form = SubElement(fieldset, "form")
-        form.attrib['id'] = "site_" + str(site_num+1)
-        form.attrib['name'] = site
-        for option in options:
-            label = SubElement(form, 'label')
-            if option == 'remove':
-                label.text = _('remove from list')
-            else:
-                label.text = option
-            label.attrib['for'] = site + option
-            inp = SubElement(label, 'input', value=option, type='radio',
-                                            name='rad', id=site+option)
-            SubElement(form, 'br')
+        format_site_security_options(info_container, site, site_num)
+    add_button(info_container, nb_sites)
+    return
+
+def format_site_security_options(parent, site, site_num):
+    '''adds the various security options for a given site'''
+    options = ['trusted', 'normal', 'strict', 'display trusted',
+               'display normal', 'display strict']
+    if 'localhost' not in site:
+        options.append('remove')
+    fieldset = SubElement(parent, "fieldset")
+    site_label = SubElement(fieldset, "legend")
+    site_label.text = site
+    form = SubElement(fieldset, "form")
+    form.attrib['id'] = "site_" + str(site_num+1)
+    form.attrib['name'] = site
+    for option in options:
+        label = SubElement(form, 'label')
+        if option == 'remove':
+            label.text = _('remove from list')
+        else:
+            label.text = option
+        label.attrib['for'] = site + option
+        inp = SubElement(label, 'input', value=option, type='radio',
+                                        name='rad', id=site+option)
+        SubElement(form, 'br')
+        if site in config['site_security']:
             if option == config['site_security'][site]:
                 inp.attrib['checked'] = 'checked'
-    # in case list gets too long, we include buttons at top and bottom
-    add_button(info_container, nb_sites)
     return
 
 def add_button(info_container, nb_sites):
@@ -117,6 +122,62 @@ def add_button(info_container, nb_sites):
     deny_btn = SubElement(info_container, "button", onclick="app_remove_all()")
     deny_btn.text = _("Remove all")
     return
+
+def format_table(parent, title, headings, content):
+    '''formats a report in a standard table form'''
+    h2 = SubElement(parent, 'h2')
+    h2.text = title
+    h2.attrib['class'] = "crunchy"
+
+    table = SubElement(parent, 'table')
+    table.attrib['class'] = 'summary'
+
+    tr = SubElement(table, 'tr')
+    for item in headings:
+        th = SubElement(tr, 'th')
+        th.text = item
+
+    for item in content:
+        tr = SubElement(table, 'tr')
+        for cell in item:
+            td = SubElement(tr, 'td')
+            td.text = str(cell)
+    return
+
+intro_exp = _("""
+Selection of a 'display MODE' will result in the same processing by Crunchy
+ as the selection of 'MODE' except that no interactive elements
+ (such as a Python interpreter)
+ will be inserted in the page, thereby preserving the normal browser
+ sandbox to protect your computer from malicious code.""")
+
+intro2_exp = _("""
+Crunchy will remove any pre-existing javascript code on the page as
+ well as a number of html elements that could be used to hide some
+ javascript code.""")
+
+trusted_exp = _("""
+'trusted' should only be used for sites that you are convinced will
+ not attempt to insert malicious code.  Sites that allow users to post
+ comments, or worse, that allow users to edit (such as wikis) should not
+ be set to 'trusted'. With 'trusted' selected, Crunchy will display the
+ site as closely as it can to the way the original looked using only
+ your browser.""")
+
+normal_exp = _("""
+'normal' will attempt to display the sites the same ways as 'trusted' does
+ except that it will remove any styling deemed suspicious (see the docs for
+ details) and will validate any image source before allowing the image to
+ be displayed.  If the site contains many images, this validation process
+ will slow down the display.  Images that can not be validated will not be
+ shown.  Each image is validated only once during a given Crunchy session.""")
+
+strict_exp = _("""
+'strict' will remove all styling and image on the page.  It will result
+ in the fastest display, but one that will likely be the least visually
+ appealing.""")
+
+explanations = [intro_exp, intro2_exp, trusted_exp, normal_exp, strict_exp]
 
 def format_report(page, div):
     '''puts the security information (extracted material) into a table
@@ -142,162 +203,49 @@ def format_report(page, div):
         s_image.attrib['src'] = '/warning_big.png'
 
     if page.security_info['tags removed']:
-        h2 = SubElement(div, 'h2')
-        h2.text = _('Removed: tag not allowed')
-        h2.attrib['class'] = "crunchy"
-
-        table = SubElement(div, 'table')
-        table.attrib['class'] = 'summary'
-        tr = SubElement(table, 'tr')
-        th = SubElement(tr, 'th')
-        th.text = _('Tag removed')
-        th = SubElement(tr, 'th')
-        th.text = _('Number of times')
-
-        for item in page.security_info['tags removed']:
-            tr = SubElement(table, 'tr')
-            td = SubElement(tr, 'td')
-            td.text = item[0]
-            td = SubElement(tr, 'td')
-            td.text = str(item[1])
+        title = _('Removed: tag not allowed')
+        headings = [_('Tag removed'), _('Number of times')]
+        content = page.security_info['tags removed']
+        format_table(div, title, headings, content)
 
     if page.security_info['attributes removed']:
-        h2 = SubElement(div, 'h2')
-        h2.text = _('Removed: attribute, or attribute value not allowed')
-        h2.attrib['class'] = "crunchy"
-
-        table = SubElement(div, 'table')
-        table.attrib['class'] = 'summary'
-
-        tr = SubElement(table, 'tr')
-        th = SubElement(tr, 'th')
-        th.text = _('Tag')
-        th = SubElement(tr, 'th')
-        th.text = _('Attribute')
-        th = SubElement(tr, 'th')
-        th.text = _('Value (if relevant)')
-
-        for item in page.security_info['attributes removed']:
-            tr = SubElement(table, 'tr')
-            td = SubElement(tr, 'td')
-            td.text = item[0]
-            td = SubElement(tr, 'td')
-            td.text = item[1]
-            td = SubElement(tr, 'td')
-            td.text = item[2]
+        title = _('Removed: attribute, or attribute value not allowed')
+        headings = [_('Tag'), _('Attribute'), _('Value (if relevant)')]
+        content = page.security_info['attributes removed']
+        format_table(div, title, headings, content)
 
     if page.security_info['styles removed']:
-        h2 = SubElement(div, 'h2')
-        h2.text = _('Removed: style tag or attribute not allowed')
-        h2.attrib['class'] = "crunchy"
-
-        table = SubElement(div, 'table')
-        table.attrib['class'] = 'summary'
-
-        tr = SubElement(table, 'tr')
-        th = SubElement(tr, 'th')
-        th.text = _('Tag')
-        th = SubElement(tr, 'th')
-        th.text = _('Attribute (if relevant)')
-        th = SubElement(tr, 'th')
-        th.text = _('Value')
-
-        for item in page.security_info['styles removed']:
-            tr = SubElement(table, 'tr')
-            td = SubElement(tr, 'td')
-            td.text = item[0]
-            td = SubElement(tr, 'td')
-            td.text = item[1]
-            td = SubElement(tr, 'td')
-            td.text = item[2]
+        title = _('Removed: style tag or attribute not allowed')
+        headings = [_('Tag'), _('Attribute (if relevant)'), _('Value')]
+        content = page.security_info['styles removed']
+        format_table(div, title, headings, content)
 
     #netloc = urlsplit(page.url).netloc # localhost will return empty string
     # urlsplit().netloc == urlsplit()[1] is not Python 2.4 compatible
     netloc = urlsplit(page.url)[1]
 
     if netloc:
-        h2 = SubElement(div, 'h2')
-        h2.text = _('You may select a site specific security level:')
-        h2.attrib['class'] = "crunchy"
-        if netloc in config['site_security']:
-            p = SubElement(div, 'p')
-            p.text = _("If you want to preserve the existing selection, ")
-            p.text += _("simply dismiss this window by clicking on the X above.")
-        site_num = 1
+        site = netloc
+    else:
+        site = "localhost (127.0.0.1)"
 
-        options = [['trusted', 'trusted'],
-                    ['normal', 'normal'],
-                    ['strict', 'strict'],
-                    ['display trusted', 'display trusted'],
-                    ['display normal', 'display normal'],
-                    ['display strict', 'display strict'],
-                    ['remove', _('remove from list')]]
-
-        fieldset = SubElement(div, "fieldset")
-        site_label = SubElement(fieldset, "legend")
-        site_label.text = netloc
-        form = SubElement(fieldset, "form")
-        form.attrib['id'] = "single_site_" + str(site_num)
-        form.attrib['name'] = netloc
-        for option in options:
-            label = SubElement(form, 'label')
-            label.text = option[1]
-            label.attrib['for'] = netloc + option[0]
-            inp = SubElement(label, 'input')
-            inp.attrib['value'] = option[0]
-            inp.attrib['type'] = 'radio'
-            inp.attrib['name'] = "rad"
-            inp.attrib['id'] = netloc + option[0]
-            SubElement(form, 'br')
-            if netloc in config['site_security']:
-                if option[1] == config['site_security'][netloc]:
-                    inp.attrib['checked'] = 'checked'
-        approve_btn = SubElement(div, "button")
-        approve_btn.attrib["onclick"] = "javascript:allow_site();"
-        approve_btn.text = _("Select site security level")
-
+    h2 = SubElement(div, 'h2')
+    h2.text = _('You may select a site specific security level:')
+    h2.attrib['class'] = "crunchy"
+    if netloc in config['site_security']:
         p = SubElement(div, 'p')
-        p.text = _("""
-Selection of a 'display MODE' will result in the same processing by Crunchy
-as the selection of 'MODE' except that no interactive elements
-(such as a Python interpreter)
-will be inserted in the page, thereby preserving the normal browser
-sandbox to protect your computer from malicious code.""")
+        p.text = _("If you want to preserve the existing selection, ")
+        p.text += _("simply dismiss this window by clicking on the X above.")
+    site_num = 1
+    format_site_security_options(div, site, 0)
 
+    approve_btn = SubElement(div, "button")
+    approve_btn.attrib["onclick"] = "javascript:allow_site();"
+    approve_btn.text = _("Select site security level")
+
+    for item in explanations:
         p = SubElement(div, 'p')
-        p.text = _("""
-Crunchy will remove any pre-existing javascript code on the page as
-well as a number of html elements that could be used to hide some
-javascript code.
-        """)
-
-        p = SubElement(div, 'p')
-        p.text = _("""
-'trusted' should only be used for sites that you are convinced will
-not attempt to insert malicious code.  Sites that allow users to post
-comments, or worse, that allow users to edit (such as wikis) should not
-be set to 'trusted'. With 'trusted' selected, Crunchy will display the
-site as closely as it can to the way the original looked using only
- your browser.
-        """)
-
-        p = SubElement(div, 'p')
-        p.text = _("""
-'normal' will attempt to display the sites the same ways as 'trusted' does
-except that it will remove any styling deemed suspicious (see the docs for
-details) and will validate any image source before allowing the image to
-be displayed.  If the site contains many images, this validation process
-will slow down the display.  Images that can not be validated will not be
-shown.  Each image is validated only once during a given Crunchy session.
-        """)
-
-        p = SubElement(div, 'p')
-        p.text = _("""
-'strict' will remove all styling and image on the page.  It will result
-in the fastest display, but one that will likely be the least visually
-appealing.
-        """)
-
+        p.text = item
     return
 
 def set_security_list(request):
@@ -319,7 +267,7 @@ def set_security_list(request):
         if DEBUG:
             print "site = ", site
 
-        if site != '':
+        if 'localhost' not in site:
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
                 config['_set_site_security'](site, mode)
@@ -329,6 +277,9 @@ def set_security_list(request):
                 to_be_deleted.append(site)
                 if DEBUG:
                     print str(site) + ' is going to be removed.'
+        else:
+            config['_set_local_security'](mode)
+            break  # should be only site
 
     for site in to_be_deleted:
         del config['site_security'][site]
@@ -354,8 +305,7 @@ def empty_security_list(request):
         sites.append(site)
     for site in sites:
         del config['site_security'][site]
-    # If we are approving a site for the first time, we don't need
-    # the user to confirm again in this session, so assign
+    # We don't need the user to confirm again in this session, so assign
     # initial_security_set to True
     config['initial_security_set'] = True
     config['_save_settings']()
