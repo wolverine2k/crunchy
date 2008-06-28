@@ -14,6 +14,7 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id
+import src.session as session
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -61,7 +62,8 @@ def doctest_widget_callback(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'doctest'
-        config['logging_uids'][uid] = (log_id, t)
+        session.add_log_id(uid, log_id, t)
+        #config['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
@@ -75,7 +77,8 @@ def doctest_widget_callback(page, elem, uid):
     # next, we style the code, also extracting it in a useful form ...
     doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        session.log(log_id, tostring(markup))
+        #config['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
     # reset the original element to use it as a container.  For those

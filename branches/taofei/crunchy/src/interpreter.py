@@ -9,6 +9,7 @@ from src.interface import StringIO, exec_code, python_version, translate
 
 from src.utilities import trim_empty_lines_from_end, log_session
 import src.configuration as configuration
+import src.session as session
 if python_version < 3:
     import src.errors as errors
 
@@ -18,7 +19,7 @@ class Interpreter(threading.Thread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = {}, doctest=False):
+    def __init__(self, code, channel, symbols = {}, doctest=False, session_id = None):
         threading.Thread.__init__(self)
         if python_version < 3:
             self.code = trim_empty_lines_from_end(code) # problem with Py3k?
@@ -27,6 +28,7 @@ class Interpreter(threading.Thread):
         self.channel = channel
         self.symbols = symbols
         self.doctest = doctest
+        self.session_id = session_id
         if self.doctest:
             self.doctest_out = StringIO()
             self.symbols['doctest_out'] = self.doctest_out
@@ -38,6 +40,8 @@ class Interpreter(threading.Thread):
         sys.stdin.register_thread(self.channel)
         sys.stdout.register_thread(self.channel)
         sys.stderr.register_thread(self.channel)
+        #start session, then we can use the get_session
+        session.start_session(self.session_id)
         try:
             try:
                 self.ccode = compile(self.code, "User's code", 'exec')
@@ -50,11 +54,12 @@ class Interpreter(threading.Thread):
                 return
             try:
                 # logging the user input first, if required
-                if self.channel in configuration.defaults.logging_uids:
-                    vlam_type = configuration.defaults.logging_uids[self.channel][1]
+                log_info = session.log_info(self.channel)
+                if log_info:
+                    vlam_type = log_info[1]
                     if vlam_type == 'editor':
                         user_code = self.code.split("\n")
-                        log_id = configuration.defaults.logging_uids[self.channel][0]
+                        log_id = log_info[0]
                         if user_code:
                             user_code = '\n'.join(user_code)
                             if not user_code.endswith('\n'):
@@ -62,8 +67,10 @@ class Interpreter(threading.Thread):
                         else:
                             user_code = _("# no code entered by user\n").encode("utf-8")
                         data = "<span class='stdin'>" + user_code + "</span>"
-                        configuration.defaults.log[log_id].append(data)
-                        log_session()
+                        session.log(log_id, data)
+                        session.save_log()
+                        #configuration.defaults.log[log_id].append(data)
+                        #log_session()
                 exec_code(self.ccode, self.symbols, source=None)
                 #exec self.ccode in self.symbols#, {}
                 # note: previously, the "local" directory used for exec
@@ -80,7 +87,8 @@ class Interpreter(threading.Thread):
         finally:
             if self.doctest:
                 # attempting to log
-                if self.channel in configuration.defaults.logging_uids:
+                log_info = session.log_info(self.channel)
+                if log_info:
                     code_lines = self.code.split("\n")
                     user_code = []
                     for line in code_lines:
@@ -90,7 +98,7 @@ class Interpreter(threading.Thread):
                         if line.startswith("__teststring"):
                             break
                         user_code.append(line)
-                    log_id = configuration.defaults.logging_uids[self.channel][0]
+                    log_id = log_info[0]
                     if user_code:
                         user_code = '\n' + '\n'.join(user_code)
                         if not user_code.endswith('\n'):
@@ -101,8 +109,10 @@ class Interpreter(threading.Thread):
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
                     data = "<span class='stdin'>" + user_code + "</span>"
-                    configuration.defaults.log[log_id].append(data)
-                    log_session()
+                    session.log(log_id, data)
+                    session.save_log()
+                    #configuration.defaults.log[log_id].append(data)
+                    #log_session()
                 # proceed with regular output
                 if configuration.defaults.friendly:
                     message, success = errors.simplify_doctest_error_message(

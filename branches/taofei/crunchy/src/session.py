@@ -19,10 +19,19 @@ thread_data = threading.local()
 def start_session(sid = None):
     if not sid or sid not in sessions: #no sid or invalid sid
         sid = md5.md5("%d" % (time.time())).hexdigest()
-        sessions[sid] = {'sid' : sid, 'log' : [], 'need_log' : {}}
+        sessions[sid] = {
+            'sid' : sid, 
+            'log' : [], 
+            'need_log' : {},
+            'log_filename' : 
+                os.path.join(os.path.expanduser("~"), "crunchy_log_%s_%s.html" %(datetime.now().strftime("%Y%m%d%H%M%S"), sid[:5]))
+        }
     thread_data.session_id = sid
     return sid
 
+
+def get_session_id():
+    return thread_data.session_id
 
 def get_session():
     sid = thread_data.session_id
@@ -31,6 +40,7 @@ def get_session():
 
 #logging stuff
 '''
+NEED UPDATE
 the following is about logging
 what do we log  ?  page elements which user used , user's input , execution result 
 what is session logging ? 
@@ -53,11 +63,12 @@ def add_log_id(uid, log_id, t):
     '''
     get_session()['need_log'][uid] = (log_id, t)
 
-
 def log(log_id, content):
     get_session()['log'].append((log_id, content))
-    save_log()
+    #save_log()
 
+def log_info(uid):
+    return get_session()['need_log'][uid]
 
 def save_log():
     ''' save the log to a proper file 
@@ -65,15 +76,19 @@ def save_log():
     2. about log log format
     '''
     session = get_session()
-    log_filename = os.path.join(os.path.expanduser("~"), "crunchy_log_%s_%s.html" %(datetime.now().strftime("%Y%m%d%H%M%S"), session['sid'][:5]))
+    log_filename = session['log_filename']
     f = open(log_filename, 'w')
     f.write(begin_html)
+    contents = {} 
     for item in session['log']:
-        log_id = item[0]
+        if item[0] not in contents:
+            contents[item[0]] = [item[1]]
+        else:
+            contents[item[0]].append(item[1])
+    for log_id,content in contents.items():
         #f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
         f.write("<h2>log_id = %s </h2>"%(log_id))
-        #content = ''.join([item[1] for item in session['log'] if item[0] == log_id])
-        content = item[1]
+        content = "".join(content)
         f.write("<pre>"+content+"</pre>")
     
     #f.write(str(session['log']))

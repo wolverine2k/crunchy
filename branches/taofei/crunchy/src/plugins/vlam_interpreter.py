@@ -15,6 +15,7 @@ import sys
 from src.interface import config, plugin, translate, tostring, Element
 import src.utilities as utilities
 import colourize as colourize
+import src.session as session
 
 _ = translate['_']
 
@@ -56,7 +57,8 @@ def insert_interpreter(page, elem, uid):
         log_id = utilities.extract_log_id(vlam)
         if log_id:
             t = 'interpreter'
-            config['logging_uids'][uid] = (log_id, t)
+            session.add_log_id(uid, log_id, t)
+            #config['logging_uids'][uid] = (log_id, t)
     else:
         log_id = False
 
@@ -67,7 +69,8 @@ def insert_interpreter(page, elem, uid):
     # interpreter, thus saving some typing by the user.
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        session.log(log_id, tostring(markup))
+        #config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
