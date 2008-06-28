@@ -14,6 +14,7 @@ import os
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, translate, tostring
 from src.utilities import extract_log_id
+import src.session as session
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -65,7 +66,8 @@ def insert_editor(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'editor'
-        config['logging_uids'][uid] = (log_id, t)
+        session.add_log_id(uid, log_id, t)
+        #config['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
@@ -79,7 +81,8 @@ def insert_editor(page, elem, uid):
     # code to be executed in the process
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        session.log(log_id, tostring(markup))
+        #config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -114,7 +117,8 @@ def insert_editor(page, elem, uid):
         btn.text = _("Execute as external program")
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
-            config['logging_uids'][uid] = (log_id, t)
+            session.add_log_id(uid, log_id, t)
+            #config['logging_uids'][uid] = (log_id, t)
         path_label.attrib['class'] = 'path_info'
         if not "no-internal" in vlam:
             SubElement(elem, "br")
@@ -136,7 +140,8 @@ def insert_alternate_python(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'editor'
-        config['logging_uids'][uid] = (log_id, t)
+        session.add_log_id(uid, log_id, t)
+        #config['logging_uids'][uid] = (log_id, t)
 
     if 'display' not in config['page_security_level'](page.url):
         if not page.includes("exec_included"):
@@ -145,7 +150,8 @@ def insert_alternate_python(page, elem, uid):
 
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        session.log(log_id, tostring(markup))
+        #config['log'][log_id] = [tostring(markup)]
 
     insert_markup(elem, uid, vlam, markup)
 

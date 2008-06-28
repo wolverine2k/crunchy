@@ -10,6 +10,7 @@ import sys
 import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
+import src.session as session
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -144,11 +145,10 @@ def do_exec(code, uid, doctest=False):
     # configuration.defaults._prefix = '_crunchy_' is the
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
-
     symbols = { configuration.defaults._prefix : configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
-    t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
+    t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest, session_id = session.get_session_id())
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
     t.setDaemon(True)
     debug_msg("  starting the thread in cometIO.do_exec()", 5)
