@@ -11,7 +11,6 @@
 # out such methods from the display.
 
 import os
-import sys
 from urlparse import urlsplit
 from imp import find_module
 
@@ -29,7 +28,7 @@ if python_version < 3:
 else:
     print("Python 3.x not supported")
     raise SystemExit
-    import pickle as cPickle
+    #import pickle as cPickle
 
 _ = translate['_']
 translate['init_translation']()
@@ -178,7 +177,7 @@ class Defaults(object):
             self.__forward_accept_language = saved['forward_accept_language']
         except:
             self.__forward_accept_language = True
-        
+
         if not success:
             # save the file with the default values
             self._save_settings()
@@ -582,10 +581,10 @@ You can change some of the default values by Crunchy, just like
         return level
 
     #==============
-    
+
     def _get_forward_accept_language(self):
         return self.__forward_accept_language
-    
+
     def _set_forward_accept_language(self, choice):
         if choice not in forward_accept_language_allowed_values:
             u_print((_("Invalid choice for %s.forward_accept_language")%self._prefix))
@@ -596,11 +595,11 @@ You can change some of the default values by Crunchy, just like
         self._save_settings()
         config["forward_accept_language"] = choice
         return
-    
+
     forward_accept_language = property(_get_forward_accept_language, _set_forward_accept_language, None,
         (_('The choices for forward_accept_language are %s\n')% forward_accept_language_allowed_values) +\
         _('  The current value is: '))
-    
+
     #==============
 
 defaults = Defaults()
