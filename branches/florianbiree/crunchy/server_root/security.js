@@ -15,13 +15,7 @@ function hide_security_report() {
 function app_approve(nb_item) {
     hide_security_info();
     approved_sites = "";
-    if (nb_item == 0){   // used for single site approval from verify_site()
-      site_name = "single_site_";
-      nb_item = 1;
-      }
-    else{
-      site_name = "site_";
-      }
+    site_name = "site_";
     for (site_num = 1; site_num <= nb_item; site_num++) {
     	site_form = document.getElementById(site_name+site_num);
     	len = site_form.rad.length;
@@ -61,5 +55,5 @@ function app_remove_all() {
 
 
 function allow_site() {
-        app_approve(0);
+        app_approve(1);
 }

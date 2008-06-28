@@ -22,8 +22,8 @@ def register():  # tested
     plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
 
 def external_link(page, elem, *dummy):  # tested
-    '''force the link to be opened in a new window/tab, and
-    insert an image to indicate it leads outside of Crunchy'''
+    '''handler which totally ignores the link being passed to it, other than
+    inserting an image to indicate it leads outside of Crunchy'''
     if elem.tail:
         elem.tail += " "
     else:

@@ -108,7 +108,7 @@ And here for relative to the current page:
     >>> a_link.text = ""
     >>> links.external_link(page_remote, a_link)
     >>> a_link.attrib['href']
-    'http://www.python.org/download/releases/linux/'
+    'http://www.python.org/download/linux/'
 
 .. _`fixed_link()`:
 
