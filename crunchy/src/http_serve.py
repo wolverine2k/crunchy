@@ -52,14 +52,16 @@ def require_digest_access_authenticate(func):
                 else:
                     if 'qop' in cred:
                         expect_response = md5hex('%s:%s'%( 
-                            users.get(cred['username'], ""),
+                            #users.get(cred['username'], ""),
+                            users.get_password(cred['username'], ""),
                             #md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
                             ':'.join([cred['nonce'],cred['nc'],cred['cnonce'],cred['qop'], md5hex('%s:%s' %(method, self.path))])
                             )
                         )
                     else:
                         expect_response = md5hex('%s:%s' %(
-                            users.get(cred['username'], ""),
+                            #users.get(cred['username'], ""),
+                            users.get_password(cred['username'], ""),
                             #md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
                             ':'.join([cred['nonce'], md5hex('%s:%s' %(method, self.path))])
                             )
