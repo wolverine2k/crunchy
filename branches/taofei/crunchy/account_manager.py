@@ -10,6 +10,8 @@ class Accounts(dict):
 
     realm = 'Crunchy Access'
 
+    separator = '|'
+
     def __init__(self, pwp):
         self.pwd_file_path = pwp
         try:
@@ -22,20 +24,29 @@ class Accounts(dict):
         for line in data.split('\n'):
             if line == "":
                 continue
-            u,p = line.split(':',1)
-            dict.__setitem__(self, u, p)
+            u,hd,p = line.split(self.separator, 2)
+            dict.__setitem__(self, u, (hd,p))
 
     def save(self):
         lines = []
-        for item in self.items():
-            lines.append(':'.join(item))
+        for key, value in self.items():
+            lines.append(self.separator.join([key, value[0], value[1]]))
         data = '\n'.join(lines)
         f = open(self.pwd_file_path, 'w')
         f.write(data)
         f.close()
 
     def __setitem__(self, key, item): 
-        dict.__setitem__(self, key, md5.md5('%s:%s:%s' %(key, self.realm, item)).hexdigest())
+        home = item[0]
+        password = md5.md5('%s:%s:%s' %(key, self.realm, item[1])).hexdigest()
+        dict.__setitem__(self, key, (home, password))
+
+    def get_password(self, key, default = ""):
+        if key not in self:
+            return default
+        else:
+            return self[key][1]
+
 
 class AMCLI(object):
     '''Account Mamnager Command Line Interface'''
@@ -80,25 +91,31 @@ class AMCLI(object):
 
     def cmd_list(self):
         'list : list all users'
+        print ("%s\t%s" %("username", "home direcotry"))
+        print ('---------------------------------------')
         for user in self.accounts:
-            print(user)
+            print ("%s\t\t%s" %(user, self.accounts[user][0]))
 
     def cmd_new(self, username):
         'new <username> : add a new user'
+        home = raw_input("Please input the home directory:") 
         password = getpass("Please input the password:") 
         if username in self.accounts:
             print ("Error: user %s already exists" %(username))
         else:
-            self.accounts[username] =  password
+            self.accounts[username] =  (home, password)
             self.accounts.save()
 
-    def cmd_pwd(self, username):
-        "pwd <username> : change a user's password"
-        password = getpass("Please input the new password:") 
+    def cmd_edit(self, username):
+        "edit <username> : change a user's home direcotry and password"
         if username not in self.accounts:
             print ("Error: user %s doesn't exist" %(username))
         else:
-            self.accounts[username] =  password
+            home = raw_input("Please input the new home directory:[%s]" %(self.accounts[username][0]))
+            if not home:
+                home = self.accounts[username][0]
+            password = getpass("Please input the new password:") 
+            self.accounts[username] =  (home, password)
             self.accounts.save()
 
     def cmd_del(self, username):
@@ -135,7 +152,7 @@ def check_for_password_file(path = None):
     if path is None:
         path = pwd_file_path
     if not os.path.exists(path):
-        print("Password file not exisi, please create one using the accout manager")
+        print("Password file not exist, please create one using the accout manager")
         return False
     else:
         return True
