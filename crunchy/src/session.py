@@ -68,7 +68,7 @@ def log(log_id, content):
     #save_log()
 
 def log_info(uid):
-    return get_session()['need_log'][uid]
+    return get_session()['need_log'].get(uid, None)
 
 def save_log():
     ''' save the log to a proper file 
