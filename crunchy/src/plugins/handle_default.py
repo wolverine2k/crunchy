@@ -79,6 +79,7 @@ def handler(request):
         request.end_headers()
     else:
         request.send_response(200)
+        request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
         if request.path == "/":
             request.send_header ("Content-Type", "text/html; charset=UTF-8")
         request.end_headers()
@@ -143,9 +144,9 @@ dir_list_page = """
 
 def error_page(path):
     '''returns a page with an error message; used when a path is not found'''
-    return illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
+    return unicode( illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
                                  _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
                                  _("The page doesn't exist."),
                                  _("The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."),
                                  _("The path you requested was: "),
-                                 path)
+                                 path) )
