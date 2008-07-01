@@ -63,8 +63,11 @@ def add_log_id(uid, log_id, t):
     '''
     get_session()['need_log'][uid] = (log_id, t)
 
-def log(log_id, content):
-    get_session()['log'].append((log_id, content))
+def log(uid, content):
+    '''log item is (uid, content)
+    we can get log_id by access to sesion['need_log'][uid]
+    '''
+    get_session()['log'].append((uid, content))
     #save_log()
 
 def log_info(uid):
@@ -79,18 +82,32 @@ def save_log():
     log_filename = session['log_filename']
     f = open(log_filename, 'w')
     f.write(begin_html)
-    contents = {} 
+    contents = {}
+    #re-organazie the log  (uid -> content)
     for item in session['log']:
+        if not log_info(item[0]): #don't need log
+            continue
         if item[0] not in contents:
             contents[item[0]] = [item[1]]
         else:
             contents[item[0]].append(item[1])
-    for log_id,content in contents.items():
-        #f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
-        f.write("<h2>log_id = %s </h2>"%(log_id))
+    log_uids= contents.keys()
+    def uid_cmp(x, y):
+        x1,x2 = x.split(':')
+        y1,y2 = y.split(':')
+        if x1 == y1:
+            return cmp(int(x2), int(y2))
+        else:
+            return cmp(int(x1), int(y1))
+    log_uids.sort(uid_cmp) # sort by uid 
+    for uid in log_uids:
+        content = contents[uid]
+        log_id, vlam_type = log_info(uid)
+        f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
+        #f.write("<h2>log_id = %s </h2>"%(log_id))
         content = "".join(content)
         f.write("<pre>"+content+"</pre>")
-    
+
     #f.write(str(session['log']))
     #for uid in session['need_log']:
     #    log_id = session[uid][0]
