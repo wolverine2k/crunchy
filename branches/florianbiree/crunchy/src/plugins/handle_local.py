@@ -34,6 +34,7 @@ def local_loader(request):  # tested
     else:
         page = open(url, 'rb')
     request.send_response(200)
+    request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
