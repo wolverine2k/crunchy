@@ -81,7 +81,7 @@ def insert_editor(page, elem, uid):
     # code to be executed in the process
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        session.log(log_id, tostring(markup))
+        session.log(uid, tostring(markup))
         #config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
@@ -150,7 +150,7 @@ def insert_alternate_python(page, elem, uid):
 
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        session.log(log_id, tostring(markup))
+        session.log(uid, tostring(markup))
         #config['log'][log_id] = [tostring(markup)]
 
     insert_markup(elem, uid, vlam, markup)
