@@ -248,14 +248,16 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         while terminals_to_try:
             (terminal, start_parameter) = terminals_to_try[0]
             try:
-                print 'Try %s %s %s %s' % (terminal, start_parameter,
+                if DEBUG:
+                    print 'Try to lauch "%s %s %s %s"' % (terminal, start_parameter,
                                        python_interpreter, path)
                 Popen([terminal, start_parameter,
                                        python_interpreter, path])
                 # If it works, remove all terminals in the to_try list
                 terminals_to_try = []
             except:
-                print 'failed'
+                if DEBUG:
+                    print 'Failed'
                 if len(terminals_to_try) == 1:
                     # Impossible to find a terminal
                     raise NotImplementedError
