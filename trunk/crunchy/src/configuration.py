@@ -6,28 +6,15 @@
 ### Important:
 #
 # In order to reduce the list of variables displayed in the popup
-# "tooltip" when the user enters "crunchy.", most methods have been
+# "tooltip" when the user enters "crunchy.", some methods have been
 # prefixed by a leading underscore; Crunchy (in tooltip.py) filters
 # out such methods from the display.
 
 import os
 from urlparse import urlsplit
+import cPickle
 
-
-from src.interface import config, u_print, translate, python_version, debug
-# the following is needed for unit tests, since debug_flag is normally
-# set when crunchy is started.
-try:
-    from src.interface import debug_flag
-except:
-    debug_flag = False
-
-if python_version < 3:
-    import cPickle
-else:
-    print("Python 3.x not supported")
-    raise SystemExit
-    #import pickle as cPickle
+from src.interface import config, u_print, translate
 
 ANY = '*'
 
@@ -37,51 +24,69 @@ translate['init_translation']()
 # Existing translations for Crunchy messages
 trans_path = os.path.join(config['crunchy_base_dir'], "translations")
 # allow values like "en" or "en_GB"
-languages_allowed_values = [f for f in os.listdir(trans_path)
+languages_allowed = [f for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
                                     and not f.startswith('.')]
 # Existing translations for editarea
 trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root", "edit_area", "langs")
 # language file names end in ".js"
-editarea_languages_allowed_values = [f[0:-3] for f in os.listdir(trans_path)
+editarea_languages_allowed = [f[0:-3] for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
 
-security_allowed_values = [
-                        'trusted','display trusted',
-                        'normal', 'display normal',
-                        'strict', 'display strict'
-                            ]
+security_allowed = [ 'trusted','display trusted',
+                     'normal', 'display normal', 'strict', 'display strict']
 
 # Unfortunately, IPython interferes with Crunchy;
 #  I'm commenting it out, keeping it in as a reference.
-override_default_interpreter_allowed_values = ['default', # ipython,
+override_default_interpreter_allowed = ['default', # ipython,
         'interpreter', 'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
 
-no_markup_allowed_values = ["none", "editor", 'python_tutorial',
+no_markup_allowed = ["none", "editor", 'python_tutorial',
             "python_code", "doctest", "alternate_python_version", "alt_py"]
 
-for interpreter in override_default_interpreter_allowed_values:
-    no_markup_allowed_values.append(interpreter)
-
-
-
-forward_accept_language_allowed_values = [True, False]
+for interpreter in override_default_interpreter_allowed:
+    no_markup_allowed.append(interpreter)
+browser_choices_allowed = ['None', 'python', 'rst', 'local_html', 'remote_html']
 
 def make_property(name, allowed, default=None):
-    '''creates properties within allowed values with some defaults,
-       and enables automatic saving of new values'''
+    '''creates properties within allowed values (if so specified)
+       with some defaults, and enables automatic saving of new values'''
     if default is None:
         default = allowed[0]
 
     def fget(obj):
+        '''simply returns the attribute for the requested object'''
         return getattr(obj, "_"+name)
 
+    def _set_and_save(obj, _name, value, initial=False):
+        '''sets the value and make the required call to save the new status'''
+        setattr(obj, "_" + _name, value)
+        getattr(obj, '_save_settings')(_name, value, initial)
+        return
+
+    def _only_set_and_save_if_new(obj, name, val):
+        '''sets the value (and save the new status) only if there is
+           a change from the current value; this is to prevent
+           needlessly writing to files'''
+        try:  # don't save needlessly if there is no change
+            current = getattr(obj, "_"+name)
+            if val == current:
+                return
+            else:
+                _set_and_save(obj, name, val)
+        except:
+            _set_and_save(obj, name, val)
+        return
+
     def fset(obj, val):
-        '''assigns a value if allowed, and saves the result'''
+        '''assigns a value within an allowed set (if defined),
+           and saves the result'''
         prefs = getattr(obj, "prefs")
+        # some properties are designed to allow any value to be set to them
         if ANY in allowed and val != ANY:
             allowed.append(val)
+
         if val not in allowed:
             try:
                 current = getattr(obj, "_"+name) # can raise AttributeError
@@ -90,19 +95,9 @@ def make_property(name, allowed, default=None):
                 u_print(_("The valid choices are: "), allowed)
                 u_print(_("The current value is: "), current)
             except AttributeError: # first time; set to default!
-                setattr(obj, "_"+name, default)
-                getattr(obj, '_save_settings')(name, default, initial=True)
+                _set_and_save(obj, name, default, initial=True)
         elif val != ANY:
-            try:  # don't save needlessly if there is no change
-                current = getattr(obj, "_"+name)
-                if val == current:
-                    return
-                else:
-                    setattr(obj, "_"+name, val)
-                    getattr(obj, '_save_settings')(name, val)
-            except:
-                setattr(obj, "_"+name, val)
-                getattr(obj, '_save_settings')(name, val)
+            _only_set_and_save_if_new(obj, name, val)
         return
     return property(fget, fset)
 
@@ -125,6 +120,7 @@ class Base(object):
         return
 
     def _save_settings(self, name, value, initial=False):
+        '''dummy function; needs to be defined by subclass'''
         raise NotImplementedError
 
 
@@ -165,8 +161,6 @@ class Defaults(Base):
                                # type is one of 'interpreter', 'editor',...
         self.init_properties(Defaults)
 
-    browser_choices =  make_property('browser_choices', ['None', 'python',
-                                        'rst', 'local_html', 'remote_html'])
     dir_help = make_property('dir_help', [True, False])
     doc_help = make_property('doc_help', [True, False])
     forward_accept_language = make_property('forward_accept_language',
@@ -174,24 +168,13 @@ class Defaults(Base):
     friendly = make_property('friendly', [True, False])
     _trans_path = os.path.join(config['crunchy_base_dir'], "translations")
     override_default_interpreter = make_property('override_default_interpreter',
-                                    override_default_interpreter_allowed_values)
-    language = make_property('language',
-                            [f for f in os.listdir(_trans_path)
-                             # allow values like "en" or "en_GB"
-                             if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
-                                    and not f.startswith('.')],
-                           default='en')
+                                    override_default_interpreter_allowed)
+    language = make_property('language', languages_allowed, default='en')
     editarea_language = make_property('editarea_language',
-                                      [f[0:-3] for f in os.listdir(trans_path)
-                             if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
-                                    and not f.startswith('.')])
-    local_security = make_property('local_security', ['trusted',
-                        'display trusted', 'normal', 'display normal',
-                        'strict', 'display strict'])
-    no_markup = make_property('no_markup', no_markup_allowed_values)
-
-    power_browser = make_property('power_browser', ['None', 'python', 'rst',
-                                                'local_html', 'remote_html'])
+                                      editarea_languages_allowed, default='en')
+    local_security = make_property('local_security', security_allowed)
+    no_markup = make_property('no_markup', no_markup_allowed)
+    power_browser = make_property('power_browser', browser_choices_allowed)
     my_style = make_property('my_style', [False, True])
     alternate_python_version = make_property('alternate_python_version', ['*'])
 
@@ -244,10 +227,56 @@ class Defaults(Base):
             return
         return
 
+    #def _save_settings(self, name, value, initial=False):
+    #    if not initial:
+    #        print "Setting", name, '=', value
+    #    self.prefs[name] = value
+
     def _save_settings(self, name, value, initial=False):
-        if not initial:
-            print "Setting", name, '=', value
+        '''Update user settings and save results to a configuration file'''
+        print "inside _save_settings; name=", name, "value=", value, "initial=", initial
         self.prefs[name] = value
+        if initial:
+            return
+        print "++++++++++++++++++++++++++++++++++++++++++"
+        import pprint
+        pprint.pprint( self.prefs)
+        print "------------------------------------------"
+        return
+        saved = {}
+        saved['no_markup'] = self.__no_markup
+        saved['language'] = self.__language
+        saved['editarea_language'] = self.__editarea_language
+        saved['friendly'] = self.__friendly
+        if 'display' not in self.__local_security:
+            saved['local_security'] = self.__local_security
+        else:
+            # we do not want to restart Crunchy in a "display" mode
+            # as we will not be able to change it without loading
+            # a remote tutorial.
+            saved_value = self.__local_security.replace("display ", '')
+            saved['local_security'] = saved_value
+        saved['override_default_interpreter'] = self.__override_default_interpreter
+        saved['doc_help'] = self.__doc_help
+        saved['dir_help'] = self.__dir_help
+        saved['my_style'] = self.__my_style
+        saved['styles'] = self.styles
+        saved['site_security'] = self.site_security
+        saved['alternate_python_version'] = self.__alternate_python_version
+        saved['power_browser'] = self.__power_browser
+        saved['forward_accept_language'] = self.__forward_accept_language
+        # time to save
+        pickled_path = os.path.join(self.__user_dir, "settings.pkl")
+        try:
+            pickled = open(pickled_path, 'wb')
+        except:
+            u_print("Could not open file in configuration._save_settings().")
+            return
+        cPickle.dump(saved, pickled)
+        pickled.close()
+        return
+
+
 
     def page_security_level(self, url):
         info = urlsplit(url)
@@ -274,7 +303,8 @@ class Defaults(Base):
             self._save_settings()
             u_print(_("site security set to: ") , choice)
         else:
-            u_print((_("Invalid choice for %s.site_security")%self._prefix))
+            u_print((_("Invalid choice for %s.site_security") %
+                                                         self.prefs['_prefix']))
             u_print(_("The valid choices are: "), str(security_allowed_values))
 
     user_dir = make_property('user_dir', [ANY])
