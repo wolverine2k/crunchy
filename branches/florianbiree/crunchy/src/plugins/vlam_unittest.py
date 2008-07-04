@@ -47,7 +47,7 @@ def unittest_runner_callback(request):
         'user_code': request.data,
         'unit_test': unittests[request.args["uid"]],
     }
-    plugin['exec_code'](code, request.args["uid"], doctest=True) # TODO: doctests=True?
+    plugin['exec_code'](code, request.args["uid"], doctest=False) # TODO: doctests=True?
     request.send_response(200)
     request.end_headers()
 
@@ -124,7 +124,8 @@ def test_suite():
             pass
     return unittest.TestSuite(tests)
 
-__test_runner = unittest.TextTestRunner(doctest_out)
+#__test_runner = unittest.TextTestRunner(doctest_out)
+__test_runner = unittest.TextTestRunner(descriptions=2, verbosity=2)
 __test_runner.run(test_suite())
 '''
 
