@@ -1,3 +1,0 @@
-def bye():
-    print "Goodbye!"
-
