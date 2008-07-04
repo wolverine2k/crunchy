@@ -31,14 +31,24 @@ doctest.OutputChecker = MyOutputChecker
 os.chdir("..")
 sys.path.insert(0, os.getcwd())
 test_path = os.path.join(os.getcwd(), "src", "tests")
-test_files = [f for f in os.listdir(test_path) if f.startswith("test_")]
+test_files = [f for f in os.listdir(test_path) if f.startswith("test_")
+              and f.endswith(".rst")]
 
 sep = os.path.sep
 
 nb_files = 0
+
+#TODO: add a command line option to replace this
 excluded = []#["test_colourize.rst"]
 
-#include_only = ['test_handle_remote.rst']
+#TODO: add a command line option to replace this
+include_only = ['test_configuration.rst']
+
+#TODO: add a command line option (clean?) that would remove all .pyc
+# files before testing.
+#TODO: add a command line option that would remove the current .crunchy
+# directory to start unit tests from the point of view of a new user.
+
 for t in test_files:
     if t in excluded:
         continue # skip

@@ -12,7 +12,9 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-debug_ids = []#1, 2, 3, 4, 5, 6]
+from src.interface import config
+
+debug_ids = []#[1, 2, 3, 4, 5, 6]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -148,7 +150,6 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-
     if 'display' in configuration.defaults.current_page_security_level:
         return
 
@@ -156,7 +157,7 @@ def do_exec(code, uid, doctest=False):
     # instance name that can be used to get/set the various
     # configuration variables from within a user-written program.
 
-    symbols = { configuration.defaults._prefix : configuration.defaults,
+    symbols = {config['_prefix']: configuration.defaults,
                 'temp_dir': configuration.defaults.temp_dir}
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
     t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
