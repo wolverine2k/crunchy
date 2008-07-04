@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Session Logging Tests</title>
+</head>
+<body>
+<h1>Session Logging Tests</h1>
+<p>Crunchy includes a "proof-of-concept" implementation of a session logging mechanism.
+This file is to be used to test for logging option.  Input/output from
+each of these is going to be written to an external file, crunchy_log.html,
+located in the user's home directory.  More information about session logging can be
+found near the bottom of this page.</p>
+<h3>First, a sample interpreter</h3>
+<pre title="interpreter log_id=(interp)">
+>>> print "Borg"
+Borg
+</pre>
+<h3>An isolated interpreter</h3>
+<pre title="interpreter isolated log_id=( isol )">
+>>> print "isolated"
+isolated
+</pre>
+<h3>An editor</h3>
+<pre title="editor log_id=( edit )">
+>>> print "editor"
+editor
+</pre>
+<h3>A doctest</h3>
+<p>You know what to do with doctests: write the required code so that the following will work.</p>
+<pre title="doctest log_id=( doc )">
+>>> double(21)
+42
+</pre>
+<p>Of course, a true session will include more than one page.  Try the
+following link to <a href="logging_2.html">continue the logging test</a>.</p>
+
+
+<h2>What is the purpose of logging a session?</h2>
+<p>
+There are many reasons why a user might want to log a Crunchy session.  For example:
+</p>
+<ul>
+<li>A teacher might want to assign some examples to work through, perhaps some doctest examples,
+and would like to have a permanent record of the students's work.</li>
+<li>A teacher might want to record some examples created "live" in class so as to post them later
+on the web.</li>
+<li>A tutorial writer might want to develop the basis for a tutorial by recording her
+work done using a Crunchy Python interpreter.  She can then later edit the (html) log file containing
+the sample input and resulting output to add the textual information required to create a real tutorial.</li>
+</ul>
+<p>Crunchy's current logging mechanism provides the minimum features that would be required
+for these types of activities.  It is, admittedly, not entirely user friendly at this point.
+However, there has not been any request to improve on the current status.</p>
+<p>If you think you could make use of an improved session logging feature, please feel
+free to contact us with your request.  We only ask one thing:</p>
+<ul>
+<li>You must be willing to try out the various "prototypes" as we incrementally add
+the requested features and give us reasonably detailed feedback.</li>
+</ul>
+<p>Please note that Crunchy is currently (version 0.9.8+) designed as a single-user application,
+i.e. it is not intended to be residing on a server answering to requests from multiples users.
+While we can see the usefulness of having a "Crunchy server", with individual (secure) logins
+from multiple concurrent users, it is currently not a high priority
+and it likely would be difficult for us to develop as we do not work in a multiple-user 
+environment with a central server.   However, if this is seen as highly desirable by enough
+people, we might just try and make it a priority.</p>
+<p>Of course, anyone who would like to work on Crunchy as a developer is welcome to do so!</p>
+
+<h2>Bugs</h2>
+<ul>
+<li>None noted yet
+</li>
+</ul>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
