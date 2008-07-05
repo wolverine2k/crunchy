@@ -21,14 +21,15 @@ def start_session(sid = None):
         sid = md5.md5("%d" % (time.time())).hexdigest()
         sessions[sid] = {
             'sid' : sid, 
+            'log_flag':True,
             'log' : [], 
             'need_log' : {},
             'log_filename' : 
-                os.path.join(os.path.expanduser("~"), "crunchy_log_%s_%s.html" %(datetime.now().strftime("%Y%m%d%H%M%S"), sid[:5]))
+                os.path.join(os.path.expanduser("~"), "crunchy_log_%s.html" %(sid))
+            #os.path.join(os.path.expanduser("~"), "crunchy_log_%s_%s.html" %(datetime.now().strftime("%Y%m%d%H%M%S"), sid[:5]))
         }
     thread_data.session_id = sid
     return sid
-
 
 def get_session_id():
     return thread_data.session_id
@@ -36,7 +37,6 @@ def get_session_id():
 def get_session():
     sid = thread_data.session_id
     return sessions[sid]
-
 
 #logging stuff
 '''
@@ -58,6 +58,24 @@ NO. instead we will save the logs in session object
 should we organize the code based on  logid ?
 '''
 
+def set_log_flag(flag):
+    get_session()['log_flag'] = flag
+
+def enable_log():
+    get_session()['log_flag'] = True
+
+def disable_log():
+    s = get_session()
+    s['log_flag'] = False
+    #remove the logging file
+    try:
+        os.remove(s['log_filename'])
+    except:
+        pass
+    
+def log_flag():
+    return get_session()['log_flag']
+
 def add_log_id(uid, log_id, t):
     ''' vlam_element with uid has a log_id , and it's vlam type is t
     '''
@@ -67,8 +85,9 @@ def log(uid, content):
     '''log item is (uid, content)
     we can get log_id by access to sesion['need_log'][uid]
     '''
+    if not log_flag():
+        return 
     get_session()['log'].append((uid, content))
-    #save_log()
 
 def log_info(uid):
     return get_session()['need_log'].get(uid, None)
@@ -78,6 +97,8 @@ def save_log():
     1. log file should be in user's home directory, named as crunchy_log_{time_stamp}_{session_id}.html 
     2. about log log format
     '''
+    if not log_flag():
+        return 
     session = get_session()
     log_filename = session['log_filename']
     f = open(log_filename, 'w')

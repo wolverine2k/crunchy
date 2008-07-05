@@ -2,6 +2,8 @@
 
 Other than through a language preference, Crunchy menus can be modified
 by tutorial writers using a custom meta declaration.
+
+Crunchy Plugin can add new menu items
 """
 
 import os
@@ -12,6 +14,10 @@ import src.security as security
 
 _default_menu = None
 _css = None
+_extra_menu_items = []
+
+requires =  set([])
+provides = set(['add_menu_item'])
 
 def register():
     """
@@ -19,6 +25,8 @@ def register():
     """
     plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
     plugin['register_tag_handler']("no_tag", "menu", None, insert_default_menu)
+    plugin['register_tag_handler']("no_tag", "add_extra_menu", None, add_extra_menu)
+    plugin['register_service']("add_menu_item", add_menu_item)
 
 def insert_special_menu(page, elem, dummy):
     '''inserts a menu different from the Crunchy default based.
@@ -90,3 +98,18 @@ def extract_menu(filename, page, safe_menus=False):
     menu.attrib['id'] = 'menu_box'
     menu.attrib['onmousedown'] = "dragStart(event, 'menu_box')"
     return menu, css
+
+
+def add_extra_menu(page):
+    for item in _extra_menu_items:
+        if item not in page.body[0]:
+            page.body[0].insert(-1, item)
+
+def add_menu_item(item):
+    global _extra_menu_items
+    if type(item) is list:
+        _extra_menu_items += item
+    else:
+        _extra_menu_items.append(item)
+    #menu = page.body[0]
+    #menu.insert(-1, elem)
