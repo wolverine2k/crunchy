@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Unittest Test</title></head>
+<body>
+<h1>Crunchy Unittest Test</h1>
+
+<p>Here's a Unittest box:</p>
+<pre title="unittest">
+class MathTest(unittest.TestCase):
+    """Test class for mathematical functions"""
+    def test_add(self):
+        """Tests for the function add"""
+        self.assertEquals(add(1, 1), 2)
+        self.assertEquals(add(add(-1,2), 1), 2)
+        self.assertEquals(add(40, 2), 42)
+    def test_sub(self):
+        """Tests for the function sub"""
+        self.assertEquals(sub(1, 1), 0)
+        self.assertEquals(sub(40, -2), 42)
+
+class AnswerTest(unittest.TestCase):
+    """Test class for answer objects"""
+    def test_answer(self):
+        """Tests for Answer.__repr__"""
+        answer = Answer('Life')
+        self.assertEquals(str(answer), '42')
+        answer = Answer('Universe')
+        self.assertEquals(str(answer), '42')
+        answer = Answer('Everything')
+        self.assertEquals(str(answer), '42')
+</pre>
+<p>Try entering some code in the editor above so that it satisfies the unittest.</p>
+
+<p>This should work:</p>
+<pre title="py_code">
+
+def add(a, b):
+    """Return a + b"""
+    return a + b
+
+def sub(a, b):
+    """Return a - b"""
+    return a - b
+
+class Answer(object):
+    """Class to emulate the behavior of Deep Thought"""
+    def __init__(self, ultimate_question):
+        self.ultimate_question = ultimate_question
+    
+    def __repr__(self):
+        return "42"
+</pre>
+<h2>Bugs</h2>
+<ul>
+  <li>No bug known.</li>
+</ul>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
