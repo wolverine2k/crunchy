@@ -58,6 +58,9 @@ NO. instead we will save the logs in session object
 should we organize the code based on  logid ?
 '''
 
+def get_log_flag():
+    return get_session()['log_flag']
+
 def set_log_flag(flag):
     get_session()['log_flag'] = flag
 
