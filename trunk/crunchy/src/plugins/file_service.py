@@ -202,7 +202,7 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
-        * GNOME (Tested)
+        * GNOME/KDE/XFCE/xterm (Tested)
         * OS X
     """
     if DEBUG:

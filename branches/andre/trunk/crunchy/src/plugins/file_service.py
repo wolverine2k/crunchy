@@ -15,6 +15,15 @@ provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
 
 DEBUG = False
 
+# Sorted list of ('terminal', 'parameters to start a program') for linux systems
+linux_terminals = (
+    ('xdg-terminal', ''),
+    ('gnome-terminal', '-x'),
+    ('konsole', '-e'),
+    ('xfce4-terminal', '-x'),
+    ('xterm', '-e'),
+)
+
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register three types of 'actions':
@@ -193,10 +202,8 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
-        * GNOME (Tested)
+        * GNOME/KDE/XFCE/xterm (Tested)
         * OS X
-    This also needs to be tested for KDE
-    and implemented some form of linux fallback (xterm?)
     """
     if DEBUG:
         print("Entering exec_external_python_interpreter.")
@@ -237,14 +244,24 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         command =  "osascript -e '%s';osascript -e '%s'" % (activate, do_script)
         os.popen(command)
     elif os.name == 'posix':
-        try:
-            os.spawnlp(os.P_NOWAIT, 'gnome-terminal', 'gnome-terminal',
-                       '-x', python_interpreter, '%s' % path)
-        except:
+        terminals_to_try = list(linux_terminals)
+        while terminals_to_try:
+            (terminal, start_parameter) = terminals_to_try[0]
             try:
-                os.spawnlp(os.P_NOWAIT, 'konsole', 'konsole',
-                                '-x', python_interpreter, '%s' % path)
+                if DEBUG:
+                    print 'Try to lauch "%s %s %s %s"' % (terminal, start_parameter,
+                                       python_interpreter, path)
+                Popen([terminal, start_parameter,
+                                       python_interpreter, path])
+                # If it works, remove all terminals in the to_try list
+                terminals_to_try = []
             except:
-                raise NotImplementedError
+                if DEBUG:
+                    print 'Failed'
+                if len(terminals_to_try) == 1:
+                    # Impossible to find a terminal
+                    raise NotImplementedError
+                else:
+                    terminals_to_try = terminals_to_try[1:]
     else:
         raise NotImplementedError
