@@ -25,7 +25,8 @@ def start_session(sid = None):
             'log' : [], 
             'need_log' : {},
             'log_filename' : 
-                os.path.join(os.path.expanduser("~"), "crunchy_log_%s.html" %(sid))
+                os.path.join(os.path.expanduser("~"), "crunchy_log_%s.html" %(sid)),
+            'dirty' : True,
             #os.path.join(os.path.expanduser("~"), "crunchy_log_%s_%s.html" %(datetime.now().strftime("%Y%m%d%H%M%S"), sid[:5]))
         }
     thread_data.session_id = sid
@@ -73,6 +74,7 @@ def disable_log():
     #remove the logging file
     try:
         os.remove(s['log_filename'])
+        s['dirty'] = True
     except:
         pass
     
@@ -90,19 +92,27 @@ def log(uid, content, c_type = "crunchy"):
     '''
     if not get_log_flag():
         return 
-    get_session()['log'].append((uid, content, c_type))
+    s = get_session() 
+    s['log'].append((uid, content, c_type))
+    s['dirty'] = True
 
 def log_info(uid):
     return get_session()['need_log'].get(uid, None)
+
+def is_need_log(uid):
+    if not get_log_flag():
+        return False
+    else:
+        uid in get_session()['need_log']
 
 def save_log():
     ''' save the log to a proper file 
     1. log file should be in user's home directory, named as crunchy_log_{time_stamp}_{session_id}.html 
     2. about log log format
     '''
-    if not get_log_flag():
-        return 
     session = get_session()
+    if not session['log_flag'] or not session['dirty']:
+        return 
     log_filename = session['log_filename']
     f = open(log_filename, 'w')
     f.write(begin_html)
@@ -113,10 +123,10 @@ def save_log():
         if not log_info(item[0]): #don't need log
             continue
         if item[0] not in contents:
-            contents[item[0]] = [item[1]]
+            contents[item[0]] = [item[1:]]
         else:
-            contents[item[0]].append(item[1])
-        if item[2] != "crunchy" :
+            contents[item[0]].append(item[1:])
+        if item[2] in ("input"):
             has_user_input.append(item[0])
 
     #only log these elements which has user input
@@ -135,20 +145,25 @@ def save_log():
         content = contents[uid]
         log_id, vlam_type = log_info(uid)
         f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
+        f.write("<pre>")
+        for item in content:
+            f.write(globals()[item[1] + "_template"] %(item[0]))
+        f.write("</pre>")
         #f.write("<h2>log_id = %s </h2>"%(log_id))
-        content = "".join(content)
-        f.write("<pre>"+content+"</pre>")
+        #content = "".join(content)
+        #f.write("<pre>"+content+"</pre>")
 
-    #f.write(str(session['log']))
-    #for uid in session['need_log']:
-    #    log_id = session[uid][0]
-    #    vlam_type = session[uid][1]
-    #    f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
-    #    content = ''.join([item[1] for item in session['log'] if item[0] == log_id])
-    #    f.write("<pre>"+content+"</pre>")
     f.write(end_html)
     f.close()
+    session['dirty'] = False
 
+#crunchy_template = '''<div class="crunchy">%s</div>\n'''
+#input_template = '''<div class="input">%s</div>\n'''
+#output_template = '''<div class="output">%s</div>\n'''
+
+crunchy_template = '''%s'''
+input_template = '''%s'''
+output_template = '''%s'''
 
 begin_html = """
 <html>
