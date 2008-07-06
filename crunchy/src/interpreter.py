@@ -67,7 +67,7 @@ class Interpreter(threading.Thread):
                         else:
                             user_co = _("# no code entered by user\n").encode("utf-8")
                         data = "<span class='stdin'>" + user_code + "</span>"
-                        session.log(self.channel, data)
+                        session.log(self.channel, data, "input")
                         session.save_log()
                         #configuration.defaults.log[log_id].append(data)
                         #log_session()
@@ -109,7 +109,7 @@ class Interpreter(threading.Thread):
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
                     data = "<span class='stdin'>" + user_code + "</span>"
-                    session.log(self.channel, data)
+                    session.log(self.channel, data, "input")
                     session.save_log()
                     #configuration.defaults.log[log_id].append(data)
                     #log_session()
