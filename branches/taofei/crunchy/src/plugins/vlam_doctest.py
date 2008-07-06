@@ -77,7 +77,7 @@ def doctest_widget_callback(page, elem, uid):
     # next, we style the code, also extracting it in a useful form ...
     doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
-        session.log(uid, tostring(markup))
+        session.log(uid, tostring(markup), "crunchy")
         #config['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode

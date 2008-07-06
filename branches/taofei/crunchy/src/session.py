@@ -76,21 +76,21 @@ def disable_log():
     except:
         pass
     
-def log_flag():
-    return get_session()['log_flag']
 
 def add_log_id(uid, log_id, t):
     ''' vlam_element with uid has a log_id , and it's vlam type is t
     '''
     get_session()['need_log'][uid] = (log_id, t)
 
-def log(uid, content):
+def log(uid, content, c_type = "crunchy"):
     '''log item is (uid, content)
     we can get log_id by access to sesion['need_log'][uid]
+    c_type can be "crunchy" , "input", "output"
+    "crunchy" means pre-input code , eg the doctest - test code
     '''
-    if not log_flag():
+    if not get_log_flag():
         return 
-    get_session()['log'].append((uid, content))
+    get_session()['log'].append((uid, content, c_type))
 
 def log_info(uid):
     return get_session()['need_log'].get(uid, None)
@@ -100,13 +100,14 @@ def save_log():
     1. log file should be in user's home directory, named as crunchy_log_{time_stamp}_{session_id}.html 
     2. about log log format
     '''
-    if not log_flag():
+    if not get_log_flag():
         return 
     session = get_session()
     log_filename = session['log_filename']
     f = open(log_filename, 'w')
     f.write(begin_html)
     contents = {}
+    has_user_input = []
     #re-organazie the log  (uid -> content)
     for item in session['log']:
         if not log_info(item[0]): #don't need log
@@ -115,7 +116,13 @@ def save_log():
             contents[item[0]] = [item[1]]
         else:
             contents[item[0]].append(item[1])
-    log_uids= contents.keys()
+        if item[2] != "crunchy" :
+            has_user_input.append(item[0])
+
+    #only log these elements which has user input
+    log_uids= list(set(has_user_input))
+    #log_uids= contents.keys()
+
     def uid_cmp(x, y):
         x1,x2 = x.split(':')
         y1,y2 = y.split(':')

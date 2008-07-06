@@ -69,7 +69,7 @@ def insert_interpreter(page, elem, uid):
     # interpreter, thus saving some typing by the user.
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        session.log(uid, tostring(markup))
+        session.log(uid, tostring(markup), "crunchy")
         #config['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,

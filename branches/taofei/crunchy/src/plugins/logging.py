@@ -7,6 +7,7 @@ deal with logging relate action
 3. view log_file
 '''
 import urllib
+import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, translate, plugin, Element, SubElement, fromstring
@@ -28,6 +29,9 @@ def register():
                          "/disable_log", disable_log_cb) 
     plugin['register_http_handler'](
                          "/view_log_file", view_log_file_cb) 
+
+    plugin['register_http_handler'](
+                         "/replay_log", replay_log_cb) 
 
     plugin['services'].add_menu_item(logging_menu_items)
 
@@ -52,9 +56,18 @@ def view_log_file_cb(request):
     if not s['log_flag']:
         return #report error
     log_file = s['log_filename']
+    if not os.path.isfile(log_file):
+        session.save_log()
+        
     request.send_response(302)
     request.send_header("Location", "/local?url=%s" %(urllib.quote_plus(log_file)))
     request.end_headers()
+
+
+def replay_log_cb(request):
+    '''replay user actions according the log
+    '''
+    pass
 
 
 js = '''
