@@ -1,13 +1,12 @@
 
 import inspect
 import threading, sys
-import sys
 import traceback
 from codeop import CommandCompiler, compile_command
 
 from src.interface import StringIO, exec_code, python_version, translate
 
-from src.utilities import trim_empty_lines_from_end, log_session
+from src.utilities import trim_empty_lines_from_end
 import src.configuration as configuration
 import src.session as session
 if python_version < 3:
@@ -65,7 +64,7 @@ class Interpreter(threading.Thread):
                             if not user_code.endswith('\n'):
                                 user_code += '\n'
                         else:
-                            user_co = _("# no code entered by user\n").encode("utf-8")
+                            user_code = _("# no code entered by user\n").encode("utf-8")
                         data = "<span class='stdin'>" + user_code + "</span>"
                         session.log(self.channel, data, "input")
                         session.save_log()
@@ -111,8 +110,6 @@ class Interpreter(threading.Thread):
                     data = "<span class='stdin'>" + user_code + "</span>"
                     session.log(self.channel, data, "input")
                     session.save_log()
-                    #configuration.defaults.log[log_id].append(data)
-                    #log_session()
                 # proceed with regular output
                 if configuration.defaults.friendly:
                     message, success = errors.simplify_doctest_error_message(

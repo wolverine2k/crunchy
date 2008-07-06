@@ -18,7 +18,7 @@ provides = set([])
 
 def register():
     '''
-    register a tag handler and three http handlers: /set_trusted and /remove_all
+    register 5 http handlers for log related work
     '''
 
     plugin['register_http_handler'](
@@ -56,20 +56,21 @@ def view_log_file_cb(request):
     if not s['log_flag']:
         return #report error
     log_file = s['log_filename']
-    if not os.path.isfile(log_file):
-        session.save_log()
+    #always save log before view 
+    session.save_log()
         
     request.send_response(302)
     request.send_header("Location", "/local?url=%s" %(urllib.quote_plus(log_file)))
     request.end_headers()
 
-
 def replay_log_cb(request):
-    '''replay user actions according the log
+    '''replay user actions according to the log
     '''
     pass
 
 
+#how to use & in code ? 
+#it report error , even put it in <![CDATA[ , it is parsed ...
 js = '''
 <script type="text/javascript">
 //<![CDATA[ 
@@ -119,8 +120,6 @@ function toggle_log_flag()
 </script>
 '''
 
-#how to use & in code ? 
-#it report error , even put it in <![CDATA[ , it is parsed ...
 js2 = '''
 <script type="text/javascript">
 //<![CDATA[ 

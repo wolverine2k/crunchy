@@ -74,7 +74,7 @@ class CrunchyPage(object):
             except AttributeError:
                 html = self.tree.getroot()
                 self.body = et.SubElement(html, "body")
-            self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
+
             warning = et.SubElement(self.body, 'h1')
             warning.text = "Missing body from original file"
         self.process_tags()

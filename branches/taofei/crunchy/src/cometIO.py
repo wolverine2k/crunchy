@@ -83,15 +83,10 @@ class CrunchyIOBuffer(StringBuffer):
         self.lock.acquire()
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
-            log_info = session.log_info(uid)
-            if log_info:
+            # Saving session; appending from below
+            if session.log_info(uid):
                 session.log(uid, data, "output")
                 session.save_log()
-            # Saving session; appending from below
-            #if uid in configuration.defaults.logging_uids:
-            #    log_id = configuration.defaults.logging_uids[uid][0]
-            #    configuration.defaults.log[log_id].append(data)
-            #    utilities.log_session()
             self.event.set()
         elif self.help_flag == True:
             self.put(help_js)
@@ -100,15 +95,10 @@ class CrunchyIOBuffer(StringBuffer):
             self.help_flag = False
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
-            log_info = session.log_info(uid)
-            if log_info:
+            # Saving session; first line...
+            if session.log_info(uid):
                 session.log(uid, data, "output")
                 session.save_log()
-            # Saving session; first line...
-            #if uid in configuration.defaults.logging_uids:
-            #    log_id = configuration.defaults.logging_uids[uid][0]
-            #    configuration.defaults.log[log_id].append(data)
-            #    utilities.log_session()
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
@@ -168,6 +158,7 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # echo back to output:
+    session.log(uid, request.data, "input")
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
