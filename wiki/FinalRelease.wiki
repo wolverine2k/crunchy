@@ -22,8 +22,6 @@ Both of those lists should be empty.
 Crunchy's "look" must have been finalized, with everyone (well... at least both Johannes
 and André) agreeing about all styling issues.
 
-  * Note: must determine if some visual symbol has to be re-introduced to indicate the security level on the page (or on the menu?).
-
 ==Testing==
 
 Ensure that Crunchy has been tested under
@@ -85,7 +83,7 @@ Translations should be verified and, if possible, brought up to date.
 || English || || || ||
 || French || || || André ||
 
-To be completed later.
+To be completed later for the other 8 languages.
 
 ====Included files====
 
@@ -93,7 +91,6 @@ Try to make sure that included 3rd party code (e.g. editarea) are the latest ver
 
 ==Open issues==
 
-  * Should "Tests" on the left-hand side menu be renamed "Miscelleaneous"?
   * Should we remove all styling "hard-coded" information in .py files, like what was done when addressing Issue 112, prior to the 1.0 release?
 
 == See also ==
