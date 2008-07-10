@@ -66,6 +66,28 @@ src/plugins
             plugin['register_http_handler'](
                             "/input%s" % plugin['session_random_id'], push_input)
             plugin['register_http_handler']("/comet", comet)
+    config_gui.py
+        from src.interface import plugin
+        register():  # tested
+            plugin['register_http_handler'](
+                            "/set_config%s" % plugin['session_random_id'], set_config)
+            plugin['register_http_handler']("/config", config_page)
+        class ConfigOption(object):
+            __init__(self, key, initial)
+            get(self)
+            set(self, value)
+        class MultiOption(ConfigOption):
+            __init__(self, key, initial, values)
+            get_values(self)
+        class ConfigWidget(object):
+            __init__(self, option)
+            pre_render(self, handle)
+            post_render(self, handle)
+        class MultiChoiceWidget(ConfigWidget):
+            __init__(self, option)
+            render(self, handle)
+        _test()
+            import doctest
     doc_code_check.py
         import copy
         import difflib
@@ -163,8 +185,8 @@ src/plugins
         local_loader(request)  # tested
         add_to_path(page, elem, *dummy)  # tested
     handle_remote.py
-        from urllib import urlopen, unquote_plus
-        from src.interface import plugin, preprocessor
+        from urllib import FancyURLopener, unquote_plus
+        from src.interface import plugin, preprocessor, config
         register():  # tested
             plugin['register_http_handler']("/remote", remote_loader)
         remote_loader(request)  # tested
@@ -191,7 +213,7 @@ src/plugins
             plugin['register_tag_handler']("style", None, None, style_handler)
             plugin['register_tag_handler']("a", "title", "external_link", external_link)
             plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
-        external_link(dummy_page, elem, *dummy)  # tested
+        external_link(page, elem, *dummy)  # tested
         fixed_link(*dummy)  # tested
         a_tag_handler(page, elem, *dummy)  # tested
         src_handler(page, elem, *dummy)  # partially tested
@@ -285,6 +307,9 @@ src/plugins
             plugin['register_http_handler']("/remove_all", empty_security_list)
         insert_security_info(page, *dummy)
         confirm_at_start(page, info_container)
+        format_site_security_options(parent, site, site_num)
+        add_button(info_container, nb_sites)
+        format_table(parent, title, headings, content)
         format_report(page, div)
         set_security_list(request)
         empty_security_list(request)
@@ -366,6 +391,19 @@ src/plugins
             plugin['register_tag_handler']("span", "title", "load_remote",
                                                             insert_load_remote)
         insert_load_remote(dummy_page, parent, dummy_uid) # tested
+    vlam_unittest.py
+        from src.interface import config, plugin, Element, SubElement, tostring
+        from src.utilities import extract_log_id, insert_markup
+        register():
+            plugin['register_tag_handler']("pre", "title", "unittest",
+                                                  unittest_widget_callback)
+            plugin['register_http_handler'](
+                                 "/unittest%s"%plugin['session_random_id'],
+                                               unittest_runner_callback)
+        unittest_runner_callback(request)
+        unittest_widget_callback(page, elem, uid)
+        import unittest
+        test_suite()
 src/tests
     __init__.py
     mocks.py
@@ -384,6 +422,7 @@ src/tests
         class Request(object):
             __init__(self, data='data', args='args')
             send_response(self, response=42)
+            send_header(self, key, value)
             end_headers(self)
         register_tag_handler(tag, attribute, value, function)
         register_http_handler(handle, function)
@@ -542,13 +581,11 @@ src
         debug_msg(data, id_=None)
     configuration.py
         import os
-        import sys
         from urlparse import urlsplit
         from imp import find_module
         from src.interface import config, u_print, translate, python_version, debug
             from src.interface import debug_flag
             import cPickle
-            import pickle as cPickle
         class Defaults(object):
             class containing various default values:
                 user_dir home user directory
@@ -586,6 +623,8 @@ src
             _get_alternate_python_version(self)
             _set_alternate_python_version(self, alternate_python_version)
             page_security_level(self, url)
+            _get_forward_accept_language(self)
+            _set_forward_accept_language(self, choice)
     CrunchyPlugin.py
         import threading
         from os.path import dirname
