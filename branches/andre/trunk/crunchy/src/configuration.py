@@ -16,6 +16,16 @@ import cPickle
 
 from src.interface import config, u_print, translate
 
+_docutils_installed = True
+try:
+    from docutils.core import publish_string
+    from docutils.parsers import rst as rst_test
+    if "Directive" not in dir(rst_test):
+        _docutils_installed = False
+except:
+    _docutils_installed = False
+
+
 ANY = '*'
 
 _ = translate['_']
@@ -47,7 +57,11 @@ no_markup_allowed = ["none", "editor", 'python_tutorial',
 
 for interpreter in override_default_interpreter_allowed:
     no_markup_allowed.append(interpreter)
-browser_choices_allowed = ['None', 'python', 'rst', 'local_html', 'remote_html']
+
+if _docutils_installed:
+    browser_choices_allowed = ['None', 'python', 'rst', 'local_html', 'remote_html']
+else:
+    browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
 
 def make_property(name, allowed, default=None):
     '''creates properties within allowed values (if so specified)
@@ -96,7 +110,9 @@ def make_property(name, allowed, default=None):
                 u_print(_("The current value is: "), current)
             except AttributeError: # first time; set to default!
                 _set_and_save(obj, name, default, initial=True)
-        elif val != ANY:
+        else:
+            if val == ANY:
+                val = default
             _only_set_and_save_if_new(obj, name, val)
         return
     return property(fget, fset)
@@ -149,11 +165,13 @@ class Defaults(Base):
     """
     def __init__(self, prefs):
         self.site_security = {}
+        self.styles = {}
         self.prefs = prefs
         self.prefs.update( {'_prefix': 'crunchy',
                             'page_security_level': self.page_security_level,
                             '_set_site_security': self._set_site_security,
-                            'site_security': self.site_security})
+                            'site_security': self.site_security,
+                            'styles': self.styles})
         self._set_dirs()
         # self.logging_uids is needed by comitIO.py:87
         self.logging_uids = {}  # {uid : (name, type)}
@@ -176,54 +194,54 @@ class Defaults(Base):
     no_markup = make_property('no_markup', no_markup_allowed)
     power_browser = make_property('power_browser', browser_choices_allowed)
     my_style = make_property('my_style', [False, True])
-    alternate_python_version = make_property('alternate_python_version', ['*'])
-
+    alternate_python_version = make_property('alternate_python_version', [ANY],
+                                             default="python")
 
     def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         home = os.path.expanduser("~")
-        self.__user_dir = os.path.join(home, ".crunchy")
-        self.__temp_dir = os.path.join(home, ".crunchy", "temp")
+        self._user_dir = os.path.join(home, ".crunchy")
+        self._temp_dir = os.path.join(home, ".crunchy", "temp")
 
         # hack to make it work for now.
-        self.user_dir = self.__user_dir
-        self.temp_dir = self.__temp_dir
+        self.user_dir = self._user_dir
+        self.temp_dir = self._temp_dir
 
-        if not os.path.exists(self.__user_dir):  # first time ever
+        if not os.path.exists(self._user_dir):  # first time ever
             try:
-                os.makedirs(self.__user_dir)
-                if not os.path.exists(self.__temp_dir):
+                os.makedirs(self._user_dir)
+                if not os.path.exists(self._temp_dir):
                     try:
-                        os.makedirs(self.__temp_dir)
+                        os.makedirs(self._temp_dir)
                     except:
                         # Note: we do not translate diagnostic messages
                         # sent to the terminal
                         u_print("Created successfully home directory.")
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = self.__user_dir
+                        self._temp_dir = self._user_dir
                     return
             except:
                 u_print("Could not create the user directory.")
-                self.__user_dir = os.getcwd()  # use crunchy's as a default.
-                self.__temp_dir = os.path.join(self.__user_dir, "temp")
-                if not os.path.exists(self.__temp_dir):
+                self._user_dir = os.getcwd()  # use crunchy's as a default.
+                self._temp_dir = os.path.join(self._user_dir, "temp")
+                if not os.path.exists(self._temp_dir):
                     try:
-                        os.makedirs(self.__temp_dir)
+                        os.makedirs(self._temp_dir)
                     except:
                         u_print("Could not create temporary directory.")
-                        self.__temp_dir = self.__user_dir
+                        self._temp_dir = self._user_dir
                     return
                 return
         # we may encounter a situation where a ".crunchy" directory
         # had been created by an old version without a temporary directory
-        if not os.path.exists(self.__temp_dir):
+        if not os.path.exists(self._temp_dir):
             try:
-                os.makedirs(self.__temp_dir)
+                os.makedirs(self._temp_dir)
             except:
                 u_print("home directory '.crunchy' exists; however, ")
                 u_print("could not create temporary directory.")
-                self.__temp_dir = self.__user_dir
+                self._temp_dir = self._user_dir
             return
         return
 
@@ -238,42 +256,48 @@ class Defaults(Base):
         self.prefs[name] = value
         if initial:
             return
-        print "++++++++++++++++++++++++++++++++++++++++++"
-        import pprint
-        pprint.pprint( self.prefs)
-        print "------------------------------------------"
-        return
+
         saved = {}
-        saved['no_markup'] = self.__no_markup
-        saved['language'] = self.__language
-        saved['editarea_language'] = self.__editarea_language
-        saved['friendly'] = self.__friendly
-        if 'display' not in self.__local_security:
-            saved['local_security'] = self.__local_security
-        else:
-            # we do not want to restart Crunchy in a "display" mode
-            # as we will not be able to change it without loading
-            # a remote tutorial.
-            saved_value = self.__local_security.replace("display ", '')
-            saved['local_security'] = saved_value
-        saved['override_default_interpreter'] = self.__override_default_interpreter
-        saved['doc_help'] = self.__doc_help
-        saved['dir_help'] = self.__dir_help
-        saved['my_style'] = self.__my_style
-        saved['styles'] = self.styles
-        saved['site_security'] = self.site_security
-        saved['alternate_python_version'] = self.__alternate_python_version
-        saved['power_browser'] = self.__power_browser
-        saved['forward_accept_language'] = self.__forward_accept_language
+        dummy = "dummy"
+        saved['no_markup'] = "dumy"#self.__no_markup
+        saved['language'] = "dumy"#self.__language
+        saved['editarea_language'] = "dumy"#self.__editarea_language
+        saved['friendly'] = "dumy"#self.__friendly
+        #if 'display' not in self.__local_security:
+        #    saved['local_security'] = self.__local_security
+        #else:
+        #    # we do not want to restart Crunchy in a "display" mode
+        #    # as we will not be able to change it without loading
+        #    # a remote tutorial.
+        #    saved_value = self.__local_security.replace("display ", '')
+        saved['local_security'] = value#saved_value
+
+
+
+        saved['override_default_interpreter'] = "dumy"#self.__override_default_interpreter
+        saved['doc_help'] = "dumy"#self.__doc_help
+        saved['dir_help'] = "dumy"#self.__dir_help
+        saved['my_style'] = "dumy"#self.__my_style
+        saved['styles'] = "dumy"#self.styles
+        saved['site_security'] = "dumy"#self.site_security
+        saved['alternate_python_version'] = "dumy"#self.__alternate_python_version
+        saved['power_browser'] = "dumy"#self.__power_browser
+        saved['forward_accept_language'] = "dumy"#self.__forward_accept_language
+        print "self.prefs                            saved"
+        for key in saved:
+            if key in self.prefs:
+                print "%s                       %s"%(key, key)
+            else:
+                print "                         %s"%key
         # time to save
-        pickled_path = os.path.join(self.__user_dir, "settings.pkl")
-        try:
-            pickled = open(pickled_path, 'wb')
-        except:
-            u_print("Could not open file in configuration._save_settings().")
-            return
-        cPickle.dump(saved, pickled)
-        pickled.close()
+        #pickled_path = os.path.join(self._user_dir, "settings.pkl")
+        #try:
+        #    pickled = open(pickled_path, 'wb')
+        #except:
+        #    u_print("Could not open file in configuration._save_settings().")
+        #    return
+        #cPickle.dump(saved, pickled)
+        #pickled.close()
         return
 
 
@@ -306,6 +330,14 @@ class Defaults(Base):
             u_print((_("Invalid choice for %s.site_security") %
                                                          self.prefs['_prefix']))
             u_print(_("The valid choices are: "), str(security_allowed_values))
+
+
+    def add_site(self):
+        '''interactive function to facilitate adding new site to
+           the secured list'''
+        site = raw_input(_("Enter site url (for example, docs.python.org) "))
+        level = raw_input(_("Enter security level (for example: normal) "))
+        self._set_site_security(site, level)
 
     user_dir = make_property('user_dir', [ANY])
     temp_dir = make_property('temp_dir', [ANY])
