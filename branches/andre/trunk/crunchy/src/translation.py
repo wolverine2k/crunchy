@@ -17,9 +17,13 @@ languages = {}
 
 def init_translation(lang=None):
     global _selected
-    trans_path = os.path.join(os.path.dirname(
-                                    find_module("crunchy")[1]), "translations")
-
+    #trans_path = os.path.join(os.path.dirname(
+    #                                find_module("crunchy")[1]), "translations")
+    #print "original trans_path = ", trans_path
+    trans_path = os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                               '..', "translations"))
+                                          #).decode(sys.getfilesystemencoding())
+    #print "new trans_path =", trans_path
     if lang in languages:
         _selected = languages[lang]
     else:

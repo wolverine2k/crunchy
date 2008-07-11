@@ -15,8 +15,11 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-   >>> from src.interface import plugin
+   >>> from src.interface import plugin, config
    >>> plugin.clear()
+   >>> config.clear()
+   >>> from os import getcwd
+   >>> config['crunchy_base_dir'] = getcwd()
    >>> plugin['session_random_id'] = 42
    >>> import src.plugins.comet   #doctest: +IGNORE_OUTPUT
    >>> import src.cometIO as cometIO

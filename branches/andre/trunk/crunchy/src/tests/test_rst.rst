@@ -21,6 +21,7 @@ set up some dummy registering functions.
    >>> import src.plugins.rst as rst
    >>> from src.interface import Element
    >>> import src.tests.mocks as mocks
+   >>> mocks.init()
    
 Note that if docutils is not installed for the Python version we are testing,
 some tests would normally fail; we prevent this from happening by setting up

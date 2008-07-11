@@ -13,6 +13,8 @@ power_browser.py has has the following functions that require testing:
 
 
     >>> from src.interface import plugin, config, Element, tostring
+    >>> import src.utilities
+    >>> src.utilities.COUNT = 0
     >>> plugin.clear()
     >>> config.clear()
     >>> config['editarea_language'] = 'en'

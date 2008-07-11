@@ -25,7 +25,6 @@ try:
 except:
     _docutils_installed = False
 
-
 ANY = '*'
 
 _ = translate['_']
@@ -58,10 +57,9 @@ no_markup_allowed = ["none", "editor", 'python_tutorial',
 for interpreter in override_default_interpreter_allowed:
     no_markup_allowed.append(interpreter)
 
+browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
 if _docutils_installed:
-    browser_choices_allowed = ['None', 'python', 'rst', 'local_html', 'remote_html']
-else:
-    browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
+    browser_choices_allowed.append('rst')
 
 def make_property(name, allowed, default=None):
     '''creates properties within allowed values (if so specified)
@@ -96,7 +94,7 @@ def make_property(name, allowed, default=None):
     def fset(obj, val):
         '''assigns a value within an allowed set (if defined),
            and saves the result'''
-        prefs = getattr(obj, "prefs")
+        prefs = getattr(obj, "_preferences")
         # some properties are designed to allow any value to be set to them
         if ANY in allowed and val != ANY:
             allowed.append(val)
@@ -105,14 +103,19 @@ def make_property(name, allowed, default=None):
             try:
                 current = getattr(obj, "_"+name) # can raise AttributeError
                                                    # if not (yet) defined...
-                u_print(_("Invalid choice for %s.%s") % (prefs['_prefix'], name))
+                u_print(_("%s is an invalid choice for %s.%s") % (val,
+                                                        prefs['_prefix'], name))
                 u_print(_("The valid choices are: "), allowed)
                 u_print(_("The current value is: "), current)
             except AttributeError: # first time; set to default!
                 _set_and_save(obj, name, default, initial=True)
         else:
             if val == ANY:
-                val = default
+                try:
+                    current = getattr(obj, "_"+name)
+                except:
+                    current = default
+                val = current
             _only_set_and_save_if_new(obj, name, val)
         return
     return property(fget, fset)
@@ -122,14 +125,11 @@ class Base(object):
        configuration values in properties.  On its own, it does nothing;
        see test_configuration.rst for sample uses.'''
 
-    def init_properties(self, cls):
-        '''automatically assigns all known properties, keeping track of
-        them in a dict.'''
+    def _init_properties(self, cls):
+        '''automatically assigns all known properties.'''
         # Note: properties are class variables which is why we need
         # to pass the class name as a parameter.
-        keys = []
         for key in cls.__dict__:
-            keys.append(key)
             val = cls.__dict__[key]
             if isinstance(val, property):
                 val.fset(self, ANY)
@@ -164,20 +164,32 @@ class Defaults(Base):
     This class is instantiated [instance name: defaults] within this module.
     """
     def __init__(self, prefs):
+        self._preferences = prefs
+        self._preferences.update({'_prefix': 'crunchy',
+                            'page_security_level': self.page_security_level,
+                            '_set_site_security': self._set_site_security})
+        self._not_saved = self._preferences.keys()
+        self._not_saved.extend(['user_dir', 'temp_dir'])
+
         self.site_security = {}
         self.styles = {}
-        self.prefs = prefs
-        self.prefs.update( {'_prefix': 'crunchy',
-                            'page_security_level': self.page_security_level,
-                            '_set_site_security': self._set_site_security,
-                            'site_security': self.site_security,
+        self._preferences.update({'site_security': self.site_security,
                             'styles': self.styles})
+
         self._set_dirs()
         # self.logging_uids is needed by comitIO.py:87
         self.logging_uids = {}  # {uid : (name, type)}
                                # name is defined by tutorial writer
                                # type is one of 'interpreter', 'editor',...
-        self.init_properties(Defaults)
+        # the following two variables will be replaced by Tao's improved logging
+        self.log_filename = os.path.join(os.path.expanduser("~"),
+                                          "crunchy_log.html")
+        self.log = {}
+        # Make sure to initialize properties so that they exist before
+        # retrieving saved values
+        self._not_loaded = True
+        self._init_properties(Defaults)
+        self._load_settings()
 
     dir_help = make_property('dir_help', [True, False])
     doc_help = make_property('doc_help', [True, False])
@@ -196,6 +208,8 @@ class Defaults(Base):
     my_style = make_property('my_style', [False, True])
     alternate_python_version = make_property('alternate_python_version', [ANY],
                                              default="python")
+    user_dir = make_property('user_dir', [ANY])
+    temp_dir = make_property('temp_dir', [ANY])
 
     def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.
@@ -245,62 +259,77 @@ class Defaults(Base):
             return
         return
 
-    #def _save_settings(self, name, value, initial=False):
-    #    if not initial:
-    #        print "Setting", name, '=', value
-    #    self.prefs[name] = value
+    def _load_settings(self):
+        '''
+        loads the user settings from a configuration file; uses default
+        values if file specific settings is not found.
+        '''
+        success = False
+        pickled_path = os.path.join(self._user_dir, "settings.pkl")
+        try:
+            pickled = open(pickled_path, 'rb')
+            success = True
+        except:
+            u_print("No configuration file found.")
+            print "user_dir = ", self._user_dir
+        if success:
+            saved = cPickle.load(pickled)
+            pickled.close()
+        else:
+            # save the file with the default value
+            self._not_loaded = False
+            self._save_settings(None, None)
+            return
+
+        for key in saved:
+            try:
+                val = Defaults.__dict__[key]
+                if isinstance(val, property):
+                    val.fset(self, saved[key])
+                else:
+                    print "*"*50
+                    print "Unless Crunchy has just been updated,"
+                    print "this should not happen."
+                    print "saved variable: %s is not a property", key
+            except:
+                try:
+                    val = getattr(self, key)
+                    setattr(self, key, saved[key])
+                    self._preferences[key] = saved[key]
+                except:
+                    print "*"*50
+                    print "Unless Crunchy has just been updated,"
+                    print "this should not happen."
+                    print "saved variable: %s is not recognized" % key
+        self._not_loaded = False
+        return
 
     def _save_settings(self, name, value, initial=False):
         '''Update user settings and save results to a configuration file'''
-        print "inside _save_settings; name=", name, "value=", value, "initial=", initial
-        self.prefs[name] = value
-        if initial:
-            return
+        if name is not None: # otherwise, we need to save all...
+            self._preferences[name] = value
+            if initial:
+                return
+            if self._not_loaded:  # saved configuration not retrieved; do not overwrite
+                return
 
+        # update values of non-properties
+        self._preferences['site_security'] = self.site_security
+        self._preferences['styles'] = self.styles
         saved = {}
-        dummy = "dummy"
-        saved['no_markup'] = "dumy"#self.__no_markup
-        saved['language'] = "dumy"#self.__language
-        saved['editarea_language'] = "dumy"#self.__editarea_language
-        saved['friendly'] = "dumy"#self.__friendly
-        #if 'display' not in self.__local_security:
-        #    saved['local_security'] = self.__local_security
-        #else:
-        #    # we do not want to restart Crunchy in a "display" mode
-        #    # as we will not be able to change it without loading
-        #    # a remote tutorial.
-        #    saved_value = self.__local_security.replace("display ", '')
-        saved['local_security'] = value#saved_value
+        for name in self._preferences:
+            if name not in self._not_saved:
+                saved[name] = self._preferences[name]
 
-
-
-        saved['override_default_interpreter'] = "dumy"#self.__override_default_interpreter
-        saved['doc_help'] = "dumy"#self.__doc_help
-        saved['dir_help'] = "dumy"#self.__dir_help
-        saved['my_style'] = "dumy"#self.__my_style
-        saved['styles'] = "dumy"#self.styles
-        saved['site_security'] = "dumy"#self.site_security
-        saved['alternate_python_version'] = "dumy"#self.__alternate_python_version
-        saved['power_browser'] = "dumy"#self.__power_browser
-        saved['forward_accept_language'] = "dumy"#self.__forward_accept_language
-        print "self.prefs                            saved"
-        for key in saved:
-            if key in self.prefs:
-                print "%s                       %s"%(key, key)
-            else:
-                print "                         %s"%key
-        # time to save
-        #pickled_path = os.path.join(self._user_dir, "settings.pkl")
-        #try:
-        #    pickled = open(pickled_path, 'wb')
-        #except:
-        #    u_print("Could not open file in configuration._save_settings().")
-        #    return
-        #cPickle.dump(saved, pickled)
-        #pickled.close()
+        pickled_path = os.path.join(self._user_dir, "settings.pkl")
+        try:
+            pickled = open(pickled_path, 'wb')
+        except:
+            u_print("Could not open file in configuration._save_settings().")
+            return
+        cPickle.dump(saved, pickled)
+        pickled.close()
         return
-
-
 
     def page_security_level(self, url):
         info = urlsplit(url)
@@ -328,9 +357,8 @@ class Defaults(Base):
             u_print(_("site security set to: ") , choice)
         else:
             u_print((_("Invalid choice for %s.site_security") %
-                                                         self.prefs['_prefix']))
+                                                         self._preferences['_prefix']))
             u_print(_("The valid choices are: "), str(security_allowed_values))
-
 
     def add_site(self):
         '''interactive function to facilitate adding new site to
@@ -339,8 +367,6 @@ class Defaults(Base):
         level = raw_input(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
-    user_dir = make_property('user_dir', [ANY])
-    temp_dir = make_property('temp_dir', [ANY])
 
     #==============
 
@@ -349,6 +375,3 @@ defaults = Defaults(config)
 # the following may be set as an option when starting Crunchy
 if 'initial_security_set' not in config:
     config['initial_security_set'] = False
-
-#import pprint
-#pprint.pprint(config)

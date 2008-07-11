@@ -21,6 +21,10 @@ transparent way of printing, we have defined a function called u_print()
 which is meant to print a series of arguments.
 
     >>> import src.interface as interface
+    >>> interface.config.clear()
+    >>> interface.plugin.clear()
+    >>> from os import getcwd
+    >>> interface.config['crunchy_base_dir'] = getcwd()
     >>> if interface.python_version < 3:
     ...     to_print = "André".decode('utf-8')
     ... else: 

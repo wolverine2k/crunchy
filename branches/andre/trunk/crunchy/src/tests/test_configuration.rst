@@ -5,19 +5,24 @@ configuration.py tests
 Setting things up
 ------------------
 
+    >>> from src.interface import config, plugin
+    >>> plugin.clear()
+    >>> config.clear()
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
     >>> from src.configuration import Base, make_property
 
 Sample use of extending the Base class for a single object:
 
     >>> class Simple(Base):
     ...    def __init__(self, prefs):
-    ...        self.prefs = prefs
-    ...        self.prefs.update( {'_prefix': 'crunchy'})
-    ...        self.init_properties(Simple)
+    ...        self._preferences = prefs
+    ...        self._preferences.update( {'_prefix': 'crunchy'})
+    ...        self._init_properties(Simple)
     ...    def _save_settings(self, name, value, initial=False):
     ...        if not initial:
     ...            print "Saving", name, '=', value
-    ...        self.prefs[name] = value
+    ...        self._preferences[name] = value
     ...    y = make_property('y', [True, False])
     ...    x = make_property('x', [1, 2, 4, 8])
     
@@ -25,12 +30,12 @@ Sample use of extending the Base class for a single object:
     >>> a_dict = {}
     >>> example = Simple(a_dict)
     >>> example.y = 3
-    Invalid choice for crunchy.y
+    3 is an invalid choice for crunchy.y
     The valid choices are: [True, False]
     The current value is: True
     >>> example.y = False
     Saving y = False
-    >>> print a_dict == example.prefs
+    >>> print a_dict == example._preferences
     True
 
 Multi users examples.

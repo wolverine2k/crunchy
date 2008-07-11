@@ -369,6 +369,19 @@ src/plugins
             plugin['register_tag_handler']("span", "title", "load_remote",
                                                             insert_load_remote)
         insert_load_remote(dummy_page, parent, dummy_uid) # tested
+    vlam_unittest.py
+        from src.interface import config, plugin, Element, SubElement, tostring
+        from src.utilities import extract_log_id, insert_markup
+        register():
+            plugin['register_tag_handler']("pre", "title", "unittest",
+                                                  unittest_widget_callback)
+            plugin['register_http_handler'](
+                                 "/unittest%s"%plugin['session_random_id'],
+                                               unittest_runner_callback)
+        unittest_runner_callback(request)
+        unittest_widget_callback(page, elem, uid)
+        import unittest
+        test_suite()
 src/tests
     __init__.py
     mocks.py
@@ -388,6 +401,7 @@ src/tests
             __init__(self, data='data', args='args')
             send_response(self, response=42)
             end_headers(self)
+            send_header(self, *args)
         register_tag_handler(tag, attribute, value, function)
         register_http_handler(handle, function)
         register_service(handle, function)
@@ -518,6 +532,7 @@ src
         import src.interpreter as interpreter
         import src.utilities as utilities
         import src.interface as interface
+        from src.interface import config
         class StringBuffer(object):
             __init__(self)
             get(self)
@@ -546,49 +561,35 @@ src
     configuration.py
         import os
         from urlparse import urlsplit
-        from imp import find_module
-        from src.interface import config, u_print, translate, python_version, debug
-            from src.interface import debug_flag
-            import cPickle
-        class Defaults(object):
+        import cPickle
+        from src.interface import config, u_print, translate
+            from docutils.core import publish_string
+            from docutils.parsers import rst as rst_test
+        make_property(name, allowed, default=None)
+            fget(obj)
+            _set_and_save(obj, _name, value, initial=False)
+            _only_set_and_save_if_new(obj, name, val)
+            fset(obj, val)
+        class Base(object):
+            _init_properties(self, cls)
+            _save_settings(self, name, value, initial=False)
+        class Defaults(Base):
             class containing various default values:
+                dir_help interactive help for Borg consoles
+                doc_help interactive help for Borg consoles
+                forward_accept_language respecting user's webbrowser's language option
+                                         settings
+                friendly traceback settings
                 user_dir home user directory
                 temp_dir temporary (working) directory
-            __init__(self)
-            _load_settings(self)
-            _save_settings(self)
+            __init__(self, prefs)
             _set_dirs(self) # "tested"; i.e. called in unit tests.
-            _get_user_dir(self)  # tested
-            _get_temp_dir(self)  # tested
-            _get_dir_help(self) # tested
-            _set_dir_help(self, choice) # tested
-            _get_doc_help(self) # tested
-            _set_doc_help(self, choice) # tested
-            _get_help(self)
-            _get_nm(self)
-            _set_nm(self, choice)
-            _get_language(self)
-            _set_language(self, choice)
-            _get_power_browser(self)
-            _set_power_browser(self, choice)
-            _get_editarea_language(self)
-            _set_editarea_language(self, choice)
-            _get_friendly_traceback(self)
-            _set_friendly_traceback(self, choice)
+            _load_settings(self)
+            _save_settings(self, name, value, initial=False)
+            page_security_level(self, url)
             _get_site_security(self, site)
             _set_site_security(self, site, choice)
-            _get_local_security(self)
-            _set_local_security(self, choice)
-            _get_override_default_interpreter(self)
-            _set_override_default_interpreter(self, choice)
-            _get_my_style(self)
-            _set_my_style(self, choice)
             add_site(self)
-            _get_alternate_python_version(self)
-            _set_alternate_python_version(self, alternate_python_version)
-            page_security_level(self, url)
-            _get_forward_accept_language(self)
-            _set_forward_accept_language(self, choice)
     CrunchyPlugin.py
         import threading
         from os.path import dirname
@@ -608,7 +609,7 @@ src
         exec_code(code, uid, doctest=False)
         register_service(servicename, function)
         exec_js(pageid, jscode)
-        append_html(page_id, output_id, htmlcode)
+        append_text(page_id, output_id, text)
         get_pageid()
         get_uid()
         get_root_dir()
@@ -619,7 +620,7 @@ src
         import sys
         import traceback
         from StringIO import StringIO
-        import configuration
+        from src.interface import config
         import translation
         simplify_traceback(code=None)
         simplify_syntax_error(code, ex_type, value, trace, lineno)
@@ -807,6 +808,7 @@ dev
         from doctest import OutputChecker
         import doctest
         import os
+        import random
         import sys
         class MyOutputChecker(doctest.OutputChecker):
             check_output(self, want, got, optionflags)
