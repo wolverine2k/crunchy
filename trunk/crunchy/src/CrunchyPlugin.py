@@ -132,11 +132,10 @@ def exec_js(pageid, jscode):
     cometIO.write_js(pageid, jscode)
 plugin['exec_js'] = exec_js
 
-# The following function appears to not be used anywhere else
-def append_html(page_id, output_id, htmlcode):
-    """append some html to an IO widget"""
-    cometIO.write_output(page_id, output_id, htmlcode)
-plugin['append_html'] = append_html
+def append_text(page_id, output_id, text):
+    """append some text to an IO widget on an html page."""
+    cometIO.write_output(page_id, output_id, text)
+plugin['append_text'] = append_text
 
 def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page
