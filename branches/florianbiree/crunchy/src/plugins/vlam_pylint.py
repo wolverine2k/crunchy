@@ -8,18 +8,32 @@ import StringIO
 import tempfile
 try:
     from pylint import lint, checkers
+    from pylint.checkers.base import BasicChecker
     pylint_available = True
 except ImportError:
     pylint_available = False
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring, translate
+from src.interface import config, plugin, Element, SubElement, tostring
+from src.interface import translate
 from src.utilities import extract_log_id, insert_markup
 _ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
 
+if pylint_available:
+    # We redefine the verification of docstring
+    old_check_docstring = BasicChecker._check_docstring
+    def replaced_check_docstring(self, node_type, node):
+        """Check the node has a non empty docstring
+        
+        This modified method prevent to raise a message for a module missing
+        docstring.
+        """
+        if node_type != 'module':
+            old_check_docstring(self, node_type, node)
+    BasicChecker._check_docstring = replaced_check_docstring
 
 class CrunchyLinter:
     """Class to configure and start a pylint analyze
@@ -30,7 +44,10 @@ class CrunchyLinter:
     def __init__(self, reporter=None, quiet=0, pylintrc=None):
         self.LinterClass = lint.PyLinter
         self._rcfile = pylintrc
-        self.linter = self.LinterClass(reporter=reporter, pylintrc=self._rcfile)
+        self.linter = self.LinterClass(
+            reporter=reporter,
+            pylintrc=self._rcfile,
+        )
         self.linter.quiet = quiet
         self._report = None
         # register standard checkers
@@ -38,19 +55,20 @@ class CrunchyLinter:
         # read configuration
         self.linter.read_config_file()
         self.linter.load_config_file()
-        # Disable some errors: don't check the module name
-        self.linter.load_command_line_configuration(['--module-rgx=.*'])
+        # Disable some errors.
+        self.linter.load_command_line_configuration([
+            '--module-rgx=.*',  # don't check the module name
+            '--reports=n',      # remove tables
+            '--persistent=n',   # don't save the old score (no sens for temp)
+        ])
         self.linter.load_configuration()
+        self.linter.disable_message('C0121')# required attribute "__revision__"
         if reporter:
             self.linter.set_reporter(reporter)
 
     def set_code(self, code):
         """Set the code to analyze"""
-        self._code = """
-'''Fake doctest for the analysis'''
-__revision__ = 'nothing'
-%(code)s
-""" % {'code': code}
+        self._code = code
 
     def run(self):
         """Make the analysis"""
@@ -87,11 +105,15 @@ __revision__ = 'nothing'
         """Return the full report"""
         return self._report
 
-    def get_global_note(self):
-        """Return the global note
+    def get_global_score(self):
+        """Return the global score or None if not available.
 
-        This note can be formatted with "%.2f/10" % note
+        This score can be formatted with "%.2f/10" % score
         """
+        # Make sure there is a global_note (if --report=n, the global_note
+        # is not calculated)
+        if not 'global_note' in self.linter.stats:
+            self.linter.report_evaluation([], self.linter.stats, {})
         return self.linter.stats['global_note']
 
 
@@ -133,8 +155,10 @@ def pylint_runner_callback(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # The following is just an example of a possible output. Note that
-    # append_html is poorly named and misleading; it should be append_text instead.
-    plugin['append_html'](pageid, uid, _("Code quality %.2f/10\n")%analyzer.get_global_note())
+    # append_html is poorly named and misleading; it should be append_text
+    # instead.
+    plugin['append_html'](pageid, uid, _("Code quality %.2f/10\n") % \
+                          analyzer.get_global_score())
     plugin['append_html'](pageid, uid, "="*50+"\n")
     plugin['append_html'](pageid, uid, analyzer.get_report())
 
@@ -158,7 +182,8 @@ def pylint_widget_callback(page, elem, uid):
             page.add_js_code(pylint_jscode)
 
     # next, we style the code, also extracting it in a useful form ...
-    pylintcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
+    pylintcode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
+                                                                        elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
 
