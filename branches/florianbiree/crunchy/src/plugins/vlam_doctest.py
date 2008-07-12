@@ -12,8 +12,9 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
+from src.interface import config, plugin, Element, SubElement, tostring, translate
 from src.utilities import extract_log_id, insert_markup
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -87,7 +88,7 @@ def doctest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
-    btn.text = "Run Doctest"
+    btn.text = _("Run Doctest")
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     SubElement(elem, "br")
     # finally, an output subwidget:

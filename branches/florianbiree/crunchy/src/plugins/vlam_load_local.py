@@ -9,8 +9,9 @@ for people familiar with the Crunchy plugin architecture.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin
+from src.interface import plugin, translate
 from src.utilities import insert_file_browser
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["/local"])
@@ -28,5 +29,5 @@ def register():  # tested
 
 def insert_load_local(dummy_page, parent, dummy_uid):  # tested
     "Inserts a javascript browser object to load a local (html) file."
-    insert_file_browser(parent, 'Load local html tutorial', '/local')
+    insert_file_browser(parent, _('Load local html tutorial'), '/local')
     return
