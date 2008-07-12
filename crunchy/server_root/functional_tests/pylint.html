@@ -8,13 +8,11 @@
 <p>This is a prototype of a code analyzer (using Pylint)</p>
 <p>Here's an editor:</p>
 <pre title="pylint">
-
 def Function_without_DocString(msg):
     print msg
 
-variableWith_bad_NaMe = "Feel free to try some bad code"
-Function_without_DocString(variableWith_bad_NaMe)
-
+foo=missingvar
+Function_without_DocString(missingvar)
 </pre>
 
 <h2>Bugs</h2>
