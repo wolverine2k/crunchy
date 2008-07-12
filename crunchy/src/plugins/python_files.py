@@ -1,7 +1,8 @@
 """Plugin for loading and transforming python files."""
 
-from src.interface import plugin, interactive
+from src.interface import plugin, interactive, translate
 from src.utilities import changeHTMLspecialCharacters, insert_file_browser
+_ = translate['_']
 
 def register():
     """Registers new http handler and new widget for loading ReST files"""
@@ -32,7 +33,7 @@ def load_python(request):
         interpreter_python_code = "__name__ = '__main__'\n" + python_code
     else:
         interpreter_python_code = python_code
-    html_template = """
+    html_template = _("""
     <html>
     <head><title>%s</title></head>
     <body>
@@ -49,7 +50,7 @@ def load_python(request):
 
     </body>
     </html>
-    """ % (url, url, interpreter_python_code, python_code)
+    """) % (url, url, interpreter_python_code, python_code)
 
     fake_file = Python_file(html_template)
     page = plugin['create_vlam_page'](fake_file, url, local=True)

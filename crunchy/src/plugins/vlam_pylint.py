@@ -13,8 +13,9 @@ except ImportError:
     pylint_available = False
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
+from src.interface import config, plugin, Element, SubElement, tostring, translate
 from src.utilities import extract_log_id, insert_markup
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -61,7 +62,12 @@ __revision__ = 'nothing'
         # same temp directory as for Crunchy.  In fact, it is better to use
         # the Python tempfile module as it automatically cleans up after
         # it's done...
-
+        
+        # With this, the tempfile module is still used, but it try first to
+        # save the temp file with others - this can make the life simpler
+        # of an administrator...
+        tempfile.tempdir = config['temp_dir']
+        
         temp = tempfile.NamedTemporaryFile(suffix = '.py')
         temp.write(self._code)
         temp.flush()
@@ -71,7 +77,9 @@ __revision__ = 'nothing'
         # Start the check
         self.linter.check(temp.name)
         # Get the output and remove the irrelevant file name
-        self._report = output_buffer.getvalue().replace(temp.name, 'line ')
+        self._report = output_buffer.getvalue().replace(
+                            os.path.splitext(os.path.basename(temp.name))[0],
+                            'line ')
         # Close files
         output_buffer.close()
         temp.close()
@@ -97,11 +105,11 @@ def register():
           issued by clicking on a button incorporated in the
           'unittest widget';
        """
+    # 'pylint' only appears inside <pre> elements, using the notation
+    # <pre title='pylint ...'>
+    plugin['register_tag_handler']("pre", "title", "pylint",
+                                   pylint_widget_callback)
     if pylint_available:
-        # 'pylint' only appears inside <pre> elements, using the notation
-        # <pre title='pylint ...'>
-        plugin['register_tag_handler']("pre", "title", "pylint",
-                                              pylint_widget_callback)
         # By convention, the custom handler for "name" will be called
         # via "/name"; for security, we add a random session id
         # to the custom handler's name to be executed.
@@ -118,12 +126,12 @@ def pylint_runner_callback(request):
     linter.run()
     request.send_response(200)
     request.end_headers()
-
+    
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # The following is just an example of a possible output. Note that
     # append_html is poorly named and misleading; it should be append_text instead.
-    plugin['append_html'](pageid, uid, "Code quality %.2f/10\n"%linter.get_global_note())
+    plugin['append_html'](pageid, uid, _("Code quality %.2f/10\n")%linter.get_global_note())
     plugin['append_html'](pageid, uid, "="*50+"\n")
     plugin['append_html'](pageid, uid, linter.get_report())
 
@@ -157,10 +165,15 @@ def pylint_widget_callback(page, elem, uid):
     plugin['services'].insert_editor_subwidget(page, elem, uid, pylintcode)
     #some spacing:
     SubElement(elem, "br")
-    # the actual button used for code execution:
-    btn = SubElement(elem, "button")
-    btn.text = "Run analyze"
-    btn.attrib["onclick"] = "exec_pylint('%s')" % uid
+    if pylint_available:
+        # the actual button used for code execution:
+        btn = SubElement(elem, "button")
+        btn.text = _("Run analyze")
+        btn.attrib["onclick"] = "exec_pylint('%s')" % uid
+    else:
+        pylint_link = SubElement(elem, "a")
+        pylint_link.text = _("You need to install pylint")
+        pylint_link.attrib["href"] = "http://www.logilab.org/857"
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)

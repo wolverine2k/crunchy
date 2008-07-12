@@ -5,8 +5,9 @@ a user to enter some code which should satisfy the unittest.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
+from src.interface import config, plugin, Element, SubElement, tostring, translate
 from src.utilities import extract_log_id, insert_markup
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -40,14 +41,13 @@ def unittest_runner_callback(request):
     all the data in the AJAX message sent from the browser."""
     # note how the code to be executed is not simply the code entered by
     # the user, and obtained as "request.data", but also includes a part
-    # (doctest_pycode) defined below used to automatically call the
-    # correct method in the doctest module.
-    # TODO: update the comment
+    # (unittest_pycode) defined below used to automatically make the list
+    # of tests and call the correct method in the unittest module.
     code = unittest_pycode % {
         'user_code': request.data,
         'unit_test': unittests[request.args["uid"]],
     }
-    plugin['exec_code'](code, request.args["uid"], doctest=False) # TODO: doctests=True?
+    plugin['exec_code'](code, request.args["uid"], doctest=False)
     request.send_response(200)
     request.end_headers()
 
@@ -84,7 +84,7 @@ def unittest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
-    btn.text = "Run Unittest"
+    btn.text = _("Run Unittest")
     btn.attrib["onclick"] = "exec_unittest('%s')" % uid
     SubElement(elem, "br")
     # finally, an output subwidget:
@@ -124,9 +124,6 @@ def test_suite():
             pass
     return unittest.TestSuite(tests)
 
-#__test_runner = unittest.TextTestRunner(doctest_out)
 __test_runner = unittest.TextTestRunner(descriptions=2, verbosity=2)
 __test_runner.run(test_suite())
 '''
-
-#Note: information about doctest_out is found in interpreter.py

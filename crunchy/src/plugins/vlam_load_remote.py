@@ -9,7 +9,8 @@ for people familiar with the Crunchy plugin architecture.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, SubElement
+from src.interface import plugin, SubElement, translate
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires = set(["/remote"])
@@ -34,6 +35,6 @@ def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     SubElement(form, 'input', name='url', size='80',
                            value=parent.text)
     input2 = SubElement(form, 'input', type='submit',
-                           value='Load remote tutorial')
+                           value=_('Load remote tutorial'))
     input2.attrib['class'] = 'crunchy'
     parent.text = ' '
