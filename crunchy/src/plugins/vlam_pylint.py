@@ -35,13 +35,12 @@ class CrunchyLinter:
         self._report = None
         # register standard checkers
         checkers.initialize(self.linter)
-        ## Disable some errors
-        #self.linter.disable_message('C0121')# required attribute "__revision__"
-        #self.linter.disable_message('C0111')# required docstring (for the file)
-        #self.linter.disable_message('C0103')# file name convention
         # read configuration
         self.linter.read_config_file()
         self.linter.load_config_file()
+        # Disable some errors: don't check the module name
+        self.linter.load_command_line_configuration(['--module-rgx=.*'])
+        self.linter.load_configuration()
         if reporter:
             self.linter.set_reporter(reporter)
 
@@ -116,14 +115,18 @@ def register():
         plugin['register_http_handler'](
                          "/pylint%s"%plugin['session_random_id'],
                                        pylint_runner_callback)
+        # Register the analyzer
+        # TODO: only if pylint is the default analyzer in the configuration
+        plugin['register_service']('get_analyzer', (lambda : CrunchyLinter()))
+        
 
 
 def pylint_runner_callback(request):
     """Handles all execution of pylint. The request object will contain
     all the data in the AJAX message sent from the browser."""
-    linter = CrunchyLinter()
-    linter.set_code(request.data)
-    linter.run()
+    analyzer = plugin['services'].get_analyzer()
+    analyzer.set_code(request.data)
+    analyzer.run()
     request.send_response(200)
     request.end_headers()
     
@@ -131,9 +134,9 @@ def pylint_runner_callback(request):
     pageid = uid.split(":")[0]
     # The following is just an example of a possible output. Note that
     # append_html is poorly named and misleading; it should be append_text instead.
-    plugin['append_html'](pageid, uid, _("Code quality %.2f/10\n")%linter.get_global_note())
+    plugin['append_html'](pageid, uid, _("Code quality %.2f/10\n")%analyzer.get_global_note())
     plugin['append_html'](pageid, uid, "="*50+"\n")
-    plugin['append_html'](pageid, uid, linter.get_report())
+    plugin['append_html'](pageid, uid, analyzer.get_report())
 
 
 def pylint_widget_callback(page, elem, uid):
