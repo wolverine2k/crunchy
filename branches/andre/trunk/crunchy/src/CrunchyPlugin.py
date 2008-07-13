@@ -26,12 +26,11 @@ plugin['session_random_id'] = session_random_id
 
 DEBUG = False
 
-def add_vlam_option(option_name, option_argument):
+def add_vlam_option(option_name, *args):
     '''records an additional vlam argument requested by a plugin to be
        added to an existing vlam option'''
-    print "option = ", option_name, option_argument
-    additional_vlam.setdefault(option_name, []).append(option_argument)
-    print additional_vlam
+    for arg in args:
+        additional_vlam.setdefault(option_name, []).append(arg)
 plugin['add_vlam_option'] = add_vlam_option
 
 def register_http_handler(pattern, handler):
