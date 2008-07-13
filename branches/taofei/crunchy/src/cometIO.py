@@ -158,6 +158,8 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
     # echo back to output:
+    #TODO: we dont' really need it , but it helps session.sav_log to make sure 
+    #we do have user input
     session.log(uid, request.data, "input")
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
