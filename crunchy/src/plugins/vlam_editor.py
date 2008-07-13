@@ -123,6 +123,8 @@ def insert_editor(page, elem, uid):  # tested
     if "external" in vlam:
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = _("Execute as external program")
+        if "analyzer_score" in vlam:
+            plugin['services'].add_scoring(page, btn, uid)
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
             config['logging_uids'][uid] = (log_id, t)
@@ -132,10 +134,17 @@ def insert_editor(page, elem, uid):  # tested
             btn2 = SubElement(elem, "button")
             btn2.attrib["onclick"] = "exec_code('%s')" % uid
             btn2.text = _("Execute as separate thread")
+            if "analyzer_score" in vlam:
+                plugin['services'].add_scoring(page, btn2, uid)
     else:
         path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
+        if "analyzer_score" in vlam:
+            plugin['services'].add_scoring(page, btn, uid)
+    
+    if "analyzer_report" in vlam:
+            plugin['services'].insert_analyser_button(page, elem, uid)
 
     # leaving some space to start output on next line, below last button
     SubElement(elem, "br")
@@ -161,6 +170,10 @@ def insert_alternate_python(page, elem, uid):
     btn = SubElement(elem, "button")
     btn.attrib["onclick"] = "exec_code_externally_python_interpreter('%s')" % uid
     btn.text = _("Execute as external program")
+    if "analyzer_score" in vlam:
+        plugin['services'].add_scoring(page, btn, uid)
+    if "analyzer_report" in vlam:
+        plugin['services'].insert_analyser_button(page, elem, uid)
 
     path_label = SubElement(elem, "span", id= 'path_'+uid)
     path_label.text = config['temp_dir'] + os.path.sep + "temp.py"

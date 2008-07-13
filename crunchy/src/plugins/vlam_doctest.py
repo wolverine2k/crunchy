@@ -90,6 +90,10 @@ def doctest_widget_callback(page, elem, uid):
     btn = SubElement(elem, "button")
     btn.text = _("Run Doctest")
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
+    if "analyzer_score" in vlam:
+        plugin['services'].add_scoring(page, btn, uid)
+    if "analyzer_report" in vlam:
+        plugin['services'].insert_analyser_button(page, elem, uid)
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
