@@ -14,7 +14,7 @@ import os
 from urlparse import urlsplit
 import cPickle
 
-from src.interface import config, u_print, translate
+from src.interface import config, u_print, translate, additional_vlam
 
 _docutils_installed = True
 try:
@@ -57,9 +57,15 @@ no_markup_allowed = ["none", "editor", 'python_tutorial',
 for interpreter in override_default_interpreter_allowed:
     no_markup_allowed.append(interpreter)
 
+print "additional_vlam in configuration", additional_vlam
 browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
-if _docutils_installed:
-    browser_choices_allowed.append('rst')
+if 'power_browser' in additional_vlam:
+    browser_choices_allowed.extend(additional_vlam['power_browser'])
+    print "extended"
+
+print "additional_vlam in configuration", additional_vlam
+#if _docutils_installed:
+#    browser_choices_allowed.append('rst')
 
 def make_property(name, allowed, default=None):
     '''creates properties within allowed values (if so specified)
@@ -273,12 +279,17 @@ class Defaults(Base):
             u_print("No configuration file found.")
             print "user_dir = ", self._user_dir
         if success:
-            saved = cPickle.load(pickled)
-            pickled.close()
+            try:
+                saved = cPickle.load(pickled)
+                pickled.close()
+            except EOFError:
+                self._not_loaded = False
+                self._save_settings()
+                return
         else:
             # save the file with the default value
             self._not_loaded = False
-            self._save_settings(None, None)
+            self._save_settings()
             return
 
         for key in saved:
@@ -304,7 +315,7 @@ class Defaults(Base):
         self._not_loaded = False
         return
 
-    def _save_settings(self, name, value, initial=False):
+    def _save_settings(self, name=None, value=None, initial=False):
         '''Update user settings and save results to a configuration file'''
         if name is not None: # otherwise, we need to save all...
             self._preferences[name] = value
@@ -342,6 +353,9 @@ class Defaults(Base):
         self.current_page_security_level = level
         return level
 
+    def get_current_page_security_level(self):
+        return self.current_page_security_level
+
     def _get_site_security(self, site):
         if site in self.site_security:
             #u_print("site = ", site)
@@ -351,14 +365,14 @@ class Defaults(Base):
             return 'display trusted'
 
     def _set_site_security(self, site, choice):
-        if choice in security_allowed_values:
+        if choice in security_allowed:
             self.site_security[site] = choice
-            self._save_settings()
+            self._save_settings('site_security', choice)
             u_print(_("site security set to: ") , choice)
         else:
             u_print((_("Invalid choice for %s.site_security") %
                                                          self._preferences['_prefix']))
-            u_print(_("The valid choices are: "), str(security_allowed_values))
+            u_print(_("The valid choices are: "), str(security_allowed))
 
     def add_site(self):
         '''interactive function to facilitate adding new site to
@@ -371,6 +385,11 @@ class Defaults(Base):
     #==============
 
 defaults = Defaults(config)
+
+config['log'] = defaults.log
+config['logging_uids'] = defaults.logging_uids
+config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
+config['get_current_page_security_level'] = defaults.get_current_page_security_level
 
 # the following may be set as an option when starting Crunchy
 if 'initial_security_set' not in config:
