@@ -1,18 +1,59 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Pylint Test</title></head>
+<title>Analyzer Test</title></head>
 <body>
-<h1>Crunchy pylint Test</h1>
+<h1>Crunchy analyzer Test</h1>
 
-<p>This is a prototype of a code analyzer (using Pylint)</p>
-<p>Here's an editor:</p>
-<pre title="pylint">
+<p>This is a prototype of a code analyzer (using a backend like Pylint)</p>
+<p>Here's an analyzer widget:</p>
+<pre title="analyzer">
 def Function_without_DocString(msg):
     print msg
 
 foo=missingvar
 Function_without_DocString(missingvar)
+</pre>
+
+<p>Here is an editor with the <code>analyzer_score</code> option:</p>
+<pre title="editor analyzer_score">
+def Function_without_DocString(msg = []):
+    this_variable_is_not_used = 42
+    print ' '.join(msg)
+
+Function_without_DocString(['Hello', 'world'])
+</pre>
+
+<p>Here is a doctest editor with the <code>analyzer_report</code> option:</p>
+<pre title="doctest analyzer_report">
+This force your function to have a bad name:
+    >>> Function_with_A_BadName(['A', 'message'])
+    A message
+</pre>
+
+<p>You can try this code:</p>
+<pre title="py_code">
+def Function_with_A_BadName(msg = []):
+    this_variable_is_not_used = 42
+    print ' '.join(msg)
+</pre>
+
+<p>And here a unittest editor with both <code>analyze_report</code> and
+<code>analyzer_score</code>:</p>
+
+<pre title="unittest analyzer_report analyzer_score">
+class BadCodeTest(unittest.TestCase):
+    """Test class for the bad_named_class class"""
+    def test_bad_named_class(self):
+        """Tests for the initialization of bad_named_class"""
+        bad_object = bad_named_class()
+        self.assertEquals(bad_object.BadAttribName, 42)
+</pre>
+
+<p>You can try this code:</p>
+<pre title="py_code">
+class bad_named_class(object):
+    BadAttribName = 42
 </pre>
 
 <h2>Bugs</h2>
