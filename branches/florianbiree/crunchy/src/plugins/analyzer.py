@@ -35,8 +35,8 @@ def register():
                             "/analyzer_score%s"%plugin['session_random_id'],
                             analyzer_score_callback)
     
-    plugin['register_service']('insert_analyser_button',
-                               insert_analyser_button)
+    plugin['register_service']('insert_analyzer_button',
+                               insert_analyzer_button)
     plugin['register_service']('add_scoring', add_scoring)
     
     # 'analyzer' only appears inside <pre> elements, using the notation
@@ -47,12 +47,13 @@ def register():
 def analyzer_enabled():
     """Return is a analyzer is available and enable"""
     # TODO: Maybe this should check a configuration option
-    return hasattr(plugin['services'], 'insert_analyser_button')
+    return hasattr(plugin['services'], 'insert_analyzer_button')
 
 def analyzer_runner_callback(request):
     """Handles all execution of the analyzer to display a report.
     The request object will contain
     all the data in the AJAX message sent from the browser."""
+    print hasattr(plugin['services'], 'get_analyzer')
     analyzer = plugin['services'].get_analyzer()
     analyzer.set_code(request.data)
     analyzer.run()
@@ -99,8 +100,8 @@ def analyzer_widget_callback(page, elem, uid):
     #some spacing:
     SubElement(elem, "br")
     if analyzer_enabled():
-        # use the insert_analyser_button service as any plugin can do
-        plugin['services'].insert_analyser_button(page, elem, uid)
+        # use the insert_analyzer_button service as any plugin can do
+        plugin['services'].insert_analyzer_button(page, elem, uid)
     else:
         # Display a nice link
         pylint_link = SubElement(elem, "a")
@@ -110,7 +111,7 @@ def analyzer_widget_callback(page, elem, uid):
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
-def insert_analyser_button(page, elem, uid):
+def insert_analyzer_button(page, elem, uid):
     """inserts an Elementtree that is an button to make a report on the code
     quality.
     Return the inserted button
