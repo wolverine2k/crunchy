@@ -29,18 +29,13 @@ def register():
        """
     # 'interpreter' only appears inside <pre> elements, using the notation
     # <pre title='interpreter ...'>
-    plugin['register_tag_handler']("pre", "title", "interpreter", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "isolated", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "Borg", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "parrot", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "Parrots", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "TypeInfoConsole", insert_interpreter)
-    plugin['register_tag_handler']("pre", "title", "python_tutorial", insert_interpreter)
-    # Guess what this is equivalent to:
-    plugin['register_tag_handler']("pre", "title", "Human", insert_interpreter)
-#  Unfortunately, IPython interferes with Crunchy; I'm commenting it out,
-#  keeping it in as a reference.
-##    plugin['register_tag_handler']("pre", "title", "ipython", insert_interpreter)
+    interp_kind = ['interpreter', 'Borg', 'isolated', 'Human', 'parrot',
+                   'Parrots', 'TypeInfoConsole', 'python_tutorial']
+                 #ipython not included as it does not work...
+    for interp in interp_kind:
+        plugin['register_tag_handler']("pre", "title", interp, insert_interpreter)
+        plugin['add_vlam_option']('override_default_interpreter', interp)
+        plugin['add_vlam_option']('no_markup', interp)
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""

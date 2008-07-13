@@ -23,35 +23,23 @@ translate['init_translation']()
 
 # Existing translations for Crunchy messages
 trans_path = os.path.join(config['crunchy_base_dir'], "translations")
-# allow values like "en" or "en_GB"
-languages_allowed = [f for f in os.listdir(trans_path)
+trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root",
+                                                          "edit_area", "langs")
+options = {
+    'power_browser': ['None'],
+    'security': [ 'trusted', 'display trusted',
+                  'normal', 'display normal',
+                  'strict', 'display strict'],
+    'no_markup': ["none"],
+    'override_default_interpreter' : ['default'],
+    # allow languages values like "en" or "en_GB"
+    'languages': [f for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
-                                    and not f.startswith('.')]
-# Existing translations for editarea
-trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root", "edit_area", "langs")
-# language file names end in ".js"
-editarea_languages_allowed = [f[0:-3] for f in os.listdir(trans_path2)
+                                    and not f.startswith('.')],
+    # language file names end in ".js"
+    'editarea_languages': [f[0:-3] for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
-
-security_allowed = [ 'trusted','display trusted',
-                     'normal', 'display normal', 'strict', 'display strict']
-
-# Unfortunately, IPython interferes with Crunchy;
-#  I'm commenting it out, keeping it in as a reference.
-override_default_interpreter_allowed = ['default', # ipython,
-        'interpreter', 'Borg', 'isolated', 'Human', 'parrot', 'Parrots', 'TypeInfoConsole']
-
-no_markup_allowed = ["none", "editor", 'python_tutorial',
-            "python_code", "doctest", "alternate_python_version", "alt_py"]
-
-for interpreter in override_default_interpreter_allowed:
-    no_markup_allowed.append(interpreter)
-
-#browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
-
-options = {
-'power_browser': ['None']
 }
 
 def make_property(name, allowed, default=None):
@@ -162,7 +150,8 @@ class Defaults(Base):
                             'page_security_level': self.page_security_level,
                             '_set_site_security': self._set_site_security})
         self._not_saved = self._preferences.keys()
-        self._not_saved.extend(['user_dir', 'temp_dir'])
+        self._not_saved.extend(['user_dir', 'temp_dir', 'log', 'logging_uids',
+                                'symbols', 'get_current_page_security_level'])
 
         self.site_security = {}
         self.styles = {}
@@ -191,12 +180,13 @@ class Defaults(Base):
     friendly = make_property('friendly', [True, False])
     _trans_path = os.path.join(config['crunchy_base_dir'], "translations")
     override_default_interpreter = make_property('override_default_interpreter',
-                                    override_default_interpreter_allowed)
-    language = make_property('language', languages_allowed, default='en')
+                                    options['override_default_interpreter'])
+    language = make_property('language', options['languages'], default='en')
     editarea_language = make_property('editarea_language',
-                                      editarea_languages_allowed, default='en')
-    local_security = make_property('local_security', security_allowed)
-    no_markup = make_property('no_markup', no_markup_allowed)
+                                    options['editarea_languages'], default='en')
+    local_security = make_property('local_security', options['security'])
+    no_markup = make_property('no_markup', options['no_markup'],
+                              default='python_tutorial')
     power_browser = make_property('power_browser', options['power_browser'])
     my_style = make_property('my_style', [False, True])
     alternate_python_version = make_property('alternate_python_version', [ANY],
@@ -318,7 +308,6 @@ class Defaults(Base):
         for name in self._preferences:
             if name not in self._not_saved:
                 saved[name] = self._preferences[name]
-
         pickled_path = os.path.join(self._user_dir, "settings.pkl")
         try:
             pickled = open(pickled_path, 'wb')
@@ -345,14 +334,12 @@ class Defaults(Base):
 
     def _get_site_security(self, site):
         if site in self.site_security:
-            #u_print("site = ", site)
-            #u_print("self.site_security = ", str(self.site_security))
             return self.site_security[site]
         else:
             return 'display trusted'
 
     def _set_site_security(self, site, choice):
-        if choice in security_allowed:
+        if choice in options['security']:
             self.site_security[site] = choice
             self._save_settings('site_security', choice)
             u_print(_("site security set to: ") , choice)
