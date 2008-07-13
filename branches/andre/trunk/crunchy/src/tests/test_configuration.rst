@@ -10,10 +10,13 @@ Setting things up
     >>> config.clear()
     >>> from os import getcwd
     >>> config['crunchy_base_dir'] = getcwd()
-    >>> from src.configuration import Base, make_property
+    >>> from src.configuration import Base, make_property, options
 
 Sample use of extending the Base class for a single object:
 
+
+    >>> options.update( { 'y': [True, False],
+    ...             'x': [1, 2, 4, 8]})
     >>> class Simple(Base):
     ...    def __init__(self, prefs):
     ...        self._preferences = prefs
@@ -23,8 +26,8 @@ Sample use of extending the Base class for a single object:
     ...        if not initial:
     ...            print "Saving", name, '=', value
     ...        self._preferences[name] = value
-    ...    y = make_property('y', [True, False])
-    ...    x = make_property('x', [1, 2, 4, 8])
+    ...    y = make_property('y')
+    ...    x = make_property('x')
     
     >>>
     >>> a_dict = {}

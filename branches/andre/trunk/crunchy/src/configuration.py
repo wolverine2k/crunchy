@@ -26,25 +26,37 @@ trans_path = os.path.join(config['crunchy_base_dir'], "translations")
 trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root",
                                                           "edit_area", "langs")
 options = {
+    'dir_help': [True, False],
+    'doc_help': [True, False],
+    'forward_accept_language': [True, False],
+    'friendly': [True, False],
+    'my_style': [True, False],
+    'alternate_python_version': [ANY],
+    'user_dir': [ANY],
+    'temp_dir': [ANY],
     'power_browser': ['None'],
     'security': [ 'trusted', 'display trusted',
+                  'normal', 'display normal',
+                  'strict', 'display strict'],
+    'local_security': [ 'trusted', 'display trusted',
                   'normal', 'display normal',
                   'strict', 'display strict'],
     'no_markup': ["none"],
     'override_default_interpreter' : ['default'],
     # allow languages values like "en" or "en_GB"
-    'languages': [f for f in os.listdir(trans_path)
+    'language': [f for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
                                     and not f.startswith('.')],
     # language file names end in ".js"
-    'editarea_languages': [f[0:-3] for f in os.listdir(trans_path2)
+    'editarea_language': [f[0:-3] for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
 }
 
-def make_property(name, allowed, default=None):
+def make_property(name, default=None):
     '''creates properties within allowed values (if so specified)
        with some defaults, and enables automatic saving of new values'''
+    allowed = options[name]
     if default is None:
         default = allowed[0]
 
@@ -123,26 +135,8 @@ class Base(object):
 
 class Defaults(Base):
     """
-    class containing various default values:
-        dir_help: interactive help for Borg consoles
-        doc_help: interactive help for Borg consoles
-        forward_accept_language: respecting user's webbrowser's language option
-                                 settings
-        friendly: traceback settings
-        user_dir: home user directory
-        temp_dir: temporary (working) directory
-        nm: no_markup option, i.e. default mode to use when the user has
-            not specied a vlam keyword
-        language: language to use for feedback to user - and anything
-            else that might have been translated.
-        editarea_language: language used for ui of editarea
-
-        security: level of filtering of web pages
-
-        my_style: enables preferred styling of Python code, etc.
-        alternate_python_version: path of an alternate Python interpreter
-
-    This class is instantiated [instance name: defaults] within this module.
+    class containing various default values that can be set by user according
+    to their preferences.
     """
     def __init__(self, prefs):
         self._preferences = prefs
@@ -173,26 +167,21 @@ class Defaults(Base):
         self._init_properties(Defaults)
         self._load_settings()
 
-    dir_help = make_property('dir_help', [True, False])
-    doc_help = make_property('doc_help', [True, False])
-    forward_accept_language = make_property('forward_accept_language',
-                                            [True, False])
-    friendly = make_property('friendly', [True, False])
-    _trans_path = os.path.join(config['crunchy_base_dir'], "translations")
-    override_default_interpreter = make_property('override_default_interpreter',
-                                    options['override_default_interpreter'])
-    language = make_property('language', options['languages'], default='en')
-    editarea_language = make_property('editarea_language',
-                                    options['editarea_languages'], default='en')
-    local_security = make_property('local_security', options['security'])
-    no_markup = make_property('no_markup', options['no_markup'],
-                              default='python_tutorial')
-    power_browser = make_property('power_browser', options['power_browser'])
-    my_style = make_property('my_style', [False, True])
-    alternate_python_version = make_property('alternate_python_version', [ANY],
+    dir_help = make_property('dir_help')
+    doc_help = make_property('doc_help')
+    forward_accept_language = make_property('forward_accept_language')
+    friendly = make_property('friendly')
+    override_default_interpreter = make_property('override_default_interpreter')
+    language = make_property('language', default='en')
+    editarea_language = make_property('editarea_language', default='en')
+    local_security = make_property('local_security')
+    no_markup = make_property('no_markup', default='python_tutorial')
+    power_browser = make_property('power_browser')
+    my_style = make_property('my_style', default=False)
+    alternate_python_version = make_property('alternate_python_version',
                                              default="python")
-    user_dir = make_property('user_dir', [ANY])
-    temp_dir = make_property('temp_dir', [ANY])
+    user_dir = make_property('user_dir')
+    temp_dir = make_property('temp_dir')
 
     def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.
