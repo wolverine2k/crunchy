@@ -144,7 +144,7 @@ def insert_editor(page, elem, uid):  # tested
             plugin['services'].add_scoring(page, btn, uid)
     
     if "analyzer_report" in vlam:
-            plugin['services'].insert_analyser_button(page, elem, uid)
+            plugin['services'].insert_analyzer_button(page, elem, uid)
 
     # leaving some space to start output on next line, below last button
     SubElement(elem, "br")
@@ -173,7 +173,7 @@ def insert_alternate_python(page, elem, uid):
     if "analyzer_score" in vlam:
         plugin['services'].add_scoring(page, btn, uid)
     if "analyzer_report" in vlam:
-        plugin['services'].insert_analyser_button(page, elem, uid)
+        plugin['services'].insert_analyzer_button(page, elem, uid)
 
     path_label = SubElement(elem, "span", id= 'path_'+uid)
     path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
