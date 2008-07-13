@@ -14,7 +14,6 @@ from src.interface import StringIO, exec_code, translate, config
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
-import src.configuration as configuration
 import src.errors as errors
 
 _ = translate['_']
@@ -77,7 +76,7 @@ class Interpreter(KillableThread):
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
                 try:
-                    if configuration.defaults.friendly:
+                    if config['friendly']:
                         sys.stderr.write(errors.simplify_traceback(self.code))
                     else:
                         traceback.print_exc()
@@ -87,11 +86,11 @@ class Interpreter(KillableThread):
                 return
             try:
                 # logging the user input first, if required
-                if self.channel in configuration.defaults.logging_uids:
-                    vlam_type = configuration.defaults.logging_uids[self.channel][1]
+                if self.channel in config['logging_uids']:
+                    vlam_type = config['logging_uids'][self.channel][1]
                     if vlam_type == 'editor':
                         user_code = self.code.split("\n")
-                        log_id = configuration.defaults.logging_uids[self.channel][0]
+                        log_id = config['logging_uids'][self.channel][0]
                         if user_code:
                             user_code = '\n'.join(user_code)
                             if not user_code.endswith('\n'):
@@ -99,7 +98,7 @@ class Interpreter(KillableThread):
                         else:
                             user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
-                        configuration.defaults.log[log_id].append(data)
+                        config['log'][log_id].append(data)
                         log_session()
                 exec_code(self.ccode, self.symbols, source=None)
                 #exec self.ccode in self.symbols#, {}
@@ -111,7 +110,7 @@ class Interpreter(KillableThread):
                 # will be used for holding both global and local variables.
             except:
                 try:
-                    if configuration.defaults.friendly:
+                    if config['friendly']:
                         sys.stderr.write(errors.simplify_traceback(self.code))
                     else:
                         traceback.print_exc()
@@ -120,7 +119,7 @@ class Interpreter(KillableThread):
         finally:
             if self.doctest:
                 # attempting to log
-                if self.channel in configuration.defaults.logging_uids:
+                if self.channel in config['logging_uids']:
                     code_lines = self.code.split("\n")
                     user_code = []
                     for line in code_lines:
@@ -130,7 +129,7 @@ class Interpreter(KillableThread):
                         if line.startswith("__teststring"):
                             break
                         user_code.append(line)
-                    log_id = configuration.defaults.logging_uids[self.channel][0]
+                    log_id = config['logging_uids'][self.channel][0]
                     if user_code:
                         user_code = '\n' + '\n'.join(user_code)
                         if not user_code.endswith('\n'):
@@ -141,10 +140,10 @@ class Interpreter(KillableThread):
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
                     data = "<span class='stdin'>" + user_code + "</span>"
-                    configuration.defaults.log[log_id].append(data)
+                    config['log'][log_id].append(data)
                     log_session()
                 # proceed with regular output
-                if configuration.defaults.friendly:
+                if config['friendly']:
                     message, success = errors.simplify_doctest_error_message(
                            self.doctest_out.getvalue())
                     if success:

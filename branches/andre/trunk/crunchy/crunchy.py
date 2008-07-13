@@ -44,7 +44,14 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
         port = find_port(start=port)
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
+
+    ## plugins will register possible additional keywords that
+    ## configuration.py should know about...
     pluginloader.init_plugin_system(server)
+    ## ... and we proceed to immediately import configuration
+    import src.configuration
+    ##
+    
     base_url = 'http://' + host + ':' + str(port)
     if url is None:
         url =  base_url + '/'

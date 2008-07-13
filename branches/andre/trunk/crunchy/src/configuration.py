@@ -16,15 +16,6 @@ import cPickle
 
 from src.interface import config, u_print, translate, additional_vlam
 
-_docutils_installed = True
-try:
-    from docutils.core import publish_string
-    from docutils.parsers import rst as rst_test
-    if "Directive" not in dir(rst_test):
-        _docutils_installed = False
-except:
-    _docutils_installed = False
-
 ANY = '*'
 
 _ = translate['_']
@@ -57,15 +48,9 @@ no_markup_allowed = ["none", "editor", 'python_tutorial',
 for interpreter in override_default_interpreter_allowed:
     no_markup_allowed.append(interpreter)
 
-print "additional_vlam in configuration", additional_vlam
 browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
 if 'power_browser' in additional_vlam:
     browser_choices_allowed.extend(additional_vlam['power_browser'])
-    print "extended"
-
-print "additional_vlam in configuration", additional_vlam
-#if _docutils_installed:
-#    browser_choices_allowed.append('rst')
 
 def make_property(name, allowed, default=None):
     '''creates properties within allowed values (if so specified)
@@ -381,7 +366,6 @@ class Defaults(Base):
         level = raw_input(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
-
     #==============
 
 defaults = Defaults(config)
@@ -390,6 +374,9 @@ config['log'] = defaults.log
 config['logging_uids'] = defaults.logging_uids
 config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
 config['get_current_page_security_level'] = defaults.get_current_page_security_level
+
+#import pprint
+#pprint.pprint(config)
 
 # the following may be set as an option when starting Crunchy
 if 'initial_security_set' not in config:
