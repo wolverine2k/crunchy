@@ -39,7 +39,8 @@ def register():
                                        pdb_start_callback)
 
 def pdb_start_callback(request):
-    code = pdb_pycode % (pdb_codes[request.args["uid"]])
+    code = pdb_pycode % (request.data)
+    #(pdb_codes[request.args["uid"]])
     plugin['exec_code'](code, request.args["uid"])
     request.send_response(200)
     request.end_headers()
@@ -75,7 +76,7 @@ def pdb_widget_callback(page, elem, uid):
         if not page.includes("pdb_included") :
             page.add_include("pdb_included")
             page.add_js_code(pdb_jscode)
-        page.add_js_code('init_pdb_interpreter("%s");' % uid)
+        #page.add_js_code('init_pdb_interpreter("%s");' % uid)
 
     # next, we style the code, also extracting it in a useful form ...
     code, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
@@ -91,35 +92,45 @@ def pdb_widget_callback(page, elem, uid):
     elem.clear()
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = "crunchy"
     # We insert the styled doctest code inside this container element:
-    elem.insert(0, markup)
+    #elem.insert(0, markup)
     # call the insert_editor_subwidget service to insert an editor:
-    plugin['services'].insert_editor_subwidget(page, elem, uid)
+    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
     #some spacing:
     SubElement(elem, "br")
+
+    btn = SubElement(elem, "button")
+    btn.text = "Start PDB"
+    btn.attrib["onclick"] = "init_pdb_interpreter('%s')" % uid
+    btn.attrib["id"] = "btn_start_pdb_%s" % uid
+
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
     btn.text = "Next Step"
     btn.attrib["onclick"] = "pdb_next_step('%s')" % uid
+    btn.attrib["id"] = "btn_next_step_%s" % uid
+    btn.attrib["disabled"] = "disabled"
+
     SubElement(elem, "br")
 
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 
-pdb_jscode = """
-function pbd_next_step(uid){
+pdb_jscode = r"""
+function pdb_next_step(uid){
     var j = new XMLHttpRequest();
-    j.open("POST", "/pdb_next%s?uid="+uid, false);
-    j.send(code);
+    j.open("POST", "/input%s?uid="+uid, false);
+    j.send("next\n");
 }
 function init_pdb_interpreter(uid){
         var j = new XMLHttpRequest();
+        code = document.getElementById('code_' + uid).value;
         j.open("POST", "/pdb_start%s?uid="+uid, false);
-        j.send("");
-    };
-;
+        j.send(code);
+        //document.getElementById('btn_start_pdb_' + uid).disabled= true;
+        document.getElementById('btn_next_step_' + uid).disabled= false;
+};
 """ % (plugin['session_random_id'], plugin['session_random_id'])
 
 pdb_pycode = """

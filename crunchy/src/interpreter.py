@@ -437,3 +437,16 @@ class TypeInfoConsole(BorgGroups, SingleConsole):
 ##                                        user_ns = locals)
 ##except:
 ##    pass  # for now
+
+
+class PdbConsole(object):
+    '''A pdb console
+    a bridge between pdb and crunchy
+    '''
+
+    def __init__(self):
+        pass
+
+    def start(self, code):
+        pass
+
