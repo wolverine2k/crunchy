@@ -19,6 +19,7 @@ We need to import the plugin, something to create an Element, and
 set up some dummy registering functions.
 
    >>> from src.interface import Element, plugin
+   >>> plugin.clear()
    >>> def dummy_add(*args):
    ...      for arg in args:
    ...          print arg

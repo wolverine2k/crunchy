@@ -54,11 +54,13 @@ class Interpreter(KillableThread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = {}, doctest=False):
+    def __init__(self, code, channel, symbols = None, doctest=False):
         threading.Thread.__init__(self)
         self.code = trim_empty_lines_from_end(code)
         self.channel = channel
-        self.symbols = symbols
+        self.symbols = {}
+        if symbols is not None:
+            self.symbols.update(symbols)
         self.doctest = doctest
         if self.doctest:
             self.doctest_out = StringIO()
@@ -197,6 +199,11 @@ class InteractiveInterpreter(object):
         if locals is None:
             locals = {"__name__": "__console__", "__doc__": None}
         self.locals = locals
+
+        ## NOTA BENE:  This is for a single user environment only;
+        ## a different approach might be needed when multiple users are
+        ## allowed.
+        self.locals.update(config['symbols'])  # single user...
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):

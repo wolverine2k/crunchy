@@ -17,11 +17,16 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-   >>> import src.plugins.vlam_load_remote as vlam_load_remote
+
    >>> from src.interface import Element, plugin
    >>> plugin.clear()
+   >>> def dummy_add(*args):
+   ...      for arg in args:
+   ...          print arg
+   >>> plugin['add_vlam_option'] = dummy_add
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
+   >>> import src.plugins.vlam_load_remote as vlam_load_remote
 
 .. _`register()`:
 
@@ -30,6 +35,8 @@ Testing register()
 
 # Test - check that tag handler, and service have been registered
     >>> vlam_load_remote.register()
+    power_browser
+    remote_html
     >>> print(mocks.registered_tag_handler['span']['title']['load_remote'] == vlam_load_remote.insert_load_remote)
     True
 

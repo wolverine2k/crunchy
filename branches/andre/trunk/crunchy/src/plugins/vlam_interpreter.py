@@ -162,13 +162,12 @@ def include_interpreter(interp_kind, page, uid):
 ##              page.add_js_code(IPythonInterpreter_js)
 ##          page.add_js_code('init_IPythonInterpreter("%s");' % uid)
 
+
 def borg_javascript(prefix, page, crunchy_help):
     '''create string needed to initialize a Borg interpreter using javascript'''
     return r"""
     function init_BorgInterpreter(uid){
-        code = "import src.configuration as configuration\n";
-        code += "locals = {'%s': configuration.defaults}\n";
-        code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals, group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
         code += "\nborg.push('print(";
         code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact()\n";
@@ -176,17 +175,16 @@ def borg_javascript(prefix, page, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (prefix, page.pageid, (sys.version.split(" ")[0]), crunchy_help,
+    """ % (page.pageid, (sys.version.split(" ")[0]), crunchy_help,
                plugin['session_random_id'])
+
 
 def single_javascript(prefix):
     '''create string needed to initialize an Isolated (single) interpreter
        using javascript'''
     return r"""
     function init_SingleInterpreter(uid){
-        code = "import src.configuration as configuration\n";
-        code += "locals = {'%s': configuration.defaults}\n";
-        code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
         code += "\nisolated.push('print(";
         code += '"Crunchy: Individual Interpreter (Python version %s)."';
         code += ")')\nisolated.interact(ps1='--> ')\n";
@@ -194,16 +192,14 @@ def single_javascript(prefix):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    """ % ((sys.version.split(" ")[0]), plugin['session_random_id'])
 
 def parrot_javascript(prefix):
     '''create string needed to initialize a parrot (single) interpreter
        using javascript'''
     return   r"""
     function init_parrotInterpreter(uid){
-        code = "import src.configuration as configuration\n";
-        code += "locals = {'%s': configuration.defaults}\n";
-        code += "import src.interpreter\nisolated=src.interpreter.SingleConsole(locals)";
+        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
         code += "\nisolated.push('print(";
         code += '"Crunchy: [dead] parrot Interpreter (Python version %s)."';
         code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
@@ -211,16 +207,14 @@ def parrot_javascript(prefix):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (prefix, (sys.version.split(" ")[0]), plugin['session_random_id'])
+    """ % ((sys.version.split(" ")[0]), plugin['session_random_id'])
 
 def parrots_javascript(prefix, page):
     '''create string needed to initialize a parrots (shared) interpreter
        using javascript'''
     return r"""
     function init_ParrotsInterpreter(uid){
-        code = "import src.configuration as configuration\n";
-        code += "locals = {'%s': configuration.defaults}\n";
-        code += "import src.interpreter\nborg=src.interpreter.BorgConsole(locals, group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
         code += "\nborg.push('print(";
         code += '"Crunchy: [dead] Parrots Interpreter (Python version %s)."';
         code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
@@ -228,7 +222,7 @@ def parrots_javascript(prefix, page):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (prefix, page.pageid, (sys.version.split(" ")[0]),
+    """ % (page.pageid, (sys.version.split(" ")[0]),
            plugin['session_random_id'])
 
 def type_info_javascript(prefix, page):
@@ -236,9 +230,7 @@ def type_info_javascript(prefix, page):
        using javascript'''
     return r"""
     function init_TypeInfoConsole(uid){
-        code = "import src.configuration as configuration\n";
-        code += "locals = {'%s': configuration.defaults}\n";
-        code += "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(locals, group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s')";
         code += "\nborg.push('print(";
         code += '"Crunchy: TypeInfoConsole (Python version %s)."';
         code += ")')\nborg.interact(ps1='<t>>> ')\n";
@@ -246,17 +238,18 @@ def type_info_javascript(prefix, page):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (prefix, page.pageid, (sys.version.split(" ")[0]),
+    """ % (page.pageid, (sys.version.split(" ")[0]),
            plugin['session_random_id'])
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 
+## Note: the code has been edited since the original version has been
+## commented out ... and has not been tested.
+
 ##IPythonInterpreter_js = r"""
 ##function init_IPythonInterpreter(uid){
-##    code = "import src.configuration as configuration\n";
-##    code += "locals = {'%s': configuration.defaults}\n";
-##    code += "import src.interpreter\n";
-##    code += "isolated=src.interpreter.SingleConsole(locals)\n";
+##    code = "import src.interpreter\n";
+##    code += "isolated=src.interpreter.SingleConsole()\n";
 ##    code += "isolated.push('print(";
 ##    code += '"Crunchy: Attempting to load IPython shell"';
 ##    code += ")')\n";
@@ -270,4 +263,4 @@ def type_info_javascript(prefix, page):
 ##    j.open("POST", "/exec%s?uid="+uid, false);
 ##    j.send(code);
 ##};
-##"""%(prefix, sys.version.split(" ")[0], plugin['session_random_id'])
+##"""%(sys.version.split(" ")[0], plugin['session_random_id'])

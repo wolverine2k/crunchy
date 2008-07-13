@@ -13,6 +13,7 @@ REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
+import src.configuration
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
@@ -49,9 +50,9 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     ## configuration.py should know about...
     pluginloader.init_plugin_system(server)
     ## ... and we proceed to immediately import configuration
-    import src.configuration
+    src.configuration.init()
     ##
-    
+
     base_url = 'http://' + host + ':' + str(port)
     if url is None:
         url =  base_url + '/'

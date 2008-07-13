@@ -48,9 +48,11 @@ no_markup_allowed = ["none", "editor", 'python_tutorial',
 for interpreter in override_default_interpreter_allowed:
     no_markup_allowed.append(interpreter)
 
-browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
-if 'power_browser' in additional_vlam:
-    browser_choices_allowed.extend(additional_vlam['power_browser'])
+#browser_choices_allowed = ['None', 'python', 'local_html', 'remote_html']
+
+options = {
+'power_browser': ['None']
+}
 
 def make_property(name, allowed, default=None):
     '''creates properties within allowed values (if so specified)
@@ -195,7 +197,7 @@ class Defaults(Base):
                                       editarea_languages_allowed, default='en')
     local_security = make_property('local_security', security_allowed)
     no_markup = make_property('no_markup', no_markup_allowed)
-    power_browser = make_property('power_browser', browser_choices_allowed)
+    power_browser = make_property('power_browser', options['power_browser'])
     my_style = make_property('my_style', [False, True])
     alternate_python_version = make_property('alternate_python_version', [ANY],
                                              default="python")
@@ -368,16 +370,19 @@ class Defaults(Base):
 
     #==============
 
-defaults = Defaults(config)
+def init():
+    for key in additional_vlam:
+        options[key].extend(additional_vlam[key])
+    defaults = Defaults(config)
 
-config['log'] = defaults.log
-config['logging_uids'] = defaults.logging_uids
-config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
-config['get_current_page_security_level'] = defaults.get_current_page_security_level
+    config['log'] = defaults.log
+    config['logging_uids'] = defaults.logging_uids
+    config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
+    config['get_current_page_security_level'] = defaults.get_current_page_security_level
 
-#import pprint
-#pprint.pprint(config)
+    #import pprint
+    #pprint.pprint(config)
 
-# the following may be set as an option when starting Crunchy
-if 'initial_security_set' not in config:
-    config['initial_security_set'] = False
+    # the following may be set as an option when starting Crunchy
+    if 'initial_security_set' not in config:
+        config['initial_security_set'] = False

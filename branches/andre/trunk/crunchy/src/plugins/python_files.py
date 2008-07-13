@@ -7,7 +7,7 @@ def register():
     """Registers new http handler and new widget for loading ReST files"""
     plugin['register_http_handler']("/py", load_python)
     plugin['register_tag_handler']("span", "title", "load_python", insert_load_python)
-
+    plugin['add_vlam_option']('power_browser', 'python')
 
 class Python_file(object):
     """Simplest object that vlam will take as a file"""
