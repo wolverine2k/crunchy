@@ -38,9 +38,6 @@ options = {
     'security': [ 'trusted', 'display trusted',
                   'normal', 'display normal',
                   'strict', 'display strict'],
-    'local_security': [ 'trusted', 'display trusted',
-                  'normal', 'display normal',
-                  'strict', 'display strict'],
     'no_markup': ["none"],
     'override_default_interpreter' : ['default'],
     # allow languages values like "en" or "en_GB"
@@ -52,6 +49,7 @@ options = {
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
 }
+options['local_security'] = options['security']
 
 def make_property(name, default=None):
     '''creates properties within allowed values (if so specified)
@@ -328,6 +326,9 @@ class Defaults(Base):
         self.current_page_security_level = level
         return level
 
+    def _set_local_security(self, choice):
+        self.local_security = choice
+
     def get_current_page_security_level(self):
         return self.current_page_security_level
 
@@ -368,7 +369,7 @@ def init():
     config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
     config['get_current_page_security_level'] = defaults.get_current_page_security_level
     config['_set_alternate_python_version'] = defaults._set_alternate_python_version
-
+    config['_set_local_security'] = defaults._set_local_security
     #import pprint
     #pprint.pprint(config)
 
