@@ -144,8 +144,9 @@ class Defaults(Base):
                             'page_security_level': self.page_security_level,
                             '_set_site_security': self._set_site_security})
         self._not_saved = self._preferences.keys()
-        self._not_saved.extend(['user_dir', 'temp_dir', 'log', 'logging_uids',
-                                'symbols', 'get_current_page_security_level'])
+        self._not_saved.extend(['user_dir', 'log', 'logging_uids',
+                                'symbols', 'get_current_page_security_level',
+                                'initial_security_set'])
 
         self.site_security = {}
         self.styles = {}
@@ -191,8 +192,8 @@ class Defaults(Base):
         self._temp_dir = os.path.join(home, ".crunchy", "temp")
 
         # hack to make it work for now.
-        self.user_dir = self._user_dir
-        self.temp_dir = self._temp_dir
+        self.user_dir = config['user_dir'] = self._user_dir
+        self.temp_dir = config['temp_dir'] = self._temp_dir
 
         if not os.path.exists(self._user_dir):  # first time ever
             try:
@@ -287,6 +288,8 @@ class Defaults(Base):
             self._preferences[name] = value
             if initial:
                 return
+            if name == 'language':
+                self._select_language(value)
             if self._not_loaded:  # saved configuration not retrieved; do not overwrite
                 return
 
@@ -306,6 +309,13 @@ class Defaults(Base):
         cPickle.dump(saved, pickled)
         pickled.close()
         return
+
+    def _select_language(self, choice):
+        '''selects the appropriate file for language translation and attempts
+        to set editarea_language to the same value'''
+        translate['init_translation'](choice)
+        u_print(_("language set to: ") , choice)
+        self.editarea_language = choice
 
     def page_security_level(self, url):
         info = urlsplit(url)
@@ -344,6 +354,8 @@ class Defaults(Base):
         level = raw_input(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
+    def _set_alternate_python_version(self, alt_py):
+        self.alternate_python_version = alt_py
     #==============
 
 def init():
@@ -355,6 +367,7 @@ def init():
     config['logging_uids'] = defaults.logging_uids
     config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
     config['get_current_page_security_level'] = defaults.get_current_page_security_level
+    config['_set_alternate_python_version'] = defaults._set_alternate_python_version
 
     #import pprint
     #pprint.pprint(config)
