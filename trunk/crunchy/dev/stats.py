@@ -9,9 +9,9 @@ The following statistics are gathered:
  * Total number of Functions/Methods
  * Number of functions/methods marked as tested
  * List of .py files ordered by percentage tested
+ * A dependency graph rendered using dot,
 
-A possible future feature would be a dependency graph rendered using dot,
-and some kind of automated coverage analsis (maybe that should be in all_tests.py)
+maybe one day we can some kind of automated coverage analsis (maybe that should be in all_tests.py)
 '''
 import os
 import os.path
@@ -121,8 +121,8 @@ def examine_file(f):
 
 def build_graph(py_file_info):
     """Build a graph using dot"""
-    process = Popen("dot -Tpng -o dependencies.png", shell=True, stdin=PIPE)
-    dot_descr = 'digraph dependencies {'
+    process = Popen("dot -Tps2 -o dependencies.ps", shell=True, stdin=PIPE)
+    dot_descr = 'digraph dependencies { graph [page=8,11 pagedir=TR]'
     # generate the vertices
     # keeping track of vertices generated
     vertices = []
