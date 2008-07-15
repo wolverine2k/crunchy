@@ -38,6 +38,9 @@ sep = os.path.sep
 nb_files = 0
 excluded = []#["test_colourize.rst"]
 
+total_fails = 0
+total_tests = 0
+
 #include_only = ['test_handle_remote.rst']
 for t in test_files:
     if t in excluded:
@@ -45,10 +48,13 @@ for t in test_files:
     #if t not in include_only:
     #    continue
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
+    total_fails += failure
+    total_tests += nb_tests
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
 
-print "number of test files run: ", nb_files
+print "\nNumber of test files run: ", nb_files
+print "%d failures in %d tests run." % (total_fails, total_tests) 
 
 # Note that the number of tests, as identified by the doctest module
 # is equal to the number of commands entered at the interpreter
