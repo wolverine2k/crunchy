@@ -13,38 +13,42 @@ def register():  # tested
                     "/set_config%s" % plugin['session_random_id'], set_config)
     plugin['register_http_handler']("/config", config_page)
 
-
+# the following are required for Crunchy to work; they will need to be defined.
+def set_config():
+    pass
+def config_page():
+    pass
 
 class ConfigOption(object):     # tested
     all_options = {}
-    
+
     def __init__(self, key, initial):       # tested
         """
         """
         self.key = key
         self.set(initial)
         ConfigOption.all_options[key] = self
-        
+
     def get(self):      # tested
         return self.__value
-        
+
     def set(self, value):   # tested
         self.__value = value
-    
+
 class MultiOption(ConfigOption):        # tested
     """An option that has multiple predefined choices
     """
     # the threshold between radio buttons and a dropdown box
     threshold = 4
-    
+
     def __init__(self, key, initial, values):       # tested
         super(MultiOption, self).__init__(key, initial)
         self.values = values
-        
+
     def get_values(self):       # tested
         """get the possible values"""
         return self.values
-        
+
     def render(self, handle):
         """render the widget to a particular file object"""
         values = self.get_values()

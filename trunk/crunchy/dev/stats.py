@@ -31,10 +31,10 @@ def main():
     # get a list of all files and directories in the distribution
     file_list = []
     os.path.walk('.', (lambda _, dirname, fnames : file_list.extend([os.path.join(dirname, f) for f in fnames])), {})
-    
+
     # filter that list to get the python files
     py_file_list = [f for f in file_list if f.endswith('.py')]
-    
+
     # examine the py files
     total_lines = 0
     total_functions = 0
@@ -48,14 +48,14 @@ def main():
         total_functions += functions
         total_classes += classes
         total_tested += tested
-        
+
     print
     print "%d python source files, containing %d lines." % (len(py_file_list), total_lines)
     print "In all there are %d functions and %d classes, %d%%(%d) of which are tested." % (total_functions, total_classes, total_tested*100 / (total_functions + total_classes), total_tested)
     print
     print '*' * 80
     print 'Tested\tFile'
-    
+
     def cmp(a, b):
         if py_file_info[a][4] == 0:
             return 1
@@ -65,9 +65,9 @@ def main():
             return 1
         else:
             return -1
-            
+
     py_file_list.sort(cmp)
-    
+
     for f in py_file_list:
         if py_file_info[f][4] > 0:
             print '%3d%%\t%s' % (py_file_info[f][4] *100.0/(py_file_info[f][3] + py_file_info[f][2]), f[2:])
@@ -76,9 +76,9 @@ def main():
             print ' N/A\t%s' % f[2:]
         else:   # functions, but no tests :(
             print '  0%%\t%s' % f[2:]
-            
+
     build_graph(py_file_info)
-    
+
 def examine_file(f):
     """examine the file f and return lots of information about it"""
     stream = open(f, 'rt')
@@ -87,42 +87,42 @@ def examine_file(f):
     functions = 0
     classes = 0
     tested = 0
-    
+
     for line in stream:
         # is this an empty line?
         if re.match(empty_re, line):
             continue
-        
-        # note that empty lines aren't counted    
+
+        # note that empty lines aren't counted
         lines += 1
-        
+
         # is the line an import statement?
         result = re.match(import_re, line)
         if result:
             imports.append(result.groupdict()['module'])
             continue
-            
+
         result = re.match(def_re, line)
         if result:
             functions += 1
             # this is a candidate for testing:
             if re.search(tested_re, line):
                 tested += 1
-            
+
         result = re.match(class_re, line)
         if result:
             classes += 1
             # this is a candidate for testing:
             if re.search(tested_re, line):
                 tested += 1
-        
+
     stream.close()
     return lines, imports, functions, classes, tested
 
 def build_graph(py_file_info):
     """Build a graph using dot"""
     process = Popen("dot -Tps2 -o dependencies.ps", shell=True, stdin=PIPE)
-    dot_descr = 'digraph dependencies { graph [page=8,11 pagedir=TR]'
+    dot_descr = 'digraph dependencies { graph [page="8,11" pagedir=TR]'
     # generate the vertices
     # keeping track of vertices generated
     vertices = []
@@ -146,7 +146,6 @@ def build_graph(py_file_info):
             dot_descr += "%s -> %s\n" % (mname, dmname)
     dot_descr += '}'
     process.communicate(dot_descr)
-    
+
 if __name__ == "__main__":
     main()
-
