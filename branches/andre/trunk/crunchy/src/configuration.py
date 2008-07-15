@@ -296,7 +296,7 @@ class Defaults(Base):
         self._preferences['styles'] = self.styles
         saved = {}
         for name in self._preferences:
-            if name not in self._not_saved:
+            if not (name in self._not_saved or name.startswith('_')):
                 saved[name] = self._preferences[name]
         pickled_path = os.path.join(self._user_dir, "settings.pkl")
         try:

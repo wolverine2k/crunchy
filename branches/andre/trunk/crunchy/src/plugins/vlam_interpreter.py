@@ -66,10 +66,14 @@ def insert_interpreter(page, elem, uid):
     if log_id:
         config['log'][log_id] = [tostring(markup)]
 
-    utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
-
     if interp_kind is None:
+        elem.clear()
+        elem.tag = "pre"
+        elem.attrib['class'] = "python_code"
+        elem.append(markup)
         return
+
+    utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
     plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind = interp_kind, sample_code = code)
     plugin['services'].insert_tooltip(page, elem, uid)
