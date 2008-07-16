@@ -12,12 +12,18 @@ def register():  # tested
     plugin['register_http_handler'](
                     "/set_config%s" % plugin['session_random_id'], set_config)
     plugin['register_http_handler']("/config", config_page)
+    # TODO create autogeneration once new config framework is in place
 
 # the following are required for Crunchy to work; they will need to be defined.
-def set_config():
-    pass
-def config_page():
-    pass
+def set_config(request):
+    option = ConfigOption.all_options[request.args['option']]
+    option.set(request.args['value'])
+    
+def config_page(request):
+    request.wfile.write(config_head_html)
+    for option in ConfigOption.all_options:
+        option.render(request.wfile)
+    request.wfile.write(config_tail_html)
 
 class ConfigOption(object):     # tested
     all_options = {}
@@ -74,3 +80,6 @@ class MultiOption(ConfigOption):        # tested
                     handle.write('<option value="%s"> %s' % (value, value))
             handle.write("</select>")
         handle.write("</div>")
+
+config_head_html = """<html><head><title>Crunchy :: Config</title></head><body>"""
+config_tail_html = """</body></html>"""
