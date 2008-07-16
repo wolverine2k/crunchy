@@ -34,12 +34,14 @@ def register():  # tested
     # <pre title='editor ...'>
     plugin['register_tag_handler']("pre", "title", "editor",
                                                         insert_editor)
-    plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
     plugin['register_tag_handler']("pre", "title", "alternate_python_version",
                                                         insert_alternate_python)
     # shorter name version of the above
     plugin['register_tag_handler']("pre", "title", "alt_py",
                                                         insert_alternate_python)
+    plugin['add_vlam_option']('no_markup', 'editor', 'alternate_python_version',
+                              'alt_py')
+    plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
     return
 
 def kill_thread_handler(request):

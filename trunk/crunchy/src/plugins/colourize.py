@@ -40,10 +40,11 @@ def register():
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.
-    plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
-    plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
-    plugin['register_tag_handler']("pre", "title", "py_code", plugin_style)
-    plugin['register_tag_handler']("pre", "title", "python_code", plugin_style)
+    styling_choices = ['py_code', 'python_code']
+    for style in styling_choices:
+        plugin['register_tag_handler']("code", "title", style, plugin_style)
+        plugin['register_tag_handler']("pre", "title", style, plugin_style)
+        plugin['add_vlam_option']('no_markup', style)
     # this plugin can style some Python code, returning both the styled
     # code and either the extracted Python code ...
     plugin['register_service']("style_pycode", service_style)

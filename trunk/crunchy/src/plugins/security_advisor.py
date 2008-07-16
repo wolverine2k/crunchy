@@ -111,6 +111,9 @@ def format_site_security_options(parent, site, site_num):
         if site in config['site_security']:
             if option == config['site_security'][site]:
                 inp.attrib['checked'] = 'checked'
+        elif 'localhost' in site:
+            if option == config['local_security']:
+                inp.attrib['checked'] = 'checked'
     return
 
 def add_button(info_container, nb_sites):
@@ -278,6 +281,8 @@ def set_security_list(request):
                     print str(site) + ' is going to be removed.'
         else:
             config['_set_local_security'](mode)
+            if DEBUG:
+                print "setting local security to ", mode
             break  # should be only site
 
     for site in to_be_deleted:

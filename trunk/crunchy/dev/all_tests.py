@@ -10,6 +10,7 @@ from doctest import OutputChecker
 original_check_output = OutputChecker.check_output
 import doctest
 import os
+import random
 import sys
 
 # sometime we want to ignore Crunchy's output as it may be in a
@@ -31,30 +32,48 @@ doctest.OutputChecker = MyOutputChecker
 os.chdir("..")
 sys.path.insert(0, os.getcwd())
 test_path = os.path.join(os.getcwd(), "src", "tests")
-test_files = [f for f in os.listdir(test_path) if f.startswith("test_")]
+test_files = [f for f in os.listdir(test_path) if f.startswith("test_")
+              and f.endswith(".rst")]
+
+# do the test in somewhat arbitrary order in order to try and
+# ensure true independence.
+random.shuffle(test_files)
 
 sep = os.path.sep
 
 nb_files = 0
+total_tests = 0
+total_failures = 0
+files_with_failures = 0
+
+#TODO: add a command line option to replace this
 excluded = []#["test_colourize.rst"]
 
-total_fails = 0
-total_tests = 0
+#TODO: add a command line option to replace this
+include_only = ['test_vlam.rst']
 
-#include_only = ['test_handle_remote.rst']
+#TODO: add a command line option (clean?) that would remove all .pyc
+# files before testing.
+#TODO: add a command line option that would remove the current .crunchy
+# directory to start unit tests from the point of view of a new user.
+
+
 for t in test_files:
     if t in excluded:
         continue # skip
     #if t not in include_only:
     #    continue
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
-    total_fails += failure
     total_tests += nb_tests
+    total_failures += failure
+    if failure > 0:
+        files_with_failures += 1
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
 
-print "\nNumber of test files run: ", nb_files
-print "%d failures in %d tests run." % (total_fails, total_tests) 
+print "-"*50
+print "%d failures in %d tests in %s files out of %s." % (total_failures,
+                                total_tests, files_with_failures, nb_files)
 
 # Note that the number of tests, as identified by the doctest module
 # is equal to the number of commands entered at the interpreter

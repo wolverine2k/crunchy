@@ -12,14 +12,17 @@ It contains two functions that need to be tested:
 Setting things up
 --------------------
 
-    >>> import src.plugins.execution as execution
-    >>> import src.tests.mocks as mocks
-    >>> from src.interface import plugin
+    >>> from src.interface import plugin, config
+    >>> config.clear()
+    >>> plugin.clear()
     >>> plugin['session_random_id'] = 42
+    >>> import src.tests.mocks as mocks
+    >>> mocks.init()
     >>> def exec_code(data, arg):
     ...     print(data)
     ...     print(arg)
     >>> plugin['exec_code'] = exec_code
+    >>> import src.plugins.execution as execution
 
 .. _`register()`:
 

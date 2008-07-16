@@ -25,6 +25,7 @@ def register():  # tested
     # <span title='load_remote'>
     plugin['register_tag_handler']("span", "title", "load_local",
                                                  insert_load_local)
+    plugin['add_vlam_option']('power_browser', 'local_html')
 
 def insert_load_local(dummy_page, parent, dummy_uid):  # tested
     "Inserts a javascript browser object to load a local (html) file."

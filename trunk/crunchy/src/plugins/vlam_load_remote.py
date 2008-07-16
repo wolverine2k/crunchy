@@ -24,6 +24,7 @@ def register(): # tested
     # <span title='load_remote'>
     plugin['register_tag_handler']("span", "title", "load_remote",
                                                     insert_load_remote)
+    plugin['add_vlam_option']('power_browser', 'remote_html')
 
 def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     '''inserts a form to load a remote page'''
