@@ -3,6 +3,13 @@ Figure out some interesting information about the source code.
 
 This is based closely on test_status.py
 
+to ignore directories, put them as aruments to the script, so for instance:
+$ python stats.py dev/
+will ignore all files contained in dev/
+
+I suggest running this script with the following arguments to ignore irrelevant directories:
+$ python stats.py dev/ server_root/ src/tests/ src/element_tree/
+
 The following statistics are gathered:
  * Total number of .py files
  * Total number of Classes
@@ -13,6 +20,7 @@ The following statistics are gathered:
 
 maybe one day we can some kind of automated coverage analsis (maybe that should be in all_tests.py)
 '''
+import sys
 import os
 import os.path
 import re
@@ -25,13 +33,17 @@ class_re = re.compile(r"\s*?class\s+(?P<cname>[_a-zA-Z][_0-9a-zA-Z]*)")
 tested_re = re.compile(r"#\s*tested\s*$")
 empty_re = re.compile(r"\s*$")
 
-def main():
+def main(ignore_these):
     """The main function, called when this file is run as a script"""
     os.chdir(os.path.pardir)
     # get a list of all files and directories in the distribution
     file_list = []
-    os.path.walk('.', (lambda _, dirname, fnames : file_list.extend([os.path.join(dirname, f) for f in fnames])), {})
+    os.path.walk('.', (lambda _, dirname, fnames : file_list.extend([os.path.join(dirname, f)[2:] for f in fnames])), {})
 
+    # filter the list to remove things in ignore_these
+    for ignore in ignore_these:
+        file_list = [f for f in file_list if not f.startswith(ignore)]
+    
     # filter that list to get the python files
     py_file_list = [f for f in file_list if f.endswith('.py')]
 
@@ -70,12 +82,12 @@ def main():
 
     for f in py_file_list:
         if py_file_info[f][4] > 0:
-            print '%3d%%\t%s' % (py_file_info[f][4] *100.0/(py_file_info[f][3] + py_file_info[f][2]), f[2:])
+            print '%3d%%\t%s' % (py_file_info[f][4] *100.0/(py_file_info[f][3] + py_file_info[f][2]), f)
         elif py_file_info[f][3] + py_file_info[f][2] == 0:
             # no classes or functions or tests - this is OK
-            print ' N/A\t%s' % f[2:]
+            print ' N/A\t%s' % f
         else:   # functions, but no tests :(
-            print '  0%%\t%s' % f[2:]
+            print '  0%%\t%s' % f
 
     build_graph(py_file_info)
 
@@ -130,8 +142,9 @@ def build_graph(py_file_info):
         mname = fname.split('/')[-1].split('.')[0]
         if mname == "__init__":
             # here we us the folder name as the module name
-            mname = fname.split('/')[-2].split('.')[0]
-            if mname == '':
+            try:
+                mname = fname.split('/')[-2].split('.')[0]
+            except IndexError:
                 continue
         dot_descr += '%s [label="%s"]\n' % (mname, fname)
         vertices.append(mname)
@@ -148,4 +161,5 @@ def build_graph(py_file_info):
     process.communicate(dot_descr)
 
 if __name__ == "__main__":
-    main()
+    ignore_these = sys.argv[1:]
+    main(ignore_these)
