@@ -9,6 +9,8 @@ will ignore all files contained in dev/
 
 I suggest running this script with the following arguments to ignore irrelevant directories:
 $ python stats.py dev/ server_root/ src/tests/ src/element_tree/
+or alternatively:
+$ python stats.py dev/ server_root/ src/tests/ src/element_tree/ src/imports/ src/plugins/ src/__init__.py __init__.py src/my_htmlentitydefs.py
 
 The following statistics are gathered:
  * Total number of .py files
