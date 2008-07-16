@@ -31,6 +31,7 @@ options = {
     'forward_accept_language': [True, False],
     'friendly': [True, False],
     'my_style': [True, False],
+    'menu_position': ['top_right', 'top_left'],
     'alternate_python_version': [ANY],
     'user_dir': [ANY],
     'temp_dir': [ANY],
@@ -174,6 +175,7 @@ class Defaults(Base):
     language = make_property('language', default='en')
     editarea_language = make_property('editarea_language', default='en')
     local_security = make_property('local_security')
+    menu_position = make_property('menu_position')
     no_markup = make_property('no_markup', default='python_tutorial')
     power_browser = make_property('power_browser')
     my_style = make_property('my_style', default=False)
