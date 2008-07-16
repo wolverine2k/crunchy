@@ -1,12 +1,13 @@
 '''
 security_advisor.py
 
-Inserts security information at the top of a page
+Inserts security information about a given page
 '''
 from urlparse import urlsplit
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element, SubElement
+from src.interface import config, translate, plugin, Element, SubElement, \
+     additional_menu_items
 _ = translate['_']
 
 provides = set(["/allow_site", "/set_trusted", "/remove_all"])
@@ -21,17 +22,30 @@ def register():
     plugin['register_http_handler']("/set_trusted", set_security_list)
     plugin['register_http_handler']("/remove_all", empty_security_list)
 
+def create_security_menu_item(page):
+    '''creates the security report menu item'''
+
+    if 'display' in page.security_info['level']:
+        security_result_image = '/display.png'
+    elif page.security_info['number removed'] == 0:
+        security_result_image = '/ok.png'
+    else:
+        security_result_image = '/warning.png'
+
+    security_item = Element("li")
+    a = SubElement(security_item, "a", id="security_info_link", href="#",
+                   onclick= "show_security_info();", title="security_link")
+    a.text = "Security: "
+    SubElement(a, "img", src=security_result_image)
+    additional_menu_items['security_report'] = security_item
+    return
+
 def insert_security_info(page, *dummy):
     """Inserts security information on a page"""
     if not page.body:
         return
-    # the following is used by menu.py
-    if 'display' in page.security_info['level']:
-        page.security_result_image = '/display.png'
-    elif page.security_info['number removed'] == 0:
-        page.security_result_image = '/ok.png'
-    else:
-        page.security_result_image = '/warning.png'
+
+    create_security_menu_item(page)
 
     # Next, the hidden container for the full security information
 
@@ -325,6 +339,7 @@ security_css = """
     top: 60px;
     right: 100px;
     height: 85%%;
+    max-width: 800px;
     overflow:auto;
     border: 4px outset #369;
     color: black;

@@ -39,6 +39,7 @@ exec_code = tools.exec_code
 # independent unit testing.
 
 additional_vlam = {}  # initialized from plugins by CrunchyPlugin.py
+additional_menu_items = {}
 config = {}  # initialized mostly by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
