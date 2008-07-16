@@ -15,7 +15,7 @@ import src.PluginServices as services
 # use something else than ElementTree, we can avoid having to change
 # any working plugin, as long as we maintain the API here.
 
-from src.interface import plugin, server, preprocessor
+from src.interface import plugin, server, preprocessor, additional_vlam
 plugin['services'] = services
 
 # We generate a random string that will be appended to javascript functions
@@ -25,6 +25,13 @@ session_random_id = str(int(random.random()*1000000000)) + str(
 plugin['session_random_id'] = session_random_id
 
 DEBUG = False
+
+def add_vlam_option(option_name, *args):
+    '''records an additional vlam argument requested by a plugin to be
+       added to an existing vlam option'''
+    for arg in args:
+        additional_vlam.setdefault(option_name, []).append(arg)
+plugin['add_vlam_option'] = add_vlam_option
 
 def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
@@ -132,11 +139,10 @@ def exec_js(pageid, jscode):
     cometIO.write_js(pageid, jscode)
 plugin['exec_js'] = exec_js
 
-# The following function appears to not be used anywhere else
-def append_html(page_id, output_id, htmlcode):
-    """append some html to an IO widget"""
-    cometIO.write_output(page_id, output_id, htmlcode)
-plugin['append_html'] = append_html
+def append_text(page_id, output_id, text):
+    """append some text to an IO widget on an html page."""
+    cometIO.write_output(page_id, output_id, text)
+plugin['append_text'] = append_text
 
 def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page

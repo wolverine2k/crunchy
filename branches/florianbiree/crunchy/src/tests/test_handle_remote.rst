@@ -81,6 +81,7 @@ First, we do a test without the language-request on.
     >>> config["forward_accept_language"] = False
     >>> handle_remote.remote_loader(request)
     200
+    Cache-Controlno-cache, must-revalidate, no-store
     End headers
     This is just a test.
     >>> handle.close()
@@ -92,6 +93,7 @@ not in request.headers.
     >>> config["forward_accept_language"] = True
     >>> handle_remote.remote_loader(request)
     200
+    Cache-Controlno-cache, must-revalidate, no-store
     End headers
     This is just a test.
     >>> handle.close()
@@ -103,6 +105,7 @@ Third, with "Accept-Language" in the headers.
     >>> config["forward_accept_language"] = True
     >>> handle_remote.remote_loader(request)
     200
+    Cache-Controlno-cache, must-revalidate, no-store
     End headers
     This is just a test.
     >>> handle.close()

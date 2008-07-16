@@ -13,6 +13,9 @@ REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
+import src.configuration
+import src.http_serve as http_serve
+import src.pluginloader as pluginloader
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
@@ -34,17 +37,19 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     * set the port to the value specified, or looks for a free one
     * open a web browser at given url, or a default if not specified
     '''
-    ## keep the following import inside this function so that
-    ## we can run unit tests using Python 3.0
-    import src.http_serve as http_serve
-    import src.pluginloader as pluginloader
     if port is None:
         port = find_port()
     else:
         port = find_port(start=port)
     server = http_serve.MyHTTPServer((host, port),
                                      http_serve.HTTPRequestHandler)
+
+    ## plugins will register possible additional keywords that
+    ## configuration.py should have access to, before it is initialized
     pluginloader.init_plugin_system(server)
+    src.configuration.init()
+    ##
+
     base_url = 'http://' + host + ':' + str(port)
     if url is None:
         url =  base_url + '/'

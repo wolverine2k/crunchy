@@ -19,13 +19,6 @@ server_root/functional_tests/test_import
 src/plugins
     __init__.py
     colourize.py
-        import copy
-        import re
-        import keyword
-        import token
-        import tokenize
-        from src.interface import StringIO, ElementTree, translate, plugin
-        from src.utilities import trim_empty_lines_from_end, changeHTMLspecialCharacters
         register():
             plugin['register_tag_handler']("code", "title", "py_code", plugin_style)
             plugin['register_tag_handler']("code", "title", "python_code", plugin_style)
@@ -60,19 +53,24 @@ src/plugins
         is_interpreter_session(py_code)
         parsing_error_dialog()
     comet.py
-        from src.interface import plugin
-        from src.cometIO import comet, push_input
         register():  # tested
             plugin['register_http_handler'](
                             "/input%s" % plugin['session_random_id'], push_input)
             plugin['register_http_handler']("/comet", comet)
+    config_gui.py
+        register():  # tested
+            plugin['register_http_handler'](
+                            "/set_config%s" % plugin['session_random_id'], set_config)
+            plugin['register_http_handler']("/config", config_page)
+        class ConfigOption(object):     # tested
+            __init__(self, key, initial)       # tested
+            get(self)      # tested
+            set(self, value)   # tested
+        class MultiOption(ConfigOption):        # tested
+            __init__(self, key, initial, values)       # tested
+            get_values(self)       # tested
+            render(self, handle)
     doc_code_check.py
-        import copy
-        import difflib
-        import re
-        import sys
-        from src.interface import StringIO, plugin, config, Element, SubElement
-        from src.utilities import append_checkmark, append_warning
         register():
             plugin['register_tag_handler']("pre", "title", "setup_code",
                                                   code_setup_process)
@@ -99,7 +97,6 @@ src/plugins
         compare(s1, s2)  # tested
         extract_name(vlam)  # tested
     editarea.py
-        from src.interface import config, translate, plugin, SubElement
         register():  # tested
             plugin['register_service']("enable_editarea", enable_editarea)
         enable_editarea(page, elem, textarea_id)  # tested
@@ -107,16 +104,11 @@ src/plugins
         addLoadPython(parent, hidden_load_id, textarea_id)  # tested
         addSavePython(parent, hidden_save_id, textarea_id)  # tested
     execution.py
-        from src.interface import plugin
         register():  # tested
             plugin['register_http_handler']("/exec%s" % plugin['session_random_id'],
                                             exec_handler)
         exec_handler(request)  # tested
     file_service.py
-        from subprocess import Popen
-        import os
-        import sys
-        from src.interface import config, plugin
         register():
             plugin['register_http_handler']("/save_file", save_file_request_handler)
             plugin['register_http_handler']("/load_file", load_file_request_handler)
@@ -142,10 +134,6 @@ src/plugins
         exec_external_python_version(code=None,  path=None, alternate_version=True,
                                          write_over=True)
     handle_default.py
-        from os.path import normpath, join, isdir,  exists
-        from dircache import listdir, annotate
-        import sys
-        from src.interface import translate, plugin, server, debug, \
         register():
             plugin['register_http_handler'](None, handler)
         path_to_filedata(path, root)
@@ -153,24 +141,16 @@ src/plugins
         get_directory(npath)
         error_page(path)
     handle_local.py
-        import os
-        import sys
-        from urllib import unquote_plus
-        from src.interface import config, plugin
         register():  # tested
             plugin['register_http_handler']("/local", local_loader)
             plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
         local_loader(request)  # tested
         add_to_path(page, elem, *dummy)  # tested
     handle_remote.py
-        from urllib import urlopen, unquote_plus
-        from src.interface import plugin, preprocessor
         register():  # tested
             plugin['register_http_handler']("/remote", remote_loader)
         remote_loader(request)  # tested
     io_widget.py
-        from src.interface import config, plugin, translate, SubElement
-        from editarea import editArea_load_and_save
         register():   # tested
             plugin['register_service']("insert_io_subwidget", insert_io_subwidget)
             plugin['register_http_handler']("/kill_thread%s" % plugin['session_random_id'],
@@ -179,11 +159,6 @@ src/plugins
         insert_io_subwidget(page, elem, uid, interp_kind=None,
                                 sample_code='')  # partially tested
     links.py
-        import urllib
-        import re
-        from urlparse import urljoin, urlsplit, urlunsplit
-        import os
-        from src.interface import plugin, SubElement
         register():  # tested
             plugin['register_tag_handler']("a", None, None, a_tag_handler)
             plugin['register_tag_handler']("img", None, None, src_handler)
@@ -191,7 +166,7 @@ src/plugins
             plugin['register_tag_handler']("style", None, None, style_handler)
             plugin['register_tag_handler']("a", "title", "external_link", external_link)
             plugin['register_tag_handler']("a", "title", "security_link", fixed_link)
-        external_link(dummy_page, elem, *dummy)  # tested
+        external_link(page, elem, *dummy)  # tested
         fixed_link(*dummy)  # tested
         a_tag_handler(page, elem, *dummy)  # tested
         src_handler(page, elem, *dummy)  # partially tested
@@ -200,9 +175,6 @@ src/plugins
         style_handler(page, elem, *dummy)  # tested
             css_import_replace(imp_match)
     menu.py
-        import os
-        from src.interface import plugin, parse, Element, config
-        import src.security as security
         register():
             plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
             plugin['register_end_pagehandler'](insert_default_menu)
@@ -212,22 +184,14 @@ src/plugins
         extract_menu(filename, page, safe_menus=False)
         select_language(lang)
     no_markup.py
-        from src.interface import plugin, config
         register():
             plugin['register_final_tag_handler']("pre", power_vlam)
         power_vlam(page, elem, uid)
     power_browser.py
-        from src.interface import plugin, config, Element
-        import python_files
-        import rst
-        import vlam_load_local
-        import vlam_load_remote
         register(): # tested
             plugin['register_end_pagehandler'](insert_browser)
         insert_browser(page, *dummy) # tested
     python_files.py
-        from src.interface import plugin, interactive
-        from src.utilities import changeHTMLspecialCharacters, insert_file_browser
         register():
             plugin['register_http_handler']("/py", load_python)
             plugin['register_tag_handler']("span", "title", "load_python", insert_load_python)
@@ -237,15 +201,6 @@ src/plugins
         load_python(request)
         insert_load_python(dummy_page, parent, dummy_uid)
     rst.py
-        from src.interface import plugin
-        from src.utilities import insert_file_browser
-        from urllib import urlopen
-            from docutils.core import publish_string
-            from docutils.parsers import rst as rst_test
-            from os import linesep
-            from docutils.parsers import rst
-            from docutils.writers.html4css1 import HTMLTranslator
-            from docutils import nodes
         register():
             plugin['register_http_handler']("/rst", load_rst)
             plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
@@ -277,22 +232,19 @@ src/plugins
         convert_rst(path, local=True)
         insert_load_rst(dummy_page, parent, dummy_uid)
     security_advisor.py
-        from urlparse import urlsplit
-        from src.interface import config, translate, plugin, Element, SubElement
         register():
             plugin['register_begin_pagehandler'](insert_security_info)
             plugin['register_http_handler']("/set_trusted", set_security_list)
             plugin['register_http_handler']("/remove_all", empty_security_list)
         insert_security_info(page, *dummy)
         confirm_at_start(page, info_container)
+        format_site_security_options(parent, site, site_num)
+        add_button(info_container, nb_sites)
+        format_table(parent, title, headings, content)
         format_report(page, div)
         set_security_list(request)
         empty_security_list(request)
     tooltip.py
-        import re
-        import urllib
-        import src.interpreter as interpreter
-        from src.interface import config, translate, plugin, Element
         register():
             plugin['register_service']("insert_tooltip", insert_tooltip)
             plugin['register_http_handler']("/dir%s" % plugin['session_random_id'],
@@ -303,8 +255,6 @@ src/plugins
         dir_handler(request)
         doc_handler(request)
     vlam_doctest.py
-        from src.interface import config, plugin, Element, SubElement, tostring
-        from src.utilities import extract_log_id, insert_markup
         register():
             plugin['register_tag_handler']("pre", "title", "doctest",
                                                   doctest_widget_callback)
@@ -313,11 +263,7 @@ src/plugins
                                                doctest_runner_callback)
         doctest_runner_callback(request)
         doctest_widget_callback(page, elem, uid)
-        from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
     vlam_editor.py
-        import os
-        from src.interface import config, plugin, Element, SubElement, translate, tostring
-        from src.utilities import extract_log_id, insert_markup
         register():  # tested
             plugin['register_tag_handler']("pre", "title", "editor",
                                                                 insert_editor)
@@ -332,10 +278,6 @@ src/plugins
         insert_editor(page, elem, uid)  # tested
         insert_alternate_python(page, elem, uid)
     vlam_interpreter.py
-        import sys
-        from src.interface import config, plugin, translate, tostring, Element
-        import src.utilities as utilities
-        import colourize as colourize
         register():
             plugin['register_tag_handler']("pre", "title", "interpreter", insert_interpreter)
             plugin['register_tag_handler']("pre", "title", "isolated", insert_interpreter)
@@ -354,23 +296,28 @@ src/plugins
         parrots_javascript(prefix, page)
         type_info_javascript(prefix, page)
     vlam_load_local.py
-        from src.interface import plugin
-        from src.utilities import insert_file_browser
         register():  # tested
             plugin['register_tag_handler']("span", "title", "load_local",
                                                          insert_load_local)
         insert_load_local(dummy_page, parent, dummy_uid)  # tested
     vlam_load_remote.py
-        from src.interface import plugin, SubElement
         register(): # tested
             plugin['register_tag_handler']("span", "title", "load_remote",
                                                             insert_load_remote)
         insert_load_remote(dummy_page, parent, dummy_uid) # tested
+    vlam_unittest.py
+        register():
+            plugin['register_tag_handler']("pre", "title", "unittest",
+                                                  unittest_widget_callback)
+            plugin['register_http_handler'](
+                                 "/unittest%s"%plugin['session_random_id'],
+                                               unittest_runner_callback)
+        unittest_runner_callback(request)
+        unittest_widget_callback(page, elem, uid)
+        test_suite()
 src/tests
     __init__.py
     mocks.py
-        import sys
-        from src.interface import plugin
         class Page(object):
             __init__(self)
             includes(self, dummy)
@@ -385,6 +332,7 @@ src/tests
             __init__(self, data='data', args='args')
             send_response(self, response=42)
             end_headers(self)
+            send_header(self, *args)
         register_tag_handler(tag, attribute, value, function)
         register_http_handler(handle, function)
         register_service(handle, function)
@@ -394,11 +342,9 @@ src/tests
         init()
 server_root/crunchy_tutor
     global_edit.py
-        import time
 src/imports
     __init__.py
     c_turtle.py
-        import math as _math
         class CTurtle(object):
             __init__(self, x=0, y=0, angle=0, visible=True) # tested indirectly
             home(self)  # tested
@@ -430,9 +376,6 @@ src/imports
             delay(self, dt)
             speed(self, speed)
     dhtml.py
-        import os as _os
-        import random
-        import src.interface as _interface
         class _Tree(object):
             __init__(self, label, parent=None)
             append_child(self, child)  # indirectly tested
@@ -446,8 +389,6 @@ src/imports
         _js_append_html(pid, tag, child_uid, attributes)
         _js_remove_html(child_uid, parent_uid)
     graphics.py
-        import re
-        from src.interface import plugin
         init(width=400, height=400, border_color='red', origin='top') # tested
         clear() # tested
         set_line_colour(col) # tested
@@ -465,9 +406,6 @@ src/imports
         point(x, y) # tested
         validate_colour(colour) # tested
     turtle_js.py
-        import math as _math
-        from src.interface import plugin
-        from src.imports.c_turtle import CTurtle
         class Turtle(CTurtle):
             __init__(self, x=0, y=0, angle=0,    
                 visible=True, pen_down=True,
@@ -505,16 +443,9 @@ src/imports
         _filled_rectangle(corner, w, h)
         __point(x, y)
     turtle_tk.py
-        import Tkinte
 src
     __init__.py
     cometIO.py
-        import threading
-        import sys
-        import src.configuration as configuration
-        import src.interpreter as interpreter
-        import src.utilities as utilities
-        import src.interface as interface
         class StringBuffer(object):
             __init__(self)
             get(self)
@@ -541,14 +472,6 @@ src
             default_write(self, data)
         debug_msg(data, id_=None)
     configuration.py
-        import os
-        import sys
-        from urlparse import urlsplit
-        from imp import find_module
-        from src.interface import config, u_print, translate, python_version, debug
-            from src.interface import debug_flag
-            import cPickle
-            import pickle as cPickle
         class Defaults(object):
             class containing various default values:
                 user_dir home user directory
@@ -586,15 +509,9 @@ src
             _get_alternate_python_version(self)
             _set_alternate_python_version(self, alternate_python_version)
             page_security_level(self, url)
+            _get_forward_accept_language(self)
+            _set_forward_accept_language(self, choice)
     CrunchyPlugin.py
-        import threading
-        from os.path import dirname
-        from imp import find_module
-        import random
-        import src.vlam as vlam
-        import src.cometIO as cometIO
-        import src.PluginServices as services
-        from src.interface import plugin, server, preprocessor
         register_http_handler(pattern, handler)
         register_preprocessor(extension, handler)
         register_tag_handler(tag, attribute, keyword, handler)
@@ -613,24 +530,10 @@ src
         kill_thread(uid)
     debug.py
     errors.py
-        import sys
-        import traceback
-        from StringIO import StringIO
-        import configuration
-        import translation
         simplify_traceback(code=None)
         simplify_syntax_error(code, ex_type, value, trace, lineno)
         simplify_doctest_error_message(msg)
     http_serve.py
-        from SocketServer import ThreadingMixIn, TCPServer
-        from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-        import urllib,urllib2
-        from traceback import format_exc
-        import base64,md5
-        import time
-        from src.utilities import uidgen
-        import src.CrunchyPlugin as CrunchyPlugin
-        from src.interface import config
         require_basic_authenticate(func)
             wrapped(self)
         require_digest_access_authenticate(func)
@@ -646,27 +549,8 @@ src
             do_GET(self)
             send_response(self, code)
     interface.py
-        import imp
-        import os
-        import sys
-            from StringIO import StringIO
-            from io import StringIO
-        import src.tools_2k as tools
-        import src.translation
-        from src.debug import debug
         debug_msg(data)
-        from src.element_tree import ElementTree, HTMLTreeBuilder
     interpreter.py
-        import inspect
-        import threading, sys
-        import sys
-        import traceback
-        from codeop import CommandCompiler, compile_command
-            import ctypes
-        from src.interface import StringIO, exec_code, translate, config
-        from src.utilities import trim_empty_lines_from_end, log_session
-        import src.configuration as configuration
-        import src.errors as errors
         _async_raise(tid, excobj)
         class KillableThread(threading.Thread):
             raise_exc(self, excobj)
@@ -698,24 +582,12 @@ src
             runcode(self, code, source)
             show_expression_value(self, val)
     my_htmlentitydefs.py
-        from htmlentitydefs import name2codepoint
     pluginloader.py
-        import sys
-        import os
-        from imp import find_module
-        import os.path
-        import src.interface as interface
         gen_register_list(initial_list)  # tested
         gen_plugin_list()
         init_plugin_system(server)
     PluginServices.py
     security.py
-        import os
-        import imghdr
-        import urllib
-        import urlparse
-        import sys
-        from src.interface import config, ElementTree
         remove_unwanted(tree, page)  # partially tested
         __cleanup(elem, filter)
         validate_image(src, page)
@@ -726,19 +598,11 @@ src
     tools_2k.py
         u_print(*args)
         exec_code(code, local_dict, source='')
-            import src.errors as errors   # prevent premature import
-            import sys                    #
     translation.py
-        import os.path
-        from imp import find_module
-        from src.interface import u_print
         init_translation(lang=None)
-                import pprint
         _(message)
         build_dict(filename)
     utilities.py
-        import re
-        from src.interface import config, plugin, Element, SubElement
         uidgen()  # tested
         extract_log_id(vlam)  # tested
         insert_file_browser(parent, text, action)  # tested
@@ -750,11 +614,6 @@ src
         append_warning(pageid, parent_uid)
         append_image(pageid, parent_uid, attributes)
     vlam.py
-        from StringIO import StringIO
-        from src.security import remove_unwanted
-        from src.element_tree import ElementSoup
-        from src.interface import ElementTree, config, from_comet
-        from src.utilities import uidgen
         class _BasePage(object):
             __init__(self)  # tested
             create_tree(self, filehandle, encoding='utf-8')  # tested
@@ -781,17 +640,8 @@ src
 
     __init__.py
     crunchy.py
-        from optparse import OptionParser
-        import os
-        import socket
-        import urllib
-        from urlparse import urlsplit
-        import webbrowser
-        import src.interface
         find_port(start=8001)
         run_crunchy(host='127.0.0.1', port=None, url=None)
-            import src.http_serve as http_serve
-            import src.pluginloader as pluginloader
         parse_options()
         convert_url(url)
         open_browser(url)
@@ -801,18 +651,9 @@ server_root/edit_area
         add_font_choices(text)
 dev
     all_tests.py
-        from doctest import OutputChecker
-        import doctest
-        import os
-        import sys
         class MyOutputChecker(doctest.OutputChecker):
             check_output(self, want, got, optionflags)
     functional_test.py
-        from optparse import OptionParser
-        import sys
-        import unittest
-        import time
-        from selenium import selenium
         go_home()
         click_link_and_wait(clickable)
         common_tear_down(self)
@@ -826,16 +667,16 @@ dev
             test_links(self)
             tearDown(self)
         parse_options()
+    stats.py
+        main()
+        examine_file(f)
     test_status.py
-        import os.path
         visit(arg, dirname, names)
         changeHTMLspecialCharacters(text)
         extract_lines(filename)
 src/imports/DOM
     __init__.py
-        from document import Documen
     document.py
-        import src.interface
         freevar()
         class Document(object): 
             exec_jscript(self, code)

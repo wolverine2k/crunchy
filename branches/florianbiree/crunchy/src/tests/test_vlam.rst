@@ -33,12 +33,14 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-    >>> import src.vlam as vlam
     >>> from StringIO import StringIO
     >>> from src.interface import Element, plugin, config, from_comet
     >>> from src.utilities import uidgen
     >>> plugin.clear()
     >>> config.clear()
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
+    >>> import src.vlam as vlam
     >>> from_comet.clear()
     >>> def dummy(arg):
     ...    pass

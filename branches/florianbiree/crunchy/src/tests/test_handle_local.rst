@@ -66,6 +66,7 @@ this interferes with unit tests unless we catch the return value.
     >>> request = mocks.Request(args={'url':filepath})
     >>> handle_local.local_loader(request)
     200
+    Cache-Controlno-cache, must-revalidate, no-store
     End headers
     This is just a test.
     >>> os.remove(filepath)
@@ -112,6 +113,7 @@ We are now ready for the test as such.
     .htm
     True
     200
+    Cache-Controlno-cache, must-revalidate, no-store
     End headers
     This is just a test.
     >>> os.remove(filepath)

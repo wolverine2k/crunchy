@@ -170,7 +170,8 @@ def save_file_python_interpreter_request_handler(request):
 
     content = '_::EOF::_'.join(info[2:])
     save_file(path, content)
-
+    if DEBUG:
+        print "info =", info
     if info[0]:
         config['alternate_python_version'] = info[0]
         # the following updates the value stored in configuration.defaults

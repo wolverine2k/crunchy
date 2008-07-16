@@ -1,135 +1,60 @@
 configuration.py tests
 ======================
 
-configuration.py has a single class with multiple methods.  We will test
-these methods following certain themes.
-
-#. directories_
-#. dir_help_
-#. doc_help
-
 
 Setting things up
 ------------------
 
-    >>> from src.configuration import defaults
-    >>> import os
-    >>> def temp_set_lang(lang):
-    ...    current = defaults._Defaults__language
-    ...    defaults._set_language(lang)
-    ...    return current
+    >>> from src.interface import config, plugin
+    >>> plugin.clear()
+    >>> config.clear()
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
+    >>> from src.configuration import Base, make_property, options
+
+Sample use of extending the Base class for a single object:
+
+
+    >>> options.update( { 'y': [True, False],
+    ...             'x': [1, 2, 4, 8]})
+    >>> class Simple(Base):
+    ...    def __init__(self, prefs):
+    ...        self._preferences = prefs
+    ...        self._preferences.update( {'_prefix': 'crunchy'})
+    ...        self._init_properties(Simple)
+    ...    def _save_settings(self, name, value, initial=False):
+    ...        if not initial:
+    ...            print "Saving", name, '=', value
+    ...        self._preferences[name] = value
+    ...    y = make_property('y')
+    ...    x = make_property('x')
+    
     >>>
+    >>> a_dict = {}
+    >>> example = Simple(a_dict)
+    >>> example.y = 3
+    3 is an invalid choice for crunchy.y
+    The valid choices are: [True, False]
+    The current value is: True
+    >>> example.y = False
+    Saving y = False
+    >>> print a_dict == example._preferences
+    True
 
-.. _`directories`:
-
-Testing directories
+Multi users examples.
 ---------------------
 
-First, we call the default function that attempts to create the
-user directory and the temporary directory.
+    >>> user_names = ['Tao', 'Florian', 'Johannes', 'Andre']
+    >>> users = {}
+    >>> configs = {}
+    >>> for name in user_names: #doctest: +ELLIPSIS
+    ...     configs[name] = {}
+    ...     users[name] = Simple(configs[name])
+    >>> users['Tao'].x = 4
+    Saving x = 4
+    >>> for name in user_names:
+    ...    print users[name].x, 
+    4 1 1 1
 
-    >>> defaults._set_dirs()
-
-Next, we test for the home directory.
-
-    >>> home_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
-    >>> print(os.path.exists(home_dir))
-    True
-    >>> print(home_dir == defaults._get_user_dir())
-    True
-    >>> # also indirectly testing defaults._get_user_dir()
-    >>> print(home_dir == defaults.user_dir)
-    True
-
-
-Next, we test for the temporary directory.
-
-    >>> temp_dir = os.path.join(home_dir, "temp")
-    >>> print(os.path.exists(temp_dir))
-    True
-    >>> print(temp_dir == defaults._get_temp_dir())
-    True
-    >>> print(temp_dir == defaults.temp_dir)
-    True
-
-.. _dir_help:
-
-Testing dir_help
------------------
-
-Saving initial values, and setting default language to English.
-
-    >>> saved = temp_set_lang('en')
-    language set to: en
-    editarea_language also set to: en
-    >>> current = defaults._get_dir_help()
-
-Proceeding with the tests.
-
-    >>> print(current == defaults._Defaults__dir_help)
-    True
-    >>> print(current == defaults.dir_help)
-    True
-    >>> defaults.dir_help = True
-    >>> defaults.dir_help == defaults._get_dir_help()
-    True
-    >>> defaults.dir_help = 'True'
-    Invalid choice for crunchy.dir_help
-    The valid choices are: [True, False]
-    The current value is: True
-
-Now testing with a different language.
-
-    >>> dummy = temp_set_lang('fr') # doctest:+ELLIPSIS
-    la valeur ...
-    >>> defaults.dir_help = 'junk'
-    Choix invalide pour crunchy.dir_help
-    Les choix valides sont :[True, False]
-    La valeur actuelle est :True
-
-Finally restoring the initial values
-
-    >>> defaults.dir_help = current
-    >>> dummy = temp_set_lang(saved) #doctest: +IGNORE_OUTPUT
-
-.. _doc_help:
-
-Testing doc_help
------------------
-
-Saving initial values, and setting default language to English.
-
-    >>> saved = temp_set_lang('en')
-    language set to: en
-    editarea_language also set to: en
-    >>> current = defaults._get_doc_help()
-
-Proceeding with the tests.
-
-    >>> print(current == defaults._Defaults__doc_help)
-    True
-    >>> print(current == defaults.doc_help)
-    True
-    >>> defaults.doc_help = True
-    >>> defaults.doc_help == defaults._get_doc_help()
-    True
-    >>> defaults.doc_help = 'True'
-    Invalid choice for crunchy.doc_help
-    The valid choices are: [True, False]
-    The current value is: True
-
-Now testing with a different language.
-
-    >>> dummy = temp_set_lang('fr') # doctest:+ELLIPSIS
-    la valeur ...
-    >>> defaults.doc_help = 'junk'
-    Choix invalide pour crunchy.doc_help
-    Les choix valides sont :[True, False]
-    La valeur actuelle est :True
-
-Finally restoring the initial values
-
-    >>> defaults.doc_help = current
-    >>> dummy = temp_set_lang(saved) #doctest: +IGNORE_OUTPUT
-
+    
 

@@ -67,6 +67,9 @@ class Request(object):
     def end_headers(self):
         print("End headers")
 
+    def send_header(self, *args):
+        print ''.join(args)
+
 
 def register_tag_handler(tag, attribute, value, function):
     if tag not in registered_tag_handler:

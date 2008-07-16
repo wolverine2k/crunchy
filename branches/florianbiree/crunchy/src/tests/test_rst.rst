@@ -18,9 +18,15 @@ some functional testing that we do on a regular basis.
 We need to import the plugin, something to create an Element, and
 set up some dummy registering functions.
 
-   >>> import src.plugins.rst as rst
-   >>> from src.interface import Element
+   >>> from src.interface import Element, plugin
+   >>> plugin.clear()
+   >>> def dummy_add(*args):
+   ...      for arg in args:
+   ...          print arg
+   >>> plugin['add_vlam_option'] = dummy_add
    >>> import src.tests.mocks as mocks
+   >>> mocks.init()
+   >>> import src.plugins.rst as rst
    
 Note that if docutils is not installed for the Python version we are testing,
 some tests would normally fail; we prevent this from happening by setting up
@@ -36,7 +42,9 @@ an appropriate flag.
 ---------------------
 
 # Test - check that tag handler, and service have been registered
-    >>> rst.register() 
+    >>> rst.register()
+    power_browser
+    rst
     >>> if _docutils_installed:
     ...     print(mocks.registered_tag_handler['span']['title']['load_rst'] == rst.insert_load_rst)
     ...     print(mocks.registered_http_handler['/rst'] == rst.load_rst)
