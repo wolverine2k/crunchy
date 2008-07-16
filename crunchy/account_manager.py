@@ -76,10 +76,12 @@ class AMCLI(object):
         'command dispatcher'
         command = command.strip().split(" ", 1)
         if hasattr(self, "cmd_" + command[0]):
-            if command[0] in ('help', 'list', 'exit'):
+            if command[0] in ('list', 'exit'):
                 getattr(self, "cmd_" + command[0])()
             elif len(command) > 1:
                 getattr(self, "cmd_" + command[0])(command[1])
+            elif command[0] == 'help':
+                getattr(self, "cmd_" + command[0])()
             else:
                 print ("Argument username is need for command %s" %(command[0]))
         else:
@@ -99,7 +101,13 @@ class AMCLI(object):
     def cmd_new(self, username):
         'new <username> : add a new user'
         home = raw_input("Please input the home directory:") 
-        password = getpass("Please input the password:") 
+        while True:
+            password = getpass("Please input the password:") 
+            password2 = getpass("Please input the password again:") 
+            if password == password2:
+                break
+            else:
+                print("Password don't match, please try again.")
         if username in self.accounts:
             print ("Error: user %s already exists" %(username))
         else:
@@ -114,7 +122,13 @@ class AMCLI(object):
             home = raw_input("Please input the new home directory:[%s]" %(self.accounts[username][0]))
             if not home:
                 home = self.accounts[username][0]
-            password = getpass("Please input the new password:") 
+            while True:
+                password = getpass("Please input the new password:") 
+                password2 = getpass("Please input the password again:") 
+                if password == password2:
+                    break
+                else:
+                    print("Password don't match, please try again.")
             self.accounts[username] =  (home, password)
             self.accounts.save()
 
@@ -126,23 +140,53 @@ class AMCLI(object):
             del self.accounts[username]
             self.accounts.save()
 
-    def cmd_help(self):
-        "help : show this message"
-        self.help()
+    def cmd_load(self, file_name):
+        '''load <file_name> : load accounts from file <file_name>
+        File format :
+        user1 home1 pass1
+        user2 home2 pass2
+        ....
+        you can user '\\t' , space , or ',' as seperator 
+        '''
+        f = open(file_name)
+        lines = f.readlines()
+        try_sep = ('\t', ' ', ',');
+        for sep in try_sep:
+            data = []
+            is_ok = True
+            for line in lines:
+                t = line.split(sep)
+                if len(t) != 3:
+                    is_ok = False
+                    break
+                else:
+                    data.append(t)
+            if is_ok:
+                break
+        else:
+            print("Error: Can't parse input file %s" %file_name)
+        for t in data:
+            self.accounts[t[0]] = t[1:]
+        self.accounts.save()
+        print("%d accounts loaded." %(len(data)))
 
-    def help(self):
-        msg = "Crunchy Account Manager\nsupported commands:\n"
-        for attr in dir(self):
-            if attr.startswith('cmd_'):
-                msg += "  %s\n" %(getattr(self, attr).__doc__)
-        print (msg)
+    def cmd_help(self, topic = None):
+        "help [<help_topic>]: display this message or display help of <help_topic>"
+        self.help(topic)
 
-
+    def help(self, topic = None):
+        if topic is None:
+            msg = "Crunchy Account Manager\nsupported commands:\n"
+            for attr in dir(self):
+                if attr.startswith('cmd_'):
+                    msg += "  %s\n" %(getattr(self, attr).__doc__.split('\n')[0])
+            print (msg)
+        else:
+            if hasattr(self, 'cmd_' + topic):
+                print(getattr(self, 'cmd_' + topic).__doc__ + '\n')
+            else:
+                print("No such command %s" %topic)
         
-class AMGUI:
-    pass
-
-
 def get_accounts(path = None):
     if path is None:
         path = pwd_file_path
