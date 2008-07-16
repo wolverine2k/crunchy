@@ -16,11 +16,15 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-   >>> import src.plugins.vlam_load_local as vlam_load_local
    >>> from src.interface import Element, plugin
    >>> plugin.clear()
+   >>> def dummy_add(*args):
+   ...      for arg in args:
+   ...          print arg
+   >>> plugin['add_vlam_option'] = dummy_add
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
+   >>> import src.plugins.vlam_load_local as vlam_load_local
 
 .. _`register()`:
 
@@ -29,6 +33,8 @@ Testing register()
 
 # Test - check that tag handler, and service have been registered
     >>> vlam_load_local.register()
+    power_browser
+    local_html
     >>> print(mocks.registered_tag_handler['span']['title']['load_local'] == vlam_load_local.insert_load_local)
     True
 

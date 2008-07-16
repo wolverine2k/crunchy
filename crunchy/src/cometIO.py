@@ -7,12 +7,13 @@ Also handles the redirection of stdin, stdout and stderr.
 import threading
 import sys
 
-import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-debug_ids = []#1, 2, 3, 4, 5, 6]
+from src.interface import config
+
+debug_ids = []#[1, 2, 3, 4, 5, 6]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -84,9 +85,9 @@ class CrunchyIOBuffer(StringBuffer):
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             # Saving session; appending from below
-            if uid in configuration.defaults.logging_uids:
-                log_id = configuration.defaults.logging_uids[uid][0]
-                configuration.defaults.log[log_id].append(data)
+            if uid in config['logging_uids']:
+                log_id = config['logging_uids'][uid][0]
+                config['log'][log_id].append(data)
                 utilities.log_session()
             self.event.set()
         elif self.help_flag == True:
@@ -97,9 +98,9 @@ class CrunchyIOBuffer(StringBuffer):
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
             # Saving session; first line...
-            if uid in configuration.defaults.logging_uids:
-                log_id = configuration.defaults.logging_uids[uid][0]
-                configuration.defaults.log[log_id].append(data)
+            if uid in config['logging_uids']:
+                log_id = config['logging_uids'][uid][0]
+                config['log'][log_id].append(data)
                 utilities.log_session()
         self.lock.release()
 
@@ -148,18 +149,13 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-
-    if 'display' in configuration.defaults.current_page_security_level:
+    if 'display' in config['get_current_page_security_level']():
         return
 
-    # configuration.defaults._prefix = '_crunchy_' is the
-    # instance name that can be used to get/set the various
-    # configuration variables from within a user-written program.
-
-    symbols = { configuration.defaults._prefix : configuration.defaults,
-                'temp_dir': configuration.defaults.temp_dir}
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
-    t = interpreter.Interpreter(code, uid, symbols=symbols, doctest=doctest)
+    t = interpreter.Interpreter(code, uid, symbols=config['symbols'],
+                                doctest=doctest)
+
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
     t.setDaemon(True)
     debug_msg("  starting the thread in cometIO.do_exec()", 5)

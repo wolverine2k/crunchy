@@ -12,7 +12,8 @@ import sys
 import traceback
 from StringIO import StringIO
 
-import configuration
+#import configuration
+from src.interface import config
 
 import translation
 _ = translation._
@@ -50,7 +51,7 @@ def simplify_traceback(code=None):
     for line in tb_list:
         saved_tb_list.append(line)
 
-    if configuration.defaults.friendly:
+    if config['friendly']:#configuration.defaults.friendly:
         try:
             if code is not None:
                 code_line = code.split('\n')[lineno - 1]
@@ -103,7 +104,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno):
         # Stuff in the right filename
         value = SyntaxError(msg, (filename, lineno, offset, line))
         sys.last_value = value
-    if configuration.defaults.friendly:  # ignore that filename stuff!
+    if config['friendly']:#configuration.defaults.friendly:  # ignore that filename stuff!
         list = traceback.format_exception_only(ex_type, value)[1:]
         list.insert(0, "Error on line %s:\n"%lineno)
     else:

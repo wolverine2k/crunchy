@@ -56,6 +56,8 @@ def insert_default_menu(page):
         # this is important for poorly formed tutorials (non-w3c compliant).
     try:
         page.head.append(_css)
+        if config['menu_position'] == 'top_left':
+            page.add_css_code("#menu_box{left:0px;}")
     except Exception:#, info:
         print("Cannot append css code in the head") # info
         print("_css= " + _css)

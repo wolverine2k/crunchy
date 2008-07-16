@@ -38,6 +38,7 @@ def register():
         # something it can deal with - we may have to find a way to tell
         # Firefox that these are equivalent to text files.
         plugin['register_preprocessor']('rst', convert_rst)
+        plugin['add_vlam_option']('power_browser', 'rst')
 
 if _docutils_installed:
     def int_or_one(argument):

@@ -41,7 +41,7 @@ def register():
     plugin['register_http_handler'](
                          "/doctest%s"%plugin['session_random_id'],
                                        doctest_runner_callback)
-
+    plugin['add_vlam_option']('no_markup', 'doctest')
 
 def doctest_runner_callback(request):
     """Handles all execution of doctests. The request object will contain

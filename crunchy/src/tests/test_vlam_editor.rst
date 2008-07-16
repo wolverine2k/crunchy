@@ -23,6 +23,10 @@ See how_to.rst_ for details.
 
   >>> from src.interface import Element, plugin, config
   >>> plugin.clear()
+  >>> def dummy_add(*args):
+  ...      for arg in args:
+  ...          print arg
+  >>> plugin['add_vlam_option'] = dummy_add
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
   >>> config['editarea_language'] = 'en'
@@ -43,15 +47,20 @@ Testing register()
 
 # Test - check that tag handler, and service have been registered
 
-  >>> vlam_editor.register()
-  >>> mocks.registered_tag_handler['pre']['title']['editor'] == vlam_editor.insert_editor
-  True
-  >>> mocks.registered_tag_handler['pre']['title']['alternate_python_version'] == vlam_editor.insert_alternate_python
-  True
-  >>> mocks.registered_tag_handler['pre']['title']['alt_py'] == vlam_editor.insert_alternate_python
-  True
-  >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
-  True
+    >>> vlam_editor.register()
+    no_markup
+    editor
+    alternate_python_version
+    alt_py
+
+    >>> mocks.registered_tag_handler['pre']['title']['editor'] == vlam_editor.insert_editor
+    True
+    >>> mocks.registered_tag_handler['pre']['title']['alternate_python_version'] == vlam_editor.insert_alternate_python
+    True
+    >>> mocks.registered_tag_handler['pre']['title']['alt_py'] == vlam_editor.insert_alternate_python
+    True
+    >>> mocks.registered_services['insert_editor_subwidget'] == vlam_editor.insert_editor_subwidget
+    True
 
 .. _`insert_editor_subwidget()`:
 
