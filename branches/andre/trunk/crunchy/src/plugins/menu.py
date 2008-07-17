@@ -102,7 +102,7 @@ height:%spx; line-height:%spx;}
 menu_css = """%s
 .menu {
     position:fixed;
-    font-size:11px;
+    font-size:11pt;
     width:%spx;
 }
 .menu ul {

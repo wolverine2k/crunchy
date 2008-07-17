@@ -25,6 +25,7 @@ Testing register()
     >>> menu.register()
     menu_position
     top_left
+    top_right
     bottom_right
     bottom_left
     >>> print(mocks.registered_end_pagehandlers) #doctest: +ELLIPSIS
