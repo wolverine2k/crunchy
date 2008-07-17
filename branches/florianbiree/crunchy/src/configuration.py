@@ -48,7 +48,8 @@ options = {
     # language file names end in ".js"
     'editarea_language': [f[0:-3] for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
-                                    and not f.startswith('.')]
+                                    and not f.startswith('.')],
+    'analyzer': ['None'],
 }
 options['local_security'] = options['security']
 
@@ -183,6 +184,7 @@ class Defaults(Base):
                                              default="python")
     user_dir = make_property('user_dir')
     temp_dir = make_property('temp_dir')
+    analyzer = make_property('analyzer')
 
     def _set_dirs(self): # "tested"; i.e. called in unit tests.
         '''sets the user directory, creating it if needed.

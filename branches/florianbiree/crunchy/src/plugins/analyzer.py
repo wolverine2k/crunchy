@@ -43,17 +43,23 @@ def register():
     # <pre title='analyzer ...'>
     plugin['register_tag_handler']("pre", "title", "analyzer",
                                    analyzer_widget_callback)
+    # Register the 'get_analyzer' service
+    plugin['register_service']('get_analyzer', get_analyzer)
 
 def analyzer_enabled():
     """Return is a analyzer is available and enable"""
-    # TODO: Maybe this should check a configuration option
-    return hasattr(plugin['services'], 'insert_analyzer_button')
+    return 'analyzer' in config and config['analyzer'].lower() != 'none'
+
+def get_analyzer():
+    """Return the current analyzer (or None)"""
+    if analyzer_enabled():
+        return plugin['services'].__dict__['get_analyzer_%s' % \
+                                           config['analyzer']]
 
 def analyzer_runner_callback(request):
     """Handles all execution of the analyzer to display a report.
     The request object will contain
     all the data in the AJAX message sent from the browser."""
-    print hasattr(plugin['services'], 'get_analyzer')
     analyzer = plugin['services'].get_analyzer()
     analyzer.set_code(request.data)
     analyzer.run()
@@ -61,7 +67,7 @@ def analyzer_runner_callback(request):
     request.end_headers()
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
-    plugin['append_html'](pageid, uid, analyzer.get_report())
+    plugin['append_text'](pageid, uid, analyzer.get_report())
 
 def analyzer_score_callback(request):
     """Handles all execution of the analyzer to display a score
@@ -74,9 +80,11 @@ def analyzer_score_callback(request):
     request.end_headers()
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
-    plugin['append_html'](pageid, uid, "\n")
-    plugin['append_html'](pageid, uid, _("[Code quality %.2f/10]\n") % \
-                          analyzer.get_global_score())
+    plugin['append_text'](pageid, uid, "\n")
+    score = analyzer.get_global_score()
+    if score is not None:
+        plugin['append_text'](pageid, uid, _("[Code quality: %.2f/10]\n") % \
+                              score)
 
 def analyzer_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
@@ -104,9 +112,8 @@ def analyzer_widget_callback(page, elem, uid):
         plugin['services'].insert_analyzer_button(page, elem, uid)
     else:
         # Display a nice link
-        pylint_link = SubElement(elem, "a")
-        pylint_link.text = _("You need to install an analyzer such as pylint")
-        pylint_link.attrib["href"] = "http://www.logilab.org/857"
+        no_analyzer = SubElement(elem, "p")
+        no_analyzer.text = _("No analyzer installed nor enabled.")
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
