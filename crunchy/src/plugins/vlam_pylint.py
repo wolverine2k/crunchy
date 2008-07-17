@@ -9,6 +9,7 @@ import tempfile
 try:
     from pylint import lint, checkers
     from pylint.checkers.base import BasicChecker
+    from pylint.reporters import EmptyReport
     pylint_available = True
 except ImportError:
     pylint_available = False
@@ -71,7 +72,8 @@ class CrunchyLinter:
     def run(self):
         """Make the analysis"""
         # Save the code in a temporary file
-        tempfile.tempdir = config['temp_dir']
+        if 'temp_dir' in config:
+            tempfile.tempdir = config['temp_dir']
         temp = tempfile.NamedTemporaryFile(suffix = '.py')
         temp.write(self._code)
         temp.flush()
@@ -100,7 +102,11 @@ class CrunchyLinter:
         # Make sure there is a global_note (if --report=n, the global_note
         # is not calculated)
         if not 'global_note' in self.linter.stats:
-            self.linter.report_evaluation([], self.linter.stats, {})
+            try:
+                self.linter.report_evaluation([], self.linter.stats, {})
+            except EmptyReport:
+                # If there is no code to make a score
+                self.linter.stats['global_note'] = 0
         return self.linter.stats['global_note']
 
 def register():
@@ -110,5 +116,10 @@ def register():
        """
     if pylint_available:
         # Register the analyzer
-        # TODO: only if pylint is the default analyzer in the configuration
-        plugin['register_service']('get_analyzer', (lambda : CrunchyLinter()))
+        # Important: the vlam_option is the identifier of the analyzer.
+        # The same identifiant must be used for the service: get_analyzer_id
+        plugin['add_vlam_option']('analyzer', 'pylint') 
+        plugin['register_service'](
+            'get_analyzer_pylint',
+            CrunchyLinter(),
+        )
