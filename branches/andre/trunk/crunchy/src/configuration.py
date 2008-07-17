@@ -31,7 +31,7 @@ options = {
     'forward_accept_language': [True, False],
     'friendly': [True, False],
     'my_style': [True, False],
-    'menu_position': ['top_right'],
+    'menu_position': ['default'],
     'alternate_python_version': [ANY],
     'user_dir': [ANY],
     'temp_dir': [ANY],

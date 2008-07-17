@@ -15,8 +15,8 @@ def register(): # tested
        allowed positions for the menu.
     """
     plugin['register_end_pagehandler'](insert_menu)
-    plugin['add_vlam_option']('menu_position', 'top_left', 'bottom_right',
-                              'bottom_left') # 'top_right' in configuration.py
+    plugin['add_vlam_option']('menu_position', 'top_left', 'top_right',
+                              'bottom_right', 'bottom_left')
 
 def create_empty_menu(): # tested
     '''creates the basic menu structure including only the title'''
@@ -52,7 +52,7 @@ def insert_menu(page): # tested
     if page.body:
         page.body.insert(0, menu)
 
-    height = 25
+    height = 20
     bottom = "bottom:%spx;" % height
     top = "top:%spx;" % height
     width = 150
@@ -71,9 +71,6 @@ def insert_menu(page): # tested
         menu_position = menu_position_css % ("bottom:0; left:0;", bottom,
                                             height, height)
     else:  # use top_right as default
-        print "WARNING: menu_position in menu.py not recognized."
-        print "value =", config['menu_position']
-        print "using default value"
         menu_position = menu_position_css % ("top:0; right:0;", top,
                                             height, height)
 
@@ -133,7 +130,6 @@ menu_css = """%s
     text-align:center;
     color:#fff;
     background:#369;
-    border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
 }
 .menu ul li:hover ul, .menu ul li a:hover ul {
