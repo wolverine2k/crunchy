@@ -179,6 +179,9 @@ def push_input(request):
     request.send_response(200)
     request.end_headers()
 
+def raw_push_input(uid, data):
+    input_buffers[uid].put(data)
+
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
     def __init__(self, out_buf=None, in_buf=None, buf_class="STDOUT"):

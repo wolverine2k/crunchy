@@ -10,6 +10,7 @@ Pdb the code in the pre area
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id
 import src.session as session
+from src.cometIO import raw_push_input
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -33,10 +34,13 @@ def register():
     # to the custom handler's name to be executed.
     plugin['register_http_handler'](
                          "/pdb_next%s"%plugin['session_random_id'],
-                                       pdb_next_step_callback)
+                         lambda r :pdb_command_callback(r, "next"))
+    plugin['register_http_handler'](
+                         "/pdb_local_var%s"%plugin['session_random_id'],
+                         lambda r :pdb_command_callback(r, "local_var"))
     plugin['register_http_handler'](
                          "/pdb_start%s"%plugin['session_random_id'],
-                                       pdb_start_callback)
+                        pdb_start_callback)
 
 def pdb_start_callback(request):
     code = pdb_pycode % (request.data)
@@ -45,15 +49,18 @@ def pdb_start_callback(request):
     request.send_response(200)
     request.end_headers()
 
-def pdb_next_step_callback(request):
-    """Handles all next step command. The request object will contain
+def pdb_command_callback(request, command = "next"):
+    """Handles all pdb command. The request object will contain
     all the data in the AJAX message sent from the browser."""
     # note how the code to be executed is not simply the code entered by
     # the user, and obtained as "request.data", but also includes a part
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
-    code = request.data + (doctest_pycode % doctests[request.args["uid"]])
-    plugin['exec_code'](code, request.args["uid"], doctest=False)
+    uid = request.args["uid"]
+    if command == "next":
+        raw_push_input(uid, "next\n")
+    elif command == "local_var":
+        raw_push_input(uid, "print(__dict2table(locals()))\n")
     request.send_response(200)
     request.end_headers()
 
@@ -104,11 +111,16 @@ def pdb_widget_callback(page, elem, uid):
     btn.attrib["onclick"] = "init_pdb_interpreter('%s')" % uid
     btn.attrib["id"] = "btn_start_pdb_%s" % uid
 
-    # the actual button used for code execution:
     btn = SubElement(elem, "button")
     btn.text = "Next Step"
     btn.attrib["onclick"] = "pdb_next_step('%s')" % uid
     btn.attrib["id"] = "btn_next_step_%s" % uid
+    btn.attrib["disabled"] = "disabled"
+
+    btn = SubElement(elem, "button")
+    btn.text = "Show Local Var"
+    btn.attrib["onclick"] = "pdb_command('local_var', '%s')" % uid
+    btn.attrib["id"] = "btn_show_local_var_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
     SubElement(elem, "br")
@@ -117,25 +129,75 @@ def pdb_widget_callback(page, elem, uid):
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 
+class PdbConsole(object):
+    '''A pdb console
+    a bridge between pdb and crunchy
+    '''
+    def __init__(self):
+        pass
+
+    def start(self, code):
+        __debug_string = '''%s'''
+        pdb.run(__debug_string %(code))
+
 pdb_jscode = r"""
+var random_session_id = '%s';
 function pdb_next_step(uid){
     var j = new XMLHttpRequest();
-    j.open("POST", "/input%s?uid="+uid, false);
+    j.open("POST", "/pdb_next" + random_session_id +"?uid="+uid, false);
     j.send("next\n");
 }
+function pdb_command(command, uid){
+    var j = new XMLHttpRequest();
+    j.open("POST", "/pdb_" + command + random_session_id  + "?uid="+uid, false);
+    j.send(command + "\n");
+}
+
 function init_pdb_interpreter(uid){
         var j = new XMLHttpRequest();
         code = document.getElementById('code_' + uid).value;
-        j.open("POST", "/pdb_start%s?uid="+uid, false);
+        j.open("POST", "/pdb_start" + random_session_id + "?uid="+uid, false);
         j.send(code);
         //document.getElementById('btn_start_pdb_' + uid).disabled= true;
         document.getElementById('btn_next_step_' + uid).disabled= false;
+        document.getElementById('btn_show_local_var_' + uid).disabled= false;
 };
-""" % (plugin['session_random_id'], plugin['session_random_id'])
+""" % (plugin['session_random_id'])
 
 pdb_pycode = """
-__debug_string = \"\"\"%s\"\"\"
 import pdb
+def __dict2table(d):
+    s = "<table>"
+    s += "<thead><tr><th>name</th><th>value</th></tr>"
+    for key,item in d.items():
+        if key == "__dict2table":
+            continue
+        s += "<tr><td>" + str(key)  + "</td><td>" + str(item) + "</td></tr>"
+    s += "</tbody>"
+    s += "</table>"
+    return s
+def __dict2table(d):
+    s = ""
+    for key,item in d.items():
+        if key == "__dict2table":
+            continue
+        s += "" + str(key)  + "\\t" + str(item) + "\\n"
+    return s
+
+_debug_string = \"\"\"
+%s
+\"\"\"
+pdb.run(_debug_string, locals={'__dict2table': __dict2table})
+"""
+_pdb_pycode = """
+import pdb
+import sys
+from StringIO import StringIO
+old_output = sys.stdout
+__debug_string = \"\"\"
+%s
+\"\"\"
 pdb.run(__debug_string)
 """
+
 
