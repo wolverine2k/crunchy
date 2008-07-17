@@ -67,6 +67,7 @@ def analyzer_runner_callback(request):
     request.end_headers()
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
+    plugin['append_text'](pageid, uid, "="*60 + "\n")
     plugin['append_text'](pageid, uid, analyzer.get_report())
 
 def analyzer_score_callback(request):
