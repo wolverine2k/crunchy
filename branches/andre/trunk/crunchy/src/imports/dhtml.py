@@ -23,9 +23,9 @@ join_path = _os.path.join
 _nodes = {}
 _roots = {}
 
-class _Tree(object):
+class _Tree(object): # tested
     '''simple tree structure to keep track of elements added and removed'''
-    def __init__(self, label, parent=None):
+    def __init__(self, label, parent=None): # tested indirectly
         self.label = label
         self.parent = parent
         if parent is not None:

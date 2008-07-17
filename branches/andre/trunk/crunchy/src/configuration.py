@@ -41,35 +41,35 @@ options = {
                   'strict', 'display strict'],
     'no_markup': ["none"],
     'override_default_interpreter' : ['default'],
-    # allow languages values like "en" or "en_GB"
-    'language': [f for f in os.listdir(trans_path)
+    # allow languages values like "en" or "en_GB"; str(f) converts u"en" to "en"
+    'language': [str(f) for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))
                                     and not f.startswith('.')],
     # language file names end in ".js"
-    'editarea_language': [f[0:-3] for f in os.listdir(trans_path2)
+    'editarea_language': [str(f[0:-3]) for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
 }
 options['local_security'] = options['security']
 
-def make_property(name, default=None):
+def make_property(name, default=None, doc=None): # tested
     '''creates properties within allowed values (if so specified)
        with some defaults, and enables automatic saving of new values'''
     allowed = options[name]
     if default is None:
         default = allowed[0]
 
-    def fget(obj):
+    def fget(obj): # indirectly tested
         '''simply returns the attribute for the requested object'''
         return getattr(obj, "_"+name)
 
-    def _set_and_save(obj, _name, value, initial=False):
+    def _set_and_save(obj, _name, value, initial=False): # indirectly tested
         '''sets the value and make the required call to save the new status'''
         setattr(obj, "_" + _name, value)
         getattr(obj, '_save_settings')(_name, value, initial)
         return
 
-    def _only_set_and_save_if_new(obj, name, val):
+    def _only_set_and_save_if_new(obj, name, val): # indirectly tested
         '''sets the value (and save the new status) only if there is
            a change from the current value; this is to prevent
            needlessly writing to files'''
@@ -83,7 +83,7 @@ def make_property(name, default=None):
             _set_and_save(obj, name, val)
         return
 
-    def fset(obj, val):
+    def fset(obj, val): # indirectly tested
         '''assigns a value within an allowed set (if defined),
            and saves the result'''
         prefs = getattr(obj, "_preferences")
@@ -110,14 +110,17 @@ def make_property(name, default=None):
                 val = current
             _only_set_and_save_if_new(obj, name, val)
         return
-    return property(fget, fset)
+    if doc is None:
+        return property(fget, fset)
+    else:
+        return property(fget, fset, None, doc)
 
 class Base(object):
     '''Base class for all objects that keeps track of
        configuration values in properties.  On its own, it does nothing;
        see test_configuration.rst for sample uses.'''
 
-    def _init_properties(self, cls):
+    def _init_properties(self, cls): # indirectly tested
         '''automatically assigns all known properties.'''
         # Note: properties are class variables which is why we need
         # to pass the class name as a parameter.
@@ -131,11 +134,13 @@ class Base(object):
         '''dummy function; needs to be defined by subclass'''
         raise NotImplementedError
 
-
 class Defaults(Base):
     """
     class containing various default values that can be set by user according
     to their preferences.
+
+    IMPORTANT: you can specify the value of a given "Data descriptor" by entering
+    crunchy.descriptor = value
     """
     def __init__(self, prefs):
         self._preferences = prefs
@@ -167,24 +172,67 @@ class Defaults(Base):
         self._init_properties(Defaults)
         self._load_settings()
 
-    dir_help = make_property('dir_help')
-    doc_help = make_property('doc_help')
-    forward_accept_language = make_property('forward_accept_language')
-    friendly = make_property('friendly')
-    override_default_interpreter = make_property('override_default_interpreter')
-    language = make_property('language', default='en')
-    editarea_language = make_property('editarea_language', default='en')
-    local_security = make_property('local_security')
-    menu_position = make_property('menu_position')
-    no_markup = make_property('no_markup', default='python_tutorial')
-    power_browser = make_property('power_browser')
-    my_style = make_property('my_style', default=False)
+    dir_help = make_property('dir_help',
+        doc="""\
+If True, when a '.' is pressed for 'object.', a popup window
+appears displaying the available methods and attributes, with
+the exception of those that start with a leading underscore.""")
+    doc_help = make_property('doc_help',
+        doc="""\
+If True, displays the result of help(fn) where fn is either a
+function or method when an open parenthese "fn(" is typed.""")
+    forward_accept_language = make_property('forward_accept_language',
+        doc="""\
+If True, the browser will forward the default language chosen
+by the user to the website so that pages in that language
+will be sent back if they are available.""")
+    friendly = make_property('friendly',
+        doc="""\
+If True, Crunchy will try to simplify some tracebacks and doctest
+results so that they are easier to understand for beginners.""")
+    override_default_interpreter = make_property('override_default_interpreter',
+        doc="""\
+If a value other than 'default' is specified, Crunchy will replace
+any interpreter type specified by a tutorial writer by this value.""")
+    language = make_property('language', default='en',
+        doc="""Specifies the language used by Crunchy for output, menus, etc.""")
+    editarea_language = make_property('editarea_language', default='en',
+        doc="""\
+Specifies the language used by the embedded editor 'editarea' for tooltips, etc.""")
+    local_security = make_property('local_security',
+        doc="""\
+Specifies the security setting for tutorials loaded from
+the local server (127.0.0.1) running Crunchy.""")
+    menu_position = make_property('menu_position',
+        doc="""Specifies the position where the menu should appear.""")
+    no_markup = make_property('no_markup', default='python_tutorial',
+        doc="""\
+Specifies the 'interactive element' to be included whenever
+Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
+    power_browser = make_property('power_browser',
+        doc="""\
+If the value is not 'none', inserts the requested file browser
+at the top of every page displayed by Crunchy.""")
+    my_style = make_property('my_style', default=False,
+        doc="""\
+If True, indicates that Crunchy will replace some styling (css)
+by some values specified by the user in crunchy.styles""")
     alternate_python_version = make_property('alternate_python_version',
-                                             default="python")
-    user_dir = make_property('user_dir')
-    temp_dir = make_property('temp_dir')
+                                             default="python",
+        doc="""\
+Specifies the command to be used when launching a script using
+a possibly different python version than the one that was
+used to launch Crunchy.""")
+    user_dir = make_property('user_dir',
+        doc="""\
+Location of the user directory, where the configuration file
+is saved; please do not attempt to change from inside Crunchy.""")
+    temp_dir = make_property('temp_dir',
+        doc="""\
+Location of a 'temporary' directory from which external scripts
+are usually launched.""")
 
-    def _set_dirs(self): # "tested"; i.e. called in unit tests.
+    def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
         home = os.path.expanduser("~")

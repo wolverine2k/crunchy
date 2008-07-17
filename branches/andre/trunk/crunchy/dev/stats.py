@@ -30,7 +30,8 @@ import_re = re.compile(r"\s*(import|from)\s+(?P<module>[_a-zA-Z][_0-9a-zA-Z\.]*)
 def_re = re.compile(r"\s*?def\s+(?P<fname>[_a-zA-Z][_0-9a-zA-Z]*)")
 class_re = re.compile(r"\s*?class\s+(?P<cname>[_a-zA-Z][_0-9a-zA-Z]*)")
 
-tested_re = re.compile(r"#\s*tested\s*$")
+# could have comments like "# indirectly tested" or "# tested indirectly" ...
+tested_re = re.compile(r"#\s*[_0-9a-zA-Z]*\s*tested\s*[_0-9a-zA-Z]*\s*$")
 empty_re = re.compile(r"\s*$")
 
 def main(ignore_these):
@@ -43,7 +44,7 @@ def main(ignore_these):
     # filter the list to remove things in ignore_these
     for ignore in ignore_these:
         file_list = [f for f in file_list if not f.startswith(ignore)]
-    
+
     # filter that list to get the python files
     py_file_list = [f for f in file_list if f.endswith('.py')]
 

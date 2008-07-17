@@ -26,7 +26,7 @@ def u_print(*args):
         print "PROBLEM in u_print; could not print encoded args:"
         print args
 
-def exec_code(code, local_dict, source=''):
+def exec_code(code, local_dict, source=''): # tested via test_interface.rst
     import src.errors as errors   # prevent premature import
     import sys                    #
     try:

@@ -319,34 +319,6 @@ paths can be added via the following syntax<br/>
 &lt;meta title="python_import" name="<em>relative_path</em>" /&gt;
 </code>
 </p>
-
-<h3 >Changing the default menu</h3>
-<p>Changing the default menu can be done by including<br/>
-<code>&lt;meta name="crunchy_menu" content="filename"&gt;</code> in the html <code>&lt;head&gt;</code> element.  The file designated by <code>filename</code> must be a valid
-html file having a well defined structure.  The following is the file currently used by
-Crunchy.</p>
-<pre title="no_vlam">
-&lt;html&gt;
-&lt;head&gt;
-&lt;link rel="stylesheet" href="/crunchy_menu.css" type="text/css" charset="utf-8"&gt;
-&lt;/head&gt;
-&lt;body&gt;
-
-&lt;div id="menu_box"&gt;
-&lt;div id="menu_title"&gt;Crunchy Menu&lt;/div&gt;
-&lt;a href="/"&gt;Crunchy Home&lt;/a&gt;
-&lt;a href="#" id="security_info_link"&gt;Security ...&lt;/a&gt;
-&lt;span class="menu_separator" &gt; &lt;/span&gt;
-&lt;a href="/exit"&gt;Quit Crunchy&lt;/a&gt;
-&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</pre>
-<p>Crunchy looks for the menu inside the <code>&lt;div&gt;</code>, and the menu styling
-in the <code>&lt;head&gt;</code>.  You can see examples of using alternate menus, with
-slightly different files structures (and very different styling)
-<a href="/functional_tests/menus.html">here</a> and 
-<a href="/functional_tests/menus2.html">here</a>.</p>
 </div>
 </div>
 </body>

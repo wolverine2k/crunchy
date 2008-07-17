@@ -92,10 +92,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
-        if sample_code:
-            code_sample.text = sample_code
-        else:
-            code_sample.text = '\n'
+        code_sample.text = sample_code + '\n'
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"

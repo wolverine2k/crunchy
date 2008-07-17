@@ -154,7 +154,7 @@ css_import_re = re.compile('@import\s+"(.+?)"')
 
 def style_handler(page, elem, *dummy):  # tested
     """replace @import statements in style elements"""
-    def css_import_replace(imp_match):
+    def css_import_replace(imp_match): # indirectly tested
         '''replaces the relative path found by its absolute value'''
         path = imp_match.group(1)
         return '@import "%s"' % urljoin(page.url, path)

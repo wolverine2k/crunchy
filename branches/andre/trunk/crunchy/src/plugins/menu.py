@@ -9,7 +9,7 @@ from src.interface import plugin, Element, SubElement, config, \
 _ = translate['_']
 
 
-def register():
+def register(): # tested
     """
        registers the tag handlers for inserting menu as well as
        allowed positions for the menu.
@@ -18,7 +18,7 @@ def register():
     plugin['add_vlam_option']('menu_position', 'top_left', 'bottom_right',
                               'bottom_left') # 'top_right' in configuration.py
 
-def create_empty_menu():
+def create_empty_menu(): # tested
     '''creates the basic menu structure including only the title'''
     menu = Element('div')
     menu.attrib['class'] = "menu"
@@ -28,21 +28,21 @@ def create_empty_menu():
     menu_items = SubElement(_li, "ul")
     return menu, menu_items
 
-def create_home():
+def create_home():  # tested
     '''creates the home element for the menu'''
     home = Element("li")
     a = SubElement(home, "a", href="/index.html")
     a.text = _("Crunchy Home")
     return home
 
-def create_quit():
+def create_quit(): # tested
     '''creates the quit element for the menu'''
     Quit = Element("li")
     a = SubElement(Quit, "a", href="/exit")
     a.text = _("Quit Crunchy")
     return Quit
 
-def insert_menu(page):
+def insert_menu(page): # tested
     """inserts the default Crunchy menu, if no other menu is present."""
     menu, menu_items = create_empty_menu()
     menu_items.append(create_home())

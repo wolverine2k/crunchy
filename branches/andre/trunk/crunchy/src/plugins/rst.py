@@ -28,7 +28,7 @@ if _docutils_installed:
     from docutils.writers.html4css1 import HTMLTranslator
     from docutils import nodes
 
-def register():
+def register(): # tested
     """Registers new http handler and new widget for loading ReST files"""
     if _docutils_installed:
         plugin['register_http_handler']("/rst", load_rst)
@@ -246,7 +246,7 @@ def convert_rst(path, local=True):
     rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
     return rst_file
 
-def insert_load_rst(dummy_page, parent, dummy_uid):
+def insert_load_rst(dummy_page, parent, dummy_uid): # tested
     """Creates new widget for loading rst files.
     Only include <span title="load_rst"> </span>"""
     insert_file_browser(parent, 'Load local ReST file', '/rst')

@@ -24,7 +24,7 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 # In production code, we invoke CrunchyPage instead which does all
 # the required processing automatically.
 
-class _BasePage(object):
+class _BasePage(object): # tested
     '''
        Base class used to store html pages and the methods to process them.
     '''
