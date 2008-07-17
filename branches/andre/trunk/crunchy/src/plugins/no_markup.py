@@ -16,7 +16,7 @@ def power_vlam(page, elem, uid):
     inserts interactive elements in bare "pre" based on user's preferences.
     '''
     n_m = config['no_markup'].lower()
-    if n_m != 'none':
+    if n_m is not None:
         keyword = n_m.split(" ")[0]
         if "title" not in elem.attrib:
             elem.attrib["title"] = n_m

@@ -35,11 +35,11 @@ options = {
     'alternate_python_version': [ANY],
     'user_dir': [ANY],
     'temp_dir': [ANY],
-    'power_browser': ['None'],
+    'power_browser': [None],
     'security': [ 'trusted', 'display trusted',
                   'normal', 'display normal',
                   'strict', 'display strict'],
-    'no_markup': ["none"],
+    'no_markup': [None],
     'override_default_interpreter' : ['default'],
     # allow languages values like "en" or "en_GB"; str(f) converts u"en" to "en"
     'language': [str(f) for f in os.listdir(trans_path)

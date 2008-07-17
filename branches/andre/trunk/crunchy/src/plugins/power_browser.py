@@ -10,9 +10,6 @@ import rst
 import vlam_load_local
 import vlam_load_remote
 
-_default_menu = None
-_css = None
-
 def register(): # tested
     """The register() function is required for all plugins.
        """
@@ -22,7 +19,7 @@ def insert_browser(page, *dummy): # tested
     '''Inserts a default file/url browser at the top of a page'''
     div = Element("div")
     div.text = ' '
-    if config['power_browser'] == 'None':
+    if config['power_browser'] is None:
         return
     elif config['power_browser'] == 'python':
         python_files.insert_load_python(page, div, 'dummy')
