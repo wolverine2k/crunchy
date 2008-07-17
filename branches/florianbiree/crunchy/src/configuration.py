@@ -49,7 +49,7 @@ options = {
     'editarea_language': [f[0:-3] for f in os.listdir(trans_path2)
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')],
-    'analyzer': ['None'],
+    'analyzer': [None],
 }
 options['local_security'] = options['security']
 

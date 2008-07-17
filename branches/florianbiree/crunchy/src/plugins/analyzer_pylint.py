@@ -20,6 +20,21 @@ from src.interface import config, plugin
 # The set of other "widgets/services" required from other plugins
 requires =  set()
 
+def register():
+    """The register() function is required for all plugins.
+       In this case, we need to register one 'action':
+       the get_analyzer service, that return a object to analyze the code.
+       """
+    if pylint_available:
+        # Register the analyzer
+        # Important: the vlam_option is the identifier of the analyzer.
+        # The same identifiant must be used for the service: get_analyzer_id
+        plugin['add_vlam_option']('analyzer', 'pylint') 
+        plugin['register_service'](
+            'get_analyzer_pylint',
+            CrunchyLinter(),
+        )
+
 if pylint_available:
     # We redefine the verification of docstring
     old_check_docstring = BasicChecker._check_docstring
@@ -34,7 +49,7 @@ if pylint_available:
     BasicChecker._check_docstring = replaced_check_docstring
 
 class CrunchyLinter:
-    """Class to configure and start a pylint analyze
+    """Class to configure and start a pylint analysis
     
     Based on the Run class from pylint.lint
     """
@@ -82,7 +97,7 @@ class CrunchyLinter:
         self.linter.reporter.set_output(output_buffer)
         # Start the check
         self.linter.check(temp.name)
-        # Get the output and remove the irrelevant file name
+        # Get the output and remove the irrelevant file path
         self._report = output_buffer.getvalue().replace(
                             os.path.splitext(os.path.basename(temp.name))[0],
                             'line ')
@@ -106,20 +121,5 @@ class CrunchyLinter:
                 self.linter.report_evaluation([], self.linter.stats, {})
             except EmptyReport:
                 # If there is no code to make a score
-                self.linter.stats['global_note'] = 0
+                return None
         return self.linter.stats['global_note']
-
-def register():
-    """The register() function is required for all plugins.
-       In this case, we need to register one 'action':
-       the get_analyzer service, that return a object to analyze the code.
-       """
-    if pylint_available:
-        # Register the analyzer
-        # Important: the vlam_option is the identifier of the analyzer.
-        # The same identifiant must be used for the service: get_analyzer_id
-        plugin['add_vlam_option']('analyzer', 'pylint') 
-        plugin['register_service'](
-            'get_analyzer_pylint',
-            CrunchyLinter(),
-        )
