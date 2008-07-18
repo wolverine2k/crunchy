@@ -13,10 +13,8 @@ import src.session as session
 from src.cometIO import raw_push_input
 
 # The set of other "widgets/services" required from other plugins
-requires =  set(["editor_widget", "io_widget"])
+requires =  set(["editor_widget", "io_widget", "register_io_hook"])
 
-# each doctest code sample will be kept track via a uid used as a key.
-pdb_codes = {}
 
 def register():
     """The register() function is required for all plugins.
@@ -91,7 +89,6 @@ def pdb_widget_callback(page, elem, uid):
     #    session.log(uid, tostring(markup), "crunchy")
         #config['log'][log_id] = [tostring(markup)]
     # which we store
-    pdb_codes[uid] = code
     # reset the original element to use it as a container.  For those # familiar with dealing with ElementTree Elements, in other context, # note that the style_pycode_nostrip() method extracted all of the existing
     # text, removing any original markup (and other elements), so that we
     # do not need to save either the "text" attribute or the "tail" one
@@ -127,7 +124,14 @@ def pdb_widget_callback(page, elem, uid):
 
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
+    
+    #retister before_ouput hook
+    plugin['services'].register_io_hook('before_output', pdb_filter, uid)
 
+
+def pdb_filter(data):
+    '''just test'''
+    return "_________pdb\n" + data
 
 class PdbConsole(object):
     '''A pdb console

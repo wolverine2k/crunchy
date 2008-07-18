@@ -11,6 +11,7 @@ import src.configuration as configuration
 import src.interpreter as interpreter
 import src.utilities as utilities
 import src.session as session
+from src.interface import plugin
 
 debug_ids = []#1, 2, 3, 4, 5]
 
@@ -76,6 +77,11 @@ class CrunchyIOBuffer(StringBuffer):
 
     def put_output(self, data, uid):
         """put some output into the pipe"""
+
+        #apply before_output hook first
+        data = plugin['services'].apply_io_hook('ANY', 'before_output', data)
+        data = plugin['services'].apply_io_hook(uid, 'before_output', data)
+
         data = data.replace('"', '&#34;')
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
