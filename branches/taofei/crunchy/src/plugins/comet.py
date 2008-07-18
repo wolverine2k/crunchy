@@ -10,6 +10,7 @@ can be avoided.
 from src.interface import plugin
 from src.cometIO import comet, push_input
 
+requires = set(["apply_io_hook"])
 provides = set(["/comet", "/input"])
 
 def register():
