@@ -4,13 +4,12 @@ Pdb the code in the pre area
 
 """
 
-# All plugins should import the crunchy plugin API
-
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id
 import src.session as session
 from src.cometIO import raw_push_input
+import re
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget", "register_io_hook"])
@@ -61,6 +60,16 @@ def pdb_command_callback(request, command = "next"):
         raw_push_input(uid, "print(__dict2table(locals()))\n")
     request.send_response(200)
     request.end_headers()
+
+def pdb_filter(data):
+    '''modifify the output of pdb command'''
+    pattern = re.compile(r"{HTML_STUFF}(.*){/END_HTML_STUFF}", re.M)
+    if pattern.search(data) != None:
+        data = pattern.sub(r"\1", data)
+        data = data.replace("&lt;", '<')
+        data = data.replace("&gt;", '>')
+        data = data.replace("&amp;", '&')
+    return data
 
 def pdb_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
@@ -129,20 +138,6 @@ def pdb_widget_callback(page, elem, uid):
     plugin['services'].register_io_hook('before_output', pdb_filter, uid)
 
 
-def pdb_filter(data):
-    '''just test'''
-    return "_________pdb\n" + data
-
-class PdbConsole(object):
-    '''A pdb console
-    a bridge between pdb and crunchy
-    '''
-    def __init__(self):
-        pass
-
-    def start(self, code):
-        __debug_string = '''%s'''
-        pdb.run(__debug_string %(code))
 
 pdb_jscode = r"""
 var random_session_id = '%s';
@@ -168,10 +163,11 @@ function init_pdb_interpreter(uid){
 };
 """ % (plugin['session_random_id'])
 
-pdb_pycode = """
+pdb_pycode = r'''
 import pdb
 def __dict2table(d):
-    s = "<table>"
+    s = "{HTML_STUFF}"
+    s += "<table>"
     s += "<thead><tr><th>name</th><th>value</th></tr>"
     for key,item in d.items():
         if key == "__dict2table":
@@ -179,20 +175,21 @@ def __dict2table(d):
         s += "<tr><td>" + str(key)  + "</td><td>" + str(item) + "</td></tr>"
     s += "</tbody>"
     s += "</table>"
+    s += "{/END_HTML_STUFF}"
     return s
-def __dict2table(d):
+def ___dict2table(d):
     s = ""
     for key,item in d.items():
         if key == "__dict2table":
             continue
-        s += "" + str(key)  + "\\t" + str(item) + "\\n"
+        s += "" + str(key)  + "\t" + str(item) + "\n"
     return s
 
-_debug_string = \"\"\"
+_debug_string = """
 %s
-\"\"\"
-pdb.run(_debug_string, locals={'__dict2table': __dict2table})
 """
+pdb.run(_debug_string, locals={'__dict2table': __dict2table})
+'''
 _pdb_pycode = """
 import pdb
 import sys
