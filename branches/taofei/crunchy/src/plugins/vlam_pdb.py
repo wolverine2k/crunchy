@@ -62,6 +62,7 @@ def pdb_command_callback(request, command = "next"):
     if command == "next":
         raw_push_input(uid, "next\n")
         raw_push_input(uid, "!print(__dict2table(locals()))\n")
+        raw_push_input(uid, "where\n")
     elif command == "local_var":
         raw_push_input(uid, "!print(__dict2table(locals()))\n")
     request.send_response(200)
@@ -83,6 +84,12 @@ def pdb_filter(data, uid):
             #text = text.replace(r'"', r'\"')
             plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].update_local_var('%s');" %(uid, text))
             data = ""
+        else: 
+            pattern = re.compile("&lt;.*?&gt;\(([0-9]+)\)&lt;module&gt;\(.*?\)")
+            match = pattern.match(text)
+            if match != None:
+                line_no = match.groups()[0]
+                plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].move_to_line('%s');" %(uid, line_no))
     #elif buff_class == "stdin":
     #    #no echo at all
     #    data = ""
@@ -112,7 +119,6 @@ def pdb_widget_callback(page, elem, uid):
             page.add_include("pdb_css_code")
             #element tree always escape < to &lt; and break my js code , so...
             page.add_css_code(pdb_css)
-
     # next, we style the code, also extracting it in a useful form ...
     code, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     # which we store
@@ -139,26 +145,25 @@ def pdb_widget_callback(page, elem, uid):
 
     btn = SubElement(elem, "button")
     btn.text = "Start PDB"
-    btn.attrib["onclick"] = "init_pdb('%s');/*document.getElementById('edit_area_toggle_checkbox_code_%s').click();*/" %(uid,uid)
+    btn.attrib["onclick"] = "init_pdb('%s');document.getElementById('edit_area_toggle_checkbox_code_%s').checked=true;eAL.toggle_on('code_%s');" %(uid,uid,uid)
     btn.attrib["id"] = "btn_start_pdb_%s" % uid
 
     btn = SubElement(elem, "button")
     btn.text = "Next Step"
-    btn.attrib["onclick"] = "window['pdb_%s'].send_cmd('next');" % uid
     btn.attrib["id"] = "btn_next_step_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
-    btn = SubElement(elem, "button")
-    btn.text = "Show Local Var"
-    btn.attrib["onclick"] = "window['pdb_%s'].send_cmd('local_var');" % uid
-    btn.attrib["id"] = "btn_show_local_var_%s" % uid
-    btn.attrib["disabled"] = "disabled"
+    #btn = SubElement(elem, "button")
+    #btn.text = "Show Local Var"
+    #btn.attrib["id"] = "btn_show_local_var_%s" % uid
+    #btn.attrib["disabled"] = "disabled"
 
     SubElement(elem, "br")
 
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
     
+
     #retister before_ouput hook
     plugin['services'].register_io_hook('before_output', pdb_filter, uid)
 
@@ -194,9 +199,18 @@ pdb_interpreter.prototype = {
         code = document.getElementById('code_' + uid).value;
         j.open("POST", "/pdb_start" + random_session_id + "?uid="+uid, false);
         j.send(code);
-        //document.getElementById('btn_start_pdb_' + uid).disabled= true;
-        document.getElementById('btn_next_step_' + uid).disabled= false;
-        document.getElementById('btn_show_local_var_' + uid).disabled= false;
+
+        //bind events
+        var _this = this;
+        self.start_btn = document.getElementById('btn_start_pdb_' + uid);//.disabled= true;
+        self.next_step_btn = document.getElementById('btn_next_step_' + uid);
+        self.show_local_var_btn = document.getElementById('btn_show_local_var_' + uid);
+        self.next_step_btn.onclick = function(){ _this.send_cmd('next')}; 
+        //self.show_local_var_btn.onclick = function(){ _this.send_cmd('local_var')}; 
+        
+        //enable them
+        self.next_step_btn.disabled = false;
+        //self.show_local_var_btn.disabled = false;
     },
     send_cmd : function(cmd){
         uid = this.uid;
@@ -230,6 +244,21 @@ pdb_interpreter.prototype = {
         }
         */
         container.innerHTML = data;
+    },
+    //move the curse to line <line> and highlight it
+    //assume we are using edit area
+    move_to_line: function(line){
+        var uid = this.uid;
+        var content = eAL.getValue("code_" + uid);
+        var i = 1;
+        var start = 0;
+        while(i < line)
+        {
+            start = content.indexOf('\n', start) + 1;
+            i ++;
+        }
+        end = content.indexOf('\n', start);
+        eAL.setSelectionRange("code_" + uid, start, end);
     }
 }
 
