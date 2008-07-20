@@ -5,6 +5,7 @@ Do something when the input/output  happpens
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin
+import re
 
 # The set of other "widgets/services" required from other plugins
 requires =  set()
@@ -41,5 +42,6 @@ def apply_io_hook(uid, hook, data):
         return data
     else:
         for func in _io_hooks[uid][hook]:
-            data = func(data)
+            data = func(data, uid)
         return data
+
