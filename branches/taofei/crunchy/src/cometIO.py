@@ -6,6 +6,7 @@ Also handles the redirection of stdin, stdout and stderr.
 
 import threading
 import sys
+import re
 
 import src.configuration as configuration
 import src.interpreter as interpreter
@@ -13,7 +14,7 @@ import src.utilities as utilities
 import src.session as session
 from src.interface import plugin
 
-debug_ids = []#1, 2, 3, 4, 5]
+debug_ids = [6]#1, 2, 3, 4, 5]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -187,6 +188,17 @@ def push_input(request):
 
 def raw_push_input(uid, data):
     input_buffers[uid].put(data)
+
+def extract_data(data):
+    '''
+    extract pure data from output span  like <span class='stdout'>some text</span>
+    '''
+    pattern = re.compile(r"<span class=\'([a-z]{1,10})\'>(.*?)</span>", re.M)
+    match = pattern.search(data)
+    if match:
+        return match.groups()
+    else:
+        return (None,None)
 
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""

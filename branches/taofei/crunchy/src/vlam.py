@@ -274,6 +274,7 @@ function runOutput(channel){
             }
             catch(e){
                 var status = "NO HTTP RESPONSE";
+                alert(status);
             }
             switch (status){
                 case 200:
