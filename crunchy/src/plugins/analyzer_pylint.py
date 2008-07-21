@@ -23,7 +23,8 @@ requires =  set()
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register one 'action':
-       the get_analyzer service, that return a object to analyze the code.
+       the get_analyzer_pylint service, that return a object to analyze the
+       code.
        """
     if pylint_available:
         # Register the analyzer

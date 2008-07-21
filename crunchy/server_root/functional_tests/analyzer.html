@@ -5,8 +5,49 @@
 <body>
 <h1>Crunchy analyzer Test</h1>
 
-<p>This is a prototype of a code analyzer (using a backend like Pylint)</p>
-<p>Here's an analyzer widget:</p>
+<p>Analyzers are tools which can analyze the quality of code, make reports
+about when something bad is found, and score the quality of the code.</p>
+
+<p>Those tools are not a part of Crunchy, you must install them on your
+computer. Currently, there are two supported analyzer:</p>
+<ul>
+<li><a href="http://www.logilab.org/857">Pylint</a></li>
+<li><a href="http://pychecker.sourceforge.net/">PyChecker</a></li>
+</ul>
+
+<h2>Configuration</h2>
+
+<p>You can choose your analyzer (or disable analysis) using the option:</p>
+<pre title="interpreter">
+crunchy.analyzer = None         # Disable analysis
+crunchy.analyzer = 'pylint'     # Use Pylint
+crunchy.analyzer = 'pychecker'   # Use PyChecker
+</pre>
+
+<h2>Making analysis</h2>
+
+<p>Please notice that the report and the score displayed heavy depend on
+what analyzer you use. Pylint is far more sever than PyChecker.</p>
+
+<p>The analyzer plugin add several <acronym title="Very Little Additional
+Markup">VLAM</acronym> options:</p>
+
+<ul>
+<li><code>analyzer</code>: a new widget to make analysis</li>
+<li><code>analyzer_score</code>: for editors, doctest and unittest, display
+the score after the normal execution</li>
+<li><code>analyzer_report</code>: for editors, doctest and unittest, add a
+button to analyze the code</li>
+</ul>
+
+<h3>The analyzer widget</h3>
+
+<p>The analyzer widget is an editor with a button to make a report and a score
+about the code.</p>
+
+<p>Here is some code that will raise warnings with Pylint (PyChecker fails to
+analyze it):</p>
+
 <pre title="analyzer">
 def Function_without_DocString(msg):
     print msg
@@ -14,6 +55,18 @@ def Function_without_DocString(msg):
 foo=missingvar
 Function_without_DocString(missingvar)
 </pre>
+
+<p>Here is another bad code, to try with PyChecker:</p>
+<pre title="analyzer">
+# Unused import
+import this
+# Statement with no effect
+True
+# Nice, well known and useful piece of code
+print "Hello world"
+</pre>
+
+<h3>With the editor</h3>
 
 <p>Here is an editor with the <code>analyzer_score</code> option:</p>
 <pre title="editor analyzer_score">
@@ -23,6 +76,8 @@ def Function_without_DocString(msg = []):
 
 Function_without_DocString(['Hello', 'world'])
 </pre>
+
+<h3>With doctest</h3>
 
 <p>Here is a doctest editor with the <code>analyzer_report</code> option:</p>
 <pre title="doctest analyzer_report">
@@ -37,6 +92,8 @@ def Function_with_A_BadName(msg = []):
     this_variable_is_not_used = 42
     print ' '.join(msg)
 </pre>
+
+<h3>With unittest</h3>
 
 <p>And here a unittest editor with both <code>analyze_report</code> and
 <code>analyzer_score</code>:</p>
@@ -57,6 +114,11 @@ class bad_named_class(object):
 </pre>
 
 <h2>Bugs</h2>
+
+<p>Please notice that the score displayed while using PyChecker is made by
+Crunchy from the PyChecker report, because PyChecker itself doesn't make
+scores.</p>
+
 <ul>
   <li>No bug known.</li>
 </ul>

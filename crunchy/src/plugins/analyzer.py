@@ -48,7 +48,7 @@ def register():
 
 def analyzer_enabled():
     """Return is a analyzer is available and enable"""
-    return 'analyzer' in config and config['analyzer'].lower() != 'none'
+    return 'analyzer' in config and config['analyzer'] is not None
 
 def get_analyzer():
     """Return the current analyzer (or None)"""
@@ -63,12 +63,16 @@ def analyzer_runner_callback(request):
     analyzer = plugin['services'].get_analyzer()
     analyzer.set_code(request.data)
     analyzer.run()
+    report = analyzer.get_report()
     request.send_response(200)
     request.end_headers()
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
-    plugin['append_text'](pageid, uid, "="*60 + "\n")
-    plugin['append_text'](pageid, uid, analyzer.get_report())
+    plugin['append_text'](pageid, uid, '\n' + "="*60 + "\n")
+    if report:
+        plugin['append_text'](pageid, uid, analyzer.get_report())
+    else:
+        plugin['append_text'](pageid, uid, _("Nothing to report."))
 
 def analyzer_score_callback(request):
     """Handles all execution of the analyzer to display a score
