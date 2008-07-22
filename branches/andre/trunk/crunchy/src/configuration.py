@@ -40,7 +40,7 @@ options = {
                   'normal', 'display normal',
                   'strict', 'display strict'],
     'no_markup': [None],
-    'override_default_interpreter' : ['default'],
+    'override_default_interpreter' : [None],
     # allow languages values like "en" or "en_GB"; str(f) converts u"en" to "en"
     'language': [str(f) for f in os.listdir(trans_path)
                              if (len(f)==2 or (len(f) == 5 and f[2] == '_'))

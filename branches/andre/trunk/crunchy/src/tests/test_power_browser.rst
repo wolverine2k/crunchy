@@ -132,11 +132,11 @@ An unrecognize value.
     <body />
     <BLANKLINE>
 
-"None" should yield the same result.
+None should yield the same result.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'None'
+    >>> config['power_browser'] = None
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body />

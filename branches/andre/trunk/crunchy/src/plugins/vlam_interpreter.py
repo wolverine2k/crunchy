@@ -82,7 +82,7 @@ def insert_interpreter(page, elem, uid):
 def select_type(vlam, c, elem):
     '''determines the interpreter type that should be inserted based on
        user configuration and vlam information.'''
-    if c == 'default':
+    if c is None:
         # go with interpreter specified in tutorial
         if "isolated" in vlam or "Human" in vlam:
             interp_kind = "isolated"
