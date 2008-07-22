@@ -116,9 +116,10 @@ def register_end_pagehandler(handler):
     vlam.CrunchyPage.end_pagehandlers.append(handler)
 plugin['register_end_pagehandler'] = register_end_pagehandler
 
-def create_vlam_page(filehandle, url, remote=False, local=False):
+def create_vlam_page(filehandle, url, username=None, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
-    return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
+    return vlam.CrunchyPage(filehandle, url, username=username,
+                                                    remote=remote, local=local)
 plugin['create_vlam_page'] = create_vlam_page
 
 def exec_code(code, uid, doctest=False):

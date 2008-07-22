@@ -38,6 +38,7 @@ exec_code = tools.exec_code
 # to artificially populate it as well from other sources enabling
 # independent unit testing.
 
+accounts = {}  # initialized in crunchy.py
 additional_vlam = {}  # initialized from plugins by CrunchyPlugin.py
 additional_menu_items = {}
 config = {}  # initialized mostly by configuration.py
@@ -46,9 +47,6 @@ preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
 from_comet = {} # initialized from cometIO.py
-#
-#config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1]
-#    ).decode(sys.getfilesystemencoding())
 
 config['crunchy_base_dir'] = os.path.normpath(os.path.join(
                                               os.path.dirname(__file__), '..')
@@ -82,6 +80,5 @@ Element = ElementTree.Element
 SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
-
 
 interactive = False # used with python crunchy -i option

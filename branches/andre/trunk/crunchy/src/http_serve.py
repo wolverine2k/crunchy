@@ -16,48 +16,19 @@ import time
 from src.utilities import uidgen
 import src.CrunchyPlugin as CrunchyPlugin
 from src.interface import config
+import src.interface
 
 DEBUG = False
 
-def require_basic_authenticate(func):
-    '''A decorate  to addd  basic http authorization check to HTTP Request Handlers'''
-    def wrapped(self):
-        #if not hasattr(self, 'need_authenticated'):
-        #    return func(self)
-        if not hasattr(self, 'authenticated'):
-            self.authenticated = False
-        if not self.authenticated and 'Authorization' in self.headers:
-            auth_word = self.headers['Authorization'].split()
-            if auth_word[0] != 'Basic':
-                self.authenticated = False
-            elif len(auth_word) > 1:
-                user,password = base64.b64decode(auth_word[1]).split(':')
-                if user == 'crunchy' and password == 'crunchypassword':
-                    self.authenticated = True
-        if not self.authenticated:
-            self.send_response(401)
-            self.send_header('WWW-Authenticate','Basic realm="Crunchy Access"')
-            self.end_headers()
-            self.wfile.write("You are not allowed to access this page.")
-    return wrapped
+realm = "Crunchy Access"
 
 def require_digest_access_authenticate(func):
-    '''A decorate  to addd  deigest authorization check to HTTP Request Handlers'''
-    #TODO:Find a bettter way to decide what method we are dealing with ..
-    if 'automated' in config:
-        return func
-    if "GET" in func.__name__:
-        method = "GET"
-    else:
-        method = "POST"
-    realm = "Crunchy Access"
-    users = {"crunchy" : "password"}
+    '''A decorator to add digest authorization checks to HTTP Request Handlers'''
+    accounts = src.interface.accounts
+    md5hex = lambda x:md5.md5(x).hexdigest()
 
     def wrapped(self):
-        #if not hasattr(self, 'need_authenticated'):
-        #    return func(self)
-        md5hex = lambda x:md5.md5(x).hexdigest()
-
+        method = self.command
         if not hasattr(self, 'authenticated'):
             self.authenticated =  None
         auth = self.headers.getheader('authorization')
@@ -69,30 +40,31 @@ def require_digest_access_authenticate(func):
                 if 'realm' not in cred or 'username' not in cred \
                     or 'nonce' not in cred or 'uri' not in cred or 'response' not in cred:
                     self.authenticated = False
-                elif cred['realm'] != realm or cred['username'] not in users:
+                elif cred['realm'] != realm or cred['username'] not in accounts:
                     self.authenticated = False
                 elif 'qop' in cred and ('nc' not in cred or 'cnonce' not in cred):
                     self.authenticated = False
                 else:
                     if 'qop' in cred:
                         expect_response = md5hex('%s:%s'%(
-                            md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
+                            accounts.get_password(cred['username']),
                             ':'.join([cred['nonce'],cred['nc'],cred['cnonce'],cred['qop'], md5hex('%s:%s' %(method, self.path))])
                             )
                         )
                     else:
                         expect_response = md5hex('%s:%s' %(
-                            md5hex('%s:%s:%s' %(cred['username'], realm , users.get(cred['username'], ""))),
+                            accounts.get_password(cred['username']),
                             ':'.join([cred['nonce'], md5hex('%s:%s' %(method, self.path))])
                             )
                         )
                     self.authenticated = (expect_response == cred['response'])
+                    if self.authenticated:
+                        self.crunchy_username = cred['username']
 
         if self.authenticated is None:
-            msg = "You are not allowed to access this page.Please login first!"
+            msg = "You are not allowed to access this page. Please login first!"
         elif self.authenticated is False:
             msg = "Authenticated Failed"
-
         if  not self.authenticated :
             self.send_response(401)
             self._nonce = md5hex("%d:%s" % (time.time(), realm))
@@ -103,6 +75,11 @@ def require_digest_access_authenticate(func):
             return func(self)
 
     return wrapped
+
+if src.interface.accounts:
+    require_authenticate = require_digest_access_authenticate
+else:
+    require_authenticate = lambda x: x
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
@@ -140,10 +117,10 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):
 
-    #@require_basic_authenticate
-    @require_digest_access_authenticate
+    @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
+        print "username = ", self.crunchy_username
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
         if DEBUG:
@@ -183,8 +160,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 ##            import sys
 ##            sys.exit()
 
-    #@require_basic_authenticate
-    @require_digest_access_authenticate
+    @require_authenticate
     def do_GET(self):
         """the same as POST, we draw no distinction"""
         self.do_POST()

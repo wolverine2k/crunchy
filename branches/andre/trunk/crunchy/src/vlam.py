@@ -281,7 +281,7 @@ class CrunchyPage(_BasePage):
     '''class used to store an html page processed by Crunchy with added
        interactive elements.
     '''
-    def __init__(self, filehandle, url, remote=False, local=False):
+    def __init__(self, filehandle, url, username=None, remote=False, local=False):
         """
         read a page, processes it and outputs a completely transformed one,
         ready for display in browser.
@@ -291,6 +291,7 @@ class CrunchyPage(_BasePage):
         """
         _BasePage.__init__(self)
         self.url = url
+        self.username = username
 
         # Assign tutorial type
         self.is_remote = remote # True if remote tutorial, on the web
@@ -310,12 +311,12 @@ class CrunchyPage(_BasePage):
         self.find_head()  # assigns self.head
         self.find_body()  # assigns self.body
 
-        # Crunchy's main work: processing vlam instructions, etc.
-        self.process_tags()
-
         # adding the javascript for communication between the browser and the server
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         self.add_js_code(comet_js)
+
+        # Crunchy's main work: processing vlam instructions, etc.
+        self.process_tags()
 
         # Extra styling
         self.add_crunchy_style() # first Crunchy's style

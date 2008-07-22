@@ -13,7 +13,7 @@ class Accounts(dict): # tested
     realm = 'Crunchy Access'
     separator = '|'
 
-    def __init__(self, pwp=None): # tested
+    def __init__(self, pwp=None, from_AMCLI=False): # tested
         if pwp is None:  # use this to allow redefining DEFAULT_PATH
             pwp = DEFAULT_PATH # from outside this module
         self.pwd_file_path = pwp
@@ -24,7 +24,8 @@ class Accounts(dict): # tested
             except IOError:
                 print "WARNING: Could not open existing password file."
         else:
-            print "New password file [path = %s] will be created." % pwp
+            if from_AMCLI:
+                print "New password file [path = %s] will be created." % pwp
 
     def __setitem__(self, username, item): # tested indirectly
         '''overrides base class dict method so that the password gets
@@ -109,14 +110,14 @@ class AMCLI(object):
 
     def cmd_set_base_dir(self):
         '''set_base_dir : sets the base directory from which accounts are
-           created when choosing 'default'.'''
-        print "The current base directory is %s" % accounts.base_dir
+           created when choosing 'default' or simply pressing enter.'''
+        print "The current base directory is %s" % self.accounts.base_dir
         print "If you want to keep the same base directory, simply press 'enter'."
         base_dir = raw_input("Please enter the new base directory: ")
         if base_dir != "":
-            accounts.base_dir = base_dir
+            self.accounts.base_dir = base_dir
             print "The account information for 'username' will be saved in "
-            print os.path.join(accounts.base_dir, 'username')
+            print os.path.join(self.accounts.base_dir, 'username')
         return
 
     def cmd_exit(self):
@@ -132,7 +133,10 @@ class AMCLI(object):
 
     def cmd_new(self, username):
         'new <username> : add a new user.'
-        home = raw_input("Please input the home directory [or 'default']: ")
+        if username in self.accounts:
+            print "Error: user %s already exists" % (username)
+            return
+        home = raw_input("Please input the home directory [or press 'enter' for default]: ")
         while True:
             password = getpass("Please input the password: ")
             password2 = getpass("Please input the password again: ")
@@ -140,17 +144,15 @@ class AMCLI(object):
                 break
             else:
                 print "The passwords do not match; please try again."
-        if username in self.accounts:
-            print "Error: user %s already exists" % (username)
-        else:
-            home = self.evaluate_home(username, home)
-            self.accounts[username] = (home, password)
-            self.accounts.save()
+        home = self.evaluate_home(username, home)
+        self.accounts[username] = (home, password)
+        self.accounts.save()
 
     def cmd_edit(self, username):
         "edit <username> : change a user's home directory and password."
         if username not in self.accounts:
             print "Error: user %s doesn't exist" % (username)
+            return
         else:
             home = raw_input("Please input the new home directory:[%s]" %
                                                   (self.accounts[username][0]))
@@ -172,6 +174,7 @@ class AMCLI(object):
         "del <username> : delete a user"
         if username not in self.accounts:
             print "Error: user %s doesn't exist" % username
+            return
         else:
             del self.accounts[username]
             self.accounts.save()
@@ -227,8 +230,8 @@ class AMCLI(object):
     def evaluate_home(self, username, home):
         '''processes home directory as provided by user to replace
         "shortcuts" by their true values.'''
-        if home == "default":
-            return os.path.join(accounts.base_dir, username)
+        if home == "default" or home == '':
+            return os.path.join(self.accounts.base_dir, username)
         else:
             return home
 

@@ -13,9 +13,7 @@ REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
-import src.configuration
-import src.http_serve as http_serve
-import src.pluginloader as pluginloader
+import account_manager
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
@@ -37,6 +35,11 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
     * set the port to the value specified, or looks for a free one
     * open a web browser at given url, or a default if not specified
     '''
+    # delay importing these until we've parsed the options.
+    import src.configuration
+    import src.http_serve as http_serve
+    import src.pluginloader as pluginloader
+
     if port is None:
         port = find_port()
     else:
@@ -52,7 +55,7 @@ def run_crunchy(host='127.0.0.1', port=None, url=None):
 
     base_url = 'http://' + host + ':' + str(port)
     if url is None:
-        url =  base_url + '/'
+        url =  base_url + '/index.html'
     else:
         url = base_url + url
     open_browser(url)
@@ -118,6 +121,9 @@ def parse_options():
     parser.add_option("--debug_ALL", action="store_true", dest="debug_all",
             help="Sets ALL the debug flags to True right from the start "+\
                  "(useful for developers in case of major problems; not fully implemented)")
+    parser.add_option("--accounts_file", action="store", type="string",
+                      dest="accounts_file",
+            help="Selects a user accounts file path different from default (.PASSWD)")
     # a dummy option to get it to work with py2app:
     parser.add_option("-p")
     (options, dummy) = parser.parse_args()
@@ -145,6 +151,12 @@ def parse_options():
     port = None
     if options.port:
         port = options.port
+    if options.accounts_file:
+        if os.path.exists(options.accounts_file):
+            src.interface.accounts = account_manager.Accounts(
+                                                          options.accounts_file)
+    else:
+        src.interface.accounts = account_manager.Accounts()
     return url, port
 
 def convert_url(url):

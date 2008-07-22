@@ -14,7 +14,7 @@ def register():
     '''registers a default http handler'''
     plugin['register_http_handler'](None, handler)
 
-def path_to_filedata(path, root):
+def path_to_filedata(path, root, crunchy_username=None):
     """
     Given a path, finds the matching file and returns a read-only reference
     to it. If the path specifies a directory and does not have a trailing slash
@@ -44,10 +44,11 @@ def path_to_filedata(path, root):
         try:
             extension = npath.split('.')[-1]
             if extension in ["htm", "html"]:
-                return plugin['create_vlam_page'](open(npath), path).read()
+                return plugin['create_vlam_page'](open(npath), path,
+                                                  crunchy_username).read()
             elif extension in preprocessor:
                 return plugin['create_vlam_page'](preprocessor[extension](npath),
-                                                  path).read()
+                                            path, crunchy_username).read()
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -63,7 +64,7 @@ def handler(request):
     """the actual handler"""
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
-    data = path_to_filedata(request.path, root_path)
+    data = path_to_filedata(request.path, root_path, request.crunchy_username)
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("in handle_default.handler(), beginning of data =")
         try:

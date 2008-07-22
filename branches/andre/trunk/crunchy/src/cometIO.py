@@ -11,7 +11,7 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import config
+from src.interface import config, accounts
 
 debug_ids = []#[1, 2, 3, 4, 5, 6]
 
@@ -150,6 +150,8 @@ def do_exec(code, uid, doctest=False):
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     if 'display' in config['get_current_page_security_level']():
+        return
+    elif not accounts:  # same if no username/password set
         return
 
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)

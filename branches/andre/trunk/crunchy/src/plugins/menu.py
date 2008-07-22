@@ -47,7 +47,10 @@ def insert_menu(page): # tested
     menu, menu_items = create_empty_menu()
     menu_items.append(create_home())
     for item in additional_menu_items:
-        menu_items.append(additional_menu_items[item])
+        if item.startswith('0'):
+            menu_items.insert(0, additional_menu_items[item])
+        else:
+            menu_items.append(additional_menu_items[item])
     menu_items.append(create_quit())
     if page.body:
         page.body.insert(0, menu)

@@ -50,7 +50,7 @@ files_with_failures = 0
 excluded = []#["test_colourize.rst"]
 
 #TODO: add a command line option to replace this
-include_only = ['test_vlam.rst']
+include_only = ["test_account_manager.rst"]
 
 #TODO: add a command line option (clean?) that would remove all .pyc
 # files before testing.
@@ -61,8 +61,8 @@ include_only = ['test_vlam.rst']
 for t in test_files:
     if t in excluded:
         continue # skip
-    #if t not in include_only:
-    #    continue
+    if t not in include_only:
+        continue
     failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
     total_tests += nb_tests
     total_failures += failure
