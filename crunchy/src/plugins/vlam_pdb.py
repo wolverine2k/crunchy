@@ -6,7 +6,7 @@ Pdb the code in the pre area
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id,unChangeHTMLspecialCharacters,escape_for_javascript
 import src.session as session
 from src.cometIO import raw_push_input,extract_data
 import re,sys
@@ -32,9 +32,19 @@ def register():
     plugin['register_http_handler'](
                          "/pdb_next%s"%plugin['session_random_id'],
                          lambda r :pdb_command_callback(r, "next"))
+
     plugin['register_http_handler'](
-                         "/pdb_local_var%s"%plugin['session_random_id'],
-                         lambda r :pdb_command_callback(r, "local_var"))
+                         "/pdb_step%s"%plugin['session_random_id'],
+                         lambda r :pdb_command_callback(r, "step"))
+
+    plugin['register_http_handler'](
+                         "/pdb_return%s"%plugin['session_random_id'],
+                         lambda r :pdb_command_callback(r, "return"))
+
+    #plugin['register_http_handler'](
+    #                     "/pdb_local_var%s"%plugin['session_random_id'],
+    #                     lambda r :pdb_command_callback(r, "local_var"))
+
     plugin['register_http_handler'](
                          "/pdb_start%s"%plugin['session_random_id'],
                         pdb_start_callback)
@@ -65,6 +75,14 @@ def pdb_command_callback(request, command = "next"):
         raw_push_input(uid, "where\n")
     elif command == "local_var":
         raw_push_input(uid, "!print(__dict2table(locals()))\n")
+    elif command == "step":
+        raw_push_input(uid, "step\n")
+        raw_push_input(uid, "!print(__dict2table(locals()))\n")
+        raw_push_input(uid, "where\n")
+    elif command == "return":
+        raw_push_input(uid, "return\n")
+        raw_push_input(uid, "!print(__dict2table(locals()))\n")
+        raw_push_input(uid, "where\n")
     request.send_response(200)
     request.end_headers()
 
@@ -75,24 +93,19 @@ def pdb_filter(data, uid):
         pattern = re.compile(r"{pdb_local_var_output}(.*){/pdb_local_var_output}", re.M)
         if pattern.search(text) != None:
             text = pattern.sub(r"\1", text)
-            text = text.replace(r"'", r"\'")
-            text = text.replace(r"\n", r"\\n'")
-            text = text.replace(r"\r", r"\\r'")
-            text = text.replace(r"&lt;", r"<")
-            text = text.replace(r"&gt;", r">")
-            text = text.replace(r"&amp;", r"&")
-            #text = text.replace(r'"', r'\"')
+            text = unChangeHTMLspecialCharacters(text)
+            text = escape_for_javascript(text)
             plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].update_local_var('%s');" %(uid, text))
             data = ""
         else: 
-            pattern = re.compile("&lt;.*?&gt;\(([0-9]+)\)&lt;module&gt;\(.*?\)")
+            pattern = re.compile(".*?\(([0-9]+)\).*?\(.*?\)")
             match = pattern.match(text)
             if match != None:
                 line_no = match.groups()[0]
                 plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].move_to_line('%s');" %(uid, line_no))
-    #elif buff_class == "stdin":
-    #    #no echo at all
-    #    data = ""
+    elif buff_class == "stdin":
+        #no echo at all
+        data = ""
     return data
 
 def pdb_widget_callback(page, elem, uid):
@@ -138,19 +151,28 @@ def pdb_widget_callback(page, elem, uid):
     t.text = "Local Namespace"
     local_var_div = SubElement(elem, "div")
     local_var_div.attrib["id"] = "local_var_%s"%uid 
-    #local_var_div.attrib['style'] = "width:"
 
     #some spacing:
     SubElement(elem, "br")
 
     btn = SubElement(elem, "button")
     btn.text = "Start PDB"
-    btn.attrib["onclick"] = "init_pdb('%s');document.getElementById('edit_area_toggle_checkbox_code_%s').checked=true;eAL.toggle_on('code_%s');" %(uid,uid,uid)
+    btn.attrib["onclick"] = "init_pdb('%s');" %(uid)
     btn.attrib["id"] = "btn_start_pdb_%s" % uid
 
     btn = SubElement(elem, "button")
     btn.text = "Next Step"
     btn.attrib["id"] = "btn_next_step_%s" % uid
+    btn.attrib["disabled"] = "disabled"
+
+    btn = SubElement(elem, "button")
+    btn.text = "Step Into"
+    btn.attrib["id"] = "btn_step_into_%s" % uid
+    btn.attrib["disabled"] = "disabled"
+
+    btn = SubElement(elem, "button")
+    btn.text = "return"
+    btn.attrib["id"] = "btn_return_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
     #btn = SubElement(elem, "button")
@@ -204,13 +226,22 @@ pdb_interpreter.prototype = {
         var _this = this;
         self.start_btn = document.getElementById('btn_start_pdb_' + uid);//.disabled= true;
         self.next_step_btn = document.getElementById('btn_next_step_' + uid);
+        self.step_into_btn = document.getElementById('btn_step_into_' + uid);
+        self.return_btn = document.getElementById('btn_return_' + uid);
         self.show_local_var_btn = document.getElementById('btn_show_local_var_' + uid);
         self.next_step_btn.onclick = function(){ _this.send_cmd('next')}; 
+        self.step_into_btn.onclick = function(){ _this.send_cmd('step')}; 
+        self.return_btn.onclick = function(){ _this.send_cmd('return')}; 
         //self.show_local_var_btn.onclick = function(){ _this.send_cmd('local_var')}; 
         
         //enable them
         self.next_step_btn.disabled = false;
+        self.step_into_btn.disabled = false;
+        self.return_btn.disabled = false;
         //self.show_local_var_btn.disabled = false;
+
+        //clean local var table
+        this.update_local_var("");
     },
     send_cmd : function(cmd){
         uid = this.uid;
@@ -259,6 +290,7 @@ pdb_interpreter.prototype = {
         }
         end = content.indexOf('\n', start);
         eAL.setSelectionRange("code_" + uid, start, end);
+        this._current_line = line;
     }
 }
 
@@ -271,6 +303,7 @@ function init_pdb(uid)
 
 pdb_pycode = r'''
 import pdb
+import __builtin__
 def __dict2table(d):
     s = "{pdb_local_var_output}"
     s += "<table class='namespace'>"
@@ -279,24 +312,15 @@ def __dict2table(d):
     for key,item in d.items():
         if key == "__dict2table":
             continue
+        item = str(item).replace('<', '&lt;')
         s += "<tr><td>" + str(key)  + "</td><td>" + str(item) + "</td></tr>"
     s += "</tbody>"
     s += "</table>"
     s += "{/pdb_local_var_output}"
     return s
-
+__builtin__.__dict2table = __dict2table
+del __builtin__
 _debug_string = """%s"""
-pdb.run(_debug_string, locals={'__dict2table': __dict2table})
+pdb.run(_debug_string, globals={}, locals={})
 '''
-_pdb_pycode = """
-import pdb
-import sys
-from StringIO import StringIO
-old_output = sys.stdout
-__debug_string = \"\"\"
-%s
-\"\"\"
-pdb.run(__debug_string)
-"""
-
 
