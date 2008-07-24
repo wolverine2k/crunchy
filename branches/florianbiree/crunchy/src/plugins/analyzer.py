@@ -70,7 +70,7 @@ def analyzer_runner_callback(request):
     pageid = uid.split(":")[0]
     plugin['append_text'](pageid, uid, '\n' + "="*60 + "\n")
     if report:
-        plugin['append_text'](pageid, uid, analyzer.get_report())
+        plugin['append_text'](pageid, uid, report)
     else:
         plugin['append_text'](pageid, uid, _("Nothing to report."))
 

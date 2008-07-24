@@ -85,11 +85,13 @@ class CrunchyChecker:
         score = 10 - ((number_of_errors / number_of_lines) * 10)
         """
         if not "UNABLE TO IMPORT" in self.get_report():
-            report_lines = self.get_report().split('\n')
-            while '' in report_lines:
-                report_lines.remove('')
+            # Just count non-empty and non-comment lines
+            code_lines = [line for line in self._code.split('\n') \
+                          if line.strip() and not line.strip().startswith('#')]
+            report_lines = [line for line in self.get_report().split('\n') \
+                            if line]
             number_of_errors = float(len(report_lines))
-            number_of_lines = float(len(self._code.split('\n')))
+            number_of_lines = float(len(code_lines))
             return 10 - ((number_of_errors / number_of_lines) * 10)
         else:
             return None
