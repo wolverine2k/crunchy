@@ -9,10 +9,11 @@
 about when something bad is found, and score the quality of the code.</p>
 
 <p>Those tools are not a part of Crunchy, you must install them on your
-computer. Currently, there are two supported analyzer:</p>
+computer. Currently, there are three supported analyzers:</p>
 <ul>
 <li><a href="http://www.logilab.org/857" title="external_link">Pylint</a></li>
 <li><a href="http://pychecker.sourceforge.net/" title="external_link">PyChecker</a></li>
+<li><a href="http://divmod.org/trac/wiki/DivmodPyflakes" title="external_link">PyFlakes</a></li>
 </ul>
 
 <h2>Configuration</h2>
@@ -21,7 +22,8 @@ computer. Currently, there are two supported analyzer:</p>
 <pre title="interpreter">
 crunchy.analyzer = None         # Disable analysis
 crunchy.analyzer = 'pylint'     # Use Pylint
-crunchy.analyzer = 'pychecker'   # Use PyChecker
+crunchy.analyzer = 'pychecker'  # Use PyChecker
+crunchy.analyzer = 'pyflakes'   # Use PyFlakes
 </pre>
 
 <h2>Making analysis</h2>
@@ -68,7 +70,9 @@ print "Hello world"
 
 <h3>With the editor</h3>
 
-<p>Here is an editor with the <code>analyzer_score</code> option:</p>
+<p>Here is an editor with the <code>analyzer_score</code> option (<em>this
+doesn't add another button, but let the existing one display the score reported
+by the analyzer</em>):</p>
 <pre title="editor analyzer_score">
 def Function_without_DocString(msg = []):
     this_variable_is_not_used = 42
