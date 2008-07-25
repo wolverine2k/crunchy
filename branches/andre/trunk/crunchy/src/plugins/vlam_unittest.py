@@ -59,7 +59,7 @@ def unittest_widget_callback(page, elem, uid):
     if log_id:
         t = 'unittest'
         config['logging_uids'][uid] = (log_id, t)
-    
+
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
@@ -68,7 +68,7 @@ def unittest_widget_callback(page, elem, uid):
         if not page.includes("unittest_included") :
             page.add_include("unittest_included")
             page.add_js_code(unittest_jscode)
-    
+
     # next, we style the code, also extracting it in a useful form ...
     unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
@@ -95,7 +95,10 @@ def unittest_widget_callback(page, elem, uid):
 # random session id.
 unittest_jscode = """
 function exec_unittest(uid){
+    try{
     document.getElementById("kill_image_"+uid).style.display = "block";
+    }
+    catch(err){;}
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/unittest%s?uid="+uid, false);

@@ -98,7 +98,10 @@ def doctest_widget_callback(page, elem, uid):
 # random session id.
 doctest_jscode = """
 function exec_doctest(uid){
+    try{
     document.getElementById("kill_image_"+uid).style.display = "block";
+    }
+    catch(err){;}
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/doctest%s?uid="+uid, false);

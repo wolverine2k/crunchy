@@ -174,7 +174,10 @@ def insert_alternate_python(page, elem, uid):
 # with a random session id appended for security reasons.
 exec_jscode = """
 function exec_code(uid){
+    try{
     document.getElementById("kill_image_"+uid).style.display = "block";
+    }
+    catch(err){;}
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
