@@ -119,6 +119,12 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno):
 def simplify_doctest_error_message(msg):
     '''Simplifies doctest messages, assuming standard format.'''
 
+    # new for Python 2.6
+    #- Doctest now returns results as a named tuple for readability:
+    # (0, 7) --> TestResults(failed=0, attempted=7)
+    if "TestResults" in msg:
+        msg = msg.replace("TestResults", '').replace("=", '')
+        msg = msg.replace("failed", '').replace("attempted", '')
     failures, total = eval( msg.split('\n')[-1])
 
     if failures:
