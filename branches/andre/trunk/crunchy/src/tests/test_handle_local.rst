@@ -89,8 +89,12 @@ so we can be sure it's been added correctly.
     
     >>> import sys
     >>> cwd = os.getcwd()
-    >>> while cwd in sys.path:
-    ...    sys.path.remove(cwd)
+    >>> if cwd in sys.path:
+    ...     cwd_present = True  # For later cleanup
+    ...     while cwd in sys.path:
+    ...         sys.path.remove(cwd)
+    ... else:
+    ...     cwd_present = False
 
 We are now ready for the test as such.
 
@@ -119,7 +123,8 @@ We are now ready for the test as such.
     >>> os.remove(filepath)
     >>> cwd in sys.path
     True
-    >>> sys.path.remove(cwd)  # cleaning up
+    >>> if not cwd_present:
+    ...     sys.path.remove(cwd)  # restore original state
 
 .. _`add_to_path()`:
 
