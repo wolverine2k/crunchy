@@ -31,9 +31,10 @@ class Accounts(dict): # tested
         '''overrides base class dict method so that the password gets
         automatically encrypted.'''
         home = item[0]
+        admin_rights = item[2]
         encoded_password = md5.md5('%s:%s:%s' %
                            (username, self.realm, item[1])).hexdigest()
-        dict.__setitem__(self, username, (home, encoded_password))
+        dict.__setitem__(self, username, (home, encoded_password, admin_rights))
 
     def load(self): # tested indirectly
         '''loads data from password file'''
@@ -41,14 +42,16 @@ class Accounts(dict): # tested
         for line in data.split('\n'):
             if not line:
                 continue
-            username, user_dir, encoded_password = line.split(self.separator, 2)
-            dict.__setitem__(self, username, (user_dir, encoded_password))
+            username, user_dir, encoded_password, admin_rights = line.split(
+                                                            self.separator)
+            dict.__setitem__(self, username, (user_dir, encoded_password,
+                                              admin_rights))
 
     def save(self): # tested
         '''saves the account information in a file.'''
         lines = []
         for key, value in self.items():
-            lines.append(self.separator.join([key, value[0], value[1]]))
+            lines.append(self.separator.join([key, value[0], value[1], value[2]]))
         data = '\n'.join(lines)
         f = open(self.pwd_file_path, 'w')
         f.write(data)
@@ -69,6 +72,17 @@ class Accounts(dict): # tested
             return ""
         else:
             return self[username][0]
+
+    def is_admin(self, username):
+        '''given a username, indicates whether or not the corresponding
+           user has administrative privileges (required to exit crunchy).'''
+        if username not in self:
+            return False
+        else:
+            if self[username][2] == 'y':
+                return True
+            else:
+                return False
 
 class AMCLI(object):
     '''Account Manager Command Line Interface'''
@@ -126,10 +140,11 @@ class AMCLI(object):
 
     def cmd_list(self):
         'list : list all users'
-        print "%s\t%s" % ("username", "home directory")
-        print '---------------------------------------'
+        print "%s\t%s\t%s" % ("username", "home directory", "admin rights")
+        print '-----------------------------------------------------------'
         for user in self.accounts:
-            print ("%s\t\t%s" %(user, self.accounts[user][0]))
+            print ("%s\t\t%s\t\t%s" %(user, self.accounts[user][0],
+                                                        self.accounts[user][2]))
 
     def cmd_new(self, username):
         'new <username> : add a new user.'
@@ -144,8 +159,10 @@ class AMCLI(object):
                 break
             else:
                 print "The passwords do not match; please try again."
+        admin_rights = raw_input(
+                "Does this user have administrative rights [y or n]? ")
         home = self.evaluate_home(username, home)
-        self.accounts[username] = (home, password)
+        self.accounts[username] = (home, password, admin_rights)
         self.accounts.save()
 
     def cmd_edit(self, username):
@@ -167,7 +184,9 @@ class AMCLI(object):
                     break
                 else:
                     print "Password don't match, please try again."
-            self.accounts[username] =  (home, password)
+            admin_rights = raw_input(
+                        "Does this user have administrative rights [y or n]? ")
+            self.accounts[username] =  (home, password, admin_rights)
             self.accounts.save()
 
     def cmd_del(self, username):
@@ -182,8 +201,8 @@ class AMCLI(object):
     def cmd_load(self, file_name):
         '''load <file_name> : create accounts from plain file <file_name>
                 File format :
-                    username_1 home_directory1 password1
-                    username_2 home_directory2 password2
+                    username_1 home_directory1 password1 admin_rights1
+                    username_2 home_directory2 password2 admin_rights2
                     ...
                 You can use a single space [' '], a comma [','], or
                 a tab character ['\\t'] as separator between values.'''
@@ -195,7 +214,7 @@ class AMCLI(object):
             is_ok = True
             for line in lines:
                 t = line.split(sep)
-                if len(t) != 3:
+                if len(t) != 4:
                     is_ok = False
                     break
                 else:

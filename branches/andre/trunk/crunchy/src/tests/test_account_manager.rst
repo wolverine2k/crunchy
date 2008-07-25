@@ -9,8 +9,7 @@ We start our tests with a non-existing file to be created from scratch.
     >>> if os.path.exists(new_file):
     ...     os.remove(new_file)
     >>> import account_manager as am
-    >>> accounts = am.Accounts(new_file) # doctest: +ELLIPSIS
-    New password file [path = ...] will be created.
+    >>> accounts = am.Accounts(new_file)
 
 Adding a user.
 

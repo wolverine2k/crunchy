@@ -6,7 +6,7 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, plugin, server, debug, \
-                      debug_msg, preprocessor
+                      debug_msg, preprocessor, common
 
 _ = translate['_']
 
@@ -24,7 +24,7 @@ def path_to_filedata(path, root, crunchy_username=None):
     Paths starting with / and containing .. will return an error message.
     POSIX version, should work in Windows.
     """
-    if path == "/exit":
+    if path == common['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()

@@ -4,8 +4,8 @@ a username/password has been set or not.
 '''
 
 
-from src.interface import plugin, accounts, Element, SubElement, \
-     translate, additional_menu_items
+from src.interface import plugin, accounts, Element, translate,\
+    additional_menu_items
 _ = translate['_']
 
 

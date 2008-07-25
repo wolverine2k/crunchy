@@ -9,13 +9,14 @@ treats them the same.
 
 from SocketServer import ThreadingMixIn, TCPServer
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import urllib,urllib2
+import urllib
+import urllib2
 from traceback import format_exc
-import base64,md5
+import base64
+import md5
 import time
-from src.utilities import uidgen
+
 import src.CrunchyPlugin as CrunchyPlugin
-from src.interface import config
 import src.interface
 
 DEBUG = False
@@ -120,7 +121,6 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
-        print "username = ", self.crunchy_username
         # at first, assume that the given path is the actual path and there are no arguments
         realpath = self.path
         if DEBUG:

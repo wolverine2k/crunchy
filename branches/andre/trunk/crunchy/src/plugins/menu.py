@@ -3,9 +3,9 @@
 Other than through a language preference, Crunchy menus can be modified
 by plugin writers who can add other items.
 """
-
+import random
 from src.interface import plugin, Element, SubElement, config, \
-     translate, additional_menu_items
+     translate, additional_menu_items, accounts, common
 _ = translate['_']
 
 
@@ -35,10 +35,13 @@ def create_home():  # tested
     a.text = _("Crunchy Home")
     return home
 
+quit_random_id = str(int(random.random()*1000000000)) + str(
+                                           int(random.random()*1000000000))
+common['exit'] = "/exit" + quit_random_id
 def create_quit(): # tested
     '''creates the quit element for the menu'''
     Quit = Element("li")
-    a = SubElement(Quit, "a", href="/exit")
+    a = SubElement(Quit, "a", href=common['exit'])
     a.text = _("Quit Crunchy")
     return Quit
 
@@ -51,7 +54,8 @@ def insert_menu(page): # tested
             menu_items.insert(0, additional_menu_items[item])
         else:
             menu_items.append(additional_menu_items[item])
-    menu_items.append(create_quit())
+    if accounts.is_admin(page.username):
+        menu_items.append(create_quit())
     if page.body:
         page.body.insert(0, menu)
 

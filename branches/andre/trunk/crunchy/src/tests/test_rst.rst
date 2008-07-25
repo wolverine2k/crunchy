@@ -42,7 +42,11 @@ an appropriate flag.
 ---------------------
 
 # Test - check that tag handler, and service have been registered
-    >>> rst.register()
+    >>> if _docutils_installed:
+    ...     rst.register()
+    ... else:
+    ...     print "power_browser"
+    ...     print "rst"
     power_browser
     rst
     >>> if _docutils_installed:
