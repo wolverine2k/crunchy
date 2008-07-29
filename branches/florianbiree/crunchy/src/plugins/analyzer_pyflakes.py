@@ -17,7 +17,7 @@ except ImportError:
 from src.interface import config, plugin
 
 # The set of other "widgets/services" required from other plugins
-requires =  set()
+requires =  set(["analyzer_widget"])
 
 def register():
     """The register() function is required for all plugins.
@@ -34,6 +34,7 @@ def register():
             'get_analyzer_pyflakes',
             CrunchyFlakes(),
         )
+        plugin['services'].register_analyzer_name('pyflakes', 'PyFlakes')
 
 class CrunchyFlakes:
     """Class to configure and start a pyflakes analysis

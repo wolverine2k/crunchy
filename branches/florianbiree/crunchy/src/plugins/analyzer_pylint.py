@@ -18,7 +18,7 @@ except ImportError:
 from src.interface import config, plugin
 
 # The set of other "widgets/services" required from other plugins
-requires =  set()
+requires =  set(["analyzer_widget"])
 
 def register():
     """The register() function is required for all plugins.
@@ -35,6 +35,7 @@ def register():
             'get_analyzer_pylint',
             CrunchyLinter(),
         )
+        plugin['services'].register_analyzer_name('pylint', 'PyLint')
 
 if pylint_available:
     # We redefine the verification of docstring

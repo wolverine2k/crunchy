@@ -19,7 +19,7 @@ except ImportError:
 from src.interface import config, plugin
 
 # The set of other "widgets/services" required from other plugins
-requires =  set()
+requires =  set(["analyzer_widget"])
 
 def register():
     """The register() function is required for all plugins.
@@ -36,6 +36,7 @@ def register():
             'get_analyzer_pychecker',
             CrunchyChecker(),
         )
+        plugin['services'].register_analyzer_name('pychecker', 'PyChecker')
 
 # Keep the original checker._printWarnings
 original_printWarnings = checker._printWarnings
