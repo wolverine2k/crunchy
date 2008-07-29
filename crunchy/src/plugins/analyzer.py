@@ -15,6 +15,8 @@ provides = set(["analyzer_widget"])
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
 
+analyzer_names = {None: _("Disabled")}
+
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register two types of 'actions':
@@ -38,6 +40,8 @@ def register():
     plugin['register_service']('insert_analyzer_button',
                                insert_analyzer_button)
     plugin['register_service']('add_scoring', add_scoring)
+    plugin['register_service']('register_analyzer_name',
+                               analyzer_names.__setitem__)
     
     # 'analyzer' only appears inside <pre> elements, using the notation
     # <pre title='analyzer ...'>
@@ -60,19 +64,36 @@ def analyzer_runner_callback(request):
     """Handles all execution of the analyzer to display a report.
     The request object will contain
     all the data in the AJAX message sent from the browser."""
-    analyzer = plugin['services'].get_analyzer()
-    analyzer.set_code(request.data)
-    analyzer.run()
-    report = analyzer.get_report()
+    info = request.data.split("_::EOF::_")
+    code = '_::EOF::_'.join(info[1:])
+    # Get the choosen analyzer (if any)
+    analyzer = info[0]
+    if analyzer :
+        # Change the config if needed
+        if analyzer == str(None):
+            analyzer = None
+        if analyzer != config['analyzer']:
+            config['analyzer'] = analyzer
+    
     request.send_response(200)
     request.end_headers()
     uid = request.args["uid"]
     pageid = uid.split(":")[0]
-    plugin['append_text'](pageid, uid, '\n' + "="*60 + "\n")
-    if report:
-        plugin['append_text'](pageid, uid, report)
+    
+    if analyzer_enabled():
+        # Analyzer the code
+        analyzer = plugin['services'].get_analyzer()
+        analyzer.set_code(code)
+        analyzer.run()
+        report = analyzer.get_report()
+        plugin['append_text'](pageid, uid, '\n' + "="*60 + "\n")
+        if report:
+            plugin['append_text'](pageid, uid, report)
+        else:
+            plugin['append_text'](pageid, uid, _("Nothing to report."))
     else:
-        plugin['append_text'](pageid, uid, _("Nothing to report."))
+        plugin['append_text'](pageid, uid,
+                              _("Please install and enable an analyzer."))
 
 def analyzer_score_callback(request):
     """Handles all execution of the analyzer to display a score
@@ -112,13 +133,8 @@ def analyzer_widget_callback(page, elem, uid):
     plugin['services'].insert_editor_subwidget(page, elem, uid, analyzercode)
     #some spacing:
     SubElement(elem, "br")
-    if analyzer_enabled():
-        # use the insert_analyzer_button service as any plugin can do
-        plugin['services'].insert_analyzer_button(page, elem, uid)
-    else:
-        # Display a nice link
-        no_analyzer = SubElement(elem, "p")
-        no_analyzer.text = _("No analyzer installed nor enabled.")
+    # use the insert_analyzer_button service as any plugin can do
+    plugin['services'].insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
@@ -128,19 +144,31 @@ def insert_analyzer_button(page, elem, uid):
     quality.
     Return the inserted button
     """
-    if analyzer_enabled():
-        if 'display' not in config['page_security_level'](page.url):
-            if not page.includes("analyzer_included") :
-                page.add_include("analyzer_included")
-                page.add_js_code(analyzer_jscode)
-        btn = SubElement(elem, "button")
-        btn.text = _("Analyze the code")
-        btn.attrib["onclick"] = "exec_analyzer('%s')" % uid
-        # add the display of the score
-        plugin['services'].add_scoring(page, btn, uid)
-        return btn
-    else:
-        return None
+    
+    # Form to select the analyzer
+    SubElement(elem, "br")
+    form1 = SubElement(elem, 'form', name='form1_' + uid)
+    span = SubElement(form1, 'span')
+    span.text = _('Analyzer: ')
+    span.attrib['class'] = 'analyzer'
+    select = SubElement(form1, 'select', id='analyzer_'+uid)
+    for analyzer in analyzer_names:
+        option = SubElement(select, 'option', value=str(analyzer))
+        option.text = analyzer_names[analyzer]
+        if analyzer == config['analyzer']:
+            option.attrib['selected'] = 'selected'
+    SubElement(elem, "br")
+    
+    
+    if 'display' not in config['page_security_level'](page.url):
+        if not page.includes("analyzer_included") :
+            page.add_include("analyzer_included")
+            page.add_js_code(analyzer_jscode)
+    btn = SubElement(elem, "button")
+    btn.text = _("Analyze the code")
+    btn.attrib["onclick"] = "exec_analyzer('%s')" % uid
+    # add the display of the score
+    plugin['services'].add_scoring(page, btn, uid)
 
 def add_scoring(page, button, uid):
     """Add a call to the analyzer scoring function to a standard 'execute'
@@ -162,7 +190,8 @@ function exec_analyzer(uid){
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/analyzer%s?uid="+uid, false);
-    j.send(code);
+    analyzer = document.getElementById("analyzer_"+uid).value;
+    j.send(analyzer+"_::EOF::_"+code);
 };
 """ % plugin['session_random_id']
 analyzer_score_jscode = """
