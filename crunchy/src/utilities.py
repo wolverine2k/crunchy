@@ -82,10 +82,11 @@ def unChangeHTMLspecialCharacters(text):
 def escape_for_javascript(text):
     if python_version >= 3:
         text = str(text)
-    text = text.replace(r"'", r"\'")
-    text = text.replace(r'"', r'\"')
-    text = text.replace(r"\n", r"\\n'")
-    text = text.replace(r"\r", r"\\r'")
+    text = text.replace("\\", "\\\\")
+    text = text.replace("'", r"\'")
+    text = text.replace('"', r'\"')
+    text = text.replace("\n", r"\n'")
+    text = text.replace("\r", r"\r'")
     return text
 
 begin_html = """

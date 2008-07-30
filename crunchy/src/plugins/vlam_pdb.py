@@ -8,7 +8,7 @@ Pdb the code in the pre area
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id,unChangeHTMLspecialCharacters,escape_for_javascript
 import src.session as session
-from src.cometIO import raw_push_input,extract_data
+from src.cometIO import raw_push_input,extract_data,debug_msg
 import re,sys
 
 # The set of other "widgets/services" required from other plugins
@@ -71,18 +71,18 @@ def pdb_command_callback(request, command = "next"):
     uid = request.args["uid"]
     if command == "next":
         raw_push_input(uid, "next\n")
-        raw_push_input(uid, "!print(__dict2table(locals()))\n")
-        raw_push_input(uid, "where\n")
+        raw_push_input(uid, "show_locals\n")
+        raw_push_input(uid, "simple_where\n")
     elif command == "local_var":
-        raw_push_input(uid, "!print(__dict2table(locals()))\n")
+        raw_push_input(uid, "simple_where\n")
     elif command == "step":
         raw_push_input(uid, "step\n")
-        raw_push_input(uid, "!print(__dict2table(locals()))\n")
-        raw_push_input(uid, "where\n")
+        raw_push_input(uid, "show_locals\n")
+        raw_push_input(uid, "simple_where\n")
     elif command == "return":
         raw_push_input(uid, "return\n")
-        raw_push_input(uid, "!print(__dict2table(locals()))\n")
-        raw_push_input(uid, "where\n")
+        raw_push_input(uid, "show_locals\n")
+        raw_push_input(uid, "simple_where\n")
     request.send_response(200)
     request.end_headers()
 
@@ -90,19 +90,26 @@ def pdb_filter(data, uid):
     '''modifify the output of pdb command'''
     buff_class,text = extract_data(data)
     if buff_class == "stdout":
-        pattern = re.compile(r"{pdb_local_var_output}(.*){/pdb_local_var_output}", re.M)
+        text = unChangeHTMLspecialCharacters(text)
+        pattern = re.compile(r"{pdb_local_var_output}(.*){/pdb_local_var_output}", re.DOTALL)
         if pattern.search(text) != None:
             text = pattern.sub(r"\1", text)
-            text = unChangeHTMLspecialCharacters(text)
+            #we should escape twice
             text = escape_for_javascript(text)
             plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].update_local_var('%s');" %(uid, text))
             data = ""
-        else: 
-            pattern = re.compile(".*?\(([0-9]+)\).*?\(.*?\)")
-            match = pattern.match(text)
+        else:
+            pattern = re.compile(r"{simple_where}(.*?)\|(.*?){/simple_where}", re.DOTALL)
+            match = pattern.search(text)
             if match != None:
-                line_no = match.groups()[0]
-                plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].move_to_line('%s');" %(uid, line_no))
+                module,line_no = match.groups()
+                if module != '<string>':
+                    plugin['exec_js'](plugin['get_pageid'](), r"alert('sorry, can\'t step into no-user code! %s');" %(module))
+                    raw_push_input(uid, "return\n")
+                    raw_push_input(uid, "show_locals\n")
+                    raw_push_input(uid, "simple_where\n")
+                else:
+                    plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].move_to_line('%s');" %(uid, line_no))
     elif buff_class == "stdin":
         #no echo at all
         data = ""
@@ -302,25 +309,33 @@ function init_pdb(uid)
 """ % (plugin['session_random_id'])
 
 pdb_pycode = r'''
-import pdb
-import __builtin__
-def __dict2table(d):
-    s = "{pdb_local_var_output}"
-    s += "<table class='namespace'>"
-    #s += "<thead><tr><th>name</th><th>value</th></tr></thead>"
-    s += "<tbody>"
-    for key,item in d.items():
-        if key == "__dict2table":
-            continue
-        item = str(item).replace('<', '&lt;')
-        s += "<tr><td>" + str(key)  + "</td><td>" + str(item) + "</td></tr>"
-    s += "</tbody>"
-    s += "</table>"
-    s += "{/pdb_local_var_output}"
-    return s
-__builtin__.__dict2table = __dict2table
-del __builtin__
+from src.plugins.vlam_pdb import MyPdb
 _debug_string = """%s"""
-pdb.run(_debug_string, globals={}, locals={})
+MyPdb().run(_debug_string, globals={}, locals={})
 '''
 
+from pdb import Pdb
+
+class MyPdb(Pdb):
+
+    def do_simple_where(self, arg):
+        filename = self.curframe.f_code.co_filename
+        line_no = self.curframe.f_lineno
+        print >>self.stdout, "{simple_where}%s|%d{/simple_where}" %(filename, line_no)
+
+    def _dict2table(self, d):
+        s = "{pdb_local_var_output}"
+        s += "<table class='namespace'>"
+        #s += "<thead><tr><th>name</th><th>value</th></tr></thead>"
+        s += "<tbody>"
+        for key,item in d.items():
+            item = str(item).replace('<', '&lt;')
+            s += "<tr><td>" + str(key)  + "</td><td>" + str(item) + "</td></tr>"
+        s += "</tbody>"
+        s += "</table>"
+        s += "{/pdb_local_var_output}"
+        return s
+    
+    def do_show_locals(self, arg):
+        locals = self.curframe.f_locals
+        print >>self.stdout, self._dict2table(locals)
