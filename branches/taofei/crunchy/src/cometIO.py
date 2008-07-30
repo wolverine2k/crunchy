@@ -14,7 +14,7 @@ import src.utilities as utilities
 import src.session as session
 from src.interface import plugin
 
-debug_ids = [6]#1, 2, 3, 4, 5]
+debug_ids = []#1, 2, 3, 4, 5]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -84,6 +84,7 @@ class CrunchyIOBuffer(StringBuffer):
         data = plugin['services'].apply_io_hook(uid, 'before_output', data)
 
         data = data.replace('"', '&#34;')
+        pdata = data.replace("\\", "\\\\")
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
@@ -193,7 +194,7 @@ def extract_data(data):
     '''
     extract pure data from output span  like <span class='stdout'>some text</span>
     '''
-    pattern = re.compile(r"<span class=\'([a-z]{1,10})\'>(.*?)</span>", re.M)
+    pattern = re.compile("<span class='([a-z]{1,10})'>(.*)</span>", re.DOTALL)
     match = pattern.search(data)
     if match:
         return match.groups()
