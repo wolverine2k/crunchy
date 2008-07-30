@@ -134,7 +134,7 @@ def analyzer_widget_callback(page, elem, uid):
     #some spacing:
     SubElement(elem, "br")
     # use the insert_analyzer_button service as any plugin can do
-    plugin['services'].insert_analyzer_button(page, elem, uid)
+    insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
@@ -168,7 +168,7 @@ def insert_analyzer_button(page, elem, uid):
     btn.text = _("Analyze the code")
     btn.attrib["onclick"] = "exec_analyzer('%s')" % uid
     # add the display of the score
-    plugin['services'].add_scoring(page, btn, uid)
+    add_scoring(page, btn, uid)
 
 def add_scoring(page, button, uid):
     """Add a call to the analyzer scoring function to a standard 'execute'
