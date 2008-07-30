@@ -6,6 +6,11 @@ Setting things up
 ------------------
 
     >>> from src.interface import config, plugin, tostring, translate
+    >>> import src.interface
+    >>> class Accounts(dict):
+    ...     def is_admin(self, value):
+    ...         return value
+    >>> src.interface.accounts = Accounts()
     >>> plugin.clear()
     >>> config.clear()
     >>> def dummy_add(*args):
@@ -18,6 +23,7 @@ Setting things up
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
     >>> import src.plugins.menu as menu
+
 
 Testing register()
 ===================
@@ -52,8 +58,8 @@ Testing create_quit()
 =====================
 
     >>> Quit = menu.create_quit()
-    >>> tostring(Quit)
-    '<li><a href="/exit">Quit Crunchy</a></li>'
+    >>> tostring(Quit) #doctest: +ELLIPSIS
+    '<li><a href="/exit...">Quit Crunchy</a></li>'
 
 Testing insert_menu()
 ======================
@@ -63,6 +69,7 @@ yield the same results using our mock functions.  So, we only test one here.
 
     >>> page = mocks.Page()
     >>> page.body = ['dummy']
+    >>> page.username = True  # will be used to simulate admin
     >>> config['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
     >>> tostring(page.body[0]) #doctest: +ELLIPSIS
