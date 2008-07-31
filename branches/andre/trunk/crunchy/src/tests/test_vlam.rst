@@ -58,7 +58,7 @@ Let us define a utility function that will:
     ...     fake_file = StringIO()
     ...     fake_file.write(html)
     ...     fake_file.seek(0)
-    ...     page = vlam._BasePage()
+    ...     page = vlam._BasePage('dummy_username')
     ...     page.create_tree(fake_file)  # tested separately below
     ...     output = StringIO()
     ...     page.tree.write(output)
@@ -82,10 +82,10 @@ Creating a page and a tree
 
 Let's start by creating a simple page.
 
-    >>> page = vlam._BasePage()
+    >>> page = vlam._BasePage('dummy_username')
     >>> page.included
     set([])
-    >>> print int(uidgen()) - int(page.pageid)
+    >>> print int(uidgen('dummy')) - int(page.pageid)
     1
 
 .. _`create_tree()`:

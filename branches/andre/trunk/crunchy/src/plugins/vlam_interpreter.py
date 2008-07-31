@@ -168,7 +168,7 @@ def borg_javascript(prefix, page, crunchy_help):
     function init_BorgInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
         code += "\nborg.push('print(";
-        code += '"Crunchy: Borg Interpreter (Python version %s). %s"';
+        code += '"This is a Borg Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact()\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
@@ -185,7 +185,7 @@ def single_javascript(prefix, crunchy_help):
     function init_SingleInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
         code += "\nisolated.push('print(";
-        code += '"Crunchy: Individual Interpreter (Python version %s). %s"';
+        code += '"This is an Individual Interpreter (Python version %s). %s"';
         code += ")')\nisolated.interact(ps1='--> ')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
@@ -200,7 +200,7 @@ def parrot_javascript(prefix, crunchy_help):
     function init_parrotInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
         code += "\nisolated.push('print(";
-        code += '"Crunchy: [dead] parrot Interpreter (Python version %s). %s"';
+        code += '"This is a [dead] parrot Interpreter (Python version %s). %s"';
         code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
@@ -215,7 +215,7 @@ def parrots_javascript(prefix, page, crunchy_help):
     function init_ParrotsInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
         code += "\nborg.push('print(";
-        code += '"Crunchy: [dead] Parrots Interpreter (Python version %s). %s"';
+        code += '"This is a [dead] Parrots Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
@@ -231,7 +231,7 @@ def type_info_javascript(prefix, page, crunchy_help):
     function init_TypeInfoConsole(uid){
         code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s')";
         code += "\nborg.push('print(";
-        code += '"Crunchy: TypeInfoConsole (Python version %s). %s"';
+        code += '"This is a TypeInfoConsole (Python version %s). %s"';
         code += ")')\nborg.interact(ps1='<t>>> ')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);

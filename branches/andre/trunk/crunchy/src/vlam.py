@@ -37,10 +37,11 @@ class _BasePage(object): # tested
     begin_pagehandlers = []
     end_pagehandlers = []
 
-    def __init__(self):  # tested
+    def __init__(self, username):  # tested
         '''initialises a few values, and registers the page for comet i/o.'''
         self.included = set([])
-        self.pageid = uidgen()
+        self.username = username
+        self.pageid = uidgen(self.username)
         from_comet['register_new_page'](self.pageid)
         return
 
@@ -205,7 +206,7 @@ class _BasePage(object): # tested
                         keyword = self.extract_keyword(elem, attr)
                         if keyword in self.handlers3[tag][attr]:
                             self.handlers3[tag][attr][keyword]( self,
-                                            elem, self.pageid + ":" + uidgen())
+                                            elem, self.pageid + ":" + uidgen(self.username))
                             break
 
     def process_handlers2(self):  # tested
@@ -228,7 +229,7 @@ class _BasePage(object): # tested
                             if keyword in self.handlers3[tag][attr]:
                                 do_it = False
                         if do_it:
-                            uid = self.pageid + ":" + uidgen()
+                            uid = self.pageid + ":" + uidgen(self.username)
                             self.handlers2[tag][attr](self, elem, uid)
         return
 
@@ -257,7 +258,7 @@ class _BasePage(object): # tested
                                 do_it = False
                                 break
                 if do_it:
-                    uid = self.pageid + ":" + uidgen()
+                    uid = self.pageid + ":" + uidgen(self.username)
                     handlers[tag](self, elem, uid)
         return
 
@@ -289,9 +290,8 @@ class CrunchyPage(_BasePage):
         url should be just a path if crunchy accesses the page locally, or
         the full URL if it is remote.
         """
-        _BasePage.__init__(self)
+        _BasePage.__init__(self, username=username)
         self.url = url
-        self.username = username
 
         # Assign tutorial type
         self.is_remote = remote # True if remote tutorial, on the web

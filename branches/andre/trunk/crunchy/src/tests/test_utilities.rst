@@ -28,8 +28,8 @@ Testing uidgen()
 uidgen() generates a unique integer id (returned as a string).
 The current implementation is such that consecutive integers are generated.
 
-    >>> first = int(utilities.uidgen())
-    >>> second = int(utilities.uidgen())
+    >>> first = int(utilities.uidgen('dummy'))
+    >>> second = int(utilities.uidgen('dummy'))
     >>> second - first
     1
 

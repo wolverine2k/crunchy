@@ -166,11 +166,6 @@ def get_root_dir():
     return dirname(find_module("crunchy")[1])
 plugin['get_root_dir'] = get_root_dir
 
-def gen_uid():
-    '''returns a unique id'''
-    return vlam.uidgen()
-plugin['gen_uid'] = gen_uid
-
 def kill_thread(uid):
     """kill a thread, given its assocated uid"""
     cometIO.kill_thread(uid)

@@ -5,15 +5,20 @@
    unit tests in test_utilities.rst
 '''
 import re
-from src.interface import config, plugin, Element, SubElement
+from src.interface import config, plugin, Element, SubElement, common
 
 COUNT = 0
-def uidgen():  # tested
+def uidgen(username):  # tested
     """an suid (session unique ID) generator
     """
     global COUNT
     COUNT += 1
-    return str(COUNT)
+    uid = str(COUNT)
+    # uid's get passed around to various modules; by associating a uid
+    # to a username, we facilitate adapting behaviour of a given function/method
+    # to the preferences of the user.
+    common[uid] = username
+    return uid
 
 def extract_log_id(vlam):  # tested
     '''given a vlam of the form
@@ -38,8 +43,8 @@ def insert_file_browser(parent, text, action):  # tested
     # on a page; use the "action" [e.g. /local, /rst, etc.] as part of the
     # name so that it can be easily parsed by a human reader when viewing
     # the html source.
-    name1 = 'browser_%s' % action[1:] + uidgen()
-    name2 = 'submit_%s' % action[1:] + uidgen()
+    name1 = 'browser_%s' % action[1:] + uidgen(None)
+    name2 = 'submit_%s' % action[1:] + uidgen(None)
     form1 = SubElement(parent, 'form', name=name1)
     SubElement(form1, 'input', type='file', name='filename', size='80',
                onblur = "document.%s.url.value="%name2+\

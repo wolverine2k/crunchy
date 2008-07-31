@@ -145,11 +145,11 @@ class Defaults(Base):
     def __init__(self, prefs):
         self._preferences = prefs
         self._preferences.update({'_prefix': 'crunchy',
-                            'page_security_level': self.page_security_level,
+                            'page_security_level': self._page_security_level,
                             '_set_site_security': self._set_site_security})
         self._not_saved = self._preferences.keys()
         self._not_saved.extend(['user_dir', 'log', 'logging_uids',
-                                'symbols', 'get_current_page_security_level',
+                                'symbols', '_get_current_page_security_level',
                                 'initial_security_set'])
 
         self.site_security = {}
@@ -192,7 +192,7 @@ If True, Crunchy will try to simplify some tracebacks and doctest
 results so that they are easier to understand for beginners.""")
     override_default_interpreter = make_property('override_default_interpreter',
         doc="""\
-If a value other than 'default' is specified, Crunchy will replace
+If a value other than NOne is specified, Crunchy will replace
 any interpreter type specified by a tutorial writer by this value.""")
     language = make_property('language', default='en',
         doc="""Specifies the language used by Crunchy for output, menus, etc.""")
@@ -211,7 +211,7 @@ Specifies the 'interactive element' to be included whenever
 Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
     power_browser = make_property('power_browser',
         doc="""\
-If the value is not 'none', inserts the requested file browser
+If the value is not None, inserts the requested file browser
 at the top of every page displayed by Crunchy.""")
     my_style = make_property('my_style', default=False,
         doc="""\
@@ -365,7 +365,7 @@ are usually launched.""")
         u_print(_("language set to: ") , choice)
         self.editarea_language = choice
 
-    def page_security_level(self, url):
+    def _page_security_level(self, url):
         info = urlsplit(url)
         # info.netloc == info[1] is not Python 2.4 compatible; we "fake it"
         info_netloc = info[1]
@@ -379,7 +379,7 @@ are usually launched.""")
     def _set_local_security(self, choice):
         self.local_security = choice
 
-    def get_current_page_security_level(self):
+    def _get_current_page_security_level(self):
         return self.current_page_security_level
 
     def _get_site_security(self, site):
@@ -417,7 +417,7 @@ def init():
     config['log'] = defaults.log
     config['logging_uids'] = defaults.logging_uids
     config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
-    config['get_current_page_security_level'] = defaults.get_current_page_security_level
+    config['get_current_page_security_level'] = defaults._get_current_page_security_level
     config['_set_alternate_python_version'] = defaults._set_alternate_python_version
     config['_set_local_security'] = defaults._set_local_security
     #import pprint

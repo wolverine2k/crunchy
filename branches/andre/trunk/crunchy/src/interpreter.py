@@ -10,7 +10,7 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, translate, config
+from src.interface import StringIO, exec_code, translate, config, plugin, common
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -196,6 +196,13 @@ class InteractiveInterpreter(object):
         "__doc__" set to None.
 
         """
+
+        pageid = plugin["get_uid"]().split(":")[0]
+        try:
+            print _("Hello %s ! "% common[pageid]), 
+        except:
+            pass
+
         if locals is None:
             locals = {"__name__": "__console__", "__doc__": None}
         self.locals = locals
