@@ -59,12 +59,12 @@ def insert_security_info(page, *dummy):
         # if there are sites for which to confirm the security level.
         if ((page.url.startswith("/index") or page.url=="/")
                   # will work with /index_fr.html ...
-              and config['site_security']
+              and config[page.username]['site_security']
                   # something to confirm
-              and not config['initial_security_set']):
+              and not config[page.username]['initial_security_set']):
                   # only do it once per session
             confirm_at_start(page, info_container)
-            config['initial_security_set'] = True
+            config[page.username]['initial_security_set'] = True
         else:
             page.add_css_code(security_css%('none','none'))
             format_report(page, info_container)
@@ -93,14 +93,14 @@ def confirm_at_start(page, info_container):
     directions.text += _("You can change any of them before clicking on the approve button.\n\n")
 
     # in case list gets too long, we include buttons at top and bottom of list
-    nb_sites = len(config['site_security'])
+    nb_sites = len(config[page.username]['site_security'])
     add_button(info_container, nb_sites)
-    for site_num, site in enumerate(config['site_security']):
-        format_site_security_options(info_container, site, site_num)
+    for site_num, site in enumerate(config[page.username]['site_security']):
+        format_site_security_options(info_container, site, site_num, page)
     add_button(info_container, nb_sites)
     return
 
-def format_site_security_options(parent, site, site_num):
+def format_site_security_options(parent, site, site_num, page):
     '''adds the various security options for a given site'''
     options = ['trusted', 'normal', 'strict', 'display trusted',
                'display normal', 'display strict']
@@ -122,11 +122,11 @@ def format_site_security_options(parent, site, site_num):
         inp = SubElement(label, 'input', value=option, type='radio',
                                         name='rad', id=site+option)
         SubElement(form, 'br')
-        if site in config['site_security']:
-            if option == config['site_security'][site]:
+        if site in config[page.username]['site_security']:
+            if option == config[page.username]['site_security'][site]:
                 inp.attrib['checked'] = 'checked'
         elif 'localhost' in site:
-            if option == config['local_security']:
+            if option == config[page.username]['local_security']:
                 inp.attrib['checked'] = 'checked'
     return
 
@@ -249,11 +249,11 @@ def format_report(page, div):
     h2 = SubElement(div, 'h2')
     h2.text = _('You may select a site specific security level:')
     h2.attrib['class'] = "crunchy"
-    if netloc in config['site_security']:
+    if netloc in config[page.username]['site_security']:
         p = SubElement(div, 'p')
         p.text = _("If you want to preserve the existing selection, ")
         p.text += _("simply dismiss this window by clicking on the X above.")
-    format_site_security_options(div, site, 0)
+    format_site_security_options(div, site, 0, page)
 
     approve_btn = SubElement(div, "button")
     approve_btn.attrib["onclick"] = "javascript:allow_site();"
@@ -286,7 +286,7 @@ def set_security_list(request):
         if 'localhost' not in site:
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                config['_set_site_security'](site, mode)
+                config[page.username]['_set_site_security'](site, mode)
                 if DEBUG:
                     print str(site) + ' has been set to ' + str(mode)
             else:
@@ -294,20 +294,20 @@ def set_security_list(request):
                 if DEBUG:
                     print str(site) + ' is going to be removed.'
         else:
-            config['_set_local_security'](mode)
+            config[page.username]['_set_local_security'](mode)
             if DEBUG:
                 print "setting local security to ", mode
             break  # should be only site
 
     for site in to_be_deleted:
-        del config['site_security'][site]
+        del config[page.username]['site_security'][site]
     if DEBUG:
-        print config['site_security']
+        print config[page.username]['site_security']
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
-    config['initial_security_set'] = True
-    config['_save_settings']()
+    config[page.username]['initial_security_set'] = True
+    config[page.username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()
@@ -319,14 +319,14 @@ def empty_security_list(request):
     removes all the sites from the list of sites with security level assigned
     '''
     sites = []
-    for site in config['site_security']:
+    for site in config[page.username]['site_security']:
         sites.append(site)
     for site in sites:
-        del config['site_security'][site]
+        del config[page.username]['site_security'][site]
     # We don't need the user to confirm again in this session, so assign
     # initial_security_set to True
-    config['initial_security_set'] = True
-    config['_save_settings']()
+    config[page.username]['initial_security_set'] = True
+    config[page.username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()

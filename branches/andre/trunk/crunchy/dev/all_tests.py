@@ -30,7 +30,8 @@ doctest.OutputChecker = MyOutputChecker
 # end of new directive definition and replacement (monkeypatching)
 
 os.chdir("..")
-sys.path.insert(0, os.getcwd())
+cwd = os.getcwd()
+sys.path.insert(0, cwd)
 test_path = os.path.join(os.getcwd(), "src", "tests")
 test_files = [f for f in os.listdir(test_path) if f.startswith("test_")
               and f.endswith(".rst")]
@@ -47,10 +48,10 @@ total_failures = 0
 files_with_failures = 0
 
 #TODO: add a command line option to replace this
-excluded = []#["test_colourize.rst"]
+include_only = []#["test_colourize.rst"]
 
 #TODO: add a command line option to replace this
-include_only = ["test_account_manager.rst"]
+excluded = []
 
 #TODO: add a command line option (clean?) that would remove all .pyc
 # files before testing.
@@ -61,9 +62,9 @@ include_only = ["test_account_manager.rst"]
 for t in test_files:
     if t in excluded:
         continue # skip
-    if t not in include_only:
-        continue
-    failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
+    #if t not in include_only:
+    #    continue
+    failure, nb_tests = doctest.testfile(os.path.join("src", "tests", t))
     total_tests += nb_tests
     total_failures += failure
     if failure > 0:

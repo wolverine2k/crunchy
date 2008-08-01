@@ -30,7 +30,7 @@ def enable_editarea(page, elem, textarea_id):  # tested
         page.add_css_code(load_save_css)
     # element specific code
     page.add_js_code(editAreaLoader_js%(textarea_id,
-                                config['editarea_language']))
+                                config[page.username]['editarea_language']))
     add_hidden_load_and_save(elem, textarea_id)
     return
 

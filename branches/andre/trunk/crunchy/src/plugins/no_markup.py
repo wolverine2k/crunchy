@@ -15,8 +15,8 @@ def custom_vlam(page, elem, uid): # tested
     '''
     inserts interactive elements in bare "pre" based on user's preferences.
     '''
-    if config['no_markup'] is not None:
-        n_m = config['no_markup'].lower()
+    if config[page.username]['no_markup'] is not None:
+        n_m = config[page.username]['no_markup'].lower()
         keyword = n_m.split(" ")[0]
         if "title" not in elem.attrib:
             elem.attrib["title"] = n_m

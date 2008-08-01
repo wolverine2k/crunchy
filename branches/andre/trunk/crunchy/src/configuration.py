@@ -14,7 +14,7 @@ import os
 from urlparse import urlsplit
 import cPickle
 
-from src.interface import config, u_print, translate, additional_vlam
+from src.interface import config, u_print, translate, additional_vlam, accounts
 
 ANY = '*'
 
@@ -412,14 +412,29 @@ are usually launched.""")
 def init():
     for key in additional_vlam:
         options[key].extend(additional_vlam[key])
-    defaults = Defaults(config)
 
-    config['log'] = defaults.log
-    config['logging_uids'] = defaults.logging_uids
-    config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
-    config['get_current_page_security_level'] = defaults._get_current_page_security_level
-    config['_set_alternate_python_version'] = defaults._set_alternate_python_version
-    config['_set_local_security'] = defaults._set_local_security
+    users = {}
+    for name in accounts:
+        config[name] = {}
+        users[name] = Defaults(config[name])
+        config[name]['log'] = users[name].log
+        config[name]['logging_uids'] = users[name].logging_uids
+        config[name]['symbols'] = {config[name]['_prefix']:users[name],
+                                    'temp_dir': users[name].temp_dir}
+        config[name]['temp_dir'] = users[name].temp_dir
+        config[name]['get_current_page_security_level'] = users[name]._get_current_page_security_level
+        config[name]['_set_alternate_python_version'] = users[name]._set_alternate_python_version
+        config[name]['_set_local_security'] = users[name]._set_local_security
+
+
+    #defaults = Defaults(config)
+    #
+    #config['log'] = defaults.log
+    #config['logging_uids'] = defaults.logging_uids
+    #config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
+    #config['get_current_page_security_level'] = defaults._get_current_page_security_level
+    #config['_set_alternate_python_version'] = defaults._set_alternate_python_version
+    #config['_set_local_security'] = defaults._set_local_security
     #import pprint
     #pprint.pprint(config)
 

@@ -147,7 +147,7 @@ class AMCLI(object):
                                                         self.accounts[user][2]))
 
     def cmd_new(self, username):
-        'new <username> : add a new user.'
+        'new <username> : add a new user. (ascii characters ONLY)'
         if username in self.accounts:
             print "Error: user %s already exists" % (username)
             return

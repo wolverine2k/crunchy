@@ -11,9 +11,9 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import config, accounts
+from src.interface import config, accounts, names
 
-debug_ids = []#[1, 2, 3, 4, 5, 6]
+debug_ids = [1, 2, 3, 4, 5, 6]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -82,12 +82,15 @@ class CrunchyIOBuffer(StringBuffer):
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
         self.lock.acquire()
+        pageid = uid.split(":")[0]
+        username = names[pageid]
+        debug_msg("username = %s in CrunchyIOBuffer.put_output"%username, 5)
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             # Saving session; appending from below
-            if uid in config['logging_uids']:
-                log_id = config['logging_uids'][uid][0]
-                config['log'][log_id].append(data)
+            if uid in config[username]['logging_uids']:
+                log_id = config[username]['logging_uids'][uid][0]
+                config[username]['log'][log_id].append(data)
                 utilities.log_session()
             self.event.set()
         elif self.help_flag == True:
@@ -98,9 +101,9 @@ class CrunchyIOBuffer(StringBuffer):
         else:
             self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
             # Saving session; first line...
-            if uid in config['logging_uids']:
-                log_id = config['logging_uids'][uid][0]
-                config['log'][log_id].append(data)
+            if uid in config[username]['logging_uids']:
+                log_id = config[username]['logging_uids'][uid][0]
+                config[username]['log'][log_id].append(data)
                 utilities.log_session()
         self.lock.release()
 
@@ -149,13 +152,20 @@ def do_exec(code, uid, doctest=False):
     """
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if 'display' in config['get_current_page_security_level']():
+    try:
+        pageid = uid.split(":")[0]
+        username = names[pageid]
+    except:
+        debug_msg("error in do_exec; uid =%s"%uid, 5)
+        return
+
+    if 'display' in config[username]['get_current_page_security_level']():
         return
     elif not accounts:  # same if no username/password set
         return
 
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
-    t = interpreter.Interpreter(code, uid, symbols=config['symbols'],
+    t = interpreter.Interpreter(code, uid, symbols=config[username]['symbols'],
                                 doctest=doctest)
 
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)

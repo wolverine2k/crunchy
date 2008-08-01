@@ -42,6 +42,7 @@ accounts = {}  # initialized in crunchy.py
 additional_vlam = {}  # initialized from plugins by CrunchyPlugin.py
 additional_menu_items = {}
 common = {}
+names = {}
 config = {}  # initialized mostly by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py

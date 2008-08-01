@@ -19,15 +19,15 @@ def insert_browser(page, *dummy): # tested
     '''Inserts a default file/url browser at the top of a page'''
     div = Element("div")
     div.text = ' '
-    if config['power_browser'] is None:
+    if config[page.username]['power_browser'] is None:
         return
-    elif config['power_browser'] == 'python':
+    elif config[page.username]['power_browser'] == 'python':
         python_files.insert_load_python(page, div, 'dummy')
-    elif config['power_browser'] == 'rst':
+    elif config[page.username]['power_browser'] == 'rst':
         rst.insert_load_rst(page, div, 'dummy')
-    elif config['power_browser'] == 'local_html':
+    elif config[page.username]['power_browser'] == 'local_html':
         vlam_load_local.insert_load_local(page, div, 'dummy')
-    elif config['power_browser'] == 'remote_html':
+    elif config[page.username]['power_browser'] == 'remote_html':
         vlam_load_remote.insert_load_remote(page, div, 'dummy')
     else:  # unrecognized value; ignore
         return

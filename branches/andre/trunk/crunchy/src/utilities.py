@@ -5,7 +5,7 @@
    unit tests in test_utilities.rst
 '''
 import re
-from src.interface import config, plugin, Element, SubElement, common
+from src.interface import config, plugin, Element, SubElement, names
 
 COUNT = 0
 def uidgen(username):  # tested
@@ -17,7 +17,7 @@ def uidgen(username):  # tested
     # uid's get passed around to various modules; by associating a uid
     # to a username, we facilitate adapting behaviour of a given function/method
     # to the preferences of the user.
-    common[uid] = username
+    names[uid] = username
     return uid
 
 def extract_log_id(vlam):  # tested

@@ -41,7 +41,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if config['ctypes_available']:
             kill_link = SubElement(new_div, "a")
             kill_link.attrib["id"] = "kill_%s" % uid

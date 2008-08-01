@@ -274,7 +274,7 @@ def remove_unwanted(tree, page):  # partially tested
 
     # determine if site security level has been set to override
     # the default
-    security_level = config['page_security_level'](page.url)
+    security_level = config[page.username]['page_security_level'](page.url)
     _allowed = allowed_attributes[security_level]
     #The following will be updated so as to add result from page.
     page.security_info = { 'level': security_level,

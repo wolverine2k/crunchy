@@ -71,13 +71,13 @@ def insert_bare_editor(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'editor'
-        config['logging_uids'][uid] = (log_id, t)
+        config[page.username]['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("exec_included"):
             page.add_include("exec_included")
             page.add_js_code(exec_jscode)
@@ -85,7 +85,7 @@ def insert_bare_editor(page, elem, uid):
     # code to be executed in the process
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
@@ -120,14 +120,14 @@ def insert_editor(page, elem, uid):  # tested
     # path_label required in all cases to avoid javascript error
     path_label = SubElement(elem, "span")
     path_label.attrib['id'] = 'path_' + uid
-    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
+    path_label.text = config[page.username]['temp_dir'] + os.path.sep + "temp.py"
 
     if "external" in vlam:
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = _("Execute as external program")
         if log_id:  # override - probably not useful to log
             t = 'run_external_editor'
-            config['logging_uids'][uid] = (log_id, t)
+            config[page.username]['logging_uids'][uid] = (log_id, t)
         path_label.attrib['class'] = 'path_info'
         if not "no_internal" in vlam:
             SubElement(elem, "br")
@@ -156,7 +156,7 @@ def insert_alternate_python(page, elem, uid):
     span.text = _('Alternate Python path: ')
     span.attrib['class'] = 'alt_python'
     input1 = SubElement(form1, 'input', id='input1_'+uid, size='50',
-                            value=config['alternate_python_version'])
+                            value=config[page.username]['alternate_python_version'])
     input1.attrib['class'] = 'alt_python'
     SubElement(elem, "br")
 
@@ -165,7 +165,7 @@ def insert_alternate_python(page, elem, uid):
     btn.text = _("Execute as external program")
 
     path_label = SubElement(elem, "span", id= 'path_'+uid)
-    path_label.text = config['temp_dir'] + os.path.sep + "temp.py"
+    path_label.text = config[page.username]['temp_dir'] + os.path.sep + "temp.py"
     path_label.attrib['class'] = 'path_info'
 
 # we need some unique javascript in the page; note how the

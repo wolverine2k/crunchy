@@ -10,7 +10,7 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, translate, config, plugin, common
+from src.interface import StringIO, exec_code, translate, config, plugin, names
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -58,6 +58,13 @@ class Interpreter(KillableThread):
         threading.Thread.__init__(self)
         self.code = trim_empty_lines_from_end(code)
         self.channel = channel
+        try:
+            pageid = self.channel.split(":")[0]
+            self.username = names[pageid]
+            self.friendly = config[self.username].friendly
+        except:
+            self.friendly = False
+            self.username = False
         self.symbols = {}
         if symbols is not None:
             self.symbols.update(symbols)
@@ -78,21 +85,22 @@ class Interpreter(KillableThread):
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
                 try:
-                    if config['friendly']:
+                    if self.friendly:
                         sys.stderr.write(errors.simplify_traceback(self.code))
                     else:
                         traceback.print_exc()
                 except:
                     sys.stderr.write("Recovering from internal error in Interpreter.run()")
+                    sys.stderr.write("self.channel =%s"%self.channel)
             if not self.ccode:    #code does nothing
                 return
             try:
                 # logging the user input first, if required
-                if self.channel in config['logging_uids']:
-                    vlam_type = config['logging_uids'][self.channel][1]
+                if self.username and self.channel in config[self.username]['logging_uids']:
+                    vlam_type = config[self.username]['logging_uids'][self.channel][1]
                     if vlam_type == 'editor':
                         user_code = self.code.split("\n")
-                        log_id = config['logging_uids'][self.channel][0]
+                        log_id = config[self.username]['logging_uids'][self.channel][0]
                         if user_code:
                             user_code = '\n'.join(user_code)
                             if not user_code.endswith('\n'):
@@ -100,7 +108,7 @@ class Interpreter(KillableThread):
                         else:
                             user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
-                        config['log'][log_id].append(data)
+                        config[self.username]['log'][log_id].append(data)
                         log_session()
                 exec_code(self.ccode, self.symbols, source=None)
                 #exec self.ccode in self.symbols#, {}
@@ -112,16 +120,18 @@ class Interpreter(KillableThread):
                 # will be used for holding both global and local variables.
             except:
                 try:
-                    if config['friendly']:
+                    if self.friendly:
                         sys.stderr.write(errors.simplify_traceback(self.code))
                     else:
                         traceback.print_exc()
                 except:
                     sys.stderr.write("Recovering from internal error in Interpreter.run()")
+                    sys.stderr.write(".. after trying to call exec_code.")
+                    sys.stderr.write("self.channel = %s"%self.channel)
         finally:
             if self.doctest:
                 # attempting to log
-                if self.channel in config['logging_uids']:
+                if self.username and self.channel in config[self.username]['logging_uids']:
                     code_lines = self.code.split("\n")
                     user_code = []
                     for line in code_lines:
@@ -131,7 +141,7 @@ class Interpreter(KillableThread):
                         if line.startswith("__teststring"):
                             break
                         user_code.append(line)
-                    log_id = config['logging_uids'][self.channel][0]
+                    log_id = config[self.username]['logging_uids'][self.channel][0]
                     if user_code:
                         user_code = '\n' + '\n'.join(user_code)
                         if not user_code.endswith('\n'):
@@ -142,10 +152,10 @@ class Interpreter(KillableThread):
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
                     data = "<span class='stdin'>" + user_code + "</span>"
-                    config['log'][log_id].append(data)
+                    config[self.username]['log'][log_id].append(data)
                     log_session()
                 # proceed with regular output
-                if config['friendly']:
+                if self.friendly:
                     message, success = errors.simplify_doctest_error_message(
                            self.doctest_out.getvalue())
                     if success:
@@ -197,20 +207,19 @@ class InteractiveInterpreter(object):
 
         """
 
-        pageid = plugin["get_uid"]().split(":")[0]
-        try:
-            print _("Hello %s ! "% common[pageid]), 
-        except:
-            pass
-
         if locals is None:
             locals = {"__name__": "__console__", "__doc__": None}
         self.locals = locals
+        try:
+            pageid = plugin["get_uid"]().split(":")[0]
+            username = names[pageid]
+            print _("Hello %s ! "% username),
+            self.locals.update(config[username]['symbols'])
+        except:
+            sys.stderr.write("Error; uid = %s " % plugin['get_uid']())
+            sys.stderr.write("names = %s" % names)
 
-        ## NOTA BENE:  This is for a single user environment only;
-        ## a different approach might be needed when multiple users are
-        ## allowed.
-        self.locals.update(config['symbols'])  # single user...
+
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):

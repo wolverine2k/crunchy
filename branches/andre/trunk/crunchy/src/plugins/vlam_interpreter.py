@@ -41,19 +41,19 @@ def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
 
     vlam = elem.attrib["title"]
-    interp_kind = select_type(vlam, config['override_default_interpreter'], elem)
+    interp_kind = select_type(vlam, config[page.username]['override_default_interpreter'], elem)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if not ('display' in config['page_security_level'](page.url) or
+    if not ('display' in config[page.username]['page_security_level'](page.url) or
            interp_kind == None ):
         include_interpreter(interp_kind, page, uid)
         log_id = utilities.extract_log_id(vlam)
         if log_id:
             t = 'interpreter'
-            config['logging_uids'][uid] = (log_id, t)
+            config[page.username]['logging_uids'][uid] = (log_id, t)
     else:
         log_id = False
 
@@ -64,7 +64,7 @@ def insert_interpreter(page, elem, uid):
     # interpreter, thus saving some typing by the user.
     code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(markup)]
 
     if interp_kind is None:
         elem.clear()
@@ -121,7 +121,7 @@ def select_type(vlam, c, elem):
 
 def include_interpreter(interp_kind, page, uid):
     '''includes the relevant code to initialize an interpreter'''
-    prefix = config['_prefix']
+    prefix = config[page.username]['_prefix']
     crunchy_help = _("For more information, enter: %s?" % prefix)
     BorgInterpreter_js = borg_javascript(prefix, page, crunchy_help)
     SingleInterpreter_js = single_javascript(prefix, crunchy_help)

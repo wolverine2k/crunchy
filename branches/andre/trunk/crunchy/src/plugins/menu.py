@@ -65,16 +65,16 @@ def insert_menu(page): # tested
     width = 150
     padding = 5
     items_width = width - 2*padding
-    if config['menu_position'] == 'top_right':
+    if config[page.username]['menu_position'] == 'top_right':
         menu_position = menu_position_css % ("top:0; right:0;", top,
                                             height, height)
-    elif config['menu_position'] == 'top_left':
+    elif config[page.username]['menu_position'] == 'top_left':
         menu_position = menu_position_css % ("top:0; left:0;", top,
                                             height, height)
-    elif config['menu_position'] == 'bottom_right':
+    elif config[page.username]['menu_position'] == 'bottom_right':
         menu_position = menu_position_css % ("bottom:0; right:0;", bottom,
                                             height, height)
-    elif config['menu_position'] == 'bottom_left':
+    elif config[page.username]['menu_position'] == 'bottom_left':
         menu_position = menu_position_css % ("bottom:0; left:0;", bottom,
                                             height, height)
     else:  # use top_right as default
