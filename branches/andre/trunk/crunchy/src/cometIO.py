@@ -13,7 +13,7 @@ import src.interface as interface
 
 from src.interface import config, accounts, names
 
-debug_ids = [1, 2, 3, 4, 5, 6]
+debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8]
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -69,7 +69,7 @@ class StringBuffer(object):
         self.data += data
         self.event.set()
         self.lock.release()
-
+        debug_msg("Leaving StringBuffer.put:", 3)
 
 class CrunchyIOBuffer(StringBuffer):
     """A version optimised for crunchy IO"""
@@ -156,10 +156,10 @@ def do_exec(code, uid, doctest=False):
         pageid = uid.split(":")[0]
         username = names[pageid]
     except:
-        debug_msg("error in do_exec; uid =%s"%uid, 5)
+        debug_msg("error in do_exec; uid =%s"%uid, 8)
         return
 
-    if 'display' in config[username]['get_current_page_security_level']():
+    if 'display' in config[username]['_get_current_page_security_level']():
         return
     elif not accounts:  # same if no username/password set
         return
@@ -234,6 +234,7 @@ class ThreadedBuffer(object):
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
         threads[uid] = threading.currentThread()
+        debug_msg("registering thread for uid=%s" % uid, 8)
         output_buffers[pageid].put(reset_js % (uid, uid, uid))
 
     def unregister_thread(self):
@@ -253,7 +254,6 @@ class ThreadedBuffer(object):
             document.getElementById("in_%s").style.display="none";
             document.getElementById("kill_%s").style.display="none";
             """ % (uid,uid))
-
 
     def write(self, data):
         """write some data"""

@@ -5,7 +5,7 @@ import urllib
 
 import src.interpreter as interpreter
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element
+from src.interface import config, translate, plugin, Element, names
 _ = translate['_']
 
 borg_console = {}
@@ -51,7 +51,9 @@ def insert_tooltip(page, *dummy):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    if not config['dir_help']:
+    pageid = request.args['uid'].split(":")[0]
+    username = names[pageid]
+    if not config[username]['dir_help']:
         request.send_response(204)
         request.end_headers()
         return
@@ -63,7 +65,6 @@ def dir_handler(request):
     # has clicked on a few more keys.
     line = ".".join(line.split(".")[:-1])
 
-    pageid = request.args['uid'].split(":")[0]
     try:
         result = eval("dir(%s)" % line, {}, borg_console[pageid].__dict__['locals'])
     except:
@@ -84,12 +85,12 @@ def dir_handler(request):
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
 
-    if not config['doc_help']:#configuration.defaults.doc_help:
+    pageid = request.args['uid'].split(":")[0]
+    username = names[pageid]
+    if not config[page.username]['doc_help']:#configuration.defaults.doc_help:
         request.send_response(204)
         request.end_headers()
         return
-
-    pageid = request.args['uid'].split(":")[0]
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
 
     # Support lines like "func(text" as "func(", because the browser

@@ -91,6 +91,7 @@ img {
     float: left;
     margin-bottom: 1em;
     margin-right: 10px;
+    position: fixed;
 }
 
 #navbar span.heading {

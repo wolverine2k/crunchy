@@ -148,9 +148,8 @@ class Defaults(Base):
                             'page_security_level': self._page_security_level,
                             '_set_site_security': self._set_site_security})
         self._not_saved = self._preferences.keys()
-        self._not_saved.extend(['user_dir', 'log', 'logging_uids',
-                                'symbols', '_get_current_page_security_level',
-                                'initial_security_set'])
+        self._not_saved.extend(['user_dir', 'log', 'logging_uids', 'symbols',
+                                'initial_security_set', 'page_security_level'])
 
         self.site_security = {}
         self.styles = {}
@@ -422,7 +421,7 @@ def init():
         config[name]['symbols'] = {config[name]['_prefix']:users[name],
                                     'temp_dir': users[name].temp_dir}
         config[name]['temp_dir'] = users[name].temp_dir
-        config[name]['get_current_page_security_level'] = users[name]._get_current_page_security_level
+        config[name]['_get_current_page_security_level'] = users[name]._get_current_page_security_level
         config[name]['_set_alternate_python_version'] = users[name]._set_alternate_python_version
         config[name]['_set_local_security'] = users[name]._set_local_security
 

@@ -124,8 +124,8 @@ def include_interpreter(interp_kind, page, uid):
     prefix = config[page.username]['_prefix']
     crunchy_help = _("For more information, enter: %s?" % prefix)
     BorgInterpreter_js = borg_javascript(prefix, page, crunchy_help)
-    SingleInterpreter_js = single_javascript(prefix, crunchy_help)
-    parrot_js = parrot_javascript(prefix, crunchy_help)
+    SingleInterpreter_js = single_javascript(prefix, page, crunchy_help)
+    parrot_js = parrot_javascript(prefix, page, crunchy_help)
     Parrots_js = parrots_javascript(prefix, page, crunchy_help)
     TypeInfoConsole_js = type_info_javascript(prefix, page, crunchy_help)
     # first we need to make sure that the required javacript code is in the page:
@@ -166,7 +166,7 @@ def borg_javascript(prefix, page, crunchy_help):
     '''create string needed to initialize a Borg interpreter using javascript'''
     return r"""
     function init_BorgInterpreter(uid){
-        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s',username='%s')";
         code += "\nborg.push('print(";
         code += '"This is a Borg Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact()\n";
@@ -174,16 +174,16 @@ def borg_javascript(prefix, page, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, (sys.version.split(" ")[0]), crunchy_help,
+    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
                plugin['session_random_id'])
 
 
-def single_javascript(prefix, crunchy_help):
+def single_javascript(prefix, page, crunchy_help):
     '''create string needed to initialize an Isolated (single) interpreter
        using javascript'''
     return r"""
     function init_SingleInterpreter(uid){
-        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
+        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
         code += "\nisolated.push('print(";
         code += '"This is an Individual Interpreter (Python version %s). %s"';
         code += ")')\nisolated.interact(ps1='--> ')\n";
@@ -191,14 +191,15 @@ def single_javascript(prefix, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % ((sys.version.split(" ")[0]), crunchy_help, plugin['session_random_id'])
+    """ % (page.username, (sys.version.split(" ")[0]), crunchy_help,
+           plugin['session_random_id'])
 
-def parrot_javascript(prefix, crunchy_help):
+def parrot_javascript(prefix, page, crunchy_help):
     '''create string needed to initialize a parrot (single) interpreter
        using javascript'''
     return   r"""
     function init_parrotInterpreter(uid){
-        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole()";
+        code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
         code += "\nisolated.push('print(";
         code += '"This is a [dead] parrot Interpreter (Python version %s). %s"';
         code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
@@ -206,14 +207,14 @@ def parrot_javascript(prefix, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % ((sys.version.split(" ")[0]), crunchy_help, plugin['session_random_id'])
+    """ % (page.username, (sys.version.split(" ")[0]), crunchy_help, plugin['session_random_id'])
 
 def parrots_javascript(prefix, page, crunchy_help):
     '''create string needed to initialize a parrots (shared) interpreter
        using javascript'''
     return r"""
     function init_ParrotsInterpreter(uid){
-        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s', username='%s')";
         code += "\nborg.push('print(";
         code += '"This is a [dead] Parrots Interpreter (Python version %s). %s"';
         code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
@@ -221,7 +222,7 @@ def parrots_javascript(prefix, page, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, (sys.version.split(" ")[0]), crunchy_help,
+    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
            plugin['session_random_id'])
 
 def type_info_javascript(prefix, page, crunchy_help):
@@ -229,7 +230,7 @@ def type_info_javascript(prefix, page, crunchy_help):
        using javascript'''
     return r"""
     function init_TypeInfoConsole(uid){
-        code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s')";
+        code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s', username='%s')";
         code += "\nborg.push('print(";
         code += '"This is a TypeInfoConsole (Python version %s). %s"';
         code += ")')\nborg.interact(ps1='<t>>> ')\n";
@@ -237,7 +238,7 @@ def type_info_javascript(prefix, page, crunchy_help):
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, (sys.version.split(" ")[0]), crunchy_help,
+    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
            plugin['session_random_id'])
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.

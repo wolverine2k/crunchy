@@ -61,13 +61,13 @@ def doctest_widget_callback(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'doctest'
-        config['logging_uids'][uid] = (log_id, t)
+        config[page.username]['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("doctest_included") :
             page.add_include("doctest_included")
             page.add_js_code(doctest_jscode)
@@ -75,7 +75,7 @@ def doctest_widget_callback(page, elem, uid):
     # next, we style the code, also extracting it in a useful form ...
     doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
-        config['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
 
