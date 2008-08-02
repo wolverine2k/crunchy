@@ -33,7 +33,8 @@ See how_to.rst_ for details.
     >>> from src.interface import config, plugin, Element
     >>> config.clear()
     >>> plugin.clear()
-    >>> config['editarea_language'] = 'en'
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['editarea_language'] = 'en'
     >>> plugin['session_random_id'] = '42'
     >>> import src.plugins.editarea as editarea
     >>> import src.tests.mocks as mocks

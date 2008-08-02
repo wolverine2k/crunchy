@@ -38,9 +38,10 @@ Testing custom_vlam()
 
 First, no markup specified.
 
-    >>> page = mocks.Page()
+    >>> page = mocks.Page(username='Crunchy')
     >>> page.pre = Element("pre")
-    >>> config['no_markup'] = None
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['no_markup'] = None
     >>> no_markup.custom_vlam(page, page.pre, '42')
     >>> print tostring(page.pre).replace('>', '>\n')
     <pre />
@@ -48,7 +49,7 @@ First, no markup specified.
 
 Next, some silly markup...
 
-    >>> config['no_markup'] = "silly"
+    >>> config['Crunchy']['no_markup'] = "silly"
     >>> page.handlers3["pre"] = {}
     >>> page.handlers3["pre"]["title"] = {}
     >>> page.handlers3["pre"]["title"]["silly"] = repeat_args # fake handler

@@ -29,7 +29,8 @@ See how_to.rst_ for details.
   >>> plugin['add_vlam_option'] = dummy_add
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
-  >>> config['editarea_language'] = 'en'
+  >>> config['Crunchy'] = {}
+  >>> config['Crunchy']['editarea_language'] = 'en'
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea
   >>> import src.tests.mocks as mocks
@@ -38,7 +39,7 @@ See how_to.rst_ for details.
   ...                  'display_only_url': 'display normal'}
   >>> def get_security_level(url):
   ...     return site_security[url]
-  >>> config['page_security_level'] = get_security_level
+  >>> config['Crunchy']['page_security_level'] = get_security_level
 
 .. _`register()`:
 
@@ -90,7 +91,7 @@ First, we need to fake some services that are expected by insert_editor_subwidge
 
 Create also a fake configuration variable.
 
-  >>> config['temp_dir'] = 'temp_dir'
+  >>> config['Crunchy']['temp_dir'] = 'temp_dir'
 
 # Next, we need to create a fake page that we will process. 
 
@@ -296,7 +297,7 @@ included this time.
   True
   >>> elem[5].attrib == {'style': 'display:none', 'id': 'path_2'}
   True
-  >>> elem[5].text == config['temp_dir'] + vlam_editor.os.path.sep + "temp.py"
+  >>> elem[5].text == config['Crunchy']['temp_dir'] + vlam_editor.os.path.sep + "temp.py"
   True
 
 # Test - br

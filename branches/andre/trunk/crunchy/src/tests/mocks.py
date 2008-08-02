@@ -16,7 +16,11 @@ class Page(object):
     not the details.
 
     Note that verification of modifications of Elements are done separately.'''
-    def __init__(self):
+    def __init__(self, username=None):
+        if username is None:
+            self.username = 'Crunchy'
+        else:
+            self.username = username
         self.pageid = 1
         self.added_info = []
         self.url = 'crunchy_server'

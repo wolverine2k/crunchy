@@ -67,10 +67,10 @@ Testing insert_menu()
 There are 4 valid options, and a default option for insert_menu(); all
 yield the same results using our mock functions.  So, we only test one here.
 
-    >>> page = mocks.Page()
+    >>> page = mocks.Page(username='Crunchy')
     >>> page.body = ['dummy']
-    >>> page.username = True  # will be used to simulate admin
-    >>> config['menu_position'] = 'top_right'
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
     >>> tostring(page.body[0]) #doctest: +ELLIPSIS
     '<div class="menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>'

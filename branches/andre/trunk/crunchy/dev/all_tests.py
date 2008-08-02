@@ -62,8 +62,9 @@ excluded = []
 for t in test_files:
     if t in excluded:
         continue # skip
-    #if t not in include_only:
-    #    continue
+    if include_only:
+        if t not in include_only:
+            continue
     failure, nb_tests = doctest.testfile(os.path.join("src", "tests", t))
     total_tests += nb_tests
     total_failures += failure

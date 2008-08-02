@@ -17,7 +17,8 @@ power_browser.py has has the following functions that require testing:
     >>> src.utilities.COUNT = 0
     >>> plugin.clear()
     >>> config.clear()
-    >>> config['editarea_language'] = 'en'
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['editarea_language'] = 'en'
     >>> import src.plugins.power_browser as pb
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -42,7 +43,7 @@ First, reStructuredText files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'rst'
+    >>> config['Crunchy']['power_browser'] = 'rst'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body>
@@ -63,7 +64,7 @@ Next, local html tutorials.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'local_html'
+    >>> config['Crunchy']['power_browser'] = 'local_html'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body>
@@ -84,7 +85,7 @@ Next, remote html tutorials.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'local_html'
+    >>> config['Crunchy']['power_browser'] = 'local_html'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body>
@@ -105,7 +106,7 @@ Python files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'python'
+    >>> config['Crunchy']['power_browser'] = 'python'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body>
@@ -126,7 +127,7 @@ An unrecognize value.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'unknown'
+    >>> config['Crunchy']['power_browser'] = 'unknown'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body />
@@ -136,7 +137,7 @@ None should yield the same result.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = None
+    >>> config['Crunchy']['power_browser'] = None
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body />

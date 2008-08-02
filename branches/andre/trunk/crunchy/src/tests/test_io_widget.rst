@@ -38,7 +38,8 @@ We also need to define some mock functions and values.
     ...                  'display_only_url': 'display normal'}
     >>> def get_security_level(url):
     ...     return site_security[url]
-    >>> config['page_security_level'] = get_security_level
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['page_security_level'] = get_security_level
 
 
 .. _`register()`:
