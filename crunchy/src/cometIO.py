@@ -170,6 +170,7 @@ def push_input(request):
     #we do have user input
     session.log(uid, request.data, "input")
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
+    in_to_browser = in_to_browser.replace('\\', r'\\')
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
@@ -282,6 +283,7 @@ class ThreadedBuffer(object):
             data = ("<span class='py_prompt'>%s" % _prompt).join(dd)
 
         if self.__redirect(uid):
+            data = data.replace('\\',r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data)
