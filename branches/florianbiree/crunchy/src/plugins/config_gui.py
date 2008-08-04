@@ -3,10 +3,13 @@ config_gui.py : a plugin to enable users to configure crunchy nicely.
 
 """
 
+import os.path
+import StringIO
 from src.interface import translate, plugin, config
+from src.interface import parse, SubElement, tostring
+_ = translate['_']
 # TODO: get those object from src.interface instead
 from src.configuration import options, ANY
-_ = translate['_']
 
 provides = set(["/comet", "/input"])
 
@@ -39,11 +42,41 @@ def config_page(request):
             else:
                 # multiple predefined choices
                 MultiOption(key, config[key], options[key])
+    
+    # Getting the main template from server_root/index.html
+    html = parse(index_path)
+    # Find the head
+    head = html.find('head')
+    script = SubElement(head, 'script', type='text/javascript')
+    script.text = set_config_jscode
+    SubElement(head, 'style').text = option_style
+    # Set the title
+    head.find('title').text = _("Configuration")
+    titlebar = [element for element in html.getiterator() \
+                     if element.attrib.get('id') == 'titlebar'][0]
+    titlebar.find('h1').text = _("Configuration")
+    # Find the content div
+    content_block = [element for element in html.getiterator() \
+                     if element.attrib.get('id') == 'content'][0]
+    # Remove its content
+    for content in content_block:
+        content_block.remove(content)
+    content_block.text = ""
+    
     # Rendering the page
-    request.wfile.write(config_head_html)
-    for key in ConfigOption.all_options:
-        ConfigOption.all_options[key].render(request.wfile)
-    request.wfile.write(config_tail_html)
+    option_list = SubElement(content_block, 'dl')
+    # Sort options in the lphabetical order
+    keys = ConfigOption.all_options.keys()
+    keys.sort()
+    for key in keys:
+        ConfigOption.all_options[key].render(option_list)
+    
+    # Send the page
+    request.wfile.write(tostring(html.getroot()))
+
+def get_prefs():
+    """Return the preference object"""
+    return config['symbols'][config['_prefix']]
 
 class ConfigOption(object):     # tested
     """Generic option class"""
@@ -64,7 +97,7 @@ class ConfigOption(object):     # tested
         self.__value = value
         #Need to use that instead of config[self.key] = value to save values...
         # TODO: find a better way to save settings
-        setattr(config['symbols'][config['_prefix']], self.key, value)
+        setattr(get_prefs(), self.key, value)
 
 class MultiOption(ConfigOption):        # tested
     """An option that has multiple predefined choices
@@ -88,62 +121,66 @@ class MultiOption(ConfigOption):        # tested
             value = None
         super(MultiOption, self).set(value)
     
-    def render(self, handle):
+    def render(self, elem):
         """render the widget to a particular file object"""
         values = self.get_values()
-        handle.write('<p>\n')
+        option = SubElement(elem, 'dt')
         if len(values) <= MultiOption.threshold:
-            handle.write('%(name)s:<br />\n' % {'name': self.key})
+            option.text = "%s: " % self.key
+            SubElement(option, 'br')
             for value in values:
-                handle.write('''
-                <input type="radio" name="%(key)s" id="%(key)s_%(value)s"
-                value="%(value)s" %(checked)s
-                onchange="set_config('%(key)s_%(value)s', '%(key)s');" />
-                <label for="%(key)s_%(value)s">%(value)s</label>
-                <br />
-                ''' % {
-                    'key': self.key,
-                    'value': str(value), # str( ) is needed for None
-                    'checked': 'checked="checked"' if value == self.get() \
-                                                   else '',
-                })
+                input = SubElement(option, 'input',
+                    type = 'radio',
+                    name = self.key,
+                    id = "%s_%s" % (self.key, str(value)),
+                    value = str(value), # str( ) is needed for None
+                    onchange = "set_config('%(key)s_%(value)s', '%(key)s');" \
+                        % {'key': self.key, 'value': str(value)},
+                )
+                if value == self.get():
+                    input.attrib['checked'] = 'checked'
+                label = SubElement(option, 'label')
+                label.attrib['for'] = "%s_%s" % (self.key, str(value))
+                label.text = str(value)
+                SubElement(option, 'br')
         else:
-            handle.write('''
-            <label for="%(key)s">%(name)s</label>:
-            <select name="%(key)s" id="%(key)s"
-            onchange="set_config('%(key)s', '%(key)s');" >
-            ''' % {
-                'key': self.key,
-                'name': self.key,
-            })
+            label = SubElement(option, 'label')
+            label.attrib['for'] = self.key
+            label.text = "%s: " % self.key
+            select = SubElement(option, 'select',
+                name = self.key,
+                id = self.key,
+                onchange = "set_config('%(key)s', '%(key)s');" % \
+                    {'key': self.key},
+            )
             for value in values:
-                handle.write('''
-                <option value="%(value)s" %(selected)s>%(value)s</option>
-                ''' % {
-                    'value': str(value), # str( ) is needed for None
-                    'selected': 'selected="selected"' if value == self.get() \
-                                                      else '',
-                }) 
-            handle.write("</select>")
-        handle.write("</p>")
+                select_elem = SubElement(select, 'option', value = str(value))
+                if value == self.get():
+                    select_elem.attrib['selected'] = 'selected'
+                select_elem.text = str(value) # str( ) is needed for None
+        desc = SubElement(elem, 'dd')
+        desc.text = str(getattr(get_prefs().__class__, self.key).__doc__)
 
 class BoolOption(ConfigOption):
     """An option that has two choices [True, False]
     """
     
-    def render(self, handle):
+    def render(self, elem):
         """render the widget to a particular file object"""
-        handle.write('''
-        <p>
-            <input type="checkbox" name="%(key)s" id="%(key)s" %(checked)s
-            onchange="set_config('%(key)s', '%(key)s');" />
-            <label for="%(key)s">%(name)s</label>
-        </p>
-        ''' % {
-            'key': self.key,
-            'name': self.key,
-            'checked': 'checked="checked"' if self.get() else '',
-        })
+        option = SubElement(elem, 'dt')
+        input = SubElement(option, 'input',
+            type = 'checkbox',
+            name = self.key,
+            id = self.key,
+            onchange = "set_config('%(key)s', '%(key)s');" % {'key': self.key},
+        )
+        if self.get:
+            input.attrib['checked'] = 'checked'
+        label = SubElement(option, 'label')
+        label.attrib['for'] = self.key
+        label.text = self.key
+        desc = SubElement(elem, 'dd')
+        desc.text = str(getattr(get_prefs().__class__, self.key).__doc__)
     
     def set(self, value):
         """Define the value of the option
@@ -160,19 +197,23 @@ class StringOption(ConfigOption):
     """An option that can have any value
     """
     
-    def render(self, handle):
+    def render(self, elem):
         """render the widget to a particular file object"""
-        handle.write('''
-        <p>
-            <label for="%(key)s">%(name)s</label>:
-            <input type="text" id="%(key)s" name="%(key)s" value="%(value)s" 
-            onchange="set_config('%(key)s', '%(key)s');" />
-        </p>
-        ''' % {
-            'key': self.key,
-            'name': self.key,
-            'value': self.get(),
-        })
+        option = SubElement(elem, 'dt')
+        label = SubElement(option, 'label')
+        label.attrib['for'] = self.key
+        label.text = "%s: " % self.key
+        input = SubElement(elem, 'input',
+            type = 'text',
+            id = self.key,
+            name = self.key,
+            value = self.get(),
+            onchange = "set_config('%(key)s', '%(key)s');" % {'key': self.key},
+        )
+        desc = SubElement(elem, 'dd')
+        desc.text = str(getattr(get_prefs().__class__, self.key).__doc__)
+
+index_path = os.path.join(plugin['get_root_dir'](), "server_root/template.html")
 
 set_config_jscode = """
 function set_config(id, key){
@@ -196,16 +237,11 @@ function set_config(id, key){
 };
 """ % plugin['session_random_id']
 
-config_head_html = """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-    <title>Crunchy :: Config</title>
-    <script type="text/javascript">
-    %(set_config_js)s
-    </script>
-</head>
-<body>
-""" % {'set_config_js': set_config_jscode,}
-config_tail_html = """</body></html>"""
+option_style = """
+dd{
+    position:relative;
+    top: -1em;
+    text-align:right;
+    border-bottom: 1px dotted black;
+}
+"""
