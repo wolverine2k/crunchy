@@ -33,6 +33,7 @@ class _BasePage(object): # tested
     handlers1 = {} # tag -> handler function
     handlers2 = {} # tag -> attribute -> handler function
     handlers3 = {} # tag -> attribute -> keyword -> handler function
+    begin_handlers1 = {}  # tag -> handler function
     final_handlers1 = {}  # tag -> handler function
     begin_pagehandlers = []
     end_pagehandlers = []
@@ -45,7 +46,7 @@ class _BasePage(object): # tested
         from_comet['register_new_page'](self.pageid)
         return
 
-    def create_tree(self, filehandle, encoding='utf-8'):  # tested
+    def create_tree(self, filehandle):  # tested
         '''creates a tree (elementtree object) from an html file'''
         # note: this process removes the existing DTD
         html = ElementSoup.parse(filehandle, encoding = 'utf-8')
@@ -206,7 +207,7 @@ class _BasePage(object): # tested
                         keyword = self.extract_keyword(elem, attr)
                         if keyword in self.handlers3[tag][attr]:
                             self.handlers3[tag][attr][keyword]( self,
-                                            elem, self.pageid + ":" + uidgen(self.username))
+                                            elem, self.pageid + "_" + uidgen(self.username))
                             break
 
     def process_handlers2(self):  # tested
@@ -229,7 +230,7 @@ class _BasePage(object): # tested
                             if keyword in self.handlers3[tag][attr]:
                                 do_it = False
                         if do_it:
-                            uid = self.pageid + ":" + uidgen(self.username)
+                            uid = self.pageid + "_" + uidgen(self.username)
                             self.handlers2[tag][attr](self, elem, uid)
         return
 
@@ -258,15 +259,29 @@ class _BasePage(object): # tested
                                 do_it = False
                                 break
                 if do_it:
-                    uid = self.pageid + ":" + uidgen(self.username)
+                    uid = self.pageid + "_" + uidgen(self.username)
                     handlers[tag](self, elem, uid)
         return
 
-    def process_final_handlers1(self):  # tested
-        self.process_type1(self.final_handlers1)
+    def process_begin_handlers1(self, handlers):
+        '''
+        Processes handlers based on their tag.
+
+        Used, for example, to modify existing markup on a page.
+        '''
+        for tag in handlers:
+            for elem in self.tree.getiterator(tag):
+                handlers[tag](self, elem, 'dummy')
+        return
 
     def process_handlers1(self):  # tested
+        '''processes special handlers of type 1.'''
         self.process_type1(self.handlers1)
+
+    def process_final_handlers1(self):  # tested
+        '''processes special handlers of type 1 after other handlers have been
+        processed on that page'''
+        self.process_type1(self.final_handlers1)
 
     def read(self):  # tested
         '''create fake file from a tree, adding DTD and charset information
@@ -276,7 +291,6 @@ class _BasePage(object): # tested
         self.add_charset()
         self.tree.write(fake_file)
         return fake_file.getvalue()
-
 
 class CrunchyPage(_BasePage):
     '''class used to store an html page processed by Crunchy with added
@@ -325,6 +339,8 @@ class CrunchyPage(_BasePage):
 
     def process_tags(self):
         """process all the customised tags in the page"""
+
+        self.process_begin_handlers1(self.begin_handlers1)
 
         for handler in CrunchyPage.begin_pagehandlers:
             handler(self)

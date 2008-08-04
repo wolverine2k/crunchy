@@ -18,6 +18,8 @@ def uidgen(username):  # tested
     # to a username, we facilitate adapting behaviour of a given function/method
     # to the preferences of the user.
     names[uid] = username
+    # note that Crunchy's uid's are usually composed of TWO uid's - one for
+    # the page, the other for a given html "object".
     return uid
 
 def extract_log_id(vlam):  # tested

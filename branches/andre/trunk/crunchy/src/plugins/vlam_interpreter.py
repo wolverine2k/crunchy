@@ -41,14 +41,15 @@ def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
 
     vlam = elem.attrib["title"]
-    interp_kind = select_type(vlam, config[page.username]['override_default_interpreter'], elem)
+    interp_kind = select_type(vlam,
+                    config[page.username]['override_default_interpreter'], elem)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if not ('display' in config[page.username]['page_security_level'](page.url) or
-           interp_kind == None ):
+    if not ('display' in config[page.username]['page_security_level'](page.url)
+                or interp_kind == None ):
         include_interpreter(interp_kind, page, uid)
         log_id = utilities.extract_log_id(vlam)
         if log_id:

@@ -64,7 +64,7 @@ class Interpreter(KillableThread):
             self.friendly = config[self.username]['friendly']
         else:
             try:
-                pageid = self.channel.split(":")[0]
+                pageid = self.channel.split("_")[0]
                 self.username = names[pageid]
                 self.friendly = config[self.username]['friendly']
             except:
@@ -77,7 +77,7 @@ class Interpreter(KillableThread):
                     print "username not defined..."
                     self.username = None
                 try:
-                    print "self.channel (uid) in names: ", self.channel.split(":")[0] in names
+                    print "pageid in names: ", self.channel.split("_")[0] in names
                 except:
                     pass
 
@@ -231,16 +231,6 @@ class InteractiveInterpreter(object):
         if username is not None:
             self.locals.update(config[username]['symbols'])
             print _("Hello %s ! "% username)
-            #try:
-            #    pageid = plugin["get_uid"]().split(":")[0]
-            #    username = names[pageid]
-            #    self.username = username
-            #    print _("Hello %s ! "% username),
-            #
-            #except:
-            #    sys.stderr.write("Error in InteractiveIntrepreter.init;")
-            #    sys.stderr.write("uid = %s " % plugin['get_uid']())
-
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):

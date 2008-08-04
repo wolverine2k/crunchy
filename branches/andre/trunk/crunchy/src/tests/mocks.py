@@ -95,6 +95,9 @@ def register_begin_pagehandler(handler):
 def register_end_pagehandler(handler):
     registered_end_pagehandlers[str(handler)] = handler
 
+def register_begin_tag_handler(tag, handler):
+    registered_begin_tag_handlers[tag] = handler
+
 def register_final_tag_handler(tag, handler):
     registered_final_tag_handlers[tag] = handler
 
@@ -108,13 +111,15 @@ def init():
     '''
     global registered_tag_handler, registered_http_handler, registered_services,\
         registered_begin_pagehandlers, registered_end_pagehandlers,\
-        registered_preprocessors, registered_final_tag_handlers
+        registered_preprocessors, registered_begin_tag_handlers,\
+        registered_final_tag_handlers
     registered_tag_handler = {}
     registered_http_handler = {}
     registered_services = {}
     registered_preprocessors = {}
     registered_begin_pagehandlers = {}
     registered_end_pagehandlers = {}
+    registered_begin_tag_handlers = {}
     registered_final_tag_handlers = {}
 
     plugin['register_tag_handler'] = register_tag_handler
@@ -123,4 +128,5 @@ def init():
     plugin['register_preprocessor'] = register_preprocessor
     plugin['register_begin_pagehandler'] = register_begin_pagehandler
     plugin['register_end_pagehandler'] = register_end_pagehandler
+    plugin['register_begin_tag_handler'] = register_begin_tag_handler
     plugin['register_final_tag_handler'] = register_final_tag_handler

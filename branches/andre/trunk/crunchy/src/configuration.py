@@ -39,6 +39,7 @@ options = {
     'security': [ 'trusted', 'display trusted',
                   'normal', 'display normal',
                   'strict', 'display strict'],
+    'modify_markup': [True, False],
     'no_markup': [None],
     'override_default_interpreter' : [None],
     # allow languages values like "en" or "en_GB"; str(f) converts u"en" to "en"
@@ -130,11 +131,7 @@ class Base(object):
                 val.fset(self, ANY)
         return
 
-    def _save_settings(self, name, value, initial=False):
-        '''dummy function; needs to be defined by subclass'''
-        raise NotImplementedError
-
-class Defaults(Base):
+class UserPreferences(Base):
     """
     class containing various default values that can be set by user according
     to their preferences.
@@ -153,8 +150,10 @@ class Defaults(Base):
 
         self.site_security = {}
         self.styles = {}
+        self._modification_rules = []
         self._preferences.update({'site_security': self.site_security,
-                            'styles': self.styles})
+                            'styles': self.styles,
+                            '_modification_rules': self._modification_rules})
 
         self._set_dirs()
         # self.logging_uids is needed by comitIO.py:87
@@ -168,7 +167,7 @@ class Defaults(Base):
         # Make sure to initialize properties so that they exist before
         # retrieving saved values
         self._not_loaded = True
-        self._init_properties(Defaults)
+        self._init_properties(UserPreferences)
         self._load_settings()
 
     dir_help = make_property('dir_help',
@@ -204,6 +203,11 @@ Specifies the security setting for tutorials loaded from
 the local server (127.0.0.1) running Crunchy.""")
     menu_position = make_property('menu_position',
         doc="""Specifies the position where the menu should appear.""")
+    modify_markup = make_property('modify_markup', default=False,
+        doc="""\
+If True, invokes a set of user-defined rules to modify the existing
+markup on a page (currently restricted to changing the title attributes
+of <pre> html elements)""")
     no_markup = make_property('no_markup', default='python_tutorial',
         doc="""\
 Specifies the 'interactive element' to be included whenever
@@ -308,7 +312,7 @@ are usually launched.""")
 
         for key in saved:
             try:
-                val = Defaults.__dict__[key]
+                val = UserPreferences.__dict__[key]
                 if isinstance(val, property):
                     val.fset(self, saved[key])
                 else:
@@ -343,10 +347,12 @@ are usually launched.""")
         # update values of non-properties
         self._preferences['site_security'] = self.site_security
         self._preferences['styles'] = self.styles
+        self._preferences['_modification_rules'] = self._modification_rules
         saved = {}
         for name in self._preferences:
             if not (name in self._not_saved or name.startswith('_')):
                 saved[name] = self._preferences[name]
+        saved['_modification_rules'] = self._modification_rules
         pickled_path = os.path.join(self._user_dir, "settings.pkl")
         try:
             pickled = open(pickled_path, 'wb')
@@ -365,6 +371,7 @@ are usually launched.""")
         self.editarea_language = choice
 
     def _page_security_level(self, url):
+        '''determine the page security level based on the url'''
         info = urlsplit(url)
         # info.netloc == info[1] is not Python 2.4 compatible; we "fake it"
         info_netloc = info[1]
@@ -376,18 +383,22 @@ are usually launched.""")
         return level
 
     def _set_local_security(self, choice):
+        '''sets the security level for pages viewed locally'''
         self.local_security = choice
 
     def _get_current_page_security_level(self):
+        '''retrieves the security level of the current page'''
         return self.current_page_security_level
 
     def _get_site_security(self, site):
+        '''determines the appropriate level of security to use for given site'''
         if site in self.site_security:
             return self.site_security[site]
         else:
             return 'display trusted'
 
     def _set_site_security(self, site, choice):
+        '''sets the security level of a given site'''
         if choice in options['security']:
             self.site_security[site] = choice
             self._save_settings('site_security', choice)
@@ -395,7 +406,7 @@ are usually launched.""")
         else:
             u_print((_("Invalid choice for %s.site_security") %
                                                          self._preferences['_prefix']))
-            u_print(_("The valid choices are: "), str(security_allowed))
+            u_print(_("The valid choices are: "), str(options['security']))
 
     def add_site(self):
         '''interactive function to facilitate adding new site to
@@ -404,18 +415,59 @@ are usually launched.""")
         level = raw_input(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
+    def add_rule(self):
+        '''interactive function to enable rules to modify markup'''
+        print _("Enter a rule method to modify markup.")
+        print _("The allowed methods are: add_option, remove_option, replace")
+        method = raw_input(_("Enter method: ")).strip()
+        if method == 'replace':
+            to_replace = raw_input(_("Markup value to replace: "))
+            replacement = raw_input(_("Replacement value: "))
+            self._modification_rules.append([method, to_replace, replacement])
+        elif method == 'add_option':
+            add = raw_input(_("Enter option to add (e.g. linenumber): "))
+            self._modification_rules.append([method, add])
+        elif method == 'remove_option':
+            remove = raw_input(_("Enter option to remove (e.g. linenumber)"))
+            self._modification_rules.append([method, remove])
+        else:
+            print _("Unknown method.")
+            return
+        self._save_settings()
+        return
+
+    def remove_rule(self, no):
+        '''remove an existing rule'''
+        try:
+            del self._modification_rules[no]
+            self._save_settings()
+        except:
+            print _("Choose a valid rule number to remove.")
+            self.list_rules()
+        return
+
+    def list_rules(self):
+        '''list the rules used to modify markup'''
+        print _("#"), _("\tmethod"), _("\targuments")
+        for i, rule in enumerate(self._modification_rules):
+            print i, "\t%s" % rule[0], "\t%s" % rule[1:]
+
     def _set_alternate_python_version(self, alt_py):
+        '''sets the path to use for using an alternate Python version
+           to run external scripts.'''
         self.alternate_python_version = alt_py
     #==============
 
 def init():
+    '''Called when we need to initialize the various instances - based on the
+    number of different users defined.'''
     for key in additional_vlam:
         options[key].extend(additional_vlam[key])
 
     users = {}
     for name in accounts:
         config[name] = {}
-        users[name] = Defaults(config[name])
+        users[name] = UserPreferences(config[name])
         config[name]['log'] = users[name].log
         config[name]['logging_uids'] = users[name].logging_uids
         config[name]['symbols'] = {config[name]['_prefix']:users[name],
@@ -424,18 +476,6 @@ def init():
         config[name]['_get_current_page_security_level'] = users[name]._get_current_page_security_level
         config[name]['_set_alternate_python_version'] = users[name]._set_alternate_python_version
         config[name]['_set_local_security'] = users[name]._set_local_security
-
-
-    #defaults = Defaults(config)
-    #
-    #config['log'] = defaults.log
-    #config['logging_uids'] = defaults.logging_uids
-    #config['symbols'] = {config['_prefix']:defaults, 'temp_dir': defaults.temp_dir}
-    #config['get_current_page_security_level'] = defaults._get_current_page_security_level
-    #config['_set_alternate_python_version'] = defaults._set_alternate_python_version
-    #config['_set_local_security'] = defaults._set_local_security
-    #import pprint
-    #pprint.pprint(config)
 
     # the following may be set as an option when starting Crunchy
     if 'initial_security_set' not in config:

@@ -51,7 +51,7 @@ def insert_tooltip(page, *dummy):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    pageid = request.args['uid'].split(":")[0]
+    pageid = request.args['uid'].split("_")[0]
     username = names[pageid]
     if not config[username]['dir_help']:
         request.send_response(204)
@@ -85,9 +85,9 @@ def dir_handler(request):
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
 
-    pageid = request.args['uid'].split(":")[0]
+    pageid = request.args['uid'].split("_")[0]
     username = names[pageid]
-    if not config[page.username]['doc_help']:#configuration.defaults.doc_help:
+    if not config[username]['doc_help']:#configuration.defaults.doc_help:
         request.send_response(204)
         request.end_headers()
         return

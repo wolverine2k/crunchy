@@ -18,7 +18,7 @@ from src.interface import config
 import translation
 _ = translation._
 
-debug = True
+debug = False
 
 def simplify_traceback(code=None, username=None):
     ''' inspired by simplifytraceback from the code module in the

@@ -82,7 +82,7 @@ class CrunchyIOBuffer(StringBuffer):
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
         self.lock.acquire()
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         username = names[pageid]
         debug_msg("username = %s in CrunchyIOBuffer.put_output"%username, 5)
         if self.data.endswith('";//output\n'):
@@ -153,7 +153,7 @@ def do_exec(code, uid, doctest=False):
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     try:
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         username = names[pageid]
     except:
         debug_msg("error in do_exec; uid =%s"%uid, 8)
@@ -177,7 +177,7 @@ def do_exec(code, uid, doctest=False):
 def push_input(request):
     """An http request handler to deal with stdin"""
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
+    pageid = uid.split("_")[0]
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     output_buffers[pageid].put_output("<span class='stdin'>" +
@@ -229,7 +229,7 @@ class ThreadedBuffer(object):
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
@@ -247,7 +247,7 @@ class ThreadedBuffer(object):
         uid = threading.currentThread().getName()
         if not self.__redirect(uid):
             return
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         del input_buffers[uid]
         # hide the input box:
         output_buffers[pageid].put("""
@@ -264,7 +264,7 @@ class ThreadedBuffer(object):
         # Borg interpreter, there can be exchange of input or output between
         # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
         #Note: in the following, it is important to ensure that the

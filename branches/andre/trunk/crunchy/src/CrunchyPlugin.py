@@ -98,6 +98,10 @@ created, that conflicts with an existing one."""%(tag, attribute, keyword))
     return
 plugin['register_tag_handler'] = register_tag_handler
 
+def register_begin_tag_handler(tag, handler):
+    vlam.CrunchyPage.begin_handlers1[tag] = handler
+plugin['register_begin_tag_handler'] = register_begin_tag_handler
+
 def register_final_tag_handler(tag, handler):
     vlam.CrunchyPage.final_handlers1[tag] = handler
 plugin['register_final_tag_handler'] = register_final_tag_handler
@@ -149,7 +153,7 @@ def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page
     from which the code is being executed.
     """
-    return threading.currentThread().getName().split(":")[0]
+    return threading.currentThread().getName().split("_")[0]
 plugin['get_pageid'] = get_pageid
 
 def get_uid():
