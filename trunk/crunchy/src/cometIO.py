@@ -78,6 +78,7 @@ class CrunchyIOBuffer(StringBuffer):
     def put_output(self, data, uid):
         """put some output into the pipe"""
         data = data.replace('"', '&#34;')
+        pdata = data.replace("\\", "\\\\")
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
@@ -168,6 +169,7 @@ def push_input(request):
     pageid = uid.split(":")[0]
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
+    in_to_browser = in_to_browser.replace('\\', r'\\')
     output_buffers[pageid].put_output("<span class='stdin'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
@@ -270,6 +272,7 @@ class ThreadedBuffer(object):
             data = ("<span class='py_prompt'>%s" % _prompt).join(dd)
 
         if self.__redirect(uid):
+            data = data.replace('\\',r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data.encode(sys.getfilesystemencoding()))
