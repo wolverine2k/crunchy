@@ -6,10 +6,11 @@
 <h1>Crunchy Single Step Test</h1>
 <p>Here's a pdb box:</p>
 <pre title="pdb">
-a = 1
-b = 2
-c = a + b
-a = c
+import re
+p = re.compile('[a-z_][a-z_0-9]*')
+s = 'var abcde = 11111'
+m = p.search(s)
+print m 
 </pre>
 
 <p><a href="index.html">Back to the test index</a></p>

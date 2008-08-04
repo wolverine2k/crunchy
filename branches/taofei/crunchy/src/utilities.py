@@ -85,8 +85,8 @@ def escape_for_javascript(text):
     text = text.replace("\\", "\\\\")
     text = text.replace("'", r"\'")
     text = text.replace('"', r'\"')
-    text = text.replace("\n", r"\n'")
-    text = text.replace("\r", r"\r'")
+    text = text.replace("\n", r"\n")
+    text = text.replace("\r", r"\r")
     return text
 
 begin_html = """
