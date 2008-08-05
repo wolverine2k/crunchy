@@ -144,6 +144,22 @@ img {
     color: #204a87;
 }
 
+/* Configuration GUI content */
+.config_gui dt{
+    position:relative;
+    z-index:50;
+    width:50%;
+}
+.config_gui dd{
+    position:relative;
+    padding-left:50%;
+    top: -1em;
+    text-align:right;
+    border-bottom: 1px dotted black;
+    z-index:40;
+    width:50%;
+}
+
 /* special notes */
 .notes {
     border: 1px solid #2e3436;
