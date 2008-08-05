@@ -23,11 +23,12 @@ def register():  # tested
 # the following are required for Crunchy to work; they will need to be defined.
 def set_config(request):
     """Http handler to set an option"""
-    key = request.args['key']
-    value = request.args['value']
+    info = request.data.split("_::EOF::_")
+    key = info[0]
+    value = '_::EOF::_'.join(info[1:])
     option = ConfigOption.all_options[key]
     option.set(value)
-    
+
 def config_page(request):
     """Http handler to make a dynamic configuration page"""
     # Dynamic generation of the option list
@@ -43,13 +44,12 @@ def config_page(request):
                 # multiple predefined choices
                 MultiOption(key, config[key], options[key])
     
-    # Getting the main template from server_root/index.html
-    html = parse(index_path)
+    # Getting the main template from server_root/template.html
+    html = parse(template_path)
     # Find the head
     head = html.find('head')
     script = SubElement(head, 'script', type='text/javascript')
     script.text = set_config_jscode
-    SubElement(head, 'style').text = option_style
     # Set the title
     head.find('title').text = _("Configuration")
     titlebar = [element for element in html.getiterator() \
@@ -58,10 +58,12 @@ def config_page(request):
     # Find the content div
     content_block = [element for element in html.getiterator() \
                      if element.attrib.get('id') == 'content'][0]
-    # Remove its content
+    # Remove its content and the class "config_gui"
     for content in content_block:
         content_block.remove(content)
     content_block.text = ""
+    content_block.attrib['class'] = content_block.attrib.get('class', '') + \
+                                    ' config_gui'
     
     # Rendering the page
     option_list = SubElement(content_block, 'dl')
@@ -97,7 +99,8 @@ class ConfigOption(object):     # tested
         self.__value = value
         #Need to use that instead of config[self.key] = value to save values...
         # TODO: find a better way to save settings
-        setattr(get_prefs(), self.key, value)
+        get_prefs()._save_settings(self.key, value)
+        #setattr(get_prefs(), self.key, value)
 
 class MultiOption(ConfigOption):        # tested
     """An option that has multiple predefined choices
@@ -203,7 +206,7 @@ class StringOption(ConfigOption):
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = "%s: " % self.key
-        input = SubElement(elem, 'input',
+        input = SubElement(option, 'input',
             type = 'text',
             id = self.key,
             name = self.key,
@@ -213,7 +216,7 @@ class StringOption(ConfigOption):
         desc = SubElement(elem, 'dd')
         desc.text = str(getattr(get_prefs().__class__, self.key).__doc__)
 
-index_path = os.path.join(plugin['get_root_dir'](), "server_root/template.html")
+template_path = os.path.join(plugin['get_root_dir'](), "server_root/template.html")
 
 set_config_jscode = """
 function set_config(id, key){
@@ -231,17 +234,8 @@ function set_config(id, key){
     // if needed, send the new value
     if (value != undefined) {
         var j = new XMLHttpRequest();
-        j.open("POST", "/set_config%s?key="+key+"&value="+value, false);
+        j.open("POST", "/set_config%s", false);
         j.send(key+"_::EOF::_"+value);
     }
 };
 """ % plugin['session_random_id']
-
-option_style = """
-dd{
-    position:relative;
-    top: -1em;
-    text-align:right;
-    border-bottom: 1px dotted black;
-}
-"""
