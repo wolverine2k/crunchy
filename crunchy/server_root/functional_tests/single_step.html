@@ -7,8 +7,9 @@
 <p>Here's a pdb box:</p>
 <pre title="pdb">
 import re
-p = re.compile('[a-z_][a-z_0-9]*')
-s = 'var abcde = 11111'
+p = 1  #name p is created , you can see yellow
+p = re.compile('[a-z_][a-z_0-9]*')  # name p is changed , turn to red
+s = 'var abcde = 11111'  # p is not changed , corlor for p will be normal
 m = p.search(s)
 print m 
 </pre>

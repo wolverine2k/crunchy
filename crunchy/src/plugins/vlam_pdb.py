@@ -8,7 +8,7 @@ Pdb the code in the pre area
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id,unChangeHTMLspecialCharacters,escape_for_javascript
 import src.session as session
-from src.cometIO import raw_push_input,extract_data
+from src.cometIO import raw_push_input,extract_data,debug_msg
 import re,sys
 
 # The set of other "widgets/services" required from other plugins
@@ -76,7 +76,7 @@ def pdb_command_callback(request, command = "next"):
         #raw_push_input(uid, "output_off\n")
         raw_push_input(uid, "next\n")
         #raw_push_input(uid, "output_on\n")
-        #raw_push_input(uid, "crunchy_update_page\n")
+        raw_push_input(uid, "crunchy_update_page\n")
     #elif command == "local_var":
     #    raw_push_input(uid, "simple_where\n")
     elif command == "step":
@@ -167,10 +167,10 @@ def pdb_widget_callback(page, elem, uid):
     local_ns_div = SubElement(elem, "div")
     local_ns_div.attrib["id"] = "local_ns_%s"%uid 
 
-    #t = SubElement(elem, "h4")
-    #t.text = "Global Namespace"
-    #global_ns_div = SubElement(elem, "div")
-    #global_ns_div.attrib["id"] = "global_ns_%s"%uid 
+    t = SubElement(elem, "h4")
+    t.text = "Global Namespace"
+    global_ns_div = SubElement(elem, "div")
+    global_ns_div.attrib["id"] = "global_ns_%s"%uid 
 
     #some spacing:
     SubElement(elem, "br")
@@ -223,10 +223,10 @@ table.namespace td{
     border: 1px solid rgb(170, 170, 170); padding: 5px;
 }
 table.namespace tr.modified {
-    color:red;
+    background-color:red;
 }
 table.namespace tr.new {
-    color:green;
+    background-color:yellow;
 }
 div.btns {
     
@@ -389,6 +389,24 @@ class MyPdb(Pdb):
         self.prompt = "" #remove promot 
         self.use_rawinput = 0
 
+        #these name should not be exposed to user (as they are used by pdb)
+        self.exclude_name_list = ['__return__', '__exception__']#, '__builtins__']
+
+        self.last_locals = {}
+
+    def get_name_id_map(self, d):
+        ret = {}
+        for key,item in d.items():
+            ret[key] = id(item)
+        return ret
+
+    def filter_dict(self, d):
+        ret = {}
+        for key,value in d.items():
+            if key not in self.exclude_name_list:
+                ret[key] = value
+        return ret
+
     def do_output_off(self, arg = None):
         '''do command and capture the output'''
         self.old_stdout = self.stdout
@@ -419,6 +437,7 @@ class MyPdb(Pdb):
 
     def do_crunchy_where(self, arg = None):
         '''Get current module and lineno'''
+        self.last_frame = self.curframe
         for frame_lineno in self.stack:
             frame,lineno = frame_lineno
             if frame is self.curframe:
@@ -426,19 +445,16 @@ class MyPdb(Pdb):
                 print >>self.c_stdout, self.proto.encode('crunchy_where', '|'.join((filename, str(lineno))))
                 break
 
-    #def dict2table(self, d, old = {}):
-    def dict2table(self, d):
+    def dict2table(self, d, old = {}):
         s = "<table class='namespace'>"
         #s += "<thead><tr><th>name</th><th>value</th></tr></thead>"
         s += "<tbody>"
         for key,item in d.items():
             t = "normal"
-            #if key not in old:
-            #    t = "new"
-            #elif id(item) is id(old[key]):
-            #    t = "unchange"
-            #else:
-            #    t = "modified"
+            if key not in old:
+                t = "new"
+            elif id(item) != old[key]:
+                t = "modified"
             item = str(item).replace('<', '&lt;')
             s += "<tr class='%s'><td>%s</td><td>%s</td></tr>\n" %(t, str(key), str(item))
         s += "</tbody>"
@@ -447,16 +463,14 @@ class MyPdb(Pdb):
     
     def do_crunchy_locals(self, arg):
         '''Get local nanespace and format it a html table'''
-        locals = self.curframe.f_locals
-        print >>self.c_stdout, self.proto.encode('crunchy_locals', self.dict2table(locals))
-        #try:
-        #    old = self.last_locals
-        #except AttributeError,e:
-        #    old = {} 
-        #self.last_locals = locals
+        locals = self.filter_dict(self.curframe.f_locals)
+        old = self.last_locals.get(id(self.curframe), {})
+        #debug_msg(str(old), 6)
+        print >>self.c_stdout, self.proto.encode('crunchy_locals', self.dict2table(locals, old))
+        self.last_locals[id(self.curframe)] = self.get_name_id_map(locals) 
 
     def do_crunchy_globals(self, arg):
         '''Get local nanespace and format it a html table'''
-        globals = self.curframe.f_globals
+        globals = self.filter_dict(self.curframe.f_globals)
         print >>self.c_stdout, self.proto.encode('crunchy_globals', self.dict2table(globals))
 
