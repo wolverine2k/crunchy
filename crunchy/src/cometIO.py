@@ -82,7 +82,8 @@ class CrunchyIOBuffer(StringBuffer):
         #apply before_output hook first
         data = plugin['services'].apply_io_hook('ANY', 'before_output', data)
         data = plugin['services'].apply_io_hook(uid, 'before_output', data)
-
+        if data == "":
+            return
         data = data.replace('"', '&#34;')
         pdata = data.replace("\\", "\\\\")
         pdata = data.replace("\n", "\\n")
