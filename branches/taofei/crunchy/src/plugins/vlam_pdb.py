@@ -76,7 +76,7 @@ def pdb_command_callback(request, command = "next"):
         #raw_push_input(uid, "output_off\n")
         raw_push_input(uid, "next\n")
         #raw_push_input(uid, "output_on\n")
-        raw_push_input(uid, "crunchy_update_page\n")
+        #raw_push_input(uid, "crunchy_update_page\n")
     #elif command == "local_var":
     #    raw_push_input(uid, "simple_where\n")
     elif command == "step":
@@ -346,6 +346,7 @@ MyPdb().run(_debug_string, globals={}, locals={})
 
 from pdb import Pdb
 from StringIO import StringIO
+import inspect
 
 class Proto:
     '''Proto used to encode and decond information between mypdb and crunchy'''
@@ -364,12 +365,29 @@ class Proto:
             prefix, command, data = msg.split('\n',2)
             data = data[:data.find(self.suffix)-1]
             return (command, data)
+        
+class MyStringIO(StringIO):
+    '''Eat Up Every thing'''
+
+    def __init__(self, old_out):
+        self.old_out = old_out
+        StringIO.__init__(self)
+
+    def write(self, data):
+        pass
+        #self.old_out.write("data = %s\n" %data)
+        #self.old_out.write(str(outer_frames) + "\n--------------------\n")
+
 
 class MyPdb(Pdb):
 
     def __init__(self):
         Pdb.__init__(self) 
         self.proto = Proto()
+        self.c_stdout = self.stdout #crunchy output 
+        self.stdout =  MyStringIO(self.stdout)  #eat up everything output by orginal pdb
+        self.prompt = "" #remove promot 
+        self.use_rawinput = 0
 
     def do_output_off(self, arg = None):
         '''do command and capture the output'''
@@ -405,7 +423,7 @@ class MyPdb(Pdb):
             frame,lineno = frame_lineno
             if frame is self.curframe:
                 filename = self.canonic(frame.f_code.co_filename)
-                print >>self.stdout, self.proto.encode('crunchy_where', '|'.join((filename, str(lineno))))
+                print >>self.c_stdout, self.proto.encode('crunchy_where', '|'.join((filename, str(lineno))))
                 break
 
     #def dict2table(self, d, old = {}):
@@ -430,7 +448,7 @@ class MyPdb(Pdb):
     def do_crunchy_locals(self, arg):
         '''Get local nanespace and format it a html table'''
         locals = self.curframe.f_locals
-        print >>self.stdout, self.proto.encode('crunchy_locals', self.dict2table(locals))
+        print >>self.c_stdout, self.proto.encode('crunchy_locals', self.dict2table(locals))
         #try:
         #    old = self.last_locals
         #except AttributeError,e:
@@ -440,5 +458,5 @@ class MyPdb(Pdb):
     def do_crunchy_globals(self, arg):
         '''Get local nanespace and format it a html table'''
         globals = self.curframe.f_globals
-        print >>self.stdout, self.proto.encode('crunchy_globals', self.dict2table(globals))
+        print >>self.c_stdout, self.proto.encode('crunchy_globals', self.dict2table(globals))
 
