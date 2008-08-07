@@ -1,7 +1,11 @@
 """  Crunchy pdb plugin.
-
-Pdb the code in the pre area
-
+Debugger In Browser
+Features:
+    next
+    step 
+    return
+    show local namespace  (highlight just changed or newly create name) 
+    highlight current line (can jump between files)
 """
 
 # All plugins should import the crunchy plugin API via interface.py
@@ -30,16 +34,16 @@ def register():
     # via "/name"; for security, we add a random session id
     # to the custom handler's name to be executed.
     plugin['register_http_handler'](
-                         "/pdb_next%s"%plugin['session_random_id'],
-                         lambda r :pdb_command_callback(r, "next"))
+                         "/pdb_cmd%s"%plugin['session_random_id'],
+                         pdb_command_callback)
 
-    plugin['register_http_handler'](
-                         "/pdb_step%s"%plugin['session_random_id'],
-                         lambda r :pdb_command_callback(r, "step"))
+    #plugin['register_http_handler'](
+    #                     "/pdb_step%s"%plugin['session_random_id'],
+    #                     lambda r :pdb_command_callback(r, "step"))
 
-    plugin['register_http_handler'](
-                         "/pdb_return%s"%plugin['session_random_id'],
-                         lambda r :pdb_command_callback(r, "return"))
+    #plugin['register_http_handler'](
+    #                     "/pdb_return%s"%plugin['session_random_id'],
+    #                     lambda r :pdb_command_callback(r, "return"))
 
     #plugin['register_http_handler'](
     #                     "/pdb_local_var%s"%plugin['session_random_id'],
@@ -64,7 +68,7 @@ def pdb_start_callback(request):
     request.send_response(200)
     request.end_headers()
 
-def pdb_command_callback(request, command = "next"):
+def pdb_command_callback(request):
     """Handles all pdb command. The request object will contain
     all the data in the AJAX message sent from the browser."""
     # note how the code to be executed is not simply the code entered by
@@ -72,6 +76,7 @@ def pdb_command_callback(request, command = "next"):
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
     uid = request.args["uid"]
+    command = request.args["command"]
     if command == "next":
         #raw_push_input(uid, "output_off\n")
         raw_push_input(uid, "next\n")
@@ -279,7 +284,8 @@ pdb_interpreter.prototype = {
     send_cmd : function(cmd){
         uid = this.uid;
         var j = new XMLHttpRequest();
-        j.open("POST", "/pdb_" + cmd + random_session_id +"?uid="+uid, false);
+        //j.open("POST", "/pdb_" + cmd + random_session_id +"?uid="+uid, false);
+        j.open("POST", "/pdb_cmd"+ random_session_id +"?uid="+uid + "&command=" + cmd, false);
         j.send(cmd + "\n");
     },
     //update local namespace , update the html
