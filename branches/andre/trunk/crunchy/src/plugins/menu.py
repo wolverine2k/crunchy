@@ -15,6 +15,7 @@ def register(): # tested
        allowed positions for the menu.
     """
     plugin['register_end_pagehandler'](insert_menu)
+    plugin['register_service']("insert_menu", insert_menu)
     plugin['add_vlam_option']('menu_position', 'top_left', 'top_right',
                               'bottom_right', 'bottom_left')
 

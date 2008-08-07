@@ -29,10 +29,29 @@ def set_config(request):
     option = ConfigOption.all_options[key]
     option.set(value)
 
+class FakePage(object):
+    def __init__(self, username):
+        self.username = username
+
 def config_page(request):
     """Http handler to make a dynamic configuration page"""
     # Dynamic generation of the option list
     username = request.crunchy_username
+    # Getting the main template from server_root/template.html
+    html = parse(template_path)
+    # Find the head
+    head = html.find('head')
+    script = SubElement(head, 'script', type='text/javascript')
+    script.text = set_config_jscode
+    # Set the title
+    head.find('title').text = _("Configuration")
+    titlebar = [element for element in html.getiterator() \
+                     if element.attrib.get('id') == 'titlebar'][0]
+    titlebar.find('h1').text = _("Configuration")
+    # prepare to insert the menu
+    fake_page = FakePage(username)
+    fake_page.body = html.find('body')
+    plugin['services'].insert_menu(fake_page)
     for key in options:
         if key in config[username]:
             if set(options[key]) == set((True, False)):
@@ -45,17 +64,9 @@ def config_page(request):
                 # multiple predefined choices
                 MultiOption(key, config[username][key], options[key], username=username)
 
-    # Getting the main template from server_root/template.html
-    html = parse(template_path)
-    # Find the head
-    head = html.find('head')
-    script = SubElement(head, 'script', type='text/javascript')
-    script.text = set_config_jscode
-    # Set the title
-    head.find('title').text = _("Configuration")
-    titlebar = [element for element in html.getiterator() \
-                     if element.attrib.get('id') == 'titlebar'][0]
-    titlebar.find('h1').text = _("Configuration")
+
+
+
     # Find the content div
     content_block = [element for element in html.getiterator() \
                      if element.attrib.get('id') == 'content'][0]
