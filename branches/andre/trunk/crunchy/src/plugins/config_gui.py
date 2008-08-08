@@ -6,7 +6,7 @@ config_gui.py : a plugin to enable users to configure crunchy nicely.
 import os.path
 import StringIO
 from src.interface import translate, plugin, config
-from src.interface import parse, SubElement, tostring
+from src.interface import parse, Element, SubElement, tostring
 _ = translate['_']
 # TODO: get those object from src.interface instead
 from src.configuration import options, ANY
@@ -32,6 +32,13 @@ def set_config(request):
 class FakePage(object):
     def __init__(self, username):
         self.username = username
+    # the following is needed for adding the menu styling
+    def add_css_code(self, code):
+        '''inserts styling code in <head>'''
+        css = Element("style", type="text/css")
+        css.text = code
+        self.head.insert(0, css)
+        return
 
 def config_page(request):
     """Http handler to make a dynamic configuration page"""
@@ -51,6 +58,7 @@ def config_page(request):
     # prepare to insert the menu
     fake_page = FakePage(username)
     fake_page.body = html.find('body')
+    fake_page.head = head
     plugin['services'].insert_menu(fake_page)
     for key in options:
         if key in config[username]:
