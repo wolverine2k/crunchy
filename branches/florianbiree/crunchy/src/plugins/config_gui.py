@@ -8,12 +8,10 @@ import StringIO
 from src.interface import translate, plugin, config
 from src.interface import parse, SubElement, tostring
 _ = translate['_']
-# TODO: get those object from src.interface instead
-from src.configuration import options, ANY
 
 provides = set(["/comet", "/input"])
 
-def register():  # tested
+def register():
     '''registers two http handlers: /config and /set_config and a begin page
     handler to insert the configuration page'''
     plugin['register_http_handler'](
@@ -32,17 +30,17 @@ def set_config(request):
 def config_page(request):
     """Http handler to make a dynamic configuration page"""
     # Dynamic generation of the option list
-    for key in options:
+    for key in config['_available_options']:
         if key in config:
-            if set(options[key]) == set((True, False)):
+            if set(config['_available_options'][key]) == set((True, False)):
                 # boolean option
                 BoolOption(key, config[key])
-            elif ANY in options[key]:
+            elif config['_ANY'] in config['_available_options'][key]:
                 # any string allowed
                 StringOption(key, config[key])
             else:
                 # multiple predefined choices
-                MultiOption(key, config[key], options[key])
+                MultiOption(key, config[key], config['_available_options'][key])
     
     # Getting the main template from server_root/template.html
     html = parse(template_path)
@@ -80,16 +78,16 @@ def get_prefs():
     """Return the preference object"""
     return config['symbols'][config['_prefix']]
 
-class ConfigOption(object):     # tested
+class ConfigOption(object):
     """Generic option class"""
     all_options = {}
 
-    def __init__(self, key, initial):       # tested
+    def __init__(self, key, initial):
         self.key = key
         self.set(initial)
         ConfigOption.all_options[key] = self
 
-    def get(self):      # tested
+    def get(self):
         """Return the current value of the option"""
         return self.__value
 
@@ -97,22 +95,19 @@ class ConfigOption(object):     # tested
         """Define the value of the option
         """
         self.__value = value
-        #Need to use that instead of config[self.key] = value to save values...
-        # TODO: find a better way to save settings
         get_prefs()._save_settings(self.key, value)
-        #setattr(get_prefs(), self.key, value)
 
-class MultiOption(ConfigOption):        # tested
+class MultiOption(ConfigOption):
     """An option that has multiple predefined choices
     """
     # the threshold between radio buttons and a dropdown box
     threshold = 4
 
-    def __init__(self, key, initial, values):       # tested
+    def __init__(self, key, initial, values):
         self.values = values
         super(MultiOption, self).__init__(key, initial)
     
-    def get_values(self):       # tested
+    def get_values(self):
         """get the possible values"""
         return self.values
     

@@ -1,6 +1,8 @@
 config_gui.py tests
 ===================
 
+Warning: this file is out of date.
+
     >>> from src.plugins.config_gui import *
     
 This was first suggested by André on the crunchy-discuss mailing list. This

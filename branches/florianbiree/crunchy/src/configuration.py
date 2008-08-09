@@ -374,6 +374,9 @@ def init():
     config['get_current_page_security_level'] = defaults.get_current_page_security_level
     config['_set_alternate_python_version'] = defaults._set_alternate_python_version
     config['_set_local_security'] = defaults._set_local_security
+    # Added for confi_gui:
+    config['_ANY'] = ANY
+    config['_available_options'] = options
     #import pprint
     #pprint.pprint(config)
 
