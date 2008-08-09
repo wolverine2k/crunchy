@@ -96,6 +96,7 @@ def pdb_command_callback(request):
 
 def pdb_filter(data, uid):
     '''modifify the output of pdb command'''
+    page_id = uid.split(':')[0]
     buff_class,text = extract_data(data)
     proto = Proto()
     if buff_class == "stdout":
@@ -104,11 +105,11 @@ def pdb_filter(data, uid):
         if command is None:
             pass
         elif command == 'crunchy_locals':
-            plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].update_local_ns('%s');" %(uid, escape_for_javascript(d)))
+            plugin['exec_js'](page_id, "window['pdb_%s'].update_local_ns('%s');" %(uid, escape_for_javascript(d)))
             data = ""
-        elif command == 'crunchy_globals':
-            plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].update_global_ns('%s');" %(uid, escape_for_javascript(d)))
-            data = ""
+        #elif command == 'crunchy_globals':
+        #    plugin['exec_js'](page_id, "window['pdb_%s'].update_global_ns('%s');" %(uid, escape_for_javascript(d)))
+        #    data = ""
         elif command == 'crunchy_where':
             filename,line_no = d.split('|')
             if filename not in pdb_py_files[uid]:
@@ -121,7 +122,7 @@ def pdb_filter(data, uid):
                 content = ""
             filename = escape_for_javascript(filename)
             content = escape_for_javascript(content)
-            plugin['exec_js'](plugin['get_pageid'](), "window['pdb_%s'].go_to_file_and_line('%s','%s','%s');" %(uid, filename, content, line_no))
+            plugin['exec_js'](page_id, "window['pdb_%s'].go_to_file_and_line('%s','%s','%s');" %(uid, filename, content, line_no))
             data = ""
     elif buff_class == "stdin":
         #no echo at all
@@ -132,13 +133,6 @@ def pdb_filter(data, uid):
 def pdb_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and
     run pdb"""
-    vlam = elem.attrib["title"]
-    #logging this is meanless
-    #log_id = extract_log_id(vlam)
-    #if log_id:
-    #    t = 'doctest'
-    #    session.add_log_id(uid, log_id, t)
-        #config['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
@@ -172,10 +166,10 @@ def pdb_widget_callback(page, elem, uid):
     local_ns_div = SubElement(elem, "div")
     local_ns_div.attrib["id"] = "local_ns_%s"%uid 
 
-    t = SubElement(elem, "h4")
-    t.text = "Global Namespace"
-    global_ns_div = SubElement(elem, "div")
-    global_ns_div.attrib["id"] = "global_ns_%s"%uid 
+    #t = SubElement(elem, "h4")
+    #t.text = "Global Namespace"
+    #global_ns_div = SubElement(elem, "div")
+    #global_ns_div.attrib["id"] = "global_ns_%s"%uid 
 
     #some spacing:
     SubElement(elem, "br")
@@ -196,7 +190,7 @@ def pdb_widget_callback(page, elem, uid):
     btn.attrib["disabled"] = "disabled"
 
     btn = SubElement(elem, "button")
-    btn.text = "return"
+    btn.text = "Return"
     btn.attrib["id"] = "btn_return_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
