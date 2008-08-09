@@ -7,7 +7,7 @@ performs vlam substitution, and outputs back the final result.
 
 It contains two classes and a number of methods that need to be tested:
 
-#. `_BasePage.__init__()`_
+#. `BasePage.__init__()`_
 #. `create_tree()`_
 #. `find_head()`_
 #. `find_body()`_
@@ -58,7 +58,7 @@ Let us define a utility function that will:
     ...     fake_file = StringIO()
     ...     fake_file.write(html)
     ...     fake_file.seek(0)
-    ...     page = vlam._BasePage('dummy_username')
+    ...     page = vlam.BasePage('dummy_username')
     ...     page.create_tree(fake_file)  # tested separately below
     ...     output = StringIO()
     ...     page.tree.write(output)
@@ -75,14 +75,14 @@ Also, let us define the 4th part of that function as a function on its own
     ...     return out_html
     >>>
 
-.. _`_BasePage.__init__()`:
+.. _`BasePage.__init__()`:
 
 Creating a page and a tree
 ---------------------------
 
 Let's start by creating a simple page.
 
-    >>> page = vlam._BasePage('dummy_username')
+    >>> page = vlam.BasePage('dummy_username')
     >>> page.included
     set([])
     >>> print int(uidgen('dummy')) - int(page.pageid)
@@ -415,10 +415,10 @@ and a test function.
     >>> handlers2 = {'a': {'aa': func}, 'b': {'aa': func}}
     >>> handlers3 = {'a': {'aa': {'aaa': func, 'bbb': func}}, 'c': {'aa': {'aaa': func}, 'cc': {'ccc': func}}}
     >>> final_handlers1 = {'a': func, 'd': func}
-    >>> vlam._BasePage.handlers1 = handlers1
-    >>> vlam._BasePage.handlers2 = handlers2
-    >>> vlam._BasePage.handlers3 = handlers3
-    >>> vlam._BasePage.final_handlers1 = final_handlers1
+    >>> vlam.BasePage.handlers1 = handlers1
+    >>> vlam.BasePage.handlers2 = handlers2
+    >>> vlam.BasePage.handlers3 = handlers3
+    >>> vlam.BasePage.final_handlers1 = final_handlers1
 
 Next, let us create a tree with these tags, and some others.  The text we put inside
 each element will be a number chosen, by inspection of the above handlers structure, 

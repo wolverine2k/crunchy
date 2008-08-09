@@ -24,7 +24,7 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 # In production code, we invoke CrunchyPage instead which does all
 # the required processing automatically.
 
-class _BasePage(object): # tested
+class BasePage(object): # tested
     '''
        Base class used to store html pages and the methods to process them.
     '''
@@ -292,7 +292,7 @@ class _BasePage(object): # tested
         self.tree.write(fake_file)
         return fake_file.getvalue()
 
-class CrunchyPage(_BasePage):
+class CrunchyPage(BasePage):
     '''class used to store an html page processed by Crunchy with added
        interactive elements.
     '''
@@ -304,7 +304,7 @@ class CrunchyPage(_BasePage):
         url should be just a path if crunchy accesses the page locally, or
         the full URL if it is remote.
         """
-        _BasePage.__init__(self, username=username)
+        BasePage.__init__(self, username=username)
         self.url = url
 
         # Assign tutorial type
