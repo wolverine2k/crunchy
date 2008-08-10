@@ -12,7 +12,7 @@ Features:
 from src.interface import config, plugin, SubElement, tostring
 from src.utilities import extract_log_id,unChangeHTMLspecialCharacters,escape_for_javascript
 import src.session as session
-from src.cometIO import raw_push_input,extract_data,debug_msg
+from src.cometIO import raw_push_input,extract_data,debug_msg,is_accept_input,write_output
 import re,sys
 
 # The set of other "widgets/services" required from other plugins
@@ -77,6 +77,13 @@ def pdb_command_callback(request):
     # correct method in the doctest module.
     uid = request.args["uid"]
     command = request.args["command"]
+    #check if we are still alive
+    #if not is_accept_input(uid):
+    #    plugin['exec_js'](uid.split(':')[0], "window['pdb_%s'].on_terminate()" %(uid))
+    #    write_output("---FINISHED---\n")
+    #    request.send_response(200)
+    #    request.end_headers()
+    #    return 
     if command == "next":
         #raw_push_input(uid, "output_off\n")
         raw_push_input(uid, "next\n")
@@ -123,6 +130,10 @@ def pdb_filter(data, uid):
             filename = escape_for_javascript(filename)
             content = escape_for_javascript(content)
             plugin['exec_js'](page_id, "window['pdb_%s'].go_to_file_and_line('%s','%s','%s');" %(uid, filename, content, line_no))
+            data = ""
+        elif command == "crunchy_finished": #we are finished
+            plugin['exec_js'](uid.split(':')[0], "window['pdb_%s'].on_terminate();" %(uid))
+            plugin['exec_js'](uid.split(':')[0], "alert('Reach end of the code.');")
             data = ""
     elif buff_class == "stdin":
         #no echo at all
@@ -262,6 +273,7 @@ pdb_interpreter.prototype = {
         //self.show_local_var_btn.onclick = function(){ _this.send_cmd('local_var')}; 
         
         //enable them
+        self.start_btn.disabled = true;
         self.next_step_btn.disabled = false;
         self.step_into_btn.disabled = false;
         self.return_btn.disabled = false;
@@ -273,6 +285,13 @@ pdb_interpreter.prototype = {
         this.files = {};
         this.files['<string>'] = {'content' : eAL.getValue("code_" + uid), 'curr_line' : 1};
         this.current_file = '<string>';
+    },
+    on_terminate : function(){
+        self.start_btn.disabled = false;
+        self.next_step_btn.disabled = true;
+        self.step_into_btn.disabled = true;
+        self.return_btn.disabled = true;
+        this.update_local_ns("");
     },
     send_cmd : function(cmd){
         uid = this.uid;
@@ -337,10 +356,12 @@ function init_pdb(uid)
 """ % (plugin['session_random_id'])
 
 pdb_pycode = '''
-from src.plugins.vlam_pdb import MyPdb
+from src.plugins.vlam_pdb import MyPdb,Proto
 _debug_string = """%s
 """
-MyPdb().run(_debug_string, globals={}, locals={})
+mypdb = MyPdb()
+mypdb.run(_debug_string, globals={}, locals={})
+mypdb.c_stdout.write(Proto().encode('crunchy_finished', '---FINISHED---'))
 '''
 
 from pdb import Pdb

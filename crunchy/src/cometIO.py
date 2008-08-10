@@ -192,6 +192,9 @@ def push_input(request):
 def raw_push_input(uid, data):
     input_buffers[uid].put(data)
 
+def is_accept_input(uid):
+    return uid in input_buffers
+
 def extract_data(data):
     '''
     extract pure data from output span  like <span class='stdout'>some text</span>
@@ -269,6 +272,7 @@ class ThreadedBuffer(object):
         pageid = uid.split(":")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
+        debug_msg("write --- data , " + data.replace('\\', r'\\'), 4)
         #Note: in the following, it is important to ensure that the
         # py_prompt class is surrounded by single quotes - not double ones.
         # normal prompt
