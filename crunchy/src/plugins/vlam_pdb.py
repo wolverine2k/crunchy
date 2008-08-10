@@ -127,7 +127,6 @@ def pdb_filter(data, uid):
     elif buff_class == "stdin":
         #no echo at all
         data = ""
-    #no normal output at all
     return data
 
 def pdb_widget_callback(page, elem, uid):
@@ -442,7 +441,7 @@ class MyPdb(Pdb):
             frame,lineno = frame_lineno
             if frame is self.curframe:
                 filename = self.canonic(frame.f_code.co_filename)
-                print >>self.c_stdout, self.proto.encode('crunchy_where', '|'.join((filename, str(lineno))))
+                self.c_stdout.write(self.proto.encode('crunchy_where', '|'.join((filename, str(lineno)))))
                 break
 
     def dict2table(self, d, old = {}):
@@ -466,11 +465,11 @@ class MyPdb(Pdb):
         locals = self.filter_dict(self.curframe.f_locals)
         old = self.last_locals.get(id(self.curframe), {})
         #debug_msg(str(old), 6)
-        print >>self.c_stdout, self.proto.encode('crunchy_locals', self.dict2table(locals, old))
+        self.c_stdout.write(self.proto.encode('crunchy_locals', self.dict2table(locals, old)))
         self.last_locals[id(self.curframe)] = self.get_name_id_map(locals) 
 
     def do_crunchy_globals(self, arg):
         '''Get local nanespace and format it a html table'''
         globals = self.filter_dict(self.curframe.f_globals)
-        print >>self.c_stdout, self.proto.encode('crunchy_globals', self.dict2table(globals))
+        self.c_stdout.write(self.proto.encode('crunchy_globals', self.dict2table(globals)))
 
