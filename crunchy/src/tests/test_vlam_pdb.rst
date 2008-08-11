@@ -96,25 +96,17 @@ First, we need to fake some services that are expected by pdb_widget_callback
 #Test buttons
   
   >>> btns = elem.findall("button")
-  >>> btns[0].text == "Start PDB"
-  True
   >>> btns[0].attrib["onclick"] == "init_pdb('%s');" %(uid)
   True
   >>> btns[0].attrib["id"] == "btn_start_pdb_%s" %(uid)
   True
 
-  >>> btns[1].text == "Next Step"
-  True
   >>> btns[1].attrib["id"] == "btn_next_step_%s" %(uid)
   True
 
-  >>> btns[2].text == "Step Into"
-  True
   >>> btns[2].attrib["id"] == "btn_step_into_%s" %(uid)
   True
 
-  >>> btns[3].text == "Return"
-  True
   >>> btns[3].attrib["id"] == "btn_return_%s" %(uid)
   True
 

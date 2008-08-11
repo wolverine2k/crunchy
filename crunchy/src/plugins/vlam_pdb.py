@@ -9,11 +9,12 @@ Features:
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring
+from src.interface import config, plugin, SubElement, tostring, translate
 from src.utilities import extract_log_id,unChangeHTMLspecialCharacters,escape_for_javascript
-import src.session as session
 from src.cometIO import raw_push_input,extract_data,debug_msg,is_accept_input,write_output
 import re,sys
+
+_ = translate['_']
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget", "register_io_hook"])
@@ -26,8 +27,8 @@ def register():
           interpret the special Crunchy markup.
        2. a custom http handler to deal with "exec pdb command" commands,
        """
-    # 'doctest' only appears inside <pre> elements, using the notation
-    # <pre title='doctest ...'>
+    # 'pdb' only appears inside <pre> elements, using the notation
+    # <pre title='pdb ...'>
     plugin['register_tag_handler']("pre", "title", "pdb",
                                           pdb_widget_callback)
     # By convention, the custom handler for "name" will be called
@@ -36,18 +37,6 @@ def register():
     plugin['register_http_handler'](
                          "/pdb_cmd%s"%plugin['session_random_id'],
                          pdb_command_callback)
-
-    #plugin['register_http_handler'](
-    #                     "/pdb_step%s"%plugin['session_random_id'],
-    #                     lambda r :pdb_command_callback(r, "step"))
-
-    #plugin['register_http_handler'](
-    #                     "/pdb_return%s"%plugin['session_random_id'],
-    #                     lambda r :pdb_command_callback(r, "return"))
-
-    #plugin['register_http_handler'](
-    #                     "/pdb_local_var%s"%plugin['session_random_id'],
-    #                     lambda r :pdb_command_callback(r, "local_var"))
 
     plugin['register_http_handler'](
                          "/pdb_start%s"%plugin['session_random_id'],
@@ -133,7 +122,7 @@ def pdb_filter(data, uid):
             data = ""
         elif command == "crunchy_finished": #we are finished
             plugin['exec_js'](uid.split(':')[0], "window['pdb_%s'].on_terminate();" %(uid))
-            plugin['exec_js'](uid.split(':')[0], "alert('Reach end of the code.');")
+            plugin['exec_js'](uid.split(':')[0], "alert('" + _("Reach end of the code.") + "');")
             data = ""
     elif buff_class == "stdin":
         #no echo at all
@@ -172,7 +161,7 @@ def pdb_widget_callback(page, elem, uid):
     plugin['services'].insert_editor_subwidget(page, elem, uid, code)
 
     t = SubElement(elem, "h4")
-    t.text = "Local Namespace"
+    t.text = _("Local Namespace")
     local_ns_div = SubElement(elem, "div")
     local_ns_div.attrib["id"] = "local_ns_%s"%uid 
 
@@ -185,22 +174,22 @@ def pdb_widget_callback(page, elem, uid):
     SubElement(elem, "br")
 
     btn = SubElement(elem, "button")
-    btn.text = "Start PDB"
+    btn.text = _("Start PDB")
     btn.attrib["onclick"] = "init_pdb('%s');" %(uid)
     btn.attrib["id"] = "btn_start_pdb_%s" % uid
 
     btn = SubElement(elem, "button")
-    btn.text = "Next Step"
+    btn.text = _("Next Step")
     btn.attrib["id"] = "btn_next_step_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
     btn = SubElement(elem, "button")
-    btn.text = "Step Into"
+    btn.text = _("Step Into")
     btn.attrib["id"] = "btn_step_into_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
     btn = SubElement(elem, "button")
-    btn.text = "Return"
+    btn.text = _("Return")
     btn.attrib["id"] = "btn_return_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
@@ -236,9 +225,6 @@ table.namespace tr.modified {
 }
 table.namespace tr.new {
     background-color:yellow;
-}
-div.btns {
-    
 }
 """
 pdb_jscode = r"""
