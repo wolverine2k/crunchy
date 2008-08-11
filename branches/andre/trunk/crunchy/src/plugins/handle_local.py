@@ -47,6 +47,11 @@ def add_to_path(page, elem, *dummy):  # tested
         import_path = elem.attrib['name']
     except:
         return
-    added_path = os.path.normpath(os.path.join(base_url, import_path))
+    if page.is_from_root:
+        added_path = os.path.normpath(os.path.join(
+                                        config['crunchy_base_dir'],
+                                    "server_root", base_url[1:], import_path))
+    else:
+        added_path = os.path.normpath(os.path.join(base_url, import_path))
     if added_path not in sys.path:
         sys.path.insert(0, added_path)

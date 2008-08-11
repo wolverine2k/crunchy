@@ -23,6 +23,10 @@ Setting things up
     >>> from_comet['register_new_page'] = ignore
     >>> import src.plugins.templates as templates
 
+Testing register()
+------------------
+
+to do
 
 Testing create_template()
 --------------------------
@@ -33,12 +37,6 @@ Testing create_template()
     {'a_name': <src.vlam.BasePage object at ...}
     >>> print templates._templates['a_name'].username
     user_name
-
-
-Testing merge_with_template()
------------------------------
-
-    >>>
 
 Testing merge_elements()
 -------------------------
@@ -113,10 +111,58 @@ Testing merge_elements()
     </title><title>This is the second title.
     </title></head>
 
-Testing remove_subelement()
+Testing find_divs()
+-------------------
 
-Now, let's clear the template title first...
-    >>> template_head = templates.remove_subelement(template.find(".//head"), 'title')
-    >>> print tostring(template_head)
-    <head />
+    >>> class Page(object):
+    ...     pass
+    >>> template_page = Page()
+    >>> template_page.tree = template
+    >>> divs = templates.find_divs(template_page)
+    >>> for div in divs:
+    ...    print div, ":", tostring(divs[div])
+    ...    print "-------"
+    content : <div id="content"><p>
+    This is part of the target.
+    </p></div>
+    -------
+    not this one : <div id="not this one"><p>
+    Keep this.
+    </p></div>
+    -------
+    not that one : <div id="not that one"><p>
+    This should be kept.
+    </p></div>
+    -------
 
+
+Testing merge_with_template()
+-----------------------------
+
+    >>>
+
+Testing merge_heads()
+---------------------
+
+    >>> template_page.head = template_head
+    >>> fake_page = Page()
+    >>> fake_page.head = target_head
+    >>> templates.merge_heads(template_page, fake_page)
+    >>> print tostring(fake_page.head)
+    <head><title>This is the title.
+    </title><title>This is the second title.
+    </title></head>
+
+Note that, in practice, the title from the template will have
+been cleared upon creation.
+
+
+Testing merge_bodies()
+----------------------
+
+to do
+
+Testing return_template()
+-------------------------
+
+to do

@@ -190,7 +190,7 @@ If True, Crunchy will try to simplify some tracebacks and doctest
 results so that they are easier to understand for beginners.""")
     override_default_interpreter = make_property('override_default_interpreter',
         doc="""\
-If a value other than NOne is specified, Crunchy will replace
+If a value other than None is specified, Crunchy will replace
 any interpreter type specified by a tutorial writer by this value.""")
     language = make_property('language', default='en',
         doc="""Specifies the language used by Crunchy for output, menus, etc.""")

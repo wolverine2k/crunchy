@@ -141,9 +141,22 @@ add path and see if it is in there.
     >>> elem = Element("dummy")
     >>> elem.attrib['name'] = fake_path
     >>> page = mocks.Page()
+    >>> print page.url
+    crunchy_server
     >>> handle_local.add_to_path(page, elem, 'dummy')
-    >>> fake_path in sys.path
+    >>> fake_path == sys.path[0]
     True
-    >>> sys.path.remove(fake_path)  # cleaning up
+    >>> del sys.path[0] # cleaning up
+    >>> fake_path == sys.path[0]
+    False
 
+Try again, this time with a tutorial supposedly loaded from the
+base directory.
+
+    >>> page.is_from_root = True
+    >>> config['crunchy_base_dir'] = '/base'
+    >>> handle_local.add_to_path(page, elem, 'dummy')
+    >>> print sys.path[0]
+    /base/server_root/fake_path_which_does_not_exist
+    >>> del sys.path[0]  # cleaning up
 
