@@ -2,138 +2,113 @@
 config_gui.py : a plugin to enable users to configure crunchy nicely.
 
 """
+from src.interface import plugin, config, SubElement
+import src.configuration as configuration
 
-import os.path
-import StringIO
-from src.interface import translate, plugin, config
-from src.interface import parse, Element, SubElement, tostring
-_ = translate['_']
-# TODO: get those object from src.interface instead
-from src.configuration import options, ANY
-
-provides = set(["/comet", "/input"])
-
-def register():  # tested
+def register():
     '''registers two http handlers: /config and /set_config and a begin page
     handler to insert the configuration page'''
     plugin['register_http_handler'](
                     "/set_config%s" % plugin['session_random_id'], set_config)
-    plugin['register_http_handler']("/config", config_page)
+    plugin['register_tag_handler']("div", "title", "preferences", insert_preferences)
 
-# the following are required for Crunchy to work; they will need to be defined.
+def insert_preferences(page, elem, uid):
+    '''insert the requested preference choosers on a page'''
+    if not page.includes("set_config"):
+        page.add_include("set_config")
+        page.add_js_code(set_config_jscode)
+        page.add_css_code(config_gui_css)
+    # The original div in the raw html page may contain some text
+    # as a visual reminder that we need to remove here.
+    elem.text = ''
+    elem.attrib['class'] = 'config_gui'
+    parent = SubElement(elem, 'dl')
+    username = page.username
+    to_show = elem.attrib['title'].split(' ')
+    if len(to_show) == 1: # choices = "preferences"; all values are shown
+        to_show = ['boolean', 'multiple_choice', 'user_defined']
+    show(parent, username, uid, to_show)
+    return
+
 def set_config(request):
     """Http handler to set an option"""
-    info = request.data.split("_::EOF::_")
+    info = request.data.split("__SEPARATOR__")
     key = info[0]
-    value = '_::EOF::_'.join(info[1:])
+    value = '__SEPARATOR__'.join(info[1:])
     option = ConfigOption.all_options[key]
     option.set(value)
 
-class FakePage(object):
-    def __init__(self, username):
-        self.username = username
-    # the following is needed for adding the menu styling
-    def add_css_code(self, code):
-        '''inserts styling code in <head>'''
-        css = Element("style", type="text/css")
-        css.text = code
-        self.head.insert(0, css)
+def show(parent, username, uid, to_show=None):
+    '''Shows all the requested configuration options in alphabetical order.'''
+    if to_show is None:
         return
-
-def config_page(request):
-    """Http handler to make a dynamic configuration page"""
-    # Dynamic generation of the option list
-    username = request.crunchy_username
-    # Getting the main template from server_root/template.html
-    html = parse(template_path)
-    # Find the head
-    head = html.find('head')
-    script = SubElement(head, 'script', type='text/javascript')
-    script.text = set_config_jscode
-    # Set the title
-    head.find('title').text = _("Configuration")
-    titlebar = [element for element in html.getiterator() \
-                     if element.attrib.get('id') == 'titlebar'][0]
-    titlebar.find('h1').text = _("Configuration")
-    # prepare to insert the menu
-    fake_page = FakePage(username)
-    fake_page.body = html.find('body')
-    fake_page.head = head
-    plugin['services'].insert_menu(fake_page)
-    for key in options:
-        if key in config[username]:
-            if set(options[key]) == set((True, False)):
-                # boolean option
-                BoolOption(key, config[username][key], username=username)
-            elif ANY in options[key]:
-                # any string allowed
-                StringOption(key, config[username][key], username=username)
-            else:
-                # multiple predefined choices
-                MultiOption(key, config[username][key], options[key], username=username)
-
-
-
-
-    # Find the content div
-    content_block = [element for element in html.getiterator() \
-                     if element.attrib.get('id') == 'content'][0]
-    # Remove its content and the class "config_gui"
-    for content in content_block:
-        content_block.remove(content)
-    content_block.text = ""
-    content_block.attrib['class'] = content_block.attrib.get('class', '') + \
-                                    ' config_gui'
-
-    # Rendering the page
-    option_list = SubElement(content_block, 'dl')
-    # Sort options in the lphabetical order
-    keys = ConfigOption.all_options.keys()
+    keys = []
+    for key in configuration.options:
+        _type = select_option_type(key, username, uid)
+        if (_type in to_show) or (key in to_show):
+            keys.append(key)
     keys.sort()
     for key in keys:
-        ConfigOption.all_options[key].render(option_list)
+        ConfigOption.all_options[key].render(parent)
+    return
 
-    # Send the page
-    request.wfile.write(tostring(html.getroot()))
+def select_option_type(key, username, uid, allowed_options=configuration.options,
+                       ANY=configuration.ANY):
+    '''select the option type to choose based on the key requested'''
+    if key in config[username]:
+        if set(allowed_options[key]) == set((True, False)):
+            BoolOption(key, config[username][key], username, uid)
+            _type = 'boolean'
+        elif ANY in allowed_options[key]:
+            StringOption(key, config[username][key], username, uid)
+            _type = 'user_defined'
+        elif key in allowed_options:
+            MultiOption(key, config[username][key], allowed_options[key],
+                        username, uid)
+            _type = 'multiple_choice'
+        else:
+            print "Unexpected error in select_option_type; option = ", key
+            print "not found in configuration.options but found in config[]."
+    else:
+        print key, "is not a valid configuration option"
+        return False
+    return _type
 
 def get_prefs(username):
     """Return the preference object"""
-    print config[username]['symbols'][config[username]['_prefix']]
     return config[username]['symbols'][config[username]['_prefix']]
 
 class ConfigOption(object):     # tested
     """Generic option class"""
     all_options = {}
 
-    def __init__(self, key, initial, username=None):       # tested
+    def __init__(self, key, initial, username=None, uid=None):
         self.key = key
+        self.uid = uid
         self.username = username
         self.set(initial)
         ConfigOption.all_options[key] = self
 
-    def get(self):      # tested
+    def get(self):
         """Return the current value of the option"""
-        return self.__value
+        return self.value
 
     def set(self, value):
-        """Define the value of the option
-        """
-        self.__value = value
-        #Need to use that instead of config[self.key] = value to save values...
-        # TODO: find a better way to save settings
-        #get_prefs(self.username)._save_settings(self.key, value)
+        """sets and saves the value of the option"""
+        self.value = value
+        get_prefs(self.username)._save_settings(self.key, value)
 
-class MultiOption(ConfigOption):        # tested
+class MultiOption(ConfigOption):
     """An option that has multiple predefined choices
     """
     # the threshold between radio buttons and a dropdown box
     threshold = 4
 
-    def __init__(self, key, initial, values, username=None):       # tested
+    def __init__(self, key, initial, values, username=None, uid=None):
         self.values = values
-        super(MultiOption, self).__init__(key, initial, username=username)
+        super(MultiOption, self).__init__(key, initial, username=username, uid=uid)
 
-    def get_values(self):       # tested
+    def get_values(self):
         """get the possible values"""
         return self.values
 
@@ -149,6 +124,9 @@ class MultiOption(ConfigOption):        # tested
         """render the widget to a particular file object"""
         values = self.get_values()
         option = SubElement(elem, 'dt')
+        # we use a unique id, rather than simply the key, in case two
+        # identical preference objects are on the same page...
+        _id = str(self.uid) + "__KEY__" + str(self.key)
         if len(values) <= MultiOption.threshold:
             option.text = "%s: " % self.key
             SubElement(option, 'br')
@@ -156,10 +134,9 @@ class MultiOption(ConfigOption):        # tested
                 input = SubElement(option, 'input',
                     type = 'radio',
                     name = self.key,
-                    id = "%s_%s" % (self.key, str(value)),
-                    value = str(value), # str( ) is needed for None
-                    onchange = "set_config('%(key)s_%(value)s', '%(key)s');" \
-                        % {'key': self.key, 'value': str(value)},
+                    id = "%s_%s" % (_id, str(value)),
+                    onchange = "set_config('%(id)s_%(value)s', '%(key)s');" \
+                        % {'id': _id, 'key': self.key, 'value': str(value)},
                 )
                 if value == self.get():
                     input.attrib['checked'] = 'checked'
@@ -173,9 +150,8 @@ class MultiOption(ConfigOption):        # tested
             label.text = "%s: " % self.key
             select = SubElement(option, 'select',
                 name = self.key,
-                id = self.key,
-                onchange = "set_config('%(key)s', '%(key)s');" % \
-                    {'key': self.key},
+                id = _id,
+                onchange = "set_config('%s', '%s');" % (_id, self.key)
             )
             for value in values:
                 select_elem = SubElement(select, 'option', value = str(value))
@@ -191,13 +167,14 @@ class BoolOption(ConfigOption):
     def render(self, elem):
         """render the widget to a particular file object"""
         option = SubElement(elem, 'dt')
+        _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'checkbox',
             name = self.key,
-            id = self.key,
-            onchange = "set_config('%(key)s', '%(key)s');" % {'key': self.key},
+            id = _id,
+            onchange = "set_config('%s', '%s');" % (_id, self.key)
         )
-        if self.get:
+        if self.get():
             input.attrib['checked'] = 'checked'
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
@@ -210,10 +187,11 @@ class BoolOption(ConfigOption):
         This function replace the javascript "true" and "false value by python
         objects True and False.
         """
-        if value == "true":
-            value = True
-        elif value == "false":
-            value = False
+        if value not in [True, False]:
+            if value.lower() == "true":
+                value = True
+            else:
+                value = False
         super(BoolOption, self).set(value)
 
 class StringOption(ConfigOption):
@@ -225,17 +203,16 @@ class StringOption(ConfigOption):
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = "%s: " % self.key
+        _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'text',
-            id = self.key,
+            id = _id,
             name = self.key,
             value = self.get(),
-            onchange = "set_config('%(key)s', '%(key)s');" % {'key': self.key},
+            onchange = "set_config('%s', '%s');" % (_id, self.key)
         )
         desc = SubElement(elem, 'dd')
         desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
-
-template_path = os.path.join(plugin['get_root_dir'](), "server_root/template.html")
 
 set_config_jscode = """
 function set_config(id, key){
@@ -254,7 +231,21 @@ function set_config(id, key){
     if (value != undefined) {
         var j = new XMLHttpRequest();
         j.open("POST", "/set_config%s", false);
-        j.send(key+"_::EOF::_"+value);
+        j.send(key+"__SEPARATOR__"+value);
     }
 };
 """ % plugin['session_random_id']
+
+config_gui_css = """
+.config_gui dt{
+    position:relative;
+    width:50%;
+    top: 1em;
+}
+.config_gui dd{
+    position:relative;
+    padding-left:50%;
+    text-align:left;
+    border-bottom: 1px dotted black;
+    width:50%;
+}"""
