@@ -78,7 +78,7 @@ def get_prefs(username):
     """Return the preference object"""
     return config[username]['symbols'][config[username]['_prefix']]
 
-class ConfigOption(object):     # tested
+class ConfigOption(object):
     """Generic option class"""
     all_options = {}
 
@@ -102,7 +102,7 @@ class MultiOption(ConfigOption):
     """An option that has multiple predefined choices
     """
     # the threshold between radio buttons and a dropdown box
-    threshold = 4
+    threshold = 6
 
     def __init__(self, key, initial, values, username=None, uid=None):
         self.values = values
@@ -130,20 +130,22 @@ class MultiOption(ConfigOption):
         if len(values) <= MultiOption.threshold:
             option.text = "%s: " % self.key
             SubElement(option, 'br')
+            form = SubElement(option, 'form')
             for value in values:
-                input = SubElement(option, 'input',
+                input = SubElement(form, 'input',
                     type = 'radio',
                     name = self.key,
                     id = "%s_%s" % (_id, str(value)),
                     onchange = "set_config('%(id)s_%(value)s', '%(key)s');" \
                         % {'id': _id, 'key': self.key, 'value': str(value)},
                 )
+                print "value = ", value, "current = [%s]"%self.get()
                 if value == self.get():
                     input.attrib['checked'] = 'checked'
-                label = SubElement(option, 'label')
+                label = SubElement(form, 'label')
                 label.attrib['for'] = "%s_%s" % (self.key, str(value))
                 label.text = str(value)
-                SubElement(option, 'br')
+                SubElement(form, 'br')
         else:
             label = SubElement(option, 'label')
             label.attrib['for'] = self.key
@@ -242,14 +244,15 @@ function set_config(id, key){
 
 config_gui_css = """
 .config_gui dt{
-    position:relative;
+    padding: .5em;
+    font-weight: bold;
     width:50%;
     top: 1em;
 }
 .config_gui dd{
-    position:relative;
     padding-left:50%;
     text-align:left;
+    margin-top: -1em;
     border-bottom: 1px dotted black;
     width:50%;
 }"""
