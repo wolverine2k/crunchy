@@ -154,6 +154,17 @@ img {
     color: #204a87;
 }
 
+.config_gui td{
+    width:50%;
+    margin: 5px;
+    padding: 5px;
+}
+
+input.config_gui{
+background-color: #e9e9c7;
+}
+
+
 /* special notes */
 .notes {
     border: 1px solid #2e3436;

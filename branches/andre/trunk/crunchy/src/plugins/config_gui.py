@@ -17,12 +17,11 @@ def insert_preferences(page, elem, uid):
     if not page.includes("set_config"):
         page.add_include("set_config")
         page.add_js_code(set_config_jscode)
-        page.add_css_code(config_gui_css)
     # The original div in the raw html page may contain some text
     # as a visual reminder that we need to remove here.
     elem.text = ''
     elem.attrib['class'] = 'config_gui'
-    parent = SubElement(elem, 'dl')
+    parent = SubElement(elem, 'table')
     username = page.username
     to_show = elem.attrib['title'].split(' ')
     if len(to_show) == 1: # choices = "preferences"; all values are shown
@@ -123,7 +122,8 @@ class MultiOption(ConfigOption):
     def render(self, elem):
         """render the widget to a particular file object"""
         values = self.get_values()
-        option = SubElement(elem, 'dt')
+        row = SubElement(elem, 'tr')
+        option = SubElement(row, 'td')
         # we use a unique id, rather than simply the key, in case two
         # identical preference objects are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
@@ -160,7 +160,7 @@ class MultiOption(ConfigOption):
                 if value == self.get():
                     select_elem.attrib['selected'] = 'selected'
                 select_elem.text = str(value) # str( ) is needed for None
-        desc = SubElement(elem, 'dd')
+        desc = SubElement(row, 'td')
         desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
 
 class BoolOption(ConfigOption):
@@ -168,7 +168,8 @@ class BoolOption(ConfigOption):
     """
     def render(self, elem):
         """render the widget to a particular file object"""
-        option = SubElement(elem, 'dt')
+        row = SubElement(elem, 'tr')
+        option = SubElement(row, 'td')
         # we use a unique id, rather than simply the key, in case two
         # identical preference objects are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
@@ -183,7 +184,7 @@ class BoolOption(ConfigOption):
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = self.key
-        desc = SubElement(elem, 'dd')
+        desc = SubElement(row, 'td')
         desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
 
     def set(self, value):
@@ -203,7 +204,8 @@ class StringOption(ConfigOption):
     """
     def render(self, elem):
         """render the widget to a particular file object"""
-        option = SubElement(elem, 'dt')
+        row = SubElement(elem, 'tr')
+        option = SubElement(row, 'td')
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = "%s: " % self.key
@@ -217,7 +219,8 @@ class StringOption(ConfigOption):
             value = self.get(),
             onchange = "set_config('%s', '%s');" % (_id, self.key)
         )
-        desc = SubElement(elem, 'dd')
+        input.attrib['class'] = 'config_gui'
+        desc = SubElement(row, 'td')
         desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
 
 set_config_jscode = """
@@ -241,18 +244,3 @@ function set_config(id, key){
     }
 };
 """ % plugin['session_random_id']
-
-config_gui_css = """
-.config_gui dt{
-    padding: .5em;
-    font-weight: bold;
-    width:50%;
-    top: 1em;
-}
-.config_gui dd{
-    padding-left:50%;
-    text-align:left;
-    margin-top: -1em;
-    border-bottom: 1px dotted black;
-    width:50%;
-}"""
