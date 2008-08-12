@@ -167,6 +167,8 @@ class BoolOption(ConfigOption):
     def render(self, elem):
         """render the widget to a particular file object"""
         option = SubElement(elem, 'dt')
+        # we use a unique id, rather than simply the key, in case two
+        # identical preference objects are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'checkbox',
@@ -203,6 +205,8 @@ class StringOption(ConfigOption):
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = "%s: " % self.key
+        # we use a unique id, rather than simply the key, in case two
+        # identical preference objects are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'text',
