@@ -30,6 +30,17 @@ def extract_log_id(vlam):
     else:
         return ''
 
+def parse_vlam(vlam):
+    parts = vlam.split()
+    ret = {}
+    for part in parts:
+        pp = part.split('=', 1)
+        if len(pp) >= 2:
+            ret[pp[0]] = pp[1]
+        else:
+            ret[pp[0]] = ""
+    return ret
+
 def insert_file_browser(parent, text, action):
     '''inserts a local file browser object in an html page'''
     # add a unique id to allow more than one file_browser of a given type
