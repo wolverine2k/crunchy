@@ -13,7 +13,7 @@ for people familiar with the Crunchy plugin architecture.
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
-from src.utilities import extract_log_id
+from src.utilities import extract_log_id,parse_vlam
 import src.session as session
 
 # The set of other "widgets/services" required from other plugins
@@ -64,7 +64,9 @@ def doctest_widget_callback(page, elem, uid):
         t = 'doctest'
         session.add_log_id(uid, log_id, t)
         #config['logging_uids'][uid] = (log_id, t)
-
+    
+    limit_time = parse_vlam(vlam).get("time", None)
+    print "limit_item ...... " , limit_time
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
@@ -99,9 +101,12 @@ def doctest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
+    btn.attrib["id"] = "run_doctest_btn_" + uid
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     SubElement(elem, "br")
+    if limit_time:
+        page.add_js_code("window.addEventListener('load', function(e){count_down('%s', get_doctest_time('%s'));}, false);" %(uid, uid))
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
@@ -115,6 +120,48 @@ function exec_doctest(uid){
     j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);
 };
+function count_down(uid, second)
+{
+    var ele = document.getElementById('run_doctest_btn_' + uid);
+    ele.innerHTML = "You have " +  second + " second to finish this doctest";
+    if(second == 0)
+    {
+        ele.style.display = "none";
+    }
+    setTimeout("count_down('" + uid  + "'," + (second - 1) + ");", 1000);
+}
+
+function toggle_doctest(uid, show)
+{
+    var pre_ele = document.getElementById("div_" + uid).getElementsByTagName("pre")[0];
+    pre_ele.style.display = show ? "block" : "none";
+}
+function get_doctest_time(uid){
+    var pre_ele = document.getElementById("div_" + uid).getElementsByTagName("pre")[0];
+    var vlam = pre_ele.title;
+    var parts = vlam.split(/\s+/); 
+    for(var i = 0; parts.length != i; i++) //ugly how to input <  > ???
+    {
+        pp = parts[i].split('=', 2)
+        if (pp.length == 1 || pp[0] != 'time')
+        {
+            continue;
+        }
+        else
+        {
+            time = parseInt(pp[1]);
+            if(isNaN(time))
+            {
+                break;
+            }
+            else
+            {
+                return time;
+            }
+        }
+    }
+    return -1;
+}
 """ % plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
