@@ -33,7 +33,12 @@ def set_config(request):
     """Http handler to set an option"""
     info = request.data.split("__SEPARATOR__")
     key = info[0]
-    value = '__SEPARATOR__'.join(info[1:])
+    value = info[-1]
+    if value == 'on':
+        _id = info[1]
+        if '__VALUE__' in _id:
+            value = _id.split("__VALUE__")[1]
+    #print "key = ", key, "value = ", value
     option = ConfigOption.all_options[key]
     option.set(value)
 
@@ -125,21 +130,20 @@ class MultiOption(ConfigOption):
         row = SubElement(elem, 'tr')
         option = SubElement(row, 'td')
         # we use a unique id, rather than simply the key, in case two
-        # identical preference objects are on the same page...
-        _id = str(self.uid) + "__KEY__" + str(self.key)
+        # identical preference widgets are on the same page...
         if len(values) <= MultiOption.threshold:
             option.text = "%s: " % self.key
             SubElement(option, 'br')
             form = SubElement(option, 'form')
             for value in values:
+                _id = str(self.uid) + "__VALUE__" + str(value)
                 input = SubElement(form, 'input',
                     type = 'radio',
                     name = self.key,
-                    id = "%s_%s" % (_id, str(value)),
-                    onchange = "set_config('%(id)s_%(value)s', '%(key)s');" \
-                        % {'id': _id, 'key': self.key, 'value': str(value)},
+                    id = _id,
+                    onchange = "set_config('%(id)s', '%(key)s');" \
+                        % {'id': _id, 'key': self.key},
                 )
-                print "value = ", value, "current = [%s]"%self.get()
                 if value == self.get():
                     input.attrib['checked'] = 'checked'
                 label = SubElement(form, 'label')
@@ -147,6 +151,7 @@ class MultiOption(ConfigOption):
                 label.text = str(value)
                 SubElement(form, 'br')
         else:
+            _id = str(self.uid) + "__KEY__" + str(self.key)
             label = SubElement(option, 'label')
             label.attrib['for'] = self.key
             label.text = "%s: " % self.key
@@ -171,7 +176,7 @@ class BoolOption(ConfigOption):
         row = SubElement(elem, 'tr')
         option = SubElement(row, 'td')
         # we use a unique id, rather than simply the key, in case two
-        # identical preference objects are on the same page...
+        # identical preference widgets are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'checkbox',
@@ -192,11 +197,10 @@ class BoolOption(ConfigOption):
         This function replace the javascript "true" and "false value by python
         objects True and False.
         """
-        if value not in [True, False]:
-            if value.lower() == "true":
-                value = True
-            else:
-                value = False
+        if value == "true":
+            value = True
+        else:
+            value = False
         super(BoolOption, self).set(value)
 
 class StringOption(ConfigOption):
@@ -210,7 +214,7 @@ class StringOption(ConfigOption):
         label.attrib['for'] = self.key
         label.text = "%s: " % self.key
         # we use a unique id, rather than simply the key, in case two
-        # identical preference objects are on the same page...
+        # identical preference widgets are on the same page...
         _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'text',
@@ -226,14 +230,16 @@ class StringOption(ConfigOption):
 set_config_jscode = """
 function set_config(id, key){
     var value;
-    field=document.getElementById(id)
+    field=document.getElementById(id);
     // find the value depending of the type of input
     if (field.type == 'checkbox') {
         value = field.checked;
     }
-    else if ((field.type != 'radio') || (field.checked)) {
-        // exclude unchecked radio
+    else if (field.type != 'radio'){
         value = field.value;
+    }
+    else{
+        value = id + "__SEPARATOR__" + field.value
     }
 
     // if needed, send the new value

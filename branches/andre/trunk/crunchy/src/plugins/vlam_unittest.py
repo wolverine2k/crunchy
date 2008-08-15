@@ -58,13 +58,13 @@ def unittest_widget_callback(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'unittest'
-        config['logging_uids'][uid] = (log_id, t)
+        config[page.username]['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("unittest_included") :
             page.add_include("unittest_included")
             page.add_js_code(unittest_jscode)

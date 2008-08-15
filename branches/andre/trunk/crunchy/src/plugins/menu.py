@@ -5,7 +5,7 @@ by plugin writers who can add other items.
 """
 import random
 from src.interface import plugin, Element, SubElement, config, \
-     translate, additional_menu_items, accounts, common
+     translate, additional_menu_items, accounts, server
 _ = translate['_']
 
 
@@ -38,11 +38,11 @@ def create_home():  # tested
 
 quit_random_id = str(int(random.random()*1000000000)) + str(
                                            int(random.random()*1000000000))
-common['exit'] = "/exit" + quit_random_id
+server['exit'] = "/exit" + quit_random_id
 def create_quit(): # tested
     '''creates the quit element for the menu'''
     Quit = Element("li")
-    a = SubElement(Quit, "a", href=common['exit'])
+    a = SubElement(Quit, "a", href=server['exit'])
     a.text = _("Quit Crunchy")
     return Quit
 

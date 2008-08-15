@@ -26,6 +26,7 @@ trans_path = os.path.join(config['crunchy_base_dir'], "translations")
 trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root",
                                                           "edit_area", "langs")
 options = {
+    'analyzer': [None],
     'dir_help': [True, False],
     'doc_help': [True, False],
     'forward_accept_language': [True, False],
@@ -170,6 +171,9 @@ class UserPreferences(Base):
         self._init_properties(UserPreferences)
         self._load_settings()
 
+    analyzer = make_property('analyzer',
+                            doc="""\
+Specifies the code analyzer to use (e.g. pylint, pyflakes, etc.) if available.""")
     dir_help = make_property('dir_help',
         doc="""\
 If True, when a '.' is pressed for 'object.', a popup window
@@ -461,8 +465,25 @@ are usually launched.""")
 def init():
     '''Called when we need to initialize the various instances - based on the
     number of different users defined.'''
+    skipped = []
     for key in additional_vlam:
-        options[key].extend(additional_vlam[key])
+        try:
+            options[key].extend(additional_vlam[key])
+        except:  # the key might not be registered yet
+            options[key] = []
+            skipped.append((key, additional_vlam[key]))
+
+    # after the first pass, problematic keys should have been registered
+    # by the plugin.
+    for key, additional_option in skipped:
+        try:
+            options[key].extend(additional_option)
+        except:
+            print "Problem in config.init()"
+            print "The following additional vlam option"
+            print "key = %s, value= %s" %(key, additional_option)
+            print "is raising an exception."
+            print "Please file a bug report"
 
     users = {}
     for name in accounts:

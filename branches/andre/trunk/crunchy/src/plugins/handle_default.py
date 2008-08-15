@@ -6,7 +6,7 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, plugin, server, debug, \
-                      debug_msg, preprocessor, common
+                      debug_msg, preprocessor
 
 _ = translate['_']
 
@@ -27,7 +27,7 @@ def path_to_filedata(path, root, crunchy_username=None):
     Paths starting with / and containing .. will return an error message.
     POSIX version, should work in Windows.
     """
-    if path == common['exit']:
+    if path == server['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()
@@ -70,6 +70,17 @@ def handler(request):
     global tell_Safari_page_is_html
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
+    try:
+        username = request.crunchy_username
+    except:
+        request.wfile.write(_("You need to create an account before you can use Crunchy. "))
+        request.wfile.write(_("Please use account_manager.py to create an account."))
+        exit_file = join(root_path, "exit_en.html")
+        request.wfile.write(open(exit_file).read())
+        request.end_headers()
+        server['server'].still_serving = False
+        return
+
     data = path_to_filedata(request.path, root_path, request.crunchy_username)
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("in handle_default.handler(), beginning of data =")
