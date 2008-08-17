@@ -325,12 +325,12 @@ class CrunchyPage(BasePage):
         self.find_head()  # assigns self.head
         self.find_body()  # assigns self.body
 
+        # Crunchy's main work: processing vlam instructions, etc.
+        self.process_tags()
+
         # adding the javascript for communication between the browser and the server
         self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
         self.add_js_code(comet_js)
-
-        # Crunchy's main work: processing vlam instructions, etc.
-        self.process_tags()
 
         # Extra styling
         self.add_crunchy_style() # first Crunchy's style
