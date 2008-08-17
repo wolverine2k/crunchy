@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Exam Mode</title></head>
+<body>
+<h1>First a simple timed-doctest</h1>
+<pre title="exam_define name=test_exam start=2008-08-17_19:00:00 durations=30m">
+</pre>
+<p>
+    This a test exam.
+</p>
+
+<p>Question 1 , write some code that pass the doc-test</p>
+<pre title="doctest exam_name=test_exam">
+>>> p = Animal('Pooh')
+>>> p.name
+'Pooh'
+>>> p.addFriend('Piglet')
+>>> p.friends
+['Piglet']
+</pre>
+
+<p>Question 2 , write some code that pass the doc-test</p>
+<pre title="doctest exam_name=test_exam">
+>>> double(2) 
+4
+>>> double(-1)
+-2 
+>>> double("aa") 
+aaaa
+</pre>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

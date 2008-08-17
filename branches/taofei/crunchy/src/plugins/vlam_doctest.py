@@ -12,7 +12,7 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring
+from src.interface import config, plugin, SubElement, tostring, exams
 from src.utilities import extract_log_id,parse_vlam
 import src.session as session
 
@@ -60,13 +60,23 @@ def doctest_widget_callback(page, elem, uid):
     run doctests"""
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)
+    
+    vlam_info = parse_vlam(vlam)
+    limit_time = vlam_info.get("time", None)
+    exam_name = vlam_info.get("exam_name", None)
+    if exam_name:
+        if exam_name not in exams: # we should show them
+            print exams
+            elem.clear()
+            return
+        else:
+            exams[exam_name]['problems'].append(uid)
+
     if log_id:
         t = 'doctest'
         session.add_log_id(uid, log_id, t)
         #config['logging_uids'][uid] = (log_id, t)
-    
-    limit_time = parse_vlam(vlam).get("time", None)
-    print "limit_item ...... " , limit_time
+
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make

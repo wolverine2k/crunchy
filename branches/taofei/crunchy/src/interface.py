@@ -82,6 +82,8 @@ interactive = False # used with python crunchy -i option
 server_mode = False # used with python crunchy --server_mode option, start crunchy in server mode ,need a account manager
 accounts = {} #init by crunchy.py 
 
+exams = {}  #used by pluging exam_mode.py and vlam_doctest.py 
+
 # In the absence of either HTMLTreeBuilder or, even better,
 # ElementSoup/BeautifulSoup in Python 3.x, we provide a basic, but extremely
 # strict, x(h)tml parser.
