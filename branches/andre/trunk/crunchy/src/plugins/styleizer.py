@@ -1,4 +1,4 @@
-import sys
+
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -7,6 +7,8 @@ from pygments.styles import get_style_by_name
 
 from src.interface import fromstring, plugin, SubElement
 
+# The following can and should be extended to many more languages.
+# See http://pygments.org/docs/lexers/
 allowed_languages = ['python', 'html']
 lexers = {}
 
@@ -24,44 +26,34 @@ def extract_code(elem):
     return text.replace("\r", "")
 
 def pygment_style(page, elem, dummy_uid):
-    print "entering plugin_style"
     language = elem.attrib['title']
-    print "language = ", language
     text = extract_code(elem)
     cssclass = "default"
     styled_code = style(text, language, cssclass)
-    sys.__stderr__.write(styled_code)
-    elem.clear()
-    elem.text = ''
-    elem.attrib['title'] = language
-    elem.attrib['class'] = cssclass
     markup = fromstring(styled_code)
-    elem.append(markup)
+    elem.text = ''
+    elem[:] = markup[:]
+    elem.attrib['class'] = cssclass
     if not page.includes("pygment_cssclass"):
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
         page.add_include("pygment_cssclass")
-
     return
 
-class BareHtmlFormatter(HtmlFormatter):
+class PreHtmlFormatter(HtmlFormatter):
     '''unlike HtmlFormatter, does not embed the styled code inside both
-       a <div> and a <pre>; rather embeds it inside a <span>;'''
+       a <div> and a <pre>; rather embeds it inside a <pre> only.'''
 
     def wrap(self, source, outfile):
         return self._wrap_code(source)
 
     def _wrap_code(self, source):
-        yield 0, '<span>'
+        yield 0, '<pre>'
         for i, t in source:
-            if i == 1:
-                # it's a line of formatted code
-                t += '<br/>'
             yield i, t
-        yield 0, '</span>'
+        yield 0, '</pre>'
 
 
-
-def style(raw_code, language = None, cssclass = "highlight"):
+def style(raw_code, language=None, cssclass="highlight"):
     """Returns a string of formatted and styled HTML, where
     raw_code is a string, language is a string that Pygments has a lexer for,
     and cssclass is a class style available for Pygments."""
@@ -78,7 +70,7 @@ def style(raw_code, language = None, cssclass = "highlight"):
             lexers[language] = get_lexer_by_name(language, stripall = True)
             lexer = lexers[language]
 
-    formatter = BareHtmlFormatter()
+    formatter = PreHtmlFormatter()
     formatter.cssclass = cssclass
     formatter.style = get_style_by_name(cssclass)
 
