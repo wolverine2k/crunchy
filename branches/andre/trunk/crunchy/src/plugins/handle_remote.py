@@ -19,15 +19,19 @@ def remote_loader(request):  # tested
     '''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
+    username = request.crunchy_username
     if extension in preprocessor:
         # TODO: preprocessor don't forward Accept-Language HTTP headers
         page = plugin['create_vlam_page'](
-                    preprocessor[extension](url, local=False), url, remote=True)
+                    preprocessor[extension](url, local=False), url,
+                                                username=username, remote=True)
     else:
         opener = FancyURLopener()
-        if config["forward_accept_language"] and "Accept-Language" in request.headers:
+        if (config[username]["forward_accept_language"]
+            and "Accept-Language" in request.headers):
             opener.addheader("Accept-Language", request.headers["Accept-Language"])
-        page = plugin['create_vlam_page'](opener.open(url), url, remote=True)
+        page = plugin['create_vlam_page'](opener.open(url), url,
+                                          username=username, remote=True)
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
     request.end_headers()

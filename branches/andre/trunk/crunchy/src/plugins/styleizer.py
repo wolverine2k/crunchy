@@ -1,19 +1,28 @@
-
+'''styles the code using Pygments'''
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.formatters import HtmlFormatter
 from pygments.styles import get_style_by_name
+from pygments.lexers._mapping import LEXERS
 
 from src.interface import fromstring, plugin, SubElement
 
-# The following can and should be extended to many more languages.
-# See http://pygments.org/docs/lexers/
-allowed_languages = ['python', 'html']
+_pygment_lexer_names = {}
+_pygment_language_names = []
+for name in LEXERS:
+    aliases = LEXERS[name][2]
+    _pygment_lexer_names[name] = aliases[0]
+    for alias in aliases:
+        _pygment_language_names.append(alias)
+
 lexers = {}
 
 def register():
-    for language in allowed_languages:
+    for language in _pygment_language_names:
+        plugin["register_tag_handler"]("code", "title", language, pygment_style)
+        plugin["register_tag_handler"]("pre", "title", language, pygment_style)
+    for language in _pygment_lexer_names:
         plugin["register_tag_handler"]("code", "title", language, pygment_style)
         plugin["register_tag_handler"]("pre", "title", language, pygment_style)
 
@@ -53,22 +62,23 @@ class PreHtmlFormatter(HtmlFormatter):
         yield 0, '</pre>'
 
 
-def style(raw_code, language=None, cssclass="highlight"):
+def style(raw_code, language, cssclass="highlight"):
     """Returns a string of formatted and styled HTML, where
     raw_code is a string, language is a string that Pygments has a lexer for,
     and cssclass is a class style available for Pygments."""
     # Note: eventually, cssclass would be obtained from a user's preferences
     # and would not need to be passed as an argument to style()
-
-    # avoid calling get_lexer_by_name more than necessary
-    if language is None:                # WARNING: could throw
-        lexer = guess_lexer(raw_code)	# pygments.util.ClassNotFound if no lexer
-    else:                               # can be found for raw_code.  Needs to be
-        try:							# handled.
-            lexer = lexers[language]
-        except:
-            lexers[language] = get_lexer_by_name(language, stripall = True)
-            lexer = lexers[language]
+    global _pygment_lexer_names
+    requested_language = language
+    try:
+        lexer = lexers[language]
+    except:
+        if language in _pygment_lexer_names:
+            language = _pygment_lexer_names[requested_language]
+            lexers[requested_language] = get_lexer_by_name(language, stripall=True)
+        else:
+            lexers[language] = get_lexer_by_name(language, stripall=True)
+        lexer = lexers[requested_language]
 
     formatter = PreHtmlFormatter()
     formatter.cssclass = cssclass

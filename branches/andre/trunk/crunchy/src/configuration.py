@@ -397,6 +397,7 @@ are usually launched.""")
     def _get_site_security(self, site):
         '''determines the appropriate level of security to use for given site'''
         if site in self.site_security:
+            print "in _get_site_security, site = ", site
             return self.site_security[site]
         else:
             return 'display trusted'
