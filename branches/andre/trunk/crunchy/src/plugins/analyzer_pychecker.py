@@ -39,7 +39,8 @@ def register():
         plugin['services'].register_analyzer_name('pychecker')#, 'PyChecker')
 
 # Keep the original checker._printWarnings
-original_printWarnings = checker._printWarnings
+if pychecker_available:
+    original_printWarnings = checker._printWarnings
 
 class CrunchyChecker:
     """Class to configure and start a pychecker analysis
