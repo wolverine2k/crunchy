@@ -50,7 +50,6 @@ def return_template(page, elem):
 
 def merge_with_template(page, elem, dummy):
     '''merge an html file with a template'''
-    print "elem.attrib = ", elem.attrib
     if 'title' not in elem.attrib:
         return
     if 'template' not in elem.attrib['title']:
