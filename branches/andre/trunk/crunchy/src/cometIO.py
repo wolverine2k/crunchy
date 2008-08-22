@@ -15,6 +15,20 @@ from src.interface import config, accounts, names
 
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8]
 
+show_io_js = """
+$("#in_%s").show();
+$("#kill_%s").show();
+$("#out_%s").html("");
+"""
+hide_io_js = """
+$("#in_%s").hide();
+$("#kill_%s").hide();
+"""
+# this should probably be animated:
+show_help_js = """
+$("#help_menu,#help_menu_x").show();
+"""
+
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
     together, I've left this in a separate class because it might one day be
@@ -95,12 +109,14 @@ class CrunchyIOBuffer(StringBuffer):
                 utilities.log_session()
             self.event.set()
         elif self.help_flag == True:
-            self.put(help_js)
+            self.put(show_help_js)
             pdata = pdata.replace("stdout", "help_menu") # replacing css class
-            self.put("""document.getElementById("help_menu").innerHTML = "%s";\n""" % (pdata))
+            # use jQuery:
+            self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
         else:
-            self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
+            #use jQuery:
+            self.put("""$("#out_%s").append("%s");//output\n""" % (uid, pdata))
             # Saving session; first line...
             if uid in config[username]['logging_uids']:
                 log_id = config[username]['logging_uids'][uid][0]
@@ -165,10 +181,11 @@ def do_exec(code, uid, doctest=False):
     elif not accounts:  # same if no username/password set
         return
 
+    # make the io widget appear
+    output_buffers[pageid].put(show_io_js % (uid, uid, uid))
     debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
     t = interpreter.Interpreter(code, uid, symbols=config[username]['symbols'],
                                 doctest=doctest)
-
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
     t.setDaemon(True)
     debug_msg("  starting the thread in cometIO.do_exec()", 5)
@@ -237,7 +254,6 @@ class ThreadedBuffer(object):
         input_buffers[uid] = StringBuffer()
         threads[uid] = threading.currentThread()
         debug_msg("registering thread for uid=%s" % uid, 8)
-        output_buffers[pageid].put(reset_js % (uid, uid, uid))
 
     def unregister_thread(self):
         """
@@ -252,10 +268,8 @@ class ThreadedBuffer(object):
         pageid = uid.split("_")[0]
         del input_buffers[uid]
         # hide the input box:
-        output_buffers[pageid].put("""
-            document.getElementById("in_%s").style.display="none";
-            document.getElementById("kill_%s").style.display="none";
-            """ % (uid,uid))
+        output_buffers[pageid].put(hide_io_js % (uid, uid))
+
 
     def write(self, data):
         """write some data"""
@@ -330,21 +344,3 @@ def debug_msg(data, id_=None):
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
 sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
-
-reset_js = """
-try{
-document.getElementById("kill_%s").style.display="block";
-}
-catch(err){ ;}  //needed as the element may not exist.
-document.getElementById("in_%s").style.display="inline";
-document.getElementById("out_%s").innerHTML="";
-"""
-reset_js_3k = """
-document.getElementById("in_{0}").style.display="inline";
-document.getElementById("out_{1}").innerHTML="";
-"""
-
-help_js = """
-document.getElementById("help_menu").style.display = "block";
-document.getElementById("help_menu_x").style.display = "block";
-"""

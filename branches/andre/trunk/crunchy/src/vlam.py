@@ -329,8 +329,11 @@ class CrunchyPage(BasePage):
         self.process_tags()
 
         # adding the javascript for communication between the browser and the server
-        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        self.add_js_code(comet_js)
+        self.insert_js_file("/javascript/jquery.js")
+        self.add_js_code(comet_js % self.pageid)
+
+        #self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
+        #self.add_js_code(comet_js)
 
         # Extra styling
         self.add_crunchy_style() # first Crunchy's style
@@ -363,26 +366,45 @@ class CrunchyPage(BasePage):
             handler(self)
         return
 
+
+# jquery compatible javascript:
 comet_js = """
 function runOutput(channel){
-    var h = new XMLHttpRequest();
-    h.onreadystatechange = function(){
-        if (h.readyState == 4){
-            try{
-                var status = h.status;
+    $.ajax({type : "GET",
+            url : "/comet?pageid=" + channel,
+            cache : false,
+            dataType: "script",
+            success : function(data, status){
+                runOutput(channel);
             }
-            catch(e){
-                var status = "NO HTTP RESPONSE";
-            }
-            switch (status){
-                case 200:
-                    eval(h.responseText);
-                    runOutput(channel);
-                    break;
-            }
-        }
-    };
-    h.open("GET", "/comet?pageid="+channel, true);
-    h.send("");
+            })
 };
+
+$(document).ready(function(){
+    runOutput("%s");
+});
 """
+
+#comet_js = """
+#function runOutput(channel){
+#    var h = new XMLHttpRequest();
+#    h.onreadystatechange = function(){
+#        if (h.readyState == 4){
+#            try{
+#                var status = h.status;
+#            }
+#            catch(e){
+#                var status = "NO HTTP RESPONSE";
+#            }
+#            switch (status){
+#                case 200:
+#                    eval(h.responseText);
+#                    runOutput(channel);
+#                    break;
+#            }
+#        }
+#    };
+#    h.open("GET", "/comet?pageid="+channel, true);
+#    h.send("");
+#};
+#"""

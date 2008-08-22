@@ -57,7 +57,9 @@ class Interpreter(KillableThread):
     def __init__(self, code, channel, symbols = None, doctest=False,
                  username=None):
         threading.Thread.__init__(self)
-        self.code = trim_empty_lines_from_end(code)
+        self.code = trim_empty_lines_from_end(code) + "\n"
+        # the extra new line character at the end above prevents a syntax error
+        # if the last line is a comment.
         self.channel = channel
         if username is not None:
             self.username = username
@@ -105,9 +107,11 @@ class Interpreter(KillableThread):
                         sys.stderr.write(errors.simplify_traceback(self.code, self.username))
                     else:
                         traceback.print_exc()
+                    return
                 except:
                     sys.stderr.write("Recovering from internal error in Interpreter.run()")
                     sys.stderr.write("self.channel =%s"%self.channel)
+                    return
             if not self.ccode:    #code does nothing
                 return
             try:
