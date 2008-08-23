@@ -2,7 +2,9 @@
 config_gui.py : a plugin to enable users to configure crunchy nicely.
 
 """
-from src.interface import plugin, config, SubElement
+from src.interface import plugin, config, SubElement, Element, translate,\
+   additional_menu_items
+_ = translate['_']
 import src.configuration as configuration
 
 def register():
@@ -11,6 +13,15 @@ def register():
     plugin['register_http_handler'](
                     "/set_config%s" % plugin['session_random_id'], set_config)
     plugin['register_tag_handler']("div", "title", "preferences", insert_preferences)
+
+    plugin['register_begin_pagehandler'](add_configuration_to_menu)
+
+def add_configuration_to_menu(page):
+    '''adds a menu item allowing the user to chose the preferences'''
+    menu_item = Element("li")
+    link = SubElement(menu_item, 'a', href="/crunchy_tutor/config_en.html")
+    link.text = _("Preferences")
+    additional_menu_items['preferences'] = menu_item
 
 def insert_preferences(page, elem, uid):
     '''insert the requested preference choosers on a page'''
@@ -38,7 +49,6 @@ def set_config(request):
         _id = info[1]
         if '__VALUE__' in _id:
             value = _id.split("__VALUE__")[1]
-    #print "key = ", key, "value = ", value
     option = ConfigOption.all_options[key]
     option.set(value)
 

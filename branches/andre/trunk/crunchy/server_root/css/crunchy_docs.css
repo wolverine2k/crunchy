@@ -45,40 +45,30 @@ img {
 }
 
 #container {
-    padding: 0; /*0px 1em 0px 1em;*/
+    padding: 0;
     width: 900px;
     margin: 0 auto 0 auto;
-    /*border-left: 3px solid #555753;*/
-    /*border-right: 3px solid #555753;*/
     min-height: 600px;
 }
 
 #titlebar {
-    height: 100px;
-    margin-top: 25px;
+    height: 80px;
+    margin-top: 0;
     background-repeat: no-repeat;
     background-position: center left;
 }
 
 #titlebar img {
     display: inline;
-    margin-top: 24px;
-    width : 300px;
+    width: 33%;
     margin-left: 7px;
     vertical-align: middle;
-
-}
-
-#titlebar h1 {
-    display: inline;
-    font-size: 50px;
-    text-align: center;
-    padding-left: 1em;
-    vertical-align: bottom;
 }
 
 #main_title {
     display: inline;
+    color: #666;
+    width: 66%;
     font-size: 40px;
     text-align: center;
     padding-left: 1em;
@@ -108,7 +98,7 @@ img {
     padding: 0.15em 0.5em;
     margin: 1px 0;
     text-decoration: none;
-    /*font-size: 12pt;*/
+    color: #3465a4;
 }
 
 #crunchy_sidebar a:visited{
@@ -216,20 +206,19 @@ background-color: #e9e9c7;
     font-weight:normal;
 }
 
-.category li {
+.category li, li ul {
     border-bottom:1px solid #E5E5E5;
     line-height:16px;
     padding:0;
-}
-
-ul {
     list-style: none;
-    padding: 0;
 }
 
-UL.categories {
+ul.categories {
     margin: 0;
+    list-style: none;
+    padding:0;
 }
+
 
 .heading {
     background:#939393 url(../images/slider_handlebg188.png) no-repeat scroll 0pt;

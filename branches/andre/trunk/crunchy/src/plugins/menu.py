@@ -63,7 +63,7 @@ def insert_menu(page): # tested
     height = 20
     bottom = "bottom:%spx;" % height
     top = "top:%spx;" % height
-    width = 150
+    width = 175
     padding = 5
     items_width = width - 2*padding
     if config[page.username]['menu_position'] == 'top_right':
@@ -131,7 +131,6 @@ menu_css = """%s
     padding:0 %spx 0 %spx;
     background:#369;
 }
-
 .menu ul li{
     display:block;
     width:%spx;
@@ -144,8 +143,8 @@ menu_css = """%s
     visibility:visible;
 }
 .menu ul li:hover ul li a {
-    background:#939393 url(/images/slider_handlebg188.png) no-repeat scroll 0pt;/*#4682b5;*/
-color:#000;
+    background:#939393 url(/images/slider_handlebg188.png) no-repeat scroll 0pt;
+    color:#000;
 }
 .menu ul li:hover ul li a:hover {
     background:#e9e9e0;
