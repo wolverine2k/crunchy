@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Miscellaneous VLAM</title>
+	
+	<meta title="template ../index.html"></head>
+<body>
+
+<div id="main_title">Miscellaneous VLAM</div>
+<div id="content">
+
+<p>Here are a few additional options that could occasionally be of interest
+to tutorial writers.</p>
+<h3 >Fetching a local tutorial</h3>
+<p>If one wants to insert a "browser" object to load a local tutorial,
+all that is required is to write:<br/>
+<code title="html">&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
+<code title="html">&lt;/span&gt;</code>.  
+In addition to loading the tutorial, Crunchy will also adds as the first item 
+to the Python path (<code title="python">sys.path</code>)
+the directory where the tutorial is located; this will allow importing
+modules that are distributed with the tutorial - as long as they are in the
+same directory.</p>
+<h3 >Fetching a remote tutorial</h3>
+<p>If one wants to insert a input box to load a remote tutorial,
+all that is required is to write:<br/>
+<code title="html">&lt;span title="load remote"&gt;</code> <em>optional url</em> 
+<code title="html">&lt;/span&gt;</code></p>
+
+<h4 >Adding a path to <code title="python">sys.path</code></h4>
+<p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
+above, its path is added to <code title="python">sys.path</code>.  Other relative
+paths can be added via the following syntax<br/>
+<code title="html">
+&lt;meta title="python_import" name="<em>relative_path</em>" /&gt;
+</code>
+</p>
+</div>
+</body>
+</html>

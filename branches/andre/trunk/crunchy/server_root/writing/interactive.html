@@ -5,53 +5,34 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-	<title>Crunchy :: Writing Tutorials</title>
+	<title>Inserting Interactive Elements</title>
 	
 	<meta title="template ../index.html"></head>
 <body>
 
-<div id="main_title">Writing Tutorials</div>
+<div id="main_title">Inserting Interactive Elements</div>
 <div id="content">
-<p>So you wrote a Python tutorial, either about the language or about some library (like pygame)
-or module.  Congratulations, this is hard work.  If your tutorial was written in html, with
-relevant Python code inside  <code>&lt;pre&gt;</code> elements, then Crunchy can be used
-to interact with it.  However, with just a tiny bit more work, you can make the interaction
-with Crunchy much richer.</p>
-<div class="notes">
-<h4>Note</h4>
-<p> This document has <b><em>not</em></b> been checked extensively; it has been adapted from the old Crunchy reference.  Some minor accuracies may be present.  Please, let us know if you do find any.
-</p>
-</div>
-
-<h3 >Extremely Advanced Stuff</h3>
-<p>Very Little Aditional Markup, or VLAM, is the system used by Crunchy to describe its interactive elements.
- VLAM is essentially just an extended set of attributes for some common HTML tags. 
- Any .htm or .html file loaded through Crunchy 
- will have its VLAM code processed. Here's what VLAM can describe:</p>
+<p>As we have mentioned, Crunchy can process files enhanced by VLAM.  First, we
+ will look at interactive elements that can be inserted by Crunchy, as
+ these are likely to be the most interesting.</p>
 <ul>
 <li><a href="#interpreter">Interpreter</a></li>
 <li><a href="#editor">Code editor</a></li>
 <li><a href="#doctest">DocTest</a></li>
-<li><a href="#styling">Simple code styling</a></li>
 <li><a href="#alternate">Launching programs using alternate Python version</a></li>
-<li><a href="#advanced">Advanced options</a></li>
 </ul>
 <p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
 
 <h1 >Crunchy attributes</h1>
 <p>The following table is a summary of available "crunchy attributes"; these 
-are attributes of the html tag "title".  Please refer to the <em>Crunchy user Tutorial</em>
+are the "title" attributes of the html tag
+<code title="html">&lt;pre&gt;</code>.  Please refer to <em> The Crunchy Tutorial</em>
 on the left for some actual examples.</p>
 <table summary="Cruncy attributes" class='summary'>
 <tr><th colspan='2'>Basic Crunchy elements</th></tr>
 <tr>
-	<td><code>no_vlam</code></td>
+	<td><code>html</code></td>
 	<td>Leaves the &lt;pre&gt; element <em>as is</em>.
-	</td>
-</tr>
-<tr>
-	<td><code>py_code</code> or <code>python_code</code></td>
-	<td>Style the Python code inside a &lt;pre&gt; or &lt;code &gt; element.
 	</td>
 </tr>
 <tr>
@@ -142,9 +123,9 @@ of the different types mentioned above)</th></tr>
 
 <h2 ><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
-<code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
+<code title="html">&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
-<code>&lt;/pre&gt;</code></p> <p> where the square brackets
+<code title="html">&lt;/pre&gt;</code></p> <p> where the square brackets
 indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
 be any value taken from the following list:
 <code>[interpreter, isolated, parrot, Parrots, TypeInfoConsole]</code>; the standard choice
@@ -175,7 +156,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 </dl>
 <h2 ><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
-<pre title="no_vlam">
+<pre title="html">
 &lt;pre title="editor [no_style] [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
@@ -202,7 +183,7 @@ code.</p>
 </dl>
 
 <h2 ><a id="doctest">DocTest</a></h2>
-<p><code>&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
+<p><code title="html">&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
 <p>The output from the doctest result is further processed by Crunchy to make error messages a bit
@@ -218,34 +199,10 @@ friendlier to beginners.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
-<h2 ><a id="styling">Simple code styling</a></h2>
-<p>Crunchy will automatically colourize the Python code between the <code>&lt;pre ...&gt; ...&lt;/pre&gt;</code> tags, unless the combination <code>title="no_vlam"</code> appears as
-an attribute to the <code>pre</code>.  Sometimes, you may want simply to 
-colourize the Python code without actually inserting an interactive element.  You can do so by writing:</p>
-<pre title="no_vlam">
-&lt;pre title="py_code or python_code [linenumber [=startnumber]]"&gt;
-...
-&lt;/pre&gt;
-</pre>
-
-<p>The Python code is styled according to the following classes:</p>
-<dl>
-<dt>span.py_keyword</dt>
-<dt>span.py_number</dt>
-<dt>span.py_comment</dt>
-<dt>span.py_string</dt>
-<dt>span.py_variable</dt>
-<dt>span.py_op</dt>
-<dt>span.py_linenumber</dt>
-<dt>span.py_prompt</dt>
-<dt>span.py_output</dt>
-</dl>
-
-
 <h2 ><a id="alternate">Alternate Python version</a></h2>
 <p>Insert an editor, an input box to specify the Python version to use,
 and a button to execute the code externally using the specified Python version.</p>
-<pre title="no_vlam">
+<pre title="html">
 &lt;pre title="alternate_python_version [no_style] [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
@@ -270,33 +227,6 @@ code.</p>
 	<dd>For the input box itself.</dd>
 </dl>
 
-
-<h2 ><a id="advanced">Advanced options</a></h2>
-<p>Some "advanced" options require hand-coding and should rarely be used by
-tutorial writers.</p>
-<h3 >Fetching a local tutorial</h3>
-<p>If one wants to insert a "browser" object to load a local tutorial,
-all that is required is to write:<br/>
-<code>&lt;span title="load local"&gt;</code> <em>one or more spaces</em> 
-<code>&lt;/span&gt;</code>.  
-In addition to loading the tutorial, Crunchy will also adds as the first item 
-to the Python path (sys.path)
-the directory where the tutorial is located; this will allow importing
-modules that are distributed with the tutorial - as long as they are in the
-same directory.</p>
-<h3 >Fetching a remote tutorial</h3>
-<p>If one wants to insert a input box to load a remote tutorial,
-all that is required is to write:<br/>
-<code>&lt;span title="load remote"&gt;</code> <em>optional url</em> <code>&lt;/span&gt;</code></p>
-
-<h4 >Adding a path to <code title="py_code">sys.path</code></h4>
-<p>As we have mentioned, when a local tutorial is loaded via the "file browser" mentioned
-above, its path is added to <code title="py_code">sys.path</code>.  Other relative
-paths can be added via the following syntax<br/>
-<code>
-&lt;meta title="python_import" name="<em>relative_path</em>" /&gt;
-</code>
-</p>
 </div>
 </body>
 </html>
