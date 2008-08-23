@@ -23,7 +23,3 @@ def insert_user_info(page):
         msg = _("""No user account has been set up: execution of Python code has
 been disabled. Please use account_manager.py to create one or more user accounts.""")
         page.body.attrib['onload'] = "javascript:alert('%s')" % msg
-    else:
-        username = Element("li")
-        username.text = _("Hello %s!") % page.username
-        additional_menu_items['0username'] = username

@@ -206,8 +206,8 @@ background-color: #e9e9c7;
     line-height: 18px;
 }
 
-.categories A {
-    color:#666666;
+.categories a {
+    color:#333;
     text-decoration:none;
     font-family:"Lucida Grande",Geneva,Arial,Verdana,sans-serif;
     font-size-adjust:none;
@@ -222,7 +222,7 @@ background-color: #e9e9c7;
     padding:0;
 }
 
-UL {
+ul {
     list-style: none;
     padding: 0;
 }

@@ -137,18 +137,18 @@ menu_css = """%s
     width:%spx;
     text-align:center;
     color:#fff;
-    background:#369;
+    background:#72839D;
     border-bottom: 1px solid #fff;
 }
 .menu ul li:hover ul, .menu ul li a:hover ul {
     visibility:visible;
 }
 .menu ul li:hover ul li a {
-    background:#4682b5;
-color:#fff;
+    background:#939393 url(/images/slider_handlebg188.png) no-repeat scroll 0pt;/*#4682b5;*/
+color:#000;
 }
 .menu ul li:hover ul li a:hover {
-    background:#e9e9c7;
+    background:#e9e9e0;
     color:#000;
 }
 """
