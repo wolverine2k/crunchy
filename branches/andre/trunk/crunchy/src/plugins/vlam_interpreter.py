@@ -76,7 +76,7 @@ def insert_interpreter(page, elem, uid):
 
     utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
     plugin['services'].insert_io_subwidget(page, elem, uid,
-                        interp_kind = interp_kind, sample_code = code)
+                        interp_kind=interp_kind, sample_code=code, show=True)
     plugin['services'].insert_tooltip(page, elem, uid)
     return
 

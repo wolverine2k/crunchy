@@ -118,8 +118,11 @@ div.crunchy {
     font-family: monospace;
 }
 
+.hidden{
+   display: none;
+}
+
 .input {
-    display: none; /* required to hide below editor */
     width: 80%;
     max-width: 800px;
     font-family: monospace;

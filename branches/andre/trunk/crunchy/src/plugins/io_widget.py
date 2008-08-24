@@ -23,7 +23,7 @@ def kill_thread_handler(request):
     plugin['kill_thread'](request.args["uid"])
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None,
-                        sample_code=''):  # partially tested
+                        sample_code='', show=False):  # partially tested
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
@@ -96,7 +96,10 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
-    inp.attrib["class"] = "input"
+    if show:
+        inp.attrib["class"] = "input"
+    else:
+        inp.attrib["class"] = "input hidden"
 
 io_js = r"""
 function push_keys(event, uid){
