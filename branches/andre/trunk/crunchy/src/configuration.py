@@ -498,7 +498,5 @@ def init():
         config[name]['_get_current_page_security_level'] = users[name]._get_current_page_security_level
         config[name]['_set_alternate_python_version'] = users[name]._set_alternate_python_version
         config[name]['_set_local_security'] = users[name]._set_local_security
-
-    # the following may be set as an option when starting Crunchy
-    if 'initial_security_set' not in config:
-        config['initial_security_set'] = False
+        config[name]['_save_settings'] = users[name]._save_settings
+        config[name]['initial_security_set'] = False

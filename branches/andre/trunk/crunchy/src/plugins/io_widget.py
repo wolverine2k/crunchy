@@ -71,6 +71,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
         elif config['ctypes_available']:
             kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
+    else:
+        return
 
     output = SubElement(new_div, "span")
     output.attrib["class"] = "output"

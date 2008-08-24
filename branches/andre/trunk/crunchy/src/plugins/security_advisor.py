@@ -269,6 +269,7 @@ def set_security_list(request):
     sets the security level for a number of sites on a list
     '''
     site_list_info = request.data.strip(',').split(',')
+    username = request.crunchy_username
     if DEBUG:
         print 'inside set_security_list', site_list_info
     to_be_deleted = []
@@ -286,7 +287,7 @@ def set_security_list(request):
         if 'localhost' not in site:
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                config[page.username]['_set_site_security'](site, mode)
+                config[username]['_set_site_security'](site, mode)
                 if DEBUG:
                     print str(site) + ' has been set to ' + str(mode)
             else:
@@ -294,20 +295,20 @@ def set_security_list(request):
                 if DEBUG:
                     print str(site) + ' is going to be removed.'
         else:
-            config[page.username]['_set_local_security'](mode)
+            config[username]['_set_local_security'](mode)
             if DEBUG:
                 print "setting local security to ", mode
             break  # should be only site
 
     for site in to_be_deleted:
-        del config[page.username]['site_security'][site]
+        del config[username]['site_security'][site]
     if DEBUG:
-        print config[page.username]['site_security']
+        print config[username]['site_security']
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
-    config[page.username]['initial_security_set'] = True
-    config[page.username]['_save_settings']()
+    config[username]['initial_security_set'] = True
+    config[username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()
@@ -318,15 +319,16 @@ def empty_security_list(request):
     '''
     removes all the sites from the list of sites with security level assigned
     '''
+    username = request.crunchy_username
     sites = []
-    for site in config[page.username]['site_security']:
+    for site in config[username]['site_security']:
         sites.append(site)
     for site in sites:
-        del config[page.username]['site_security'][site]
+        del config[username]['site_security'][site]
     # We don't need the user to confirm again in this session, so assign
     # initial_security_set to True
-    config[page.username]['initial_security_set'] = True
-    config[page.username]['_save_settings']()
+    config[username]['initial_security_set'] = True
+    config[username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()

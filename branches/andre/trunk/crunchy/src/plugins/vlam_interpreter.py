@@ -48,6 +48,7 @@ def insert_interpreter(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
+    show = True
     if not ('display' in config[page.username]['page_security_level'](page.url)
                 or interp_kind == None ):
         include_interpreter(interp_kind, page, uid)
@@ -57,6 +58,8 @@ def insert_interpreter(page, elem, uid):
             config[page.username]['logging_uids'][uid] = (log_id, t)
     else:
         log_id = False
+        show = False
+
 
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
@@ -76,7 +79,7 @@ def insert_interpreter(page, elem, uid):
 
     utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
     plugin['services'].insert_io_subwidget(page, elem, uid,
-                        interp_kind=interp_kind, sample_code=code, show=True)
+                        interp_kind=interp_kind, sample_code=code, show=show)
     plugin['services'].insert_tooltip(page, elem, uid)
     return
 
