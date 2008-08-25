@@ -26,11 +26,11 @@ def create_security_menu_item(page):
     '''creates the security report menu item'''
 
     if 'display' in page.security_info['level']:
-        security_result_image = '/display.png'
+        security_result_image = '/images/display.png'
     elif page.security_info['number removed'] == 0:
-        security_result_image = '/ok.png'
+        security_result_image = '/images/ok.png'
     else:
-        security_result_image = '/warning.png'
+        security_result_image = '/images/warning.png'
 
     security_item = Element("li")
     a = SubElement(security_item, "a", id="security_info_link", href="#",
@@ -210,14 +210,14 @@ def format_report(page, div):
     s_image.attrib['title'] = 'security_link'
 
     if 'display' in page.security_info['level']:
-        s_image.attrib['src'] = '/display_big.png'
+        s_image.attrib['src'] = '/images/display_big.png'
         s_image.tail = " : display mode selected; Python code execution forbidden."
     elif page.security_info['number removed'] == 0:
-        s_image.attrib['src'] = '/ok_big.png'
+        s_image.attrib['src'] = '/images/ok_big.png'
         s_image.tail = " : clean page; nothing was removed by Crunchy."
     else:
         s_image.tail = " : Some html tags and/or attributes were removed by Crunchy."
-        s_image.attrib['src'] = '/warning_big.png'
+        s_image.attrib['src'] = '/images/warning_big.png'
 
     if page.security_info['tags removed']:
         title = _('Removed: tag not allowed')

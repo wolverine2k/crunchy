@@ -86,17 +86,17 @@ div.crunchy {
 }
 
 .interpreter{
-    background-color: #eeeee0; /*temporary choice*/
+    background-color: #eeeeec;
     font-family: monospace;
     padding-bottom: 10px;
 }
 .doctest{
-    background-color: #eeeee0; /*temporary choice*/
+    background-color: #eeeeec;
     font-family: monospace;
     padding-bottom: 10px;
 }
 .editor{
-    background-color: #eeeee0; /*temporary choice*/
+    background-color: #eeeeec;
     font-family: monospace;
     padding-bottom: 10px;
 }
