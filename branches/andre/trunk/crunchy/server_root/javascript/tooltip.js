@@ -56,15 +56,15 @@ function hide_help() {
     help_menu.style.position = "fixed";
     help_menu.style.top = "70px";
     help_menu.style.right = "5px";
-    
 
-    
+
+
     hide_tooltip();
 };
 
 function hide_tooltip() {
     document.getElementById("help_menu_x").style.display = "none";
-    var tool_tip = document.getElementById("tooltip");
+    var tool_tip = document.getElementById("interp_tooltip");
     tool_tip.style.display = "none";
     tool_tip.innerHTML = " ";
 
@@ -77,8 +77,8 @@ function hide_tooltip() {
 function show_tooltip(tipText) {
     document.getElementById("help_menu").style.display = "none";
     document.getElementById("help_menu_x").style.display = "block";
-    document.getElementById("tooltip").appendChild(document.createTextNode(tipText));
-    document.getElementById("tooltip").style.display = "block";
+    document.getElementById("interp_tooltip").appendChild(document.createTextNode(tipText));
+    document.getElementById("interp_tooltip").style.display = "block";
 }
 
 function tooltip_doc(interp_id, data) {
@@ -178,7 +178,7 @@ function convertToEditor(elm, exec_btn_label) {
     execButton.appendChild(document.createTextNode(exec_btn_label));
     execButton.onclick = function () { push_input(theID) };
     execButton.id = "exec_but_" + theID;
-    
+
     newReturn = document.createElement('br');
     newReturn.id = "br_" + theID;
 
@@ -186,13 +186,13 @@ function convertToEditor(elm, exec_btn_label) {
     outputSpan.parentNode.appendChild(newEditor);
     outputSpan.parentNode.appendChild(newReturn);
     outputSpan.parentNode.appendChild(execButton);
-    
+
     newEditor.value = document.getElementById("code_sample_" + theID).value;
 };
 
-/* The following has been adapted from http://dunnbypaul.net/js_mouse/   
+/* The following has been adapted from http://dunnbypaul.net/js_mouse/
    to make resizable tooltips; references to IE have been removed from original*/
-   
+
 var mousex = 0;
 var mousey = 0;
 var elex = 0;
@@ -202,9 +202,9 @@ var dragobj = null;
 function falsefunc() { return false; } // used to block cascading events
 
 function getMouseXY(e)
-{ 
+{
   if (e)
-  { 
+  {
       mousex = e.pageX;
       mousey = e.layerY;
   }
@@ -212,7 +212,7 @@ function getMouseXY(e)
 
 function grab(context)
 {
-  document.onmousedown = falsefunc; // in NS this prevents cascading of events, 
+  document.onmousedown = falsefunc; // in NS this prevents cascading of events,
   dragobj = context;
   dragobj.style.cursor = "ne-resize";
   document.onmousemove = drag;
@@ -220,7 +220,7 @@ function grab(context)
   getMouseXY();
 };
 
-function drag(e) // parameter passing is important for NS family 
+function drag(e) // parameter passing is important for NS family
 {
   if (dragobj)
   {

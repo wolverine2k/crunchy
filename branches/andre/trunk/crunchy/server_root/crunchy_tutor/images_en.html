@@ -22,7 +22,7 @@ Crunchy.
 </p>
 <pre title="interpreter">
 import dhtml
-dhtml.image("../crunchy-python-powered.png", width=457, height=83)
+dhtml.image("../images/crunchy-python-powered.png", width=457, height=83)
 </pre
 <p>
 The above image has been loaded from a location given relative to the current
@@ -120,13 +120,13 @@ def generic(file_path, position):
 
 # We use images that are part of the Crunchy distribution.
 def yellow(position):
-    return generic("../warning_big.png", position)
+    return generic("../images/warning_big.png", position)
 
 def green(position):
-    return generic("../ok_big.png", position)
+    return generic("../images/ok_big.png", position)
 
 def red(position):
-    return generic("../display_big.png", position)
+    return generic("../images/display_big.png", position)
 
 dhtml.append("br") # start on a new line
 

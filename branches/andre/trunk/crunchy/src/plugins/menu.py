@@ -90,6 +90,9 @@ def insert_menu(page): # tested
         print("Cannot append css code in the head") # info
     return
 
+## NOTE: Most of the menu styling is in crunchy.css.  We only take care
+# of positioning and related sizing issues here.
+
 menu_position_css = """
 .menu {%s}
 .menu ul li:hover ul, .menu ul li a:hover ul {%s}
@@ -109,45 +112,13 @@ height:%spx; line-height:%spx;}
 # insert menu_position_css into menu_css below
 menu_css = """%s
 .menu {
-    position:fixed;
-    font-size:11pt;
     width:%spx;
-}
-.menu ul {
-    padding:0;
-    margin:0;
-    list-style-type: none;
-}
-.menu ul li ul {
-    visibility:hidden;
-    position:absolute;
 }
 .menu ul li a, .menu ul li a:visited {
-    display:block;
-    text-decoration:none;
     width:%spx;
-    text-align:left;
-    color:#fff;
     padding:0 %spx 0 %spx;
-    background:#369;
 }
 .menu ul li{
-    display:block;
     width:%spx;
-    text-align:center;
-    color:#fff;
-    background:#72839D;
-    border-bottom: 1px solid #fff;
-}
-.menu ul li:hover ul, .menu ul li a:hover ul {
-    visibility:visible;
-}
-.menu ul li:hover ul li a {
-    background:#939393 url(/images/slider_handlebg188.png) no-repeat scroll 0pt;
-    color:#000;
-}
-.menu ul li:hover ul li a:hover {
-    background:#e9e9e0;
-    color:#000;
 }
 """

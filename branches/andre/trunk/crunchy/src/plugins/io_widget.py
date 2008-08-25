@@ -47,7 +47,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
             kill_link.attrib["id"] = "kill_%s" % uid
             kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
-            kill_image.attrib["src"] = "/display_big.png"
+            kill_image.attrib["src"] = "/images/stop.png"
             kill_image.attrib["alt"] = "Interrupt thread"
             kill_image.attrib["class"] = "kill_thread_image"
             kill_image.attrib["id"] = "kill_image_%s" % uid
@@ -58,7 +58,6 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         if not page.includes("io_included"):
             page.add_include("io_included")
             page.add_js_code(io_js)
-            page.add_css_code(io_css)
 
         if interp_kind is not None:
             if not page.includes("push_input_included"):
@@ -88,7 +87,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
                                       % _("Execute")
         editor_link.attrib["id"] = "ed_link_" + uid
         image = SubElement(editor_link, 'img')
-        image.attrib["src"] = "/editor.png"
+        image.attrib["src"] = "/images/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["class"] = "interpreter_image"
         code_sample = SubElement(new_div, "textarea")
@@ -127,6 +126,7 @@ function kill_thread(uid){
     var j = new XMLHttpRequest();
     j.open("GET", "/kill_thread%s?uid="+uid, false);
     j.send("");
+    alert('A KeyboardInterrupt was sent.')
 };
 """ % (plugin['session_random_id'], plugin['session_random_id'])
 
@@ -148,10 +148,3 @@ catch(err){ ;}
     return true;
 };
 """ % plugin['session_random_id']
-
-# moved most style information to crunchy.css
-io_css = r"""
-.crunchy_canvas{
-    display: none;
-}
-"""

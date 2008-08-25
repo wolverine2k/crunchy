@@ -106,7 +106,7 @@ class BasePage(object): # tested
     def add_crunchy_style(self):  # tested
         '''inserts a link to the standard Crunchy style file'''
         css = et.Element("link", type= "text/css", rel="stylesheet",
-                         href="/crunchy.css")
+                         href="/css/crunchy.css")
         try:
             self.head.insert(0, css)
         except:   # should never be needed in normal call from CrunchyPage
@@ -332,9 +332,6 @@ class CrunchyPage(BasePage):
         self.insert_js_file("/javascript/jquery.js")
         self.add_js_code(comet_js % self.pageid)
 
-        #self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        #self.add_js_code(comet_js)
-
         # Extra styling
         self.add_crunchy_style() # first Crunchy's style
         self.add_user_style()    # user's preferences can override Crunchy's
@@ -384,27 +381,3 @@ $(document).ready(function(){
     runOutput("%s");
 });
 """
-
-#comet_js = """
-#function runOutput(channel){
-#    var h = new XMLHttpRequest();
-#    h.onreadystatechange = function(){
-#        if (h.readyState == 4){
-#            try{
-#                var status = h.status;
-#            }
-#            catch(e){
-#                var status = "NO HTTP RESPONSE";
-#            }
-#            switch (status){
-#                case 200:
-#                    eval(h.responseText);
-#                    runOutput(channel);
-#                    break;
-#            }
-#        }
-#    };
-#    h.open("GET", "/comet?pageid="+channel, true);
-#    h.send("");
-#};
-#"""
