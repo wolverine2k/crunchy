@@ -116,6 +116,17 @@ class BasePage(object): # tested
         # style and by user's preferences.
         return
 
+    def insert_css_file(self, path):
+        '''inserts a link to the standard Crunchy style file'''
+        css = et.Element("link", type= "text/css", rel="stylesheet",
+                         href=path)
+        try:
+            self.head.append(css)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.append(css)
+        return
+
     def add_user_style(self):  # tested
         '''adds user style meant to replace Crunchy's default if
         so desired by the user'''

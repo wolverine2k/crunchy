@@ -217,8 +217,9 @@ for key in specific_allowed:
         normal[key].append(item)
     if key not in ['base', 'head', 'html', 'meta', 'param', 'script',
             'style', 'title']:
-        for item in ['class', 'id', 'style', 'xml:id']:
+        for item in ['class', 'id', 'style', 'xml:id', 'rel']:
             # harmless xml:id added for Python tutorial
+            # rel added for cluetip plugin
             normal[key].append(item)
     if key not in ['br', 'hr']:
         for item in ['dir', 'lang']:

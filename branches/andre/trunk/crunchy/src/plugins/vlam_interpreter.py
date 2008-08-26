@@ -37,6 +37,27 @@ def register():
         plugin['add_vlam_option']('override_default_interpreter', interp)
         plugin['add_vlam_option']('no_markup', interp)
 
+Python_version = sys.version.split(" ")[0]
+titles = {
+    'borg': "This is a Borg Interpreter (Python version %s)" % Python_version,
+    'interpreter': "This is a Borg Interpreter (Python version %s)" % Python_version,
+    'isolated': "This is an isolated Interpreter (Python version %s)" % Python_version,
+    'Human': "This is an isolated Interpreter (Python version %s)" % Python_version,
+    'parrot': "This is a parrot Interpreter (Python version %s)" % Python_version,
+    'Parrots': "This is a Parrots Interpreter (Python version %s)" % Python_version,
+    'TypeInfoConsole': "This is a TypeInfoConsole Interpreter (Python version %s)" % Python_version,
+}
+help_files = {
+    'borg': "/docs/popups/borg_interpreter.html",
+    'interpreter': "/docs/popups/borg_interpreter.html",
+    'isolated': "/docs/popups/isolated_interpreter.html",
+    'Human': "/docs/popups/isolated_interpreter.html",
+    'parrot': "/docs/popups/borg_interpreter.html",
+    'Parrots': "/docs/popups/borg_interpreter.html",
+    'TypeInfoConsole': "/docs/popups/borg_interpreter.html",
+}
+
+
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""
 
@@ -78,6 +99,11 @@ def insert_interpreter(page, elem, uid):
         return
 
     utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
+    img = Element("img", src="/images/help.png",
+                title = "cluetip Hello %s! "%page.username + titles[interp_kind],
+                rel = help_files[interp_kind])
+    elem.append(img)
+    plugin['services'].insert_cluetip(page, img, uid)
     plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind=interp_kind, sample_code=code, show=show)
     plugin['services'].insert_tooltip(page, elem, uid)
@@ -126,12 +152,11 @@ def select_type(vlam, c, elem):
 def include_interpreter(interp_kind, page, uid):
     '''includes the relevant code to initialize an interpreter'''
     prefix = config[page.username]['_prefix']
-    crunchy_help = _("For more information, enter: %s?" % prefix)
-    BorgInterpreter_js = borg_javascript(prefix, page, crunchy_help)
-    SingleInterpreter_js = single_javascript(prefix, page, crunchy_help)
-    parrot_js = parrot_javascript(prefix, page, crunchy_help)
-    Parrots_js = parrots_javascript(prefix, page, crunchy_help)
-    TypeInfoConsole_js = type_info_javascript(prefix, page, crunchy_help)
+    BorgInterpreter_js = borg_javascript(prefix, page)
+    SingleInterpreter_js = single_javascript(prefix, page)
+    parrot_js = parrot_javascript(prefix, page)
+    Parrots_js = parrots_javascript(prefix, page)
+    TypeInfoConsole_js = type_info_javascript(prefix, page)
     # first we need to make sure that the required javacript code is in the page:
     if interp_kind == "borg" or interp_kind == "interpreter":
         if not page.includes("BorgInterpreter_included"):
@@ -165,85 +190,69 @@ def include_interpreter(interp_kind, page, uid):
 ##              page.add_js_code(IPythonInterpreter_js)
 ##          page.add_js_code('init_IPythonInterpreter("%s");' % uid)
 
-
-def borg_javascript(prefix, page, crunchy_help):
+def borg_javascript(prefix, page):
     '''create string needed to initialize a Borg interpreter using javascript'''
     return r"""
     function init_BorgInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s',username='%s')";
-        code += "\nborg.push('print(";
-        code += '"This is a Borg Interpreter (Python version %s). %s"';
-        code += ")')\nborg.interact()\n";
+        code += "\nborg.interact()\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
-               plugin['session_random_id'])
+    """ % (page.pageid, page.username, plugin['session_random_id'])
 
-
-def single_javascript(prefix, page, crunchy_help):
+def single_javascript(prefix, page):
     '''create string needed to initialize an Isolated (single) interpreter
        using javascript'''
     return r"""
     function init_SingleInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
-        code += "\nisolated.push('print(";
-        code += '"This is an Individual Interpreter (Python version %s). %s"';
-        code += ")')\nisolated.interact(ps1='--> ')\n";
+        code += "\nisolated.interact(ps1='--> ')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.username, (sys.version.split(" ")[0]), crunchy_help,
-           plugin['session_random_id'])
+    """ % (page.username, plugin['session_random_id'])
 
-def parrot_javascript(prefix, page, crunchy_help):
+def parrot_javascript(prefix, page):
     '''create string needed to initialize a parrot (single) interpreter
        using javascript'''
     return   r"""
     function init_parrotInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
-        code += "\nisolated.push('print(";
-        code += '"This is a [dead] parrot Interpreter (Python version %s). %s"';
-        code += ")')\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
+        code += "\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.username, (sys.version.split(" ")[0]), crunchy_help, plugin['session_random_id'])
+    """ % (page.username, plugin['session_random_id'])
 
-def parrots_javascript(prefix, page, crunchy_help):
+def parrots_javascript(prefix, page):
     '''create string needed to initialize a parrots (shared) interpreter
        using javascript'''
     return r"""
     function init_ParrotsInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s', username='%s')";
-        code += "\nborg.push('print(";
-        code += '"This is a [dead] Parrots Interpreter (Python version %s). %s"';
-        code += ")')\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
+        code += "\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
-           plugin['session_random_id'])
+    """ % (page.pageid, page.username, plugin['session_random_id'])
 
-def type_info_javascript(prefix, page, crunchy_help):
+def type_info_javascript(prefix, page):
     '''create string needed to initialize a TypeInfo (shared) interpreter
        using javascript'''
     return r"""
     function init_TypeInfoConsole(uid){
         code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s', username='%s')";
-        code += "\nborg.push('print(";
-        code += '"This is a TypeInfoConsole (Python version %s). %s"';
-        code += ")')\nborg.interact(ps1='<t>>> ')\n";
+        code += "\nborg.interact(ps1='<t>>> ')\n";
         var j = new XMLHttpRequest();
         j.open("POST", "/exec%s?uid="+uid, false);
         j.send(code);
     };
-    """ % (page.pageid, page.username, (sys.version.split(" ")[0]), crunchy_help,
-           plugin['session_random_id'])
+    """ % (page.pageid, page.username, plugin['session_random_id'])
 
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 

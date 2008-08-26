@@ -37,12 +37,6 @@ security_advisor.py.
     margin: 0;
     padding: 4px;
     padding-right: 30px;
-    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-    white-space: -pre-wrap; /* Opera 4 - 6 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
-                            http://www.w3.org/TR/css3-text/#white-space */
-    word-wrap: break-word; /* IE 5.5+ */
     z-index:11;
 }
 
@@ -56,7 +50,6 @@ security_advisor.py.
     color: #204a87;
 }
 
-
 #security_info_x {
     position: fixed;
     top: 65px;
@@ -68,7 +61,6 @@ security_advisor.py.
     padding: 4px 4px 0 4px;
     z-index:12;
 }
-
 
 /* default used with <code> tag */
 .crunchy {
@@ -180,9 +172,8 @@ div.crunchy {
     border: 0;
     padding: 0;
     margin: 0;
-    float: left;
     bottom: 0px;
-    height: 32px;
+    height: 44px;
 }
 
 /*interpreter tool tip*/

@@ -5,7 +5,7 @@ unit tests in test_io_widget.rst
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, translate, SubElement
+from src.interface import config, plugin, translate, SubElement, Element
 from editarea import editArea_load_and_save
 _ = translate['_']
 
@@ -43,7 +43,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # thus making the source easier to read.
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if config['ctypes_available']:
-            kill_link = SubElement(new_div, "a")
+            kill_link = Element("a")
+            elem.insert(-2, kill_link)
             kill_link.attrib["id"] = "kill_%s" % uid
             kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
@@ -115,8 +116,8 @@ function push_keys(event, uid){
     i.send(data + "\n");
 // try-catch needed as the elements may not exist.
 try{
-document.getElementById("kill_image_"+uid).style.display="block";
-document.getElementById("kill_"+uid).style.display="block";
+document.getElementById("kill_image_"+uid).style.display="inline";
+document.getElementById("kill_"+uid).style.display="inline";
 }
 catch(err){ ;}
 
@@ -140,8 +141,8 @@ function push_input(uid){
     convertFromEditor(uid);
 // try-catch needed as the elements may not exist.
 try{
-document.getElementById("kill_image_"+uid).style.display="block";
-document.getElementById("kill_"+uid).style.display="block";
+document.getElementById("kill_image_"+uid).style.display="inline";
+document.getElementById("kill_"+uid).style.display="inline";
 }
 catch(err){ ;}
 

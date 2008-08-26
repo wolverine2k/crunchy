@@ -10,8 +10,15 @@ def register():
 
 def insert_javascript(page, elem, dummy):
     '''inserts the required javascript to animate the menu'''
-    page.insert_js_file("/javascript/jquery.dimensions.js")
-    page.insert_js_file("/javascript/jquery.accordion.js")
+
+    if not page.includes("jquery.dimensions.js"):
+        page.add_include("jquery.dimensions.js")
+        page.insert_js_file("/javascript/jquery.dimensions.js")
+
+    if not page.includes("jquery.accordion.js"):
+        page.add_include("jquery.accordion.js")
+        page.insert_js_file("/javascript/jquery.accordion.js")
+
     page.add_js_code(js_code)
 
 js_code = """

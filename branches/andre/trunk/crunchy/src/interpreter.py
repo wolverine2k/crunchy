@@ -234,7 +234,8 @@ class InteractiveInterpreter(object):
         self.username = username
         if username is not None:
             self.locals.update(config[username]['symbols'])
-            print _("Hello %s ! "% username)
+            #print _("Hello %s ! "% username)
+            print ''
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):

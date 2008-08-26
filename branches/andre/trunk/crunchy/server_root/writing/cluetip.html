@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta title="template ../index.html">
+<title>Inserting Popup Helpers</title>
+</head>
+<body>
+<div id="main_title">Inserting Popup Helpers</div>
+<div id='content'>
+<p>
+Inserting popup helpers is fairly straightforward.  We make use of the 
+<a href="http://plugins.learningjquery.com/cluetip/demo/" 
+title="external_link">cluetip plugin</a> 
+for <a href="http://jquery.com" title="external_link">jquery</a>.
+</p>
+<p>There are two options available for popup helpers: using information from the
+<b>title</b> attribute only, or using full web pages.  An example of the first one is
+given by the following html code.</p>
+
+<pre title="html">
+&lt;img 
+    title="cluetip This will be the title | with some other | text added." 
+    src="/images/help.png"&gt;
+</pre>
+<div class="notes">
+<h4>You need more?</h4>
+<p>If you find that you would like to have more of the jquery cluetip options
+exposed through Crunchy, just let us know.
+</p>
+</div>
+<p>with this: 
+<img title="cluetip This will be the title | with some other | text added." 
+src="/images/help.png"> as a live example. Note that the first "<b>|</b>" symbol
+is used to separate the title from the rest of the text, while others
+are equivalent to inserting new lines. For this type of popup helper the
+width is set to 300px.</p>
+
+<p>There is another way to insert popup helpers, using full html pages
+that are identified by the <b>rel</b> attribute, as in the following
+code.</p>
+<pre title="html">
+&lt;img 
+    title="cluetip A title for the web page" 
+    rel="/docs/popups/monty1.html" 
+    src="/images/help.png"
+    style="height:32px;"
+&gt;
+</pre>
+<img title="cluetip A title for the web page" rel="/docs/popups/monty1.html" 
+src="/images/help.png" style="height:32px;">
+
+<h2>What does Crunchy uses as a clue?</h2>
+<p>To identify that a popup helper is requested, Crunchy uses the fact that the
+first word to appear in the <b>title</b> attribute is <b><i>cluetip</i></b>.
+It removes that word from the <b>title</b> attribute and then proceeds to insert
+the appropriate html and javascript code to make the whole thing work.  Note
+that Crunchy can use pretty much any html element to insert a popup helper, even 
+<b title="cluetip This time, it is definitely true:" rel="/docs/popups/monty1.html">
+this bold text</b>.
+
+
+</div>
+</body>
+</html>
