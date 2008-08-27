@@ -52,9 +52,9 @@ help_files = {
     'interpreter': "/docs/popups/borg_interpreter.html",
     'isolated': "/docs/popups/isolated_interpreter.html",
     'Human': "/docs/popups/isolated_interpreter.html",
-    'parrot': "/docs/popups/borg_interpreter.html",
-    'Parrots': "/docs/popups/borg_interpreter.html",
-    'TypeInfoConsole': "/docs/popups/borg_interpreter.html",
+    'parrot': "/docs/popups/parrot_interpreter.html",
+    'Parrots': "/docs/popups/parrots_interpreter.html",
+    'TypeInfoConsole': "/docs/popups/typeinfoconsole_interpreter.html",
 }
 
 
