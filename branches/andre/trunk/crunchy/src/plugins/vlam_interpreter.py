@@ -57,6 +57,8 @@ help_files = {
     'TypeInfoConsole': "/docs/popups/typeinfoconsole_interpreter.html",
 }
 
+for f in help_files:
+    help_files[f] += " /docs/popups/keyboard_interrupt.html /docs/popups/editor_image.html"
 
 def insert_interpreter(page, elem, uid):
     """inserts an interpreter (and the js code to initialise an interpreter)"""

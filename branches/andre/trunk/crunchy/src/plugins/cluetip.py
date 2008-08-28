@@ -32,7 +32,7 @@ def insert_cluetip(page, elem, uid):
     elem.attrib['title'] = elem.attrib['title'][7:] # remove keyword "cluetip"
     uid = "cluetip_%s" % uid
     if 'class' in elem.attrib:
-        elem.attrib['class'] += '%s' % uid
+        elem.attrib['class'] += ' %s' % uid
     else:
         elem.attrib['class'] = uid
     if 'rel' in elem.attrib:
@@ -80,7 +80,9 @@ js_code_multiple = """
             success: function(txt) {
               contents += txt;
               if (index == arglength-1) {
-                $('%s.%s').cluetip(contents, {width:600});
+                $('%s.%s').cluetip(contents, {width: '600px' , height: '450px',
+                                              sticky: true
+                                              });
               }
               index++;
             }
