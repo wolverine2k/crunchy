@@ -3,10 +3,11 @@
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.formatters import HtmlFormatter
-from pygments.styles import get_style_by_name
+from pygments.styles import get_style_by_name, get_all_styles
 from pygments.lexers._mapping import LEXERS
 
-from src.interface import fromstring, plugin, SubElement
+from src.interface import fromstring, plugin, SubElement, additional_properties, config
+from src.configuration import make_property, options
 
 _pygment_lexer_names = {}
 _pygment_language_names = []
@@ -25,6 +26,9 @@ def register():
     for language in _pygment_lexer_names:
         plugin["register_tag_handler"]("code", "title", language, pygment_style)
         plugin["register_tag_handler"]("pre", "title", language, pygment_style)
+    options['cssclass'] = list(get_all_styles())
+    additional_properties['cssclass'] = make_property('cssclass', default='crunchy',
+                                                      doc="some help")
 
 def extract_code(elem):
     text = elem.text or ""
@@ -37,7 +41,7 @@ def extract_code(elem):
 def pygment_style(page, elem, dummy_uid):
     language = elem.attrib['title']
     text = extract_code(elem)
-    cssclass = "default"
+    cssclass = config[page.username]['cssclass']
     styled_code = style(text, language, cssclass)
     markup = fromstring(styled_code)
     elem.text = ''

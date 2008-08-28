@@ -16,6 +16,8 @@ import cPickle
 
 from src.interface import config, u_print, translate, additional_vlam, accounts
 
+import src.interface as interface
+
 ANY = '*'
 
 _ = translate['_']
@@ -488,6 +490,10 @@ are usually launched.""")
 def init():
     '''Called when we need to initialize the various instances - based on the
     number of different users defined.'''
+
+    for prop in interface.additional_properties:
+        setattr(UserPreferences, prop, interface.additional_properties[prop])
+
     skipped = []
     for key in additional_vlam:
         try:

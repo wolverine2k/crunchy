@@ -41,6 +41,7 @@ exec_code = tools.exec_code
 accounts = {}  # initialized in crunchy.py
 additional_vlam = {}  # initialized from plugins by CrunchyPlugin.py
 additional_menu_items = {}
+additional_properties = {}  # initialized by various plugins
 names = {}
 config = {}  # initialized mostly by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
