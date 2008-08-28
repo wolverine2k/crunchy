@@ -150,7 +150,7 @@ img {
     line-height: 18px;
 }
 
-.category li, li ul {
+.category li, .category li ul {
     border-bottom:1px solid #E5E5E5;
     line-height:16px;
     padding:0;
