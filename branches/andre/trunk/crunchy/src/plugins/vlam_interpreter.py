@@ -101,11 +101,13 @@ def insert_interpreter(page, elem, uid):
         return
 
     utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
-    img = Element("img", src="/images/help.png",
+    if config[page.username]['popups']:
+        # insert popup helper
+        img = Element("img", src="/images/help.png",
                 title = "cluetip Hello %s! "%page.username + titles[interp_kind],
                 rel = help_files[interp_kind])
-    elem.append(img)
-    plugin['services'].insert_cluetip(page, img, uid)
+        elem.append(img)
+        plugin['services'].insert_cluetip(page, img, uid)
     plugin['services'].insert_io_subwidget(page, elem, uid,
                         interp_kind=interp_kind, sample_code=code, show=show)
     plugin['services'].insert_tooltip(page, elem, uid)

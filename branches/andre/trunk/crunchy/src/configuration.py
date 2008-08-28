@@ -29,6 +29,7 @@ options = {
     'analyzer': [None],
     'dir_help': [True, False],
     'doc_help': [True, False],
+    'popups': [True, False],
     'forward_accept_language': [True, False],
     'friendly': [True, False],
     'my_style': [True, False],
@@ -174,66 +175,87 @@ class UserPreferences(Base):
     analyzer = make_property('analyzer',
                             doc="""\
 Specifies the code analyzer to use (e.g. pylint, pyflakes, etc.) if available.""")
+
     dir_help = make_property('dir_help',
         doc="""\
 If True, when a '.' is pressed for 'object.', a popup window
 appears displaying the available methods and attributes, with
 the exception of those that start with a leading underscore.""")
+
     doc_help = make_property('doc_help',
         doc="""\
 If True, displays the result of help(fn) where fn is either a
 function or method when an open parenthese "fn(" is typed.""")
+
     forward_accept_language = make_property('forward_accept_language',
         doc="""\
 If True, the browser will forward the default language chosen
 by the user to the website so that pages in that language
 will be sent back if they are available.""")
+
     friendly = make_property('friendly',
         doc="""\
 If True, Crunchy will try to simplify some tracebacks and doctest
 results so that they are easier to understand for beginners.""")
+
     override_default_interpreter = make_property('override_default_interpreter',
         doc="""\
 If a value other than None is specified, Crunchy will replace
 any interpreter type specified by a tutorial writer by this value.""")
+
     language = make_property('language', default='en',
         doc="""Specifies the language used by Crunchy for output, menus, etc.""")
+
     editarea_language = make_property('editarea_language', default='en',
         doc="""\
 Specifies the language used by the embedded editor 'editarea' for tooltips, etc.""")
+
     local_security = make_property('local_security',
         doc="""\
 Specifies the security setting for tutorials loaded from
 the local server (127.0.0.1) running Crunchy.""")
+
     menu_position = make_property('menu_position',
         doc="""Specifies the position where the menu should appear.""")
+
     modify_markup = make_property('modify_markup', default=False,
         doc="""\
 If True, invokes a set of user-defined rules to modify the existing
 markup on a page (currently restricted to changing the title attributes
 of <pre> html elements)""")
+
     no_markup = make_property('no_markup', default='python_tutorial',
         doc="""\
 Specifies the 'interactive element' to be included whenever
 Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
+
     power_browser = make_property('power_browser',
         doc="""\
 If the value is not None, inserts the requested file browser
 at the top of every page displayed by Crunchy.""")
+
     my_style = make_property('my_style', default=False,
         doc="""\
 If True, indicates that Crunchy will replace some styling (css)
 by some values specified by the user in crunchy.styles""")
+
+    popups = make_property('popups', doc="""\
+If True, will insert helpful images with informative text displayed as a popup
+when the mouse is hovering over; it will also insert similar popups over
+other images that are always included for some interactive elements.""")
+
     alternate_python_version = make_property('alternate_python_version',
                                              default="python",
         doc="""\
 Specifies the command to be used when launching a script using
 a possibly different python version than the one that was
 used to launch Crunchy.""")
+
     user_dir = make_property('user_dir',
         doc="""\
 Location of the user directory, where the configuration file
 is saved; please do not attempt to change from inside Crunchy.""")
+
     temp_dir = make_property('temp_dir',
         doc="""\
 Location of a 'temporary' directory from which external scripts

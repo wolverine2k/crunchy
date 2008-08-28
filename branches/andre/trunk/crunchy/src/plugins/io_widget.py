@@ -53,10 +53,11 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
             kill_image.attrib["class"] = "kill_thread_image"
             _id = "kill_image_%s" % uid
             kill_image.attrib["id"] = _id
-            # insert popup helper
-            kill_image.attrib["title"] = "cluetip KeyboardInterrupt"
-            kill_image.attrib["rel"] = "/docs/popups/keyboard_interrupt.html"
-            plugin['services'].insert_cluetip(page, kill_image, _id)
+            if config[page.username]['popups']:
+                # insert popup helper
+                kill_image.attrib["title"] = "cluetip KeyboardInterrupt"
+                kill_image.attrib["rel"] = "/docs/popups/keyboard_interrupt.html"
+                plugin['services'].insert_cluetip(page, kill_image, _id)
 
             # hide them initially
             kill_image.attrib['style'] = 'display: none;'
@@ -97,11 +98,12 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         image.attrib["src"] = "/images/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["class"] = "interpreter_image"
-        # insert popup helper
-        image.attrib["title"] = "cluetip Mini editor"
-        image.attrib["rel"] = "/docs/popups/editor_image.html"
-        plugin['services'].insert_cluetip(page, image, "editor"+uid)
-        
+        if config[page.username]['popups']:
+            # insert popup helper
+            image.attrib["title"] = "cluetip Mini editor"
+            image.attrib["rel"] = "/docs/popups/editor_image.html"
+            plugin['services'].insert_cluetip(page, image, "editor"+uid)
+
         code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'

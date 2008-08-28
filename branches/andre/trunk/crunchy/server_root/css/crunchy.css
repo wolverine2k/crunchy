@@ -69,12 +69,9 @@ security_advisor.py.
 }
 pre.crunchy {
     border-top: 1px solid #eeeeec; /*temporary choice*/
-    padding: 5px 0px;
+    padding: 3px 0 3px 0;
+    margin: 3px 0 3px 0;
     /*border-bottom:1px solid #ccc;*/
-}
-div.crunchy {
-    /*border-bottom: 1px solid #ccc;*/
-    padding-bottom: 10px;
 }
 
 .interpreter{
@@ -153,6 +150,7 @@ div.crunchy {
 .input {
     width: 80%;
     max-width: 800px;
+    font-size: 11pt;
     font-family: monospace;
     border: solid 1px;
     background-color: white;
@@ -172,8 +170,18 @@ div.crunchy {
     border: 0;
     padding: 0;
     margin: 0;
-    bottom: 0px;
+    bottom: 0;
     height: 44px;
+    line-height:0;
+}
+
+div.io_div{
+    margin: 0;
+    padding: 0;
+}
+div.sample_python_code{
+    margin: 0;
+    padding:0;
 }
 
 /*interpreter tool tip*/
