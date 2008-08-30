@@ -22,7 +22,9 @@ class CrunchyStyle(Style):
     default_style = ""
 
     styles = {
-        Whitespace:                "#bbbbbb",
+        Whitespace:                "#bbbbbb",        # class: 'w',
+        Error:                     "border:#FF0000", # 'err',
+
         Comment:                   "italic #555753",
         Comment.Preproc:           "noitalic #BC7A00",
 
@@ -66,6 +68,4 @@ class CrunchyStyle(Style):
         Generic.Prompt:            "bold #000080",
         Generic.Output:            "#888",
         Generic.Traceback:         "#04D",
-
-        Error:                     "border:#FF0000"
     }
