@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta title="template ../../index.html">
+<style>
+code {color: white; background-color: white; border: 3px solid darkblue;
+line-height: 14pt; margin: 4px; padding:px;}
+var {color: black; background-color:black; border: 3px solid orange;
+line-height: 14pt; margin: 4px;}
+</style>
+<title>Creating a new Pygments style</title>
+</head>
+<body>
+<div id="main_title">Creating a new Pygments style</div>
+<div id='content'>
+<p>The purpose of this document is to facilitate the design of styles (css classes)
+to be used with Pygments [and Crunchy :-)].  For more information, see the 
+<a title="external_link" href="http://pygments.org/docs/styles/">Pygments documentation</a>
+about creating your own style.
+</p>
+
+<p>You can select the desired style here and reload the page to see its effect.</p>
+<div title="preferences style">pygments css class</div>
+
+<p>We start by extracting all the possible information (token types and corresponding
+css classes) directly from the Pygments source (as included in the Crunchy distribution).
+We have also added two columns designed to show some sample text styled by default
+to have the same color for the text as for the background (either white on white, or
+black on black).  If the text does not show in either (and the borders are the same
+as all the others - sometime some styling is simply to add borders...), 
+it means that the chosen Pygments
+style has not been defined for this token type.  However, if there has been a style
+defined, it will override the defaults and the sample text should be visible in at
+least one of the two columns.
+<p>
+<div title="get_pygments_tokens">Create automatically the table</div>
+
+<h2>Comparison with current styling for Python code</h2>
+<p>The following is done in order to develop a new crunchy style for Pygments.
+First, a fairly complete Python code sample styled with the usual Crunchy default.</p>
+<pre title="py_code">
+# some comment
+'''A multi-
+line comment
+'''
+import this
+import sys
+
+import my_module as something_else
+
+class New(object):
+    """a docstring"""
+    def __init__(self, a, b=[], c={}):
+        self.a = a
+        self.b = b  # a comment
+        return None, True, False
+    
+    def other(self, choice):
+        """ a multi
+            line
+            docstring
+        """
+        pass
+
+print "Hello world!"
+for i in range(42):
+   print i,
+
+if a and b or c:
+   do_this()
+elif:
+   do_that()
+
+raise KeyboardInterrupt
+
+if __name__ == "__main__":
+   n = New(1234567890)
+</pre>
+
+<p> Now the same example styled by pygments</p>
+
+<pre title="python">
+# some comment
+'''A multi-
+line comment
+'''
+import this
+import sys
+
+import my_module as something_else
+
+class New(object):
+    """a docstring"""
+    def __init__(self, a, b=[], c={}):
+        self.a = a
+        self.b = b  # a comment
+        return None, True, False
+    
+    def other(self, choice):
+        """ a multi
+            line
+            docstring
+        """
+        pass
+
+print "Hello world!"
+for i in range(42):
+   print i,
+
+if a and b or c:
+   do_this()
+elif:
+   do_that()
+
+raise KeyboardInterrupt
+
+if __name__ == "__main__":
+   n = New(1234567890)
+</pre>
+
+
+
+</div>
+</body>
+</html>
