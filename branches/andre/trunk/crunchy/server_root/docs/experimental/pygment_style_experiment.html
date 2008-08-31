@@ -24,60 +24,23 @@ about creating your own style.
 
 <p>We start by extracting all the possible information (token types and corresponding
 css classes) directly from the Pygments source (as included in the Crunchy distribution).
-We have also added two columns designed to show some sample text styled by default
-to have the same color for the text as for the background (either white on white, or
-black on black).  If the text does not show in either (and the borders are the same
-as all the others - sometime some styling is simply to add borders...), 
-it means that the chosen Pygments
-style has not been defined for this token type.  However, if there has been a style
-defined, it will override the defaults and the sample text should be visible in at
-least one of the two columns.
+We have also added three columns designed to show some sample text:</p>
+<ul>
+<li>The first column shows the token in the chosen style</li>
+<li>The second column shows the token "white font on white background" with a blue border</li>
+<li>The third column shows the token "black font on black background" with an orange
+border</li>
+</ul>
+<p>The purpose of the last two columns is to help identify any definition that would
+rely on some default, if they don't show up (like the Text token, which does not have
+a css class assigned by Pygments).
+However, if there has been a style defined, it will override the defaults 
+and the sample text should be visible in at least one of these two columns.
 <p>
 <div title="get_pygments_tokens">Create automatically the table</div>
 
-<h2>Comparison with current styling for Python code</h2>
-<p>The following is done in order to develop a new crunchy style for Pygments.
-First, a fairly complete Python code sample styled with the usual Crunchy default.</p>
-<pre title="py_code">
-# some comment
-'''A multi-
-line comment
-'''
-import this
-import sys
-
-import my_module as something_else
-
-class New(object):
-    """a docstring"""
-    def __init__(self, a, b=[], c={}):
-        self.a = a
-        self.b = b  # a comment
-        return None, True, False
-    
-    def other(self, choice):
-        """ a multi
-            line
-            docstring
-        """
-        pass
-
-print "Hello world!"
-for i in range(42):
-   print i,
-
-if a and b or c:
-   do_this()
-elif:
-   do_that()
-
-raise KeyboardInterrupt
-
-if __name__ == "__main__":
-   n = New(1234567890)
-</pre>
-
-<p> Now the same example styled by pygments</p>
+<h2>Some code samples</h2>
+<p>First, a comprehensive Python code example.</p>
 
 <pre title="python">
 # some comment
@@ -94,31 +57,86 @@ class New(object):
     def __init__(self, a, b=[], c={}):
         self.a = a
         self.b = b  # a comment
-        return None, True, False
+        d = sys.path
+        e = something_else.other
+        return True or False
     
     def other(self, choice):
         """ a multi
             line
             docstring
         """
-        pass
+        a = """a multi
+            line
+            variable string"""
+        return None
 
 print "Hello world!"
 for i in range(42):
    print i,
 
-if a and b or c:
-   do_this()
-elif:
-   do_that()
+@some_decorator
+def a(b, c, d):
+    if b and c or d:
+       do_this()
+    else:
+       do_that()
 
 raise KeyboardInterrupt
 
 if __name__ == "__main__":
    n = New(1234567890)
 </pre>
+<p>Perhaps, a more realistic Python code sample, this time a console simulation</p>
+<pre title="pycon">
+&gt;&gt;&gt; def flatten(seq):
+...     """flatten(sequence) -> list
+... 
+...     Returns a single, flat list which contains all elements retrieved
+...     from the sequence and all recursively contained sub-sequences
+...     (iterables).
+... 
+...     Examples:
+...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+...     """
+... 
+...     result = []
+...     for elem in seq:
+...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
+...             result.extend(flatten(elem))
+...         else:
+...             result.append(elem)
+...     return result
+...
+&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+</pre>
 
+<p>Next, an html sample</p>
+<pre title="html">
+&lt;pre title="html"&gt; 
+Some text. 
+a &amp;lt; b
+&lt;/pre&gt;
+</pre>
 
+<p> Similar example, this time with an error in it</p>
+<pre title="html">
+&lt;pre title="html"&gt; 
+Some text. 
+a &lt; b
+&lt;/pre&gt;
+</pre>
+
+<p>And a css sample</p>
+
+<pre title="css">
+body {
+  font-size: 14pt; /* a comment */
+  color: #abcdef;
+  border: 1px solid red;
+  }
+</pre>
 
 </div>
 </body>

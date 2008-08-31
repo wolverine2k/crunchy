@@ -5,12 +5,14 @@ sets up the page and calls appropriate plugins
 """
 
 from StringIO import StringIO
+from traceback import print_exc
+from os.path import join
 
 from src.security import remove_unwanted
 
 # Third party modules - included in crunchy distribution
 from src.element_tree import ElementSoup
-from src.interface import ElementTree, config, from_comet
+from src.interface import ElementTree, config, from_comet, plugin
 et = ElementTree
 
 from src.utilities import uidgen
@@ -23,6 +25,21 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 # has then to be called explicitly.
 # In production code, we invoke CrunchyPage instead which does all
 # the required processing automatically.
+
+def handle_exception(full_page=True):
+    '''basic handler for exceptions'''
+    root_path = join(plugin['get_root_dir'](), "server_root/")
+    if full_page:
+        exception_file = join(root_path, "exception.html")
+    else:
+        exception_file = join(root_path, "traceback.txt")
+    text = open(exception_file).read()
+    tmp = StringIO()
+    print_exc(file=tmp)
+    text = text.replace("TRACEBACK",
+        "Please file a bug report at http://code.google.com/p/crunchy/issues/list\n"
+        + "="*80 + "\n" + tmp.getvalue())
+    return text
 
 class BasePage(object): # tested
     '''
@@ -300,7 +317,10 @@ class BasePage(object): # tested
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
         self.add_charset()
-        self.tree.write(fake_file)
+        try:
+            self.tree.write(fake_file)
+        except Exception:
+            return handle_exception()
         return fake_file.getvalue()
 
 class CrunchyPage(BasePage):
@@ -337,7 +357,15 @@ class CrunchyPage(BasePage):
         self.find_body()  # assigns self.body
 
         # Crunchy's main work: processing vlam instructions, etc.
-        self.process_tags()
+        try:
+            self.process_tags()
+        except Exception:
+            self.body.clear()
+            self.body.tag = "body"
+            pre = et.Element('pre')
+            pre.text = handle_exception(False)
+            self.body.append(pre)
+            return
 
         # adding the javascript for communication between the browser and the server
         self.insert_js_file("/javascript/jquery.js")

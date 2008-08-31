@@ -16,7 +16,6 @@ from pygments.util import ClassNotFound
 #: Maps style names to 'submodule::classname'.
 STYLE_MAP = {
     'default':  'default::DefaultStyle',
-    'crunchy':  'crunchy::CrunchyStyle',
     'emacs':    'emacs::EmacsStyle',
     'friendly': 'friendly::FriendlyStyle',
     'colorful': 'colorful::ColorfulStyle',
@@ -31,6 +30,7 @@ STYLE_MAP = {
     'fruity':   'fruity::FruityStyle',
     'bw':       'bw::BlackWhiteStyle',
     'vs':       'vs::VisualStudioStyle',
+    'tango':    'tango::TangoStyle',   # added for Crunchy
 }
 
 

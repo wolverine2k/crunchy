@@ -20,7 +20,7 @@ for name in LEXERS:
 
 lexers = {}
 options['style'] = list(get_all_styles())
-additional_properties['style'] = make_property('style', default='crunchy',
+additional_properties['style'] = make_property('style', default='tango',
 doc="""\
 Style used by pygments to colorize the code.  In addition to the default
 value ['crunchy'], it includes all the styles [css classes] included
@@ -81,11 +81,15 @@ def get_pygments_tokens(page, elem, uid):
         column2 = SubElement(row, 'td')
         column2.text = STANDARD_TYPES[token]
         column3 = SubElement(row, 'td')
-        _code = SubElement(column3, 'code')
+        span = SubElement(column3, 'span')
+        span.attrib['class'] = column2.text
+        span.text = " * test * "
+        column4 = SubElement(row, 'td')
+        _code = SubElement(column4, 'code')
         _code.attrib['class'] = column2.text
         _code.text = " * test * "
-        column4 = SubElement(row, 'td')
-        var = SubElement(column4, 'var')
+        column5 = SubElement(row, 'td')
+        var = SubElement(column5, 'var')
         var.attrib['class'] = column2.text
         var.text = " * test * "
     return
@@ -104,7 +108,7 @@ class PreHtmlFormatter(HtmlFormatter):
         yield 0, '</pre>'
 
 
-def _style(raw_code, language, cssclass="crunchy"):
+def _style(raw_code, language, cssclass):
     """Returns a string of formatted and styled HTML, where
     raw_code is a string, language is a string that Pygments has a lexer for,
     and cssclass is a class style available for Pygments."""
