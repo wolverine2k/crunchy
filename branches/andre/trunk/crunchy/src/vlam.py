@@ -31,9 +31,9 @@ def handle_exception(full_page=True):
     root_path = join(plugin['get_root_dir'](), "server_root/")
     if full_page:
         exception_file = join(root_path, "exception.html")
+        text = open(exception_file).read()
     else:
-        exception_file = join(root_path, "traceback.txt")
-    text = open(exception_file).read()
+        text = "TRACEBACK"
     tmp = StringIO()
     print_exc(file=tmp)
     text = text.replace("TRACEBACK",
