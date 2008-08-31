@@ -19,9 +19,16 @@ local_template = open(os.path.join(cwd, "docs", "basic_tutorial",
 local_template.write(main_template)
 local_template.close()
 
+# for the other templates, we need to have the menu open at the
+# appropriate leval.
 main_template = main_template.replace("heading open", "heading")
 
-all = [ ('heading">Advanced', 'heading open ">Advanced', "advanced_tutorial")]
+all = [ ('heading">Advanced', 'heading open ">Advanced', "advanced_tutorial"),
+        ('heading">Writing', 'heading open">Writing', "writing"),
+        ('heading">About', 'heading open">About', 'about'),
+        ('heading">For', 'heading open">For', 'developers'),
+        ('heading">Experimental', 'heading open">Experimental', 'experimental'),
+        ('heading">Miscellanous', 'heading">Miscellanous', 'misc')]
 
 for info in all:
     local_template = open(os.path.join(cwd, "docs", info[2],
