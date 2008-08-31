@@ -1,5 +1,5 @@
 #summary Preparing for the 1.0 release
-#labels Phase-Requirements,Featured
+#labels Phase-Requirements
 
 = Check list for an official release =
 
