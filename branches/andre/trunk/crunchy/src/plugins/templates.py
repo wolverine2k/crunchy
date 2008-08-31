@@ -35,7 +35,7 @@ def create_template(name, username, filehandle): # tested
 def return_template(page, elem):
     '''determine the file to use as a template and if a new template needs
        to be created.'''
-    url = elem.attrib['title'].split(' ')[1]
+    url = elem.attrib['title'].strip().split(' ')[-1]
     base_dir, dummy = os.path.split(page.url)
     url = os.path.normpath(os.path.join(config['crunchy_base_dir'], "server_root",
                                         base_dir[1:], url))

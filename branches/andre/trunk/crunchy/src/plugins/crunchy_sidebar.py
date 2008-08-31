@@ -29,6 +29,7 @@ $(function () {
 
     // our selected class
     selectedClass: 'open',
+    active: '.open',
 
     // match the Apple slide out effect
     event: 'mouseover'
