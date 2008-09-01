@@ -13,7 +13,7 @@ import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, translate, tostring
-from src.utilities import extract_log_id, insert_markup
+from src.utilities import extract_log_id, insert_markup, wrap_in_div
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -83,7 +83,10 @@ def insert_bare_editor(page, elem, uid):
             page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
+    elem.attrib['title'] = "python"
+    code = plugin['services'].style(page, elem)
+    elem.attrib['title'] = "vlam"
+    #code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
         config[page.username]['log'][log_id] = [tostring(markup)]
     # reset the original element to use it as a container.  For those
@@ -93,7 +96,8 @@ def insert_bare_editor(page, elem, uid):
     # do not need to save either the "text" attribute or the "tail" one
     # before resetting the element.
 
-    insert_markup(elem, uid, vlam, markup, "editor")
+    wrap_in_div(elem, uid, vlam, "editor")
+    #insert_markup(elem, uid, vlam, markup, "editor")
 
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"

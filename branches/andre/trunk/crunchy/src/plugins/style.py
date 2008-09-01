@@ -35,6 +35,7 @@ def register():
         plugin["register_tag_handler"]("pre", "title", language, pygment_style)
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
+    plugin['register_service']("style", pygment_style)
 
 def extract_code(elem):
     text = elem.text or ""
@@ -44,11 +45,11 @@ def extract_code(elem):
         if node.tail: text += node.tail
     return text.replace("\r", "")
 
-def pygment_style(page, elem, dummy_uid):
+def pygment_style(page, elem, dummy_uid='42'):
     language = elem.attrib['title']
     text = extract_code(elem)
     cssclass = config[page.username]['style']
-    styled_code = _style(text, language, cssclass)
+    styled_code = _style(text, language, cssclass).encode("utf-8")
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
@@ -56,7 +57,7 @@ def pygment_style(page, elem, dummy_uid):
     if not page.includes("pygment_cssclass"):
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
         page.add_include("pygment_cssclass")
-    return
+    return text
 
 def get_pygments_tokens(page, elem, uid):
     """inserts a table containing all existent token types and corresponding
