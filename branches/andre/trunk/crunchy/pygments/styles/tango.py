@@ -133,7 +133,7 @@ class TangoStyle(Style):
         Generic.Error:             "#ef2929",      # class: 'gr',
         Generic.Heading:           "bold #000080",      # class: 'gh',
         Generic.Inserted:          "#00A000",      # class: 'gi',
-        Generic.Output:            "#888a85",      # class: 'go',
+        Generic.Output:            "italic #000000",      # class: 'go',
         Generic.Prompt:            "#8f5902",      # class: 'gp',
         Generic.Strong:            "bold #000000",      # class: 'gs',
         Generic.Subheading:        "bold #800080",      # class: 'gu',

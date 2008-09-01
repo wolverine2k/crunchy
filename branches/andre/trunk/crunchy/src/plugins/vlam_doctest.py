@@ -12,8 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
-from src.utilities import extract_log_id, insert_markup
+from src.interface import config, plugin, SubElement, tostring
+from src.utilities import extract_log_id, wrap_in_div
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -73,13 +73,19 @@ def doctest_widget_callback(page, elem, uid):
             page.add_js_code(doctest_jscode)
 
     # next, we style the code, also extracting it in a useful form ...
-    doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
+    elem.attrib['title'] = "pycon"
+    doctestcode = plugin['services'].style(page, elem)
+    elem.attrib['title'] = "vlam"
+    #code, markup, dummy = plugin['services'].style_pycode(page, elem)
+
+    #doctestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config[page.username]['log'][log_id] = [tostring(markup)]
     # which we store
     doctests[uid] = doctestcode
 
-    insert_markup(elem, uid, vlam, markup, "doctest")
+    wrap_in_div(elem, uid, vlam, "doctest")
+    #insert_markup(elem, uid, vlam, markup, "doctest")
 
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid)

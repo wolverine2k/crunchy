@@ -12,8 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, translate, tostring
-from src.utilities import extract_log_id, insert_markup, wrap_in_div
+from src.interface import config, plugin, SubElement, translate, tostring
+from src.utilities import extract_log_id, wrap_in_div
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -88,7 +88,7 @@ def insert_bare_editor(page, elem, uid):
     elem.attrib['title'] = "vlam"
     #code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
-        config[page.username]['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(elem)]
     # reset the original element to use it as a container.  For those
     # familiar with dealing with ElementTree Elements, in other context,
     # note that the style_pycode() method extracted all of the existing
