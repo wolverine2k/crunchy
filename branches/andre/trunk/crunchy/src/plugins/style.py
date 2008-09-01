@@ -50,8 +50,8 @@ def pygment_style(page, elem, dummy_uid):
     cssclass = config[page.username]['style']
     styled_code = _style(text, language, cssclass)
     markup = fromstring(styled_code)
-    elem.text = ''
     elem[:] = markup[:]
+    elem.text = markup.text
     elem.attrib['class'] = cssclass
     if not page.includes("pygment_cssclass"):
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
@@ -130,4 +130,6 @@ def _style(raw_code, language, cssclass):
     formatter.cssclass = cssclass
     formatter.style = get_style_by_name(cssclass)
 
-    return highlight(raw_code, lexer, formatter)
+    # the removal of "\n" below prevents an extra space to be introduced
+    # with the background color of the selected cssclass
+    return highlight(raw_code, lexer, formatter).replace("\n</pre>", "</pre>")

@@ -41,21 +41,26 @@ If you click on it, you will see appear on the page a real editor, provided by C
 <h3 >Advanced stuff, for tutorial writers</h3>
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
 the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
-<pre title="no_vlam">
+<pre title="html">
 &lt;pre title="editor [no_style] [no_copy] [no_pre]
             [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
-This adds a code editor (enhanced html &lt;textarea&gt;) to the current page.
-<p>By default, Crunchy copies the contents of the <code>pre</code> in the original file
-into a new <code>pre</code> above the editor; however, this is prevented if
-<code>no_pre</code> is present.
-Also by default, Crunchy copies the contents of the original <code>pre</code>
+This adds a code editor (enhanced html <code title="html">&lt;textarea&gt;</code>) 
+to the current page.
+<p>By default, Crunchy copies the contents of the <code title="html">&lt;pre&gt;</code> 
+in the original file into a new <code title="html">&lt;pre&gt;</code> above the editor; 
+however, this is prevented if
+<code title="python">"no_pre"</code> is present.
+Also by default, Crunchy copies the contents of the original 
+<code title="html">&lt;pre&gt;</code>
 into the editor; however, this is prevented if
-<code>no_copy</code> is present.
-If the <code>linenumber</code> option is present, a line number will appear before each line of input code.</p>
-<p>The <code>[external [no_internal]]</code> options will be explained later.</p>
+<code title="python">"no_copy"</code> is present.
+If the <code title="python">"linenumber"</code> option is present, 
+a line number will appear before each line of input code.</p>
+<p>The <code title="python">"[external [no_internal]]"</code>
+options will be explained later.</p>
 
 
 </div>
