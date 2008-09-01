@@ -87,7 +87,7 @@ def save_and_run_request_handler(request):
     if DEBUG:
         print("  path = ")
         print(path)
-    exec_external(path=path)
+    exec_external(path=path, username=request.crunchy_username)
 
 def run_external_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -96,7 +96,7 @@ def run_external_request_handler(request):
     code = request.data
     request.send_response(200)
     request.end_headers()
-    exec_external(code=code)
+    exec_external(code=code, username=request.crunchy_username)
 
 def load_file_request_handler(request):
     ''' reads a local file - most likely a Python file that will
@@ -145,13 +145,13 @@ def read_file(full_path):  # tested
         print("  full_path in read_file = " + full_path)
     return content
 
-def exec_external(code=None,  path=None):
+def exec_external(code=None,  path=None, username=None):
     """execute code in an external process with default interpreter
     """
     if DEBUG:
         print("Entering exec_external.")
-    exec_external_python_version(code, path, alternate_version=False)
-
+    exec_external_python_version(code, path, alternate_version=False,
+                                 username=username)
 
 def save_file_python_interpreter_request_handler(request):
     '''extracts the path & the file content from the request and
@@ -173,10 +173,10 @@ def save_file_python_interpreter_request_handler(request):
     if DEBUG:
         print "info =", info
     if info[0]:
-        config['alternate_python_version'] = info[0]
+        username = request.crunchy_username
+        config[username]['alternate_python_version'] = info[0]
         # the following updates the value stored in configuration.defaults
-        config['_set_alternate_python_version'](info[0])
-
+        config[username]['_set_alternate_python_version'](info[0])
     return path
 
 def save_and_run_python_interpreter_request_handler(request):
@@ -187,7 +187,7 @@ def save_and_run_python_interpreter_request_handler(request):
     path = save_file_python_interpreter_request_handler(request)
     if DEBUG:
         print("  path = " + str(path))
-    exec_external_python_version(path=path)
+    exec_external_python_version(path=path, username=request.crunchy_username)
 
 def run_external_python_interpreter_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -196,10 +196,10 @@ def run_external_python_interpreter_request_handler(request):
     code = request.data
     request.send_response(200)
     request.end_headers()
-    exec_external_python_version(code=code)
+    exec_external_python_version(code=code, username=request.crunchy_username)
 
 def exec_external_python_version(code=None,  path=None, alternate_version=True,
-                                 write_over=True):
+                                 write_over=True, username=None):
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
@@ -211,11 +211,11 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         print("path =" + str(path))
         print("alternate version = " + str(alternate_version))
     if alternate_version:
-        python_interpreter = config['alternate_python_version']
+        python_interpreter = config[username]['alternate_python_version']
     else:
         python_interpreter = 'python'  # default interpreter
     if path is None:
-        path = os.path.join(config['temp_dir'], "temp.py")
+        path = os.path.join(config[username]['temp_dir'], "temp.py")
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
