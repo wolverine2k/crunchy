@@ -31,6 +31,10 @@ class Page(object):
         self.handlers2 = {}
         self.handlers3 = {}
 
+# Note: in the following, since we don't care about the value of some includes
+# (setting them as "dummy"), the only relevant thing we really test is to see if
+# we included the proper number of items per category.
+
     def includes(self, dummy):
         self.added_info.append('includes')
 

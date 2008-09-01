@@ -70,7 +70,7 @@ Testing insert_editor_subwidget()
 
 First, we need to fake some services that are expected by insert_editor_subwidget
 
-  >>> def style_pycode(page, elem):
+  >>> def style(page, elem):
   ...  return "", "TestMarkup", None
 
 # Used as a fake insert_io_subwidget function
@@ -82,7 +82,7 @@ First, we need to fake some services that are expected by insert_editor_subwidge
 
   >>> class DummyServices(object):
   ...     def __init__(self):
-  ...          self.style_pycode = style_pycode
+  ...          self.style = style
   ...          self.insert_io_subwidget = insert_io_subwidget
   ...          self.enable_editarea = src.plugins.editarea.enable_editarea
   ...          self.insert_editor_subwidget = vlam_editor.insert_editor_subwidget # tested above

@@ -237,7 +237,7 @@ Testing add_crunchy_style()
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_crunchy_style()
     >>> output(page_no_body)
-    '<html><head>brain<link href="/crunchy.css" rel="stylesheet" type="text/css" /><title>Hi!</title></head></html>'
+    '<html><head>brain<link href="/css/crunchy.css" rel="stylesheet" type="text/css" /><title>Hi!</title></head></html>'
 
 Just to make sure, an even simpler case, with no head; one will be created for
 proper insertion of css code.
@@ -246,7 +246,7 @@ proper insertion of css code.
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_crunchy_style()
     >>> output(page_no_body)
-    '<html><head> <link href="/crunchy.css" rel="stylesheet" type="text/css" /></head></html>'
+    '<html><head> <link href="/css/crunchy.css" rel="stylesheet" type="text/css" /></head></html>'
 
 .. _`add_js_code()`:
 

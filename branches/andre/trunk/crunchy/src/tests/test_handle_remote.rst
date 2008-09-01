@@ -63,7 +63,7 @@ First we create a the test file.
 
 Next, we define a dummy vlam page creator.
 
-    >>> def open_html(dummy, url, remote):
+    >>> def open_html(dummy, url, remote, username):
     ...    global handle
     ...    return handle
     >>> plugin['create_vlam_page'] = open_html
@@ -74,11 +74,13 @@ this interferes with unit tests unless we catch the return value.
     >>> __irrelevant = handle.write(file_content)
     >>> handle.close()
     >>> request = mocks.Request(args={'url':filepath})
+    >>> request.crunchy_username = "Crunchy"
 
 First, we do a test without the language-request on.
 
     >>> handle = open(filepath)
-    >>> config["forward_accept_language"] = False
+    >>> config["Crunchy"] = {}
+    >>> config["Crunchy"]["forward_accept_language"] = False
     >>> handle_remote.remote_loader(request)
     200
     Cache-Controlno-cache, must-revalidate, no-store
@@ -90,7 +92,7 @@ Second, with the language-request on but "Accept-Language"
 not in request.headers.
 
     >>> handle = open(filepath)
-    >>> config["forward_accept_language"] = True
+    >>> config["Crunchy"]["forward_accept_language"] = True
     >>> handle_remote.remote_loader(request)
     200
     Cache-Controlno-cache, must-revalidate, no-store
@@ -102,7 +104,7 @@ Third, with "Accept-Language" in the headers.
 
     >>> request.headers["Accept-Language"] = 'junk'
     >>> handle = open(filepath)
-    >>> config["forward_accept_language"] = True
+    >>> config["Crunchy"]["forward_accept_language"] = True
     >>> handle_remote.remote_loader(request)
     200
     Cache-Controlno-cache, must-revalidate, no-store

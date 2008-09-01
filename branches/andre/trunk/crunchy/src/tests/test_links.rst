@@ -70,13 +70,13 @@ arguments for each.
 
     >>> links.external_link(page_default, a_link)
     >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /external_link.png
+    img /images/external_link.png
     >>> links.external_link(page_local, a_link, 'dummy1')
     >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /external_link.png
+    img /images/external_link.png
     >>> links.external_link(page_remote, a_link, 'dummy1', 'dummy2')
     >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /external_link.png
+    img /images/external_link.png
 
 Next, we do an example with a more complicated link object, one that
 has a subelement.
@@ -89,7 +89,7 @@ has a subelement.
     >>> print a_link[0].tag, a_link[0].attrib['src']
     img logo.png
     >>> print a_link[1].tag, a_link[1].attrib['src']
-    img /external_link.png
+    img /images/external_link.png
 
 For remote site, relative (ie without http://) links must be changed in
 absolute links. Here for relative to the root links:

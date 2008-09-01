@@ -47,6 +47,7 @@ nb_files = 0
 total_tests = 0
 total_failures = 0
 files_with_failures = 0
+all_files_with_failures = []
 
 #TODO: add a command line option to replace this
 include_only = []#["test_colourize.rst"]
@@ -71,12 +72,15 @@ for t in test_files:
     total_failures += failure
     if failure > 0:
         files_with_failures += 1
+        all_files_with_failures.append((failure, t))
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
 
 print "-"*50
 print "%d failures in %d tests in %s files out of %s." % (total_failures,
                                 total_tests, files_with_failures, nb_files)
+for info in all_files_with_failures:
+    print "%3d failures in %s" % (info)
 
 # Note that the number of tests, as identified by the doctest module
 # is equal to the number of commands entered at the interpreter

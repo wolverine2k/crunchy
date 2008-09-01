@@ -33,9 +33,9 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # so that it can work together with the floated io widget
     # (and python code sample) to have a two-column display if desired.
     new_div = SubElement(elem, "div")
+    new_div.attrib['class'] = "io_div"
     clear_div = SubElement(elem, "div")
     clear_div.attrib['class'] = "end_io_widget"
-    new_div.attrib['class'] = "io_div"
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
