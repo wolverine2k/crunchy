@@ -9,6 +9,7 @@ from pygments.token import STANDARD_TYPES
 
 from src.interface import fromstring, plugin, SubElement, additional_properties, config
 from src.configuration import make_property, options
+from src.utilities import extract_code
 
 _pygment_lexer_names = {}
 _pygment_language_names = []
@@ -36,14 +37,6 @@ def register():
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
     plugin['register_service']("style", pygment_style)
-
-def extract_code(elem):
-    text = elem.text or ""
-    for node in elem:
-        text += extract_code(node)
-        if node.tag == "br": text += "\n"
-        if node.tail: text += node.tail
-    return text.replace("\r", "")
 
 def pygment_style(page, elem, dummy_uid='42'):
     language = elem.attrib['title']

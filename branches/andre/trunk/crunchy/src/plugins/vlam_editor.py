@@ -13,7 +13,8 @@ import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, translate, tostring
-from src.utilities import extract_log_id, wrap_in_div
+from src.utilities import extract_log_id, wrap_in_div, extract_code, is_interpreter_session
+import src.utilities as util
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -83,7 +84,12 @@ def insert_bare_editor(page, elem, uid):
             page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    elem.attrib['title'] = "python"
+    python_code = extract_code(elem)
+    if is_interpreter_session(python_code):
+        elem.attrib['title'] = "pycon"
+        python_code = util.extract_code_from_interpreter(python_code)
+    else:
+        elem.attrib['title'] = "python"
     code = plugin['services'].style(page, elem)
     elem.attrib['title'] = "vlam"
     #code, markup, dummy = plugin['services'].style_pycode(page, elem)
@@ -101,7 +107,7 @@ def insert_bare_editor(page, elem, uid):
 
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
         code = "\n"
-    plugin['services'].insert_editor_subwidget(page, elem, uid, code)
+    plugin['services'].insert_editor_subwidget(page, elem, uid, python_code)
     return vlam
 
 def insert_editor(page, elem, uid):  # tested

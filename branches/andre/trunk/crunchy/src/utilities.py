@@ -79,7 +79,6 @@ def changeHTMLspecialCharacters(text):  # tested
     text = text.replace('>', '&gt;')
     return text
 
-
 def insert_markup(elem, uid, vlam, markup, interactive_type):
     '''clears an element and inserts the new markup inside it'''
     elem.clear()
@@ -118,6 +117,66 @@ def wrap_in_div(elem, uid, vlam, interactive_type):
             span.text = "AssertionError from ElementTree"
             bold.append(span)
             elem.insert(1, bold)
+
+def extract_code(elem):
+    """extract all the text (Python code) from a marked up
+    code sample encoded as an ElementTree structure, but converting
+    <br/> into "\n" and removing "\r" which are not
+    expected in Python code; inspired by F.Lundh's gettext()
+
+    It also remove blank lines at beginning and end of code sample.
+    """
+    # The removal of blank lins is needed to prevent indentation error
+    # if a blank line with spaces at different levels is inserted at the end
+    # or beginning of some code to be executed.
+    text = elem.text or ""
+    for node in elem:
+        text += extract_code(node)
+        if node.tag == "br":
+            text += "\n"
+        if node.tail:
+            text += node.tail
+    text = text.replace("\r", "")
+    return text.strip(' \n')
+
+def is_interpreter_session(py_code):
+    '''determine if the python code corresponds to a simulated
+       interpreter session'''
+    lines = py_code.split('\n')
+    for line in lines:
+        if line.strip():  # look for first non-blank line
+            if line.startswith(">>>"):
+                return True
+            else:
+                return False
+
+def extract_code_from_interpreter(python_code):
+    """ Strips fake interpreter prompts from html code meant to
+        simulate a Python session, and remove lines without prompts, which
+        are supposed to represent Python output.
+
+        Assumes any '\r' characters have been removed from the Python code.
+    """
+    if not python_code:
+        return
+    lines = python_code.split('\n')
+    new_lines = [] # will contain the extracted python code
+
+    for line in lines:
+        if line.startswith(">>> "):
+            new_lines.append(line[4:].rstrip())
+        elif line.rstrip() == ">>>": # tutorial writer may forget the
+                                     # extra space for an empty line
+            new_lines.append(' ')
+        elif line.startswith("... "):
+            new_lines.append(line[4:].rstrip())
+        elif line.rstrip() == "...": # tutorial writer may forget the extra
+            new_lines.append('')     # space for an empty line
+        else: # output result
+            pass
+    python_code = '\n'.join(new_lines)
+    return python_code
+
 
 begin_html = """
 <html>
