@@ -13,7 +13,6 @@ import os
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, translate, tostring
-from src.utilities import extract_log_id, wrap_in_div, extract_code, is_interpreter_session
 import src.utilities as util
 _ = translate['_']
 
@@ -45,10 +44,6 @@ def register():  # tested
     plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
     return
 
-def kill_thread_handler(request):
-    """Kills the thread associated with uid"""
-    plugin['kill_thread'](request.args["uid"])
-
 def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
     """inserts an Elementtree that is an editor,
     used to provide a basic insert_editor_subwidget service
@@ -69,14 +64,14 @@ def insert_bare_editor(page, elem, uid):
     Common code to both insert_editor() and insert_alternate_python().
     """
     vlam = elem.attrib["title"]
-    log_id = extract_log_id(vlam)
+    log_id = util.extract_log_id(vlam)
     if log_id:
         t = 'editor'
         config[page.username]['logging_uids'][uid] = (log_id, t)
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    # If that is the case, we won't include javascript either, to make
+    # If that is the case, we won't include javascript either,
     # thus making the source easier to read.
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("exec_included"):
@@ -84,29 +79,20 @@ def insert_bare_editor(page, elem, uid):
             page.add_js_code(exec_jscode)
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process
-    python_code = extract_code(elem)
-    if is_interpreter_session(python_code):
+    python_code = util.extract_code(elem)
+    if util.is_interpreter_session(python_code):
         elem.attrib['title'] = "pycon"
         python_code = util.extract_code_from_interpreter(python_code)
     else:
         elem.attrib['title'] = "python"
     code = plugin['services'].style(page, elem)
     elem.attrib['title'] = "vlam"
-    #code, markup, dummy = plugin['services'].style_pycode(page, elem)
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
-    # reset the original element to use it as a container.  For those
-    # familiar with dealing with ElementTree Elements, in other context,
-    # note that the style_pycode() method extracted all of the existing
-    # text, removing any original markup (and other elements), so that we
-    # do not need to save either the "text" attribute or the "tail" one
-    # before resetting the element.
+    util.wrap_in_div(elem, uid, vlam, "editor")
 
-    wrap_in_div(elem, uid, vlam, "editor")
-    #insert_markup(elem, uid, vlam, markup, "editor")
-
-    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not code):
-        code = "\n"
+    if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not python_code):
+        python_code = "\n"
     plugin['services'].insert_editor_subwidget(page, elem, uid, python_code)
     return vlam
 
@@ -114,7 +100,7 @@ def insert_editor(page, elem, uid):  # tested
     """handles the editor widget"""
 
     vlam = insert_bare_editor(page, elem, uid)
-    log_id = extract_log_id(vlam)
+    log_id = util.extract_log_id(vlam)
      #some spacing if buttons are needed, they appear below.
     if "external in vlam" or not "no_internal" in vlam:
         SubElement(elem, "br")
@@ -187,7 +173,7 @@ function exec_code(uid){
     try{
     document.getElementById("kill_image_"+uid).style.display = "block";
     }
-    catch(err){;}
+    catch(err){alert("Can't display Stop image.");}
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
