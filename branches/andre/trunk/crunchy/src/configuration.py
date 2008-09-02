@@ -143,7 +143,8 @@ class UserPreferences(Base):
     IMPORTANT: you can specify the value of a given "Data descriptor" by entering
     crunchy.descriptor = value
     """
-    def __init__(self, prefs):
+    def __init__(self, prefs, name):
+        self.name = name
         self._preferences = prefs
         self._preferences.update({'_prefix': 'crunchy',
                             'page_security_level': self._page_security_level,
@@ -158,7 +159,7 @@ class UserPreferences(Base):
         self._preferences.update({'site_security': self.site_security,
                             'styles': self.styles,
                             '_modification_rules': self._modification_rules})
-
+        self._not_loaded = True
         self._set_dirs()
         # self.logging_uids is needed by comitIO.py:87
         self.logging_uids = {}  # {uid : (name, type)}
@@ -170,7 +171,6 @@ class UserPreferences(Base):
         self.log = {}
         # Make sure to initialize properties so that they exist before
         # retrieving saved values
-        self._not_loaded = True
         self._init_properties(UserPreferences)
         self._load_settings()
 
@@ -266,48 +266,47 @@ are usually launched.""")
     def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
-        home = os.path.expanduser("~")
-        self._user_dir = os.path.join(home, ".crunchy")
-        self._temp_dir = os.path.join(home, ".crunchy", "temp")
+        self.user_dir = accounts[self.name][0]
+        self.temp_dir = os.path.join(self._user_dir, "temp")
 
-        # hack to make it work for now.
-        self.user_dir = config['user_dir'] = self._user_dir
-        self.temp_dir = config['temp_dir'] = self._temp_dir
+        ## hack to make it work for now.
+        #self.user_dir = config['user_dir'] = self._user_dir
+        #self.temp_dir = config['temp_dir'] = self._temp_dir
 
-        if not os.path.exists(self._user_dir):  # first time ever
+        if not os.path.exists(self.user_dir):  # first time ever
             try:
-                os.makedirs(self._user_dir)
-                if not os.path.exists(self._temp_dir):
+                os.makedirs(self.user_dir)
+                if not os.path.exists(self.temp_dir):
                     try:
-                        os.makedirs(self._temp_dir)
+                        os.makedirs(self.temp_dir)
                     except:
                         # Note: we do not translate diagnostic messages
                         # sent to the terminal
                         u_print("Created successfully home directory.")
                         u_print("Could not create temporary directory.")
-                        self._temp_dir = self._user_dir
+                        self.temp_dir = self.user_dir
                     return
             except:
                 u_print("Could not create the user directory.")
-                self._user_dir = os.getcwd()  # use crunchy's as a default.
-                self._temp_dir = os.path.join(self._user_dir, "temp")
-                if not os.path.exists(self._temp_dir):
+                self.user_dir = os.getcwd()  # use crunchy's as a default.
+                self.temp_dir = os.path.join(self.user_dir, "temp")
+                if not os.path.exists(self.temp_dir):
                     try:
-                        os.makedirs(self._temp_dir)
+                        os.makedirs(self.temp_dir)
                     except:
                         u_print("Could not create temporary directory.")
-                        self._temp_dir = self._user_dir
+                        self.temp_dir = self.user_dir
                     return
                 return
         # we may encounter a situation where a ".crunchy" directory
         # had been created by an old version without a temporary directory
-        if not os.path.exists(self._temp_dir):
+        if not os.path.exists(self.temp_dir):
             try:
-                os.makedirs(self._temp_dir)
+                os.makedirs(self.temp_dir)
             except:
                 u_print("home directory '.crunchy' exists; however, ")
                 u_print("could not create temporary directory.")
-                self._temp_dir = self._user_dir
+                self.temp_dir = self.user_dir
             return
         return
 
@@ -317,13 +316,13 @@ are usually launched.""")
         values if file specific settings is not found.
         '''
         success = False
-        pickled_path = os.path.join(self._user_dir, "settings.pkl")
+        pickled_path = os.path.join(self.user_dir, "settings.pkl")
         try:
             pickled = open(pickled_path, 'rb')
             success = True
         except:
             u_print("No configuration file found.")
-            print "user_dir = ", self._user_dir
+            print "user_dir = ", self.user_dir
         if success:
             try:
                 saved = cPickle.load(pickled)
@@ -381,7 +380,7 @@ are usually launched.""")
             if not (name in self._not_saved or name.startswith('_')):
                 saved[name] = self._preferences[name]
         saved['_modification_rules'] = self._modification_rules
-        pickled_path = os.path.join(self._user_dir, "settings.pkl")
+        pickled_path = os.path.join(self.user_dir, "settings.pkl")
         try:
             pickled = open(pickled_path, 'wb')
         except:
@@ -517,7 +516,7 @@ def init():
     users = {}
     for name in accounts:
         config[name] = {}
-        users[name] = UserPreferences(config[name])
+        users[name] = UserPreferences(config[name], name)
         config[name]['log'] = users[name].log
         config[name]['logging_uids'] = users[name].logging_uids
         config[name]['symbols'] = {config[name]['_prefix']:users[name],
