@@ -16,13 +16,21 @@ from src.interface import config, accounts, names
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8]
 
 show_io_js = """
-$("#in_%s").show();
-$("#kill_%s").show();
 $("#out_%s").html("");
+$("#in_%s").show();
+try{
+    $("#kill_%s").show();
+    }
+catch(err){;} /* may not exist if ctypes not present. */
+
 """
 hide_io_js = """
 $("#in_%s").hide();
-$("#kill_%s").hide();
+try{
+    $("#kill_%s").hide();
+    $("#kill_image_%s").hide();
+    }
+catch(err){;} /* may not exist if ctypes not present. */
 """
 # this should probably be animated:
 show_help_js = """
@@ -267,8 +275,8 @@ class ThreadedBuffer(object):
             return
         pageid = uid.split("_")[0]
         del input_buffers[uid]
-        # hide the input box:
-        output_buffers[pageid].put(hide_io_js % (uid, uid))
+        # hide the input box and the Stop thread link
+        output_buffers[pageid].put(hide_io_js % (uid, uid, uid))
 
 
     def write(self, data):

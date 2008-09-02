@@ -152,13 +152,12 @@ function push_input(uid){
     i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
     convertFromEditor(uid);
-// try-catch needed as the elements may not exist.
+// try-catch needed as the elements may not exist if ctypes not present.
 try{
 document.getElementById("kill_image_"+uid).style.display="inline";
 document.getElementById("kill_"+uid).style.display="inline";
 }
-catch(err){ ;}
-
+catch(err){;}
     return true;
 };
 """ % plugin['session_random_id']

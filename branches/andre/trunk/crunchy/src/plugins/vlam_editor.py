@@ -171,9 +171,10 @@ def insert_alternate_python(page, elem, uid):
 exec_jscode = """
 function exec_code(uid){
     try{
-    document.getElementById("kill_image_"+uid).style.display = "block";
+    document.getElementById("kill_image_"+uid).style.display = "inline";
+    document.getElementById("kill_"+uid).style.display="inline";
     }
-    catch(err){alert("Can't display Stop image.");}
+    catch(err){;} /* may not exist if ctypes not present. */
     code=editAreaLoader.getValue("code_"+uid);
     if (code == undefined) {
         code = document.getElementById("code_"+uid).value;
