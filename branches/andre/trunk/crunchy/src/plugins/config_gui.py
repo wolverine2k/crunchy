@@ -19,7 +19,7 @@ def register():
 def add_configuration_to_menu(page):
     '''adds a menu item allowing the user to chose the preferences'''
     menu_item = Element("li")
-    link = SubElement(menu_item, 'a', href="/crunchy_tutor/config_en.html")
+    link = SubElement(menu_item, 'a', href="/docs/advanced_tutorial/preferences.html")
     link.text = _("Preferences")
     additional_menu_items['preferences'] = menu_item
 
@@ -57,10 +57,19 @@ def show(parent, username, uid, to_show=None):
     if to_show is None:
         return
     keys = []
-    for key in configuration.options:
-        _type = select_option_type(key, username, uid)
-        if (_type in to_show) or (key in to_show):
-            keys.append(key)
+
+    for key in config[username]:
+        if not (key in get_prefs(username)._not_saved or key.startswith('_')):
+            _type = select_option_type(key, username, uid)
+            if (_type in to_show) or (key in to_show):
+                keys.append(key)
+
+
+
+    #for key in configuration.options:
+    #    _type = select_option_type(key, username, uid)
+    #    if (_type in to_show) or (key in to_show):
+    #        keys.append(key)
     keys.sort()
     for key in keys:
         ConfigOption.all_options[key].render(parent)
@@ -69,8 +78,10 @@ def show(parent, username, uid, to_show=None):
 def select_option_type(key, username, uid, allowed_options=configuration.options,
                        ANY=configuration.ANY):
     '''select the option type to choose based on the key requested'''
-    if key in config[username]:
+    excluded = ['site_security']
+    if key in config[username] and key not in excluded:
         if set(allowed_options[key]) == set((True, False)):
+            print key, config[username][key]
             BoolOption(key, config[username][key], username, uid)
             _type = 'boolean'
         elif ANY in allowed_options[key]:
@@ -194,6 +205,7 @@ class BoolOption(ConfigOption):
             id = _id,
             onchange = "set_config('%s', '%s');" % (_id, self.key)
         )
+        print self.key, self.username, config[self.username][self.key], self.get()
         if self.get():
             input.attrib['checked'] = 'checked'
         label = SubElement(option, 'label')
@@ -204,10 +216,11 @@ class BoolOption(ConfigOption):
 
     def set(self, value):
         """Define the value of the option
-        This function replace the javascript "true" and "false value by python
-        objects True and False.
+        This function replace the javascript "true" and "false" values, which
+        may be returned by some http_hanlder, by python objects True and False.
         """
-        if value == "true":
+        # Note: value could already be True...
+        if value == "true" or value == True:
             value = True
         else:
             value = False

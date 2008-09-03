@@ -34,7 +34,6 @@ options = {
     'popups': [True, False],
     'forward_accept_language': [True, False],
     'friendly': [True, False],
-    'my_style': [True, False],
     'menu_position': ['default'],
     'alternate_python_version': [ANY],
     'user_dir': [ANY],
@@ -55,7 +54,7 @@ options = {
                              if (len(f)==5 or (len(f) == 8 and f[2] == '_'))
                                     and not f.startswith('.')]
 }
-options['local_security'] = options['security']
+options['site_security'] = options['local_security'] = options['security']
 
 def make_property(name, default=None, doc=None): # tested
     '''creates properties within allowed values (if so specified)
@@ -154,10 +153,10 @@ class UserPreferences(Base):
                                 'initial_security_set', 'page_security_level'])
 
         self.site_security = {}
-        self.styles = {}
+        #self.styles = {}
         self._modification_rules = []
         self._preferences.update({'site_security': self.site_security,
-                            'styles': self.styles,
+                            #'styles': self.styles,
                             '_modification_rules': self._modification_rules})
         self._not_loaded = True
         self._set_dirs()
@@ -236,10 +235,10 @@ Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
 If the value is not None, inserts the requested file browser
 at the top of every page displayed by Crunchy.""")
 
-    my_style = make_property('my_style', default=False,
-        doc="""\
-If True, indicates that Crunchy will replace some styling (css)
-by some values specified by the user in crunchy.styles""")
+#    my_style = make_property('my_style', default=False,
+#        doc="""\
+#If True, indicates that Crunchy will replace some styling (css)
+#by some values specified by the user in crunchy.styles""")
 
     popups = make_property('popups', doc="""\
 If True, will insert helpful images with informative text displayed as a popup
@@ -373,7 +372,7 @@ are usually launched.""")
 
         # update values of non-properties
         self._preferences['site_security'] = self.site_security
-        self._preferences['styles'] = self.styles
+        #self._preferences['styles'] = self.styles
         self._preferences['_modification_rules'] = self._modification_rules
         saved = {}
         for name in self._preferences:
