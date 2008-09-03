@@ -7,18 +7,15 @@ This module is meant to be imported by a user at a Crunchy prompt or
 inside an editor.
 '''
 
+# The following is provided for the convenience of end users.
+from os.path import join as join_path
+
 # variable that start with "_" are not displayed in Crunchy's "help";
 # we use this feature to only expose a small number of them to the user.
-import os as _os
-import random
+import random as _random
 import src.interface as _interface
 _plugin = _interface.plugin
 _config = _interface.config
-
-# The following three variables are provided for the convenience of end users.
-home = _os.path.expanduser("~")
-temp_dir = _config['temp_dir']
-join_path = _os.path.join
 
 _nodes = {}
 _roots = {}
@@ -77,7 +74,7 @@ def image(file_path, width=400, height=400, label='', parent_label=None,
 
     # Note: we append a random string as a parameter (after a ?) to prevent
     # the browser from loading a previously cached image.
-    file_path = file_path + '?' + str(int(random.random()*1000000000))
+    file_path = file_path + '?' + str(int(_random.random()*1000000000))
 
     append('img', attributes={'width':width, 'height':height, 'src':file_path},
            label=label, parent_label=parent_label)

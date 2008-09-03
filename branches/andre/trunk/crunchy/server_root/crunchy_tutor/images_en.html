@@ -50,7 +50,7 @@ The following example assumes that
 is installed; if it's not, you're out of luck!</p>
 <pre title="editor">
 import dhtml
-image_file = dhtml.join_path(dhtml.home, "foo.png")
+image_file = dhtml.join_path(crunchy.temp_dir, "foo.png")
 
 # assumes matplotlib is installed
 import matplotlib.numerix as nx
@@ -179,18 +179,6 @@ red("2_2")
 red("2_3")
 
 dhtml.append("span", label="message", attributes={'innerHTML':"Done!"})
-</pre>
-
-<h3 >Finding out more</h3>
-
-<p>
-
-You may want to try the following to find out more about the dhtml module.
-</p>
-<pre title="interpreter">
-&gt;&gt;&gt; help(dhtml.home)        # assumes dhtml has already been imported
-&gt;&gt;&gt; help(dhtml.join_path)   # no need to import os.path:
-                            # see matplotlib example above
 </pre>
 
 </div>

@@ -6,7 +6,7 @@ Enable the insertion of Crunchy's version anywhere in a page.
 
 from src.interface import plugin
 
-version = "1.0 pre-alpha [andre's branch - not ready for release]"
+version = "1.0 pre-alpha [Toulibre edition]"
 
 def register():
     '''registers a simple tag handler'''
