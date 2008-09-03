@@ -98,11 +98,6 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         image.attrib["src"] = "/images/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["class"] = "interpreter_image"
-        if config[page.username]['popups']:
-            # insert popup helper
-            image.attrib["title"] = "cluetip Mini editor"
-            image.attrib["rel"] = "/docs/popups/editor_image.html"
-            plugin['services'].insert_cluetip(page, image, "editor"+uid)
 
         code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
