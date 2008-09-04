@@ -12,7 +12,7 @@ for people familiar with the Crunchy plugin architecture.
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, translate, tostring
+from src.interface import config, plugin, Element, SubElement, translate, tostring
 import src.utilities as util
 _ = translate['_']
 
@@ -90,6 +90,13 @@ def insert_bare_editor(page, elem, uid):
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
     util.wrap_in_div(elem, uid, vlam, "editor")
+    if config[page.username]['popups']:
+        # insert popup helper
+        img = Element("img", src="/images/help.png",
+                title = "cluetip Hello %s! "%page.username + "This is a Editor.",
+                rel = "/docs/popups/editor.html")
+        elem.append(img)
+        plugin['services'].insert_cluetip(page, img, uid)
 
     if (("no_copy" in vlam) and not ("no_pre" in vlam)) or (not python_code):
         python_code = "\n"
