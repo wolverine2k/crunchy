@@ -31,6 +31,9 @@ See how_to.rst_ for details.
   >>> config.clear()
   >>> config['Crunchy'] = {}
   >>> config['Crunchy']['editarea_language'] = 'en'
+
+Note: we should have a test when the following is True.
+  >>> config['Crunchy']['popups'] = False
   >>> import src.plugins.vlam_editor as vlam_editor 
   >>> import src.plugins.editarea
   >>> import src.tests.mocks as mocks
