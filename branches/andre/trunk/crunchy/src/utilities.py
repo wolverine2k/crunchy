@@ -106,7 +106,7 @@ def wrap_in_div(elem, uid, vlam, interactive_type):
     elem.text = ''
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = interactive_type # 'editor', 'doctest', 'interpreter'
+    elem.attrib['class'] = interactive_type # 'editor', 'doctest', etc.
     if not "no_pre" in vlam:
         try:
             elem.append(elem_copy)

@@ -6,7 +6,7 @@ a user to enter some code which should satisfy the unittest.
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, Element, SubElement, tostring
-from src.utilities import extract_log_id, insert_markup
+from src.utilities import extract_log_id, wrap_in_div
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -69,14 +69,27 @@ def unittest_widget_callback(page, elem, uid):
             page.add_include("unittest_included")
             page.add_js_code(unittest_jscode)
 
+    elem.attrib['title'] = "python"
+    unittestcode = plugin['services'].style(page, elem)
+    elem.attrib['title'] = "vlam"
+
     # next, we style the code, also extracting it in a useful form ...
-    unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
+    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # which we store
     unittests[uid] = unittestcode
 
-    insert_markup(elem, uid, vlam, markup, "unittest")
+    wrap_in_div(elem, uid, vlam, "doctest")
+    if config[page.username]['popups']:
+        # insert popup helper
+        img = Element("img", src="/images/help.png",
+                title = "cluetip Hello %s! "%page.username + "This is a unittest.",
+                rel = "/docs/popups/unittest.html")
+        elem.append(img)
+        plugin['services'].insert_cluetip(page, img, uid)
+
+    #insert_markup(elem, uid, vlam, markup, "unittest")
 
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid)
