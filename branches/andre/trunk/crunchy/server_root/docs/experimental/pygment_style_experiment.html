@@ -22,8 +22,26 @@ about creating your own style.
 <p>You can select the desired style here and reload the page to see its effect.</p>
 <div title="preferences style">pygments css class</div>
 
+<div class="notes">
+<h4>Could this be made better?</h4>
+<p>
+Right now, if you use this page as a helper to design new styles
+for Pygments, every time you make changes to your style file (.py),
+you have to restart Crunchy and get to this page to see the effect 
+of your changes.
+</p>
+<p>This is not very convenient, I know ...</p>
+<p>However, a different approach might be possible, where 
+the style file is reloaded dynamically (so you wouldn't have to
+restart Crunchy).  If enough of you email me,
+<small>(or if your name is Georg Brandl)</small>,
+I might just do it.
+</p>
+</div>
+
 <p>We start by extracting all the possible information (token types and corresponding
-css classes) directly from the Pygments source (as included in the Crunchy distribution).
+css classes) directly from the Pygments source (as included in the Crunchy distribution).</p>
+<p>
 We have also added three columns designed to show some sample text:</p>
 <ul>
 <li>The first column shows the token in the chosen style</li>
@@ -36,7 +54,9 @@ rely on some default, if they don't show up (like the Text token, which does not
 a css class assigned by Pygments).
 However, if there has been a style defined, it will override the defaults 
 and the sample text should be visible in at least one of these two columns.
-<p>
+</p>
+
+<br><br><br>
 <div title="get_pygments_tokens">Create automatically the table</div>
 
 <h2>Some code samples</h2>
@@ -87,7 +107,7 @@ raise KeyboardInterrupt
 if __name__ == "__main__":
    n = New(1234567890)
 </pre>
-<p>Perhaps, a more realistic Python code sample, this time a console simulation</p>
+<p>Perhaps, a more realistic Python code sample, this time a console simulation.</p>
 <pre title="pycon">
 &gt;&gt;&gt; def flatten(seq):
 ...     """flatten(sequence) -> list
@@ -112,7 +132,7 @@ if __name__ == "__main__":
 &gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
 </pre>
 
-<p>Next, an html sample</p>
+<p>Next, an html sample.</p>
 <pre title="html">
 &lt;pre title="html"&gt; 
 Some text. 
@@ -120,7 +140,7 @@ a &amp;lt; b
 &lt;/pre&gt;
 </pre>
 
-<p> Similar example, this time with an error in it</p>
+<p> Similar example, this time with an error in it.</p>
 <pre title="html">
 &lt;pre title="html"&gt; 
 Some text. 
@@ -128,7 +148,7 @@ a &lt; b
 &lt;/pre&gt;
 </pre>
 
-<p>And a css sample</p>
+<p>And a css sample.</p>
 
 <pre title="css">
 body {
