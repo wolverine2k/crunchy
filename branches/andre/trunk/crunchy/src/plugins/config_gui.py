@@ -81,7 +81,6 @@ def select_option_type(key, username, uid, allowed_options=configuration.options
     excluded = ['site_security']
     if key in config[username] and key not in excluded:
         if set(allowed_options[key]) == set((True, False)):
-            print key, config[username][key]
             BoolOption(key, config[username][key], username, uid)
             _type = 'boolean'
         elif ANY in allowed_options[key]:
@@ -205,7 +204,6 @@ class BoolOption(ConfigOption):
             id = _id,
             onchange = "set_config('%s', '%s');" % (_id, self.key)
         )
-        print self.key, self.username, config[self.username][self.key], self.get()
         if self.get():
             input.attrib['checked'] = 'checked'
         label = SubElement(option, 'label')

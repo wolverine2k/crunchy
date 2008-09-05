@@ -28,7 +28,7 @@ all = [ ('heading">Advanced', 'heading open ">Advanced', "advanced_tutorial"),
         ('heading">About', 'heading open">About', 'about'),
         ('heading">For', 'heading open">For', 'developers'),
         ('heading">Experimental', 'heading open">Experimental', 'experimental'),
-        ('heading">Miscellanous', 'heading">Miscellanous', 'misc')]
+        ('heading">Miscellanous', 'heading open">Miscellanous', 'misc')]
 
 for info in all:
     local_template = open(os.path.join(cwd, "docs", info[2],
