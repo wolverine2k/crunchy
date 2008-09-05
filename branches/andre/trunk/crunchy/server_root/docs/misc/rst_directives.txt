@@ -2,6 +2,26 @@
  Crunchy/reStructuredText Demonstration
 ========================================
 
+This file is a simple reStructuredText file.  However,
+it does contain some *directives* which Crunchy can
+interpret.
+
+We start by showing two simple Python code samples,
+with no special directives,
+one with a simulated interactive Python session,
+the other without, so that Crunchy will perform
+its magic based on your preferences.
+
+    >>> print "Python is great!"
+    Python is great!
+
+And for the other example without a Python prompt, that
+Crunchy will not know what to do with.
+
+    print "Crunchy is pretty good too!"
+
+We now move on to using embedded directives.
+
 Interpreters
 ============
 
@@ -49,7 +69,10 @@ you will see the results below:
 .. editor:: no_copy
    :linenumber:
 
-   >>> print "Ni! Ni! Ni!"
+   print "Ni! Ni! Ni!"
+
+Note that we did not write a Python prompt.
+
 
 Alternatively, the editor can come pre-loaded with a few lines of
 code, like so:
@@ -86,6 +109,5 @@ Crunchy can also embed DocTests within a page:
    >>> print greeting
    Hello, World!
 
-
-For more info, see the `DocTest Documentation 
-<http://docs.python.org/lib/module-doctest.html>`_.
+Please use the back button of your browser to return
+to the previous page.
