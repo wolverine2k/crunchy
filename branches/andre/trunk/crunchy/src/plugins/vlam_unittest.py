@@ -99,6 +99,10 @@ def unittest_widget_callback(page, elem, uid):
     btn = SubElement(elem, "button")
     btn.text = "Run Unittest"
     btn.attrib["onclick"] = "exec_unittest('%s')" % uid
+    if "analyzer_score" in vlam:
+        plugin['services'].add_scoring(page, btn, uid)
+    if "analyzer_report" in vlam:
+        plugin['services'].insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
