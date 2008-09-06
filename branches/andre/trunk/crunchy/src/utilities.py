@@ -199,15 +199,15 @@ end_html = """
 </html>
 """
 
-def log_session():
+def log_session(username):
     '''create a log of a session in a file'''
-    f = open(config['log_filename'], 'w')
+    f = open(config[username]['log_filename'], 'w')
     f.write(begin_html)
-    for uid in config['logging_uids']:
-        log_id = config['logging_uids'][uid][0]
-        vlam_type = config['logging_uids'][uid][1]
+    for uid in config[username]['logging_uids']:
+        log_id = config[username]['logging_uids'][uid][0]
+        vlam_type = config[username]['logging_uids'][uid][1]
         f.write("<h2>log_id = %s    <small>(uid=%s, type=%s)</small></h2>"%(log_id, uid, vlam_type))
-        content = ''.join(config['log'][log_id])
+        content = ''.join(config[username]['log'][log_id])
         f.write("<pre>"+content+"</pre>")
     f.write(end_html)
     f.close()

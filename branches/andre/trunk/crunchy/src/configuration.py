@@ -517,6 +517,7 @@ def init():
         config[name] = {}
         users[name] = UserPreferences(config[name], name)
         config[name]['log'] = users[name].log
+        config[name]['log_filename'] = os.path.join(users[name].temp_dir, 'crunchy.html')
         config[name]['logging_uids'] = users[name].logging_uids
         config[name]['symbols'] = {config[name]['_prefix']:users[name],
                                     'temp_dir': users[name].temp_dir}

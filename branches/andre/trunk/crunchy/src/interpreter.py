@@ -129,7 +129,7 @@ class Interpreter(KillableThread):
                             user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
                         config[self.username]['log'][log_id].append(data)
-                        log_session()
+                        log_session(username)
                 exec_code(self.ccode, self.symbols, source=None,
                           username=self.username)
                 #exec self.ccode in self.symbols#, {}
@@ -174,7 +174,7 @@ class Interpreter(KillableThread):
 
                     data = "<span class='stdin'>" + user_code + "</span>"
                     config[self.username]['log'][log_id].append(data)
-                    log_session()
+                    log_session(self.username)
                 # proceed with regular output
                 if self.friendly:
                     message, success = errors.simplify_doctest_error_message(

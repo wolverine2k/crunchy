@@ -114,7 +114,7 @@ class CrunchyIOBuffer(StringBuffer):
             if uid in config[username]['logging_uids']:
                 log_id = config[username]['logging_uids'][uid][0]
                 config[username]['log'][log_id].append(data)
-                utilities.log_session()
+                utilities.log_session(username)
             self.event.set()
         elif self.help_flag == True:
             self.put(show_help_js)
@@ -129,7 +129,7 @@ class CrunchyIOBuffer(StringBuffer):
             if uid in config[username]['logging_uids']:
                 log_id = config[username]['logging_uids'][uid][0]
                 config[username]['log'][log_id].append(data)
-                utilities.log_session()
+                utilities.log_session(username)
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
