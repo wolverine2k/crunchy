@@ -70,7 +70,7 @@ def unittest_widget_callback(page, elem, uid):
             page.add_js_code(unittest_jscode)
 
     elem.attrib['title'] = "python"
-    unittestcode, show_vlam = plugin['services'].style(page, elem)
+    unittestcode, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = "vlam"
 
     # next, we style the code, also extracting it in a useful form ...

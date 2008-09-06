@@ -99,14 +99,14 @@ def insert_markup(elem, uid, vlam, markup, interactive_type):
             bold.append(span)
             elem.insert(1, bold)
 
-def wrap_in_div(elem, uid, vlam, interactive_type, show_vlam):
+def wrap_in_div(elem, uid, vlam, element_type, show_vlam):
     '''wraps a styled code inside a div'''
     elem_copy = copy.deepcopy(elem)
     elem.clear()
     elem.text = ''
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = interactive_type # 'editor', 'doctest', etc.
+    elem.attrib['class'] = element_type # 'editor', 'doctest', etc.
     if not "no_pre" in vlam:
         try:
             elem.append(elem_copy)

@@ -9,7 +9,7 @@ from pygments.token import STANDARD_TYPES
 
 from src.interface import fromstring, plugin, Element, SubElement, additional_properties, config
 from src.configuration import make_property, options
-from src.utilities import extract_code
+from src.utilities import extract_code, wrap_in_div
 
 _pygment_lexer_names = {}
 _pygment_language_names = []
@@ -41,8 +41,12 @@ def register():
 def pygments_style(page, elem, dummy_uid='42', vlam=None):
     # todo: implement the linenumbers; use linenumber in vlam for this...
     cssclass = config[page.username]['style']
+    wrap = False
     if vlam is not None:
         show_vlam = create_show_vlam(cssclass, elem, vlam)
+    elif 'show_vlam' in elem.attrib['title']:
+        show_vlam = create_show_vlam(cssclass, elem, elem.attrib['title'])
+        wrap = True
     else:
         show_vlam = None
     language = elem.attrib['title'].split()[0]
@@ -55,6 +59,8 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     if not page.includes("pygment_cssclass"):
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
         page.add_include("pygment_cssclass")
+    if wrap:
+        wrap_in_div(elem, dummy_uid, '', "show_vlam", show_vlam)
     return text, show_vlam
 
 def create_show_vlam(cssclass, elem, vlam):
@@ -72,6 +78,7 @@ def create_show_vlam(cssclass, elem, vlam):
     show_vlam.tag = 'code'
     show_vlam.attrib['class'] = cssclass
     display = Element('h3')
+    display.attrib['class'] = "show_vlam"
     display.text = "VLAM = "
     display.append(show_vlam)
     return display

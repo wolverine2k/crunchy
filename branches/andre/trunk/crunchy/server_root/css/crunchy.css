@@ -68,7 +68,7 @@ security_advisor.py.
     font-family: monospace;
 }
 pre.crunchy {
-    border-top: 1px solid #eeeeec; /*temporary choice*/
+    border-top: 1px solid #eeeeec;
     padding: 3px 0 3px 0;
     margin: 3px 0 3px 0;
     /*border-bottom:1px solid #ccc;*/
@@ -89,6 +89,13 @@ pre.crunchy {
     font-family: monospace;
     padding-bottom: 10px;
 }
+.show_vlam{
+    background-color: #f8f8f8; /*same as tango */
+    font-family: monospace;
+    padding:0;
+    margin:0;
+    }
+
 /* Basic Python Elements.
    Color choices for the editor (EditArea) are found in file python.js of the EditArea
    distribution and can not be set via a style sheet.

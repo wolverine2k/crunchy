@@ -74,7 +74,7 @@ def doctest_widget_callback(page, elem, uid):
 
     # next, we style the code, also extracting it in a useful form ...
     elem.attrib['title'] = "pycon"
-    doctestcode, show_vlam = plugin['services'].style(page, elem)
+    doctestcode, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = "vlam"
 
     if log_id:
