@@ -86,7 +86,7 @@ def insert_bare_editor(page, elem, uid):
     else:
         elem.attrib['title'] = "python"
     code, show_vlam = plugin['services'].style(page, elem, None, vlam)
-    elem.attrib['title'] = "vlam"
+    elem.attrib['title'] = vlam
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
     util.wrap_in_div(elem, uid, vlam, "editor", show_vlam)

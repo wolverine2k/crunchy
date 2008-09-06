@@ -13,7 +13,7 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, tostring, Element
-import src.utilities as utilities
+import src.utilities as util
 import colourize as colourize
 
 _ = translate['_']
@@ -75,7 +75,7 @@ def insert_interpreter(page, elem, uid):
     if not ('display' in config[page.username]['page_security_level'](page.url)
                 or interp_kind == None ):
         include_interpreter(interp_kind, page, uid)
-        log_id = utilities.extract_log_id(vlam)
+        log_id = util.extract_log_id(vlam)
         if log_id:
             t = 'interpreter'
             config[page.username]['logging_uids'][uid] = (log_id, t)
@@ -83,24 +83,24 @@ def insert_interpreter(page, elem, uid):
         log_id = False
         show = False
 
-
     # then we can go ahead and add html markup, extracting the Python
     # code to be executed in the process - we will not need this code;
     # this could change in a future version where we could add a button to
     # have the code automatically "injected" and executed by the
     # interpreter, thus saving some typing by the user.
-    code, markup, dummy = plugin['services'].style_pycode(page, elem)
+
+    python_code = util.extract_code(elem)
+    if util.is_interpreter_session(python_code):
+        elem.attrib['title'] = "pycon"
+        python_code = util.extract_code_from_interpreter(python_code)
+    else:
+        elem.attrib['title'] = "python"
+    code, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    elem.attrib['title'] = vlam
     if log_id:
-        config[page.username]['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(elem)]
+    util.wrap_in_div(elem, uid, vlam, "interpreter", show_vlam)
 
-    if interp_kind is None:
-        elem.clear()
-        elem.tag = "pre"
-        elem.attrib['class'] = "python_code"
-        elem.append(markup)
-        return
-
-    utilities.insert_markup(elem, uid, vlam, markup, "interpreter")
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png",
