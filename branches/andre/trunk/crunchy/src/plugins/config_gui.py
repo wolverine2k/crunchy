@@ -78,7 +78,7 @@ def show(parent, username, uid, to_show=None):
 def select_option_type(key, username, uid, allowed_options=configuration.options,
                        ANY=configuration.ANY):
     '''select the option type to choose based on the key requested'''
-    excluded = ['site_security']
+    excluded = ['site_security', 'log_filename']
     if key in config[username] and key not in excluded:
         if set(allowed_options[key]) == set((True, False)):
             BoolOption(key, config[username][key], username, uid)
