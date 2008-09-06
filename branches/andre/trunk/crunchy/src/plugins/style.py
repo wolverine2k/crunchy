@@ -7,7 +7,7 @@ from pygments.styles import get_style_by_name, get_all_styles
 from pygments.lexers._mapping import LEXERS
 from pygments.token import STANDARD_TYPES
 
-from src.interface import fromstring, plugin, SubElement, additional_properties, config
+from src.interface import fromstring, plugin, Element, SubElement, additional_properties, config
 from src.configuration import make_property, options
 from src.utilities import extract_code
 
@@ -29,19 +29,24 @@ in the pygments distribution.""")
 
 def register():
     for language in _pygment_language_names:
-        plugin["register_tag_handler"]("code", "title", language, pygment_style)
-        plugin["register_tag_handler"]("pre", "title", language, pygment_style)
+        plugin["register_tag_handler"]("code", "title", language, pygments_style)
+        plugin["register_tag_handler"]("pre", "title", language, pygments_style)
     for language in _pygment_lexer_names:
-        plugin["register_tag_handler"]("code", "title", language, pygment_style)
-        plugin["register_tag_handler"]("pre", "title", language, pygment_style)
+        plugin["register_tag_handler"]("code", "title", language, pygments_style)
+        plugin["register_tag_handler"]("pre", "title", language, pygments_style)
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
-    plugin['register_service']("style", pygment_style)
+    plugin['register_service']("style", pygments_style)
 
-def pygment_style(page, elem, dummy_uid='42'):
-    language = elem.attrib['title']
-    text = extract_code(elem)
+def pygments_style(page, elem, dummy_uid='42', vlam=None):
+    # todo: implement the linenumbers; use linenumber in vlam for this...
     cssclass = config[page.username]['style']
+    if vlam is not None:
+        show_vlam = create_show_vlam(cssclass, elem, vlam)
+    else:
+        show_vlam = None
+    language = elem.attrib['title'].split()[0]
+    text = extract_code(elem)
     styled_code = _style(text, language, cssclass).encode("utf-8")
     markup = fromstring(styled_code)
     elem[:] = markup[:]
@@ -50,7 +55,26 @@ def pygment_style(page, elem, dummy_uid='42'):
     if not page.includes("pygment_cssclass"):
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
         page.add_include("pygment_cssclass")
-    return text
+    return text, show_vlam
+
+def create_show_vlam(cssclass, elem, vlam):
+    '''Creates a <code> element showing the complete vlam options
+    used, as well as the element type.'''
+    if 'show_vlam' not in vlam:
+        return None
+    attributes = ' title="%s"' % vlam
+    for attr in elem.attrib:
+        if attr != 'title':
+            attributes += ' %s="%s"' % (attr, elem.attrib[attr])
+    elem_info = '<%s%s> ... </%s>' % (elem.tag, attributes, elem.tag)
+    styled_elem_info = _style(elem_info, 'html', cssclass)
+    show_vlam = fromstring(styled_elem_info)
+    show_vlam.tag = 'code'
+    show_vlam.attrib['class'] = cssclass
+    display = Element('h3')
+    display.text = "VLAM = "
+    display.append(show_vlam)
+    return display
 
 def get_pygments_tokens(page, elem, uid):
     """inserts a table containing all existent token types and corresponding

@@ -99,7 +99,7 @@ def insert_markup(elem, uid, vlam, markup, interactive_type):
             bold.append(span)
             elem.insert(1, bold)
 
-def wrap_in_div(elem, uid, vlam, interactive_type):
+def wrap_in_div(elem, uid, vlam, interactive_type, show_vlam):
     '''wraps a styled code inside a div'''
     elem_copy = copy.deepcopy(elem)
     elem.clear()
@@ -117,6 +117,9 @@ def wrap_in_div(elem, uid, vlam, interactive_type):
             span.text = "AssertionError from ElementTree"
             bold.append(span)
             elem.insert(1, bold)
+            return
+    if show_vlam is not None:
+        elem.insert(0, show_vlam)
 
 def extract_code(elem):
     """extract all the text (Python code) from a marked up

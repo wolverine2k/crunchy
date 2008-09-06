@@ -85,11 +85,11 @@ def insert_bare_editor(page, elem, uid):
         python_code = util.extract_code_from_interpreter(python_code)
     else:
         elem.attrib['title'] = "python"
-    code = plugin['services'].style(page, elem)
+    code, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = "vlam"
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
-    util.wrap_in_div(elem, uid, vlam, "editor")
+    util.wrap_in_div(elem, uid, vlam, "editor", show_vlam)
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png",
@@ -147,7 +147,7 @@ def insert_editor(page, elem, uid):  # tested
         btn.text = _("Execute")
         if "analyzer_score" in vlam:
             plugin['services'].add_scoring(page, btn, uid)
-    
+
     if "analyzer_report" in vlam:
             plugin['services'].insert_analyzer_button(page, elem, uid)
 

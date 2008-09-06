@@ -70,7 +70,7 @@ def unittest_widget_callback(page, elem, uid):
             page.add_js_code(unittest_jscode)
 
     elem.attrib['title'] = "python"
-    unittestcode = plugin['services'].style(page, elem)
+    unittestcode, show_vlam = plugin['services'].style(page, elem)
     elem.attrib['title'] = "vlam"
 
     # next, we style the code, also extracting it in a useful form ...
@@ -80,7 +80,7 @@ def unittest_widget_callback(page, elem, uid):
     # which we store
     unittests[uid] = unittestcode
 
-    wrap_in_div(elem, uid, vlam, "doctest")
+    wrap_in_div(elem, uid, vlam, "doctest", show_vlam)
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png",

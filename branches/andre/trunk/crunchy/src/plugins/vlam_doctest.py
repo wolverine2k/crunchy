@@ -74,7 +74,7 @@ def doctest_widget_callback(page, elem, uid):
 
     # next, we style the code, also extracting it in a useful form ...
     elem.attrib['title'] = "pycon"
-    doctestcode = plugin['services'].style(page, elem)
+    doctestcode, show_vlam = plugin['services'].style(page, elem)
     elem.attrib['title'] = "vlam"
 
     if log_id:
@@ -82,7 +82,7 @@ def doctest_widget_callback(page, elem, uid):
     # which we store
     doctests[uid] = doctestcode
 
-    wrap_in_div(elem, uid, vlam, "doctest")
+    wrap_in_div(elem, uid, vlam, "doctest", show_vlam)
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png",
