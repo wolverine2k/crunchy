@@ -16,6 +16,7 @@ from src.interface import ElementTree, config, from_comet, plugin
 et = ElementTree
 
 from src.utilities import uidgen
+import src.interface as interface
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
@@ -335,6 +336,11 @@ class CrunchyPage(BasePage):
         url should be just a path if crunchy accesses the page locally, or
         the full URL if it is remote.
         """
+        if username is None:
+            try:
+                username = interface.username_at_start
+            except:
+                pass
         BasePage.__init__(self, username=username)
         self.url = url
 
