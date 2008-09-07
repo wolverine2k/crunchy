@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Doctests</title>
+	<meta title="template local_template.html">
+</head>
+
+<body>
+
+<div id="main_title">Quiz time!</div>
+<div id="content">
+
+<p>People that know about these things apparently say that you should test your code.  
+One method that is used in Python is known as DocTest <small>
+(which stands for <em><b>Doc</b></em>umentation <em><b>Test</b></em> 
+and is usually spelled with lowercases "d" and "t", as in "doctest")</small>.  
+I am sure you know about DocTests; if not, you probably should make a note to read a real Python tutorial.</p>
+<p>Jeff Elkner wrote on edu-sig that Python tutorials should perhaps be based around the use of DocTest.  
+Here's an example of what he meant: try your hand at writing <em>just enough code</em> to make the following DocTest pass.</p>
+<pre title="doctest size=(6, 80)">
+>>> double(21)
+42
+>>> double('Ha! ')
+'Ha! Ha! '
+</pre>
+<p>After making a few (<em>ahem</em>) intentional mistakes to verify how
+friendly the error messages are, you will most certainly write the correct code to see what kind of 
+congratulatory message you are going to get.  
+Afterwards try the next, slightly more difficult example.</p>
+<pre title="doctest size=(9, 80)">
+>>> p = Teacher('Jeff')
+>>> p.name
+'Jeff'
+>>> p.addFriend('Andre')  # doctest bug?: can't deal with non-ascii characters
+>>> p.friends
+['Andre']
+</pre>
+<p>If you are using Crunchy, you realise that you can simply enter your code in the editor above, 
+press the button, and see what happens.</p>
+<p>If you are not using Crunchy, and you still want to try your hand at this DocTest business, you have to:</p>
+<ul>
+<li>copy the above test in a file (which can be the same as your program);</li>
+<li>edit your program to add the desired code that will satisfy the doctest;</li>
+<li>look up the syntax to call up the appropriate method in the doctest module and feel like you 
+are wasting too much time on something that should be much easier if life were fair.</li>
+</ul>  
+<p>Crunchy's ultimate goal is to make your life seem more fair.</p>
+<h3 >Advanced stuff, for tutorial writers</h3>
+<p><code title="html">&lt;pre title="doctest [no_style]  
+[linenumber]"&gt;&lt;/pre&gt;</code> adds a DocTest to the page; the text 
+between the <code title="html">&lt;pre&gt;</code> tags is always placed before the textarea and 
+used as the DocTest.</p>
+<p>By default, the output from the doctest result is further processed by Crunchy to make 
+error messages a bit friendlier to beginners.</p>
+
+</div>
+
+</body>
+</html>
