@@ -1,4 +1,5 @@
 '''styles the code using Pygments'''
+import re
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -63,6 +64,9 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
         language = "python"
     text = extract_code(elem)
     styled_code = _style(text, language, cssclass).encode("utf-8")
+    if vlam is not None:
+        if 'linenumber' in vlam:
+            styled_code = add_linenumber(styled_code, vlam)
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
@@ -138,10 +142,10 @@ class PreHtmlFormatter(HtmlFormatter):
         return self._wrap_code(source)
 
     def _wrap_code(self, source):
-        yield 0, '<pre>'
+        yield 0, '<pre>\n'
         for i, t in source:
             yield i, t
-        yield 0, '</pre>'
+        yield 0, '\n</pre>'
 
 
 def _style(raw_code, language, cssclass):
@@ -169,3 +173,48 @@ def _style(raw_code, language, cssclass):
     # the removal of "\n" below prevents an extra space to be introduced
     # with the background color of the selected cssclass
     return highlight(raw_code, lexer, formatter).replace("\n</pre>", "</pre>")
+
+def add_linenumber(styled_code, vlam):
+    '''adds the line number information'''
+    lines = styled_code.split('\n')
+    prompt1 = '<span class="gp"'
+    prompt2 = "<span class='gp'"
+    if lines[1].startswith(prompt1):
+        prompt_present = True
+        prompt = prompt1
+    elif lines[1].startswith(prompt2):
+        prompt_present = True
+        prompt = prompt2
+    else:
+        prompt_present = False
+        print "no prompt; lines[1] =", lines[1]
+        import sys
+        sys.__stderr__.write(lines[1])
+    lineno = get_linenumber_offset(vlam)
+    # first and last lines are the embdding <pre>...</pre>
+    for index, line in enumerate(lines[1:-1]):
+        if prompt_present:
+            if lines[index+1].startswith(prompt):
+                lines[index+1] = ("<span class='py_linenumber'>%3d </span>" %
+                                                            (lineno) + line)
+                lineno += 1
+            else:
+                lines[index+1] = "<span class='py_linenumber'>    </span>" + line
+        else:
+            lines[index+1] = ("<span class='py_linenumber'>%3d </span>" %
+                                                          (lineno) + line)
+            lineno += 1
+    return '\n'.join(lines)
+
+def get_linenumber_offset(vlam):
+    """ Determine the desired number for the 1st line of Python code.
+        The vlam code is expected to be of the form
+        [linenumber [=n]]    (where n is an integer)
+        but could contain upper case letters as well.
+    """
+    try:
+        res = re.search(r'linenumber\s*=\s*([0-9]*)', vlam)
+        offset = int(res.groups()[0])
+    except:
+        offset = 1
+    return offset
