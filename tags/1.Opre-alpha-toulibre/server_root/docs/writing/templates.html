@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<style>
+#main_title {margin-left: 1em; padding:1em; color: white; background-color: #204a87; 
+border: 1px solid black; font-size:20px;}
+</style>
+<title>Using Templates</title>
+</head>
+<body>
+<div id="main_title">Using Templates</div>
+<div id='content'>
+<p>
+If you are designing a multi-file tutorial, such as the one you are reading,
+you may want to give it a coherent style.  Rather than having to repeat all
+the styling information and navigation menu (such as the one you find on the left-hand
+side of this page - not the one inserted by Crunchy itself), 
+you can instruct Crunchy to use another file as a
+<em>template</em>.  An example is given by the very file you are reading.
+Other than the title, its style should be identical to that of all
+the other files about writing Crunchy tutorials you have been reading.</p>
+<p>
+The instruction to use a template is given in <b>this</b> file as
+</p>
+<pre title="html">
+&lt;meta title="template ../index.html"&gt;
+</pre>
+<p>To be consistent with normal html documents, 
+such an instruction would normally be found in the <code title="html">&lt;head&gt;</code> of the
+html file, althought Crunchy would find it anywhere.
+In the example above <code title="python">"../index.html"</code> 
+gives the relative path of a file
+that is requested to be used as the template.</p>
+<p>When requesting a file to be used as a template for another file (the <em>tutorial</em>),
+the following occurs as part of the normal processing by Crunchy:</p>
+<ol>
+<li>
+The tutorial is scanned for any html <code title="html">&lt;div id="..."&gt;</code>. 
+If none is found, the instruction to use a template is ignored by Crunchy.  
+Otherwise, it proceeds to the next step.</li>
+<li>A copy of the file requested as a template is loaded by Crunchy.  
+ <ul><li>It is
+strongly suggested that this template file do not include any Crunchy-specific
+instruction ("vlam").
+</li></ul></li>
+<li>The template is parsed and the same "purging" of elements 
+(such as removing javascript) is
+performed on the template as it would be on a regular html file.
+    <ul><li>For efficiency, the result is saved so that when the same template
+    file is requested, the pre-parsed copy is used.
+</li></ul>
+</li>
+<li>The content of the <code title="html">&lt;head&gt;</code> of the tutorial
+is merged with that of the template.  This ensures that all styling information
+in the template is preserved, and is augmented by any information found in
+the tutorial file itself.  
+    <ul><li>As an example of this, we have overriden the
+styling of the title of this page to make it stand out. In particular, the
+font size has been reduced to illustrate that styling instructions found
+in the tutorial file take precedence over those found in the template.
+</li></ul></li>
+<li>Using the previously found <code title="html">&lt;div&gt;</code>s having a specific
+<code title="python">id</code> attribute from the tutorial: 
+if a <code title="html">&lt;div&gt;</code> with an <code title="python">id</code>
+having the same value is found in the template, the content from the tutorial's
+<code title="html">&lt;div&gt;</code> replaces that of the tutorial.  
+    <ul><li>For example, in this file,
+we have two such <code title="html">&lt;div&gt;</code>s: 
+one with an <code title="python">id="main_title"</code>, 
+the other with an <code title="python">id="content"</code>.</li>
+<li>
+The file structure (e.g., the order in which the <code title="html">&lt;div&gt;</code>s appear)
+does not have to be the same for both the template and the tutorial.  The final
+structure is going to be that of the template.  Thus, one only has to make changes
+to a single template file to change the whole look of a multi-file tutorial.
+</li></ul></li>
+<li>Note that if a top level <code title="html">&lt;div&gt;</code> is found in the tutorial
+file with no corresponding <code title="html">&lt;div&gt;</code> in the template file, its content
+is going to be lost, i.e. it is not going to be copied into the template.
+</li>
+
+</ol>
+
+</div>
+</body>
+</html>
