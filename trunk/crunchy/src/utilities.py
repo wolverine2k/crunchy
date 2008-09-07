@@ -140,7 +140,7 @@ def extract_code(elem):
         if node.tail:
             text += node.tail
     text = text.replace("\r", "")
-    return text.strip(' \n')
+    return text
 
 def is_interpreter_session(py_code):
     '''determine if the python code corresponds to a simulated

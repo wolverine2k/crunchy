@@ -16,11 +16,13 @@ that would satisfy the following unittest.</p>
 <pre title="unittest">
 class MathTest(unittest.TestCase):
     """Test class for mathematical functions"""
+
     def test_add(self):
         """Tests for the function add"""
         self.assertEquals(add(1, 1), 2)
-        self.assertEquals(add(add(-1,2), 1), 2)
+        self.assertEquals(add(add(-1, 2), 1), 2)
         self.assertEquals(add(40, 2), 42)
+
     def test_sub(self):
         """Tests for the function sub"""
         self.assertEquals(sub(1, 1), 0)
@@ -31,26 +33,30 @@ class MathTest(unittest.TestCase):
 <pre title="unittest">
 class UltimateAnswerTest(unittest.TestCase):
     """Test class for answer objects"""
+
     def test_answer(self):
         """Tests for UltimateAnswer.__repr__"""
+
         answer = UltimateAnswer('Life')
         self.assertEquals(str(answer), '42')
+
         answer = UltimateAnswer('Universe')
         self.assertEquals(str(answer), '42')
+
         answer = UltimateAnswer('Everything')
         self.assertEquals(str(answer), '42')
 </pre>
 
 <h3>For the cheaters among you...</h3>
 <p>This should work:</p>
-<pre title="py_code">
+<pre title="python">
 
 def add(a, b):
-    """Return a + b"""
+    """Computes the sum of two entities"""
     return a + b
 
 def sub(a, b):
-    """Return a - b"""
+    """Computes the difference of two entities"""
     return a - b
 
 class UltimateAnswer(object):
