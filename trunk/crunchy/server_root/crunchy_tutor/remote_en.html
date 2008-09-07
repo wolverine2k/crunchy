@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: Browsing</title>
+	<meta title="template ../index.html">
+</head>
+
+<body>
+
+<div id="main_title">A Tangled Web</div>
+<div id="content">
+
+<div class="wide-warning">
+<h4>Safe browsing!</h4>
+<p>Crunchy is a tool that can be used to try out Python code found in html documents,
+either locally or on the web.  However, we can not assume responsibility for security holes: 
+<b>use at your own risk.</b>  If you do find potential security risks, please let us know.
+In the meantime, and before browsing external pages, please click on the first link of
+<a href="faq_en.html">FAQ, bugs, etc.</a>
+to learn about security as implemented by Crunchy.  [Crunchy can not bring you to
+a specific point on a new page; it always displays the page from the top.]</p>
+</div>
+
+<div class="notes">
+<h4>Crunchy is paranoid</h4>
+<p>
+Due to security concerns, every time Crunchy loads a new <b>remote</b> site,
+it will not allow any Python code to be executed from the page.  You will need
+to purposely select a different security level for that site yourself if you
+want to execute some Python code while broswing that site.
+</p>
+</div>
+<h3 >Officially learning Python</h3>
+<p> To learn about Python, it might be a good idea to through either
+<a href="http://docs.python.org/tut/tut.html">the old official Python tutorial</a> or
+<a href="http://docs.python.org/dev/tutorial/index.html">the NEW official Python tutorial</a>.
+Either way, you will be able to find out, after going through a small security validation
+step, how Crunchy can help make your learning more enjoyable.
+When you choose to browse a new site, Crunchy will load it in its "display trusted" mode.
+[See the <a href="faq_en.html">FAQ</a> entry on security for more details.]  In this mode,
+Crunchy will only display the page, not allowing you to interact with it.  However,
+you will see a link "View report" at the top.  Clicking on that link will bring a pop-up
+window giving you an indication of what type of html elements (tags) were removed. 
+In addition, you will be given the choice of selecting a different security mode.
+For the official Python tutorial, provided it is not changed to allow users to enter comments,
+we suggest that you select the 'trusted' mode.
+</p>
+<div class="wide-warning">
+<h4>You are asking Crunchy to do <em>what?</em></h4>
+<p>You should always understand any Python code you ask
+Crunchy to execute.  Crunchy is just a tool that saves you the trouble of copying and pasting
+code you find somewhere before trying it out on your computer.  <b>YOU</b> are responsible
+for asking Python to execute some code - not Crunchy's designers.</p>
+</div>
+
+<h3 >Elsewhere on the planet</h3>
+<p>
+Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
+If you do so, you might want to look at them using this:</p>
+<span title="load_remote">http://planet.python.org</span>
+<p>... or try any other valid url.</p>
+<p>Before you do, you may want to add the site as follows:</p>
+<pre title="interpreter">
+>>> crunchy.add_site()
+</pre>
+<p>Note: if you want to browse planet.python.org, which is an aggregates of many
+sites, I suggest you select 
+<code title="py_code">strict</code> as the security level; no images will be shown, but
+it will be totally safe.</p>
+<p> You may also want to enter</p>
+<pre title="py_code">
+>>> crunchy.no_markup = 'interpreter'
+</pre>
+<p>This will insert an interpreter prompt wherever an html &lt;pre&gt; tag is encountered,
+in the oft-chance that it might include some Python code that you might want to try.
+However, if you are planning to browse the official Python tutorial, I suggest you
+leave the current default (<code title="py_code">'python_tutorial'</code>) unchanged.</p>
+
+
+<h3 >Closer to home</h3>
+<p> What if you already have some Python tutorial (html documents) on your own computer
+and you would like to use Crunchy to go through them.  You can first browse for them and then load 
+them from here.</p>
+<span title="load_local"> </span>
+
+<p>Note that doing so will insert the directory where the tutorial is found in the Python
+path (sys.path) so that, if any modules are distributed with that tutorial, Crunchy
+will be able to import them (if they are in the same directory).</p>
+
+
+<p>If you have docutils installed, and you preferred files written in reStructuredText
+(with an .rst or a .txt extension) you can load them as well.</p>
+<span title="load_rst"> </span>
+<p>If you want to see some examples, navigate from the directory where Crunchy is located to
+/src/tests and load the index.rst file.  It contains links to some doctest based unit tests
+for some of Crunchy's modules.</p>
+
+
+<p>If you want to browse a tutorial you just downloaded from the web,
+and you are not entirely sure about its safety, you may want to change
+the security level of Crunchy so that it filters everything (including images)
+that could possibly be used to inject malicious javascript code.
+</p>
+<pre title="interpreter">
+&gt;&gt;&gt; crunchy.local_security = 'strict'
+</pre>
+
+<p>Finally, you can load local Python script files (.py usually) from here:</p>
+<span title="load_python"> </span>
+
+<p><b>If you are aware of any potential security holes, please let us know.</b></p>
+</div>
+
+</body>
+
+</html>

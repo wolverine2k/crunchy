@@ -1,0 +1,314 @@
+/*
+
+All the CSS needed to make Crunchy whirr
+
+*/
+img{
+    border:0;
+}
+table.summary {
+border:1px outset gray;
+border-collapse:separate;
+border-spacing:1px;
+}
+table.summary th, td {
+border:1px inset gray;
+padding:1px;
+}
+
+/* For the security advisory, follow the style from "#content" in crunchy_docs.css
+However, note that some important "display" information is defined in
+security_advisor.py.
+*/
+#security_info {
+    margin-left: 182px;
+}
+#security_info {
+    position: fixed;
+    top: 60px;
+    right: 100px;
+    height: 85%;
+    max-width: 800px;
+    overflow:auto;
+    border: 4px outset #369;
+    color: black;
+    background-color: white;
+    font: 12pt monospace;
+    margin: 0;
+    padding: 4px;
+    padding-right: 30px;
+    z-index:11;
+}
+
+#security_info p {
+    /* put the margin at the bottom rather than the top: */
+    margin: 0px 0px 1em 0px;
+    text-align: justify;
+}
+
+#security_info h1, h2, h3, h4 {
+    color: #204a87;
+}
+
+#security_info_x {
+    position: fixed;
+    top: 65px;
+    right: 110px;
+    color: #fe0;
+    background-color: #369;
+    font: 14pt sans-serif;
+    cursor: pointer;
+    padding: 4px 4px 0 4px;
+    z-index:12;
+}
+
+/* default used with <code> tag */
+.crunchy {
+    background-color: #eeeeec;
+    font-family: monospace;
+}
+pre.crunchy {
+    border-top: 1px solid #eeeeec;
+    padding: 3px 0 3px 0;
+    margin: 3px 0 3px 0;
+    /*border-bottom:1px solid #ccc;*/
+}
+
+.interpreter{
+    background-color: #eeeeec;
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.doctest{
+    background-color: #eeeeec;
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.editor{
+    background-color: #eeeeec;
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.analyzer{
+    background-color: #eeeeec;
+    font-family: monospace;
+    padding-bottom: 10px;
+}
+.show_vlam{
+    background-color: #f8f8f8; /*same as tango */
+    font-family: monospace;
+    padding:0;
+    margin:0;
+    }
+
+/* Basic Python Elements.
+   Color choices for the editor (EditArea) are found in file python.js of the EditArea
+   distribution and can not be set via a style sheet.
+   I deliberately have not set the font size - this should follow the enclosing text.
+   The palette is taken from the tango icon palette.
+*/
+
+.py_comment{
+    color: #555753; /* medium grey */
+    font-family: monospace, sans-serif; /*keep monospace to have proper indentation */
+    font-style: italic;
+    }
+.py_variable{color: #2e3436;} /* Dark grey */
+.py_op{color: #ce5c00; font-weight:bold;} /* Orange */
+.py_builtins{color: #204a87;} /* builtins and string functions - dark blue like keywords */
+.py_stdlib{color: #204a87;} /* standard library modules - dark blue like keywords*/
+.py_special{color: #5c3566;} /* special method of the form __x__ - purple*/
+.py_linenumber{font: 70% monospace; color: #888a85; font-style:normal;} /* medium grey */
+.py_output{color:#2e3436; font-style:italic;}
+.py_warning{background-color: #fce94f; font-size: 130%; color: #2e3436; padding: 2px;}
+.py_keyword {color: #204a87; font-weight:bold;} /* dark blue */
+.py_string {color: #4e9a06;} /* green */
+.py_prompt {color: #ce5c00;} /* orange */
+.py_number {color: #5c3566;} /* medium blue */
+
+/* Here's the CSS for the output elements: */
+.output {
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+
+    color: #2e3436; /* dark grey */
+    font-weight: normal;
+   	font-family: monospace;
+}
+
+.stdin {
+
+}
+.stdout {
+    font-style: italic;
+    bottom: -32px;
+}
+
+.stderr {
+    color: #a40000; /* red */
+    font-family: monospace;
+}
+
+.hidden{
+   display: none;
+}
+
+/* initial value until revealed by drawing */
+.crunchy_canvas{
+    display: none;
+}
+
+.input {
+    width: 80%;
+    max-width: 800px;
+    font-size: 11pt;
+    font-family: monospace;
+    border: solid 1px;
+    background-color: white;
+    border-color: #d3d7cf;
+    padding-top: 0;
+}
+
+.interpreter_image{
+    border: 0;
+    padding: 0;
+    position: relative;
+    bottom: -10px;
+    height: 25px;
+    margin-top: -11px; /*get rid of that pesky gap - see issue 112 */
+}
+.kill_thread_image{
+    border: 0;
+    padding: 0;
+    margin: 0;
+    bottom: 0;
+    height: 44px;
+    line-height:0;
+}
+
+div.io_div{
+    margin: 0;
+    padding: 0;
+}
+div.sample_python_code{
+    margin: 0;
+    padding:0;
+}
+
+/*interpreter tool tip*/
+#interp_tooltip {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 50%;
+    overflow:auto;
+    border: 4px outset #369;
+    background-color: white;
+    color: black;
+    font: 9pt monospace;
+    margin: 0;
+    padding: 4px;
+    padding-right: 30px;
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera 4 - 6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+    display: none;  /* will appear only when needed */
+    z-index:11;
+}
+#help_menu {
+    position: fixed;
+    top: 70px;
+    right: 1em;
+    width: 50%;
+    height: 50%;
+    overflow:auto;
+    border: 4px outset #369;
+    background-color: white;
+    color: black;
+    font: 9pt monospace;
+    margin: 0;
+    padding: 4px;
+    padding-right: 10px;
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera 4 - 6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
+                            http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+    display: none;  /* will appear only when needed */
+    z-index:11;
+}
+#help_menu_x {
+    position: fixed;
+    top: 75px;
+    right: 2em;
+    color: #fe0;
+    background-color: #369;
+    font: 14pt sans-serif;
+    cursor: pointer;
+    padding: 4px 4px 0 4px;
+    display: none;  /* will appear only when needed */
+    z-index:12;
+}
+
+
+
+#security_info_link img{
+   height: 14px;
+}
+
+.config_gui td{
+    width:50%;
+    margin: 5px;
+    padding: 5px;
+}
+
+input.config_gui{
+background-color: #e9e9c7;
+}
+
+/* Crunchy menu (normally on top right corner) basic styling.
+  Note that some styling is included in menu.py based on user preferences
+  about the position of the menu.  */
+.menu {
+    position:fixed;
+    font-size:11pt;
+}
+.menu ul {
+    padding:0;
+    margin:0;
+    list-style-type: none;
+}
+.menu ul li ul {
+    visibility:hidden;
+    position:absolute;
+}
+.menu ul li a, .menu ul li a:visited {
+    display:block;
+    text-decoration:none;
+    text-align:left;
+    color:#fff;
+    background:#369;
+}
+.menu ul li{
+    display:block;
+    text-align:center;
+    color:#fff;
+    background:#72839D;
+    border-bottom: 1px solid #fff;
+}
+.menu ul li:hover ul, .menu ul li a:hover ul {
+    visibility:visible;
+}
+.menu ul li:hover ul li a {
+    background:#939393 url(/images/slider_handlebg188.png) no-repeat scroll 0pt;
+    color:#000;
+}
+.menu ul li:hover ul li a:hover {
+    background:#e9e9e0;
+    color:#000;
+}
