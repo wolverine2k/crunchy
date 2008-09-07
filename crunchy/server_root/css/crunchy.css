@@ -64,33 +64,33 @@ security_advisor.py.
 
 /* default used with <code> tag */
 .crunchy {
-    background-color: #eeeeec;
+    background-color: #f8f8f8;
     font-family: monospace;
 }
 pre.crunchy {
-    border-top: 1px solid #eeeeec;
+    border-top: 1px solid #f8f8f8;
     padding: 3px 0 3px 0;
     margin: 3px 0 3px 0;
     /*border-bottom:1px solid #ccc;*/
 }
 
 .interpreter{
-    background-color: #eeeeec;
+    background-color: #f8f8f8;
     font-family: monospace;
     padding-bottom: 10px;
 }
 .doctest{
-    background-color: #eeeeec;
+    background-color: #f8f8f8;
     font-family: monospace;
     padding-bottom: 10px;
 }
 .editor{
-    background-color: #eeeeec;
+    background-color: #f8f8f8;
     font-family: monospace;
     padding-bottom: 10px;
 }
 .analyzer{
-    background-color: #eeeeec;
+    background-color: #f8f8f8;
     font-family: monospace;
     padding-bottom: 10px;
 }
