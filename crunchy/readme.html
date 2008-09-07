@@ -11,8 +11,19 @@ body{width:800px;}
 <p>Due to security concerns, you have to create an account before you
 can start using Crunchy.  To do so, you can double-click on
 account_manager.py or type <em>python account_manager.py</em>
-at a terminal window.  We <b>strongly</b> suggest that you give this
-first account administrative rights.</p>
+at a terminal window.  A typical sesion might go like the following:</p>
+<pre>
+$ python account_manager.py
+>>> new Username
+Please input the home directory [or press 'enter' for default]: choose default
+Please input the password: choose something simple
+Please input the password again: follow the instruction :-)
+Does this user have administrative rights [y or n]? choose y
+>>> exit
+</pre>
+<p>We <b>strongly</b> suggest that you give this
+first account administrative rights - otherwise you will not be able to
+quit Crunchy from the menu.</p>
 </p>When you are done:</p>
 <ol>
 <li>
