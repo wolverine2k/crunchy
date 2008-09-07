@@ -101,7 +101,7 @@ def insert_interpreter(page, elem, uid):
         config[page.username]['log'][log_id] = [tostring(elem)]
     util.wrap_in_div(elem, uid, vlam, "interpreter", show_vlam)
 
-    if config[page.username]['popups']:
+    if config[page.username]['popups'] and interp_kind is not None:
         # insert popup helper
         img = Element("img", src="/images/help.png",
                 title = "cluetip Hello %s! "%page.username + titles[interp_kind],
