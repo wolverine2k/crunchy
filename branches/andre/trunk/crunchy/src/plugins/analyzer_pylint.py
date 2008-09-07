@@ -100,9 +100,11 @@ class CrunchyLinter:
         # Start the check
         self.linter.check(temp.name)
         # Get the output and remove the irrelevant file path
-        self._report = output_buffer.getvalue().replace(
-                            os.path.splitext(os.path.basename(temp.name))[0],
-                            'line ')
+        #self._report = output_buffer.getvalue().replace(
+        #                    os.path.splitext(os.path.basename(temp.name))[0],
+        #                    'line ')
+        self._report = output_buffer.getvalue().replace(temp.name, 'line ')
+
         # Close files
         output_buffer.close()
         temp.close()

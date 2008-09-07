@@ -89,6 +89,11 @@ pre.crunchy {
     font-family: monospace;
     padding-bottom: 10px;
 }
+.analyzer{
+    background-color: #eeeeec;
+    font-family: monospace;
+    padding-bottom: 10px;
+}
 .show_vlam{
     background-color: #f8f8f8; /*same as tango */
     font-family: monospace;

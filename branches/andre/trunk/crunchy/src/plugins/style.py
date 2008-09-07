@@ -34,6 +34,15 @@ def register():
     for language in _pygment_lexer_names:
         plugin["register_tag_handler"]("code", "title", language, pygments_style)
         plugin["register_tag_handler"]("pre", "title", language, pygments_style)
+
+    # for compatibility with the old notation
+    styling_choices = ['py_code', 'python_code']
+    for style in styling_choices:
+        plugin['register_tag_handler']("code", "title", style, pygments_style)
+        plugin['register_tag_handler']("pre", "title", style, pygments_style)
+        plugin['add_vlam_option']('no_markup', style)
+
+
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
     plugin['register_service']("style", pygments_style)
@@ -50,6 +59,8 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     else:
         show_vlam = None
     language = elem.attrib['title'].split()[0]
+    if language in ['py_code', 'python_code']:
+        language = "python"
     text = extract_code(elem)
     styled_code = _style(text, language, cssclass).encode("utf-8")
     markup = fromstring(styled_code)

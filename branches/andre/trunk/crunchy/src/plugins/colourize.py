@@ -37,6 +37,11 @@ def register():
        2. a custom service to style some code when requested by this or
           another plugin.
        """
+
+    # colourize is to be replaced by pygments.
+    return
+
+
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.

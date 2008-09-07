@@ -50,10 +50,10 @@ files_with_failures = 0
 all_files_with_failures = []
 
 #TODO: add a command line option to replace this
-include_only = []#["test_colourize.rst"]
+include_only = []
 
 #TODO: add a command line option to replace this
-excluded = []
+excluded = ["test_colourize.rst"] # now obsolete
 
 #TODO: add a command line option (clean?) that would remove all .pyc
 # files before testing.

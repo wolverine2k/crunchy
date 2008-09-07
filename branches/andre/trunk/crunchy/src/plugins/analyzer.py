@@ -6,7 +6,7 @@ This is the frontend for analyzers like pylint
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
 from src.interface import translate, additional_vlam
-from src.utilities import extract_log_id, insert_markup
+from src.utilities import extract_log_id, wrap_in_div
 import src.configuration as configuration
 _ = translate['_']
 
@@ -124,12 +124,19 @@ def analyzer_widget_callback(page, elem, uid):
         config[page.username]['logging_uids'][uid] = (log_id, t)
 
     # next, we style the code, also extracting it in a useful form ...
-    analyzercode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
-                                                                        elem)
-    if log_id:
-        config[page.username]['log'][log_id] = [tostring(markup)]
+    #analyzercode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
+    #                                                                    elem)
+    elem.attrib['title'] = "python"
+    analyzercode, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    elem.attrib['title'] = vlam
 
-    insert_markup(elem, uid, vlam, markup, "analyzer")
+    # next, we style the code, also extracting it in a useful form ...
+    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
+    if log_id:
+        config['log'][log_id] = [tostring(markup)]
+    wrap_in_div(elem, uid, vlam, "analyzer", show_vlam)
+
+    #insert_markup(elem, uid, vlam, markup, "analyzer")
 
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid, analyzercode)

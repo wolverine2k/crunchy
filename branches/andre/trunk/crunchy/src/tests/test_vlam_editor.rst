@@ -73,8 +73,9 @@ Testing insert_editor_subwidget()
 
 First, we need to fake some services that are expected by insert_editor_subwidget
 
-  >>> def style(page, elem):
-  ...  return "", "TestMarkup", None
+  >>> def style(page, elem, dummy_uid, irrelevant_vlam):
+  ...  dummy_elem = Element('pre')
+  ...  return "", dummy_elem
 
 # Used as a fake insert_io_subwidget function
 
@@ -275,35 +276,3 @@ included this time.
   ['includes', ('add_include', 'exec_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js'), 'includes', ('add_include', 'hidden_load_and_save'), 'add_css_code', 'add_js_code']
 
 
-# Test - elem
-
-  >>> elem.tag == "div"
-  True
-  >>> elem.attrib == {'class': 'editor', 'id': 'div_2'}
-  True
-
-# Test - br
-
-  >>> elem[3].tag == "br"
-  True
-
-# Test - button
-
-  >>> elem[4].tag == "button"
-  True
-  >>> elem[4].attrib == {"onclick": "exec_code('2')"}
-  True
-
-# Test - span
-
-  >>> elem[5].tag == "span"
-  True
-  >>> elem[5].attrib == {'style': 'display:none', 'id': 'path_2'}
-  True
-  >>> elem[5].text == config['Crunchy']['temp_dir'] + vlam_editor.os.path.sep + "temp.py"
-  True
-
-# Test - br
-
-  >>> elem[6].tag == "br"
-  True
