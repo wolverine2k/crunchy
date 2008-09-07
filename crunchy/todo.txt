@@ -1,20 +1,14 @@
 
 Mostly done: 2. document better crunchy.css and crunchy_docs.css
-
-
-
 8. incorporate pdb plugin
-9. revise analyzer plugin (remove file info)
 Partly done: 10. sort out miscellaneous/index.html into new menu
 11a. try out jquery file tree and possibly replace existing
 11b. have some sort of root_dir as admin only option
-
 14. create two preferences class: one for normal user, one for admin
 15. revise translations.
 16. Make sure that site_security settings are remembered.
 Partly done: 18. Completely reorganize documentation
 18: upgrade to newest editarea
-19: move to use pygments only
 20: use cluetip for security advisor popup
 
 =========Keeping track of progress...
@@ -29,8 +23,10 @@ Done: 7. introduce tool tip plugin
     http://www.learningjquery.com/2007/07/cluetip-plugin-beta#comments
     http://www.smashingmagazine.com/2007/06/12/tooltips-scripts-ajax-javascript-css-dhtml/
         http://codylindley.com/Javascript/264/jtip-a-jquery-tool-tip
+Done: 9. revise analyzer plugin (remove file info)
 Done: 12. sort out user/temp dir
 Done: 13. Figure out how to dynamically add properties
 Done: 17. Have option to make some image cluetips not show up for users that are
     familiar enough with crunchy.
+Done: 19: move to use pygments only
 Done: 21: update unit tests

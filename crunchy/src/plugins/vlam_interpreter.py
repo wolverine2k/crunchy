@@ -109,7 +109,7 @@ def insert_interpreter(page, elem, uid):
         elem.append(img)
         plugin['services'].insert_cluetip(page, img, uid)
     plugin['services'].insert_io_subwidget(page, elem, uid,
-                        interp_kind=interp_kind, sample_code=code, show=show)
+                        interp_kind=interp_kind, sample_code=python_code, show=show)
     plugin['services'].insert_tooltip(page, elem, uid)
     return
 
