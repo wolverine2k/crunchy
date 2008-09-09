@@ -187,11 +187,8 @@ def add_linenumber(styled_code, vlam):
         prompt = prompt2
     else:
         prompt_present = False
-        print "no prompt; lines[1] =", lines[1]
-        import sys
-        sys.__stderr__.write(lines[1])
     lineno = get_linenumber_offset(vlam)
-    # first and last lines are the embdding <pre>...</pre>
+    # first and last lines are the embedding <pre>...</pre>
     for index, line in enumerate(lines[1:-1]):
         if prompt_present:
             if lines[index+1].startswith(prompt):
@@ -209,8 +206,7 @@ def add_linenumber(styled_code, vlam):
 def get_linenumber_offset(vlam):
     """ Determine the desired number for the 1st line of Python code.
         The vlam code is expected to be of the form
-        [linenumber [=n]]    (where n is an integer)
-        but could contain upper case letters as well.
+        [linenumber [=n]]    (where n is an integer).
     """
     try:
         res = re.search(r'linenumber\s*=\s*([0-9]*)', vlam)
