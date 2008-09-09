@@ -558,7 +558,7 @@ function run_code() {
 }
 
 function the_program_editor() {
-  return document.forms['the_program_editor_form'].elements['the_program_editor'];
+  return document.getElementById('the_program_editor');
 }
 
 function load_code(code) {

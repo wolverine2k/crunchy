@@ -10,10 +10,10 @@
 
 <body onload="start_page()">
 
-<table>
+<table class="ide">
 <tr>
     <td valign="top">
-        <table id="world" class="wvr">
+        <table id="world" class="reeborg_world">
         <tr>
         <th colspan=13 class="heading">Reeborg's World</th>
         </tr>
@@ -27,6 +27,8 @@
     <a href="#" onClick="start_over(); return false;">
         <img id="reload_image" src="images/reload.png" alt="stop/reload" style="height:40px; border:none;"/>
     </a>
+    </form>
+
     <br />
 
     <div id="the_program">
@@ -35,9 +37,9 @@
 </tr>
 <tr>
     <td>
-    <textarea name="the_program_editor" rows=15 cols=40>
+    <textarea id="the_program_editor" class="program" rows=15 cols=40>
     </textarea>
-    </form>
+
 
     <form name="the_form">
     <!--
@@ -46,7 +48,7 @@
     -->
     </form>
 
-</td>
+    </td>
 </tr>
 
 </table>
