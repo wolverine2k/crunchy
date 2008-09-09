@@ -649,18 +649,19 @@ function draw_code(code) {
     </td>
 
     <td valign="top">
-    <div id="the_program">
-    </div>
-    </td>
-</tr>
-<tr>
-    <td>
     <form name="the_program_editor_form" onSubmit="run_code(); return false;">
     <input id="run_image" type="image" src="images/run.png" style="height:40px; border:none;" alt="Run program">
     <a href="#" onClick="start_over(); return false;">
         <img id="reload_image" src="images/reload.png" alt="stop/reload" style="height:40px; border:none;"/>
     </a>
     <br />
+
+    <div id="the_program">
+    </div>
+    </td>
+</tr>
+<tr>
+    <td>
     <textarea name="the_program_editor" rows=15 cols=40>
     </textarea>
     </form>
