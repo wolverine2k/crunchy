@@ -1,0 +1,65 @@
+
+table {
+    border:solid 2px sienna;
+    border-collapse: collapse;
+    background-color:beige;
+}
+
+table.wvr {
+    border:solid 2px sienna;
+    background: beige;
+}
+
+table.wvr td {
+    height: 40px;
+    width: 40px;
+    text-align: center;
+}
+
+table.wvr th {
+    height: 0;
+    width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+td.st {
+    background-color: #eeeeee;
+        height: 0;
+}
+
+.heading {
+    background: white;
+}
+
+.north {
+    border-top: solid sienna;
+}
+
+.east {
+    border-right: solid sienna;
+}
+
+.no_north {
+    border-top: solid white;
+}
+
+.no_east {
+    border-right: solid white;
+}
+
+.robot {
+    background: #FF8888
+}
+
+.highlight {
+    background: white;
+}
+
+.lowlight {
+    background: beige;
+}
+
+.beeper {
+    background: #00FFFF
+}
