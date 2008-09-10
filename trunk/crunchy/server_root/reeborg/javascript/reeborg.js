@@ -103,6 +103,17 @@ function CodeBlock(stream, methods, min_indent_spaces) {
                                                desired_indent.length + 1).statements;
                 methods[method_name] = code_block;
             }
+            else if (content.match(/^set_delay/)) {
+                var matches = /set_delay\s*\(\s*(\d+)\s*\)\s*/.exec(content);
+                if (matches) {
+                    var delay = matches[1];
+                }
+                else {
+                    throw('Problem parsing set_delay instruction');
+                }
+                statement.command = 'set_delay';
+                statement.delay = delay;
+            }
             else if (builtins[content]) {
                 statement.command = content;
             }
@@ -126,6 +137,15 @@ function CodeBlock(stream, methods, min_indent_spaces) {
 }
 
 // EXECUTION CODE
+
+function SetDelayCommand(cmd) {
+    set_delay(cmd['delay']);
+    function step() {
+        return 1;
+    }
+    this.line_num = cmd.line_num;
+    this.step = step;
+}
 
 function SimpleCommand(cmd) {
     this.command = cmd['command'];
@@ -178,6 +198,9 @@ function MethodCall(cmd) {
 function get_command(cmd) {
     if (cmd['command'] == 'do') {
         return new DoCommand(cmd);
+    }
+    else if (cmd.command == "set_delay") {
+        return new SetDelayCommand(cmd);
     }
     else if (cmd.command == 'method_call') {
         return new MethodCall(cmd);
@@ -238,7 +261,7 @@ function Block(program) {
             run_img.setAttribute("src", "images/run.png");
         }
         else {
-          delay = 200; // just enough to see
+          delay = this.delay; // just enough to see
             setTimeout( function(thisObj) {
                             thisObj.step_all();
                         },
@@ -253,15 +276,16 @@ function text_box() {
     return document.forms['the_form'].elements['the_text'];
 }
 
-function World() {
+function World(nb_ave, nb_st) {
     this.robot_x = 1;
     this.robot_y = 1;
     this.robot_dir = "E";
     this.robot_beepers = 0;
     var north_walls = [];
     var east_walls = [];
-    this.num_aves = 10;
-    this.num_streets = 8;
+    this.num_aves = nb_ave;
+    this.num_streets = nb_st;
+    this.delay = 200; /* good initial value; can be changed dynamically */
     this.left = {
         'N': 'W',
         'W': 'S',
@@ -363,6 +387,10 @@ function World() {
             default: throw "Unexpected error in this.move.";
         }
     }
+    function set_delay(delay){
+        this.delay = delay;
+    }
+    this.set_delay = set_delay;
 
     function turn_left() {
         this.robot_dir = this.left[this.robot_dir];
@@ -465,7 +493,7 @@ function World() {
     this.render = render;
 }
 
-the_world = new World();
+the_world = new World(10, 8);
 
 function start_over() {
     if (RUNNING) {
@@ -483,7 +511,7 @@ function start_over() {
 }
 
 function refresh_world() {
-    the_world = new World();
+    the_world = new World(10, 8);
     redraw_grid();
 }
 
@@ -583,6 +611,10 @@ function pick_beeper() {
 
 function make_beeper() {
     the_world.make_beeper();
+}
+
+function set_delay(delay) {
+    the_world.set_delay(delay);
 }
 
 function build_wall_on_left() {
