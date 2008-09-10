@@ -6,7 +6,7 @@
 code {color: white; background-color: white; border: 3px solid darkblue;
 line-height: 14pt; margin: 4px; padding:px;}
 var {color: black; background-color:black; border: 3px solid orange;
-line-height: 14pt; margin: 4px;}
+line-height: 14pt; margin: 4px; font-style: normal;}
 </style>
 <title>Creating a new Pygments style</title>
 </head>
@@ -52,8 +52,14 @@ border</li>
 <p>The purpose of the last two columns is to help identify any definition that would
 rely on some default, if they don't show up (like the Text token, which does not have
 a css class assigned by Pygments).
-However, if there has been a style defined, it will override the defaults 
-and the sample text should be visible in at least one of these two columns.
+However, <b>if there has been a style defined</b>, it will override the defaults 
+and <b>the sample text should be visible</b> in at least one of these two columns.
+<b>Note:</b> the second last column encloses the sample text in an html 
+<tt>&lt;code&gt;</tt> 
+element; it is thus expected to be styled
+differently from the others, and should represent a truer picture of what to expect
+when styling is normally used.
+
 </p>
 
 <br><br><br>
