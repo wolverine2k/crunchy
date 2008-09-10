@@ -53,10 +53,10 @@
 
 </table>
 <h3>Single instructions</h3>
-<a href="#" onClick="move(); return false;">move()</a>
+<a href="#" onClick="try_move(); return false;">move()</a>
 <a href="#" onClick="turn_left(); return false;">turn_left()</a>
 <a href="#" onClick="turn_right(); return false;">turn_right()</a>
-<a href="#" onClick="build_wall_on_left(); return false;">build_wall_on_left()</a>
+<a href="#" onClick="try_build_wall_on_left(); return false;">build_wall_on_left()</a>
 <h3>Demos</h3>
 <a href="#" onClick="load('simple'); return false;">Demo #1</a>
 (sample commands)
@@ -68,22 +68,26 @@
 <a href="#" onClick="load('zigzag'); return false;">Demo #3</a>
 (zig zag)
 <br />
+
+<a href="#" onClick="load('beepers'); return false;">Demo #4</a>
+(beepers)
+<br />
 <p>This program is adapted from Webster van Robot to be similar to rur-ple.
 <hr>
 <h2>Demos</h2>
 
 <h3>Simple Commands</h3>
-<pre>
-<div id="simple">
+<pre id="simple">
 move()
 turn_left()
 build_wall_on_left()
 turn_right()
-</div>
 </pre>
 <h3>Build a Square</h3>
-<pre>
-<div id="build_square">
+<pre id="build_square">
+# This builds a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
 def build_square():
   for i in range(4):
     for i in range(5):
@@ -98,12 +102,9 @@ def build_square():
     move()
     turn_right()
 build_square()
-</div>
 </pre>
 <h3>Zig Zag</h3>
-<pre>
-
-<div id="zigzag">
+<pre id="zigzag">
 def zig_zag_and_build():
   for i in range(5):
     build_wall_on_left()
@@ -131,7 +132,30 @@ def zag_zig():
 zig_zag_and_build()
 turn_the_corner()
 zag_zig()
-</div>
 </pre>
+<h3>Beepers</h3>
+<pre id="beepers">
+def make_and_put_beeper():
+  make_beeper()
+  put_beeper()
+make_and_put_beeper()
+move()
+make_and_put_beeper()
+make_and_put_beeper()
+turn_left()
+move()
+for i in range(9):
+    make_and_put_beeper()
+turn_left()
+move()
+# should be a different image
+for i in range(10):
+    make_and_put_beeper()
+turn_left()
+# go back to origin; robot should appear (no beepers)
+# and image of house should indicate we can go in.
+move()
+</pre>
+
 </body>
 </html>

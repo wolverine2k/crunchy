@@ -8,6 +8,10 @@ table.ide {
     background-color:beige;
 }
 
+table.reeborg_world th.outside{
+    width: 80px;
+
+}
 table.reeborg_world {
     border:solid 2px sienna;
     background: beige;
@@ -26,6 +30,7 @@ table.reeborg_world th {
     padding: 0;
     margin: 0;
 }
+
 
 .heading {
     background: white;
@@ -56,5 +61,8 @@ table.reeborg_world th {
 }
 
 .beeper {
-    background: #00FFFF
+    font-size:70%;
+}
+.beeper img{
+    height: 24px;
 }

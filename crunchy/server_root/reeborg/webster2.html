@@ -1,5 +1,28 @@
+<html>
+
+<head>
+<style type="text/css">
+table {border-collapse: collapse;}
+table.wvr th {background-color: #EEEEEE; color: inherit;}
+table.wvr td {background: #FFFF00}
+table.wvr td, th {height: 40px; width: 40px; text-align: center}
+.heading {background: #FF00FF}
+.north {border-top: solid red;}
+.east {border-right: solid red;}
+.no_north {border-top: solid white;}
+.no_east {border-right: solid white;}
+.robot {background: #FF8888}
+.highlight {background: #FF8888}
+.lowlight {background: #DDDDDD}
+.tiny {font-size: 70%}
+.beeper {background: #00FFFF}
+</style>
+</head>
+
+<body onload="start_page()">
+<script type="text/javascript">
 /*
-Reeborg's world.
+Webster van Robot.
 (c) GNU General Public license
 */
 
@@ -56,13 +79,13 @@ function CodeBlock(stream, methods, min_indent_spaces) {
   var statements = []
   var desired_indent = undefined;
   builtins = {
-    'move()': true,
-    'turn_left()': true,
-    'turn_right()': true,
-    'build_wall_on_left()': true,
-    'put_beeper()': true,
-    'make_beeper()': true
-  };
+    'move': true,
+    'turnleft': true,
+    'turnright': true,
+    'build_wall_on_left': true,
+    'putbeeper': true,
+    'makebeeper': true,
+  }
   while (1) {
     var code_line = stream.pop();
     if (code_line == undefined) {
@@ -80,8 +103,8 @@ function CodeBlock(stream, methods, min_indent_spaces) {
       }
       desired_indent = indent;
       var statement = {}
-      if (content.match(/^for\s+/)) {
-        var matches = /for\s+[a-z_]+[a-z-0-9]*\s+in\s+range\(\s*(\d+)\s*\)\s*:/.exec(content);
+      if (content.match(/do/)) {
+        var matches = /do\s+(\d+):/.exec(content);
         if (matches) {
           var count = matches[1];
         }
@@ -129,7 +152,7 @@ function CodeBlock(stream, methods, min_indent_spaces) {
 function SimpleCommand(cmd) {
   this.command = cmd['command'];
   function step() {
-    result = eval(this.command);
+    result = eval(this.command + '()');
     if (result) {
       throw(result);
     }
@@ -199,32 +222,31 @@ function Block(program) {
     this.block[i] = get_command(program[i]);
   }
 
-    function step() {
-        try {
-            if (this.last_line_num) {
-                lowlight_line(this.last_line_num);
-            }
-            if (this.i >= this.program.length) {
-                this.i = 0;
-                return 1;
-            }
-            var cmd = this.block[this.i];
-            if (cmd.line_num) {
-                highlight_line(cmd.line_num);
-            }
-            advance = cmd.step();
-            if (advance) {
-                this.last_line_num = cmd.line_num;
-                this.i += 1;
-            }
-            return 0;
-        }
-        catch (e) {
-            alert(e);
-            RUNNING = false;
-            return 99; /* no meaning; missing return value in function...*/
-        }
-    };
+  function step() {
+    try {
+      if (this.last_line_num) {
+        lowlight_line(this.last_line_num);
+      }
+      if (this.i >= this.program.length) {
+        this.i = 0;
+        return 1;
+      }
+      var cmd = this.block[this.i];
+      if (cmd.line_num) {
+        highlight_line(cmd.line_num);
+      }
+      advance = cmd.step();
+      if (advance) {
+        this.last_line_num = cmd.line_num;
+        this.i += 1;
+      }
+      return 0;
+    }
+    catch (e) {
+      alert(e);
+      RUNNING = false;
+    }
+  }
   this.step = step;
 
   this.step_all = function() {
@@ -235,10 +257,6 @@ function Block(program) {
     if (done) {
       alert('done!');
       RUNNING = false;
-      reload_img = document.getElementById("reload_image");
-      reload_img.setAttribute("src", "images/reload.png");
-      run_img = document.getElementById("run_image");
-      run_img.setAttribute("src", "images/run.png");
     }
     else {
       delay = 200; // just enough to see
@@ -291,21 +309,13 @@ function World() {
     'S': 'W',
     'W': 'N'};
   this.robot_char = {
-    'N': "images/robot_n.png",
-    'E': "images/robot_e.png",
-    'S': "images/robot_s.png",
-    'W': "images/robot_w.png"
+    'N': '^',
+    'E': ">",
+    'S': 'v',
+    'W': "<"
   };
   this.beepers = {};
 
-/* right wall */
-for (var st = 1; st <= this.num_streets; ++st){
-    east_walls[this.num_aves + "," + st] = true;
-};
-/* top wall */
-for (var ave = 1; ave <= this.num_aves; ++ave){
-    north_walls[ave + "," + this.num_streets] = true;
-};
   function wall_on_north(x, y)
   {
     if (y == 0 || y == this.num_streets) {
@@ -352,9 +362,9 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
   }
   this.is_facing_wall = is_facing_wall;
 
-  this.put_beeper = function() {
+  this.putbeeper = function() {
     if (this.robot_beepers <= 0) {
-      throw 'Need to makebeeper because beeper bag is empty.';
+      throw 'need to makebeeper because beeper bag is empty';
     }
     var coords = this.robot_x + ',' + this.robot_y;
     if (!this.beepers[coords]) {
@@ -364,13 +374,13 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
     this.robot_beepers -= 1;
   }
 
-  this.make_beeper = function() {
+  this.makebeeper = function() {
     this.robot_beepers += 1;
   }
 
   this.move = function() {
     if (this.is_facing_wall()) {
-      throw 'Blocked by wall.';
+      throw 'blocked by wall';
     }
     switch (this.robot_dir) {
        case 'N': this.robot_y += 1; break;
@@ -381,19 +391,19 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
   }
 
 
-  function turn_left() {
+  function turnleft() {
     this.robot_dir = this.left[this.robot_dir];
   }
-  this.turn_left = turn_left;
+  this.turnleft = turnleft;
 
-  function turn_right() {
+  function turnright() {
     this.robot_dir = this.right[this.robot_dir];
   }
-  this.turn_right = turn_right;
+  this.turnright = turnright;
 
   function build_east_wall(x, y) {
     if (this.wall_on_east(x, y)) {
-        throw 'There is already a wall there.';
+      throw 'There is already a wall there';
     }
     coords = x + "," + y;
     east_walls[coords] = 1;
@@ -407,7 +417,7 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
 
   function build_north_wall(x, y) {
     if (this.wall_on_north(x, y)) {
-      throw 'There is already a wall there.';
+      throw 'There is already a wall there';
     }
     coords = x + "," + y;
     north_walls[coords] = 1;
@@ -443,10 +453,10 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
     var coords = avenue + ',' + street;
 
     if (north_walls[coords] == 1) {
-      klass += ' north';
+      klass += 'north';
     }
     else {
-      klass += ' no_north';
+      klass += 'no_north';
     }
 
     if (east_walls[coords] == 1) {
@@ -457,28 +467,15 @@ for (var ave = 1; ave <= this.num_aves; ++ave){
     }
 
     if (this.robot_x == avenue && this.robot_y == street) {
-        data = '<img src="' + this.robot() + '">';
-        try{
-            home_image = document.getElementById("home_image");
-            if (this.robot_x == 1 && this.robot_y == 1) {
-                home_image.src = "images/home_enter.png";
-            }
-            else{
-                home_image.src = "images/home.png";
-            }
-        }
-        catch(e){;}
+      data = '<div class="robot">' + this.robot() + '</div>';
     }
     else if (this.beepers[coords]) {
-        if (this.beepers[coords] <= 9){
-            beeper_image = '<img src="images/beeper_few.png">';
-        }
-        else{
-            beeper_image = '<img src="images/beeper_many.png">';
-        }
-        data = '<span class="beeper">' +
-                this.beepers[coords] + beeper_image + '</span>';
+      data = '<div class="beeper">' + this.beepers[coords] + '</div>';
     }
+    else {
+      data = '<div class="tiny">' + coords + '</div>';
+    }
+
     var text = '<td class="' + klass + '">' + data + '</td>';
     return text;
   }
@@ -491,10 +488,6 @@ function start_over() {
   if (RUNNING) {
     alert('program stopped');
     RUNNING = false;
-    reload_img = document.getElementById("reload_image");
-    reload_img.setAttribute("src", "images/reload.png");
-    run_img = document.getElementById("run_image");
-    run_img.setAttribute("src", "images/run.png");
   }
   else {
     draw_code('');
@@ -520,29 +513,27 @@ function set_row(row, text)
 
 function redraw_street(street)
 {
-    row = document.getElementById("street"+street);
-    if(street == 2){
-        var text = '<th rowspan=2 class="outside north east">' +
-            '<img id="home_image" src="images/home.png" style="height:78px;">'+
-            '</th>';}
-    else if (street == 1){
-        var text = '';
-    }
-    else{
-        var text = '<th class="outside east"></th>';
-    }
-    for (var ave = 1; ave <= the_world.num_aves; ++ave) {
-        text += the_world.render(ave, street);
-    }
-    set_row(row, text);
-    row.id = 'street' + street;
+  row = document.getElementById("street"+street);
+
+  var text = '<th class="st east">S' + street + '</th>';
+  for (var ave = 1; ave <= the_world.num_aves; ++ave) {
+    text += the_world.render(ave, street);
+  }
+  set_row(row, text);
+  row.id = 'street' + street;
 }
 
 function create_world() {
+  ave_row = document.getElementById("ave_heading");
+  text = '<th></th>';
+  for (var ave = 1; ave <= the_world.num_aves; ++ave) {
+    text += '<th class="ave">A' + ave + '</td>';
+  }
+  set_row(ave_row, text);
 
   table = document.getElementById("world");
   for (var street = 1; street <= the_world.num_streets; ++street) {
-    x = table.insertRow(1);
+    x = table.insertRow(2);
     x.id = "street"+street;
   }
   redraw_grid();
@@ -561,12 +552,13 @@ function redraw_to_bottom(street) {
 }
 
 function move() {
-    old_street = the_world.robot_y;
-    the_world.move();
-    new_street = the_world.robot_y;
-    redraw_street(old_street);
-    redraw_street(new_street);
+  old_street = the_world.robot_y;
+  the_world.move();
+  new_street = the_world.robot_y;
+  redraw_street(old_street);
+  redraw_street(new_street);
 }
+
 function try_move() {
   try {
     move();
@@ -583,25 +575,26 @@ function try_build_wall_on_left() {
   }
 }
 
-function turn_left() {
-  the_world.turn_left();
+function turnleft() {
+  the_world.turnleft();
   street = the_world.robot_y;
   redraw_street(street);
 }
 
-function turn_right() {
-  the_world.turn_right();
+function turnright() {
+  the_world.turnright();
   street = the_world.robot_y;
   redraw_street(street);
 }
 
-function put_beeper() {
-  the_world.put_beeper();
+function putbeeper() {
+  the_world.putbeeper();
 }
 
-function make_beeper() {
-  the_world.make_beeper();
+function makebeeper() {
+  the_world.makebeeper();
 }
+
 
 function build_wall_on_left() {
   problem = the_world.build_wall_on_left()
@@ -620,16 +613,12 @@ function run_code() {
   var program = parse_program(code);
   var current_block = new Block(program, '');
   RUNNING = true;
-  reload_img = document.getElementById("reload_image");
-  reload_img.setAttribute("src", "images/stop.png");
-  run_img = document.getElementById("run_image");
-  run_img.setAttribute("src", "images/rungrey.png");
   refresh_world();
   current_block.step_all();
 }
 
 function the_program_editor() {
-  return document.getElementById('the_program_editor');
+  return document.forms['the_program_editor_form'].elements['the_program_editor'];
 }
 
 function load_code(code) {
@@ -639,7 +628,8 @@ function load_code(code) {
 }
 
 function load(example) {
-  var code = document.getElementById(example).firstChild.nodeValue;
+  var div = document.getElementById(example)
+  var code = div.firstChild.nodeValue;
   load_code(code);
 }
 
@@ -681,3 +671,196 @@ function draw_code(code) {
   output += '</pre>'
   elem.innerHTML = output;
 }
+
+</script>
+
+<table>
+<tr>
+<td valign="top">
+<a href="#" onClick="start_over(); return false;">start_over</a>
+<br />
+
+<a href="#" onClick="try_move(); return false;">move</a>
+
+<a href="#" onClick="turnleft(); return false;">turnleft</a>
+
+<a href="#" onClick="turnright(); return false;">turnright</a>
+<a href="#" onClick="try_build_wall_on_left(); return false;">build_wall_on_left</a>
+<br>
+
+
+<table id="world" class="wvr">
+<tr>
+<th colspan=13 class="heading">Webster van Robot's World</th>
+
+</tr>
+
+<tr id="ave_heading">
+</tr>
+<tr class="north"></tr>
+
+</table>
+
+
+</td>
+<td valign="top">
+<a href="#" onClick="load('simple'); return false;">Demo #1</a>
+(sample commands)
+<br />
+<a href="#" onClick="load('build_square'); return false;">Demo #2</a>
+
+(build a square)
+<br />
+<a href="#" onClick="load('zigzag'); return false;">Demo #3</a>
+(zig zag)
+<br />
+<a href="#" onClick="load('beepers'); return false;">Demo #4</a>
+(beepers)
+<br />
+
+<div id="the_program">
+</div>
+
+<form name="the_program_editor_form" onSubmit="run_code(); return false;">
+<input type="submit" value="Run the program below"> (you can edit it)
+
+<br />
+<textarea name="the_program_editor" rows=15 cols=40>
+</textarea>
+</form>
+
+<form name="the_form">
+<!--
+<textarea name="the_text" rows=30 cols=40>
+</textarea>
+-->
+</form>
+
+</td>
+</tr>
+
+</table>
+
+<br />
+If you like minimal programming languages, you may like
+<a href="http://gvr.sourceforge.net/" target="_blank">Guido van Robot</a>.
+
+<hr>
+(c) GNU General Public license
+<hr>
+<h3>Steal this program, please!</h3>
+<p>
+This software is free.  You are encouraged to make your own copy of it, as long as you keep the source
+code free.  One of my design goals here is to make the
+program very easy to distribute, so all of the
+code is in one file, and you can literally copy the source by using the "View Source" feature
+of your browser.
+</p>
+<p>
+Normally authors of software discourage "forking," but I encourage it.  If you make your own version,
+you can say something along the lines of "I evolved this program from an initial version written by
+Steve Howell" somewhere on your page, but there is no obligation.
+If you decide to fork your own version, I would love to know about it, so you can
+<a href="mailto:steve@webstervanrobot.com?subject=reuse">contact me here</a>.
+But again, there is no obligation.
+</p>
+<p>
+If you would like to collaborate with me, please send an email to
+<a href="mailto:steve@webstervanrobot.com?subject=collaboration">Steve</a>.
+
+</p>
+<hr>
+<h2>Demos</h2>
+<h3>Simple Commands</h3>
+<pre>
+<div id="simple">
+do 1:
+  move
+  turnleft
+  build_wall_on_left
+  turnright
+</div>
+</pre>
+<h3>Build a Square</h3>
+<pre>
+<div id="build_square">
+# This build a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
+def build_square:
+  do 4:
+    do 5:
+      move
+      build_wall_on_left
+    move
+    turnleft
+  turnleft
+  do 4:
+    do 5:
+      move
+    move
+    turnright
+build_square
+</div>
+
+</pre>
+<h3>Zig Zag</h3>
+<pre>
+<div id="zigzag">
+def zig_zag_and_build:
+  do 5:
+    build_wall_on_left
+    move
+    turnleft
+    move
+    build_wall_on_left
+    turnright
+
+def turn_the_corner:
+  turnleft
+  move
+  turnleft
+  move
+  turnleft
+  move
+
+def zag_zig:
+  do 4:
+    turnright
+    move
+    turnleft
+    move
+
+zig_zag_and_build
+turn_the_corner
+zag_zig
+</div>
+</pre>
+<h3>Beepers</h3>
+<pre>
+<div id="beepers">
+def make_and_put_beeper:
+  makebeeper
+  putbeeper
+make_and_put_beeper
+move
+make_and_put_beeper
+make_and_put_beeper
+turnleft
+move
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+turnleft
+move
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+turnright
+move
+
+</div>
+</pre>
+</body>
+</html>
