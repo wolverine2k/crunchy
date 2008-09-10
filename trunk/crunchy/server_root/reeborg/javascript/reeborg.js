@@ -57,6 +57,7 @@ function CodeBlock(stream, methods, min_indent_spaces) {
         'turn_right()': true,
         'build_wall_on_left()': true,
         'put_beeper()': true,
+        'pick_beeper()': true,
         'make_beeper()': true
     };
     while (1) {
@@ -337,6 +338,15 @@ function World() {
         this.robot_beepers -= 1;
     }
 
+    this.pick_beeper = function() {
+        var coords = this.robot_x + ',' + this.robot_y;
+        if (!this.beepers[coords] || this.beepers[coords]==0) {
+            throw 'No beepers found at this location!';
+        }
+        this.beepers[coords] -= 1;
+        this.robot_beepers += 1;
+    }
+
     this.make_beeper = function() {
         this.robot_beepers += 1;
     }
@@ -565,6 +575,10 @@ function turn_right() {
 
 function put_beeper() {
     the_world.put_beeper();
+}
+
+function pick_beeper() {
+    the_world.pick_beeper();
 }
 
 function make_beeper() {
