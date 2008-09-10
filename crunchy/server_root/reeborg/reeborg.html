@@ -63,7 +63,7 @@
 <br />
 <a href="#" onClick="load('build_square'); return false;">Demo #2</a>
 
-(build a square)
+(build a square - uses set_delay())
 <br />
 <a href="#" onClick="load('zigzag'); return false;">Demo #3</a>
 (zig zag)
@@ -83,12 +83,13 @@ turn_left()
 build_wall_on_left()
 turn_right()
 </pre>
-<h3>Build a Square</h3>
+<h3>Build a Square - and demonstrates uses of set_delay()</h3>
 <pre id="build_square">
 # This builds a 5 x 5 square.
 # Try editing it to make a smaller
 # square!
 def build_square():
+  set_delay(10)
   for i in range(4):
     for i in range(5):
       move()
@@ -96,6 +97,7 @@ def build_square():
     move()
     turn_left()
   turn_left()
+  set_delay(200)
   for i in range(4):
     for i in range(5):
       move()
