@@ -1,0 +1,166 @@
+<html>
+
+<head>
+
+<script src="javascript/reeborg.js" type="text/javascript"></script>
+<link href="css/reeborg.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+
+<body onload="start_page()">
+
+<table class="ide">
+<tr>
+    <td valign="top">
+        <table id="world" class="reeborg_world">
+        <tr>
+        <th colspan=13 class="heading">Reeborg's World</th>
+        </tr>
+        <tr class="north" ></tr>
+        </table>
+    </td>
+
+    <td valign="top">
+    <form name="the_program_editor_form" onSubmit="run_code(); return false;">
+    <input id="run_image" type="image" src="images/run.png" style="height:40px; border:none;" alt="Run program">
+    <a href="#" onClick="start_over(); return false;">
+        <img id="reload_image" src="images/reload.png" alt="stop/reload" style="height:40px; border:none;"/>
+    </a>
+    </form>
+
+    <br />
+
+    <div id="the_program">
+    </div>
+    </td>
+</tr>
+<tr>
+    <td>
+    <textarea id="the_program_editor" class="program" rows=15 cols=40>
+    </textarea>
+
+
+    <form name="the_form">
+    <!--
+    <textarea name="the_text" rows=30 cols=40>
+    </textarea>
+    -->
+    </form>
+
+    </td>
+</tr>
+
+</table>
+<h3>Single instructions</h3>
+<a href="#" onClick="try_move(); return false;">move()</a>
+<a href="#" onClick="turn_left(); return false;">turn_left()</a>
+<a href="#" onClick="turn_right(); return false;">turn_right()</a>
+<a href="#" onClick="try_build_wall_on_left(); return false;">build_wall_on_left()</a>
+<h3>Demos</h3>
+<a href="#" onClick="load('simple'); return false;">Demo #1</a>
+(sample commands)
+<br />
+<a href="#" onClick="load('build_square'); return false;">Demo #2</a>
+
+(build a square - uses set_delay())
+<br />
+<a href="#" onClick="load('zigzag'); return false;">Demo #3</a>
+(zig zag)
+<br />
+
+<a href="#" onClick="load('beepers'); return false;">Demo #4</a>
+(beepers)
+<br />
+<p>This program is adapted from Webster van Robot to be similar to rur-ple.
+<hr>
+<h2>Demos</h2>
+
+<h3>Simple Commands</h3>
+<pre id="simple">
+move()
+turn_left()
+build_wall_on_left()
+turn_right()
+</pre>
+<h3>Build a Square - and demonstrates uses of set_delay()</h3>
+<pre id="build_square">
+# This builds a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
+def build_square():
+  set_delay(10)
+  for i in range(4):
+    for i in range(5):
+      move()
+      build_wall_on_left()
+    move()
+    turn_left()
+  turn_left()
+  set_delay(200)
+  for i in range(4):
+    for i in range(5):
+      move()
+    move()
+    turn_right()
+build_square()
+</pre>
+<h3>Zig Zag</h3>
+<pre id="zigzag">
+def zig_zag_and_build():
+  for i in range(5):
+    build_wall_on_left()
+    move()
+    turn_left()
+    move()
+    build_wall_on_left()
+    turn_right()
+
+def turn_the_corner():
+  turn_left()
+  move()
+  turn_left()
+  move()
+  turn_left()
+  move()
+
+def zag_zig():
+  for i in range(4):
+    turn_right()
+    move()
+    turn_left()
+    move()
+
+zig_zag_and_build()
+turn_the_corner()
+zag_zig()
+</pre>
+<h3>Beepers</h3>
+<pre id="beepers">
+def make_and_put_beeper():
+  make_beeper()
+  put_beeper()
+make_and_put_beeper()
+move()
+make_and_put_beeper()
+make_and_put_beeper()
+turn_left()
+move()
+for i in range(9):
+    make_and_put_beeper()
+turn_left()
+move()
+# should be a different image
+for i in range(10):
+    make_and_put_beeper()
+turn_left()
+# go back to origin; robot should appear (no beepers)
+# and image of house should indicate we can go in.
+move()
+turn_left()
+pick_beeper()
+move()
+</pre>
+
+</body>
+</html>

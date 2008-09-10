@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Code check test</title></head>
+<body>
+<h1>Code check test Test</h1>
+<p>Ok, here's the first simple test.</p>
+<pre title="setup_code name=first">
+a=42
+</pre>
+<pre title="check_code name=first">
+print(a) # Python 3.0 compatible
+</pre>
+<pre title="code_output name=first">
+42
+</pre>
+
+<p>The second one will also be a passing test.</p>
+<pre title="setup_code name=second">
+a=1
+</pre>
+<pre title="check_code name=second">
+print(a) # Python 3.0 compatible
+</pre>
+<pre title="code_output name=second">
+1
+</pre>
+
+<h2>Bugs</h2>
+<ul>
+  <li>This is work in progress.</li>
+</ul>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

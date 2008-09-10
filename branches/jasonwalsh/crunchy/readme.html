@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Crunchy Python - Instructions</title>
+<style type="text/css">
+body{width:800px;}
+</style>
+</head>
+<body>
+<h1>Instructions</h1>
+<p>Due to security concerns, you have to create an account before you
+can start using Crunchy.  To do so, you can double-click on
+account_manager.py or type <em>python account_manager.py</em>
+at a terminal window.  A typical sesion might go like the following:</p>
+<pre>
+$ python account_manager.py
+>>> new Username
+Please input the home directory [or press 'enter' for default]: choose default
+Please input the password: choose something simple
+Please input the password again: follow the instruction :-)
+Does this user have administrative rights [y or n]? choose y
+>>> exit
+</pre>
+<p>We <b>strongly</b> suggest that you give this
+first account administrative rights - otherwise you will not be able to
+quit Crunchy from the menu.</p>
+</p>When you are done:</p>
+<ol>
+<li>
+Double click on crunchy.py, or type in <em>python crunchy.py</em>
+at a terminal window.</li>
+<li>Have fun!</li>
+</ol>
+<img src="server_root/images/crunchy.png" alt="Crunchy Logo"/>
+<h3>What if it does not work?</h3>
+<p>Note that Crunchy requires Python version 2.4 or newer; however, it does not work
+with Python 3.x</p>
+<p>Furthermore, some advanced features appear to not work properly when using
+Firefox 3.  We are investigating this ... but feel free to file in a bug report
+if you encounter any problem.</p>
+<p>Some users have reported that the simple approach did not work on their computer.
+If you experience some difficulties, please write to us.  In the meantime, you may want to try
+some of the following.</p>
+<ul>
+<li>
+If Firefox does not start or open a new tab on its own, or you have a non-supported browser
+that starts instead, start Firefox and copy the url displayed in the terminal that appeared
+when you launched Crunchy into the address bar (that's the white rectangular box at the top
+of your browser that contains stuff like <tt>http:// ...</tt>).  The url to be copied there
+should be something like:<br/>
+http://127.0.0.1:8002/
+<br/>
+Copy this in and press enter - Crunchy's first page should be displayed.
+</li>
+<li>
+Do not use the "open a file" option from the Firefox menu to try and open a file; type in the
+url as indicated in the previous step.
+</li>
+<li><b>The following has not been reproduced: </b>A linux user has reported that he needed to start Firefox using sudo (i.e. in superuser mode).
+Also, when he did that, Firefox did not start in its usual mode - it started with a "virgin" profile
+with no bookmarks, etc.  If this happens to you <b><em>and especially if you know why and how
+to prevent it</em></b>, please let us know.
+</li>
+<li>If all of the above fail, do not hesitate to write to us.</li>
+</ul>
+</body>
