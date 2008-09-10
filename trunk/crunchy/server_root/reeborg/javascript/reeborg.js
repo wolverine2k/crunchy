@@ -2,6 +2,7 @@
 Reeborg's world.
 (c) GNU General Public license
 */
+var global_delay;
 
 function start_page() {
     create_world();
@@ -139,12 +140,12 @@ function CodeBlock(stream, methods, min_indent_spaces) {
 // EXECUTION CODE
 
 function SetDelayCommand(cmd) {
-    set_delay(cmd['delay']);
     function step() {
         return 1;
     }
     this.line_num = cmd.line_num;
     this.step = step;
+    this.delay = cmd['delay'];
 }
 
 function SimpleCommand(cmd) {
@@ -236,6 +237,9 @@ function Block(program) {
             if (advance) {
                 this.last_line_num = cmd.line_num;
                 this.i += 1;
+                if (cmd.delay != undefined){
+                    set_delay(cmd.delay);
+                }
             }
             return 0;
         }
@@ -261,7 +265,7 @@ function Block(program) {
             run_img.setAttribute("src", "images/run.png");
         }
         else {
-          delay = this.delay; // just enough to see
+            delay = the_world.delay;
             setTimeout( function(thisObj) {
                             thisObj.step_all();
                         },
