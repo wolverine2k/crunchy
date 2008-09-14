@@ -472,7 +472,7 @@ function World(nb_ave, nb_st) {
             data = '<img src="' + this.robot() + '">';
             try{
                 home_image = document.getElementById("home_image");
-                if (this.robot_x == 1 && this.robot_y == 1) {
+                if (this.robot_x == 1 && this.robot_y == 1 && this.robot_dir == 'W') {
                     home_image.src = "images/home_enter.png";
                 }
                 else{
