@@ -79,6 +79,24 @@ def changeHTMLspecialCharacters(text):  # tested
     text = text.replace('>', '&gt;')
     return text
 
+def unChangeHTMLspecialCharacters(text):
+    '''reverse of changeHTMLspecialCharacters'''
+    text = text.replace('&lt;', '<')
+    text = text.replace('&gt;', '>')
+    text = text.replace('&amp;', '&')
+    return text
+
+def escape_for_javascript(text):
+    '''as the name indicates, escape some characters so that they can be
+       safely included in javascript'''
+    text = text.replace("\\", "\\\\")
+    text = text.replace("'", r"\'")
+    text = text.replace('"', r'\"')
+    text = text.replace("\n", r"\n")
+    text = text.replace("\r", r"\r")
+    return text
+
+
 def insert_markup(elem, uid, vlam, markup, interactive_type):
     '''clears an element and inserts the new markup inside it'''
     elem.clear()

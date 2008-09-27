@@ -6,6 +6,7 @@ Also handles the redirection of stdin, stdout and stderr.
 
 import threading
 import sys
+import re
 
 import src.interpreter as interpreter
 import src.utilities as utilities
@@ -99,6 +100,12 @@ class CrunchyIOBuffer(StringBuffer):
 
     def put_output(self, data, uid):
         """put some output into the pipe"""
+
+        #apply before_output hook first
+        data = interface.plugin['services'].apply_io_hook('ANY', 'before_output', data)
+        data = interface.plugin['services'].apply_io_hook(uid, 'before_output', data)
+        if data == "":
+            return
         data = data.replace('"', '&#34;')
         pdata = data.replace("\\", "\\\\")
         pdata = data.replace("\n", "\\n")
@@ -224,6 +231,23 @@ def push_input(request):
     request.send_response(200)
     request.end_headers()
 
+def raw_push_input(uid, data):
+    input_buffers[uid].put(data)
+
+def is_accept_input(uid):
+    return uid in input_buffers
+
+def extract_data(data):
+    '''
+    extract pure data from output span  like <span class='stdout'>some text</span>
+    '''
+    pattern = re.compile("<span class='([a-z]{1,10})'>(.*)</span>", re.DOTALL)
+    match = pattern.search(data)
+    if match:
+        return match.groups()
+    else:
+        return (None,None)
+
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
     def __init__(self, out_buf=None, in_buf=None, buf_class="STDOUT"):
@@ -291,6 +315,7 @@ class ThreadedBuffer(object):
         pageid = uid.split("_")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
+        debug_msg("write --- data , " + data.replace('\\', r'\\'), 4)
         #Note: in the following, it is important to ensure that the
         # py_prompt class is surrounded by single quotes - not double ones.
         # normal prompt
