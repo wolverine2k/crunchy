@@ -60,6 +60,7 @@ def jquery_file_tree(request):
     # request.data is of the form "dir=SomeDirectory"
     try:
         d = urllib.unquote(request.data)[4:]
+        d = urllib.unquote(d)  # apparently need to call it twice on windows
         for f in os.listdir(d):
             if f.startswith('.') and f != ".crunchy": # exclude "hidden" directories
                 continue
@@ -86,7 +87,7 @@ def insert_file_tree(page, elem, uid):
     else:
         return
     tree_id = "tree_" + str(uid)
-    root = os.path.splitdrive(__file__)[0] + os.path.sep  # use base directory for now
+    root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',
