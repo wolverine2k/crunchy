@@ -72,7 +72,7 @@ UL.jqueryFileTree A:hover {
 .jqueryFileTree LI.ext_ppt { background: url(images/ppt.png) left top no-repeat; }
 .jqueryFileTree LI.ext_psd { background: url(images/psd.png) left top no-repeat; }
 .jqueryFileTree LI.ext_pl { background: url(images/script.png) left top no-repeat; }
-.jqueryFileTree LI.ext_py { background: url(images/script.png) left top no-repeat; }
+.jqueryFileTree LI.ext_py { background: url(images/python.png) left top no-repeat; }
 .jqueryFileTree LI.ext_rb { background: url(images/ruby.png) left top no-repeat; }
 .jqueryFileTree LI.ext_rbx { background: url(images/ruby.png) left top no-repeat; }
 .jqueryFileTree LI.ext_rhtml { background: url(images/ruby.png) left top no-repeat; }
