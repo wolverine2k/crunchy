@@ -96,7 +96,6 @@ def escape_for_javascript(text):
     text = text.replace("\r", r"\r")
     return text
 
-
 def insert_markup(elem, uid, vlam, markup, interactive_type):
     '''clears an element and inserts the new markup inside it'''
     elem.clear()

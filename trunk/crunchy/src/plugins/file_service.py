@@ -6,6 +6,7 @@ Provides the means to save and load a file.
 from subprocess import Popen
 import os
 import sys
+import urllib
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin
@@ -35,8 +36,11 @@ def register():
          1. a custom service to save a file.
          2. a custom service to read content from a file.
        """
+    plugin['register_tag_handler']("div", "title", "file_tree",
+                                          insert_file_tree)
     plugin['register_http_handler']("/save_file", save_file_request_handler)
     plugin['register_http_handler']("/load_file", load_file_request_handler)
+    plugin['register_http_handler']("/jquery_file_tree", jquery_file_tree)
     plugin['register_http_handler']("/save_and_run%s"%plugin['session_random_id'],
                                         save_and_run_request_handler)
     plugin['register_http_handler']("/run_external%s"%plugin['session_random_id'],
@@ -46,6 +50,54 @@ def register():
                                         save_and_run_python_interpreter_request_handler)
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
+
+
+def jquery_file_tree(request):
+    r = ['<ul class="jqueryFileTree" style="display: none;">']
+    # request.data is of the form "dir=SomeDirectory"
+    try:
+        d = urllib.unquote(request.data)[4:]#urllib.unquote(request.args["dir"])
+        for f in os.listdir(d):
+            ff = os.path.join(d,f)
+            if os.path.isdir(ff):
+                r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+            else:
+                e = os.path.splitext(f)[1][1:] # get .ext and remove dot
+                r.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,f))
+        r.append('</ul>')
+    except Exception,e:
+        r.append('Could not load directory: %s' % str(e))
+    r.append('</ul>')
+    request.wfile.write(''.join(r))
+    return
+
+def insert_file_tree(page, elem, uid):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
+        if not page.includes("jquery_file_tree"):
+            page.add_include("jquery_file_tree")
+            page.insert_js_file("/javascript/jquery.filetree.js")
+            page.insert_css_file("/css/jquery.filetree.css")
+    else:
+        return
+    tree_id = "tree_" + str(uid)
+    root = os.path.splitdrive(__file__)[0] + os.path.sep  # use base directory for now
+    js_code =  """$(document).ready( function() {
+        $('#%s').fileTree({
+          root: '%s',
+          script: '/jquery_file_tree',
+          expandSpeed: -1,
+          collapseSpeed: -1,
+          multiFolder: true
+        }, function(file) {
+            alert(file);
+        });
+    });
+    """ % (tree_id, root)
+    page.add_js_code(js_code)
+    elem.text = ''
+    elem.attrib['id'] = tree_id
+    return
+
 
 def save_file_request_handler(request):
     '''extracts the path & the file content from the request and
