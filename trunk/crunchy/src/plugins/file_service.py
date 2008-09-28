@@ -53,11 +53,16 @@ def register():
 
 
 def jquery_file_tree(request):
+    '''extract the file information and formats it in the form expected
+       by the jquery FileTree plugin, but excludes some normally hidden
+       files or directories.'''
     r = ['<ul class="jqueryFileTree" style="display: none;">']
     # request.data is of the form "dir=SomeDirectory"
     try:
-        d = urllib.unquote(request.data)[4:]#urllib.unquote(request.args["dir"])
+        d = urllib.unquote(request.data)[4:]
         for f in os.listdir(d):
+            if f.startswith('.') and f != ".crunchy": # exclude "hidden" directories
+                continue
             ff = os.path.join(d,f)
             if os.path.isdir(ff):
                 r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
@@ -72,6 +77,7 @@ def jquery_file_tree(request):
     return
 
 def insert_file_tree(page, elem, uid):
+    '''inserts a file tree object in a page.'''
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("jquery_file_tree"):
             page.add_include("jquery_file_tree")
