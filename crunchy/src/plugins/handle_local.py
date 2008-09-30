@@ -24,8 +24,10 @@ def local_loader(request):  # tested
     If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
+    username = request.crunchy_username
     if "htm" in extension:
-        page = plugin['create_vlam_page'](open(url), url, local=True)
+        page = plugin['create_vlam_page'](open(url), url, username=username,
+                                          local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
         base_url, fname = os.path.split(url)

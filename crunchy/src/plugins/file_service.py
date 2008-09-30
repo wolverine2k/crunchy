@@ -9,7 +9,7 @@ import sys
 import urllib
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin
+from src.interface import config, plugin, SubElement
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
@@ -117,7 +117,8 @@ def insert_file_tree(page, elem, uid):
             page.insert_css_file("/css/jquery.filetree.css")
     else:
         return
-    tree_id = "tree_" + str(uid)
+    tree_id = "tree_" + uid
+    form_id = "form_" + uid
     root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
@@ -127,13 +128,24 @@ def insert_file_tree(page, elem, uid):
           collapseSpeed: -1,
           multiFolder: false
         }, function(file) {
-            alert("You have selected " + file);
+            document.getElementById('%s').value=file;
         });
     });
-    """ % (tree_id, root)
+    """ % (tree_id, root, form_id)
     page.add_js_code(js_code)
-    elem.text = ''
-    elem.attrib['id'] = tree_id
+    elem.text = 'File Tree Browser'
+    elem.attrib['class'] = "filetree_wrapper"
+
+    form = SubElement(elem, 'form', name='url', size='80', method='get',
+                       action='/local')
+    SubElement(form, 'input', name='url', size='80', id=form_id)
+    input_ = SubElement(form, 'input', type='submit',
+                           value='Load local tutorial')
+    input_.attrib['class'] = 'crunchy'
+
+    file_div = SubElement(elem, 'div')
+    file_div.attrib['id'] = tree_id
+    file_div.attrib['class'] = "filetree_window"
     return
 
 
