@@ -49,7 +49,6 @@ def register():
     plugin['register_service']("style", pygments_style)
 
 def pygments_style(page, elem, dummy_uid='42', vlam=None):
-    # todo: implement the linenumbers; use linenumber in vlam for this...
     cssclass = config[page.username]['style']
     wrap = False
     if vlam is not None:
@@ -64,9 +63,11 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
         language = "python"
     text = extract_code(elem)
     styled_code = _style(text, language, cssclass).encode("utf-8")
-    if vlam is not None:
-        if 'linenumber' in vlam:
-            styled_code = add_linenumber(styled_code, vlam)
+    if vlam is None:
+        vlam = elem.attrib['title']
+    if 'linenumber' in vlam:
+        styled_code = add_linenumber(styled_code, vlam)
+
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
