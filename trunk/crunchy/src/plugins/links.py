@@ -120,6 +120,8 @@ def src_handler(page, elem, *dummy):  # partially tested
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
+        if elem.attrib["src"].startswith("/"):
+            return
         local_dir = os.path.split(page.url)[0]
         elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
@@ -133,6 +135,8 @@ def link_tag_handler(page, elem, *dummy):  # partially tested
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local:
+        if elem.attrib["href"].startswith("/"):
+            return
         local_dir = os.path.split(page.url)[0]
         elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))

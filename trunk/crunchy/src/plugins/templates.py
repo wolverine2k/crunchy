@@ -37,8 +37,11 @@ def return_template(page, elem):
        to be created.'''
     url = elem.attrib['title'].strip().split(' ')[-1]
     base_dir, dummy = os.path.split(page.url)
-    url = os.path.normpath(os.path.join(config['crunchy_base_dir'], "server_root",
+    if page.is_from_root:
+        url = os.path.normpath(os.path.join(config['crunchy_base_dir'], "server_root",
                                         base_dir[1:], url))
+    elif page.is_local:
+        url = os.path.normpath(os.path.join(base_dir, url))
     if url not in _templates:
         try:
             filehandle = open(url)
