@@ -66,6 +66,7 @@ class Request(object):
         self.args = args
         self.headers = {}
         self.wfile = Wfile()
+        self.crunchy_username = "Crunchy"
 
     def send_response(self, response=42):
         print(response)
