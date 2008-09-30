@@ -76,10 +76,11 @@ the file extension - not the actual content.  Note that we need to
 determine if the path gets added properly.  
 First, we define a dummy vlam page creator.
 
-    >>> def open_html(file_handle, url, local):
+    >>> def open_html(file_handle, url, username, local):
     ...    print(file_handle.read())
     ...    file_handle.seek(0)  # "rewind"
     ...    print(url[-4:]) # just the extension
+    ...    print(username)
     ...    print(local)
     ...    return file_handle
     >>> plugin['create_vlam_page'] = open_html
@@ -115,6 +116,7 @@ We are now ready for the test as such.
     >>> handle_local.local_loader(request)
     This is just a test.
     .htm
+    Crunchy
     True
     200
     Cache-Controlno-cache, must-revalidate, no-store
