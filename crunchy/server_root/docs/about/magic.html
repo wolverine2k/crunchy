@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<title>How does Crunchy perform its magic?</title>
+</head>
+<body>
+<div id="main_title">How does Crunchy perform its magic?</div>
+<div id='content'>
+<p>In case you are wondering, we will explain graphically how Crunchy performs it magic.
+There are four parts to consider.</p>
+<li>The User starts Crunchy and communication is established.</li>
+<li>Crunchy sanitizes the html pages requested to remove unwanted elements.</li>
+<li>Crunchy processes the markup (vlam) to insert appropriate interactive elements.</li>
+<li>The User requests that some Python code be executed</li>
+</ul>
+<p>Note: all images have been produced using 
+<a href="http://www.websequencediagrams.com/" title="external_link">a wonderful free tool.</a>
+</p>
+<h3>Starting Crunchy and User Authentication</h3>
+<p>Explain how we start Crunchy, etc.</p>
+<img src="/images/authenticate.png">
+<p>Draw attention to the "retrieve and process file" box.  Explain that this
+consists of two step: a sanitizing/filtering step, and the processing of markup.</p>
+<h3>Security: Filtering Unwanted Elements</h3>
+<p>Perhaps add a word about three (or six) security levels</p>
+<img src="/images/security.png">
+<h3>Processing vlam: Adding Interactive Elements</h3>
+<img src="/images/process_vlam.png">
+<h3>User Beware: Running Arbitrary Python Code</h3>
+<img src="/images/run_python.png">
+</div>
+</body>
+</html>

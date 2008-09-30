@@ -51,30 +51,61 @@ def register():
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
 
+def filter_default(filename, basepath=None):
+    '''filters out all files and directory with filename starting with "."
+       except for ".crunchy".'''
+    if filename.startswith('.') and filename != ".crunchy":
+        return True
+    else:
+        return False
 
-def jquery_file_tree(request):
-    '''extract the file information and formats it in the form expected
-       by the jquery FileTree plugin, but excludes some normally hidden
-       files or directories.'''
-    r = ['<ul class="jqueryFileTree" style="display: none;">']
+def filter_html(filename, basepath):
+    '''filters out all files and directory with filename so as to include
+       only files whose extensions start with ".htm" with the possible
+       exception of ".crunchy" - the usual crunchy default directory.
+    '''
+    if filename.startswith('.') and filename != ".crunchy":
+        return True
+    else:
+        fullpath = os.path.join(basepath, filename)
+        if os.path.isdir(fullpath):
+            return False   # do not filter out directories
+        ext = os.path.splitext(filename)[1][1:] # get .ext and remove dot
+        if ext.startswith("htm"):
+            return False
+        else:
+            return True
+
+def filtered_dir(request, filter=filter_default):
+    '''returns the file listing from a directory,
+       satisfying a given filter function,
+       in a form suitable for the jquery FileTree plugin.'''
+    ul = ['<ul class="jqueryFileTree" style="display: none;">']
     # request.data is of the form "dir=SomeDirectory"
     try:
         d = urllib.unquote(request.data)[4:]
         d = urllib.unquote(d)  # apparently need to call it twice on windows
         for f in os.listdir(d):
-            if f.startswith('.') and f != ".crunchy": # exclude "hidden" directories
+            if filter(f, d):
                 continue
-            ff = os.path.join(d,f)
+            ff = os.path.join(d, f)
             if os.path.isdir(ff):
-                r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+                ul.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
             else:
-                e = os.path.splitext(f)[1][1:] # get .ext and remove dot
-                r.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,f))
-        r.append('</ul>')
+                ext = os.path.splitext(f)[1][1:] # get .ext and remove dot
+                ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
+        ul.append('</ul>')
     except Exception,e:
-        r.append('Could not load directory: %s' % str(e))
-    r.append('</ul>')
-    request.wfile.write(''.join(r))
+        ul.append('Could not load directory: %s' % str(e))
+    ul.append('</ul>')
+    request.wfile.write(''.join(ul))
+    return
+
+def jquery_file_tree(request):
+    '''extract the file information and formats it in the form expected
+       by the jquery FileTree plugin, but excludes some normally hidden
+       files or directories.'''
+    filtered_dir(request, filter_html)
     return
 
 def insert_file_tree(page, elem, uid):
@@ -94,9 +125,9 @@ def insert_file_tree(page, elem, uid):
           script: '/jquery_file_tree',
           expandSpeed: -1,
           collapseSpeed: -1,
-          multiFolder: true
+          multiFolder: false
         }, function(file) {
-            alert(file);
+            alert("You have selected " + file);
         });
     });
     """ % (tree_id, root)
