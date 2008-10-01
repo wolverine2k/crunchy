@@ -1,17 +1,27 @@
-"""handle remote loading of tutorials.
-Uses the /remote http request path.
+"""Handle remote loading of tutorials.
+
+Defines the /remote http request path.
+Creates a form allowing to specify the URL of a tutorial to be loaded
+by Crunchy.
 """
 
 from urllib import FancyURLopener, unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, preprocessor, config
+from src.interface import plugin, preprocessor, config, SubElement
 
 provides = set(["/remote"])
 
 def register():  # tested
-    '''registers http handler for dealing with remote files'''
+    '''registers http handler for dealing with remote files as well as
+    handler for inserting widget for loading remote tutorials.'''
     plugin['register_http_handler']("/remote", remote_loader)
+    # 'load_remote' only appears inside <span> elements, using the notation
+    # <span title='load_remote'>
+    plugin['register_tag_handler']("span", "title", "load_remote",
+                                                    insert_load_remote)
+    plugin['add_vlam_option']('power_browser', 'remote_html')
+    plugin['register_service']("remote_broswer", insert_load_remote)
 
 def remote_loader(request):  # tested
     '''
@@ -38,3 +48,16 @@ def remote_loader(request):  # tested
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
     dummy = request.wfile.write(page.read())
+
+def insert_load_remote(dummy_page, parent, dummy_uid): # tested
+    '''inserts a form to load a remote page'''
+    # in general, page and uid are used by similar plugins, but they are
+    # redundant here.
+    form = SubElement(parent, 'form', name='url', size='80', method='get',
+                       action='/remote')
+    SubElement(form, 'input', name='url', size='80',
+                           value=parent.text)
+    input2 = SubElement(form, 'input', type='submit',
+                           value='Load remote tutorial')
+    input2.attrib['class'] = 'crunchy'
+    parent.text = ' '
