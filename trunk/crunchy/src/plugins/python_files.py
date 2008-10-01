@@ -1,13 +1,19 @@
 """Plugin for loading and transforming python files."""
 
+import os
 from src.interface import plugin, interactive
-from src.utilities import changeHTMLspecialCharacters, insert_file_browser
+from src.utilities import changeHTMLspecialCharacters
+
+provides = set(["/py"])
+requires = set(["filtered_dir", "insert_file_tree"])
 
 def register():
     """Registers new http handler and new widget for loading ReST files"""
     plugin['register_http_handler']("/py", load_python)
-    plugin['register_tag_handler']("span", "title", "load_python", insert_load_python)
+    plugin['register_tag_handler']("div", "title", "local_python_file", insert_load_python)
     plugin['add_vlam_option']('power_browser', 'python')
+    plugin['register_http_handler']("/jquery_file_tree_py", jquery_file_tree_py)
+    plugin['register_service']("local_python", insert_load_python)
 
 class Python_file(object):
     """Simplest object that vlam will take as a file"""
@@ -52,14 +58,39 @@ def load_python(request):
     """ % (url, url, interpreter_python_code, python_code)
 
     fake_file = Python_file(html_template)
-    page = plugin['create_vlam_page'](fake_file, url, local=True)
+    page = plugin['create_vlam_page'](fake_file, url, local=True,
+                                      username=request.crunchy_username)
 
     request.send_response(200)
     request.end_headers()
     request.wfile.write(page.read())
 
-def insert_load_python(dummy_page, parent, dummy_uid):
-    """Creates new widget for loading python files.
-    Only include <span title="load_python"> </span>"""
-    insert_file_browser(parent, 'Load local Python file', '/py')
+def insert_load_python(page, elem, uid):
+    "Inserts a javascript browser object to load a local (html) file."
+    plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_py',
+                                '/py', 'Load local Python file', 'Load Python file')
+    return
+
+def filter_py(filename, basepath):
+    '''filters out all files and directory with filename so as to include
+       only files whose extensions are ".py" with the possible
+       exception of ".crunchy" - the usual crunchy default directory.
+    '''
+    if filename.startswith('.') and filename != ".crunchy":
+        return True
+    else:
+        fullpath = os.path.join(basepath, filename)
+        if os.path.isdir(fullpath):
+            return False   # do not filter out directories
+        ext = os.path.splitext(filename)[1][1:] # get .ext and remove dot
+        if ext == 'py':
+            return False
+        else:
+            return True
+
+def jquery_file_tree_py(request):
+    '''extract the file information and formats it in the form expected
+       by the jquery FileTree plugin, but excludes some normally hidden
+       files or directories, to include only python files.'''
+    plugin['services'].filtered_dir(request, filter_py)
     return

@@ -34,8 +34,8 @@ def insert_browser(page, *dummy): # tested
 
     if config[page.username]['power_browser'] is None:
         return
-    elif config[page.username]['power_browser'] == 'python':
-        python_files.insert_load_python(page, div, 'dummy')
+    elif config[page.username]['power_browser'] == 'local_python':
+        plugin['local_python'](page, div, 'dummy')
     elif config[page.username]['power_browser'] == 'rst':
         rst.insert_load_rst(page, div, 'dummy')
     elif config[page.username]['power_browser'] == 'local_html':
