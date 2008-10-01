@@ -248,7 +248,7 @@ def append_warning(pageid, parent_uid):
 def append_image(pageid, parent_uid, attributes):
     '''appends an image using dhtml techniques
     '''
-    child_uid = parent_uid + "_child"
+    child_uid = parent_uid + uidgen("_")
     plugin['exec_js'](pageid,
                       """var currentDiv = document.getElementById("%s");
                       var newTag = document.createElement("img");

@@ -21,7 +21,7 @@ def register():  # tested
     plugin['register_tag_handler']("span", "title", "load_remote",
                                                     insert_load_remote)
     plugin['add_vlam_option']('power_browser', 'remote_html')
-    plugin['register_service']("remote_broswer", insert_load_remote)
+    plugin['register_service']("remote_html", insert_load_remote)
 
 def remote_loader(request):  # tested
     '''

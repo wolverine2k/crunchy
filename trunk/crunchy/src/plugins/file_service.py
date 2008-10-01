@@ -12,7 +12,9 @@ import urllib
 from src.interface import config, plugin, SubElement
 
 # The set of other "widgets/services" provided by this plugin
-provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
+provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external",
+                "filtered_dir", "insert_file_tree", "/save_file_python_interpreter",
+                "/save_and_run_python_interpreter", "/run_external_python_interpreter"])
 
 DEBUG = False
 
@@ -36,11 +38,10 @@ def register():
          1. a custom service to save a file.
          2. a custom service to read content from a file.
        """
-    plugin['register_tag_handler']("div", "title", "file_tree",
-                                          insert_file_tree)
+    plugin['register_service']("insert_file_tree", insert_file_tree)
+    plugin['register_service']("filtered_dir", filtered_dir)
     plugin['register_http_handler']("/save_file", save_file_request_handler)
     plugin['register_http_handler']("/load_file", load_file_request_handler)
-    plugin['register_http_handler']("/jquery_file_tree", jquery_file_tree)
     plugin['register_http_handler']("/save_and_run%s"%plugin['session_random_id'],
                                         save_and_run_request_handler)
     plugin['register_http_handler']("/run_external%s"%plugin['session_random_id'],
@@ -51,32 +52,7 @@ def register():
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
 
-def filter_default(filename, basepath=None):
-    '''filters out all files and directory with filename starting with "."
-       except for ".crunchy".'''
-    if filename.startswith('.') and filename != ".crunchy":
-        return True
-    else:
-        return False
-
-def filter_html(filename, basepath):
-    '''filters out all files and directory with filename so as to include
-       only files whose extensions start with ".htm" with the possible
-       exception of ".crunchy" - the usual crunchy default directory.
-    '''
-    if filename.startswith('.') and filename != ".crunchy":
-        return True
-    else:
-        fullpath = os.path.join(basepath, filename)
-        if os.path.isdir(fullpath):
-            return False   # do not filter out directories
-        ext = os.path.splitext(filename)[1][1:] # get .ext and remove dot
-        if ext.startswith("htm"):
-            return False
-        else:
-            return True
-
-def filtered_dir(request, filter=filter_default):
+def filtered_dir(request, filter=None):
     '''returns the file listing from a directory,
        satisfying a given filter function,
        in a form suitable for the jquery FileTree plugin.'''
@@ -101,14 +77,7 @@ def filtered_dir(request, filter=filter_default):
     request.wfile.write(''.join(ul))
     return
 
-def jquery_file_tree(request):
-    '''extract the file information and formats it in the form expected
-       by the jquery FileTree plugin, but excludes some normally hidden
-       files or directories.'''
-    filtered_dir(request, filter_html)
-    return
-
-def insert_file_tree(page, elem, uid):
+def insert_file_tree(page, elem, uid, action, callback, title, label):
     '''inserts a file tree object in a page.'''
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("jquery_file_tree"):
@@ -123,7 +92,7 @@ def insert_file_tree(page, elem, uid):
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',
-          script: '/jquery_file_tree',
+          script: '%s',
           expandSpeed: -1,
           collapseSpeed: -1,
           multiFolder: false
@@ -131,16 +100,16 @@ def insert_file_tree(page, elem, uid):
             document.getElementById('%s').value=file;
         });
     });
-    """ % (tree_id, root, form_id)
+    """ % (tree_id, root, action, form_id)
     page.add_js_code(js_code)
-    elem.text = 'File Tree Browser'
+    elem.text = title
     elem.attrib['class'] = "filetree_wrapper"
 
     form = SubElement(elem, 'form', name='url', size='80', method='get',
-                       action='/local')
+                       action=callback)
     SubElement(form, 'input', name='url', size='80', id=form_id)
     input_ = SubElement(form, 'input', type='submit',
-                           value='Load local tutorial')
+                           value=label)
     input_.attrib['class'] = 'crunchy'
 
     file_div = SubElement(elem, 'div')

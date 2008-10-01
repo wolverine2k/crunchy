@@ -18,6 +18,11 @@ See how_to.rst_ for details.
     >>> from src.interface import plugin, config, Element
     >>> plugin.clear()
     >>> config.clear()
+    >>> def print_args(*args):
+    ...     for arg in args:
+    ...         print arg
+    >>> plugin['add_vlam_option'] = print_args
+    >>> plugin['services'] = print_args
     >>> import src.plugins.handle_local as handle_local
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -30,6 +35,8 @@ Testing register()
 ----------------------
 
     >>> handle_local.register()
+    power_browser
+    local_html
     >>> 
     >>> mocks.registered_tag_handler['meta']['title']['python_import'] == handle_local.add_to_path
     True
