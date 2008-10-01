@@ -16,6 +16,10 @@ power_browser.py has has the following functions that require testing:
     >>> import src.utilities
     >>> src.utilities.COUNT = 0
     >>> plugin.clear()
+    >>> def dummy(*args):
+    ...    print args
+    >>> plugin['local_html'] = dummy
+    >>> plugin['remote_html'] = dummy
     >>> config.clear()
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['editarea_language'] = 'en'
@@ -65,42 +69,17 @@ Next, local html tutorials.
     >>> page = mocks.Page()
     >>> page.body = Element("body")
     >>> config['Crunchy']['power_browser'] = 'local_html'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_local3">
-    <input name="filename" onblur="document.submit_local4.url.value=document.browser_local3.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/local" method="get" name="submit_local4">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local html tutorial" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
+
 
 Next, remote html tutorials.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['Crunchy']['power_browser'] = 'local_html'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_local5">
-    <input name="filename" onblur="document.submit_local6.url.value=document.browser_local5.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/local" method="get" name="submit_local6">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local html tutorial" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'remote_html'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
 Python files.
 
@@ -111,11 +90,11 @@ Python files.
     >>> print tostring(page.body).replace('>', '>\n')
     <body>
     <div>
-     <form name="browser_py7">
-    <input name="filename" onblur="document.submit_py8.url.value=document.browser_py7.filename.value" size="80" type="file" />
+     <form name="browser_py3">
+    <input name="filename" onblur="document.submit_py4.url.value=document.browser_py3.filename.value" size="80" type="file" />
     <br />
     </form>
-    <form action="/py" method="get" name="submit_py8">
+    <form action="/py" method="get" name="submit_py4">
     <input name="url" type="hidden" />
     <input class="crunchy" type="submit" value="Load local Python file" />
     </form>
@@ -123,7 +102,7 @@ Python files.
     </body>
     <BLANKLINE>
 
-An unrecognize value.
+An unrecognized value.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")

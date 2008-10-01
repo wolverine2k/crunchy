@@ -7,8 +7,6 @@ Allow the user to always insert a file/url browser at the top of a page.
 from src.interface import plugin, config, Element
 import python_files
 import rst
-import vlam_load_local
-#import handle_remote
 
 def register(): # tested
     """The register() function is required for all plugins.
@@ -19,6 +17,21 @@ def insert_browser(page, *dummy): # tested
     '''Inserts a default file/url browser at the top of a page'''
     div = Element("div")
     div.text = ' '
+
+    '''to do:  when restructuring is completed, change the code below to
+       something like
+    if config[page.username]['power_browser'] is None:
+        return
+    else:
+        try:
+            plugin[config[page.username]['power_browser']](page, div, 'dummy')
+            page.body.insert(0, div)
+        except KeyError:
+            this should not happen
+        except:
+            this should definitely not happen
+'''
+
     if config[page.username]['power_browser'] is None:
         return
     elif config[page.username]['power_browser'] == 'python':
@@ -26,10 +39,9 @@ def insert_browser(page, *dummy): # tested
     elif config[page.username]['power_browser'] == 'rst':
         rst.insert_load_rst(page, div, 'dummy')
     elif config[page.username]['power_browser'] == 'local_html':
-        vlam_load_local.insert_load_local(page, div, 'dummy')
+        plugin['local_html'](page, div, 'dummy')
     elif config[page.username]['power_browser'] == 'remote_html':
-        plugin['remote_browser'](page, div, 'dummy')
-        #handle_remote.insert_load_remote(page, div, 'dummy')
+        plugin['remote_html'](page, div, 'dummy')
     else:  # unrecognized value; ignore
         return
     page.body.insert(0, div)
