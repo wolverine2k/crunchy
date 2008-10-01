@@ -20,6 +20,7 @@ power_browser.py has has the following functions that require testing:
     ...    print args
     >>> plugin['local_html'] = dummy
     >>> plugin['remote_html'] = dummy
+    >>> plugin['local_python'] = dummy
     >>> config.clear()
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['editarea_language'] = 'en'
@@ -85,22 +86,9 @@ Python files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['Crunchy']['power_browser'] = 'python'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_py3">
-    <input name="filename" onblur="document.submit_py4.url.value=document.browser_py3.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/py" method="get" name="submit_py4">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local Python file" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'local_python'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
 An unrecognized value.
 

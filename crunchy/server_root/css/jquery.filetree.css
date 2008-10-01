@@ -28,7 +28,8 @@ UL.jqueryFileTree A:hover {
 
 .filetree_wrapper {
     background: #eee;
-    width: 350px;
+    width: 90%;
+    max-width: 800px;
     padding-bottom: 10px;
 }
 
