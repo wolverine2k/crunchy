@@ -21,6 +21,7 @@ power_browser.py has has the following functions that require testing:
     >>> plugin['local_html'] = dummy
     >>> plugin['remote_html'] = dummy
     >>> plugin['local_python'] = dummy
+    >>> plugin['local_rst'] = dummy
     >>> config.clear()
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['editarea_language'] = 'en'
@@ -48,22 +49,9 @@ First, reStructuredText files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['Crunchy']['power_browser'] = 'rst'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_rst1">
-    <input name="filename" onblur="document.submit_rst2.url.value=document.browser_rst1.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/rst" method="get" name="submit_rst2">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local ReST file" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'local_rst'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
 Next, local html tutorials.
 
