@@ -120,12 +120,11 @@ def insert_editor(page, elem, uid):  # tested
     # of the editor...
 
     btn = SubElement(elem, "button")
-    # path_label required in all cases to avoid javascript error
-    path_label = SubElement(elem, "span")
-    path_label.attrib['id'] = 'path_' + uid
-    path_label.text = config[page.username]['temp_dir'] + os.path.sep + "temp.py"
 
     if "external" in vlam:
+        path_label = SubElement(elem, "span")
+        path_label.attrib['id'] = 'path_' + uid
+        path_label.text = config[page.username]['temp_dir'] + os.path.sep + "temp.py"
         btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
         btn.text = _("Execute as external program")
         if "analyzer_score" in vlam:
@@ -142,7 +141,6 @@ def insert_editor(page, elem, uid):  # tested
             if "analyzer_score" in vlam:
                 plugin['services'].add_scoring(page, btn2, uid)
     else:
-        path_label.attrib['style'] = 'display:none'  #keep hidden since not required
         btn.attrib["onclick"] = "exec_code('%s')" % uid
         btn.text = _("Execute")
         if "analyzer_score" in vlam:
