@@ -15,8 +15,6 @@ def register():
     '''registers a single service: enable_editarea'''
     plugin['register_service']("enable_editarea", enable_editarea)
     plugin['register_http_handler']("/jquery_file_tree_all", jquery_file_tree_all)
-    plugin['register_http_handler']("/editarea_loader", editarea_loader)
-
 
 def enable_editarea(page, elem, textarea_id):  # tested
     """enables an editarea editor on a given element (textarea) of a page.
@@ -52,7 +50,7 @@ def add_hidden_load_and_save(page, elem, textarea_id):  # tested
     addSavePython(hidden_save, hidden_save_id, textarea_id)
     return
 
-def insert_file_browser(page, elem, uid, action, callback, title, label, textarea_id):
+def insert_file_browser(page, elem, uid, action, title, js_script):
     '''inserts a file tree object in a page.'''
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("jquery_file_tree"):
@@ -62,7 +60,6 @@ def insert_file_browser(page, elem, uid, action, callback, title, label, textare
     else:
         return
     tree_id = "tree_" + uid
-    form_id = "form_" + uid
     root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
@@ -72,21 +69,13 @@ def insert_file_browser(page, elem, uid, action, callback, title, label, textare
           collapseSpeed: -1,
           multiFolder: false
         }, function(file) {
-            path=file;
-            load_python_file('%s')
+            %s
         });
     });
-    """ % (tree_id, root, action, textarea_id)
+    """ % (tree_id, root, action, js_script)
     page.add_js_code(js_code)
     elem.text = title
     elem.attrib['class'] = "load_python"
-
-    #form = SubElement(elem, 'form', name='path', size='80', method='get',
-    #                   action=callback)
-    #SubElement(form, 'input', name='path', size='80', id=form_id)
-    #input_ = SubElement(form, 'input', type='submit',
-    #                       value=label)
-    #input_.attrib['class'] = 'crunchy'
 
     file_div = SubElement(elem, 'div')
     file_div.attrib['id'] = tree_id
@@ -97,15 +86,17 @@ def addLoadPython(page, parent, hidden_load_id, textarea_id):
     '''Inserts the widget required to browse for and load a local Python
        file.  This is intended to be used to load a file in the editor.
     '''
+    js_script = """path = file;
+                   load_python_file('%s')""" % textarea_id
     insert_file_browser(page, parent, hidden_load_id, '/jquery_file_tree_all',
-                "/load_file", _('Select a file'), 'Load file', textarea_id)
+                 _('Select a file'), js_script)
     btn = SubElement(parent, 'button',
         onclick="c=getElementById('%s');c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_load_id)
     btn.text = _("Cancel")
     return
 
 
-def filter_none(filename, basepath):
+def filter_none(filename, dummy):
     '''filters out all files and directory with filename so as to exclude
        files whose names start with "." with the possible
        exception of ".crunchy" - the usual crunchy default directory.
@@ -122,13 +113,13 @@ def jquery_file_tree_all(request):
     plugin['services'].filtered_dir(request, filter_none)
     return
 
-def editarea_loader(request):
-    """Loads source file from disk.
-       """
-    print request.args
-    url = request.args["url"]
-    # we may want to use urlopen for this?
-    source_code = open(url).read()
+#def editarea_loader(request):
+#    """Loads source file from disk.
+#       """
+#    print request.args
+#    url = request.args["url"]
+#    # we may want to use urlopen for this?
+#    source_code = open(url).read()
 
 def addSavePython(parent, hidden_save_id, textarea_id):  # tested
     '''Inserts the two forms required to browse for and load a local Python
@@ -265,7 +256,7 @@ load_save_css = """
 .load_python{position:fixed; top:100px; z-index:-1;
             border:4px solid #339; border-style: outset;
             visibility:hidden; background-color:#66C;
-            color: white; font: 14pt;}
+            color: white; font: 16pt; padding:15px;}
 .save_python{position:fixed; top:200px; z-index:-1;
             border:4px solid #063; border-style: outset;
             visibility:hidden; background-color:#696}
