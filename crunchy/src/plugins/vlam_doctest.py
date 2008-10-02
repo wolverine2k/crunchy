@@ -97,6 +97,10 @@ def doctest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
+    # path_label required in all cases to avoid javascript error when toggling editarea...
+    path_label = SubElement(elem, "span")
+    path_label.attrib['id'] = 'path_' + uid
+    #
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     if "analyzer_score" in vlam:
