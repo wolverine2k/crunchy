@@ -18,30 +18,17 @@ def insert_browser(page, *dummy): # tested
     div = Element("div")
     div.text = ' '
 
-    '''to do:  when restructuring is completed, change the code below to
-       something like
     if config[page.username]['power_browser'] is None:
         return
     else:
         try:
             plugin[config[page.username]['power_browser']](page, div, 'dummy')
             page.body.insert(0, div)
-        except KeyError:
-            this should not happen
-        except:
-            this should definitely not happen
-'''
+        except: # unrecognized value, just ignore... (see below)
+            return
 
-    if config[page.username]['power_browser'] is None:
-        return
-    elif config[page.username]['power_browser'] == 'local_python':
-        plugin['local_python'](page, div, 'dummy')
-    elif config[page.username]['power_browser'] == 'rst':
-        rst.insert_load_rst(page, div, 'dummy')
-    elif config[page.username]['power_browser'] == 'local_html':
-        plugin['local_html'](page, div, 'dummy')
-    elif config[page.username]['power_browser'] == 'remote_html':
-        plugin['remote_html'](page, div, 'dummy')
-    else:  # unrecognized value; ignore
-        return
-    page.body.insert(0, div)
+# Why ignoring the exception?  Perhaps the browser requested is not available.
+# For example, suppose the user upgrades to a new Python version but do not
+# install docutils. As a result, she will not be able to process rst files.
+# However, she could have set the configuration to include an rst browser
+# while using a previous version of Python ...

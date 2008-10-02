@@ -66,7 +66,7 @@ def load_python(request):
     request.wfile.write(page.read())
 
 def insert_load_python(page, elem, uid):
-    "Inserts a javascript browser object to load a local (html) file."
+    "Inserts a javascript browser object to load a local python file."
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_py',
                                 '/py', 'Load local Python file', 'Load Python file')
     return

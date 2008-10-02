@@ -41,27 +41,6 @@ def extract_log_id(vlam):  # tested
     else:
         return ''
 
-def insert_file_browser(parent, text, action):  # tested
-    '''inserts a local file browser object in an html page'''
-    # add a unique id to allow more than one file_browser of a given type
-    # on a page; use the "action" [e.g. /local, /rst, etc.] as part of the
-    # name so that it can be easily parsed by a human reader when viewing
-    # the html source.
-    name1 = 'browser_%s' % action[1:] + uidgen(None)
-    name2 = 'submit_%s' % action[1:] + uidgen(None)
-    form1 = SubElement(parent, 'form', name=name1)
-    SubElement(form1, 'input', type='file', name='filename', size='80',
-               onblur = "document.%s.url.value="%name2+\
-                        "document.%s.filename.value"%name1)
-    SubElement(form1, 'br')
-
-    form2 = SubElement(parent, 'form', name=name2, method='get',
-                action=action)
-    SubElement(form2, 'input', type='hidden', name='url')
-    input3 = SubElement(form2, 'input', type='submit', value=text)
-    input3.attrib['class'] = 'crunchy'
-    return
-
 def trim_empty_lines_from_end(text):  # tested
     '''remove blank lines at beginning and end of code sample'''
     # this is needed to prevent indentation error if a blank line

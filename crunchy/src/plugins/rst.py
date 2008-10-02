@@ -7,8 +7,8 @@
 # It was adapted and incorporated into Crunchy by A. Roberge
 
 # All plugins should import the crunchy plugin API via interface.py
+import os
 from src.interface import plugin
-from src.utilities import insert_file_browser
 from urllib import urlopen
 
 _docutils_installed = True
@@ -23,6 +23,7 @@ except:
 
 if _docutils_installed:
     provides = set(["/rst"])
+    requires = set(["filtered_dir", "insert_file_tree"])
     from os import linesep
     from docutils.parsers import rst
     from docutils.writers.html4css1 import HTMLTranslator
@@ -32,13 +33,15 @@ def register(): # tested
     """Registers new http handler and new widget for loading ReST files"""
     if _docutils_installed:
         plugin['register_http_handler']("/rst", load_rst)
-        plugin['register_tag_handler']("span", "title", "load_rst", insert_load_rst)
+        plugin['register_tag_handler']("div", "title", "local_rst_file", insert_load_rst)
         plugin['register_preprocessor']('txt', convert_rst)
         # the following does nothing as Firefox does not recognize rst files as
         # something it can deal with - we may have to find a way to tell
         # Firefox that these are equivalent to text files.
-        plugin['register_preprocessor']('rst', convert_rst)
+        plugin['register_preprocessor']('local_rst', convert_rst)
         plugin['add_vlam_option']('power_browser', 'rst')
+        plugin['register_http_handler']("/jquery_file_tree_rst", jquery_file_tree_rst)
+        plugin['register_service']("local_rst", insert_load_rst)
 
 if _docutils_installed:
     def int_or_one(argument):
@@ -231,7 +234,8 @@ def load_rst(request):
     file_ = open(url)
 
     rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
-    page = plugin['create_vlam_page'](rst_file, url, local=True)
+    page = plugin['create_vlam_page'](rst_file, url, local=True,
+                                      username=request.crunchy_username)
 
     request.send_response(200)
     request.end_headers()
@@ -246,8 +250,32 @@ def convert_rst(path, local=True):
     rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
     return rst_file
 
-def insert_load_rst(dummy_page, parent, dummy_uid): # tested
-    """Creates new widget for loading rst files.
-    Only include <span title="load_rst"> </span>"""
-    insert_file_browser(parent, 'Load local ReST file', '/rst')
+def insert_load_rst(page, elem, uid):
+    "Inserts a javascript browser object to load a local reStructuredText file."
+    plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_rst',
+                                '/rst', 'Load local reStructuredText file', 'Load rst file')
+    return
+
+def filter_rst(filename, basepath):
+    '''filters out all files and directory with filename so as to include
+       only files whose extensions are ".rst" or ".txt" with the possible
+       exception of ".crunchy" - the usual crunchy default directory.
+    '''
+    if filename.startswith('.') and filename != ".crunchy":
+        return True
+    else:
+        fullpath = os.path.join(basepath, filename)
+        if os.path.isdir(fullpath):
+            return False   # do not filter out directories
+        ext = os.path.splitext(filename)[1][1:] # get .ext and remove dot
+        if ext == 'rst' or ext == "txt":
+            return False
+        else:
+            return True
+
+def jquery_file_tree_rst(request):
+    '''extract the file information and formats it in the form expected
+       by the jquery FileTree plugin, but excludes some normally hidden
+       files or directories, to include only reStructuredText files.'''
+    plugin['services'].filtered_dir(request, filter_rst)
     return
