@@ -205,7 +205,10 @@ function load_python_file(obj_id)
             }
         };
     h.open("GET", "/load_file"+"?"+"path="+path, true);
-    document.getElementById("path_"+obj_id.substring(5)).innerHTML = path;
+    try{
+        document.getElementById("path_"+obj_id.substring(5)).innerHTML = path;
+        }
+    catch (e){};
     h.send('');
 }
 function save_python_file(path, id)
