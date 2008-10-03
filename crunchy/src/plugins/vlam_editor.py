@@ -85,7 +85,7 @@ def insert_bare_editor(page, elem, uid):
         python_code = util.extract_code_from_interpreter(python_code)
     else:
         elem.attrib['title'] = "python"
-    code, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    dummy, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = vlam
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
@@ -103,55 +103,42 @@ def insert_bare_editor(page, elem, uid):
     plugin['services'].insert_editor_subwidget(page, elem, uid, python_code)
     return vlam
 
-def insert_editor(page, elem, uid):  # tested
+def insert_editor(page, elem, uid):
     """handles the editor widget"""
 
     vlam = insert_bare_editor(page, elem, uid)
-    log_id = util.extract_log_id(vlam)
-     #some spacing if buttons are needed, they appear below.
-    if "external in vlam" or not "no_internal" in vlam:
+    #log_id = util.extract_log_id(vlam)
+    SubElement(elem, "br")
+    if not "no_internal" in vlam:
+        btn1 = SubElement(elem, "button")
+        btn1.attrib["onclick"] = "exec_code('%s')" % uid
         SubElement(elem, "br")
-    # the actual buttons used for code execution; we make sure the
-    # button for external execution, if required, appear first.
-    #
-    # note: as the code is written, it is possible that an execution
-    # button will NOT be included.  Perhaps the tutorial writer wants
-    # the user to only execute code from the "save and run" option
-    # of the editor...
-
-    btn = SubElement(elem, "button")
+    btn2 = SubElement(elem, "button", id="run_from_file_"+uid)
+    btn2.attrib["onclick"] = "exec_code_externally('%s')" % uid
+    btn2.text = _("Run from file")
+    path_label = SubElement(elem, "span")
+    path_label.attrib['id'] = 'path_' + uid
+    path_label.attrib['class'] = 'path_info'
 
     if "external" in vlam:
-        path_label = SubElement(elem, "span")
-        path_label.attrib['id'] = 'path_' + uid
         path_label.text = config[page.username]['temp_dir'] + os.path.sep + "temp.py"
-        btn.attrib["onclick"] = "exec_code_externally('%s')" % uid
-        btn.text = _("Execute as external program")
         if "analyzer_score" in vlam:
-            plugin['services'].add_scoring(page, btn, uid)
-        if log_id:  # override - probably not useful to log
-            t = 'run_external_editor'
-            config[page.username]['logging_uids'][uid] = (log_id, t)
-        path_label.attrib['class'] = 'path_info'
+            plugin['services'].add_scoring(page, btn2, uid)
         if not "no_internal" in vlam:
-            SubElement(elem, "br")
-            btn2 = SubElement(elem, "button")
-            btn2.attrib["onclick"] = "exec_code('%s')" % uid
-            btn2.text = _("Execute as separate thread")
-            if "analyzer_score" in vlam:
-                plugin['services'].add_scoring(page, btn2, uid)
+            btn1.text = _("Execute as separate thread")
     else:
-        btn.attrib["onclick"] = "exec_code('%s')" % uid
-        btn.text = _("Execute")
+        path_label.text = "" # effectively hides it.
+        btn1.text = _("Execute")
+        # Note that btn2 will be revealed by execution code when a file is saved;
+        # see editarea.py for this.
+        btn2.attrib['style'] = "display:none;"
         if "analyzer_score" in vlam:
-            plugin['services'].add_scoring(page, btn, uid)
+            plugin['services'].add_scoring(page, btn1, uid)
 
     if "analyzer_report" in vlam:
-            plugin['services'].insert_analyzer_button(page, elem, uid)
-
-    # leaving some space to start output on next line, below last button
+        SubElement(elem, "br")
+        plugin['services'].insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
-    # an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 def insert_alternate_python(page, elem, uid):
