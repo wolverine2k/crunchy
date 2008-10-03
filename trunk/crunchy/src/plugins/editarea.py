@@ -113,33 +113,6 @@ def jquery_file_tree_all(request):
     plugin['services'].filtered_dir(request, filter_none)
     return
 
-#def add_save_python(parent, hidden_save_id, textarea_id):  # tested
-#    '''Inserts the two forms required to browse for and load a local Python
-#       file.  This is intended to be used to load a file in the editor.
-#    '''
-#    filename = 'filename' + hidden_save_id
-#    path = 'path' + hidden_save_id
-#    SubElement(parent, 'br')
-#    form1 = SubElement(parent, 'form')
-#    SubElement(form1, 'input', type='file', id=filename, size='80')
-#    SubElement(form1, 'br')
-#
-#    form2 = SubElement(parent, 'form')
-#    form2.text = _("Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally.")
-#    SubElement(form2, 'input', type='hidden', id=path)
-#    btn = SubElement(parent, 'button',
-#        onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
-#        "c=getElementById('%s');path=c.value;save_python_file(path,'%s');"%(path, textarea_id))
-#    btn.text = _("Save Python file")
-#    btn2 = SubElement(parent, 'button',
-#        onclick="c=getElementById('%s');path=c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_save_id)
-#    btn2.text = _("Cancel")
-#    btn3 = SubElement(parent, 'button',
-#        onclick="a=getElementById('%s');b=getElementById('%s');a.value=b.value;"%(path, filename)+
-#        "c=getElementById('%s');path=c.value;save_and_run(path,'%s');"%(path, textarea_id))
-#    btn3.text = _("Save and Run")
-#    return
-
 def add_save_python(page, parent, hidden_save_id, textarea_id):
     '''Inserts the widget required to browse for and save a local Python
        file.  This is intended to be used to load a file in the editor.
@@ -224,7 +197,9 @@ function save_python_file(path, id)
         return;
     }
     else{
-        alert(path);
+        obj = document.getElementById('run_from_file_'+id.substring(5));
+        obj.style.visibility = "visible";
+        obj.style.display = "inline";
     }
     data = document.getElementById(id).value;
     try{
@@ -240,20 +215,7 @@ function save_python_file(path, id)
     obj.style.visibility = "hidden";
     obj.style.zIndex = -1;
 };
-
-function save_and_run(path, id)
-{
-	data = document.getElementById(id).value;
-    document.getElementById("path_"+id.substring(5)).innerHTML = path;
-	var h = new XMLHttpRequest();
-	h.open("POST", "/save_and_run%s", true);
-	// Use an unlikely part of a filename (path) as a separator between file
-	// path and file content.
-	h.send(path+"_::EOF::_"+editAreaLoader.getValue(id));
-    var obj = document.getElementById('hidden_save'+id);
-	obj.style.visibility = "hidden";
-    obj.style.zIndex = -1;
-};""" % plugin['session_random_id']
+"""
 
 # Some javascript code
 editAreaLoader_js = """
