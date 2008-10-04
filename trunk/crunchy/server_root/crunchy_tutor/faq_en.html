@@ -41,6 +41,11 @@ Python's.  Can you really do this?</a>
 should I do anything special?</a>
 </li>
 <li>
+<a href="#my_own_style">I have written a tutorial with my own style and I would like
+for Crunchy not to modify it; why can't I?</a>
+</li>
+
+<li>
 <a href="#disappearing_cursor">The cursor (caret) sometimes does not show up in an editor or
 textarea.  Surely, this is a Crunchy bug.</a>
 </li>
@@ -90,6 +95,30 @@ image displayed on below in a prominent place on your blog or tutorial.  This im
 crunchy-python-powered.png and the original can be found in the server_root
 directory of the Crunchy distribution.</p>
 <img src="../crunchy-python-powered.png" alt="Crunchy Logo"/>
+
+<a id="my_own_style"> </a><br/>
+<h4>Why can't Crunchy leave my code styling alone?</h4>
+<p>
+In the past, Crunchy had an option called "no_style" which would instruct
+Crunchy to not style the code, but leave in place the code of the user.  However,
+consider the following possible code:
+</p>
+<pre title="html">
+&lt;pre title="doctest no_style"&gt;
+&gt;&gt;&gt; &lt;span style="display:none"&gt;do_nasty_stuff()&lt;/span&gt;
+&gt;&gt;&gt; add(3, 4)
+7
+&lt;/pre&gt;
+</pre>
+<p>
+In this situation, a user could try to define a simple function to satisfy the
+visible doctest only to have some nasty code (hidden from view) executed.
+In other instances (for example, with an editor), a nasty line could be hidden in
+a long piece of code that would be perused in the styled section, but overlooked in
+the textarea before being executed. Since Crunchy uses Pygments, the solution we
+propose is for the tutorial writer to design a Pygments style (plugin) and have the
+reader use it to view the tutorial.  Yes, it's a bit more work, but it's safer.
+</p>
 
 <a id="disappearing_cursor"> </a><br/>
 <h4 >Vanishing cursor?</h4>
