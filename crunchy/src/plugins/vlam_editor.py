@@ -109,13 +109,13 @@ def insert_editor(page, elem, uid):
     vlam = insert_bare_editor(page, elem, uid)
     #log_id = util.extract_log_id(vlam)
     SubElement(elem, "br")
-    if not "no_internal" in vlam:
+    if not ("no_internal" in vlam and "external" in vlam):
         btn1 = SubElement(elem, "button")
         btn1.attrib["onclick"] = "exec_code('%s')" % uid
         SubElement(elem, "br")
     btn2 = SubElement(elem, "button", id="run_from_file_"+uid)
     btn2.attrib["onclick"] = "exec_code_externally('%s')" % uid
-    btn2.text = _("Run from file")
+    btn2.text = _("Save and Run from file")
     path_label = SubElement(elem, "span")
     path_label.attrib['id'] = 'path_' + uid
     path_label.attrib['class'] = 'path_info'

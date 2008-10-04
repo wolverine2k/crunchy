@@ -7,18 +7,50 @@
 <body>
 <div id="main_title">How does Crunchy perform its magic?</div>
 <div id='content'>
-<p>In case you are wondering, we will explain graphically how Crunchy performs it magic.
-There are four parts to consider.</p>
+
+<p>In case you are wondering how Crunchy manages to transform
+boring static html pages into exciting interactive Python sessions
+right within your browser window ... you are at the right place.
+However, before we begin to explain how Crunchy works, you might have
+the following question on your mind: </p>
+
+<h4 >Is it safe to browse a web site with Crunchy?</h4>
+<div class="wide-warning">
+<h4>We are serious about safety.</h4>
+<p>While we try to be humorous in Crunchy's documentation, security is not
+a laughing matter.  We believe it is important that we provide you with a full
+description of how Crunchy deals with security matters.
+Feel free to contact us directly if you have any questions or suggestions
+concerning security.</p>
+</div>
+
+<p>In case you are wondering, we will explain, using words and diagrams,
+how Crunchy performs it magic.
+There are a few steps to consider.</p>
+<ol>
 <li>The User starts Crunchy and communication is established.</li>
-<li>Crunchy sanitizes the html pages requested to remove unwanted elements.</li>
-<li>Crunchy processes the markup (vlam) to insert appropriate interactive elements.</li>
+<li>The User has to establish his credentials, entering a username
+and password.</li>
+<li>Crunchy retrieves an html page.</li>
+<li>Crunchy parses the page to create a tree structure 
+(using Elementtree - more on this later).</li>
+<li>Crunchy sanitizes the html pages requested to remove unwanted elements,
+such as any existing javascript, links to javascript files
+and various undesired html tags.</li>
+<li>Crunchy processes the Crunchy specific markup (vlam), adding
+custom elements <b><em>and</em></b> custom javascript.</li>
+<li>Crunchy feeds the page to the browser, leaving a line of
+communication open, waiting for user instruction.</li>
 <li>The User requests that some Python code be executed</li>
-</ul>
-<p>Note: all images have been produced using 
-<a href="http://www.websequencediagrams.com/" title="external_link">a wonderful free tool.</a>
+</ol>
+<p>There is a saying that a picture is worth a thousand words.  Well, here's a
+thousand words worth, produced using
+<a href="http://www.websequencediagrams.com/" title="external_link">
+a wonderful <b>free</b> tool.</a>
 </p>
 <h3>Starting Crunchy and User Authentication</h3>
-<p>Explain how we start Crunchy, etc.</p>
+<p>Let's assume you've set up a user account (username and password) and are
+starting Crunchy.  The interaction will proceed as follows.</p>
 <img src="/images/authenticate1.png">
 <p>Future authentication requests are done using the stored information, without
 requesting any information from the user, as long as the browser session
@@ -32,64 +64,55 @@ step indicated by "Retrieves and process file"
 on the diagram to the left.
 </p>
 </div>
-
-
-
 <img src="/images/authenticate2.png">
 
-<h4 >Is it safe to browse a web site with Crunchy?</h4>
-<div class="wide-warning">
-<h4>We are serious about safety</h4>
-<p>While we try to be humorous in Crunchy's documentation, security is not
-a laughing matter.  We believe it is important that we provide you with a full
-description of how Crunchy deals with security matters.
-Feel free to contact us directly if you have any questions or suggestions
-concerning security.</p>
-</div>
 
 <p>
-We begin with an overview explaining how Crunchy work.  
-Assume Crunchy is running and that the user click on a link 
-(or similar method) to go to a new page.
-</p>
-<ol>
-<li>Crunchy retrieves the page.</li>
-<li>Crunchy parses the page to create a tree structure 
-(using Elementtree - more on this later).</li>
-<li>Crunchy removes any existing javascript, links to javascript files
-and various undesired html tags.</li>
-<li>Crunchy processes the Crunchy specific markup (vlam), adding
-custom elements <b><em>and</em></b> custom javascript.</li>
-<li>Crunchy feeds the page to the browser, leaving a line of
-communication open, waiting for user instruction.</li>
-</ol>
-<p>
-We will address the various points in reverse order.
-At step 5, Crunchy is simply waiting for the user's instruction, and will
+Once a page has been processed and fed to the browser, the user
+can start interacting with the Python backend as illustrated below.
+Crunchy is simply waiting for the user's instruction, and will
 not execute any code on the page unless the user takes some active steps,
 like clicking on a button or typing some code and pressing the "enter" key
 to send it to an interpreter.
 <em>If the user types in the appropriate Python code to delete all files
 on the computer ...</em> Crunchy will dutifully execute that code.  There is
 nothing we can do about this.  The same thing could happen if a user
-started a normal Python shell and typed in the same code.  So, at step 5,
-it is <em>user beware</em>!
+started a normal Python shell and typed in the same code.
 </p>
 <h3>User Beware: Running Arbitrary Python Code</h3>
 <img src="/images/run_python.png">
 
+<div class="notes" style="width:200px">
+<h4>Custom code for interaction.</h4>
 <p>
-At step 4, Crunchy inserts the required javascript code to enable 
+We will show the basic code required for the interaction below,
+after we complete the description of how things work using
+only words and diagrams.
+</p>
+</div>
+
+
+<p>
+Before this type of interaction can happen,
+Crunchy inserts the required javascript code to enable 
 communication between the browser and the Python interpreter. 
-On its own, this step is harmless.
+On its own, this step is harmless...
 </p>
 <p>
-At step 3, Crunchy removes any pre-existing javascript code, etc.
+However, before it includes this custom code,
+Crunchy removes any pre-existing javascript code, etc.
 <em>What if Crunchy fails in removing the existing javascript code?</em>
 And, <em>what if the existing javascript code is designed to 
 identify a Crunchy specific javascript function on the page and uses it 
 to send some malicious Python code to the interpreter?</em>.
 </p>
+
+<p>If something like this were to happen ... it would be disastrous.  
+Therefore, we must be very careful in identifying and removing potentially
+harmful content.  The method
+we use is based on the existence of a <em>white list</em> that we created.
+</p>
+
 <div class="notes">
 <h4>Quote from feedparser.org</h4>
 <p>
@@ -122,10 +145,7 @@ definitions can contain executable code.
 </p>
 </div>
 
-<p>If something like this were to happen ... it would be disastrous.  
-Therefore, we must be very careful in identifying and removing potentially
-harmful content.  The method
-we use is based on the existence of a <em>white list</em> that we created.
+<p>
 Before we proceed with a more detailed explanation, you might want
 to read 
 <a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">this</a>
@@ -241,30 +261,42 @@ already be too late...</p>
 </ul>
 <p>
 Using each of these levels, Crunchy parses the page as you would expect according to
-the above descriptions.  The difference is that step 4 <small>[where Crunchy
+the above descriptions.  The difference is that step 6 <small>[where Crunchy
 inserts custom javascript code and enables communication between the
 browser and the Python interpreter]</small> does not take place.  Crunchy simply
 displays the page so that it looks almost like it would normally, but no Python code execution
 is possible.  A user can select a 'display' mode, inspect the page content to verify that
 no foreign javascript is included, before loading it normally.</p>
 <p>To help you, whenever some tags or attributes are removed from a page, Crunchy inserts a link
-at the top of the page giving you some summary of what it actually removed.</p>
-<h4>How do I select a security level?</h4>
+in the menu giving you some summary of what it actually removed.</p>
 
-
-
-
-
-<p>Draw attention to the "retrieve and process file" box.  Explain that this
-consists of two step: a sanitizing/filtering step, and the processing of markup.</p>
+<h4>Back to using pictures...</h4>
+<p>Let us go back to our use of diagrams.  
+Remember the "retrieve and process file" box.  This
+consists of two step: a sanitizing/filtering step, and the processing of markup.  
+We will take each one in turn.</p>
 <h3>Security: Filtering Unwanted Elements</h3>
-<p>Perhaps add a word about three (or six) security levels</p>
 <img src="/images/security.png">
 <h3>Processing vlam: Adding Interactive Elements</h3>
+<p>Crunchy has been designed with a plugin architecture.  We have found that this
+makes it very easy to add new features to Crunchy.  Each interactive element is
+added by a specific plugin.</p>
 <img src="/images/process_vlam.png">
 
 <h3>The secret ingredient to the interactivity</h3>
-<p>Explain what the following javascript function does</p>
+<p>Interactivity is achieved through the use of custom javascript
+in each html page setting up a communication channel with the
+Python backend.  The technique we use is known as "comet" and is
+described in <a href="http://en.wikipedia.org/wiki/Comet_(programming)" 
+title="external_link">Wikipedia</a> as follows.</p>
+
+<div class="notes" style="width:600px;">
+... many Comet applications instead opt for long polling, which is easier to implement on the browser side, and works, at minimum, in every browser that supports XHR. As the name suggests, long polling requires the client to poll the server for an event (or set of events). The browser makes an Ajax-style request to the server, which is kept open until the server has new data to send to the browser, which is sent to the browser in a complete response. The browser initiates a new long polling request in order to obtain subsequent events.
+</div>
+
+<br style="clear:both;">
+<p>Here's the javascript code we use to do this.  If you find the code
+cryptic, it might be because we use the jquery library.</p>
 <pre title="javascript linenumber">
 function runOutput(channel){
     $.ajax({type : "GET",
@@ -276,12 +308,13 @@ function runOutput(channel){
             }
             })
 };
-
-$(document).ready(function(){
-    runOutput("%s");
-});
 </pre>
-<p>On the server side.</p>
+<p>Let's explain what this does. We define a function [runOutput] that starts
+an ajax-style request.  Upon successful completion, this function calls itself,
+setting up a new request.  The actual request is a special url [/comet] used
+to communicate with the server.</p>
+<p>On the server side, we have the following function. [note: all the code has
+been copied, with only minor editing, from the Crunchy source.]</p>
 <pre title="python linenumber=20">
 def comet(request):
     """An http path handler, called from the page - blocks until there is data
@@ -296,7 +329,7 @@ def comet(request):
     request.wfile.write(data)
     request.wfile.flush()
 </pre>
-
+<p>The actual work is being done by the get() method of a CrunchyIOBuffer instance.</p>
 <pre title="python linenumber=40">
 class CrunchyIOBuffer(StringBuffer):
     """A version optimised for crunchy IO"""
@@ -306,11 +339,12 @@ class CrunchyIOBuffer(StringBuffer):
         """put some output into the pipe"""
         # more code ...
 </pre>
-
+<p>CrunchyIOBuffer is a subclass of a StringIOBuffer, where the actual get() method
+is defined.</p>
 <pre title="python linenumber=50">
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
-    together.  This is """
+    together."""
     def __init__(self):
         self.lock = threading.RLock()
         self.event = threading.Event()
@@ -340,6 +374,11 @@ class StringBuffer(object):
 
 # more code ...
 </pre>
+<p>As you can see, the Python server waits until it has some code in the queue,
+and then sends it back to the browser.  The browser takes the code received, deals with it,
+and starts another request to get more code from the Python server.</p>
+<p>We realise that this is a bit cryptic ... but it should be enough to get you started
+if you are interested in digging deeper in Crunchy's actual code.</p>
 
 
 </div>

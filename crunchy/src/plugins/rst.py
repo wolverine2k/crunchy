@@ -71,9 +71,6 @@ if _docutils_installed:
             if self.arguments[0].strip() not in ['interpreter', 'isolated',
                                         'parrot', 'Parrots', 'TypeInfoConsole']:
                 raise ValueError("Wrong interpreter type: %s" % (self.arguments[0].strip(),))
-            if len(self.arguments) is 2:
-                if self.arguments[1].strip() is not "no_style":
-                    raise ValueError("Invalid argument: %s" % (self.arguments[1].strip(),))
             listOut = [ x.strip() for x in self.arguments ]
             for key in [ "linenumber", "log_id" ]:
                 if self.options.has_key(key):
@@ -93,7 +90,7 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments:
-                if arg.strip() not in ['no_style', 'no_copy', 'no_pre',
+                if arg.strip() not in ['no_copy', 'no_pre',
                                        'external', 'no_internal']:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['editor'] + self.arguments ]
@@ -114,9 +111,6 @@ if _docutils_installed:
         def run(self):
             self.assert_has_content()
             code = linesep.join(self.content)
-            if len(self.arguments) is 1:
-                if self.arguments[0] is not 'no_style':
-                    raise ValueError("Invalid argument: %s" % (self.arguments[0].strip(),))
             listOut = [ x.strip() for x in ['doctest'] + self.arguments ]
             for key in [ "linenumber", "log_id" ]:
                 if self.options.has_key(key):
@@ -134,7 +128,7 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments[1:]:
-                if arg.strip() not in [ 'no_style', 'no_copy', 'no_pre' ]:
+                if arg.strip() not in ['no_copy', 'no_pre' ]:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
             if self.options.has_key("linenumber"):
@@ -168,7 +162,7 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             for arg in self.arguments:
-                if arg.strip() not in ['no_style', 'no_copy', 'no_pre',
+                if arg.strip() not in ['no_copy', 'no_pre',
                                        'external', 'no_internal']:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
