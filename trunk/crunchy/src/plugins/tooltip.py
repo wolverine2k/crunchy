@@ -32,13 +32,11 @@ def insert_tooltip(page, *dummy):
         tooltip = Element("div")
         tooltip.attrib["id"] = "interp_tooltip"
         tooltip.text = " "
-        tooltip.attrib["onmousedown"] = "grab(this);"
         page.body.append(tooltip)
 
         help_menu = Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
-        help_menu.attrib["onmousedown"] = "grab(this);"
         page.body.append(help_menu)
 
         help_menu_x = Element("div")
