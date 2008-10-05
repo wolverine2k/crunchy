@@ -13,6 +13,15 @@
 
 <div id="main_title">Inserting Interactive Elements</div>
 <div id="content">
+
+<div class="notes">
+<h4>Needs updating</h4>
+<p>This file needs updating (and proof-reading...), especially when it comes to
+styling information (css classes).  If you find any error, please
+do not hesitate to let us know.
+</p>
+</div>
+
 <p>As we have mentioned, Crunchy can process files enhanced by VLAM.  First, we
  will look at interactive elements that can be inserted by Crunchy, as
  these are likely to be the most interesting.</p>
@@ -20,6 +29,7 @@
 <li><a href="#interpreter">Interpreter</a></li>
 <li><a href="#editor">Code editor</a></li>
 <li><a href="#doctest">DocTest</a></li>
+<li><a href="#unittest">UnitTest</a></li>
 <li><a href="#alternate">Launching programs using alternate Python version</a></li>
 </ul>
 <p>A description of these is to be found just below the <em>Crunchy attributes</em> section.</p>
@@ -71,12 +81,6 @@ on the left for some actual examples.</p>
 <tr><th colspan='2'>Options (note that <code>interpreter</code> can be replaced by any
 of the different types mentioned above)</th></tr>
 <tr>
-	<td><code>no_style</code></td>
-	<td>Prevents the Python code inside the &lt;pre&gt; element from being
-	styled by Crunchy.<br/>
-	Can be used with: <code>interpreter, editor, doctest, image_file</code>.</td>
-</tr>
-<tr>
 	<td><code>no_copy</code></td>
 	<td>Prevents the Python code inside the &lt;pre&gt; element from being
 	copied into the editor.<br/>
@@ -124,7 +128,7 @@ of the different types mentioned above)</th></tr>
 
 <h2 ><a id="interpreter">Interpreter</a></h2>
 <p>You can request Crunchy to add a Python interpreter via <br/>
-<code title="html">&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
+<code title="html">&lt;pre title="&lt;&lt;interpreter&gt;&gt; [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
 <code title="html">&lt;/pre&gt;</code></p> <p> where the square brackets
 indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
@@ -158,7 +162,7 @@ code; the line numbering will start at 1 unless a different starting value is gi
 <h2 ><a id="editor">Code Editor</a></h2>
 <p>Code in a code editor is saved in a temporary file and executed as a module in a separate process.</p>
 <pre title="html">
-&lt;pre title="editor [no_style] [no_copy] [no_pre] 
+&lt;pre title="editor [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
@@ -184,7 +188,7 @@ code.</p>
 </dl>
 
 <h2 ><a id="doctest">DocTest</a></h2>
-<p><code title="html">&lt;pre title="doctest [no_style] [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
+<p><code title="html">&lt;pre title="doctest [linenumber]"&gt;&lt;/pre&gt;</code> adds a doctest to the page; the text 
 between the <code>pre</code> tags is always placed before the textarea and 
 used as the doctest.</p>
 <p>The output from the doctest result is further processed by Crunchy to make error messages a bit
@@ -200,11 +204,27 @@ friendlier to beginners.</p>
 	<dd>The div containing all the output.</dd>
 </dl>
 
+<h2 ><a id="unittest">UnitTest</a></h2>
+<p><code title="html">&lt;pre title="unittest [linenumber]"&gt;&lt;/pre&gt;</code> adds a unittest 
+to the page; the text 
+between the <code>pre</code> tags is always placed before the textarea and 
+used as the unittest.</p>
+
+<p>Unittest use the following CSS classes:</p>
+<dl>
+<dt>span.stdout</dt>
+	<dd>Output from stdout (ie. normal output).</dd>
+<dt>span.stderr</dt>
+	<dd>Output from stderr (ie. error output).</dd>
+<dt>div.doctest_out</dt>
+	<dd>The div containing all the output.</dd>
+</dl>
+
 <h2 ><a id="alternate">Alternate Python version</a></h2>
 <p>Insert an editor, an input box to specify the Python version to use,
 and a button to execute the code externally using the specified Python version.</p>
 <pre title="html">
-&lt;pre title="alternate_python_version [no_style] [no_copy] [no_pre] 
+&lt;pre title="alternate_python_version [no_copy] [no_pre] 
             [linenumber [=start_number]] [external [no_internal]]"&gt;
 Some Python code
 
