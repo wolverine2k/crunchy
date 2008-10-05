@@ -38,7 +38,7 @@ def simplify_traceback(code=None, username=None):
     except:
         lineno = trace.tb_lineno
     if ex_type is SyntaxError:
-        return simplify_syntax_error(code, ex_type, value, trace, lineno)
+        return simplify_syntax_error(code, ex_type, value, trace, lineno, username)
     if ex_type is SystemExit:
         value = "Your program exited.\n"
 
@@ -100,7 +100,7 @@ def simplify_traceback(code=None, username=None):
     return retval.getvalue().encode("utf-8") + added_info
 
 
-def simplify_syntax_error(code, ex_type, value, trace, lineno):
+def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
     """
     print out a syntax error
     closely based on showsyntaxerror from the code module

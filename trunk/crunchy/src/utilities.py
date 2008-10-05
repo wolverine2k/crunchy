@@ -102,7 +102,9 @@ def wrap_in_div(elem, uid, vlam, element_type, show_vlam):
     elem.text = ''
     elem.tag = "div"
     elem.attrib["id"] = "div_"+uid
-    elem.attrib['class'] = element_type # 'editor', 'doctest', etc.
+    username = names[uid.split("_")[0]]
+    # element_type = 'editor', 'doctest', etc.
+    elem.attrib['class'] = element_type + " " + config[username]['style']
     if not "no_pre" in vlam:
         try:
             elem.append(elem_copy)
