@@ -176,8 +176,10 @@ function convertToEditor(elm, exec_btn_label) {
 
     execButton = document.createElement('button');
     execButton.appendChild(document.createTextNode(exec_btn_label));
-    execButton.onclick = function () { push_input(theID) };
     execButton.id = "exec_but_" + theID;
+    execButton.onclick = function () {
+        push_input(this.id.substring(9));
+        };
 
     newReturn = document.createElement('br');
     newReturn.id = "br_" + theID;
