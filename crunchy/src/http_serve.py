@@ -112,8 +112,13 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
         if DEBUG:
             print("entering get_handler")
         if path in self.handler_table:
+            if DEBUG:
+                print("path %s in self.handler_table."%path)
+                print("self.handler_table[path] = %s" % self.handler_table[path])
             return self.handler_table[path]
         else:
+            if DEBUG:
+                print("path %s NOT in self.handler_table."%path)
             return self.default_handler
 
 class HTTPRequestHandler(BaseHTTPRequestHandler):

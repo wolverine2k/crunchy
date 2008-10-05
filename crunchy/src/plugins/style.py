@@ -147,7 +147,7 @@ class PreHtmlFormatter(HtmlFormatter):
         yield 0, '<pre>\n'
         for i, t in source:
             yield i, t
-        yield 0, '\n</pre>'
+        yield 0, '</pre>'
 
 
 def _style(raw_code, language, cssclass):
