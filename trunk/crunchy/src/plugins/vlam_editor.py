@@ -92,7 +92,7 @@ def insert_bare_editor(page, elem, uid):
     util.wrap_in_div(elem, uid, vlam, "editor", show_vlam)
     if config[page.username]['popups']:
         # insert popup helper
-        img = Element("img", src="/images/help.png",
+        img = Element("img", src="/images/help.png", style="height:32px;",
                 title = "cluetip Hello %s! "%page.username + "This is an Editor.",
                 rel = "/docs/popups/editor.html")
         elem.append(img)

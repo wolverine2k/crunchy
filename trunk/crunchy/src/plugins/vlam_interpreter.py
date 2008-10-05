@@ -103,7 +103,7 @@ def insert_interpreter(page, elem, uid):
 
     if config[page.username]['popups'] and interp_kind is not None:
         # insert popup helper
-        img = Element("img", src="/images/help.png",
+        img = Element("img", src="/images/help.png", style="height:32px;",
                 title = "cluetip Hello %s! "%page.username + titles[interp_kind],
                 rel = help_files[interp_kind])
         elem.append(img)

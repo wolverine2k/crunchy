@@ -17,9 +17,9 @@ def register():
     plugin['register_begin_pagehandler'](add_configuration_to_menu)
 
 def add_configuration_to_menu(page):
-    '''adds a menu item allowing the user to chose the preferences'''
+    '''adds a menu item allowing the user to choose the preferences'''
     menu_item = Element("li")
-    link = SubElement(menu_item, 'a', href="/docs/advanced_tutorial/preferences.html")
+    link = SubElement(menu_item, 'a', href="/docs/basic_tutorial/preferences.html")
     link.text = _("Preferences")
     additional_menu_items['preferences'] = menu_item
 
@@ -63,8 +63,6 @@ def show(parent, username, uid, to_show=None):
             _type = select_option_type(key, username, uid)
             if (_type in to_show) or (key in to_show):
                 keys.append(key)
-
-
 
     #for key in configuration.options:
     #    _type = select_option_type(key, username, uid)

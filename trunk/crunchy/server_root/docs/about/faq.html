@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: FAQ, Bugs, etc.</title>
+	<meta title="template local_template.html">
+</head>
+
+<body>
+<div id="main_title">FAQ, Bugs, etc.</div>
+
+<div id="content">
+<blockquote><i>
+Just a flesh wound.</i> <br/>
+<small>-said the Black Knight after both his arms were cut off in 
+<em>Monty Python and the Holy Grail</em>.</small>
+</blockquote>
+<p>Crunchy does not have bugs! 
+We do recognize that it does have a few interesting <em>features</em>; however, you should
+not confuse those with actual <em><b>bugs</b></em>.</p>
+<h3 >If you do have some questions...</h3>
+<ul>
+<li>
+<a href="#secure">If it safe to browse a web site with Crunchy?</a> 
+</li>
+
+<li>
+<a href="#w3c">The external page I view with Crunchy is all messed up as compared with viewing
+it directly with my browser.</a>
+</li>
+<li>
+<a href="#colours">Crunchy's logo and the choice of colours look very much like
+Python's.  Can you really do this?</a>
+</li>
+<li>
+<a href="#crunchy_ready">My blog or tutorial shows up very well using Crunchy; 
+should I do anything special?</a>
+</li>
+<li>
+<a href="#my_own_style">I have written a tutorial with my own style and I would like
+for Crunchy not to modify it; why can't I?</a>
+</li>
+
+<li>
+<a href="#disappearing_cursor">The cursor (caret) sometimes does not show up in an editor or
+textarea.  Surely, this is a Crunchy bug.</a>
+</li>
+<li>
+<a href="#selenium">When I enable an editor, the syntax coloring does not work, and
+each character appears with a shadow.</a>
+</li>
+<li><a href="#bug">I'm sure I found a bug; what do I do?</a></li>
+<li><a href="#ipython">Can I use IPython with Crunchy?</a></li>
+</ul>
+
+<h3 > ... we might have some answers.</h3>
+<a id="secure"> </a><br/>
+<h4 >Is it safe to browse a web site with Crunchy?</h4>
+<p>We believe it is.  However, you may want to read 
+<a href="/docs/about/magic.html">this</a> to find out more about how Crunchy actually
+works, and decide for yourself what is safe, and what is not.
+</p>
+
+
+<a id="w3c"> </a><br/>
+<h4 >Page messed up?</h4>
+<p>
+Unfortunately, Crunchy sometimes does not do a very good job of processing and rendering
+<b>non W3C compliant</b> pages for display in the browser. If you find such a page, complain
+to its creator, not to us! 
+If you do find a W3C compliant page that Crunchy does not interpret properly, <em>then</em> 
+let us know.  However, be aware that there are two reasons that may cause Crunchy
+not to display a W3C compliant page properly:</p>
+<ul>
+<li>In its normal "paranoid" mode, Crunchy can filter out a lot of styling instructions
+that only <em>look</em> like they may open the door to some malicious javascript code.
+We make no apology for this: security trumps appearance in our books.
+</li>
+<li>Perhaps there is a conflict between the html/css class and id names used by
+Crunchy and that of the web page it displays.</li>
+</ul>
+
+<a id="colours"> </a><br/>
+<h4 >Look and Feel</h4>
+<p> If you are wondering, we did obtain permission from officials of the 
+Python Software Foundation (PSF) for adapting the official Python logo for Crunchy.  
+In fact, someone from the PSF made it for us. 
+However, this work is not endorsed officially by the PSF.
+</p>
+
+
+<a id="crunchy_ready"> </a><br/>
+<h4 >Crunchy ready blog or tutorial?</h4>
+<p>
+If your blog or tutorial can be well displayed by Crunchy, 
+either because it is W3C compliant or because (or especially if) you
+have added special Crunchy markup (vlam), please consider adding a copy of the
+image displayed on below in a prominent place on your blog or tutorial.  This images is
+crunchy-python-powered.png and the original can be found in the server_root
+directory of the Crunchy distribution.</p>
+<img src="/images/crunchy-python-powered.png" alt="Crunchy Logo"/>
+
+<a id="my_own_style"> </a><br/>
+<h4>Why can't Crunchy leave my code styling alone?</h4>
+<p>
+In the past, Crunchy had an option called "no_style" which would instruct
+Crunchy to not style the code, but leave in place the code of the user.  However,
+consider the following possible code:
+</p>
+<pre title="html">
+&lt;pre title="doctest no_style"&gt;
+&gt;&gt;&gt; &lt;span style="display:none"&gt;do_nasty_stuff()&lt;/span&gt;
+&gt;&gt;&gt; add(3, 4)
+7
+&lt;/pre&gt;
+</pre>
+<p>
+In this situation, a user could try to define a simple function to satisfy the
+visible doctest only to have some nasty code (hidden from view) executed.
+In other instances (for example, with an editor), a nasty line could be hidden in
+a long piece of code that would be perused in the styled section, but overlooked in
+the textarea before being executed. Since Crunchy uses Pygments, the solution we
+propose is for the tutorial writer to design a Pygments style (plugin) and have the
+reader use it to view the tutorial.  Yes, it's a bit more work, but it's safer.
+</p>
+
+<a id="disappearing_cursor"> </a><br/>
+<h4 >Vanishing cursor?</h4>
+<p>
+How dare you suggest that Crunchy could have a bug, simply because sometimes you can't see 
+the cursor (caret) inside an editor.  Actually, this is a 
+long standing Firefox
+bug which <em>supposedly</em> is going to go away by the time Firefox 3.0 comes out.  If you
+don't believe us, look at
+<a title="external_link" href="https://bugzilla.mozilla.org/show_bug.cgi?id=167801">this bug report</a>.  <b>Update:</b> We have not seen any sign of this bug since we started
+using Firefox 3.</p>
+
+<a id="selenium"> </a><br/>
+<h4 >No syntax coloring in editor and weird shadow for each character.</h4>
+<p>
+A similar bug has been observed on a Mac with the Selenium IDE plugin enabled in Firefox.
+Try disabling your Firefox plugins to see if one is causing that problem.  
+Please report any problem you find with a given Firefox plugin to us so we can add
+it to the FAQ.
+</p>
+
+<a id="bug"> </a><br/>
+<h4 >You are sure that you found a bug?</h4>
+<p>
+That's rather presomptuous of you 
+<small style="font-size:6pt">thinking that you found a bug, grumble</small>.  
+The recommended way to report a bug is to enter a new "issue" at
+<a title="external_link" href="http://code.google.com/p/crunchy/issues/list">this bug tracker</a>,
+with a description of the steps needed to reproduce the bug, the platform (OS) you are using,
+the Python version, browser, etc..
+Alternatively, you can post a message at 
+<a title="external_link" href="http://groups.google.com/group/crunchy-discuss">crunchy-discuss</a>.   The more details you provide, the better.
+If you want to be more discrete you can write directly to 
+<a href="mailto:andre.roberge@gmail.com">me</a>.
+</p>
+
+<a id="ipython"> </a><br/>
+<h4 >You want to use IPython with Crunchy?</h4>
+<p>
+Sorry, IPython messes things up - it inserts its tentacles everywhere and prevent the other
+intepreters from working properly.  This was at least the case with IPython version 0.8.1.
+If you have IPython installed, you can 
+<a href="/functional_tests/ipython.html">see for yourself</a>.
+</p>
+
+
+
+</div>
+
+</body>
+</html>

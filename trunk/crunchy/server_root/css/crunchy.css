@@ -69,8 +69,8 @@ security_advisor.py.
 }
 pre.crunchy {
     border-top: 1px solid #f8f8f8;
-    padding: 3px 0 3px 0;
-    margin: 3px 0 3px 0;
+    /*padding: 3px 0 3px 0;*/
+    /*margin: 3px 0 3px 0;*/
     /*border-bottom:1px solid #ccc;*/
 }
 
@@ -104,27 +104,12 @@ pre.crunchy {
 /* Basic Python Elements.
    Color choices for the editor (EditArea) are found in file python.js of the EditArea
    distribution and can not be set via a style sheet.
-   I deliberately have not set the font size - this should follow the enclosing text.
-   The palette is taken from the tango icon palette.
 */
 
-.py_comment{
-    color: #555753; /* medium grey */
-    font-family: monospace, sans-serif; /*keep monospace to have proper indentation */
-    font-style: italic;
-    }
-.py_variable{color: #2e3436;} /* Dark grey */
-.py_op{color: #ce5c00; font-weight:bold;} /* Orange */
-.py_builtins{color: #204a87;} /* builtins and string functions - dark blue like keywords */
-.py_stdlib{color: #204a87;} /* standard library modules - dark blue like keywords*/
-.py_special{color: #5c3566;} /* special method of the form __x__ - purple*/
 .py_linenumber{font: 70% monospace; color: #888a85; font-style:normal;} /* medium grey */
 .py_output{color:#2e3436; font-style:italic;}
-.py_warning{background-color: #fce94f; font-size: 130%; color: #2e3436; padding: 2px;}
-.py_keyword {color: #204a87; font-weight:bold;} /* dark blue */
-.py_string {color: #4e9a06;} /* green */
-.py_prompt {color: #ce5c00;} /* orange */
-.py_number {color: #5c3566;} /* medium blue */
+.py_prompt {color: #8f5902; font-style:normal;} /* brown */
+
 
 /* Here's the CSS for the output elements: */
 .output {
@@ -183,7 +168,7 @@ pre.crunchy {
     padding: 0;
     margin: 0;
     bottom: 0;
-    height: 44px;
+    height: 32px;
     line-height:0;
 }
 

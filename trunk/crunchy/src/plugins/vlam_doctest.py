@@ -85,7 +85,7 @@ def doctest_widget_callback(page, elem, uid):
     wrap_in_div(elem, uid, vlam, "doctest", show_vlam)
     if config[page.username]['popups']:
         # insert popup helper
-        img = Element("img", src="/images/help.png",
+        img = Element("img", src="/images/help.png", style="height:32px;",
                 title = "cluetip Hello %s! "%page.username + "This is a doctest.",
                 rel = "/docs/popups/doctest.html")
         elem.append(img)
