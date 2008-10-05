@@ -28,6 +28,14 @@ PyFlakes is probably the least useful of the three that are listed here.</li>
 <div title="preferences analyzer">irrelevant text</div>
 <p>Note that only those analyzers that Crunchy can find on your system are
 listed as available.</p>
+<div class="notes">
+<h4>Show vlam</h4>
+<p> In what follows, we have used the "show_vlam" option to display automatically
+what vlam is used for a particular example.  Of course, you do not need to include this option
+to make a similar example work.
+</p>
+</div>
+
 
 <h2>Performing a code analysis</h2>
 
@@ -53,7 +61,7 @@ about the code.</p>
 <p>Here is some code that will raise warnings with Pylint (PyChecker fails to
 analyze it):</p>
 
-<pre title="analyzer">
+<pre title="analyzer show_vlam">
 def Function_without_DocString(msg):
     print msg
 
@@ -62,7 +70,7 @@ Function_without_DocString(missingvar)
 </pre>
 
 <p>Here is another less than ideal code sample, to try with PyChecker:</p>
-<pre title="analyzer">
+<pre title="analyzer show_vlam">
 # Unused import
 import this
 # Statement with no effect
@@ -76,7 +84,7 @@ print "Hello world"
 <p>Here is an editor with the <code>analyzer_score</code> option (<em>this
 doesn't add another button, but let the existing one display the score reported
 by the analyzer</em>):</p>
-<pre title="editor analyzer_score">
+<pre title="editor analyzer_score show_vlam">
 def Function_without_DocString(msg = []):
     this_variable_is_not_used = 42
     print ' '.join(msg)
@@ -87,7 +95,7 @@ Function_without_DocString(['Hello', 'world'])
 <h3>With doctest</h3>
 
 <p>Here is a doctest editor with the <code>analyzer_report</code> option:</p>
-<pre title="doctest analyzer_report">
+<pre title="doctest analyzer_report show_vlam">
 This force your function to have a bad name:
     >>> Function_with_A_BadName(['A', 'message'])
     A message
@@ -105,7 +113,7 @@ def Function_with_A_BadName(msg = []):
 <p>And here a unittest editor with both <code>analyze_report</code> and
 <code>analyzer_score</code>:</p>
 
-<pre title="unittest analyzer_report analyzer_score">
+<pre title="unittest analyzer_report analyzer_score show_vlam">
 class BadCodeTest(unittest.TestCase):
     """Test class for the bad_named_class class"""
     def test_bad_named_class(self):
