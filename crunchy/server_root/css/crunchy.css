@@ -106,10 +106,7 @@ pre.crunchy {
    distribution and can not be set via a style sheet.
 */
 
-.py_linenumber{font: 70% monospace; color: #888a85; font-style:normal;} /* medium grey */
-.py_output{color:#2e3436; font-style:italic;}
-.py_prompt {color: #8f5902; font-style:normal;} /* brown */
-
+.linenumber{font: 70% monospace;}
 
 /* Here's the CSS for the output elements: */
 .output {

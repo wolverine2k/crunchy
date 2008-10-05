@@ -8,7 +8,8 @@ from pygments.styles import get_style_by_name, get_all_styles
 from pygments.lexers._mapping import LEXERS
 from pygments.token import STANDARD_TYPES
 
-from src.interface import fromstring, plugin, Element, SubElement, additional_properties, config
+from src.interface import (fromstring, plugin, Element, SubElement,
+                           additional_properties, config, generic_prompt, comment)
 from src.configuration import make_property, options
 from src.utilities import extract_code, wrap_in_div
 
@@ -178,8 +179,9 @@ def _style(raw_code, language, cssclass):
 def add_linenumber(styled_code, vlam):
     '''adds the line number information'''
     lines = styled_code.split('\n')
-    prompt1 = '<span class="gp"'
-    prompt2 = "<span class='gp'"
+    # is the class surrounded by quotes or double quotes?
+    prompt1 = '<span class="%s"' % generic_prompt
+    prompt2 = "<span class='%s'" % generic_prompt
     if lines[1].startswith(prompt1):
         prompt_present = True
         prompt = prompt1
@@ -190,17 +192,16 @@ def add_linenumber(styled_code, vlam):
         prompt_present = False
     lineno = get_linenumber_offset(vlam)
     # first and last lines are the embedding <pre>...</pre>
+    open_span = "<span class = 'linenumber %s'>" % comment
     for index, line in enumerate(lines[1:-1]):
         if prompt_present:
             if lines[index+1].startswith(prompt):
-                lines[index+1] = ("<span class='py_linenumber'>%3d </span>" %
-                                                            (lineno) + line)
+                lines[index+1] = open_span + "%3d </span>" % (lineno) + line
                 lineno += 1
             else:
-                lines[index+1] = "<span class='py_linenumber'>    </span>" + line
+                lines[index+1] = open_span + "    </span>" + line
         else:
-            lines[index+1] = ("<span class='py_linenumber'>%3d </span>" %
-                                                          (lineno) + line)
+            lines[index+1] = open_span + "%3d </span>" % (lineno) + line
             lineno += 1
     return '\n'.join(lines)
 
