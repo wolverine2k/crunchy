@@ -22,7 +22,7 @@ def register(): # tested
 def create_empty_menu(): # tested
     '''creates the basic menu structure including only the title'''
     menu = Element('div')
-    menu.attrib['class'] = "menu"
+    menu.attrib['class'] = "crunchy_menu"
     _ul = SubElement(menu, "ul")
     _li = SubElement(_ul, "li")
     _li.text = _("Crunchy Menu")
@@ -94,9 +94,9 @@ def insert_menu(page): # tested
 # of positioning and related sizing issues here.
 
 menu_position_css = """
-.menu {%s}
-.menu ul li:hover ul, .menu ul li a:hover ul {%s}
-.menu ul li , .menu ul li a, .menu ul li a:visited {
+.crunchy_menu {%s}
+.crunchy_menu ul li:hover ul, .crunchy_menu ul li a:hover ul {%s}
+.crunchy_menu ul li , .crunchy_menu ul li a, .crunchy_menu ul li a:visited {
 height:%spx; line-height:%spx;}
 """
 
@@ -111,14 +111,14 @@ height:%spx; line-height:%spx;}
 
 # insert menu_position_css into menu_css below
 menu_css = """%s
-.menu {
+.crunchy_menu {
     width:%spx;
 }
-.menu ul li a, .menu ul li a:visited {
+.crunchy_menu ul li a, .crunchy_menu ul li a:visited {
     width:%spx;
     padding:0 %spx 0 %spx;
 }
-.menu ul li{
+.crunchy_menu ul li{
     width:%spx;
 }
 """

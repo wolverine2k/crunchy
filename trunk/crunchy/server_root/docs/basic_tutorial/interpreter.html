@@ -210,7 +210,7 @@ on the editor image next to an interpreter.</p>
 <h3 >Advanced stuff, mostly for tutorial writers</h3>
 <p>In order to instruct Crunchy to insert an interpreter below a Python code sample, 
 one uses the <code>title</code> attribute as follows:</p>
-<p><code title="html">&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
+<p><code title="html">&lt;pre title="&lt;&lt;interpreter&gt;&gt; [linenumber [=starting_number]]"&gt;</code><br/>
 <code>Some Python code</code><br/>
 <code title="html">&lt;/pre&gt;</code></p> <p> where the square brackets
 indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
@@ -235,9 +235,9 @@ you only have to do it once; similarly,
 a variable defined in one such interpreter will be known to others, 
 until the user clicks on a link to load a new page.</p>
 <p>Any text between the <code>pre</code> tags is placed before the interpreter, in a 
-<code>pre</code> element and styled, unless the <code>no_style</code>
-option is specified. If the <code>linenumber</code>
-option is present, a line number will appear before each line of input
+<code>pre</code> element and styled according to the user's preferences. 
+If the <code>linenumber</code> option is present, a line number will appear 
+before each line of input
 code; the line numbering will start at 1 unless a different starting value is given.</p>
 
 </div>
