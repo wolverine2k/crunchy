@@ -15,7 +15,7 @@ import src.interface as interface
 from src.interface import (config, accounts, names, generic_output,
                            generic_traceback, generic_prompt)
 
-debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8]
+debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 show_io_js = """
 $("#out_%s").html("");
@@ -155,14 +155,19 @@ def comet(request):
     """An http path handler, called from the page - blocks until there is data
     to be sent.
     This needs to be registered as a handler when Crunchy is launched."""
+    debug_msg("Entering comet() in cometIO.py", 9)
     pageid = request.args["pageid"]
+    debug_msg(" ... request.args = %s" % request.args, 9)
     #wait for some data
+    debug_msg(" ... wait for data", 9)
     data = output_buffers[pageid].get()
+    debug_msg(" ... found data", 9)
     # OK, data found
     request.send_response(200)
     request.end_headers()
     request.wfile.write(data)
     request.wfile.flush()
+    debug_msg(" ... done in comet()", 9)
 
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
@@ -183,6 +188,7 @@ def write_output(pageid, uid, output):
 def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
     """
+    debug_msg("Entering cometIO.do_exec()", 9)
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     try:
@@ -199,7 +205,7 @@ def do_exec(code, uid, doctest=False):
 
     # make the io widget appear
     output_buffers[pageid].put(show_io_js % (uid, uid, uid))
-    debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
+    debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 9)
     t = interpreter.Interpreter(code, uid, symbols=config[username]['symbols'],
                                 doctest=doctest)
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
