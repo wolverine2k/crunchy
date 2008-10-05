@@ -6,7 +6,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>Crunchy :: Browsing</title>
-	<meta title="template ../index.html">
+	<meta title="template local_template.html">
 </head>
 
 <body>
@@ -19,11 +19,26 @@
 <p>Crunchy is a tool that can be used to try out Python code found in html documents,
 either locally or on the web.  However, we can not assume responsibility for security holes: 
 <b>use at your own risk.</b>  If you do find potential security risks, please let us know.
-In the meantime, and before browsing external pages, please click on the first link of
-<a href="faq_en.html">FAQ, bugs, etc.</a>
-to learn about security as implemented by Crunchy.  [Crunchy can not bring you to
-a specific point on a new page; it always displays the page from the top.]</p>
+In the meantime, and before browsing external pages, we strongly suggest that you visit
+<a href="/docs/about/magic.html">this page</a>
+to learn about security as implemented by Crunchy. </p>
 </div>
+
+<p>
+You can use Crunchy to browse external tutorials, following any 
+<a href="www.python.org">normal link</a>, just like you do normally using 
+your browser.  However, if you want to specify a url, you can not use the normal
+method in your browser; instead, you must use one of the input boxes we provide for you.
+There are four different such input boxes:
+</p>
+<ul>
+<li><a href="#web">For Python tutorials on the web</a>.</li>
+<li><a href="#local_html">For Python html tutorials on your computer</a>.</li>
+<li><a href="#rst">For Python tutorials written in reStructuredText on your computer</a>.</li>
+<li><a href="#python">For opening a Python file by itself within Crunchy</a>.</li>
+</ul>
+
+
 
 <div class="notes">
 <h4>Crunchy is paranoid</h4>
@@ -57,6 +72,7 @@ code you find somewhere before trying it out on your computer.  <b>YOU</b> are r
 for asking Python to execute some code - not Crunchy's designers.</p>
 </div>
 
+<a id="web"> </a><br/>
 <h3 >Elsewhere on the planet</h3>
 <p>
 Perhaps you are a more advanced user, interested in browsing the latest Python blogs.  
@@ -80,7 +96,7 @@ in the oft-chance that it might include some Python code that you might want to 
 However, if you are planning to browse the official Python tutorial, I suggest you
 leave the current default (<code title="py_code">'python_tutorial'</code>) unchanged.</p>
 
-
+<a id="local_html"> </a><br/>
 <h3 >Closer to home</h3>
 <p> What if you already have some Python tutorial (html documents) on your own computer
 and you would like to use Crunchy to go through them.  You can first browse for them and then load 
@@ -91,7 +107,7 @@ them from here.</p>
 path (sys.path) so that, if any modules are distributed with that tutorial, Crunchy
 will be able to import them (if they are in the same directory).</p>
 
-
+<a id="rst"> </a><br/>
 <p>If you have docutils installed, and you preferred files written in reStructuredText
 (with an .rst or a .txt extension) you can load them as well.</p>
 <div title="local_rst_file"> </div>
@@ -109,10 +125,10 @@ that could possibly be used to inject malicious javascript code.
 &gt;&gt;&gt; crunchy.local_security = 'strict'
 </pre>
 
+<a id="python"> </a><br/>
 <p>Finally, you can load local Python script files (.py usually) from here:</p>
 <div title="local_python_file"> </div>
 
-<p><b>If you are aware of any potential security holes, please let us know.</b></p>
 </div>
 
 </body>
