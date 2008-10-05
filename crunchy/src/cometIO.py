@@ -12,7 +12,8 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import config, accounts, names
+from src.interface import (config, accounts, names, generic_output,
+                           generic_traceback, generic_prompt)
 
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8]
 
@@ -125,7 +126,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.event.set()
         elif self.help_flag == True:
             self.put(show_help_js)
-            pdata = pdata.replace("class='go'", "class='help_menu'")
+            pdata = pdata.replace("class='%s'"%generic_output, "class='help_menu'")
             # use jQuery:
             self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
@@ -214,7 +215,7 @@ def push_input(request):
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     in_to_browser = in_to_browser.replace('\\', r'\\')
-    output_buffers[pageid].put_output("<span class='go'>" +
+    output_buffers[pageid].put_output("<span class='%s'>"%generic_output +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
     if request.data.startswith("help("):
@@ -246,7 +247,7 @@ def extract_data(data):
     if match:
         return match.groups()
     else:
-        return (None,None)
+        return (None, None)
 
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
@@ -280,7 +281,6 @@ class ThreadedBuffer(object):
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
-        pageid = uid.split("_")[0]
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
@@ -328,11 +328,10 @@ class ThreadedBuffer(object):
                         '_u__)) ' # Parrots
                         ]:
             dd = data.split('crunchy_py_prompt%s' % _prompt)
-            # Pygments: Generic.Prompt 'gp'
-            data = ("<span class='gp'>%s" % _prompt).join(dd)
+            data = ("<span class='%s'>%s" % (generic_prompt, _prompt)).join(dd)
 
         if self.__redirect(uid):
-            data = data.replace('\\',r'\\')
+            data = data.replace('\\', r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data.encode(sys.getfilesystemencoding()))
@@ -377,5 +376,5 @@ def debug_msg(data, id_=None):
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 # Note: we use Pygments classes
-sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="go") # Generic.Output
-sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="gt") # Generic.Traceback
+sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class=generic_output)
+sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class=generic_traceback)

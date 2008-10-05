@@ -84,3 +84,8 @@ fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
 
 interactive = False # used with python crunchy -i option
+
+import pygments.token
+generic_output = pygments.token.STANDARD_TYPES[pygments.token.Generic.Output]
+generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
+generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
