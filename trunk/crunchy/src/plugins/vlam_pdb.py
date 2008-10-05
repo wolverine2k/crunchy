@@ -9,7 +9,7 @@ Features:
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring, translate
+from src.interface import config, plugin, SubElement, tostring, translate, generic_output
 from src.utilities import extract_log_id, unChangeHTMLspecialCharacters, escape_for_javascript
 import src.utilities as util
 from src.cometIO import raw_push_input, extract_data, is_accept_input, write_output
@@ -83,7 +83,7 @@ def pdb_filter(data, uid):
     page_id = uid.split('_')[0]
     buff_class,text = extract_data(data)
     proto = Proto()
-    if buff_class == "stdout":
+    if buff_class == generic_output: # generic output
         text = unChangeHTMLspecialCharacters(text)
         command, d = proto.decode(text)
         if command is None:
@@ -145,7 +145,7 @@ def pdb_widget_callback(page, elem, uid):
 
     plugin['services'].insert_editor_subwidget(page, elem, uid, python_code)
 
-    t = SubElement(elem, "h4")
+    t = SubElement(elem, "h4", style="background-color:white;color:darkblue;")
     t.text = _("Local Namespace")
     local_ns_div = SubElement(elem, "div")
     local_ns_div.attrib["id"] = "local_ns_%s"%uid
@@ -173,8 +173,8 @@ def pdb_widget_callback(page, elem, uid):
     btn.attrib["id"] = "btn_return_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
-    SubElement(elem, "br")
-
+    t = SubElement(elem, "h4", style="background-color:white;color:darkblue;")
+    t.text = _("Output")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
@@ -191,11 +191,16 @@ def pdb_js_file_callback(request):
 
 
 pdb_css = r"""
+table.namespace{
+    background-color: white;
+    color: black;
+}
 table.namespace td{
-    border: 1px solid rgb(170, 170, 170); padding: 5px;
+    border: 1px solid grey; padding: 5px;
 }
 table.namespace tr.modified {
     background-color:red;
+
 }
 table.namespace tr.new {
     background-color:yellow;
