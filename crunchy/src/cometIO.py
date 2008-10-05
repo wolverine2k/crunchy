@@ -125,7 +125,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.event.set()
         elif self.help_flag == True:
             self.put(show_help_js)
-            pdata = pdata.replace("stdout", "help_menu") # replacing css class
+            pdata = pdata.replace("class='go'", "class='help_menu'")
             # use jQuery:
             self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
@@ -214,7 +214,7 @@ def push_input(request):
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     in_to_browser = in_to_browser.replace('\\', r'\\')
-    output_buffers[pageid].put_output("<span class='stdin'>" +
+    output_buffers[pageid].put_output("<span class='go'>" +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
     if request.data.startswith("help("):
@@ -239,7 +239,7 @@ def is_accept_input(uid):
 
 def extract_data(data):
     '''
-    extract pure data from output span  like <span class='stdout'>some text</span>
+    extract pure data from output span  like <span class='go'>some text</span>
     '''
     pattern = re.compile("<span class='([a-z]{1,10})'>(.*)</span>", re.DOTALL)
     match = pattern.search(data)
@@ -328,7 +328,8 @@ class ThreadedBuffer(object):
                         '_u__)) ' # Parrots
                         ]:
             dd = data.split('crunchy_py_prompt%s' % _prompt)
-            data = ("<span class='py_prompt'>%s" % _prompt).join(dd)
+            # Pygments: Generic.Prompt 'gp'
+            data = ("<span class='gp'>%s" % _prompt).join(dd)
 
         if self.__redirect(uid):
             data = data.replace('\\',r'\\')
@@ -375,5 +376,6 @@ def debug_msg(data, id_=None):
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
-sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
-sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
+# Note: we use Pygments classes
+sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="go") # Generic.Output
+sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="gt") # Generic.Traceback
