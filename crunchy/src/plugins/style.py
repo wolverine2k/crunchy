@@ -72,9 +72,9 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
-    elem.attrib['class'] = cssclass
+    elem.attrib['class'] = 'crunchy_pygments'#cssclass
     if not page.includes("pygment_cssclass"):
-        page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass))
+        page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass).replace(cssclass, 'crunchy_pygments'))
         page.add_include("pygment_cssclass")
     if wrap:
         wrap_in_div(elem, dummy_uid, '', "show_vlam", show_vlam)
@@ -93,7 +93,7 @@ def create_show_vlam(cssclass, elem, vlam):
     styled_elem_info = _style(elem_info, 'html', cssclass)
     show_vlam = fromstring(styled_elem_info)
     show_vlam.tag = 'code'
-    show_vlam.attrib['class'] = cssclass
+    show_vlam.attrib['class'] = 'crunchy_pygments'#cssclass
     display = Element('h3')
     display.attrib['class'] = "show_vlam"
     display.text = "VLAM = "
