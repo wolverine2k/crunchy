@@ -222,6 +222,7 @@ pdb_interpreter.prototype = {
         uid = this.uid;
         var j = new XMLHttpRequest();
         code = document.getElementById('code_' + uid).value;
+        this.move_to_line(1);
         j.open("POST", "/pdb_start" + random_session_id + "?uid="+uid, false);
         j.send(code);
 
