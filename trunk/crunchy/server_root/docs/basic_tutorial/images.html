@@ -22,11 +22,11 @@ Crunchy.
 </p>
 <pre title="interpreter">
 import dhtml
-dhtml.image("../images/crunchy-python-powered.png", width=457, height=83)
+dhtml.image("../../images/crunchy-python-powered.png", width=457, height=83)
 </pre
 <p>
-The above image has been loaded from a location given relative to the current
-html file being displayed, always assumed to be from the basic server.
+The above image has been loaded from a location given <b>relative to the current
+html file</b> being displayed, always assumed to be from the basic server.
 To load other images, you will need to specify the absolute path.  Since
 I do not know the path of interesting images on your computer,
 I'll give you another one to try.
@@ -120,13 +120,13 @@ def generic(file_path, position):
 
 # We use images that are part of the Crunchy distribution.
 def yellow(position):
-    return generic("../images/warning_big.png", position)
+    return generic("../../images/warning_big.png", position)
 
 def green(position):
-    return generic("../images/ok_big.png", position)
+    return generic("../../images/ok_big.png", position)
 
 def red(position):
-    return generic("../images/display_big.png", position)
+    return generic("../../images/display_big.png", position)
 
 dhtml.append("br") # start on a new line
 
@@ -180,6 +180,10 @@ red("2_3")
 
 dhtml.append("span", label="message", attributes={'innerHTML':"Done!"})
 </pre>
+<h3>What next?</h3>
+<p>Nothing, really... Just adding some text so that the images above are not printed as the last
+thing on the page, making them appear below the browser's status bar.
+</p>
 
 </div>
 
