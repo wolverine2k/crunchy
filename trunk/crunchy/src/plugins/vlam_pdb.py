@@ -74,6 +74,10 @@ def pdb_command_callback(request):
     elif command == "return":
         raw_push_input(uid, "return\n")
         raw_push_input(uid, "crunchy_update_page\n")
+    elif command.startswith("next"):
+        for i in range(int(command[4:])):
+            raw_push_input(uid, "next\n")
+        raw_push_input(uid, "crunchy_update_page\n")
     request.send_response(200)
     request.end_headers()
 
@@ -173,6 +177,12 @@ def pdb_widget_callback(page, elem, uid):
     btn.attrib["id"] = "btn_return_%s" % uid
     btn.attrib["disabled"] = "disabled"
 
+    btn = SubElement(elem, "button")
+    btn.text = _("Next Multiple Steps")
+    btn.attrib["id"] = "btn_next_many_steps_%s" % uid
+    btn.attrib["disabled"] = "disabled"
+    input1 = SubElement(elem, 'input', id='input_many_'+uid, size='4', value='1')
+
     t = SubElement(elem, "h4", style="background-color:white;color:darkblue;")
     t.text = _("Output")
     # finally, an output subwidget:
@@ -228,19 +238,25 @@ pdb_interpreter.prototype = {
 
         //bind events
         var _this = this;
-        self.start_btn = document.getElementById('btn_start_pdb_' + uid);//.disabled= true;
+        self.start_btn = document.getElementById('btn_start_pdb_' + uid);
         self.next_step_btn = document.getElementById('btn_next_step_' + uid);
+        self.next_many_steps_btn = document.getElementById('btn_next_many_steps_' + uid);
         self.step_into_btn = document.getElementById('btn_step_into_' + uid);
         self.return_btn = document.getElementById('btn_return_' + uid);
         self.show_local_var_btn = document.getElementById('btn_show_local_var_' + uid);
         self.next_step_btn.onclick = function(){ _this.send_cmd('next')};
+        self.next_many_steps_btn.onclick = function(){
+            n = document.getElementById('input_many_'+uid).value;
+            _this.send_cmd('next'+n);
+            };
         self.step_into_btn.onclick = function(){ _this.send_cmd('step')};
         self.return_btn.onclick = function(){ _this.send_cmd('return')};
-        //self.show_local_var_btn.onclick = function(){ _this.send_cmd('local_var')};
+
 
         //enable them
         self.start_btn.disabled = true;
         self.next_step_btn.disabled = false;
+        self.next_many_steps_btn.disabled = false;
         self.step_into_btn.disabled = false;
         self.return_btn.disabled = false;
         //self.show_local_var_btn.disabled = false;
@@ -255,6 +271,7 @@ pdb_interpreter.prototype = {
     on_terminate : function(){
         self.start_btn.disabled = false;
         self.next_step_btn.disabled = true;
+        self.next_many_steps_btn.disabled = true;
         self.step_into_btn.disabled = true;
         self.return_btn.disabled = true;
         this.update_local_ns("");
