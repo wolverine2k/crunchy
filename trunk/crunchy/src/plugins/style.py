@@ -1,5 +1,6 @@
 '''styles the code using Pygments'''
 import re
+import random
 
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -20,6 +21,8 @@ for name in LEXERS:
     _pygment_lexer_names[name] = aliases[0]
     for alias in aliases:
         _pygment_language_names.append(alias)
+
+CRUNCHY_PYGMENTS = "crunchy_pygments_" + str(int(random.random()*1000000000000))
 
 lexers = {}
 options['style'] = list(get_all_styles())
@@ -48,6 +51,7 @@ def register():
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
     plugin['register_service']("style", pygments_style)
+    randomize_css_classes()
 
 def pygments_style(page, elem, dummy_uid='42', vlam=None):
     cssclass = config[page.username]['style']
@@ -72,9 +76,10 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
-    elem.attrib['class'] = 'crunchy_pygments'#cssclass
+    elem.attrib['class'] = CRUNCHY_PYGMENTS
     if not page.includes("pygment_cssclass"):
-        page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass).replace(cssclass, 'crunchy_pygments'))
+        # replacing class name for security reasons.
+        page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass).replace(cssclass, CRUNCHY_PYGMENTS))
         page.add_include("pygment_cssclass")
     if wrap:
         wrap_in_div(elem, dummy_uid, '', "show_vlam", show_vlam)
@@ -93,12 +98,23 @@ def create_show_vlam(cssclass, elem, vlam):
     styled_elem_info = _style(elem_info, 'html', cssclass)
     show_vlam = fromstring(styled_elem_info)
     show_vlam.tag = 'code'
-    show_vlam.attrib['class'] = 'crunchy_pygments'#cssclass
+    show_vlam.attrib['class'] = CRUNCHY_PYGMENTS
     display = Element('h3')
     display.attrib['class'] = "show_vlam"
     display.text = "VLAM = "
     display.append(show_vlam)
     return display
+
+def randomize_css_classes():
+    '''replace pygments names for classes by random ones'''
+    # This is done for security reason, to prevent a malicious tutorial
+    # writer from overriding a css class and hiding some python code
+    # (especially "easy" to do in doctest) by having the css class
+    # correspond to "display: none;".  Python would still execute
+    # the code but the user would never see it.
+    global STANDARD_TYPES
+    for key in STANDARD_TYPES:
+        STANDARD_TYPES[key] += "_" + str(int(random.random()*1000000000000))
 
 def get_pygments_tokens(page, elem, uid):
     """inserts a table containing all existent token types and corresponding
@@ -106,7 +122,7 @@ def get_pygments_tokens(page, elem, uid):
     # The original div in the raw html page may contain some text
     # as a visual reminder that we need to remove here.
     elem.text = ''
-    elem.attrib['class'] = config[page.username]['style']
+    elem.attrib['class'] = CRUNCHY_PYGMENTS
     table = SubElement(elem, 'table')
     row = SubElement(table, 'tr')
     for title in ['Token type', 'css class']:
@@ -121,18 +137,19 @@ def get_pygments_tokens(page, elem, uid):
         column1 = SubElement(row, 'td')
         column1.text = repr(token)[6:] # remove "Token."
         column2 = SubElement(row, 'td')
-        column2.text = STANDARD_TYPES[token]
+        token_class = STANDARD_TYPES[token]
+        column2.text = token_class.split('_')[0]
         column3 = SubElement(row, 'td')
         span = SubElement(column3, 'span')
-        span.attrib['class'] = column2.text
+        span.attrib['class'] = token_class
         span.text = " * test * "
         column4 = SubElement(row, 'td')
         _code = SubElement(column4, 'code')
-        _code.attrib['class'] = column2.text
+        _code.attrib['class'] = token_class
         _code.text = " * test * "
         column5 = SubElement(row, 'td')
         var = SubElement(column5, 'var')
-        var.attrib['class'] = column2.text
+        var.attrib['class'] = token_class
         var.text = " * test * "
     return
 
