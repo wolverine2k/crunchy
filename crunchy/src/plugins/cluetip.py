@@ -14,7 +14,7 @@ def register():
     plugin['register_service']("insert_cluetip", insert_cluetip)
 
 def insert_cluetip(page, elem, uid):
-    '''inserts the required javascript to animate the menu'''
+    '''inserts the required javascript to insert cluetips'''
 
     if not page.includes("jquery.dimensions.js"):
         page.add_include("jquery.dimensions.js")
