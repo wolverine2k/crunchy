@@ -12,8 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
-from src.utilities import extract_log_id, wrap_in_div
+from src.interface import config, plugin, Element, SubElement, tostring, exams
+from src.utilities import extract_log_id, wrap_in_div, parse_vlam
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -59,6 +59,22 @@ def doctest_widget_callback(page, elem, uid):
     run doctests"""
     vlam = elem.attrib["title"]
     log_id = extract_log_id(vlam)
+
+    vlam_info = parse_vlam(vlam)
+    limit_time = vlam_info.get("time", None)
+    exam_name = vlam_info.get("exam_name", None)
+    # We check to see if an exam name has been defined (in exam_mode.py).
+    # This is only defined when a test has started.
+    if exam_name:
+        if page.username not in exams:
+            elem.clear()
+            return
+        elif exam_name not in exams[page.username]:
+            elem.clear()
+            return
+        else:
+            exams[page.username][exam_name]['problems'].append(uid)
+
     if log_id:
         t = 'doctest'
         config[page.username]['logging_uids'][uid] = (log_id, t)
@@ -75,6 +91,12 @@ def doctest_widget_callback(page, elem, uid):
     # next, we style the code, also extracting it in a useful form ...
     elem.attrib['title'] = "pycon"
     doctestcode, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    # remove trailing white spaces, which may mess the expected output...
+    doctestcode_lines = doctestcode.split('\n')
+    for i in range(len(doctestcode_lines)):
+        doctestcode_lines[i] = doctestcode_lines[i].rstrip()
+    doctestcode = '\n'.join(doctestcode_lines)
+
     elem.attrib['title'] = vlam
 
     if log_id:
@@ -97,7 +119,7 @@ def doctest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
-    #
+    btn.attrib["id"] = "run_doctest_btn_" + uid
     btn.text = "Run Doctest"
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     if "analyzer_score" in vlam:
@@ -105,6 +127,8 @@ def doctest_widget_callback(page, elem, uid):
     if "analyzer_report" in vlam:
         plugin['services'].insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
+    if limit_time:
+        page.add_js_code("window.addEventListener('load', function(e){count_down('%s', get_doctest_time('%s'));}, false);" %(uid, uid))
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
@@ -122,6 +146,48 @@ function exec_doctest(uid){
     j.open("POST", "/doctest%s?uid="+uid, false);
     j.send(code);
 };
+function count_down(uid, second)
+{
+    var ele = document.getElementById('run_doctest_btn_' + uid);
+    ele.innerHTML = "You have " +  second + " second to finish this doctest";
+    if(second == 0)
+    {
+        ele.style.display = "none";
+    }
+    setTimeout("count_down('" + uid  + "'," + (second - 1) + ");", 1000);
+}
+
+function toggle_doctest(uid, show)
+{
+    var pre_ele = document.getElementById("div_" + uid).getElementsByTagName("pre")[0];
+    pre_ele.style.display = show ? "block" : "none";
+}
+function get_doctest_time(uid){
+    var pre_ele = document.getElementById("div_" + uid).getElementsByTagName("pre")[0];
+    var vlam = pre_ele.title;
+    var parts = vlam.split(/\s+/);
+    for(var i = 0; parts.length != i; i++) //ugly how to input <  > ???
+    {
+        pp = parts[i].split('=', 2)
+        if (pp.length == 1 || pp[0] != 'time')
+        {
+            continue;
+        }
+        else
+        {
+            time = parseInt(pp[1]);
+            if(isNaN(time))
+            {
+                break;
+            }
+            else
+            {
+                return time;
+            }
+        }
+    }
+    return -1;
+}
 """ % plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
