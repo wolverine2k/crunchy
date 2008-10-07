@@ -48,6 +48,7 @@ plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
+exams = {}  #used by pluging exam_mode.py and vlam_doctest.py 
 from_comet = {} # initialized from cometIO.py
 
 config['crunchy_base_dir'] = os.path.normpath(os.path.join(
