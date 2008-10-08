@@ -1,17 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
-<title>Colourizer: special characters test</title></head>
+<style>
+.py_keyword{font-weight: bold; color: blue;}
+</style>
+<title>Styling: special characters test</title>
+	<meta title="template tests_index.html">
+</head>
 <body>
-<h1>Colourizer: special characters test</h1>
-<p>Because of the way ElementTree parses xml strings, special care has to be given to the 
-treatment of 3 characters in particular: "&amp;", "&lt;" and "&gt;".  
-This is been done inside colourize.py, and this page verifies that it is handled properly. 
-(If you see this page, chances are that it works; previous versions were just being 
-displayed as a blank page as ElementTree could not parse the output).</p>
-<p>Note 1: Unit tests should be implemented for this.</p>
-<p>Note 2: We now handle all html special entity characters; see at the end.</p>
-<h2>Inside <code>&lt;code&gt;</code> element</h2>
+<div id="main_title">Styling: special characters test</div>
+<div id='content'>
+
+<p>In this file, we include a number of special characters and, especially, html entities,
+to see how Crunchy handles them and styles them.</p>
+<h2>Inside <code title="html">&lt;code&gt;</code> elements</h2>
 <h3>First, using the special notation for html characters, i.e.
 <code>"&amp;amp;", "&amp;lt;", "&amp;gt;"</code></h3>
 <ul>
@@ -20,9 +22,9 @@ displayed as a blank page as ElementTree could not parse the output).</p>
    <li>Same as above, but with explictly added markup "by hand", not following the usual style, so that we can later verify that Crunchy removes the existing markup to replace it by its default: <br/><code>if 0 <span class="py_keyword">&lt;</span> x and x
   <span class="py_keyword">&gt;</span> -1: print <span class="py_keyword">"neat &amp; tidy"</span></code>
   </li>
-    <li>same input as first one, but processed by Crunchy: <br/><code title="py_code">if 0 &lt; x and x &gt; -1: print "neat &amp; tidy"</code>
+    <li>same input as first one, but processed by Crunchy: <br/><code title="py_code show_vlam">if 0 &lt; x and x &gt; -1: print "neat &amp; tidy"</code>
   </li>
-    <li>Same input as second one, but processed by Crunchy: <br/><code title="py_code">if 0 <span class="py_keyword">&lt;</span> x and x
+    <li>Same input as second one, but processed by Crunchy: <br/><code title="py_code show_vlam ">if 0 <span class="py_keyword">&lt;</span> x and x
   <span class="py_keyword">&gt;</span> -1: print <span class="py_keyword">"neat &amp; tidy"</span></code>
   </li>
 </ul>
@@ -35,14 +37,14 @@ displayed as a blank page as ElementTree could not parse the output).</p>
    <li>Same as above, but with explictly added markup: <br/><code>if 0 <span class="py_keyword"><</span> x and x
   <span class="py_keyword">></span> -1: print <span class="py_keyword">"neat & tidy"</span></code>
   </li>
-    <li>same input as first one, but processed by Crunchy: <br/><code title="py_code">if 0 < x and x > -1: print "neat & tidy"</code>
+    <li>same input as first one, but processed by Crunchy: <br/><code title="py_code show_vlam">if 0 < x and x > -1: print "neat & tidy"</code>
   </li>
-    <li>Same input as second one, but processed by Crunchy: <br/><code title="py_code">if 0 <span class="py_keyword"><</span> x and x
+    <li>Same input as second one, but processed by Crunchy: <br/><code title="py_code show_vlam">if 0 <span class="py_keyword"><</span> x and x
   <span class="py_keyword">></span> -1: print <span class="py_keyword">"neat & tidy"</span></code>
   </li>
 </ul>
 
-<h2>Inside <code>&lt;pre&gt;</code> elements</h2>
+<h2>Inside <code title="html">&lt;pre&gt;</code> elements</h2>
 <h3>First, using the special notation for html characters, i.e.
 <code>"&amp;amp;", "&amp;lt;", "&amp;gt;"</code></h3>
 <ul>
@@ -57,12 +59,12 @@ displayed as a blank page as ElementTree could not parse the output).</p>
 </pre>
   </li>
     <li>same input as first one, but processed by Crunchy:
-<pre title="py_code">if 0 &lt; x and x &gt; -1:
+<pre title="py_code show_vlam">if 0 &lt; x and x &gt; -1:
     print "neat &amp; tidy"
 </pre>
   </li>
     <li>Same input as second one, but processed by Crunchy:
-<pre title="py_code">
+<pre title="py_code show_vlam">
 if 0 <span class="py_keyword">&lt;</span> x and x  <span class="py_keyword">&gt;</span> -1:
     print <span class="py_keyword">"neat &amp; tidy"</span>
 </pre>
@@ -84,12 +86,12 @@ if 0 <span class="py_keyword">&lt;</span> x and x  <span class="py_keyword">&gt;
 </pre>
   </li>
     <li>same input as first one, but processed by Crunchy:
-<pre title="py_code">if 0 < x and x > -1:
+<pre title="py_code show_vlam">if 0 < x and x > -1:
     print "neat & tidy"
 </pre>
   </li>
     <li>Same input as second one, but processed by Crunchy:
-<pre title="py_code">
+<pre title="py_code show_vlam">
 if 0 <span class="py_keyword"><</span> x and x  <span class="py_keyword">></span> -1:
     print <span class="py_keyword">"neat & tidy"</span>
 </pre>
@@ -101,7 +103,7 @@ if 0 <span class="py_keyword"><</span> x and x  <span class="py_keyword">></span
 <p>First, with no code styling.</p>
 <pre title="no_vlam">
 entities={
-    '&&AElig;':    0x00c6, # latin capital letter AE = latin capital ligature AE, U+00C6 ISOlat1
+    '&AElig;':    0x00c6, # latin capital letter AE = latin capital ligature AE, U+00C6 ISOlat1
     '&Aacute;':   0x00c1, # latin capital letter A with acute, U+00C1 ISOlat1
     '&Acirc;':    0x00c2, # latin capital letter A with circumflex, U+00C2 ISOlat1
     '&Agrave;':   0x00c0, # latin capital letter A with grave = latin capital letter A grave, U+00C0 ISOlat1
@@ -356,9 +358,9 @@ entities={
 }
 </pre>
 <p>Next, with code styling.</p>
-<pre title="py_code">
+<pre title="py_code show_vlam">
 entities={
-    '&&AElig;':    0x00c6, # latin capital letter AE = latin capital ligature AE, U+00C6 ISOlat1
+    '&AElig;':    0x00c6, # latin capital letter AE = latin capital ligature AE, U+00C6 ISOlat1
     '&Aacute;':   0x00c1, # latin capital letter A with acute, U+00C1 ISOlat1
     '&Acirc;':    0x00c2, # latin capital letter A with circumflex, U+00C2 ISOlat1
     '&Agrave;':   0x00c0, # latin capital letter A with grave = latin capital letter A grave, U+00C0 ISOlat1
@@ -612,6 +614,6 @@ entities={
     '&zwnj;':     0x200c, # zero width non-joiner, U+200C NEW RFC 2070
 }
 </pre>
-<p><a href="index.html">Back to the test index</a></p>
+</div>
 </body>
 </html>
