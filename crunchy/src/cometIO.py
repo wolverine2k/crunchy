@@ -12,8 +12,7 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import (config, accounts, names, generic_output,
-                           generic_traceback, generic_prompt)
+from src.interface import config, accounts, names
 
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -126,7 +125,7 @@ class CrunchyIOBuffer(StringBuffer):
             self.event.set()
         elif self.help_flag == True:
             self.put(show_help_js)
-            pdata = pdata.replace("class='%s'"%generic_output, "class='help_menu'")
+            pdata = pdata.replace("class='%s'"%interface.generic_output, "class='help_menu'")
             # use jQuery:
             self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
@@ -221,7 +220,7 @@ def push_input(request):
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     in_to_browser = in_to_browser.replace('\\', r'\\')
-    output_buffers[pageid].put_output("<span class='%s'>"%generic_output +
+    output_buffers[pageid].put_output("<span class='%s'>"%interface.generic_output +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
     if request.data.startswith("help("):
@@ -334,7 +333,7 @@ class ThreadedBuffer(object):
                         '_u__)) ' # Parrots
                         ]:
             dd = data.split('crunchy_py_prompt%s' % _prompt)
-            data = ("<span class='%s'>%s" % (generic_prompt, _prompt)).join(dd)
+            data = ("<span class='%s'>%s" % (interface.generic_prompt, _prompt)).join(dd)
 
         if self.__redirect(uid):
             data = data.replace('\\', r'\\')
@@ -381,6 +380,9 @@ def debug_msg(data, id_=None):
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
-# Note: we use Pygments classes
-sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class=generic_output)
-sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class=generic_traceback)
+def init_stdios():
+    # Note: we use Pygments classes
+    sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class=interface.generic_output)
+    sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class=interface.generic_traceback)
+init_stdios()
+interface.init_stdios = init_stdios

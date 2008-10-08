@@ -7,10 +7,11 @@ from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.formatters import HtmlFormatter
 from pygments.styles import get_style_by_name, get_all_styles
 from pygments.lexers._mapping import LEXERS
-from pygments.token import STANDARD_TYPES
+from pygments.token import STANDARD_TYPES, Generic, Comment
 
 from src.interface import (fromstring, plugin, Element, SubElement,
-                           additional_properties, config, generic_prompt, comment)
+                           additional_properties, config)
+import src.interface as interface
 from src.configuration import make_property, options
 from src.utilities import extract_code, wrap_in_div
 
@@ -22,7 +23,8 @@ for name in LEXERS:
     for alias in aliases:
         _pygment_language_names.append(alias)
 
-CRUNCHY_PYGMENTS = "crunchy_pygments_" + str(int(random.random()*1000000000000))
+interface.crunchy_pygments = CRUNCHY_PYGMENTS = ("crunchy_pygments_" +
+                             str(int(random.random()*1000000000000)))
 
 lexers = {}
 options['style'] = list(get_all_styles())
@@ -115,6 +117,11 @@ def randomize_css_classes():
     global STANDARD_TYPES
     for key in STANDARD_TYPES:
         STANDARD_TYPES[key] += "_" + str(int(random.random()*1000000000000))
+    interface.generic_output = STANDARD_TYPES[Generic.Output]
+    interface.generic_traceback = STANDARD_TYPES[Generic.Traceback]
+    interface.generic_prompt = STANDARD_TYPES[Generic.Prompt]
+    interface.comment = STANDARD_TYPES[Comment]
+    interface.init_stdios() # re-init to have proper css class
 
 def get_pygments_tokens(page, elem, uid):
     """inserts a table containing all existent token types and corresponding
@@ -197,8 +204,8 @@ def add_linenumber(styled_code, vlam):
     '''adds the line number information'''
     lines = styled_code.split('\n')
     # is the class surrounded by quotes or double quotes?
-    prompt1 = '<span class="%s"' % generic_prompt
-    prompt2 = "<span class='%s'" % generic_prompt
+    prompt1 = '<span class="%s"' % interface.generic_prompt
+    prompt2 = "<span class='%s'" % interface.generic_prompt
     if lines[1].startswith(prompt1):
         prompt_present = True
         prompt = prompt1
@@ -209,7 +216,7 @@ def add_linenumber(styled_code, vlam):
         prompt_present = False
     lineno = get_linenumber_offset(vlam)
     # first and last lines are the embedding <pre>...</pre>
-    open_span = "<span class = 'linenumber %s'>" % comment
+    open_span = "<span class = 'linenumber %s'>" % interface.comment
     for index, line in enumerate(lines[1:-1]):
         if prompt_present:
             if lines[index+1].startswith(prompt):

@@ -6,6 +6,7 @@ unit tests in test_io_widget.rst
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, SubElement, Element
+import src.interface as interface
 from editarea import editArea_load_and_save
 _ = translate['_']
 
@@ -33,7 +34,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # so that it can work together with the floated io widget
     # (and python code sample) to have a two-column display if desired.
     new_div = SubElement(elem, "div")
-    new_div.attrib['class'] = "io_div"
+    new_div.attrib['class'] = "io_div " + interface.crunchy_pygments
     clear_div = SubElement(elem, "div")
     clear_div.attrib['class'] = "end_io_widget"
 
