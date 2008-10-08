@@ -125,25 +125,7 @@ def get_directory(npath, crunchy_username):
         tstring += '<li><a href="' + str(child) + '">' + str(child) +'</a></li>'
     return dir_list_page % (_("Directory Listing"), tstring)
 
-illegal_paths_page = """
-<html>
-<head>
-<title>
-%s <!--Illegal path, page not found. -->
-</title>
-</head>
-<body>
-<h1>%s<!--Illegal path, page not found. --></h1>
-<p>%s <!--Crunchy could not open the page you requested. This could be for one of anumber of reasons, including: --></p>
-<ul>
-<li>%s <!--The page doesn't exist. --></li>
-<li>%s<!--The path you requested was illegal, examples of illegal paths include those containg the .. path modifier.-->
-</li>
-</ul>
-<p>%s <!--The path you requested was:--> <b>%s<!--path--></b></p>
-</body>
-</html>
-"""
+not_found = open(join(root_path, "404.html")).read()
 
 dir_list_page = """
 <html>
@@ -163,9 +145,4 @@ dir_list_page = """
 
 def error_page(path):
     '''returns a page with an error message; used when a path is not found'''
-    return unicode( illegal_paths_page % (_("Illegal path, page not found."), _("Illegal path, page not found."),
-                                 _("Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"),
-                                 _("The page doesn't exist."),
-                                 _("The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."),
-                                 _("The path you requested was: "),
-                                 path) )
+    return not_found % (path, path)
