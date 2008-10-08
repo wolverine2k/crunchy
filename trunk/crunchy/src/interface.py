@@ -30,7 +30,6 @@ import src.tools_2k as tools
 u_print = tools.u_print
 exec_code = tools.exec_code
 
-
 # Rather than having various modules importing the configuration.py,
 # CrunchyPlugin.py, etc.,
 # we will set things up so that the relevant will populate the
@@ -48,7 +47,7 @@ plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
-exams = {}  #used by pluging exam_mode.py and vlam_doctest.py 
+exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
 
 config['crunchy_base_dir'] = os.path.normpath(os.path.join(
