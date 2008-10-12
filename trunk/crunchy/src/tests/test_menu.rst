@@ -42,7 +42,7 @@ Testing create_empty_menu()
 
     >>> _menu, _menu_items = menu.create_empty_menu()
     >>> tostring(_menu)
-    '<div class="menu"><ul><li>Crunchy Menu<ul /></li></ul></div>'
+    '<div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>'
     >>> tostring(_menu_items)
     '<ul />'
 
@@ -73,7 +73,7 @@ yield the same results using our mock functions.  So, we only test one here.
     >>> config['Crunchy']['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
     >>> tostring(page.body[0]) #doctest: +ELLIPSIS
-    '<div class="menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>'
+    '<div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>'
     >>> page.added_info[0] == 'add_css_code'
     True
 

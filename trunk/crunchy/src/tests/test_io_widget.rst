@@ -19,6 +19,8 @@ config['editarea_language'].
 
 
     >>> from src.interface import plugin, config, Element
+    >>> import src.interface
+    >>> src.interface.crunchy_pygments = 'crunchy_pygments'
     >>> plugin.clear()
     >>> plugin['session_random_id'] = 42
     >>> config.clear()
@@ -109,7 +111,7 @@ have been inserted (and none unexpected).
 
 Next, we look at each elements in a bit more detail.
 
-    >>> divs[0].attrib['class'] == "io_div"
+    >>> divs[0].attrib['class'] == "io_div crunchy_pygments"
     True
     >>> divs[1].attrib['class'] == "end_io_widget"
     True
@@ -189,3 +191,9 @@ c. Testing with a Borg interpreter
 ------------------------------------
 
 to do
+
+
+Clean up
+----------
+
+    >>> del src.interface.crunchy_pygments
