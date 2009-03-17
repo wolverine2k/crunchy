@@ -247,7 +247,7 @@ def extract_data(data):
     '''
     extract pure data from output span  like <span class='go'>some text</span>
     '''
-    pattern = re.compile("<span class='([a-z]{1,10})'>(.*)</span>", re.DOTALL)
+    pattern = re.compile("<span class='(.*?)'>(.*)</span>", re.DOTALL)
     match = pattern.search(data)
     if match:
         return match.groups()
