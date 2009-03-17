@@ -9,7 +9,8 @@ Features:
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring, translate, generic_output
+from src.interface import config, plugin, SubElement, tostring, translate
+import src.interface as interface
 from src.utilities import extract_log_id, unChangeHTMLspecialCharacters, escape_for_javascript
 import src.utilities as util
 from src.cometIO import raw_push_input, extract_data, is_accept_input, write_output
@@ -85,9 +86,9 @@ def pdb_command_callback(request):
 def pdb_filter(data, uid):
     '''modifify the output of pdb command'''
     page_id = uid.split('_')[0]
-    buff_class,text = extract_data(data)
+    buff_class, text = extract_data(data)
     proto = Proto()
-    if buff_class == generic_output: # generic output
+    if buff_class == interface.generic_output:
         text = unChangeHTMLspecialCharacters(text)
         command, d = proto.decode(text)
         if command is None:
