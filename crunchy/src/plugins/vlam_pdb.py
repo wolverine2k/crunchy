@@ -13,7 +13,7 @@ from src.interface import config, plugin, SubElement, tostring, translate
 import src.interface as interface
 from src.utilities import extract_log_id, unChangeHTMLspecialCharacters, escape_for_javascript
 import src.utilities as util
-from src.cometIO import raw_push_input, extract_data, is_accept_input, write_output
+from src.cometIO import raw_push_input, is_accept_input, write_output
 import re, sys
 
 _ = translate['_']
@@ -82,6 +82,16 @@ def pdb_command_callback(request):
     request.send_response(200)
     request.end_headers()
 
+def extract_data(data):
+    '''
+    extract pure data from output span  like <span class='go'>some text</span>
+    '''
+    pattern = re.compile("<span class='(.*?)'>(.*)</span>", re.DOTALL)
+    match = pattern.search(data)
+    if match:
+        return match.groups()
+    else:
+        return (None, None)
 
 def pdb_filter(data, uid):
     '''modifify the output of pdb command'''

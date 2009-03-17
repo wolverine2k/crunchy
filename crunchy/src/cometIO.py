@@ -243,17 +243,6 @@ def raw_push_input(uid, data):
 def is_accept_input(uid):
     return uid in input_buffers
 
-def extract_data(data):
-    '''
-    extract pure data from output span  like <span class='go'>some text</span>
-    '''
-    pattern = re.compile("<span class='(.*?)'>(.*)</span>", re.DOTALL)
-    match = pattern.search(data)
-    if match:
-        return match.groups()
-    else:
-        return (None, None)
-
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
     def __init__(self, out_buf=None, in_buf=None, buf_class="STDOUT"):
