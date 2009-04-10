@@ -3,6 +3,7 @@
 import os
 import sys
 from getpass import getpass
+import cmd
 try:
     # md5 for Python 2.5+
     from hashlib import md5
@@ -90,46 +91,31 @@ class Accounts(dict): # tested
             else:
                 return False
 
-class AMCLI(object):
+class AMCLI(cmd.Cmd):
     '''Account Manager Command Line Interface'''
-
+    
     def __init__(self, pwp=None):
+        cmd.Cmd.__init__(self)
         if pwp is None:  # use this to allow redefining DEFAULT_PATH
             pwp = DEFAULT_PATH # from outside this module
-        self.welcome_msg = "Crunchy's Account Manager.\n" +\
-                           "For information, type help.\n"
         self.accounts = Accounts(pwp)
-        self.interact()
-
-    def interact(self):
-        '''starts the interactive mode (command line interface)'''
-        print self.welcome_msg
-        while True:
-            command = ""
-            try:
-                command = raw_input(">>> ")
-            except EOFError,e:
-                print "Please use 'exit' to exit the account manager."
-                continue
-            if command:
-                self.on_command(command)
-
-    def on_command(self, command):
-        'command dispatcher'
-        command = command.strip().split(" ", 1)
-        if hasattr(self, "cmd_" + command[0]):
-            if command[0] in ('list', 'exit', 'help', 'set_base_dir'):
-                getattr(self, "cmd_" + command[0])()
-            elif len(command) > 1:
-                getattr(self, "cmd_" + command[0])(command[1])
-            else:
-                print ("Argument username is needed for command %s." %
-                                                                (command[0]))
-        else:
-            print "Unknown command."
-
-    def cmd_set_base_dir(self):
-        '''set_base_dir : sets the base directory from which accounts are
+        
+        self.intro = "Crunchy's Account Manager.\n" +\
+                           "For information, type help.\n"
+        self.prompt = "Crunchy accounts> "
+        self.cmdloop()
+    
+    def do_exit(self, args):
+        '''exit: exit the account manager.'''
+        raise SystemExit
+    
+    def do_EOF(self, args):
+        '''Exit the account manager.'''
+        print                           # there is no \n after an EOF
+        raise SystemExit
+    
+    def do_set_base_dir(self, args):
+        '''set_base_dir: sets the base directory from which accounts are
            created when choosing 'default' or simply pressing enter.'''
         print "The current base directory is %s" % self.accounts.base_dir
         print "If you want to keep the same base directory, simply press 'enter'."
@@ -139,21 +125,20 @@ class AMCLI(object):
             print "The account information for 'username' will be saved in "
             print os.path.join(self.accounts.base_dir, 'username')
         return
-
-    def cmd_exit(self):
-        'exit : exit the program (accounts are saved automatically)'
-        raise SystemExit
-
-    def cmd_list(self):
-        'list : list all users'
+    
+    def do_list(self, args):
+        '''list : list all users'''
         print "%s\t%s\t%s" % ("username", "home directory", "admin rights")
         print '-----------------------------------------------------------'
         for user in self.accounts:
             print ("%s\t\t%s\t\t%s" %(user, self.accounts[user][0],
                                                         self.accounts[user][2]))
-
-    def cmd_new(self, username):
-        'new <username> : add a new user. (ascii characters ONLY)'
+    
+    def do_new(self, username):
+        '''new <username>: add a new user. (ascii characters ONLY)'''
+        if not username:
+            print "Argument username is needed for command new."
+            return
         if username in self.accounts:
             print "Error: user %s already exists" % (username)
             return
@@ -170,11 +155,11 @@ class AMCLI(object):
         home = self.evaluate_home(username, home)
         self.accounts[username] = (home, password, admin_rights)
         self.accounts.save()
-
-    def cmd_edit(self, username):
-        "edit <username> : change a user's home directory and password."
+    
+    def do_edit(self, username):
+        "edit <username>: change a user's home directory and password."
         if username not in self.accounts:
-            print "Error: user %s doesn't exist" % (username)
+            print "Error: user '%s' doesn't exist" % (username)
             return
         else:
             home = raw_input("Please input the new home directory:[%s]" %
@@ -194,24 +179,27 @@ class AMCLI(object):
                         "Does this user have administrative rights [y or n]? ")
             self.accounts[username] =  (home, password, admin_rights)
             self.accounts.save()
-
-    def cmd_del(self, username):
-        "del <username> : delete a user"
+    
+    def do_del(self, username):
+        "del <username>: delete a user"
         if username not in self.accounts:
-            print "Error: user %s doesn't exist" % username
+            print "Error: user '%s' doesn't exist" % username
             return
         else:
             del self.accounts[username]
             self.accounts.save()
-
-    def cmd_load(self, file_name):
-        '''load <file_name> : create accounts from plain file <file_name>
+    
+    def do_load(self, file_name):
+        '''load <file_name>: create accounts from plain file <file_name>
                 File format :
                     username_1 home_directory1 password1 admin_rights1
                     username_2 home_directory2 password2 admin_rights2
                     ...
                 You can use a single space [' '], a comma [','], or
                 a tab character ['\\t'] as separator between values.'''
+        if not file_name:
+            print "Argument file_name is needed for command load."
+            return
         f = open(file_name)
         lines = f.readlines()
         try_sep = ('\t', ' ', ',')
@@ -233,25 +221,7 @@ class AMCLI(object):
             self.accounts[t[0]] = t[1:]
         self.accounts.save()
         print "%d accounts loaded." % len(data)
-
-    def cmd_help(self, topic=None):
-        "help [<help_topic>]: display this message or display help of <help_topic>"
-        self.help(topic)
-
-    def help(self, topic=None):
-        'display the requested help information.'
-        if topic is None:
-            msg = "Crunchy's Account Manager supported commands:\n"
-            for attr in dir(self):
-                if attr.startswith('cmd_'):
-                    msg += "  %s\n" % (getattr(self, attr).__doc__)
-            print msg
-        else:
-            if hasattr(self, 'cmd_' + topic):
-                print getattr(self, 'cmd_' + topic).__doc__ + '\n'
-            else:
-                print "No such command %s" % topic
-
+    
     def evaluate_home(self, username, home):
         '''processes home directory as provided by user to replace
         "shortcuts" by their true values.'''
