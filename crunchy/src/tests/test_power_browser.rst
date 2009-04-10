@@ -16,8 +16,15 @@ power_browser.py has has the following functions that require testing:
     >>> import src.utilities
     >>> src.utilities.COUNT = 0
     >>> plugin.clear()
+    >>> def dummy(*args):
+    ...    print args
+    >>> plugin['local_html'] = dummy
+    >>> plugin['remote_html'] = dummy
+    >>> plugin['local_python'] = dummy
+    >>> plugin['local_rst'] = dummy
     >>> config.clear()
-    >>> config['editarea_language'] = 'en'
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['editarea_language'] = 'en'
     >>> import src.plugins.power_browser as pb
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -42,101 +49,50 @@ First, reStructuredText files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'rst'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_rst1">
-    <input name="filename" onblur="document.submit_rst2.url.value=document.browser_rst1.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/rst" method="get" name="submit_rst2">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local ReST file" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'local_rst'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
 Next, local html tutorials.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'local_html'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_local3">
-    <input name="filename" onblur="document.submit_local4.url.value=document.browser_local3.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/local" method="get" name="submit_local4">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local html tutorial" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'local_html'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
+
 
 Next, remote html tutorials.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'local_html'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_local5">
-    <input name="filename" onblur="document.submit_local6.url.value=document.browser_local5.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/local" method="get" name="submit_local6">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local html tutorial" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'remote_html'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
 Python files.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'python'
-    >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
-    <body>
-    <div>
-     <form name="browser_py7">
-    <input name="filename" onblur="document.submit_py8.url.value=document.browser_py7.filename.value" size="80" type="file" />
-    <br />
-    </form>
-    <form action="/py" method="get" name="submit_py8">
-    <input name="url" type="hidden" />
-    <input class="crunchy" type="submit" value="Load local Python file" />
-    </form>
-    </div>
-    </body>
-    <BLANKLINE>
+    >>> config['Crunchy']['power_browser'] = 'local_python'
+    >>> pb.insert_browser(page) #doctest: +ELLIPSIS
+    (...Page...div...dummy...)
 
-An unrecognize value.
+An unrecognized value.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'unknown'
+    >>> config['Crunchy']['power_browser'] = 'unknown'
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body />
     <BLANKLINE>
 
-"None" should yield the same result.
+None should yield the same result.
 
     >>> page = mocks.Page()
     >>> page.body = Element("body")
-    >>> config['power_browser'] = 'None'
+    >>> config['Crunchy']['power_browser'] = None
     >>> pb.insert_browser(page)
     >>> print tostring(page.body).replace('>', '>\n')
     <body />

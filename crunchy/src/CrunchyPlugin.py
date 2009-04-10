@@ -98,6 +98,10 @@ created, that conflicts with an existing one."""%(tag, attribute, keyword))
     return
 plugin['register_tag_handler'] = register_tag_handler
 
+def register_begin_tag_handler(tag, handler):
+    vlam.CrunchyPage.begin_handlers1[tag] = handler
+plugin['register_begin_tag_handler'] = register_begin_tag_handler
+
 def register_final_tag_handler(tag, handler):
     vlam.CrunchyPage.final_handlers1[tag] = handler
 plugin['register_final_tag_handler'] = register_final_tag_handler
@@ -116,9 +120,10 @@ def register_end_pagehandler(handler):
     vlam.CrunchyPage.end_pagehandlers.append(handler)
 plugin['register_end_pagehandler'] = register_end_pagehandler
 
-def create_vlam_page(filehandle, url, remote=False, local=False):
+def create_vlam_page(filehandle, url, username=None, remote=False, local=False):
     """Create (and return) a VLAM page from filehandle"""
-    return vlam.CrunchyPage(filehandle, url, remote=remote, local=local)
+    return vlam.CrunchyPage(filehandle, url, username=username,
+                                                    remote=remote, local=local)
 plugin['create_vlam_page'] = create_vlam_page
 
 def exec_code(code, uid, doctest=False):
@@ -148,7 +153,7 @@ def get_pageid():
     """when executed from inside a 'user thread', returns the pageid of the page
     from which the code is being executed.
     """
-    return threading.currentThread().getName().split(":")[0]
+    return threading.currentThread().getName().split("_")[0]
 plugin['get_pageid'] = get_pageid
 
 def get_uid():
@@ -164,11 +169,6 @@ def get_root_dir():
     """
     return dirname(find_module("crunchy")[1])
 plugin['get_root_dir'] = get_root_dir
-
-def gen_uid():
-    '''returns a unique id'''
-    return vlam.uidgen()
-plugin['gen_uid'] = gen_uid
 
 def kill_thread(uid):
     """kill a thread, given its assocated uid"""

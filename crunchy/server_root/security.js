@@ -26,16 +26,8 @@ function app_approve(nb_item) {
     		}
     	}
     }
-
-    // send approval
     var j = new XMLHttpRequest();
     j.open("POST", "/set_trusted");
-    // disabling the annoying alert.
-    /*j.onreadystatechange = function() {
-        if (j.readyState == 4 && j.status == 200) {
-            alert("The following values have been selected:\n\n"+approved_sites.replace(',',"\n"));
-        }
-    }*/
     j.send(approved_sites);
 }
 
@@ -43,13 +35,6 @@ function app_remove_all() {
     hide_security_info();
     var j = new XMLHttpRequest();
     j.open("POST", "/remove_all");
-    // disabling the annoying alert.
-    /*
-    j.onreadystatechange = function() {
-        if (j.readyState == 4 && j.status == 200) {
-            alert("All sites will be removed from list");
-        }
-    }*/
     j.send("");
 }
 

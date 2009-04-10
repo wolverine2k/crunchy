@@ -5,9 +5,8 @@ a user to enter some code which should satisfy the unittest.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring, translate
-from src.utilities import extract_log_id, insert_markup
-_ = translate['_']
+from src.interface import config, plugin, Element, SubElement, tostring
+from src.utilities import extract_log_id, wrap_in_div
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
@@ -41,13 +40,14 @@ def unittest_runner_callback(request):
     all the data in the AJAX message sent from the browser."""
     # note how the code to be executed is not simply the code entered by
     # the user, and obtained as "request.data", but also includes a part
-    # (unittest_pycode) defined below used to automatically make the list
-    # of tests and call the correct method in the unittest module.
+    # (doctest_pycode) defined below used to automatically call the
+    # correct method in the doctest module.
+    # TODO: update the comment
     code = unittest_pycode % {
         'user_code': request.data,
         'unit_test': unittests[request.args["uid"]],
     }
-    plugin['exec_code'](code, request.args["uid"], doctest=False)
+    plugin['exec_code'](code, request.args["uid"], doctest=False) # TODO: doctests=True?
     request.send_response(200)
     request.end_headers()
 
@@ -58,25 +58,38 @@ def unittest_widget_callback(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'unittest'
-        config['logging_uids'][uid] = (log_id, t)
-    
+        config[page.username]['logging_uids'][uid] = (log_id, t)
+
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("unittest_included") :
             page.add_include("unittest_included")
             page.add_js_code(unittest_jscode)
-    
+
+    elem.attrib['title'] = "python"
+    unittestcode, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    elem.attrib['title'] = vlam
+
     # next, we style the code, also extracting it in a useful form ...
-    unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
+    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # which we store
     unittests[uid] = unittestcode
 
-    insert_markup(elem, uid, vlam, markup, "unittest")
+    wrap_in_div(elem, uid, vlam, "doctest", show_vlam)
+    if config[page.username]['popups']:
+        # insert popup helper
+        img = Element("img", src="/images/help.png", style="height:32px;",
+                title = "cluetip Hello %s! "%page.username + "This is a unittest.",
+                rel = "/docs/popups/unittest.html")
+        elem.append(img)
+        plugin['services'].insert_cluetip(page, img, uid)
+
+    #insert_markup(elem, uid, vlam, markup, "unittest")
 
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid)
@@ -84,7 +97,7 @@ def unittest_widget_callback(page, elem, uid):
     SubElement(elem, "br")
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
-    btn.text = _("Run Unittest")
+    btn.text = "Run Unittest"
     btn.attrib["onclick"] = "exec_unittest('%s')" % uid
     if "analyzer_score" in vlam:
         plugin['services'].add_scoring(page, btn, uid)
@@ -99,7 +112,10 @@ def unittest_widget_callback(page, elem, uid):
 # random session id.
 unittest_jscode = """
 function exec_unittest(uid){
+    try{
     document.getElementById("kill_image_"+uid).style.display = "block";
+    }
+    catch(err){;}
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
     j.open("POST", "/unittest%s?uid="+uid, false);
@@ -128,6 +144,9 @@ def test_suite():
             pass
     return unittest.TestSuite(tests)
 
+#__test_runner = unittest.TextTestRunner(doctest_out)
 __test_runner = unittest.TextTestRunner(descriptions=2, verbosity=2)
 __test_runner.run(test_suite())
 '''
+
+#Note: information about doctest_out is found in interpreter.py

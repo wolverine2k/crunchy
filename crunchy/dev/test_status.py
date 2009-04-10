@@ -1,5 +1,5 @@
 '''
-Extract Python file information for keeping track of dependecies and
+Extract Python file information for keeping track of dependenies and
 testing status
 
 '''
@@ -20,8 +20,12 @@ def visit(arg, dirname, names):
     # Do not recurse into .svn directory
     if '.svn' in names:
         names.remove('.svn')
-    if 'element_tree' in names:
-        names.remove('element_tree')
+    # ignore non-core files
+    for ignore in ['element_tree', 'tests', 'server_root', 'dev',
+                   'translations', '__init__.py']:
+        if ignore in names:
+            names.remove(ignore)
+
     for name in names:
         subname = os.path.join(dirname, name)
         # only include Python files
@@ -56,11 +60,11 @@ def extract_lines(filename):
             if ')' in line:
                 close_paren = True
 
-        # extract lines with imports
-        if line.strip().startswith('import ') or (
-            line.strip().startswith('from ') and ' import ' in line):
-            text = changeHTMLspecialCharacters(line[:-1])
-            functions.append(text)
+        ## extract lines with imports
+        #if line.strip().startswith('import ') or (
+        #    line.strip().startswith('from ') and ' import ' in line):
+        #    text = changeHTMLspecialCharacters(line[:-1])
+        #    functions.append(text)
 
         # extract lines with class definitions
         if line.strip().startswith('class '):
@@ -86,13 +90,13 @@ def extract_lines(filename):
             if 'tested' in line:
                 functions_tested += 1
 
-        # extract lines with plugin information
-        if line.strip().startswith('plugin[') and inside_register:
-            text = changeHTMLspecialCharacters(line[:-1])
-            text = OFFSET + text.strip()  # hack to keep indentation right
-            functions.append(text)
-            if ')' not in line:
-                close_paren = False
+        ## extract lines with plugin information
+        #if line.strip().startswith('plugin[') and inside_register:
+        #    text = changeHTMLspecialCharacters(line[:-1])
+        #    text = OFFSET + text.strip()  # hack to keep indentation right
+        #    functions.append(text)
+        #    if ')' not in line:
+        #        close_paren = False
     return functions
 
 

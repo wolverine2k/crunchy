@@ -5,7 +5,8 @@ unit tests in test_io_widget.rst
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, translate, SubElement
+from src.interface import config, plugin, translate, SubElement, Element
+import src.interface as interface
 from editarea import editArea_load_and_save
 _ = translate['_']
 
@@ -23,7 +24,7 @@ def kill_thread_handler(request):
     plugin['kill_thread'](request.args["uid"])
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None,
-                        sample_code=''):  # partially tested
+                        sample_code='', show=False):  # partially tested
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
@@ -33,24 +34,32 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # so that it can work together with the floated io widget
     # (and python code sample) to have a two-column display if desired.
     new_div = SubElement(elem, "div")
+    new_div.attrib['class'] = "io_div " + interface.crunchy_pygments
     clear_div = SubElement(elem, "div")
     clear_div.attrib['class'] = "end_io_widget"
-    new_div.attrib['class'] = "io_div"
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if config['ctypes_available']:
-            kill_link = SubElement(new_div, "a")
+            kill_link = Element("a")
+            elem.insert(-2, kill_link)
             kill_link.attrib["id"] = "kill_%s" % uid
             kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
-            kill_image.attrib["src"] = "/display_big.png"
+            kill_image.attrib["src"] = "/images/stop.png"
             kill_image.attrib["alt"] = "Interrupt thread"
             kill_image.attrib["class"] = "kill_thread_image"
-            kill_image.attrib["id"] = "kill_image_%s" % uid
+            _id = "kill_image_%s" % uid
+            kill_image.attrib["id"] = _id
+            if config[page.username]['popups']:
+                # insert popup helper
+                kill_image.attrib["title"] = "cluetip KeyboardInterrupt"
+                kill_image.attrib["rel"] = "/docs/popups/keyboard_interrupt.html"
+                plugin['services'].insert_cluetip(page, kill_image, _id)
+
             # hide them initially
             kill_image.attrib['style'] = 'display: none;'
             kill_link.attrib['style'] = 'display: none;'
@@ -58,7 +67,6 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         if not page.includes("io_included"):
             page.add_include("io_included")
             page.add_js_code(io_js)
-            page.add_css_code(io_css)
 
         if interp_kind is not None:
             if not page.includes("push_input_included"):
@@ -71,6 +79,8 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
                 page.insert_js_file("/edit_area/edit_area_crunchy.js")
         elif config['ctypes_available']:
             kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
+    else:
+        return
 
     output = SubElement(new_div, "span")
     output.attrib["class"] = "output"
@@ -86,20 +96,21 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
                                       % _("Execute")
         editor_link.attrib["id"] = "ed_link_" + uid
         image = SubElement(editor_link, 'img')
-        image.attrib["src"] = "/editor.png"
+        image.attrib["src"] = "/images/editor.png"
         image.attrib["alt"] = "copy existing code"
         image.attrib["class"] = "interpreter_image"
+
         code_sample = SubElement(new_div, "textarea")
         code_sample.attrib["id"] = "code_sample_" + uid
         code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
-        if sample_code:
-            code_sample.text = sample_code
-        else:
-            code_sample.text = '\n'
+        code_sample.text = sample_code + '\n'
     if interp_kind == 'borg':
         inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
     inp.attrib["type"] = "text"
-    inp.attrib["class"] = "input"
+    if show:
+        inp.attrib["class"] = "input"
+    else:
+        inp.attrib["class"] = "input hidden"
 
 io_js = r"""
 function push_keys(event, uid){
@@ -114,8 +125,8 @@ function push_keys(event, uid){
     i.send(data + "\n");
 // try-catch needed as the elements may not exist.
 try{
-document.getElementById("kill_image_"+uid).style.display="block";
-document.getElementById("kill_"+uid).style.display="block";
+document.getElementById("kill_image_"+uid).style.display="inline";
+document.getElementById("kill_"+uid).style.display="inline";
 }
 catch(err){ ;}
 
@@ -125,6 +136,7 @@ function kill_thread(uid){
     var j = new XMLHttpRequest();
     j.open("GET", "/kill_thread%s?uid="+uid, false);
     j.send("");
+    alert('A KeyboardInterrupt was sent.')
 };
 """ % (plugin['session_random_id'], plugin['session_random_id'])
 
@@ -136,20 +148,12 @@ function push_input(uid){
     i.open("POST", "/input%s?uid="+uid, true);
     i.send(data + "\n");
     convertFromEditor(uid);
-// try-catch needed as the elements may not exist.
+// try-catch needed as the elements may not exist if ctypes not present.
 try{
-document.getElementById("kill_image_"+uid).style.display="block";
-document.getElementById("kill_"+uid).style.display="block";
+document.getElementById("kill_image_"+uid).style.display="inline";
+document.getElementById("kill_"+uid).style.display="inline";
 }
-catch(err){ ;}
-
+catch(err){;}
     return true;
 };
 """ % plugin['session_random_id']
-
-# moved most style information to crunchy.css
-io_css = r"""
-.crunchy_canvas{
-    display: none;
-}
-"""

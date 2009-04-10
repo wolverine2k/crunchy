@@ -5,7 +5,7 @@ import urllib
 
 import src.interpreter as interpreter
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element
+from src.interface import config, translate, plugin, Element, names
 _ = translate['_']
 
 borg_console = {}
@@ -26,20 +26,17 @@ def insert_tooltip(page, *dummy):
         borg_console[page.pageid] = interpreter.BorgConsole(group=page.pageid)
 
         page.add_include("tooltip_included")
-        page.insert_js_file("/tooltip.js")
+        page.insert_js_file("/javascript/tooltip.js")
         page.add_js_code(tooltip_js)
-        page.add_css_code(tooltip_css)
 
         tooltip = Element("div")
-        tooltip.attrib["id"] = "tooltip"
+        tooltip.attrib["id"] = "interp_tooltip"
         tooltip.text = " "
-        tooltip.attrib["onmousedown"] = "grab(this);"
         page.body.append(tooltip)
 
         help_menu = Element("div")
         help_menu.attrib["id"] = "help_menu"
         help_menu.text = " "
-        help_menu.attrib["onmousedown"] = "grab(this);"
         page.body.append(help_menu)
 
         help_menu_x = Element("div")
@@ -51,7 +48,9 @@ def insert_tooltip(page, *dummy):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    if not config['dir_help']:
+    pageid = request.args['uid'].split("_")[0]
+    username = names[pageid]
+    if not config[username]['dir_help']:
         request.send_response(204)
         request.end_headers()
         return
@@ -63,7 +62,6 @@ def dir_handler(request):
     # has clicked on a few more keys.
     line = ".".join(line.split(".")[:-1])
 
-    pageid = request.args['uid'].split(":")[0]
     try:
         result = eval("dir(%s)" % line, {}, borg_console[pageid].__dict__['locals'])
     except:
@@ -84,12 +82,12 @@ def dir_handler(request):
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
 
-    if not config['doc_help']:#configuration.defaults.doc_help:
+    pageid = request.args['uid'].split("_")[0]
+    username = names[pageid]
+    if not config[username]['doc_help']:#configuration.defaults.doc_help:
         request.send_response(204)
         request.end_headers()
         return
-
-    pageid = request.args['uid'].split(":")[0]
     line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
 
     # Support lines like "func(text" as "func(", because the browser
@@ -115,67 +113,6 @@ def doc_handler(request):
     request.wfile.write(result)
     request.wfile.flush()
     return
-
-# css
-tooltip_css = """
-#tooltip {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    width: 50%;
-    overflow:auto;
-    border: 4px outset #369;
-    background-color: white;
-    color: black;
-    font: 9pt monospace;
-    margin: 0;
-    padding: 4px;
-    padding-right: 30px;
-    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-    white-space: -pre-wrap; /* Opera 4 - 6 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
-                            http://www.w3.org/TR/css3-text/#white-space */
-    word-wrap: break-word; /* IE 5.5+ */
-    display: none;  /* will appear only when needed */
-    z-index:11;
-}
-#help_menu {
-    position: fixed;
-    top: 70px;
-    right: 1em;
-    width: 50%;
-    height: 50%;
-    overflow:auto;
-    border: 4px outset #369;
-    background-color: white;
-    color: black;
-    font: 9pt monospace;
-    margin: 0;
-    padding: 4px;
-    padding-right: 10px;
-    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-    white-space: -pre-wrap; /* Opera 4 - 6 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
-                            http://www.w3.org/TR/css3-text/#white-space */
-    word-wrap: break-word; /* IE 5.5+ */
-    display: none;  /* will appear only when needed */
-    z-index:11;
-}
-#help_menu_x {
-    position: fixed;
-    top: 75px;
-    right: 2em;
-    color: #fe0;
-    background-color: #369;
-    font: 14pt sans-serif;
-    cursor: pointer;
-    padding: 4px 4px 0 4px;
-    display: none;  /* will appear only when needed */
-    z-index:12;
-}
-"""
 
 # javascript code
 tooltip_js = """

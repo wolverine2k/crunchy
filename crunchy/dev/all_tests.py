@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
 all_tests.py
@@ -30,7 +31,8 @@ doctest.OutputChecker = MyOutputChecker
 # end of new directive definition and replacement (monkeypatching)
 
 os.chdir("..")
-sys.path.insert(0, os.getcwd())
+cwd = os.getcwd()
+sys.path.insert(0, cwd)
 test_path = os.path.join(os.getcwd(), "src", "tests")
 test_files = [f for f in os.listdir(test_path) if f.startswith("test_")
               and f.endswith(".rst")]
@@ -45,12 +47,13 @@ nb_files = 0
 total_tests = 0
 total_failures = 0
 files_with_failures = 0
+all_files_with_failures = []
 
 #TODO: add a command line option to replace this
-excluded = []#["test_colourize.rst"]
+include_only = []
 
 #TODO: add a command line option to replace this
-include_only = ['test_vlam.rst']
+excluded = ["test_colourize.rst"] # now obsolete
 
 #TODO: add a command line option (clean?) that would remove all .pyc
 # files before testing.
@@ -61,19 +64,23 @@ include_only = ['test_vlam.rst']
 for t in test_files:
     if t in excluded:
         continue # skip
-    #if t not in include_only:
-    #    continue
-    failure, nb_tests = doctest.testfile("src" + sep + "tests" + sep + t)
+    if include_only:
+        if t not in include_only:
+            continue
+    failure, nb_tests = doctest.testfile(os.path.join("src", "tests", t))
     total_tests += nb_tests
     total_failures += failure
     if failure > 0:
         files_with_failures += 1
+        all_files_with_failures.append((failure, t))
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
 
 print "-"*50
 print "%d failures in %d tests in %s files out of %s." % (total_failures,
                                 total_tests, files_with_failures, nb_files)
+for info in all_files_with_failures:
+    print "%3d failures in %s" % (info)
 
 # Note that the number of tests, as identified by the doctest module
 # is equal to the number of commands entered at the interpreter

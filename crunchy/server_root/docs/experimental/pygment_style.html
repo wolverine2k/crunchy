@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<title>Pygment-based styling Tests</title>
+</head>
+<body>
+<div id="main_title">Pygment-based styling Tests</div>
+<div id='content'>
+<p>Crunchy uses <a title="external_link" href="http://pygments.org">Pygments</a> to style code.
+To specify a language, Crunchy uses the same convention that is used by Pygment as
+given on 
+<a title="external_link" href="http://pygments.org/docs/lexers/">Pygments available Lexers</a>.
+For example, a Python code sample can be styled using either:
+<code title='html'>&lt;pre title="PythonLexer"&gt;</code>
+<pre title="PythonLexer">
+print "Hello World!"
+</pre>
+<p>
+or <code title='html'>&lt;pre title="python"&gt;</code></p>
+<pre title="python">
+print "Hello World!"
+</pre>
+or <code title='html'>&lt;pre title="py"&gt;</code>
+<pre title="py">
+print "Hello World!"
+</pre>
+<pre title="py">
+# Andr&eacute;
+</pre>
+
+<p>You can select the desired style here and reload the page to see its effect.</p>
+<div title="preferences style">pygments css class</div>
+
+<p>As further simple tests, we style  some Python code with an embedded 
+<code title='html'>&lt;br/&gt;</code> to complicate things.</p>
+<pre title="python">
+print "Hello World!"<br/>print "Done!"
+</pre>
+<p>Next, some html code.</p>
+<pre title="html">
+&lt;pre title="html"&gt;
+</pre>
+<h2>Comparison with current styling for Python code</h2>
+<p>The following is done in order to develop a new crunchy style for Pygments.
+First, a fairly complete Python code sample styled with the usual Crunchy default.</p>
+<pre title="py_code">
+# some comment
+import this
+import sys
+
+import my_module as something_else
+
+class New(object):
+    """a docstring"""
+    def __init__(self, a, b=[], c={}):
+        self.a = a
+        self.b = b  # a comment
+        return None
+    
+    def other(self, choice):
+        pass
+
+print "Hello world!"
+for i in range(42):
+   print i,
+
+if __name__ == "__main__":
+   n = New(3)
+</pre>
+
+<p> Now the same example styled by pygments</p>
+
+<pre title="python">
+# some comment
+'''A multi-
+line comment
+'''
+import this
+import sys
+
+import my_module as something_else
+
+class New(object):
+    """a docstring"""
+    def __init__(self, a, b=[], c={}):
+        self.a = a
+        self.b = b  # a comment
+        return None
+    
+    def other(self, choice):
+        """ a multi
+            line
+            docstring
+        """
+        pass
+
+print "Hello world!"
+for i in range(42):
+   print i,
+
+if __name__ == "__main__":
+   n = New(3)
+</pre>
+
+
+
+</div>
+</body>
+</html>

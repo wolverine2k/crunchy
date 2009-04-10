@@ -5,15 +5,18 @@ sets up the page and calls appropriate plugins
 """
 
 from StringIO import StringIO
+from traceback import print_exc
+from os.path import join
 
 from src.security import remove_unwanted
 
 # Third party modules - included in crunchy distribution
 from src.element_tree import ElementSoup
-from src.interface import ElementTree, config, from_comet
+from src.interface import ElementTree, config, from_comet, plugin
 et = ElementTree
 
 from src.utilities import uidgen
+import src.interface as interface
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
@@ -24,7 +27,22 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 # In production code, we invoke CrunchyPage instead which does all
 # the required processing automatically.
 
-class _BasePage(object):
+def handle_exception(full_page=True):
+    '''basic handler for exceptions'''
+    root_path = join(plugin['get_root_dir'](), "server_root/")
+    if full_page:
+        exception_file = join(root_path, "exception.html")
+        text = open(exception_file).read()
+    else:
+        text = "TRACEBACK"
+    tmp = StringIO()
+    print_exc(file=tmp)
+    text = text.replace("TRACEBACK",
+        "Please file a bug report at http://code.google.com/p/crunchy/issues/list\n"
+        + "="*80 + "\n" + tmp.getvalue())
+    return text
+
+class BasePage(object): # tested
     '''
        Base class used to store html pages and the methods to process them.
     '''
@@ -33,18 +51,20 @@ class _BasePage(object):
     handlers1 = {} # tag -> handler function
     handlers2 = {} # tag -> attribute -> handler function
     handlers3 = {} # tag -> attribute -> keyword -> handler function
+    begin_handlers1 = {}  # tag -> handler function
     final_handlers1 = {}  # tag -> handler function
     begin_pagehandlers = []
     end_pagehandlers = []
 
-    def __init__(self):  # tested
+    def __init__(self, username):  # tested
         '''initialises a few values, and registers the page for comet i/o.'''
         self.included = set([])
-        self.pageid = uidgen()
+        self.username = username
+        self.pageid = uidgen(self.username)
         from_comet['register_new_page'](self.pageid)
         return
 
-    def create_tree(self, filehandle, encoding='utf-8'):  # tested
+    def create_tree(self, filehandle):  # tested
         '''creates a tree (elementtree object) from an html file'''
         # note: this process removes the existing DTD
         html = ElementSoup.parse(filehandle, encoding = 'utf-8')
@@ -104,7 +124,7 @@ class _BasePage(object):
     def add_crunchy_style(self):  # tested
         '''inserts a link to the standard Crunchy style file'''
         css = et.Element("link", type= "text/css", rel="stylesheet",
-                         href="/crunchy.css")
+                         href="/css/crunchy.css")
         try:
             self.head.insert(0, css)
         except:   # should never be needed in normal call from CrunchyPage
@@ -112,6 +132,17 @@ class _BasePage(object):
             self.head.insert(0, css)
         # we inserted first so that it can be overriden by tutorial writer's
         # style and by user's preferences.
+        return
+
+    def insert_css_file(self, path):
+        '''inserts a link to the standard Crunchy style file'''
+        css = et.Element("link", type= "text/css", rel="stylesheet",
+                         href=path)
+        try:
+            self.head.append(css)
+        except:   # should never be needed in normal call from CrunchyPage
+            self.find_head()
+            self.head.append(css)
         return
 
     def add_user_style(self):  # tested
@@ -205,7 +236,7 @@ class _BasePage(object):
                         keyword = self.extract_keyword(elem, attr)
                         if keyword in self.handlers3[tag][attr]:
                             self.handlers3[tag][attr][keyword]( self,
-                                            elem, self.pageid + ":" + uidgen())
+                                            elem, self.pageid + "_" + uidgen(self.username))
                             break
 
     def process_handlers2(self):  # tested
@@ -228,7 +259,7 @@ class _BasePage(object):
                             if keyword in self.handlers3[tag][attr]:
                                 do_it = False
                         if do_it:
-                            uid = self.pageid + ":" + uidgen()
+                            uid = self.pageid + "_" + uidgen(self.username)
                             self.handlers2[tag][attr](self, elem, uid)
         return
 
@@ -257,15 +288,29 @@ class _BasePage(object):
                                 do_it = False
                                 break
                 if do_it:
-                    uid = self.pageid + ":" + uidgen()
+                    uid = self.pageid + "_" + uidgen(self.username)
                     handlers[tag](self, elem, uid)
         return
 
-    def process_final_handlers1(self):  # tested
-        self.process_type1(self.final_handlers1)
+    def process_begin_handlers1(self, handlers):
+        '''
+        Processes handlers based on their tag.
+
+        Used, for example, to modify existing markup on a page.
+        '''
+        for tag in handlers:
+            for elem in self.tree.getiterator(tag):
+                handlers[tag](self, elem, 'dummy')
+        return
 
     def process_handlers1(self):  # tested
+        '''processes special handlers of type 1.'''
         self.process_type1(self.handlers1)
+
+    def process_final_handlers1(self):  # tested
+        '''processes special handlers of type 1 after other handlers have been
+        processed on that page'''
+        self.process_type1(self.final_handlers1)
 
     def read(self):  # tested
         '''create fake file from a tree, adding DTD and charset information
@@ -273,15 +318,17 @@ class _BasePage(object):
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
         self.add_charset()
-        self.tree.write(fake_file)
+        try:
+            self.tree.write(fake_file)
+        except Exception:
+            return handle_exception()
         return fake_file.getvalue()
 
-
-class CrunchyPage(_BasePage):
+class CrunchyPage(BasePage):
     '''class used to store an html page processed by Crunchy with added
        interactive elements.
     '''
-    def __init__(self, filehandle, url, remote=False, local=False):
+    def __init__(self, filehandle, url, username=None, remote=False, local=False):
         """
         read a page, processes it and outputs a completely transformed one,
         ready for display in browser.
@@ -289,7 +336,12 @@ class CrunchyPage(_BasePage):
         url should be just a path if crunchy accesses the page locally, or
         the full URL if it is remote.
         """
-        _BasePage.__init__(self)
+        if username is None:
+            try:
+                username = interface.username_at_start
+            except:
+                pass
+        BasePage.__init__(self, username=username)
         self.url = url
 
         # Assign tutorial type
@@ -311,11 +363,19 @@ class CrunchyPage(_BasePage):
         self.find_body()  # assigns self.body
 
         # Crunchy's main work: processing vlam instructions, etc.
-        self.process_tags()
+        try:
+            self.process_tags()
+        except Exception:
+            self.body.clear()
+            self.body.tag = "body"
+            pre = et.Element('pre')
+            pre.text = handle_exception(False)
+            self.body.append(pre)
+            return
 
         # adding the javascript for communication between the browser and the server
-        self.body.attrib["onload"] = 'runOutput("%s")' % self.pageid
-        self.add_js_code(comet_js)
+        self.insert_js_file("/javascript/jquery.js")
+        self.add_js_code(comet_js % self.pageid)
 
         # Extra styling
         self.add_crunchy_style() # first Crunchy's style
@@ -324,6 +384,8 @@ class CrunchyPage(_BasePage):
 
     def process_tags(self):
         """process all the customised tags in the page"""
+
+        self.process_begin_handlers1(self.begin_handlers1)
 
         for handler in CrunchyPage.begin_pagehandlers:
             handler(self)
@@ -346,26 +408,21 @@ class CrunchyPage(_BasePage):
             handler(self)
         return
 
+
+# jquery compatible javascript:
 comet_js = """
 function runOutput(channel){
-    var h = new XMLHttpRequest();
-    h.onreadystatechange = function(){
-        if (h.readyState == 4){
-            try{
-                var status = h.status;
+    $.ajax({type : "GET",
+            url : "/comet?pageid=" + channel,
+            cache : false,
+            dataType: "script",
+            success : function(data, status){
+                runOutput(channel);
             }
-            catch(e){
-                var status = "NO HTTP RESPONSE";
-            }
-            switch (status){
-                case 200:
-                    eval(h.responseText);
-                    runOutput(channel);
-                    break;
-            }
-        }
-    };
-    h.open("GET", "/comet?pageid="+channel, true);
-    h.send("");
+            })
 };
+
+$(document).ready(function(){
+    runOutput("%s");
+});
 """

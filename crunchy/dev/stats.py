@@ -9,8 +9,6 @@ will ignore all files contained in dev/
 
 I suggest running this script with the following arguments to ignore irrelevant directories:
 $ python stats.py dev/ server_root/ src/tests/ src/element_tree/
-or alternatively:
-$ python stats.py dev/ server_root/ src/tests/ src/element_tree/ src/imports/ src/plugins/ src/__init__.py __init__.py src/my_htmlentitydefs.py
 
 The following statistics are gathered:
  * Total number of .py files
@@ -32,7 +30,8 @@ import_re = re.compile(r"\s*(import|from)\s+(?P<module>[_a-zA-Z][_0-9a-zA-Z\.]*)
 def_re = re.compile(r"\s*?def\s+(?P<fname>[_a-zA-Z][_0-9a-zA-Z]*)")
 class_re = re.compile(r"\s*?class\s+(?P<cname>[_a-zA-Z][_0-9a-zA-Z]*)")
 
-tested_re = re.compile(r"#\s*tested\s*$")
+# could have comments like "# indirectly tested" or "# tested indirectly" ...
+tested_re = re.compile(r"#\s*[_0-9a-zA-Z]*\s*tested\s*[_0-9a-zA-Z]*\s*$")
 empty_re = re.compile(r"\s*$")
 
 def main(ignore_these):
@@ -45,7 +44,7 @@ def main(ignore_these):
     # filter the list to remove things in ignore_these
     for ignore in ignore_these:
         file_list = [f for f in file_list if not f.startswith(ignore)]
-    
+
     # filter that list to get the python files
     py_file_list = [f for f in file_list if f.endswith('.py')]
 
@@ -136,7 +135,7 @@ def examine_file(f):
 def build_graph(py_file_info):
     """Build a graph using dot"""
     process = Popen("dot -Tps2 -o dependencies.ps", shell=True, stdin=PIPE)
-    dot_descr = 'digraph dependencies { graph [page="8,11" pagedir=TR]'
+    dot_descr = 'digraph dependencies { graph [page="8.5,11" pagedir=TR]'
     # generate the vertices
     # keeping track of vertices generated
     vertices = []

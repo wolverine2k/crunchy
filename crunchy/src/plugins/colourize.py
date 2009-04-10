@@ -37,6 +37,11 @@ def register():
        2. a custom service to style some code when requested by this or
           another plugin.
        """
+
+    # colourize is to be replaced by pygments.
+    return
+
+
     # 'py_code' or 'python_code' (both are equivalent) only appears inside
     # <pre> or <code> elements, using the notation
     # <pre title='py_code ...'>, etc.
@@ -73,7 +78,7 @@ def service_style_nostrip(dummy_page, elem, css_class='crunchy'):
 
 #--------Begin ElementTree dependent part-------------
 
-def style(elem, css_class='crunchy', no_strip=False):
+def style(elem, css_class='crunchy', no_strip=False): # tested
     """
     style some Python code (adding html markup) and return it inside the
     original html element (<pre> or <code>, most likely) with attributes
@@ -142,7 +147,7 @@ def style(elem, css_class='crunchy', no_strip=False):
     new_elem.tail = tail
     return py_code, new_elem, error_found
 
-def extract_code(elem, trim=False):
+def extract_code(elem, trim=False): # tested
     """extract all the text (Python code) from a marked up
     code sample encoded as an ElementTree structure, but converting
     <br/> into "\n" and removing "\r" which are not
@@ -162,7 +167,7 @@ def extract_code(elem, trim=False):
         text = trim_empty_lines_from_end(text)
     return text
 
-def get_linenumber_offset(vlam):
+def get_linenumber_offset(vlam): # tested
     """ Determine the desired number for the 1st line of Python code.
         The vlam code is expected to be of the form
         [linenumber [=n]]    (where n is an integer)
@@ -183,7 +188,7 @@ def get_linenumber_offset(vlam):
         offset = None # no linenumber will be added
     return offset
 
-def replace_element(elem, replacement):
+def replace_element(elem, replacement): # tested
     '''replace the content of an ElementTree Element by that of another
        one.
     '''
@@ -265,9 +270,9 @@ stdlib = [	'__builtin__', '__future__', '__main__', '_winreg', 'aifc', 'AL', 'al
 			'xmllib', 'xmlrpclib', 'zipfile', 'zipimport', 'zlib'
 ]
 
-class Colourizer(object):
+class Colourizer(object): # tested
     '''class usually used as singleton to style/colorize Python code'''
-    def __init__(self, offset=None):
+    def __init__(self, offset=None): # tested indirectly
         global CURRENT_LINE
         CURRENT_LINE = 0
         self.tokenString = ''
@@ -381,7 +386,7 @@ class Colourizer(object):
 
 # inp.readline reads a "logical" line;
 # the continuation character '\' is gobbled up.
-    def parseListing(self, code):
+    def parseListing(self, code): # tested
         global CURRENT_LINE
         self.inp = StringIO(code)
         self.outp = StringIO()
@@ -411,7 +416,7 @@ class Colourizer(object):
 
 # externally callable function
 
-def _style(text, offset=None):
+def _style(text, offset=None): # tested
     """remove prompts and output (if interpreter session)
        and return code with html markup for styling as well as raw Python
        code, and indication if an error was found."""
@@ -433,7 +438,7 @@ def _style(text, offset=None):
         return raw_code, "<span class='py_warning'>%s</span>\n<span>%s</span>" % (
                                        error_message, raw_code), True
 
-def extract_code_from_interpreter(text):
+def extract_code_from_interpreter(text): # tested
     """ Strips fake interpreter prompts from html code meant to
         simulate a Python session, and remove lines without prompts, which
         are supposed to represent Python output."""
@@ -472,7 +477,7 @@ def extract_code_from_interpreter(text):
     return python_code, stripped
 
 
-def add_back_prompt_and_output(py_code, stripped, offset=None):
+def add_back_prompt_and_output(py_code, stripped, offset=None): # tested
     '''adds back the interpreter prompt and simulated output to a
        styled interpreter session.'''
     newlines = []
@@ -515,7 +520,7 @@ def add_back_prompt_and_output(py_code, stripped, offset=None):
                                 '</span>')
     return '\n'.join(newlines)
 
-def is_interpreter_session(py_code):
+def is_interpreter_session(py_code): # tested
     '''determine if the python code corresponds to a simulated
        interpreter session'''
     lines = py_code.split('\n')

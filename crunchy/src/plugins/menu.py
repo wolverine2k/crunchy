@@ -1,136 +1,126 @@
 """  Menu plugin.
 
 Other than through a language preference, Crunchy menus can be modified
-by tutorial writers using a custom meta declaration.
+by plugin writers who can add other items.
 """
+import random
+from src.interface import plugin, Element, SubElement, config, \
+     translate, additional_menu_items, accounts, server
+_ = translate['_']
 
-import os
 
-# All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, parse, Element, config
-import src.security as security
-
-current_language = None
-
-def register():
+def register(): # tested
     """
-       registers two tag handlers for inserting custom menus
+       registers the tag handlers for inserting menu as well as
+       allowed positions for the menu.
     """
-    plugin['register_tag_handler']("meta", "name", "crunchy_menu", insert_special_menu)
-    plugin['register_end_pagehandler'](insert_default_menu)
+    plugin['register_end_pagehandler'](insert_menu)
+    plugin['register_service']("insert_menu", insert_menu)
+    plugin['add_vlam_option']('menu_position', 'top_left', 'top_right',
+                              'bottom_right', 'bottom_left')
 
-def insert_special_menu(page, elem, dummy):
-    '''inserts a menu different from the Crunchy default based.
-       The instruction is contained in a <meta> element and includes the
-       filename where the menu is defined.'''
-    if 'content' not in elem.attrib:  # most likely stripped using strict
-        return                       # security mode
-    if page.is_local:
-        local_path = os.path.split(page.url)[0]
-        menu_file = os.path.join(local_path, elem.attrib["content"])
-    elif page.is_remote:
-        raise NotImplementedError
-    else:
-        local_path = os.path.split(page.url)[0][1:]
-        menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
-                                       local_path, elem.attrib["content"])
-    menu, css = extract_menu(menu_file, page)
+def create_empty_menu(): # tested
+    '''creates the basic menu structure including only the title'''
+    menu = Element('div')
+    menu.attrib['class'] = "crunchy_menu"
+    _ul = SubElement(menu, "ul")
+    _li = SubElement(_ul, "li")
+    _li.text = _("Crunchy Menu")
+    menu_items = SubElement(_li, "ul")
+    return menu, menu_items
+
+def create_home():  # tested
+    '''creates the home element for the menu'''
+    home = Element("li")
+    a = SubElement(home, "a", href="/index.html")
+    a.text = _("Crunchy Home")
+    return home
+
+quit_random_id = str(int(random.random()*1000000000)) + str(
+                                           int(random.random()*1000000000))
+server['exit'] = "/exit" + quit_random_id
+def create_quit(): # tested
+    '''creates the quit element for the menu'''
+    Quit = Element("li")
+    a = SubElement(Quit, "a", href=server['exit'])
+    a.text = _("Quit Crunchy")
+    return Quit
+
+def insert_menu(page): # tested
+    """inserts the default Crunchy menu, if no other menu is present."""
+    menu, menu_items = create_empty_menu()
+    menu_items.append(create_home())
+    for item in additional_menu_items:
+        if item.startswith('0'):
+            menu_items.insert(0, additional_menu_items[item])
+        else:
+            menu_items.append(additional_menu_items[item])
+    if accounts.is_admin(page.username):
+        menu_items.append(create_quit())
     if page.body:
         page.body.insert(0, menu)
-        activate_security_info(page, menu)
-    if css is not None:
-        page.head.append(css)
-    page.add_include("menu_included")
 
-def insert_default_menu(page):
-    """inserts the default Crunchy menu, if no other menu is present."""
-    global current_language, _default_menu, _css
-    if page.includes("menu_included"):
-        return
-    if config['language'] != current_language:
-        _default_menu, _css = select_language(config['language'])
-    activate_security_info(page, _default_menu)
-    if page.body:
-        page.body.insert(0, _default_menu) # make sure we insert at 0 i.e.
-        # it appears first -
-        # this is important for poorly formed tutorials (non-w3c compliant).
+    height = 20
+    bottom = "bottom:%spx;" % height
+    top = "top:%spx;" % height
+    width = 175
+    padding = 5
+    items_width = width - 2*padding
+    if config[page.username]['menu_position'] == 'top_right':
+        menu_position = menu_position_css % ("top:0; right:0;", top,
+                                            height, height)
+    elif config[page.username]['menu_position'] == 'top_left':
+        menu_position = menu_position_css % ("top:0; left:0;", top,
+                                            height, height)
+    elif config[page.username]['menu_position'] == 'bottom_right':
+        menu_position = menu_position_css % ("bottom:0; right:0;", bottom,
+                                            height, height)
+    elif config[page.username]['menu_position'] == 'bottom_left':
+        menu_position = menu_position_css % ("bottom:0; left:0;", bottom,
+                                            height, height)
+    else:  # use top_right as default
+        menu_position = menu_position_css % ("top:0; right:0;", top,
+                                            height, height)
+
+    _css = menu_css % (menu_position, items_width, items_width,
+                       padding, padding, width)
     try:
-        page.head.append(_css)
+        page.add_css_code(_css)
         if config['menu_position'] == 'top_left':
             page.add_css_code("#menu_box{left:0px;}")
     except Exception:#, info:
         print("Cannot append css code in the head") # info
-        print("_css= " + _css)
-
-def activate_security_info(page, menu):
-    '''
-    Insert javascript call in link so that the security report is displayed,
-    as well as image showing security status.
-    '''
-    # First, add javascript code to display security report.
-    # While one can include such a link in the standard menu file included
-    # in the Crunchy distribution, custom menus would have such call
-    # removed for security reasons.
-    for elem in menu.getiterator('a'):
-        if 'id' in elem.attrib:
-            if elem.attrib['id'] == "security_info_link":
-                elem.attrib['onclick'] = "show_security_info();"
-                break
-
-    # Second, include image to indicate security status
-    image_found = False
-    # First, attempt to update the image identifying the security result
-    for elem in menu.getiterator('img'):
-        if 'id' in elem.attrib:
-            if elem.attrib['id'] == "security_result_image":
-                elem.attrib['src'] = page.security_result_image
-                image_found = True
-                break
-    # otherwise, add the image in the first place
-    if not image_found:
-        for elem in menu.getiterator('a'):
-            if 'id' in elem.attrib:
-                if elem.attrib['id'] == "security_info_link":
-                    img = Element('img')
-                    img.attrib['src'] = page.security_result_image
-                    img.attrib['id'] = "security_result_image"
-                    elem.attrib['title'] = 'security_link'
-                    elem.append(img)
-                    break
     return
 
-def extract_menu(filename, page, safe_menus=False):
-    '''extract a menu and css information from an html file.
+## NOTE: Most of the menu styling is in crunchy.css.  We only take care
+# of positioning and related sizing issues here.
 
-       It assumes that the menu is contained within the first <div> found in
-       the file whereas the css information is contained in the first
-       <link> in that file.'''
-    try:
-        tree = parse(filename)
-    except Exception:#, info:
-        print("cannot create a tree from the file")# info
-    # Treat menus just as suspiciously as other files
-    if not safe_menus:
-        security.remove_unwanted(tree, page)
-    # extract menu for use in other files
-    menu = tree.find(".//div")
-    css = tree.find(".//link")
-    return menu, css
+menu_position_css = """
+.crunchy_menu {%s}
+.crunchy_menu ul li:hover ul, .crunchy_menu ul li a:hover ul {%s}
+.crunchy_menu ul li , .crunchy_menu ul li a, .crunchy_menu ul li a:visited {
+height:%spx; line-height:%spx;}
+"""
 
-def select_language(lang):
-    '''
-    Select a default menu based on a language choice. If the menu for the
-    chosen language can not be found, an English menu is selected instead.
-    '''
-    global current_language
-    menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
-                                 lang, "menu.html")
-    if os.path.exists(menu_file):
-        current_language = config['language']
-    else:
-        menu_file = os.path.join(plugin['get_root_dir'](), "server_root",
-                                 "en", "menu.html")
-        if current_language == None:
-            current_language = 'en'
-    # default menus, provided by Crunchy developers, are assumed to be safe.
-    return extract_menu(menu_file, "dummy", safe_menus=True)
+# example 1: %(location, vertical_location, height, height)
+#           location = bottom:0; right:0;
+#           vertical_location = bottom:25px;
+#           height=25
+
+# example 2: location = top:0; left:0;
+#           vertical_location = top:0;
+#           height=25
+
+# insert menu_position_css into menu_css below
+menu_css = """%s
+.crunchy_menu {
+    width:%spx;
+}
+.crunchy_menu ul li a, .crunchy_menu ul li a:visited {
+    width:%spx;
+    padding:0 %spx 0 %spx;
+}
+.crunchy_menu ul li{
+    width:%spx;
+}
+"""

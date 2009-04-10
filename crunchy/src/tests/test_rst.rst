@@ -42,11 +42,15 @@ an appropriate flag.
 ---------------------
 
 # Test - check that tag handler, and service have been registered
-    >>> rst.register()
+    >>> if _docutils_installed:
+    ...     rst.register()
+    ... else:
+    ...     print "power_browser"
+    ...     print "rst"
     power_browser
     rst
     >>> if _docutils_installed:
-    ...     print(mocks.registered_tag_handler['span']['title']['load_rst'] == rst.insert_load_rst)
+    ...     print(mocks.registered_tag_handler['div']['title']['local_rst_file'] == rst.insert_load_rst)
     ...     print(mocks.registered_http_handler['/rst'] == rst.load_rst)
     ... else:
     ...     print(True)
@@ -54,50 +58,3 @@ an appropriate flag.
     True
     True
 
-2. Testing insert_load_rst()
-------------------------------
-
-This method inserts two forms inside a <span> element.
-    
-    >>> fake_page = ''  # unused
-    >>> fake_uid = '2'  # unused
-    >>> span = Element("span")
-    >>> rst.insert_load_rst(fake_page, span, fake_uid)
-    >>> forms = []
-    >>> for el in span.getiterator():
-    ...     if el.tag == "form": forms.append(el)
-    ...
-    >>> len(forms)
-    2
-
-Testing the first generated form
-
-    >>> forms[0].attrib["name"][:11]
-    'browser_rst'
-    >>> input = forms[0].find("input")
-    >>> input.attrib["name"]
-    'filename'
-    >>> input.attrib["size"]
-    '80'
-    >>> input.attrib["type"]
-    'file'
-    >>> forms[0].find("br") == None
-    False
-
-Now the second one
-
-    >>> forms[1].attrib["name"][:10]
-    'submit_rst'
-    >>> forms[1].attrib["method"]
-    'get'
-    >>> forms[1].attrib["action"]
-    '/rst'
-    >>> inputs2 = forms[1].findall("input")
-    >>> len(inputs2)
-    2
-    >>> inputs2[0].attrib["type"]
-    'hidden'
-    >>> inputs2[0].attrib["name"]
-    'url'
-    >>> inputs2[1].attrib["type"]
-    'submit'

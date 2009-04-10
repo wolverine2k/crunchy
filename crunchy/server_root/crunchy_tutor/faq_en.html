@@ -6,33 +6,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>Crunchy :: FAQ, Bugs, etc.</title>
-	
-	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
+	<meta title="template ../index.html">
 </head>
 
 <body>
+<div id="main_title">FAQ, Bugs, etc.</div>
 
-<div id="container">
-<div id="titlebar">
-<a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>FAQ, Bugs, etc.</h1>
-</div>    
-
-<div id="navbar">
-    <span class="heading">The Crunchy Tutorial</span>
-    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
-    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
-    <a href="/crunchy_tutor/editor_en.html">Editor</a>
-    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
-    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
-    <a href="/crunchy_tutor/external_en.html">External applications</a>
-    <span class="heading">Advanced Topics</span>
-    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
-    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
-    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
-    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Miscellaneous</a>
-</div>
 <div id="content">
 <blockquote><i>
 Just a flesh wound.</i> <br/>
@@ -62,6 +41,11 @@ Python's.  Can you really do this?</a>
 should I do anything special?</a>
 </li>
 <li>
+<a href="#my_own_style">I have written a tutorial with my own style and I would like
+for Crunchy not to modify it; why can't I?</a>
+</li>
+
+<li>
 <a href="#disappearing_cursor">The cursor (caret) sometimes does not show up in an editor or
 textarea.  Surely, this is a Crunchy bug.</a>
 </li>
@@ -71,7 +55,6 @@ each character appears with a shadow.</a>
 </li>
 <li><a href="#bug">I'm sure I found a bug; what do I do?</a></li>
 <li><a href="#ipython">Can I use IPython with Crunchy?</a></li>
-<li><a href="#acknowledgements">Who contributed to Crunchy?</a></li>
 </ul>
 
 <h3 > ... we might have some answers.</h3>
@@ -89,18 +72,16 @@ not to display a W3C compliant page properly:</p>
 that only <em>look</em> like they may open the door to some malicious javascript code.
 We make no apology for this: security trumps appearance in our books.
 </li>
-<li>There used to be a known second reason, which is no longer valid.  However,
-just in case the above explanation is not the true cause of display problems, this 
-new second <em>undisclosed</em> reason can be blamed. Just let us know if
-you encounter problems associated with it.</li>
+<li>Perhaps there is a conflict between the html/css class and id names used by
+Crunchy and that of the web page it displays.</li>
 </ul>
 
 <a id="colours"> </a><br/>
 <h4 >Look and Feel</h4>
 <p> If you are wondering, we did obtain permission from officials of the 
-Python Software Foundation (PSF)
-for adapting the official Python logo for Crunchy.  However, this work is not endorsed officially
-by the PSF.
+Python Software Foundation (PSF) for adapting the official Python logo for Crunchy.  
+In fact, someone from the PSF made it for us. 
+However, this work is not endorsed officially by the PSF.
 </p>
 
 
@@ -114,6 +95,30 @@ image displayed on below in a prominent place on your blog or tutorial.  This im
 crunchy-python-powered.png and the original can be found in the server_root
 directory of the Crunchy distribution.</p>
 <img src="../crunchy-python-powered.png" alt="Crunchy Logo"/>
+
+<a id="my_own_style"> </a><br/>
+<h4>Why can't Crunchy leave my code styling alone?</h4>
+<p>
+In the past, Crunchy had an option called "no_style" which would instruct
+Crunchy to not style the code, but leave in place the code of the user.  However,
+consider the following possible code:
+</p>
+<pre title="html">
+&lt;pre title="doctest no_style"&gt;
+&gt;&gt;&gt; &lt;span style="display:none"&gt;do_nasty_stuff()&lt;/span&gt;
+&gt;&gt;&gt; add(3, 4)
+7
+&lt;/pre&gt;
+</pre>
+<p>
+In this situation, a user could try to define a simple function to satisfy the
+visible doctest only to have some nasty code (hidden from view) executed.
+In other instances (for example, with an editor), a nasty line could be hidden in
+a long piece of code that would be perused in the styled section, but overlooked in
+the textarea before being executed. Since Crunchy uses Pygments, the solution we
+propose is for the tutorial writer to design a Pygments style (plugin) and have the
+reader use it to view the tutorial.  Yes, it's a bit more work, but it's safer.
+</p>
 
 <a id="disappearing_cursor"> </a><br/>
 <h4 >Vanishing cursor?</h4>
@@ -386,70 +391,13 @@ the possibility of viewing the report ... and changing the security level.
 <pre title="interpreter">
 &gt;&gt;&gt; crunchy.add_site()
 </pre>
-<p>In addition, when viewing a page, you should be able to click on a link ["View report"]
-at the top of a page.  This will bring up a window with information regarding elements that
+<p>In addition, when viewing a page, you should be able to click on a link ["Security"]
+on the menu at the top of a page.  
+This will bring up a window with information regarding elements that
 were removed on the page (if any) and allow you to change the security level for that page.  
 After changing the security level, you will need to reload the page to see its effect.</p>
 
-<a id="acknowledgements"> </a><br/>
-<h4 >Who contributed to Crunchy?</h4>
-<p>
-Many people, each in their different ways, have contributed, either directly or indirectly,
-to Crunchy.  We try to keep track of you all ... but if we forgot your name, please send us
-a reminder.
-</p>
-<ul>
-<li><b>Andr&eacute; Roberge</b> had the original idea for Crunchy, and remains one of the
-main developers.</li>
-<li><b>Johannes Woolard</b> started to work on Crunchy as a Google Summer of Code student in 2006,
-and quickly assumed the role of co-developer.</li>
-<li>Crunchy would not have been possible without Python and its great library; 
-therefore, <b>Guido van Rossum</b> and friends are to be thanked.</li>
-<li>The first version of Crunchy was inspired by an REPL (read-eval-print-loop) 
-implemented by <b>Robert Brewer</b> using CherryPy.</li>
-<li>Crunchy makes use of many of <b>Fredrik Lundh</b>'s modules.</li>
-<li>Crunchy also uses BeautifulSoup developed by <b>Leonard Richardson</b>.</li>
-<li>The embedded editor (EditArea) used by Crunchy is the result of the work of
-<b>Christophe Dolivet</b>.</li>
-<li>Crunchy's name is the result of a suggestion by <b>Dethe Elza</b> on the edu-sig list.</li>
-<li><b>Bryan Psymas</b> worked on Crunchy as a Google Summer of Code student in 2007.  He
-was the main driving force behind the security advisor feature.</li>
-<li><b>Edin Salkovic</b> worked briefly on Crunchy during Google's Summer of Code 2007; he
-implemented the prototype for the image file plugin.</li>
-<li><b>Nic Freeman</b> did the images (blue line drawings) that were displayed on the 
-right hand side at the top of the original Crunchy tutorial pages.  While we no
-longer use these images, they contributed to giving a friendly face to the original Crunchy.</li>
-<li>As part of Google's Highly Open Participation contest 2007 (currently on-going at
-the time this is written), many students contributed to Crunchy.  They are:
- <ul>
- <li><b>Josip Dzolonga</b> for the Macedonian translation, for the unit tests for 
- vlam_local.py and vlam_remote.py and for suggesting to change the code so that
- test files and available translations are automatically found - without needing
- to edit existing .py files.</li>
- <li><b>Mario Garza</b> for the Spanish translation.</li>
- <li><b>Tanel Liiv</b> for the Estonian translation. (This translation was further improved
- by contributions [outside of GHOP] from <b>Raul Laansoo</b> and <b>Pearu Peterson</b>.)</li>
- <li><b>Zachary Voase</b> for improving the test coverage of utilities.py, suggesting
- a simplification of the existing Crunchy code and implementing Crunchy-specific
- reStructuredText directives.</li>
-  <li><b>David Marek</b> for creating a reStructuredText plugin and finding a genuine
- Crunchy bug.</li>
- <li><b>Michele Mazzoni</b> for creating the first complete prototype for launching
- an external program using a different version of the Python interpreter; this allows,
- for example, to use Crunchy running under Python 2.5 to launch programs executed with
- Python 3.0.</li>
- <li><b>Felipe Schneider</b> for the Brazilian Portuguese translation.</li>
- <li><b>Sven Braun</b> for the German translation.</li>
- <li><b>Stipkovits &Aacute;dam</b> for the Hungarian translation.</li>
- <li><b>Gianluca Varisco</b> for the Italian translation </li> 
- <li><b>Mateusz Tybura</b> for the Polish translation.</li>
- </ul>
 
-</li>
-</ul>
-
-
-</div>
 </div>
 
 </body>

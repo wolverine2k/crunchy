@@ -28,7 +28,7 @@ def external_link(page, elem, *dummy):  # tested
         elem.tail += " "
     else:
         elem.text += " "
-    dummy = SubElement(elem, "img", src="/external_link.png",
+    dummy = SubElement(elem, "img", src="/images/external_link.png",
                      style="border:0;", alt="external_link.png")
     elem.attrib['target'] = "_blank" # opens in separate window/tab.
     # If the links is a relative link, make it absolute
@@ -120,6 +120,8 @@ def src_handler(page, elem, *dummy):  # partially tested
         if "://" not in elem.attrib["src"]:
             elem.attrib["src"] = urljoin(page.url, elem.attrib["src"])
     elif page.is_local:
+        if elem.attrib["src"].startswith("/"):
+            return
         local_dir = os.path.split(page.url)[0]
         elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
@@ -133,6 +135,8 @@ def link_tag_handler(page, elem, *dummy):  # partially tested
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     if page.is_local:
+        if elem.attrib["href"].startswith("/"):
+            return
         local_dir = os.path.split(page.url)[0]
         elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))
@@ -154,7 +158,7 @@ css_import_re = re.compile('@import\s+"(.+?)"')
 
 def style_handler(page, elem, *dummy):  # tested
     """replace @import statements in style elements"""
-    def css_import_replace(imp_match):
+    def css_import_replace(imp_match): # indirectly tested
         '''replaces the relative path found by its absolute value'''
         path = imp_match.group(1)
         return '@import "%s"' % urljoin(page.url, path)

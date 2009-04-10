@@ -1,5 +1,8 @@
 """handle local loading of tutorials (not from the server root).
 Uses the /local http request path.
+
+Also creates a form allowing to browse for a local tutorial to be loaded
+by Crunchy.
 """
 import os
 import sys
@@ -8,11 +11,17 @@ from urllib import unquote_plus
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin
 
-provides = set(["/local", "/generated_image"])
+provides = set(["/local"])
+requires = set(["filtered_dir", "insert_file_tree"])
 
 def register():  # tested
     plugin['register_http_handler']("/local", local_loader)
     plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
+    plugin['register_tag_handler']("div", "title", "local_html_file",
+                                                 insert_load_local)
+    plugin['add_vlam_option']('power_browser', 'local_html')
+    plugin['register_http_handler']("/jquery_file_tree_html", jquery_file_tree_html)
+    plugin['register_service']("local_html", insert_load_local)
 
 def local_loader(request):  # tested
     '''loads a local file;
@@ -24,8 +33,10 @@ def local_loader(request):  # tested
     If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
+    username = request.crunchy_username
     if "htm" in extension:
-        page = plugin['create_vlam_page'](open(url), url, local=True)
+        page = plugin['create_vlam_page'](open(url), url, username=username,
+                                          local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
         base_url, fname = os.path.split(url)
@@ -47,6 +58,41 @@ def add_to_path(page, elem, *dummy):  # tested
         import_path = elem.attrib['name']
     except:
         return
-    added_path = os.path.normpath(os.path.join(base_url, import_path))
+    if page.is_from_root:
+        added_path = os.path.normpath(os.path.join(
+                                        config['crunchy_base_dir'],
+                                    "server_root", base_url[1:], import_path))
+    else:
+        added_path = os.path.normpath(os.path.join(base_url, import_path))
     if added_path not in sys.path:
         sys.path.insert(0, added_path)
+
+def insert_load_local(page, elem, uid):
+    "Inserts a javascript browser object to load a local (html) file."
+    plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_html',
+                                '/local', 'Load local html tutorial', 'Load tutorial')
+    return
+
+def filter_html(filename, basepath):
+    '''filters out all files and directory with filename so as to include
+       only files whose extensions start with ".htm" with the possible
+       exception of ".crunchy" - the usual crunchy default directory.
+    '''
+    if filename.startswith('.') and filename != ".crunchy":
+        return True
+    else:
+        fullpath = os.path.join(basepath, filename)
+        if os.path.isdir(fullpath):
+            return False   # do not filter out directories
+        ext = os.path.splitext(filename)[1][1:] # get .ext and remove dot
+        if ext.startswith("htm"):
+            return False
+        else:
+            return True
+
+def jquery_file_tree_html(request):
+    '''extract the file information and formats it in the form expected
+       by the jquery FileTree plugin, but excludes some normally hidden
+       files or directories, to include only html files.'''
+    plugin['services'].filtered_dir(request, filter_html)
+    return

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta title="template tests_index.html">
+	<title>Interpreters tests</title>
+	
+</head>
+
+<body>
+
+<div id="main_title">Interpreters Tests</div>
+<div id="content">
+<p>We start with a very simple test, one in which the Python code has been
+written in the html file with no formatting, and using the proper html entities.</p>
+<pre title="interpreter show_vlam">
+&gt;&gt;&gt; the_world_is_flat = 1
+&gt;&gt;&gt; if the_world_is_flat:
+...     print "Be careful not to fall off!"
+...
+Be careful not to fall off!
+</pre>
+<p>Next, the same code, but this time, instead of using
+<code title="python">"&amp;gt;&amp;gt;&amp;gt; "</code> for the Python prompts, 
+we will use <code title="python">">>> "</code> 
+inside the <code title="html">&lt;pre&gt;</code>; the final result should be the same.
+<pre title="interpreter show_vlam">
+>>> the_world_is_flat = 1
+>>> if the_world_is_flat:
+...     print "Be careful not to fall off!"
+...
+Be careful not to fall off!
+</pre>
+<p>Next, we have the same example, this time using some pre-styled code; we use
+the styled code straight from html file of the official Python tutorial</p>
+<pre title="Borg show_vlam">
+<span class="gp">&gt;&gt;&gt; </span><span class="n">the_world_is_flat</span> <span class="o">=</span> <span class="mf">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">the_world_is_flat</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">"Be careful not to fall off!"</span>
+<span class="gp">...</span>
+<span class="go">Be careful not to fall off!</span>
+</pre>
+<p>The result should, once again, be the same.</p>
+
+<p>Moving on to different types of interpreters.</p>
+<pre title="isolated show_vlam">
+&gt;&gt;&gt; print the_world_is_flat
+</pre>
+<p>It's otherwise undocument equivalent.</p>
+<pre title="Human show_vlam">
+&gt;&gt;&gt; print "I am not Borg!"
+</pre>
+<p>And now, for something different.</p>
+<pre title="parrot linenumber show_vlam">
+>>> a = 4
+>>> a
+>>> print a
+4
+</pre>
+
+
+<pre title="Parrots linenumber=99 show_vlam">
+>>> a = 4
+>>> a
+>>> print a
+4
+>>> print the_world_is_flat
+1
+</pre>
+
+<p>And the TypeInfoConsole</p>
+<pre title="TypeInfoConsole show_vlam">
+>>> a = 3   # assignment does not echo anything as usual
+>>> a       # However, this echoes both the value and type.
+ 3 &lt;type 'int'&gt;
+>>> fun = (1, 'a', {'a':1}, (1, 2), [1, 2], set('abc'), 1.0, 1+1j)
+>>> for f in fun:
+...     f
+...
+1 &lt;type 'int'*gt;
+'a' &lt;type 'str'&gt; 
+{'a': 1} &lt;type 'dict'&gt; 
+(1, 2) &lt;type 'tuple'&gt; 
+[1, 2] &lt;type 'list'&gt; 
+set(['a', 'c', 'b']) &lt;type 'set'&gt; 
+1.0 &lt;type 'float'&gt; 
+(1+1j) &lt;type 'complex'&gt;
+</pre>
+
+</div>
+
+</body>
+</html>

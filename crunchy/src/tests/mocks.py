@@ -9,11 +9,6 @@ in the various tests.
 import sys
 from src.interface import plugin
 
-registered_tag_handler = {}
-registered_http_handler = {}
-registered_services = {}
-registered_preprocessors = {}
-
 class Page(object):
     '''Fake page used for testing.
     A page can be modified by a plugin when some information is added to it.
@@ -21,13 +16,24 @@ class Page(object):
     not the details.
 
     Note that verification of modifications of Elements are done separately.'''
-    def __init__(self):
+    def __init__(self, username=None):
+        if username is None:
+            self.username = 'Crunchy'
+        else:
+            self.username = username
         self.pageid = 1
         self.added_info = []
         self.url = 'crunchy_server'
         self.is_remote = False
         self.is_local = False
         self.is_from_root = False
+        self.handlers1 = {}
+        self.handlers2 = {}
+        self.handlers3 = {}
+
+# Note: in the following, since we don't care about the value of some includes
+# (setting them as "dummy"), the only relevant thing we really test is to see if
+# we included the proper number of items per category.
 
     def includes(self, dummy):
         self.added_info.append('includes')
@@ -60,6 +66,7 @@ class Request(object):
         self.args = args
         self.headers = {}
         self.wfile = Wfile()
+        self.crunchy_username = "Crunchy"
 
     def send_response(self, response=42):
         print(response)
@@ -93,6 +100,12 @@ def register_begin_pagehandler(handler):
 def register_end_pagehandler(handler):
     registered_end_pagehandlers[str(handler)] = handler
 
+def register_begin_tag_handler(tag, handler):
+    registered_begin_tag_handlers[tag] = handler
+
+def register_final_tag_handler(tag, handler):
+    registered_final_tag_handlers[tag] = handler
+
 def init():
     '''used to (re-)initialise some functions
 
@@ -102,15 +115,23 @@ def init():
     accurate to use this function.
     '''
     global registered_tag_handler, registered_http_handler, registered_services,\
-            registered_begin_pagehandlers, registered_end_pagehandlers
+        registered_begin_pagehandlers, registered_end_pagehandlers,\
+        registered_preprocessors, registered_begin_tag_handlers,\
+        registered_final_tag_handlers
     registered_tag_handler = {}
     registered_http_handler = {}
     registered_services = {}
+    registered_preprocessors = {}
     registered_begin_pagehandlers = {}
     registered_end_pagehandlers = {}
+    registered_begin_tag_handlers = {}
+    registered_final_tag_handlers = {}
+
     plugin['register_tag_handler'] = register_tag_handler
     plugin['register_http_handler'] = register_http_handler
     plugin['register_service'] = register_service
     plugin['register_preprocessor'] = register_preprocessor
     plugin['register_begin_pagehandler'] = register_begin_pagehandler
     plugin['register_end_pagehandler'] = register_end_pagehandler
+    plugin['register_begin_tag_handler'] = register_begin_tag_handler
+    plugin['register_final_tag_handler'] = register_final_tag_handler

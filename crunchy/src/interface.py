@@ -30,7 +30,6 @@ import src.tools_2k as tools
 u_print = tools.u_print
 exec_code = tools.exec_code
 
-
 # Rather than having various modules importing the configuration.py,
 # CrunchyPlugin.py, etc.,
 # we will set things up so that the relevant will populate the
@@ -38,16 +37,18 @@ exec_code = tools.exec_code
 # to artificially populate it as well from other sources enabling
 # independent unit testing.
 
+accounts = {}  # initialized in crunchy.py
 additional_vlam = {}  # initialized from plugins by CrunchyPlugin.py
+additional_menu_items = {}
+additional_properties = {}  # initialized by various plugins
+names = {}
 config = {}  # initialized mostly by configuration.py
 plugin = {}  # initialized by CrunchyPlugin.py
 preprocessor = {} # initialized via CrunchyPlugin.py
 server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
+exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
-#
-#config['crunchy_base_dir'] = os.path.dirname(imp.find_module("crunchy")[1]
-#    ).decode(sys.getfilesystemencoding())
 
 config['crunchy_base_dir'] = os.path.normpath(os.path.join(
                                               os.path.dirname(__file__), '..')
@@ -82,5 +83,10 @@ SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
 tostring = ElementTree.tostring
 
-
 interactive = False # used with python crunchy -i option
+
+import pygments.token
+generic_output = pygments.token.STANDARD_TYPES[pygments.token.Generic.Output]
+generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
+generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
+comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]

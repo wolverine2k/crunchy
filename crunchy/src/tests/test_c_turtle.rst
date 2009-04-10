@@ -148,8 +148,9 @@ Testing colors.
     >>> t1.fill_color(0.5, 0.5, 0.5)
     >>> t1._fill_color
     '#808080'
-
-
+    >>> t1.background('yellow')
+    >>> t1._background_color
+    'yellow'
     >>> t1.visible(True)
     >>> t1._visible
     True

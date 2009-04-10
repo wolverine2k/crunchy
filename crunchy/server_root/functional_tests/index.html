@@ -7,33 +7,10 @@
 
 	<title>Crunchy :: Miscellaneous</title>
 
-	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
-</head>
-
+	<meta title="template ../index.html"></head>
 <body>
 
-<div id="container">
-    <div id="titlebar">
-    <a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a>
-    <h1>Miscellaneous</h1>
-    </div>
-
-<div id="navbar">
-    <span class="heading">The Crunchy Tutorial</span>
-    <a href="/crunchy_tutor/welcome_en.html">Begin Tutorial</a>
-    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
-    <a href="/crunchy_tutor/editor_en.html">Editor</a>
-    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
-    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
-    <a href="/crunchy_tutor/external_en.html">External applications</a>
-    <span class="heading">Advanced Topics</span>
-    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
-    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
-    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
-    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Miscellaneous</a>
-</div>
+<div id="main_title">Miscellaneous</div>
 <div id="content">
 
 <h1 class="crunchy">Introduction</h1>
@@ -42,12 +19,6 @@
 
 <p>More to come...</p>
 
-<h2>Tree structure and testing status</h2>
-
-<p>The <a href="/test_status.html">tree structure</a> of the Python files included
-in the Crunchy distribution, as well as some useful information is provided.
-</p>
-
 
 <h2 class="crunchy">The Crunchy Test Suite</h2>
 
@@ -55,22 +26,10 @@ in the Crunchy distribution, as well as some useful information is provided.
 Each of these tests should be exercised before a new release is created.  
 Existing bugs can (and should) be documented here as well.</p>
 
-<p><a href="analyzer.html">Analyzer prototype</a></p>
-
 <h3 class="crunchy">Normal operation</h3>
 <ul>
 <li>IMPORTANT TEST: <a href="security_test.html">Javascript security test</a></li>
-<li><a href="menus.html">Alternate menu</a> from hard link (with css from server_root)
-  <ul><li><a href="menus2.html">Alternate menu</a> from browsing local tutorial (with css 
-  in location relative to this file.)</li></ul>
-</li>
-<li><a href="colourizer.html">Colourizer Test</a>
 
-  <ul>
-  <li><a href="special.html">Special characters</a>; does not work with Python 3.0 - try the next one.</li>
-    <li><a href="special_3k.html">Special characters</a></li>
-  </ul>
-</li>
 <li><a href="css_override.html">css override test</a></li>
 
 <li><a href="doctest.html">Doctest</a></li>
@@ -90,20 +49,22 @@ Existing bugs can (and should) be documented here as well.</p>
   <li><a href="iso-8859-1.html">iso-8859-1</a>; does not work properly with Python 3.0.</li>
   <li><a href="utf-8.html">utf-8</a>; does not work properly with Python 3.0.</li>
 </ul>
-<li><a href="language_negociation.html">Language negotiation</a></li>
 <li><a href="links.html">Links</a></li>
 <li><a href="load_tutorials.html">Loading arbitrary tutorials</a></li>
 
 <li><a href="logging.html">Session logging</a></li>
-
-<li>A <a href="rst_directives.txt">reStructuredText file with Crunchy directives</a></li>
+<li><a href="hidden_code.html">Hidden code test</a></li>
 <li> An external <a href="http://andre.roberge.googlepages.com/rst_directives.txt">reStructuredText
 file with Crunchy directives</a>. Remember to set the security mode
 to an appropriate value so that it works properly!</li>
-<li><a href="no_markup.html">No markup test</a>: automatically adding markup
+<li><a href="user_markup.html">Custom markup test</a>: automatically adding markup where
+there is none or modifying existing markup
 based on default choice.</li>
 <li><a href="kill_execution.html">Stopping execution</a>: make sure that we can get out of infinite loops.</li>
+<li><a href="exam_mode.html">Exam mode</a></li>
 </ul>
+
+<p>We need a test of adding a path to sys.path via the "python_import" option.</p>
 
 <h3 class="crunchy">Comprehensive test</h3>
 <ul>
@@ -142,10 +103,6 @@ the interactive elements.
 </li>
 </ul>
 
-
-
-
-</div>
 </div>
 
 </body>

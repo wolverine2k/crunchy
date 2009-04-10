@@ -6,14 +6,37 @@ Also handles the redirection of stdin, stdout and stderr.
 
 import threading
 import sys
+import re
 
 import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import config
+from src.interface import config, accounts, names
 
-debug_ids = []#[1, 2, 3, 4, 5, 6]
+debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+show_io_js = """
+$("#out_%s").html("");
+$("#in_%s").show();
+try{
+    $("#kill_%s").show();
+    }
+catch(err){;} /* may not exist if ctypes not present. */
+
+"""
+hide_io_js = """
+$("#in_%s").hide();
+try{
+    $("#kill_%s").hide();
+    $("#kill_image_%s").hide();
+    }
+catch(err){;} /* may not exist if ctypes not present. */
+"""
+# this should probably be animated:
+show_help_js = """
+$("#help_menu,#help_menu_x").show();
+"""
 
 class StringBuffer(object):
     """A thread safe buffer used to queue up strings that can be appended
@@ -69,7 +92,7 @@ class StringBuffer(object):
         self.data += data
         self.event.set()
         self.lock.release()
-
+        debug_msg("Leaving StringBuffer.put:", 3)
 
 class CrunchyIOBuffer(StringBuffer):
     """A version optimised for crunchy IO"""
@@ -77,31 +100,43 @@ class CrunchyIOBuffer(StringBuffer):
 
     def put_output(self, data, uid):
         """put some output into the pipe"""
+
+        #apply before_output hook first
+        data = interface.plugin['services'].apply_io_hook('ANY', 'before_output', data)
+        data = interface.plugin['services'].apply_io_hook(uid, 'before_output', data)
+        if data == "":
+            return
         data = data.replace('"', '&#34;')
+        pdata = data.replace("\\", "\\\\")
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
         self.lock.acquire()
+        pageid = uid.split("_")[0]
+        username = names[pageid]
+        debug_msg("username = %s in CrunchyIOBuffer.put_output"%username, 5)
         if self.data.endswith('";//output\n'):
             self.data = self.data[:-11] + '%s";//output\n' % (pdata)
             # Saving session; appending from below
-            if uid in config['logging_uids']:
-                log_id = config['logging_uids'][uid][0]
-                config['log'][log_id].append(data)
-                utilities.log_session()
+            if uid in config[username]['logging_uids']:
+                log_id = config[username]['logging_uids'][uid][0]
+                config[username]['log'][log_id].append(data)
+                utilities.log_session(username)
             self.event.set()
         elif self.help_flag == True:
-            self.put(help_js)
-            pdata = pdata.replace("stdout", "help_menu") # replacing css class
-            self.put("""document.getElementById("help_menu").innerHTML = "%s";\n""" % (pdata))
+            self.put(show_help_js)
+            pdata = pdata.replace("class='%s'"%interface.generic_output, "class='help_menu'")
+            # use jQuery:
+            self.put("""$("#help_menu").html("%s");\n""" % (pdata))
             self.help_flag = False
         else:
-            self.put("""document.getElementById("out_%s").innerHTML += "%s";//output\n""" % (uid, pdata))
+            #use jQuery:
+            self.put("""$("#out_%s").append("%s");//output\n""" % (uid, pdata))
             # Saving session; first line...
-            if uid in config['logging_uids']:
-                log_id = config['logging_uids'][uid][0]
-                config['log'][log_id].append(data)
-                utilities.log_session()
+            if uid in config[username]['logging_uids']:
+                log_id = config[username]['logging_uids'][uid][0]
+                config[username]['log'][log_id].append(data)
+                utilities.log_session(username)
         self.lock.release()
 
 # there is one CrunchyIOBuffer for output per page:
@@ -119,14 +154,19 @@ def comet(request):
     """An http path handler, called from the page - blocks until there is data
     to be sent.
     This needs to be registered as a handler when Crunchy is launched."""
+    debug_msg("Entering comet() in cometIO.py", 9)
     pageid = request.args["pageid"]
+    debug_msg(" ... request.args = %s" % request.args, 9)
     #wait for some data
+    debug_msg(" ... wait for data", 9)
     data = output_buffers[pageid].get()
+    debug_msg(" ... found data", 9)
     # OK, data found
     request.send_response(200)
     request.end_headers()
     request.wfile.write(data)
     request.wfile.flush()
+    debug_msg(" ... done in comet()", 9)
 
 def register_new_page(pageid):
     """Sets up the output queue for a new page"""
@@ -147,15 +187,26 @@ def write_output(pageid, uid, output):
 def do_exec(code, uid, doctest=False):
     """exec code in a new thread (and isolated environment).
     """
+    debug_msg("Entering cometIO.do_exec()", 9)
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
-    if 'display' in config['get_current_page_security_level']():
+    try:
+        pageid = uid.split("_")[0]
+        username = names[pageid]
+    except:
+        debug_msg("error in do_exec; uid =%s"%uid, 8)
         return
 
-    debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 5)
-    t = interpreter.Interpreter(code, uid, symbols=config['symbols'],
-                                doctest=doctest)
+    if 'display' in config[username]['_get_current_page_security_level']():
+        return
+    elif not accounts:  # same if no username/password set
+        return
 
+    # make the io widget appear
+    output_buffers[pageid].put(show_io_js % (uid, uid, uid))
+    debug_msg(" creating an intrepreter instance in cometIO.do_exec()", 9)
+    t = interpreter.Interpreter(code, uid, symbols=config[username]['symbols'],
+                                doctest=doctest)
     debug_msg(" setting a daemon thread in cometIO.do_exec()", 5)
     t.setDaemon(True)
     debug_msg("  starting the thread in cometIO.do_exec()", 5)
@@ -165,10 +216,11 @@ def do_exec(code, uid, doctest=False):
 def push_input(request):
     """An http request handler to deal with stdin"""
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
+    pageid = uid.split("_")[0]
     # echo back to output:
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
-    output_buffers[pageid].put_output("<span class='stdin'>" +
+    in_to_browser = in_to_browser.replace('\\', r'\\')
+    output_buffers[pageid].put_output("<span class='%s'>"%interface.generic_output +
                                             in_to_browser + "</span>", uid)
     # display help menu on a seperate div
     if request.data.startswith("help("):
@@ -184,6 +236,12 @@ def push_input(request):
 
     request.send_response(200)
     request.end_headers()
+
+def raw_push_input(uid, data):
+    input_buffers[uid].put(data)
+
+def is_accept_input(uid):
+    return uid in input_buffers
 
 class ThreadedBuffer(object):
     """Split some IO acording to calling thread"""
@@ -217,12 +275,11 @@ class ThreadedBuffer(object):
 
     def register_thread(self, uid):
         """register a thread for redirected IO, registers the current thread"""
-        pageid = uid.split(":")[0]
         mythread = threading.currentThread()
         mythread.setName(uid)
         input_buffers[uid] = StringBuffer()
         threads[uid] = threading.currentThread()
-        output_buffers[pageid].put(reset_js % (uid, uid, uid))
+        debug_msg("registering thread for uid=%s" % uid, 8)
 
     def unregister_thread(self):
         """
@@ -234,13 +291,10 @@ class ThreadedBuffer(object):
         uid = threading.currentThread().getName()
         if not self.__redirect(uid):
             return
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         del input_buffers[uid]
-        # hide the input box:
-        output_buffers[pageid].put("""
-            document.getElementById("in_%s").style.display="none";
-            document.getElementById("kill_%s").style.display="none";
-            """ % (uid,uid))
+        # hide the input box and the Stop thread link
+        output_buffers[pageid].put(hide_io_js % (uid, uid, uid))
 
 
     def write(self, data):
@@ -252,9 +306,10 @@ class ThreadedBuffer(object):
         # Borg interpreter, there can be exchange of input or output between
         # the code running in that interpreter and code entered in another one.
         uid = threading.currentThread().getName()
-        pageid = uid.split(":")[0]
+        pageid = uid.split("_")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
+        debug_msg("write --- data , " + data.replace('\\', r'\\'), 4)
         #Note: in the following, it is important to ensure that the
         # py_prompt class is surrounded by single quotes - not double ones.
         # normal prompt
@@ -267,9 +322,10 @@ class ThreadedBuffer(object):
                         '_u__)) ' # Parrots
                         ]:
             dd = data.split('crunchy_py_prompt%s' % _prompt)
-            data = ("<span class='py_prompt'>%s" % _prompt).join(dd)
+            data = ("<span class='%s'>%s" % (interface.generic_prompt, _prompt)).join(dd)
 
         if self.__redirect(uid):
+            data = data.replace('\\', r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
             self.default_out.write(data.encode(sys.getfilesystemencoding()))
@@ -313,23 +369,9 @@ def debug_msg(data, id_=None):
         sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
-sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class="stdout")
-sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class="stderr")
-
-reset_js = """
-try{
-document.getElementById("kill_%s").style.display="block";
-}
-catch(err){ ;}  //needed as the element may not exist.
-document.getElementById("in_%s").style.display="inline";
-document.getElementById("out_%s").innerHTML="";
-"""
-reset_js_3k = """
-document.getElementById("in_{0}").style.display="inline";
-document.getElementById("out_{1}").innerHTML="";
-"""
-
-help_js = """
-document.getElementById("help_menu").style.display = "block";
-document.getElementById("help_menu_x").style.display = "block";
-"""
+def init_stdios():
+    # Note: we use Pygments classes
+    sys.stdout = ThreadedBuffer(out_buf=sys.stdout, buf_class=interface.generic_output)
+    sys.stderr = ThreadedBuffer(out_buf=sys.stderr, buf_class=interface.generic_traceback)
+init_stdios()
+interface.init_stdios = init_stdios

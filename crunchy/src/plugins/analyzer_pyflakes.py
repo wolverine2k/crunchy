@@ -14,7 +14,7 @@ except ImportError:
     pyflakes_available = False
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin
+from src.interface import plugin
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["analyzer_widget"])
@@ -29,32 +29,33 @@ def register():
         # Register the analyzer
         # Important: the vlam_option is the identifier of the analyzer.
         # The same identifiant must be used for the service: get_analyzer_id
-        plugin['add_vlam_option']('analyzer', 'pyflakes') 
+        plugin['add_vlam_option']('analyzer', 'pyflakes')
         plugin['register_service'](
             'get_analyzer_pyflakes',
             CrunchyFlakes(),
         )
-        plugin['services'].register_analyzer_name('pyflakes', 'PyFlakes')
+        plugin['services'].register_analyzer_name('pyflakes')#, 'PyFlakes')
 
 class CrunchyFlakes:
     """Class to configure and start a pyflakes analysis
     """
-    
+
     def __init__(self):
         self._report = None
         self._code = None
         self._nb_errors = None
-    
-    def set_code(self, code):
-        """Set the code to analyze"""
-        self._code = code
-    
-    def run(self):
+
+    #def set_code(self, code):
+    #    """Set the code to analyze"""
+    #    self._code = code
+
+    def run(self, code):
         """Make the analysis
-        
+
         This function is inspired from the check function of the pyflakes start
         script.
         """
+        self._code = code
         # Open a buffer for the output
         output = StringIO.StringIO()
         # Start the check
@@ -79,22 +80,22 @@ class CrunchyFlakes:
             for warning in w.messages:
                 print >> output, warning
             self._nb_errors = len(w.messages)
-        
+
         # Get the output and remove the irrelevant file path
         self._report = output.getvalue()
         # Close the buffer
         output.close()
-        
-    
+
+
     def get_report(self):
         """Return the full report"""
         return self._report
-    
+
     def get_global_score(self):
         """Return the global score or None if not available.
-        
+
         This score can be formatted with "%.2f/10" % score
-        
+
         It is not computed by pychecker, but here, by the formule:
         score = 10 - ((number_of_errors / number_of_lines) * 10)
         """
@@ -106,7 +107,7 @@ class CrunchyFlakes:
         number_of_lines = float(len(code_lines))
         number_of_errors = float(self._nb_errors)
         return 10 - ((number_of_errors / number_of_lines) * 10)
-    
+
     def _printWarnings(self, warnings, stream=None):
         """This function call the original checker._printWarnings, but set
         the stream to self._output_buffer
