@@ -5,8 +5,9 @@ This is the frontend for analyzers like pylint
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, tostring
-from src.interface import translate
-from src.utilities import extract_log_id, insert_markup
+from src.interface import translate, additional_vlam
+from src.utilities import extract_log_id, wrap_in_div
+import src.configuration as configuration
 _ = translate['_']
 
 # The set of other "widgets/services" provided by this plugin
@@ -15,7 +16,7 @@ provides = set(["analyzer_widget"])
 # The set of other "widgets/services" required from other plugins
 requires =  set(["editor_widget", "io_widget"])
 
-analyzer_names = {None: _("Disabled")}
+analyzer_names = [None]#{None: _("Disabled")}
 
 def register():
     """The register() function is required for all plugins.
@@ -27,7 +28,7 @@ def register():
           'analyzer widget';
        3. some services to let other plugin add analysis function.
        """
-    
+
     # By convention, the custom handler for "name" will be called
     # via "/name"; for security, we add a random session id
     # to the custom handler's name to be executed.
@@ -36,13 +37,13 @@ def register():
     plugin['register_http_handler'](
                             "/analyzer_score%s"%plugin['session_random_id'],
                             analyzer_score_callback)
-    
+
     plugin['register_service']('insert_analyzer_button',
                                insert_analyzer_button)
     plugin['register_service']('add_scoring', add_scoring)
     plugin['register_service']('register_analyzer_name',
-                               analyzer_names.__setitem__)
-    
+                               analyzer_names.append)
+
     # 'analyzer' only appears inside <pre> elements, using the notation
     # <pre title='analyzer ...'>
     plugin['register_tag_handler']("pre", "title", "analyzer",
@@ -50,41 +51,43 @@ def register():
     # Register the 'get_analyzer' service
     plugin['register_service']('get_analyzer', get_analyzer)
 
-def analyzer_enabled():
-    """Return is a analyzer is available and enable"""
-    return 'analyzer' in config and config['analyzer'] is not None
+def analyzer_enabled(username):
+    """Return True if an analyzer is available and enabled"""
+    return 'analyzer' in config[username] and config[username]['analyzer'] is not None
 
-def get_analyzer():
+def get_analyzer(username):
     """Return the current analyzer (or None)"""
-    if analyzer_enabled():
+    if analyzer_enabled(username):
         return plugin['services'].__dict__['get_analyzer_%s' % \
-                                           config['analyzer']]
+                                           config[username]['analyzer']]
 
 def analyzer_runner_callback(request):
     """Handles all execution of the analyzer to display a report.
     The request object will contain
     all the data in the AJAX message sent from the browser."""
-    info = request.data.split("_::EOF::_")
-    code = '_::EOF::_'.join(info[1:])
+    username = request.crunchy_username
+    info = request.data.split("__SEPARATOR__")
+    code = '__SEPARATOR__'.join(info[1:])
     # Get the choosen analyzer (if any)
     analyzer = info[0]
     if analyzer :
         # Change the config if needed
         if analyzer == str(None):
             analyzer = None
-        if analyzer != config['analyzer']:
-            config['analyzer'] = analyzer
-    
+        if analyzer != config[username]['analyzer']:
+            config[username]['analyzer'] = analyzer
+            # need to save here?
+
     request.send_response(200)
     request.end_headers()
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
-    
-    if analyzer_enabled():
+    pageid = uid.split("_")[0]
+
+    if analyzer_enabled(username):
         # Analyzer the code
-        analyzer = plugin['services'].get_analyzer()
-        analyzer.set_code(code)
-        analyzer.run()
+        analyzer = plugin['services'].get_analyzer(username)
+        #analyzer.set_code(code)
+        analyzer.run(code)
         report = analyzer.get_report()
         plugin['append_text'](pageid, uid, '\n' + "="*60 + "\n")
         if report:
@@ -99,13 +102,12 @@ def analyzer_score_callback(request):
     """Handles all execution of the analyzer to display a score
     The request object will contain
     all the data in the AJAX message sent from the browser."""
-    analyzer = plugin['services'].get_analyzer()
-    analyzer.set_code(request.data)
-    analyzer.run()
+    analyzer = get_analyzer(request.crunchy_username)
+    analyzer.run(request.data)
     request.send_response(200)
     request.end_headers()
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
+    pageid = uid.split("_")[0]
     plugin['append_text'](pageid, uid, "\n")
     score = analyzer.get_global_score()
     if score is not None:
@@ -119,16 +121,23 @@ def analyzer_widget_callback(page, elem, uid):
     log_id = extract_log_id(vlam)
     if log_id:
         t = 'analyzer'
-        config['logging_uids'][uid] = (log_id, t)
-    
+        config[page.username]['logging_uids'][uid] = (log_id, t)
+
     # next, we style the code, also extracting it in a useful form ...
-    analyzercode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
-                                                                        elem)
+    #analyzercode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
+    #                                                                    elem)
+    elem.attrib['title'] = "python"
+    analyzercode, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    elem.attrib['title'] = vlam
+
+    # next, we style the code, also extracting it in a useful form ...
+    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
-    
-    insert_markup(elem, uid, vlam, markup, "analyzer")
-    
+    wrap_in_div(elem, uid, vlam, "analyzer", show_vlam)
+
+    #insert_markup(elem, uid, vlam, markup, "analyzer")
+
     # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid, analyzercode)
     #some spacing:
@@ -144,7 +153,7 @@ def insert_analyzer_button(page, elem, uid):
     quality.
     Return the inserted button
     """
-    
+
     # Form to select the analyzer
     SubElement(elem, "br")
     form1 = SubElement(elem, 'form', name='form1_' + uid)
@@ -152,15 +161,19 @@ def insert_analyzer_button(page, elem, uid):
     span.text = _('Analyzer: ')
     span.attrib['class'] = 'analyzer'
     select = SubElement(form1, 'select', id='analyzer_'+uid)
-    for analyzer in analyzer_names:
-        option = SubElement(select, 'option', value=str(analyzer))
-        option.text = analyzer_names[analyzer]
-        if analyzer == config['analyzer']:
+    analyzer_names = configuration.options['analyzer']
+    for name in analyzer_names:
+        if name is None:
+            analyzer = str(None)
+        else:
+            analyzer = name.replace('analyzer_', '')
+        option = SubElement(select, 'option', value=analyzer)
+        option.text = analyzer
+        if analyzer == str(config[page.username]['analyzer']):
             option.attrib['selected'] = 'selected'
     SubElement(elem, "br")
-    
-    
-    if 'display' not in config['page_security_level'](page.url):
+
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("analyzer_included") :
             page.add_include("analyzer_included")
             page.add_js_code(analyzer_jscode)
@@ -174,8 +187,8 @@ def add_scoring(page, button, uid):
     """Add a call to the analyzer scoring function to a standard 'execute'
     button.
     """
-    if analyzer_enabled():
-        if 'display' not in config['page_security_level'](page.url):
+    if analyzer_enabled(page.username):
+        if 'display' not in config[page.username]['page_security_level'](page.url):
             if not page.includes("analyzer_score_included") :
                 page.add_include("analyzer_score_included")
                 page.add_js_code(analyzer_score_jscode)
@@ -191,7 +204,7 @@ function exec_analyzer(uid){
     var j = new XMLHttpRequest();
     j.open("POST", "/analyzer%s?uid="+uid, false);
     analyzer = document.getElementById("analyzer_"+uid).value;
-    j.send(analyzer+"_::EOF::_"+code);
+    j.send(analyzer+"__SEPARATOR__"+code);
 };
 """ % plugin['session_random_id']
 analyzer_score_jscode = """

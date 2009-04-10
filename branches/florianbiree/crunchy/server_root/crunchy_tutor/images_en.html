@@ -7,33 +7,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>Crunchy :: Images</title>
-
-	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
+	<meta title="template ../index.html">
 </head>
 
 <body>
-
-<div id="container">
-<div id="titlebar">
-<a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>Playing with Images</h1>
-</div>
-
-<div id="navbar">
-    <span class="heading">The Crunchy Tutorial</span>
-    <a href="/crunchy_tutor/welcome_en.html">Begin tutorial</a>
-    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
-    <a href="/crunchy_tutor/editor_en.html">Editor</a>
-    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
-    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
-    <a href="/crunchy_tutor/external_en.html">External applications</a>
-    <span class="heading">Advanced Topics</span>
-    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
-    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
-    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
-    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Miscellaneous</a>
-</div>
+<div id="main_title">Images and dhtml</div>
 <div id="content">
 <h3 >Dynamically inserting images into a page</h3>
 <p>Crunchy allow a user to insert one or more images interactively below
@@ -44,7 +22,7 @@ Crunchy.
 </p>
 <pre title="interpreter">
 import dhtml
-dhtml.image("../crunchy-python-powered.png", width=457, height=83)
+dhtml.image("../images/crunchy-python-powered.png", width=457, height=83)
 </pre
 <p>
 The above image has been loaded from a location given relative to the current
@@ -72,7 +50,7 @@ The following example assumes that
 is installed; if it's not, you're out of luck!</p>
 <pre title="editor">
 import dhtml
-image_file = dhtml.join_path(dhtml.home, "foo.png")
+image_file = dhtml.join_path(crunchy.temp_dir, "foo.png")
 
 # assumes matplotlib is installed
 import matplotlib.numerix as nx
@@ -142,13 +120,13 @@ def generic(file_path, position):
 
 # We use images that are part of the Crunchy distribution.
 def yellow(position):
-    return generic("../warning_big.png", position)
+    return generic("../images/warning_big.png", position)
 
 def green(position):
-    return generic("../ok_big.png", position)
+    return generic("../images/ok_big.png", position)
 
 def red(position):
-    return generic("../display_big.png", position)
+    return generic("../images/display_big.png", position)
 
 dhtml.append("br") # start on a new line
 
@@ -203,19 +181,6 @@ red("2_3")
 dhtml.append("span", label="message", attributes={'innerHTML':"Done!"})
 </pre>
 
-<h3 >Finding out more</h3>
-
-<p>
-
-You may want to try the following to find out more about the dhtml module.
-</p>
-<pre title="interpreter">
-&gt;&gt;&gt; dhtml.home              # assumes dhtml has already been imported
-&gt;&gt;&gt; help(dhtml.join_path)   # no need to import os.path:
-                            # see matplotlib example above
-</pre>
-
-</div>
 </div>
 
 </body>

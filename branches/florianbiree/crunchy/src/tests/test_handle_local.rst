@@ -18,6 +18,11 @@ See how_to.rst_ for details.
     >>> from src.interface import plugin, config, Element
     >>> plugin.clear()
     >>> config.clear()
+    >>> def print_args(*args):
+    ...     for arg in args:
+    ...         print arg
+    >>> plugin['add_vlam_option'] = print_args
+    >>> plugin['services'] = print_args
     >>> import src.plugins.handle_local as handle_local
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -30,6 +35,8 @@ Testing register()
 ----------------------
 
     >>> handle_local.register()
+    power_browser
+    local_html
     >>> 
     >>> mocks.registered_tag_handler['meta']['title']['python_import'] == handle_local.add_to_path
     True
@@ -76,10 +83,11 @@ the file extension - not the actual content.  Note that we need to
 determine if the path gets added properly.  
 First, we define a dummy vlam page creator.
 
-    >>> def open_html(file_handle, url, local):
+    >>> def open_html(file_handle, url, username, local):
     ...    print(file_handle.read())
     ...    file_handle.seek(0)  # "rewind"
     ...    print(url[-4:]) # just the extension
+    ...    print(username)
     ...    print(local)
     ...    return file_handle
     >>> plugin['create_vlam_page'] = open_html
@@ -89,8 +97,12 @@ so we can be sure it's been added correctly.
     
     >>> import sys
     >>> cwd = os.getcwd()
-    >>> while cwd in sys.path:
-    ...    sys.path.remove(cwd)
+    >>> if cwd in sys.path:
+    ...     cwd_present = True  # For later cleanup
+    ...     while cwd in sys.path:
+    ...         sys.path.remove(cwd)
+    ... else:
+    ...     cwd_present = False
 
 We are now ready for the test as such.
 
@@ -111,6 +123,7 @@ We are now ready for the test as such.
     >>> handle_local.local_loader(request)
     This is just a test.
     .htm
+    Crunchy
     True
     200
     Cache-Controlno-cache, must-revalidate, no-store
@@ -119,7 +132,8 @@ We are now ready for the test as such.
     >>> os.remove(filepath)
     >>> cwd in sys.path
     True
-    >>> sys.path.remove(cwd)  # cleaning up
+    >>> if not cwd_present:
+    ...     sys.path.remove(cwd)  # restore original state
 
 .. _`add_to_path()`:
 
@@ -136,9 +150,22 @@ add path and see if it is in there.
     >>> elem = Element("dummy")
     >>> elem.attrib['name'] = fake_path
     >>> page = mocks.Page()
+    >>> print page.url
+    crunchy_server
     >>> handle_local.add_to_path(page, elem, 'dummy')
-    >>> fake_path in sys.path
+    >>> fake_path == sys.path[0]
     True
-    >>> sys.path.remove(fake_path)  # cleaning up
+    >>> del sys.path[0] # cleaning up
+    >>> fake_path == sys.path[0]
+    False
 
+Try again, this time with a tutorial supposedly loaded from the
+base directory.
+
+    >>> page.is_from_root = True
+    >>> config['crunchy_base_dir'] = '/base'
+    >>> handle_local.add_to_path(page, elem, 'dummy')
+    >>> print sys.path[0]
+    /base/server_root/fake_path_which_does_not_exist
+    >>> del sys.path[0]  # cleaning up
 

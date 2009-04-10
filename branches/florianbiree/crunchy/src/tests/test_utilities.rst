@@ -7,7 +7,6 @@ which are used by more than one module:
 
 #. `uidgen()`_
 #. `extract_log_id()`_
-#. `insert_file_browser()`_
 #. `trim_empty_lines_from_end()`_
 #. `changeHTMLspecialCharacters()`_
 #. `log_session()`_
@@ -28,8 +27,8 @@ Testing uidgen()
 uidgen() generates a unique integer id (returned as a string).
 The current implementation is such that consecutive integers are generated.
 
-    >>> first = int(utilities.uidgen())
-    >>> second = int(utilities.uidgen())
+    >>> first = int(utilities.uidgen('dummy'))
+    >>> second = int(utilities.uidgen('dummy'))
     >>> second - first
     1
 
@@ -72,56 +71,6 @@ It's probably a good idea to check at some failing tests as well
 
 .. _`insert_file_browser()`:
 
-Testing insert_file_browser()
---------------------------------
-
-This function inserts two forms inside an html element.  We will use
-the "usual" <span> choice.
-    
-    >>> span = Element("span")
-    >>> utilities.insert_file_browser(span, "Some text", "/dummy")
-    >>> forms = []
-    >>> for el in span.getiterator():
-    ...     if el.tag == "form": forms.append(el)
-    ...
-    >>> len(forms)
-    2
-
-Testing the first generated form
-
-    >>> forms[0].attrib["name"][:13]
-    'browser_dummy'
-    >>> input = forms[0].find("input")
-    >>> input.attrib["name"]
-    'filename'
-    >>> input.attrib["size"]
-    '80'
-    >>> input.attrib["type"]
-    'file'
-    >>> "onblur" in input.attrib
-    True
-    >>> forms[0].find("br") == None
-    False
-
-Now the second one
-
-    >>> forms[1].attrib["name"][:12]
-    'submit_dummy'
-    >>> forms[1].attrib["method"]
-    'get'
-    >>> forms[1].attrib["action"]
-    '/dummy'
-    >>> inputs2 = forms[1].findall("input")
-    >>> len(inputs2)
-    2
-    >>> inputs2[0].attrib["type"]
-    'hidden'
-    >>> inputs2[0].attrib["name"]
-    'url'
-    >>> inputs2[1].attrib["type"]
-    'submit'
-
-.. _`trim_empty_lines_from_end()`:
 
 Testing trim_empty_lines_from_end()
 --------------------------------------

@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<title>How does Crunchy perform its magic?</title>
+</head>
+<body>
+<div id="main_title">How does Crunchy perform its magic?</div>
+<div id='content'>
+
+<p>In case you are wondering how Crunchy manages to transform
+boring static html pages into exciting interactive Python sessions
+right within your browser window ... you are at the right place.
+However, before we begin to explain how Crunchy works, you might have
+the following question on your mind: </p>
+
+<h4 >Is it safe to browse a web site with Crunchy?</h4>
+<div class="wide-warning">
+<h4>We are serious about safety.</h4>
+<p>While we try to be humorous in Crunchy's documentation, security is not
+a laughing matter.  We believe it is important that we provide you with a full
+description of how Crunchy deals with security matters.
+Feel free to contact us directly if you have any questions or suggestions
+concerning security.</p>
+</div>
+
+<p>In case you are wondering, we will explain, using words and diagrams,
+how Crunchy performs it magic.
+There are a few steps to consider.</p>
+<ol>
+<li>The User starts Crunchy and communication is established.</li>
+<li>The User has to establish his credentials, entering a username
+and password.</li>
+<li>Crunchy retrieves an html page.</li>
+<li>Crunchy parses the page to create a tree structure 
+(using Elementtree - more on this later).</li>
+<li>Crunchy sanitizes the html pages requested to remove unwanted elements,
+such as any existing javascript, links to javascript files
+and various undesired html tags.</li>
+<li>Crunchy processes the Crunchy specific markup (vlam), adding
+custom elements <b><em>and</em></b> custom javascript.</li>
+<li>Crunchy feeds the page to the browser, leaving a line of
+communication open, waiting for user instruction.</li>
+<li>The User requests that some Python code be executed</li>
+</ol>
+<p>There is a saying that a picture is worth a thousand words.  Well, here's a
+thousand words worth, produced using
+<a href="http://www.websequencediagrams.com/" title="external_link">
+a wonderful <b>free</b> tool.</a>
+</p>
+<h3>Starting Crunchy and User Authentication</h3>
+<p>Let's assume you've set up a user account (username and password) and are
+starting Crunchy.  The interaction will proceed as follows.</p>
+<img src="/images/authenticate1.png">
+<p>Future authentication requests are done using the stored information, without
+requesting any information from the user, as long as the browser session
+is active.</p>
+
+<div class="notes" style="width:200px">
+<h4>Getting deeper</h4>
+<p>
+Most of the work done by Crunchy is hidden in the
+step indicated by "Retrieves and process file"
+on the diagram to the left.
+</p>
+</div>
+<img src="/images/authenticate2.png">
+
+
+<p>
+Once a page has been processed and fed to the browser, the user
+can start interacting with the Python backend as illustrated below.
+Crunchy is simply waiting for the user's instruction, and will
+not execute any code on the page unless the user takes some active steps,
+like clicking on a button or typing some code and pressing the "enter" key
+to send it to an interpreter.
+<em>If the user types in the appropriate Python code to delete all files
+on the computer ...</em> Crunchy will dutifully execute that code.  There is
+nothing we can do about this.  The same thing could happen if a user
+started a normal Python shell and typed in the same code.
+</p>
+<h3>User Beware: Running Arbitrary Python Code</h3>
+<img src="/images/run_python.png">
+
+<div class="notes" style="width:200px">
+<h4>Custom code for interaction.</h4>
+<p>
+We will show the basic code required for the interaction below,
+after we complete the description of how things work using
+only words and diagrams.
+</p>
+</div>
+
+
+<p>
+Before this type of interaction can happen,
+Crunchy inserts the required javascript code to enable 
+communication between the browser and the Python interpreter. 
+On its own, this step is harmless...
+</p>
+<p>
+However, before it includes this custom code,
+Crunchy removes any pre-existing javascript code, etc.
+<em>What if Crunchy fails in removing the existing javascript code?</em>
+And, <em>what if the existing javascript code is designed to 
+identify a Crunchy specific javascript function on the page and uses it 
+to send some malicious Python code to the interpreter?</em>.
+</p>
+
+<p>If something like this were to happen ... it would be disastrous.  
+Therefore, we must be very careful in identifying and removing potentially
+harmful content.  The method
+we use is based on the existence of a <em>white list</em> that we created.
+</p>
+
+<div class="notes">
+<h4>Quote from feedparser.org</h4>
+<p>
+Our white list consists of a series of html tags, each with their own set of attributes,
+that are allowed on the page.  For example, &lt;a&gt; is allowed, but &lt;applet&gt; is not.
+
+Here is an incomplete list of potentially dangerous <acronym >HTML</acronym> tags and 
+attributes:</p>
+<ul>
+<li>
+<tt>script</tt>, which can contain malicious script</li>
+<li>
+<tt>applet</tt>, <tt>embed</tt>, and <tt>object</tt>, which can automatically download and 
+execute malicious code</li>
+
+<li>
+<tt>meta</tt>, which can contain malicious redirects</li>
+<li>
+<tt>onload</tt>, <tt>onunload</tt>, and all other <tt>on*</tt> attributes, 
+which can contain malicious script</li>
+<li>
+<tt>style</tt>, <tt>link</tt>, and the <tt>style</tt> attribute, which can contain 
+malicious script</li>
+
+</ul>
+<p><em><tt>style</tt>?</em>
+Yes, <tt>style</tt>.  
+<acronym>CSS</acronym> 
+definitions can contain executable code.
+</p>
+</div>
+
+<p>
+Before we proceed with a more detailed explanation, you might want
+to read 
+<a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">this</a>
+document from feedparser.org.  You may also want to do an Internet search for
+<em>cross site scripting</em> (XSS), which is a topic closely related to the
+problem we are trying to address.  Once you understand XSS, you might want to 
+have also a look at 
+<a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>.
+</p>
+
+<p>The white list we have created is different from the one at feedparser.org.
+Actually, we have 3 different white lists, for 3 different levels of security.
+They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
+</p>
+
+<dl>
+<dt><b>strict</b></dt>
+<dd>With the strict level (previously named <em>paranoid</em>), 
+the following html tags are not included
+in our white list: applet, basefont, base, button, form, frameset,
+iframe, input, isindex, object, optgroup, option, param, script,
+select and textarea - as well as link, style and img.
+Not all excluded tags are potentially harmful; some are simply
+deprecated.<br/>
+For the included tags, only the <em>title</em> attribute is allowed, except
+for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
+as attributes and the &lt;meta&gt; for which we allow the <em>name</em> attribute which can
+be used in conjunction with the <em>title</em> attribute to add a relative path to 
+<code>sys.path</code> so that examples using <code title="py_code">import</code>
+can be used.  If they don't contain Crunchy objects, pages displayed
+with the strict level selected are essentially the same as old-fashioned html
+text only documents.</dd>
+<dt><b>normal</b></dt>
+<dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
+attribute.  However, we scan either the file being linked or the content 
+inside the &lt;style&gt; tag, or style attribute
+for either the string "url("  [with possible spaces before the parenthese]
+and any string starting with "&amp;#" which often would denote an obfuscated character 
+meant to bypass normal filters [see the 
+<a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">feedparser.org</a>
+and 
+<a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>
+links already mentioned for an explanation].  We treat such content as automatically
+suspicious and remove automatically these tags entirely when such content is met.<br/>
+We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy 
+to allow a tutorial writer to design an alternate menu for Crunchy; we also allow the 
+<em>http-equiv</em> only together with the value <em>content-type</em>.
+Finally, we allow the img tag; however, we pre-scan each image
+to make sure that it is indeed an image file and not some cleverly disguised javascript
+code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
+a page containing many external images.  However, we normally need to verify the
+validity of a given image only once per Crunchy session.<br/>
+The normal level is currently the default level used when starting Crunchy.  
+With this level, you can browse the official Python tutorial and it will look
+just the same <small>[better, actually! ... at least for versions prior to 2.6]</small> 
+as if you viewed it
+directly in your browser without Crunchy's help.  However, a site like python.org
+will look very different, as most styling will be removed.</dd>
+<dt><b>trusted</b></dt>
+<dd>Finally, at the trusted level, we allow the same content as with the normal level,
+except that we don't scan for suspicious styling information and assume that all images
+are safe.  Using the trusted level, a site like python.org will look almost identical as 
+intended when viewed through Crunchy.<br/>
+</dd>
+</dl>
+<p>In addition to the above described steps, we do the following:</p>
+<ul>
+<li>We transform all links of the form <code>href="url?query"</code> into <code>href="url"</code>.
+This is to prevent accidental communication between the webbrowser and the Python server, sending a
+"query" to the latter.</li>
+<li>All instructions sent to the Python server in order of having some Python command executed
+take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long 
+random integer generated at the beginning of a session.  This way, even if a malicious query bypassed
+the cleanup mentioned at the previous step, it would still be nearly impossible to guess the
+commands required for the Python interpreter to execute some malicious code sent by a query; some
+javascript code specifically designed to scan the page and extract this session-specific random 
+integer would have had to be inserted on that page.
+</li>
+</ul>
+<p>The first two security levels mentioned [strict and normal] should be
+totally safe against unwanted javascript intrusion.  The third one, as its name
+indicates, should only be used with trusted sites - and only if it is found that
+it is required for appropriate formatting.
+</p>
+
+<p>The possibility of using obfuscated code (e.g. using "&amp;#..." entities) is one that
+can cause problems for many filters [see the two links already mentioned].  
+However, as far as we have been able to verify, 
+Crunchy is immune to this problem due to the way it parses
+html pages according to step 2 mentioned previously:
+Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
+to parse pages.  BeautifulSoup is known to handled ill-formed web pages, parsing them
+and transforming them into well-formed ones.  Elementtree takes well-formed
+web pages, and create a tree structure representing them. If a page is not well-formed,
+Elementtree will raise an exception and Crunchy will not be able to
+proceed with that page.
+By using this combination of BeautifulSoup and Elementtree,
+we are left with a well defined tree that can be trimmed as mentioned above, hopefully removing
+any potential problems.
+</p>
+<h4>How can one determine which security level to use?</h4>
+<p>At this point you might wonder how you could afford to select a security level
+other than 'strict' to view pages from a new site.  What you look at a page found on the web using
+a less stringent level, and something nasty sneaks in? By the time you look at it, it might
+already be too late...</p>
+
+<p>The solution to this problem is the introduction of 3 additional security levels.  They are:
+</p>
+<ul>
+<li>display strict</li>
+<li>display normal</li>
+<li>display trusted</li>
+</ul>
+<p>
+Using each of these levels, Crunchy parses the page as you would expect according to
+the above descriptions.  The difference is that step 6 <small>[where Crunchy
+inserts custom javascript code and enables communication between the
+browser and the Python interpreter]</small> does not take place.  Crunchy simply
+displays the page so that it looks almost like it would normally, but no Python code execution
+is possible.  A user can select a 'display' mode, inspect the page content to verify that
+no foreign javascript is included, before loading it normally.</p>
+<p>To help you, whenever some tags or attributes are removed from a page, Crunchy inserts a link
+in the menu giving you some summary of what it actually removed.</p>
+
+<h4>Back to using pictures...</h4>
+<p>Let us go back to our use of diagrams.  
+Remember the "retrieve and process file" box.  This
+consists of two step: a sanitizing/filtering step, and the processing of markup.  
+We will take each one in turn.</p>
+<h3>Security: Filtering Unwanted Elements</h3>
+<img src="/images/security.png">
+<h3>Processing vlam: Adding Interactive Elements</h3>
+<p>Crunchy has been designed with a plugin architecture.  We have found that this
+makes it very easy to add new features to Crunchy.  Each interactive element is
+added by a specific plugin.</p>
+<img src="/images/process_vlam.png">
+
+<h3>The secret ingredient to the interactivity</h3>
+<p>Interactivity is achieved through the use of custom javascript
+in each html page setting up a communication channel with the
+Python backend.  The technique we use is known as "comet" and is
+described in <a href="http://en.wikipedia.org/wiki/Comet_(programming)" 
+title="external_link">Wikipedia</a> as follows.</p>
+
+<div class="notes" style="width:600px;">
+... many Comet applications instead opt for long polling, which is easier to implement on the browser side, and works, at minimum, in every browser that supports XHR. As the name suggests, long polling requires the client to poll the server for an event (or set of events). The browser makes an Ajax-style request to the server, which is kept open until the server has new data to send to the browser, which is sent to the browser in a complete response. The browser initiates a new long polling request in order to obtain subsequent events.
+</div>
+
+<br style="clear:both;">
+<p>Here's the javascript code we use to do this.  If you find the code
+cryptic, it might be because we use the jquery library.</p>
+<pre title="javascript linenumber">
+function runOutput(channel){
+    $.ajax({type : "GET",
+            url : "/comet?pageid=" + channel,
+            cache : false,
+            dataType: "script",
+            success : function(data, status){
+                runOutput(channel);  // recursive call
+            }
+            })
+};
+</pre>
+<p>Let's explain what this does. We define a function [runOutput] that starts
+an ajax-style request.  Upon successful completion, this function calls itself,
+setting up a new request.  The actual request is a special url [/comet] used
+to communicate with the server.</p>
+<p>On the server side, we have the following function. [note: all the code has
+been copied, with only minor editing, from the Crunchy source.]</p>
+<pre title="python linenumber=20">
+def comet(request):
+    """An http path handler, called from the page - blocks until there is data
+    to be sent.
+    This needs to be registered as a handler when Crunchy is launched."""
+    pageid = request.args["pageid"]
+    #wait for some data
+    data = output_buffers[pageid].get()  # CrunchyIOBuffer instance
+    # OK, data found
+    request.send_response(200)
+    request.end_headers()
+    request.wfile.write(data)
+    request.wfile.flush()
+</pre>
+<p>The actual work is being done by the get() method of a CrunchyIOBuffer instance.</p>
+<pre title="python linenumber=40">
+class CrunchyIOBuffer(StringBuffer):
+    """A version optimised for crunchy IO"""
+    help_flag = False
+
+    def put_output(self, data, uid):
+        """put some output into the pipe"""
+        # more code ...
+</pre>
+<p>CrunchyIOBuffer is a subclass of a StringIOBuffer, where the actual get() method
+is defined.</p>
+<pre title="python linenumber=50">
+class StringBuffer(object):
+    """A thread safe buffer used to queue up strings that can be appended
+    together."""
+    def __init__(self):
+        self.lock = threading.RLock()
+        self.event = threading.Event()
+        self.data = ""
+
+    def get(self):
+        """get the current contents of the buffer, if the buffer is empty,
+        this always blocks until data is available.
+        Multiple clients are handled in no particular order"""
+        while True:
+            self.event.clear()
+            self.lock.acquire()
+            if len(self.data) > 0:
+                t = self.data
+                self.data = ""
+                self.lock.release()
+                return t
+            self.lock.release()
+            self.event.wait()
+
+    def put(self, data):
+        """put some data into the buffer"""
+        self.lock.acquire()
+        self.data += data
+        self.event.set()
+        self.lock.release()
+
+# more code ...
+</pre>
+<p>As you can see, the Python server waits until it has some code in the queue,
+and then sends it back to the browser.  The browser takes the code received, deals with it,
+and starts another request to get more code from the Python server.</p>
+<p>We realise that this is a bit cryptic ... but it should be enough to get you started
+if you are interested in digging deeper in Crunchy's actual code.</p>
+
+<p><b>If you are aware of any potential security holes, please let us know.</b></p>
+
+
+</div>
+</body>
+</html>

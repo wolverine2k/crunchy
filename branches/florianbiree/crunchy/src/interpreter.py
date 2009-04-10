@@ -10,7 +10,7 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, translate, config
+from src.interface import StringIO, exec_code, translate, config, plugin, names
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -54,10 +54,35 @@ class Interpreter(KillableThread):
     """
     Run python source asynchronously
     """
-    def __init__(self, code, channel, symbols = None, doctest=False):
+    def __init__(self, code, channel, symbols = None, doctest=False,
+                 username=None):
         threading.Thread.__init__(self)
-        self.code = trim_empty_lines_from_end(code)
+        self.code = trim_empty_lines_from_end(code) + "\n"
+        # the extra new line character at the end above prevents a syntax error
+        # if the last line is a comment.
         self.channel = channel
+        if username is not None:
+            self.username = username
+            self.friendly = config[self.username]['friendly']
+        else:
+            try:
+                pageid = self.channel.split("_")[0]
+                self.username = names[pageid]
+                self.friendly = config[self.username]['friendly']
+            except:
+                self.friendly = False
+                print ("Exception raised in Interpreter.init(); channel = %s" %
+                                                                    self.channel)
+                try:
+                    print "username = ", self.username
+                except:
+                    print "username not defined..."
+                    self.username = None
+                try:
+                    print "pageid in names: ", self.channel.split("_")[0] in names
+                except:
+                    pass
+
         self.symbols = {}
         if symbols is not None:
             self.symbols.update(symbols)
@@ -78,21 +103,24 @@ class Interpreter(KillableThread):
                 self.ccode = compile(self.code, "User's code", 'exec')
             except:
                 try:
-                    if config['friendly']:
-                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    if self.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code, self.username))
                     else:
                         traceback.print_exc()
+                    return
                 except:
                     sys.stderr.write("Recovering from internal error in Interpreter.run()")
+                    sys.stderr.write("self.channel =%s"%self.channel)
+                    return
             if not self.ccode:    #code does nothing
                 return
             try:
                 # logging the user input first, if required
-                if self.channel in config['logging_uids']:
-                    vlam_type = config['logging_uids'][self.channel][1]
+                if self.username and self.channel in config[self.username]['logging_uids']:
+                    vlam_type = config[self.username]['logging_uids'][self.channel][1]
                     if vlam_type == 'editor':
                         user_code = self.code.split("\n")
-                        log_id = config['logging_uids'][self.channel][0]
+                        log_id = config[self.username]['logging_uids'][self.channel][0]
                         if user_code:
                             user_code = '\n'.join(user_code)
                             if not user_code.endswith('\n'):
@@ -100,9 +128,10 @@ class Interpreter(KillableThread):
                         else:
                             user_code = _("# no code entered by user\n")
                         data = "<span class='stdin'>" + user_code + "</span>"
-                        config['log'][log_id].append(data)
-                        log_session()
-                exec_code(self.ccode, self.symbols, source=None)
+                        config[self.username]['log'][log_id].append(data)
+                        log_session(username)
+                exec_code(self.ccode, self.symbols, source=None,
+                          username=self.username)
                 #exec self.ccode in self.symbols#, {}
                 # note: previously, the "local" directory used for exec
                 # was simply an empty directory.  However, this meant that
@@ -112,16 +141,18 @@ class Interpreter(KillableThread):
                 # will be used for holding both global and local variables.
             except:
                 try:
-                    if config['friendly']:
-                        sys.stderr.write(errors.simplify_traceback(self.code))
+                    if self.friendly:
+                        sys.stderr.write(errors.simplify_traceback(self.code, self.username))
                     else:
                         traceback.print_exc()
                 except:
                     sys.stderr.write("Recovering from internal error in Interpreter.run()")
+                    sys.stderr.write(".. after trying to call exec_code.")
+                    sys.stderr.write("self.channel = %s"%self.channel)
         finally:
             if self.doctest:
                 # attempting to log
-                if self.channel in config['logging_uids']:
+                if self.username and self.channel in config[self.username]['logging_uids']:
                     code_lines = self.code.split("\n")
                     user_code = []
                     for line in code_lines:
@@ -131,7 +162,7 @@ class Interpreter(KillableThread):
                         if line.startswith("__teststring"):
                             break
                         user_code.append(line)
-                    log_id = config['logging_uids'][self.channel][0]
+                    log_id = config[self.username]['logging_uids'][self.channel][0]
                     if user_code:
                         user_code = '\n' + '\n'.join(user_code)
                         if not user_code.endswith('\n'):
@@ -142,10 +173,10 @@ class Interpreter(KillableThread):
                     user_code = "\n" + "- "*25 + "\n" + user_code
 
                     data = "<span class='stdin'>" + user_code + "</span>"
-                    config['log'][log_id].append(data)
-                    log_session()
+                    config[self.username]['log'][log_id].append(data)
+                    log_session(self.username)
                 # proceed with regular output
-                if config['friendly']:
+                if self.friendly:
                     message, success = errors.simplify_doctest_error_message(
                            self.doctest_out.getvalue())
                     if success:
@@ -188,7 +219,7 @@ class InteractiveInterpreter(object):
 
     """
 
-    def __init__(self, locals=None):
+    def __init__(self, locals=None, username=None):
         """
         The optional 'locals' argument specifies the dictionary in
         which code will be executed; it defaults to a newly created
@@ -196,14 +227,15 @@ class InteractiveInterpreter(object):
         "__doc__" set to None.
 
         """
+
         if locals is None:
             locals = {"__name__": "__console__", "__doc__": None}
         self.locals = locals
-
-        ## NOTA BENE:  This is for a single user environment only;
-        ## a different approach might be needed when multiple users are
-        ## allowed.
-        self.locals.update(config['symbols'])  # single user...
+        self.username = username
+        if username is not None:
+            self.locals.update(config[username]['symbols'])
+            #print _("Hello %s ! "% username)
+            print ''
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):
@@ -233,7 +265,7 @@ class InteractiveInterpreter(object):
         try:
             code = self.compile(source, filename, symbol)
         except (OverflowError, SyntaxError, ValueError):
-            sys.stderr.write(errors.simplify_traceback(source))
+            sys.stderr.write(errors.simplify_traceback(source, self.username))
             return False
 
         if code is None:
@@ -252,10 +284,10 @@ class InteractiveInterpreter(object):
         caller should be prepared to deal with it.
         """
         try:
-            exec_code(code, self.locals, source=source)
+            exec_code(code, self.locals, source=source, username=self.username)
             #exec code in self.locals
         except:
-            sys.stderr.write(errors.simplify_traceback(source))
+            sys.stderr.write(errors.simplify_traceback(source, self.username))
         else:
             if softspace(sys.stdout, 0):
                 print('')
@@ -277,7 +309,7 @@ class InteractiveConsole(InteractiveInterpreter):
 
     """
 
-    def __init__(self, locals=None, filename="<console>"):
+    def __init__(self, locals=None, filename="<console>", username=None):
         """Constructor.
 
         The optional locals argument will be passed to the
@@ -287,7 +319,7 @@ class InteractiveConsole(InteractiveInterpreter):
         of the input stream; it will show up in tracebacks.
 
         """
-        InteractiveInterpreter.__init__(self, locals)
+        InteractiveInterpreter.__init__(self, locals, username=username)
         self.filename = filename
         self.resetbuffer()
 
@@ -366,10 +398,11 @@ class InteractiveConsole(InteractiveInterpreter):
 
 class SingleConsole(InteractiveConsole):
     '''SingleConsole are isolated one from another'''
-    def __init__(self, locals={}, filename="Crunchy console"):
+    def __init__(self, locals={}, filename="Crunchy console", username=None):
         self.locals = locals
         self.locals['restart'] = self.restart
-        InteractiveConsole.__init__(self, self.locals, filename=filename)
+        InteractiveConsole.__init__(self, self.locals, filename=filename,
+                                    username=username)
 
     def restart(self):
         """Used to restart an interpreter session, removing all variables
@@ -403,18 +436,21 @@ class BorgGroups(object):
 
 class BorgConsole(BorgGroups, SingleConsole):
     '''Every BorgConsole share a common state'''
-    def __init__(self, locals={}, filename="Crunchy console", group="Borg"):
+    def __init__(self, locals={}, filename="Crunchy console", group="Borg",
+                 username=None):
         super(BorgConsole, self).__init__(group=group)
-        SingleConsole.__init__(self, locals, filename=filename)
+        SingleConsole.__init__(self, locals, filename=filename,
+                               username=username)
 
 class TypeInfoConsole(BorgGroups, SingleConsole):
     '''meant to provide feedback as to type information
        inspired by John Posner's post on edu-sig
        http://mail.python.org/pipermail/edu-sig/2007-August/008166.html
     '''
-    def __init__(self, locals={}, filename="Crunchy console", group="Borg"):
+    def __init__(self, locals={}, filename="Crunchy console", group="Borg",
+                 username=None):
         super(TypeInfoConsole, self).__init__(group=group)
-        SingleConsole.__init__(self, locals, filename=filename)
+        SingleConsole.__init__(self, locals, filename=filename, username=username)
 
     def runcode(self, code, source):
         """Execute a code object.
@@ -426,10 +462,10 @@ class TypeInfoConsole(BorgGroups, SingleConsole):
         saved_dp = sys.displayhook
         sys.displayhook = self.show_expression_value
         try:
-            exec_code(code, self.locals, source=source)
+            exec_code(code, self.locals, source=source, username=self.username)
             #exec code in self.locals
         except:
-            sys.stderr.write(errors.simplify_traceback(source))
+            sys.stderr.write(errors.simplify_traceback(source, self.username))
         else:
             if softspace(sys.stdout, 0):
                 print

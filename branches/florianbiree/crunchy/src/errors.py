@@ -18,7 +18,9 @@ from src.interface import config
 import translation
 _ = translation._
 
-def simplify_traceback(code=None):
+debug = False
+
+def simplify_traceback(code=None, username=None):
     ''' inspired by simplifytraceback from the code module in the
     standard library.
     The first stack item because it is our own code; it is removed in
@@ -36,7 +38,7 @@ def simplify_traceback(code=None):
     except:
         lineno = trace.tb_lineno
     if ex_type is SyntaxError:
-        return simplify_syntax_error(code, ex_type, value, trace, lineno)
+        return simplify_syntax_error(code, ex_type, value, trace, lineno, username)
     if ex_type is SystemExit:
         value = "Your program exited.\n"
 
@@ -51,7 +53,7 @@ def simplify_traceback(code=None):
     for line in tb_list:
         saved_tb_list.append(line)
 
-    if config['friendly']:#configuration.defaults.friendly:
+    if username and config[username]['friendly']:
         try:
             if code is not None:
                 code_line = code.split('\n')[lineno - 1]
@@ -84,10 +86,21 @@ def simplify_traceback(code=None):
         out = retval.getvalue().replace("Your program exited.",
                              _(u"Your program exited.") )
         return out.encode("utf-8")
-    return retval.getvalue().encode("utf-8")
+
+    if debug:
+        if username:
+            added_info = ("Crunchy debug::  In errors.simplify_traceback:\n"
+                          "username = %s"%username + "friendly = " +
+                                            str(config[username]['friendly']))
+        else:
+            added_info = ("Crunchy debug::  "
+                          "In errors.simplify_traceback: username=%s\n"%username)
+    else:
+        added_info = ''
+    return retval.getvalue().encode("utf-8") + added_info
 
 
-def simplify_syntax_error(code, ex_type, value, trace, lineno):
+def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
     """
     print out a syntax error
     closely based on showsyntaxerror from the code module
@@ -104,7 +117,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno):
         # Stuff in the right filename
         value = SyntaxError(msg, (filename, lineno, offset, line))
         sys.last_value = value
-    if config['friendly']:#configuration.defaults.friendly:  # ignore that filename stuff!
+    if username and config[username]['friendly']:# ignore that filename stuff!
         list = traceback.format_exception_only(ex_type, value)[1:]
         list.insert(0, "Error on line %s:\n"%lineno)
     else:
@@ -119,6 +132,12 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno):
 def simplify_doctest_error_message(msg):
     '''Simplifies doctest messages, assuming standard format.'''
 
+    # new for Python 2.6
+    #- Doctest now returns results as a named tuple for readability:
+    # (0, 7) --> TestResults(failed=0, attempted=7)
+    if "TestResults" in msg:
+        msg = msg.replace("TestResults", '').replace("=", '')
+        msg = msg.replace("failed", '').replace("attempted", '')
     failures, total = eval( msg.split('\n')[-1])
 
     if failures:

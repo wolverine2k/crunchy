@@ -8,98 +8,34 @@
 
 	<title>Crunchy :: Tutorial Introduction</title>
 	
-	<link rel="stylesheet" href="/crunchy_docs.css" type="text/css" charset="utf-8">
+	<meta title="template ../index.html">
 </head>
 
 <body>
 
-<div id="container">
-    <div id="titlebar">
-    <a href="/"><img src="/crunchy-python-powered.png" alt="Crunchy home"/> </a><h1>The Crunchy Tutorial</h1>
-    </div>   
+<div id="main_title">The Crunchy Tutorial</div>
 
-<div id="navbar">
-    <span class="heading">The Crunchy Tutorial</span>
-    <a href="/crunchy_tutor/welcome_en.html">Begin Tutorial</a>
-    <a href="/crunchy_tutor/interpreter_en.html">Interpreter</a>
-    <a href="/crunchy_tutor/editor_en.html">Editor</a>
-    <a href="/crunchy_tutor/doctest_en.html">DocTest</a>
-    <a href="/crunchy_tutor/canvas_en.html">Graphics</a>
-    <a href="/crunchy_tutor/images_en.html">Images and dhtml</a>
-    <a href="/crunchy_tutor/external_en.html">External applications</a>
-    <span class="heading">Advanced Topics</span>
-    <a href="/crunchy_tutor/remote_en.html">Browsing</a>
-    <a href="/crunchy_tutor/config_en.html">Configuring Crunchy</a>
-    <a href="/crunchy_tutor/faq_en.html">FAQ, bugs, etc.</a>
-    <a href="/crunchy_tutor/writing_en.html">Writing tutorials</a>
-    <a href="/functional_tests">Miscellaneous</a>
-</div>
 <div id="content">
-    <p>This is a tutorial on the use of Crunchy. Crunchy's goal is to transform plain web-based Python tutorials into <i>amazingly exciting</i> interactive sessions!</p>
-    <blockquote><i>
-    Move along.  There's nothing to see!  Keep moving!</i> <br/>
-    <small>From Monty Python and the Holy Grail.</small>
-    </blockquote>
-    <p>If you are eager to try out Crunchy, you can just skip the rest of this introduction
-    and click on the "Interpreter" link on the left.</p>
-    <h3>A Potted Crunchy History</h3>
-    <blockquote><i> ... If I may begin at the beginning. First there is the <font color="red">cherry</font> fondue. This is extremely nasty, but we can't prosecute you for that...</i><br />
-    <small>From the Monty Python Crunchy Frog sketch. </small></blockquote>
-    <p>In the beginning, there was <tt>IT</tt>.  <tt>IT</tt> was <em>nice</em> and <tt>IT</tt> was the name suggested by Andr&eacute; Roberge's 13 year old daughter Evelyne after he showed her and explained to her that <tt>IT</tt> was designed to produce <tt>I</tt>nteractive Python <tt>T</tt>utorials.
-    However, <tt>IT</tt> was found to be slightly uninspiring as a name.  After asking on 
-    the edu-sig list for potential names, <tt>IT</tt> became Crunchy Frog. Crunchy Frog (it probably was more of a Tadpole back then) grew slowly
-    until  Johannes Woolard joined as a developer, thanks to Google's financial support during the Summer of Code 2006.  As the Frog matured and another project was found with the same name, natural selection took its course and, as of version 0.7, this project was renamed "Crunchy".</p>
+<h2>Introduction</h2>
+<p>There is a wealth of information to be found on the Internet, including
+some fantastic programming tutorials.  When reading such tutorials, you may
+be tempted to try out the code samples.  However, this means starting at
+least one other application (and editor, or perhaps an Integrated Development
+Environment) into which you can cut-and-paste the code samples, and perhaps
+edit them before trying to run them.</p>
+<p>Crunchy's goal is to transform otherwise plain web-based Python tutorials into 
+<i>amazingly exciting</i> interactive sessions without the need for a tool
+other than your browser!  
+In this basic tutorial,
+we introduce the main interactive elements that Crunchy includes.  At the 
+conclusion of this tutorial, you will be able to configure Crunchy so that
+it meets your basic interactive needs when browsing tutorials located elsewhere
+on the Internet.</p>
+<p>We strongly suggest that you go through <b>each</b> of the pages of
+this tutorial.</p>
 
-    <blockquote><i>We use only the finest baby frogs, dew-picked and flown from Iraq, cleansed in the finest quality spring water, lightly killed, and then sealed in a succulent Swiss quintuple smooth treble cream milk chocolate envelope, and lovingly frosted with glucose.</i><br />
-    <small>From the Monty Python Crunchy Frog sketch.</small></blockquote>
-    <p>Crunchy only uses the finest computer language 
-    (<a href="http://www.python.org">Python</a>) to process html pages 
-    (preferably cleansed by the excellent htmlTidy program) to which eye-pleasing styling
-    options are added with a sprinkle of javascript for added interactivity; 
-    all code is carefully crafted from both sides of the Atlantic, with the goal
-    of transforming your reading of Python related tutorials into splendidly
-    entertaining interactive sessions within a Gecko based browser, thanks to the light addition of VLAM. 
-    </p>
-<h3>What is needed to run Crunchy?</h3>
-    <p>Since you are reading this, chances are that you are already using Crunchy.  If that is not the case, in addition to Crunchy you will also need:
-    </p>
-    <ul>
-    <li>Python.  I do mean Guido van Rossum's Python, not Monty Python nor a real life snake.  
-    Chances are it is already installed on your computer; but you do need a version no older than
-    version 2.4.</li>
-    <li>Firefox.  Crunchy may work (at least partially) with some other browsers, but it is currently only tested with Firefox. Also, for security reasons, we do recommend that you
-    use a Firefox version no older than 2.0.0.5.</li>
-    </ul>
-    <p style="font-size:xx-small;">Previous versions of Crunchy (&lt; 0.8) required the presence of effbot's Elementtree; starting with version 0.8, the required modules from Elementtree are included in Crunchy's distribution. Note that the first versions of Crunchy (&lt; 0.3) also required to have
-    <font color="red">CherryPy</font> installed; <span style="color:red">CherryPy</span> is a nice and easy to use app if you ever need it.</p>
-    <p>Furthermore, since you are reading this page, it should mean that you are ready to learn more about Crunchy.
-    But to do so properly, you need to be using Crunchy.
-    I suggest that you go through the various links on the left in the order in which they appear,
-    starting with the <a href="interpreter_en.html">Interpreter</a></p>
-    <h3>Advanced stuff</h3>
-    <blockquote><i>
-    Move along.  There's nothing to see!  Keep moving!</i> <br/>
-    <small>From Monty Python and the Holy Grail.</small>
-    </blockquote>
-    <p>
-    Every page of this tutorial will include some advanced material that can and probably should
-    be skipped at first reading so that you don't get bored with all the details.
-    Since we mentioned VLAM above, we will explain what it means here 
-    (you can skip this if you are not interested in writing tutorials).
-    </p>
-    <p>To accomplish its magic, Crunchy uses VLAM.  <small><em>Well ... this new Crunchy can even do its magic without VLAM ... but, we'll see about this later.</em></small> If you think you know what VLAM stands for, and you haven't read this tutorial before, I would bet that you are wrong.  This is because VLAM is an acronym that Andr&eacute; made up.  It stands for Very Little Additional Markup.</p>
-    <p>The basic idea that motivated VLAM was to make it as easy as possible to 
-    transform traditional web-based tutorials into Crunchy tutorials, without 
-    changing the way that the same tutorials appeared when viewed in a normal 
-    browser without Crunchy doing its magic. <small>(You may have to read the previous sentence more than once as it is admittedly too long.)</small> </p>
-    <blockquote><i> - Well, the Superintendent thought it was an almond whirl. People won't expect there to be a frog in there. They're bound to think it's some sort of mock frog.<br />
-    - Mock frog? We use no artificial preservatives or additives of any kind!</i><br />
-    <small>From the Monty Python Crunchy Frog sketch.</small></blockquote>
 
-    <h3>Additives?</h3>
-    <p>We will introduce the explicit additive (vlam) used for each Crunchy interactive elements as we encounter them.
-    </p>
-</div>
+
 </div>
 
 </body>

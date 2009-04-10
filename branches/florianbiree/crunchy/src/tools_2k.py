@@ -26,13 +26,13 @@ def u_print(*args):
         print "PROBLEM in u_print; could not print encoded args:"
         print args
 
-def exec_code(code, local_dict, source=''):
+def exec_code(code, local_dict, source='', username=None): # tested via test_interface.rst
     import src.errors as errors   # prevent premature import
     import sys                    #
     try:
         exec code in local_dict
     except:
         if source is not None:
-            sys.stderr.write(errors.simplify_traceback(source))
+            sys.stderr.write(errors.simplify_traceback(source, username=username))
         else:
             raise

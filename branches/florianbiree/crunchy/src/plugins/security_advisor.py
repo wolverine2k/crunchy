@@ -1,12 +1,13 @@
 '''
 security_advisor.py
 
-Inserts security information at the top of a page
+Inserts security information about a given page
 '''
 from urlparse import urlsplit
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element, SubElement
+from src.interface import config, translate, plugin, Element, SubElement, \
+     additional_menu_items
 _ = translate['_']
 
 provides = set(["/allow_site", "/set_trusted", "/remove_all"])
@@ -21,17 +22,30 @@ def register():
     plugin['register_http_handler']("/set_trusted", set_security_list)
     plugin['register_http_handler']("/remove_all", empty_security_list)
 
+def create_security_menu_item(page):
+    '''creates the security report menu item'''
+
+    if 'display' in page.security_info['level']:
+        security_result_image = '/images/display.png'
+    elif page.security_info['number removed'] == 0:
+        security_result_image = '/images/ok.png'
+    else:
+        security_result_image = '/images/warning.png'
+
+    security_item = Element("li")
+    a = SubElement(security_item, "a", id="security_info_link", href="#",
+                   onclick= "show_security_info();", title="security_link")
+    a.text = "Security: "
+    SubElement(a, "img", src=security_result_image)
+    additional_menu_items['security_report'] = security_item
+    return
+
 def insert_security_info(page, *dummy):
     """Inserts security information on a page"""
     if not page.body:
         return
-    # the following is used by menu.py
-    if 'display' in page.security_info['level']:
-        page.security_result_image = '/display.png'
-    elif page.security_info['number removed'] == 0:
-        page.security_result_image = '/ok.png'
-    else:
-        page.security_result_image = '/warning.png'
+
+    create_security_menu_item(page)
 
     # Next, the hidden container for the full security information
 
@@ -45,12 +59,12 @@ def insert_security_info(page, *dummy):
         # if there are sites for which to confirm the security level.
         if ((page.url.startswith("/index") or page.url=="/")
                   # will work with /index_fr.html ...
-              and config['site_security']
+              and config[page.username]['site_security']
                   # something to confirm
-              and not config['initial_security_set']):
+              and not config[page.username]['initial_security_set']):
                   # only do it once per session
             confirm_at_start(page, info_container)
-            config['initial_security_set'] = True
+            config[page.username]['initial_security_set'] = True
         else:
             page.add_css_code(security_css%('none','none'))
             format_report(page, info_container)
@@ -79,14 +93,14 @@ def confirm_at_start(page, info_container):
     directions.text += _("You can change any of them before clicking on the approve button.\n\n")
 
     # in case list gets too long, we include buttons at top and bottom of list
-    nb_sites = len(config['site_security'])
+    nb_sites = len(config[page.username]['site_security'])
     add_button(info_container, nb_sites)
-    for site_num, site in enumerate(config['site_security']):
-        format_site_security_options(info_container, site, site_num)
+    for site_num, site in enumerate(config[page.username]['site_security']):
+        format_site_security_options(info_container, site, site_num, page)
     add_button(info_container, nb_sites)
     return
 
-def format_site_security_options(parent, site, site_num):
+def format_site_security_options(parent, site, site_num, page):
     '''adds the various security options for a given site'''
     options = ['trusted', 'normal', 'strict', 'display trusted',
                'display normal', 'display strict']
@@ -108,11 +122,11 @@ def format_site_security_options(parent, site, site_num):
         inp = SubElement(label, 'input', value=option, type='radio',
                                         name='rad', id=site+option)
         SubElement(form, 'br')
-        if site in config['site_security']:
-            if option == config['site_security'][site]:
+        if site in config[page.username]['site_security']:
+            if option == config[page.username]['site_security'][site]:
                 inp.attrib['checked'] = 'checked'
         elif 'localhost' in site:
-            if option == config['local_security']:
+            if option == config[page.username]['local_security']:
                 inp.attrib['checked'] = 'checked'
     return
 
@@ -196,14 +210,14 @@ def format_report(page, div):
     s_image.attrib['title'] = 'security_link'
 
     if 'display' in page.security_info['level']:
-        s_image.attrib['src'] = '/display_big.png'
+        s_image.attrib['src'] = '/images/display_big.png'
         s_image.tail = " : display mode selected; Python code execution forbidden."
     elif page.security_info['number removed'] == 0:
-        s_image.attrib['src'] = '/ok_big.png'
+        s_image.attrib['src'] = '/images/ok_big.png'
         s_image.tail = " : clean page; nothing was removed by Crunchy."
     else:
         s_image.tail = " : Some html tags and/or attributes were removed by Crunchy."
-        s_image.attrib['src'] = '/warning_big.png'
+        s_image.attrib['src'] = '/images/warning_big.png'
 
     if page.security_info['tags removed']:
         title = _('Removed: tag not allowed')
@@ -235,11 +249,11 @@ def format_report(page, div):
     h2 = SubElement(div, 'h2')
     h2.text = _('You may select a site specific security level:')
     h2.attrib['class'] = "crunchy"
-    if netloc in config['site_security']:
+    if netloc in config[page.username]['site_security']:
         p = SubElement(div, 'p')
         p.text = _("If you want to preserve the existing selection, ")
         p.text += _("simply dismiss this window by clicking on the X above.")
-    format_site_security_options(div, site, 0)
+    format_site_security_options(div, site, 0, page)
 
     approve_btn = SubElement(div, "button")
     approve_btn.attrib["onclick"] = "javascript:allow_site();"
@@ -255,6 +269,7 @@ def set_security_list(request):
     sets the security level for a number of sites on a list
     '''
     site_list_info = request.data.strip(',').split(',')
+    username = request.crunchy_username
     if DEBUG:
         print 'inside set_security_list', site_list_info
     to_be_deleted = []
@@ -272,7 +287,7 @@ def set_security_list(request):
         if 'localhost' not in site:
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
-                config['_set_site_security'](site, mode)
+                config[username]['_set_site_security'](site, mode)
                 if DEBUG:
                     print str(site) + ' has been set to ' + str(mode)
             else:
@@ -280,20 +295,20 @@ def set_security_list(request):
                 if DEBUG:
                     print str(site) + ' is going to be removed.'
         else:
-            config['_set_local_security'](mode)
+            config[username]['_set_local_security'](mode)
             if DEBUG:
                 print "setting local security to ", mode
             break  # should be only site
 
     for site in to_be_deleted:
-        del config['site_security'][site]
+        del config[username]['site_security'][site]
     if DEBUG:
-        print config['site_security']
+        print config[username]['site_security']
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True
-    config['initial_security_set'] = True
-    config['_save_settings']()
+    config[username]['initial_security_set'] = True
+    config[username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()
@@ -304,54 +319,28 @@ def empty_security_list(request):
     '''
     removes all the sites from the list of sites with security level assigned
     '''
+    username = request.crunchy_username
     sites = []
-    for site in config['site_security']:
+    for site in config[username]['site_security']:
         sites.append(site)
     for site in sites:
-        del config['site_security'][site]
+        del config[username]['site_security'][site]
     # We don't need the user to confirm again in this session, so assign
     # initial_security_set to True
-    config['initial_security_set'] = True
-    config['_save_settings']()
+    config[username]['initial_security_set'] = True
+    config[username]['_save_settings']()
 
     request.send_response(200)
     request.end_headers()
     request.wfile.write("")
     request.wfile.flush()
 
+# Note: the rest of the css appears in crunchy.css
 security_css = """
 #security_info {
-    position: fixed;
-    top: 60px;
-    right: 100px;
-    height: 85%%;
-    overflow:auto;
-    border: 4px outset #369;
-    color: black;
-    background-color: white;
-    font: 12pt monospace;
-    margin: 0;
-    padding: 4px;
-    padding-right: 30px;
-    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
-    white-space: -pre-wrap; /* Opera 4 - 6 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation)
-                            http://www.w3.org/TR/css3-text/#white-space */
-    word-wrap: break-word; /* IE 5.5+ */
     display: %s;  /* will appear only when needed */
-    z-index:11;
 }
 #security_info_x {
-    position: fixed;
-    top: 65px;
-    right: 110px;
-    color: #fe0;
-    background-color: #369;
-    font: 14pt sans-serif;
-    cursor: pointer;
-    padding: 4px 4px 0 4px;
     display: %s;  /* will appear only when needed */
-    z-index:12;
 }
 """

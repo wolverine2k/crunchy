@@ -18,8 +18,7 @@ to derive from it.
 
 import math as _math
 
-class CTurtle(object):
-
+class CTurtle(object): # tested
     def __init__(self, x=0, y=0, angle=0, visible=True): # tested indirectly
         self._x = x
         self._y = y
@@ -206,7 +205,7 @@ class CTurtle(object):
     set_line_color = color
     set_line_colour = color
 
-    def fill_color(self, *args):
+    def fill_color(self, *args): # tested
         """ fill_color or fill_colour or set_fill_color or set_fill_colour:
 
             set the pen (fill) color
@@ -237,7 +236,7 @@ class CTurtle(object):
     set_line_color = color
     set_line_colour = color
 
-    def background(self, *args):
+    def background(self, *args): # tested
         """ background: set the background color
 
         Three input formats are allowed:
@@ -292,14 +291,14 @@ class CTurtle(object):
         y = 0.5
         return "#%02x%02x%02x" % (int(r*x+y), int(g*x+y), int(b*x+y))
 
-    # the following are implementation specific
-    def begin_fill(self):
-        pass
-    def end_fill(self):
-        pass
-    def circle(self, radius, extent=None):
-        pass
-    def delay(self, dt):
-        pass
-    def speed(self, speed):
-        pass
+    ## the following are implementation specific
+    #def begin_fill(self):
+    #    pass
+    #def end_fill(self):
+    #    pass
+    #def circle(self, radius, extent=None):
+    #    pass
+    #def delay(self, dt):
+    #    pass
+    #def speed(self, speed):
+    #    pass

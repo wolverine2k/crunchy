@@ -6,12 +6,15 @@ Provides the means to save and load a file.
 from subprocess import Popen
 import os
 import sys
+import urllib
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin
+from src.interface import config, plugin, SubElement
 
 # The set of other "widgets/services" provided by this plugin
-provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external"])
+provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external",
+                "filtered_dir", "insert_file_tree", "/save_file_python_interpreter",
+                "/save_and_run_python_interpreter", "/run_external_python_interpreter"])
 
 DEBUG = False
 
@@ -35,6 +38,8 @@ def register():
          1. a custom service to save a file.
          2. a custom service to read content from a file.
        """
+    plugin['register_service']("insert_file_tree", insert_file_tree)
+    plugin['register_service']("filtered_dir", filtered_dir)
     plugin['register_http_handler']("/save_file", save_file_request_handler)
     plugin['register_http_handler']("/load_file", load_file_request_handler)
     plugin['register_http_handler']("/save_and_run%s"%plugin['session_random_id'],
@@ -46,6 +51,72 @@ def register():
                                         save_and_run_python_interpreter_request_handler)
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
+
+def filtered_dir(request, filter=None):
+    '''returns the file listing from a directory,
+       satisfying a given filter function,
+       in a form suitable for the jquery FileTree plugin.'''
+    ul = ['<ul class="jqueryFileTree" style="display: none;">']
+    # request.data is of the form "dir=SomeDirectory"
+    try:
+        d = urllib.unquote(request.data)[4:]
+        d = urllib.unquote(d)  # apparently need to call it twice on windows
+        for f in os.listdir(d):
+            if filter(f, d):
+                continue
+            ff = os.path.join(d, f)
+            if os.path.isdir(ff):
+                ul.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+            else:
+                ext = os.path.splitext(f)[1][1:] # get .ext and remove dot
+                ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
+        ul.append('</ul>')
+    except Exception,e:
+        ul.append('Could not load directory: %s' % str(e))
+    ul.append('</ul>')
+    request.wfile.write(''.join(ul))
+    return
+
+def insert_file_tree(page, elem, uid, action, callback, title, label):
+    '''inserts a file tree object in a page.'''
+    if 'display' not in config[page.username]['page_security_level'](page.url):
+        if not page.includes("jquery_file_tree"):
+            page.add_include("jquery_file_tree")
+            page.insert_js_file("/javascript/jquery.filetree.js")
+            page.insert_css_file("/css/jquery.filetree.css")
+    else:
+        return
+    tree_id = "tree_" + uid
+    form_id = "form_" + uid
+    root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
+    js_code =  """$(document).ready( function() {
+        $('#%s').fileTree({
+          root: '%s',
+          script: '%s',
+          expandSpeed: -1,
+          collapseSpeed: -1,
+          multiFolder: false
+        }, function(file) {
+            document.getElementById('%s').value=file;
+        });
+    });
+    """ % (tree_id, root, action, form_id)
+    page.add_js_code(js_code)
+    elem.text = title
+    elem.attrib['class'] = "filetree_wrapper"
+
+    form = SubElement(elem, 'form', name='url', size='80', method='get',
+                       action=callback)
+    SubElement(form, 'input', name='url', size='80', id=form_id)
+    input_ = SubElement(form, 'input', type='submit',
+                           value=label)
+    input_.attrib['class'] = 'crunchy'
+
+    file_div = SubElement(elem, 'div')
+    file_div.attrib['id'] = tree_id
+    file_div.attrib['class'] = "filetree_window"
+    return
+
 
 def save_file_request_handler(request):
     '''extracts the path & the file content from the request and
@@ -87,7 +158,7 @@ def save_and_run_request_handler(request):
     if DEBUG:
         print("  path = ")
         print(path)
-    exec_external(path=path)
+    exec_external(path=path, username=request.crunchy_username)
 
 def run_external_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -96,7 +167,7 @@ def run_external_request_handler(request):
     code = request.data
     request.send_response(200)
     request.end_headers()
-    exec_external(code=code)
+    exec_external(code=code, username=request.crunchy_username)
 
 def load_file_request_handler(request):
     ''' reads a local file - most likely a Python file that will
@@ -145,13 +216,13 @@ def read_file(full_path):  # tested
         print("  full_path in read_file = " + full_path)
     return content
 
-def exec_external(code=None,  path=None):
+def exec_external(code=None,  path=None, username=None):
     """execute code in an external process with default interpreter
     """
     if DEBUG:
         print("Entering exec_external.")
-    exec_external_python_version(code, path, alternate_version=False)
-
+    exec_external_python_version(code, path, alternate_version=False,
+                                 username=username)
 
 def save_file_python_interpreter_request_handler(request):
     '''extracts the path & the file content from the request and
@@ -173,10 +244,10 @@ def save_file_python_interpreter_request_handler(request):
     if DEBUG:
         print "info =", info
     if info[0]:
-        config['alternate_python_version'] = info[0]
+        username = request.crunchy_username
+        config[username]['alternate_python_version'] = info[0]
         # the following updates the value stored in configuration.defaults
-        config['_set_alternate_python_version'](info[0])
-
+        config[username]['_set_alternate_python_version'](info[0])
     return path
 
 def save_and_run_python_interpreter_request_handler(request):
@@ -187,7 +258,7 @@ def save_and_run_python_interpreter_request_handler(request):
     path = save_file_python_interpreter_request_handler(request)
     if DEBUG:
         print("  path = " + str(path))
-    exec_external_python_version(path=path)
+    exec_external_python_version(path=path, username=request.crunchy_username)
 
 def run_external_python_interpreter_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -196,10 +267,10 @@ def run_external_python_interpreter_request_handler(request):
     code = request.data
     request.send_response(200)
     request.end_headers()
-    exec_external_python_version(code=code)
+    exec_external_python_version(code=code, username=request.crunchy_username)
 
 def exec_external_python_version(code=None,  path=None, alternate_version=True,
-                                 write_over=True):
+                                 write_over=True, username=None):
     """execute code in an external process with the choosed python intepreter
     currently works under:
         * Windows NT
@@ -211,11 +282,11 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         print("path =" + str(path))
         print("alternate version = " + str(alternate_version))
     if alternate_version:
-        python_interpreter = config['alternate_python_version']
+        python_interpreter = config[username]['alternate_python_version']
     else:
         python_interpreter = 'python'  # default interpreter
     if path is None:
-        path = os.path.join(config['temp_dir'], "temp.py")
+        path = os.path.join(config[username]['temp_dir'], "temp.py")
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)

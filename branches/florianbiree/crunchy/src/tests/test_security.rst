@@ -24,6 +24,7 @@ See how_to.rst_ for details.
     >>> from src.interface import config, ElementTree, Element, SubElement
     >>> et = ElementTree.ElementTree
     >>> config.clear()
+    >>> config['Crunchy'] = {}
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
     >>> page = mocks.Page()
@@ -36,7 +37,7 @@ We also need to define some mock functions and values.
 
     >>> def get_security_level(level):
     ...     return level
-    >>> config['page_security_level'] = get_security_level
+    >>> config['Crunchy']['page_security_level'] = get_security_level
     >>> security_levels = ['trusted', 'display trusted', 'normal', 'display normal',
     ...                    'strict', 'display strict']
 

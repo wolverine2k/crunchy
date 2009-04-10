@@ -15,17 +15,17 @@ from src.imports.c_turtle import CTurtle
 # Since there can be many drawing areas (& Python interpreters) on a given
 # page, we need to be able to keep track of relevant variables for each
 # separately
-_created_uids = [] 
+_created_uids = []
 _heights = {} # created canvas heights
 _widths = {} # created canvas widths
 _turtles = {} # created turtles in given canvas
 
 class Turtle(CTurtle):
-    def __init__(self, x=0, y=0, angle=0,    
+    def __init__(self, x=0, y=0, angle=0,
         visible=True, pen_down=True,
-        shell_color='DarkGreen', shell_radius=20, 
-        head_color='Tan', head_radius=8, head_dist=25, 
-        legs_color='Tan', legs_radius=8, legs_dist=22,  
+        shell_color='DarkGreen', shell_radius=20,
+        head_color='Tan', head_radius=8, head_dist=25,
+        legs_color='Tan', legs_radius=8, legs_dist=22,
         eyes_color='DarkGreen', eyes_radius=2, size_scaling=1 ):
         # line_drawings will include all the javascript instructions assigned
         # up to the time a new drawing is required, so that it can redraw
@@ -56,7 +56,7 @@ class Turtle(CTurtle):
         if self._visible:
             _update_drawing()
 
-    def goto(self, x, y):
+    def goto(self, x, y): # tested
         '''Moves turtle to specified coordinates, without changing its
         orientation'''
         # draw line then move...
@@ -73,39 +73,39 @@ class Turtle(CTurtle):
         self.color(self._line_color)
         self.fill_color(self._fill_color)
 
-    def home(self):
+    def home(self): # tested
         if self._drawing:
             self.draw_line((self._x, self._y), (0, 0))
         CTurtle.home(self)
         _update_drawing()
-    
+
     def draw_line(self, from_point, to_point):
         self.line_drawings.append(line(from_point, to_point))
-    
-    def left(self, angle):
+
+    def left(self, angle): # tested
         CTurtle.left(self, angle)
         _update_drawing()
-    
-    def right(self, angle):
+
+    def right(self, angle): # tested
         CTurtle.right(self, angle)
         _update_drawing()
-    
-    def setheading(self, angle):
+
+    def setheading(self, angle): # tested
         CTurtle.setheading(self, angle)
         _update_drawing()
-        
+
     def draw(self, draw_last=False):
         '''draws a turtle'''
-        
+
         plugin['exec_js'](plugin['get_pageid'](), ''.join(self.line_drawings))
-        
+
         if not self._visible:
             return
         def x(angle):
             return _math.cos(_math.radians(angle + self._angle))
         def y(angle):
             return _math.sin(_math.radians(angle + self._angle))
-        
+
         saved_fill_color = self._fill_color
         set_fill_color(self.legs_color)
         for i in [45, 135, 225, 315]:
@@ -155,12 +155,12 @@ class World(object):
     def __init__(self, width=600, height=600, border_color='red', empty=True):
         '''creates a world in which a turtle can be made to move.
         global default_turtle
-        
+
         This world is an html <canvas>'''
         uid = plugin['get_uid']()
         _heights[uid] = height
         _widths[uid] = width
-    
+
         if uid not in _created_uids: # dynamically create a canvas
             _created_uids.append(uid)
             plugin['exec_js'](plugin['get_pageid'](), """var divCanvas = document.getElementById("div_%s");
@@ -182,10 +182,10 @@ class World(object):
         self.height = height
         if not empty and default_turtle is None:
             self.default_turtle = Turtle()
-    
+
     def goto(self, x, y):
         self.default_turtle.goto(x, y)
-        
+
     def clear_world(self):
         print('clearing world')
         set_fill_colour('yellow')
@@ -202,7 +202,7 @@ def goto(x, y):
 
 def _clear_world(uid):
     set_fill_colour('white')
-    _filled_rectangle((0, 0), _widths[uid], _heights[uid])    
+    _filled_rectangle((0, 0), _widths[uid], _heights[uid])
     _set_line_colour('red')
     _rectangle((0, 0), _widths[uid], _heights[uid])
 
@@ -297,4 +297,3 @@ def __point(x, y):
                              document.getElementById("canvas_%s").getContext('2d').moveTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').lineTo(%s, %s);
                              document.getElementById("canvas_%s").getContext('2d').stroke();""" % (uid, uid, x, y, uid, x+1, y+1, uid))
-

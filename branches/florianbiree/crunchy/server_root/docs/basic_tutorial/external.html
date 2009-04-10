@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>Crunchy :: External Execution</title>
+	
+	<meta title="template local_template.html">
+</head>
+
+<body>
+
+<div id="main_title">Popping Windows</div>
+<div id="content">
+
+<h2 >Or how to launch an external application</h2>
+<p>One of the fun part of programming with Python is to produce your own programs running in a separate window. We'll give you a few examples to
+try, ending with a simple pyglet script. 
+Note that we know it is very likely that you might not be able to run some
+of them if you don't have the necessary modules installed.  Click on "Save and Run from file" to launch them as separate processes; <b>if nothing happens</b>, click on "Execute as separate thread" and see if there's an error message that appears.</p>
+<h3 >Tkinter example</h3>
+<p>The first example has to be a simple Tkinter application - if only because
+Tkinter comes pretty much with all Python distributions and is likely
+to be already present on your computer.</p>
+<pre title="editor size=(6, 80) external">
+from Tkinter import *
+root = Tk()
+w = Label(root, text="Crunchy!")
+w.pack()
+root.mainloop()
+</pre>
+<p>Note that you can toggle the editor and save the file at a location of
+your choice before executing it.  This is useful if your file makes use
+of other files (such as an image file) that need to be loaded.</p>
+
+<h3 >wxPython example</h3>
+<p>Our second example is a basic wxPython application.</p>
+<pre title="editor size=(7, 80) external">
+import wx
+app = wx.PySimpleApp()
+frame = wx.Frame(None, -1, "Crunchy Test")
+frame.SetBackgroundColour("#33cc33")
+frame.SetSize(wx.Size(200, 100))
+frame.Show(True)
+app.MainLoop()
+</pre>
+<h3 >pyGTK example</h3>
+<p>Our third example (shamelessly lifted from http://www.pygtk.org/pygtk2tutorial/), requires pygtk:</p>
+<pre title="editor external">
+import gtk
+class HelloWorld:
+    def hello(self, widget, data=None):
+        print "Hello World"
+    def delete_event(self, widget, event, data=None):
+        print "delete event occurred"
+        return False
+    def destroy(self, widget, data=None):
+        gtk.main_quit()
+    def __init__(self):
+        self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.window.connect("delete_event", self.delete_event)
+        self.window.connect("destroy", self.destroy)
+        self.window.set_border_width(10)
+        self.button = gtk.Button("Hello World")
+        self.button.connect("clicked", self.hello, None)
+        self.button.connect_object("clicked", gtk.Widget.destroy, self.window)
+        self.window.add(self.button)
+        self.button.show()
+        self.window.show()
+    def main(self):
+        gtk.main()
+hello = HelloWorld()
+hello.main()
+</pre>
+<h3 >Pygame example</h3>
+<p>Our fourth example requires pygame.  If it works, you might
+be interested in launching more than one!  Note that we used a VLAM option
+so that it's only possible to launch it externally.</p>
+<pre title="editor no_internal external">
+import sys, pygame
+pygame.init()
+clock = pygame.time.Clock()
+size = width, height = 320, 240
+speed = [3, 3]
+black = 0, 0, 0
+screen = pygame.display.set_mode(size)
+surf = pygame.Surface((50, 50))
+ball = pygame.draw.circle(surf, (255,0,0), (25, 25), 25, 0)
+ballrect = surf.get_rect()
+while True:
+    for event in pygame.event.get():
+       if event.type == pygame.QUIT: sys.exit()
+    ballrect = ballrect.move(speed)
+    if ballrect.left &lt; 0 or ballrect.right &gt; width:
+        speed[0] = -speed[0]
+    if ballrect.top &lt; 0 or ballrect.bottom &gt; height:
+        speed[1] = -speed[1]
+    clock.tick(30)
+    screen.fill(black)
+    screen.blit(surf, ballrect)
+    pygame.display.flip()	
+</pre>
+<h3 >Pyglet example</h3>
+<p>Our fifth, and final example, requires pyglet.  
+For this example to work, you <b>must</b> save the file in the crunchy_tutor directory, where the required image and sound files are located. 
+This directory is found at crunchy/server_root/crunchy_tutorial, where "crunchy"
+is the base directory for ... you can guess.</p>
+
+<pre title="editor external no_internal">
+'''
+noisy
+=====
+
+This is an example program that accompanies pyglet (http://www.pyglet.org).
+Due to licensing restrictions on some of the assets, this game cannot be used
+for commercial purposes.
+
+The source code is licensed under the BSD license.
+
+All artwork is Copyright 2007 Alex Holkner.  
+The sound is licensed under Creative Commons Sampling License:
+
+"ball.wav"
+by opm (http://freesound.iua.upf.edu/usersViewSingle.php?id=1622)
+    RS_set2.wav (http://freesound.iua.upf.edu/samplesViewSingle.php?id=2096)
+
+
+This is a simple demonstration of how pyglet efficiently manages many sound
+channels without intervention.
+'''
+
+import os
+import random
+import sys
+
+from pyglet.gl import *
+from pyglet.window import Window
+from pyglet.window import key
+from pyglet import image
+from pyglet import clock
+from pyglet import media
+from pyglet import font
+
+PKG = os.path.dirname(__file__)
+BALL_IMAGE = os.path.join(PKG, 'ball.png')
+BALL_SOUND = os.path.join(PKG, 'ball.wav')
+
+if len(sys.argv) > 1:
+    BALL_SOUND = sys.argv[1]
+
+window = Window(640, 480)
+sound = media.load(BALL_SOUND, streaming=False)
+
+class Ball(object):
+    ball_image = image.load(BALL_IMAGE)
+    width = ball_image.width
+    height = ball_image.height
+    def __init__(self):
+        self.x = random.random() * (window.width - self.width)
+        self.y = random.random() * (window.height - self.height)
+        self.dx = (random.random() - 0.5) * 1000
+        self.dy = (random.random() - 0.5) * 1000
+
+    def update(self, dt):
+        if self.x &lt;= 0 or self.x + self.width &gt;= window.width:
+            self.dx *= -1
+            sound.play()
+        if self.y &lt;= 0 or self.y + self.height &gt;= window.height:
+            self.dy *= -1
+            sound.play()
+        self.x += self.dx * dt
+        self.y += self.dy * dt
+
+        self.x = min(max(self.x, 0), window.width - self.width)
+        self.y = min(max(self.y, 0), window.height - self.height)
+
+    def draw(self):
+        self.ball_image.blit(self.x, self.y, 0)
+
+balls = []
+
+@window.event
+def on_key_press(symbol, modifiers):
+    if symbol == key.SPACE:
+        balls.append(Ball())
+    elif symbol == key.BACKSPACE:
+        if balls:
+            del balls[-1]
+    elif symbol == key.ESCAPE:
+        window.has_exit = True
+
+if __name__ == '__main__':
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    label = font.Text(font.load('Arial', 14),
+        'Press space to add a ball, backspace to remove.',
+        window.width / 2, 10,
+        halign=font.Text.CENTER)
+
+    while not window.has_exit:
+        window.dispatch_events()
+        media.dispatch_events()
+        dt = clock.tick()
+
+        glClear(GL_COLOR_BUFFER_BIT)
+        for ball in balls:
+            ball.update(dt)
+            ball.draw()
+        label.draw()
+
+        window.flip()
+
+</pre>
+<h3 >Advanced stuff</h3>
+<p>As mentioned before, you can toggle the editor, click on the save file icon
+and use the "save and run" feature to execute a Python script as a 
+separate process. When you do so, you have to specify the file location.
+The option given here of running programs externally saves them in a default
+location, maintained by Crunchy.  The advantage of this latter approach is that
+it's a one-click step to run the application.  The disadvantage is that
+the script can not easily use other resources, such as images and sound in the
+Pyglet example, as it would not normally "know" the relative location of the 
+running programs and the files it needs to use.</p>
+<h3 >Advanced stuff, for tutorial writers</h3>
+<p>We have already seen the syntax for this:</p>
+<pre title="html">
+&lt;pre title="editor external [no_internal] 
+            [no_copy] [no_pre]  [linenumber [=start_number]] "&gt;
+Some Python code
+&lt;/pre&gt;</pre>
+<p>Note that any of the vlam option can appear in an arbitrary order.
+When <code>no_internal</code> is specified, the user does not have the option
+to execute the program as a separate thread: it must be executed as a separate
+process, with the code saved in a file first (named temp.py by default, but which takes
+the value of the latest saved file.)</p>
+</div>
+
+</body>
+</html>

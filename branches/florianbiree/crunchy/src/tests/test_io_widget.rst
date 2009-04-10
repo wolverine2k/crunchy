@@ -19,10 +19,17 @@ config['editarea_language'].
 
 
     >>> from src.interface import plugin, config, Element
+    >>> import src.interface
+    >>> src.interface.crunchy_pygments = 'crunchy_pygments'
     >>> plugin.clear()
     >>> plugin['session_random_id'] = 42
     >>> config.clear()
-    >>> config['editarea_language'] = 'en'
+    >>> config['Crunchy'] = {}
+    >>> config['Crunchy']['editarea_language'] = 'en'
+
+
+To do: we should have a test with the following set to True
+    >>> config['Crunchy']['popups'] = False
     >>> import src.plugins.io_widget as io_widget
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -38,7 +45,7 @@ We also need to define some mock functions and values.
     ...                  'display_only_url': 'display normal'}
     >>> def get_security_level(url):
     ...     return site_security[url]
-    >>> config['page_security_level'] = get_security_level
+    >>> config['Crunchy']['page_security_level'] = get_security_level
 
 
 .. _`register()`:
@@ -78,7 +85,7 @@ page, and no interactive element is included.
     >>> uid = '42'
     >>> io_widget.insert_io_subwidget(page, elem, uid)
 
-In this simplest case, three elements will have been included.
+In this simplest case, two elements will have been included.
 As a first crude test, we investigate to see if all the required elements 
 have been inserted (and none unexpected).
 
@@ -88,21 +95,13 @@ have been inserted (and none unexpected).
     >>> parent = []
     >>> divs = []
     >>> for el in elem.getiterator():
-    ...     if el.tag == "span":
-    ...         spans.append(el)
-    ...     elif el.tag == "input":
-    ...         inputs.append(el)
-    ...     elif el.tag == "parent":
+    ...     if el.tag == "parent":
     ...         parent.append(el)
     ...     elif el.tag == "div":
     ...         divs.append(el)
     ...     else:
     ...         print("Unexpected element found: " + str(el.tag))
     ...
-    >>> len(spans)
-    2
-    >>> len(inputs)
-    1
     >>> len(parent)
     1
     >>> len(divs)
@@ -112,24 +111,9 @@ have been inserted (and none unexpected).
 
 Next, we look at each elements in a bit more detail.
 
-    >>> output = spans[0]
-    >>> output.attrib['class'] == 'output'
+    >>> divs[0].attrib['class'] == "io_div crunchy_pygments"
     True
-    >>> output.attrib['id'] == 'out_' + uid
-    True
-    >>> output.text == '\n'
-    True
-    >>> span_input = spans[1]
-    >>> inp = span_input.find('input')
-    >>> inp == inputs[0]
-    True
-    >>> inp.attrib['id'] == 'in_' + uid
-    True
-    >>> inp.attrib["onkeydown"] == 'return push_keys(event, "%s")' % uid
-    True
-    >>> inp.attrib['class'] == 'input'
-    True
-    >>> inp.attrib['type'] == 'text'
+    >>> divs[1].attrib['class'] == "end_io_widget"
     True
 
 b. Testing a non-Borg interpreter
@@ -198,7 +182,7 @@ have been inserted (and none unexpected).
 Note that we also need to check if the proper "includes" have been inserted.
 
     >>> page.added_info
-    ['includes', ('add_include', 'io_included'), 'add_js_code', 'add_css_code', 'includes', ('add_include', 'push_input_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js')]
+    ['includes', ('add_include', 'io_included'), 'add_js_code', 'includes', ('add_include', 'push_input_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js')]
 
 todo: we need to conclude this test as we did with the previous one, to check
 the content of the new elements.
@@ -207,3 +191,9 @@ c. Testing with a Borg interpreter
 ------------------------------------
 
 to do
+
+
+Clean up
+----------
+
+    >>> del src.interface.crunchy_pygments

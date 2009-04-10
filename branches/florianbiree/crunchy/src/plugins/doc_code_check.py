@@ -96,7 +96,7 @@ def doc_code_check_callback(request):
     '''execute the required test code, with setup code prepended,
     and compare with expected output'''
     uid = request.args["uid"]
-    pageid = uid.split(":")[0]
+    pageid = uid.split("_")[0]
     dummy = do_single_test(pageid, uid)
     request.send_response(200)
     request.end_headers()
