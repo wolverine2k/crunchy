@@ -1,9 +1,15 @@
 '''Account Manager For Crunchy
 '''
-import md5
 import os
 import sys
 from getpass import getpass
+try:
+    # md5 for Python 2.5+
+    from hashlib import md5
+except ImportError:
+    # md5 for Python 2.4 (deprecated)
+    from md5 import md5
+
 
 DEFAULT_PATH = os.path.join(os.path.dirname(__file__), ".PASSWD")
 
@@ -32,7 +38,7 @@ class Accounts(dict): # tested
         automatically encrypted.'''
         home = item[0]
         admin_rights = item[2]
-        encoded_password = md5.md5('%s:%s:%s' %
+        encoded_password = md5('%s:%s:%s' %
                            (username, self.realm, item[1])).hexdigest()
         dict.__setitem__(self, username, (home, encoded_password, admin_rights))
 
