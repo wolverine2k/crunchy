@@ -13,8 +13,13 @@ import urllib
 import urllib2
 from traceback import format_exc
 import base64
-import md5
 import time
+try:
+    # md5 for Python 2.5+
+    from hashlib import md5
+except ImportError:
+    # md5 for Python 2.4 (deprecated)
+    from md5 import md5
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interface
@@ -26,7 +31,7 @@ realm = "Crunchy Access"
 def require_digest_access_authenticate(func):
     '''A decorator to add digest authorization checks to HTTP Request Handlers'''
     accounts = src.interface.accounts
-    md5hex = lambda x:md5.md5(x).hexdigest()
+    md5hex = lambda x:md5(x).hexdigest()
 
     def wrapped(self):
         method = self.command
