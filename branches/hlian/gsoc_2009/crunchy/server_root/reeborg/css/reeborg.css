@@ -1,0 +1,68 @@
+
+.program{
+    font-weight: bold;
+}
+
+table.ide {
+    border:solid 2px sienna;
+    background-color:beige;
+}
+
+table.reeborg_world th.outside{
+    width: 80px;
+
+}
+table.reeborg_world {
+    border:solid 2px sienna;
+    background: beige;
+    border-collapse: collapse;
+}
+
+table.reeborg_world td {
+    height: 40px;
+    width: 40px;
+    text-align: center;
+}
+
+table.reeborg_world th {
+    height: 0;
+    width: 0;
+    padding: 0;
+    margin: 0;
+}
+
+
+.heading {
+    background: white;
+}
+
+.north {
+    border-top: solid sienna;
+}
+
+.east {
+    border-right: solid sienna;
+}
+
+.no_north {
+    border-top: solid white;
+}
+
+.no_east {
+    border-right: solid white;
+}
+
+.highlight {
+    background: white;
+}
+
+.lowlight {
+    background: beige;
+}
+
+.beeper {
+    font-size:70%;
+}
+.beeper img{
+    height: 24px;
+}

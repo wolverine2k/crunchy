@@ -1,0 +1,961 @@
+<html>
+
+<head>
+<style type="text/css">
+table {border-collapse: collapse;}
+table.wvr th {background-color: #EEEEEE; color: inherit;}
+table.wvr td {background: #FFFF00}
+table.wvr td, th {height: 40px; width: 40px; text-align: center}
+.heading {background: #FF00FF}
+.north {border-top: solid red;}
+.east {border-right: solid red;}
+.no_north {border-top: solid white;}
+.no_east {border-right: solid white;}
+.robot {background: #FF8888}
+.highlight {background: #FF8888}
+.lowlight {background: #DDDDDD}
+.tiny {font-size: 70%}
+.beeper {background: #00FFFF}
+</style>
+</head>
+
+<body onload="start_page()">
+<script type="text/javascript">
+/*
+Webster van Robot.
+(c) GNU General Public license
+*/
+
+function start_page() {
+  make_demo_links();
+  create_world();
+  load('demo1');
+}
+
+function Stream(lines) {
+  this.i = 0;
+  this.lines = lines;
+
+  this.pop = function () {
+    if (this.i >= this.lines.length) {
+      return undefined;
+    }
+    else {
+      line = this.lines[this.i];
+      line = line.split('#')[0];
+      this.i += 1;
+      return new CodeLine(line, this.i);
+    }
+  }
+
+  this.unpop = function() {
+    this.i -= 1;
+  }
+}
+
+function CodeLine(line, line_num) {
+  var re = /^( *)(.*)/;
+  var matches = re.exec(line);
+  this.indent = matches[1];
+  this.content = matches[2];
+  this.line_num = line_num;
+}
+
+function parse_program(program) {
+
+  try {
+    var lines = program.split('\n');
+    var stream = new Stream(lines);
+    var methods = {}
+
+    var block = new CodeBlock(stream, methods, 0);
+    return block.statements;
+  } catch (e) {
+    alert(e);
+    throw "program invalid";
+  }
+}
+
+function CodeBlock(stream, methods, min_indent_spaces) {
+  var statements = []
+  var desired_indent = undefined;
+  builtins = {
+    'move': true,
+    'turnleft': true,
+    'turnright': true,
+    'build_wall_on_left': true,
+    'putbeeper': true,
+    'makebeeper': true,
+  }
+  while (1) {
+    var code_line = stream.pop();
+    if (code_line == undefined) {
+      break;
+    }
+    var indent = code_line.indent;
+    var content = code_line.content;
+    if (content != '') {
+      if (indent.length < min_indent_spaces) {
+        stream.unpop();
+        break;
+      }
+      if ((desired_indent != undefined) && (desired_indent != indent)) {
+        throw('unexpected indent');
+      }
+      desired_indent = indent;
+      var statement = {}
+      if (content.match(/do/)) {
+        var matches = /do\s+(\d+):/.exec(content);
+        if (matches) {
+          var count = matches[1];
+        }
+        else {
+          throw('Problem parsing instruction at line ' + code_line.line_num + 'statement: ' + content);
+        }
+        statement.command = 'do';
+        statement.count = count;
+        statement.block = new CodeBlock(stream, methods, desired_indent.length + 1).statements;
+      }
+      else if (content.match(/while/)) {
+        var matches = /while\s+(\S+):/.exec(content);
+        if (matches) {
+          var cond = matches[1];
+          var condition = 'COND_' + cond;
+          if (!the_built_ins[condition]) {
+            throw('Condition ' + cond + 'not recognized');
+          }
+        }
+        else {
+          throw('Problem parsing instruction at line ' + code_line.line_num + 'statement: ' + content);
+        }
+        statement.command = 'while';
+        statement.condition = condition;
+        statement.block = new CodeBlock(stream, methods, desired_indent.length + 1).statements;
+      }
+      else if (content.match(/^def/)) {
+        var matches = /def\s+(\S+):/.exec(content);
+        if (matches) {
+          var method_name = matches[1];
+        }
+        else {
+          throw('Problem parsing def instruction');
+        }
+        var code_block = new CodeBlock(stream, methods, desired_indent.length + 1).statements;
+        methods[method_name] = code_block;
+      }
+      else if (builtins[content]) {
+        statement.command = content;
+      }
+      else {
+        if (methods[content]) {
+          statement.command = 'method_call';
+          statement.block = methods[content];
+        }
+        else {
+          throw('Problem parsing instruction at line ' + code_line.line_num + 'statement: ' + content);
+        }
+      }
+      if (statement.command) {
+        statement.line_num = code_line.line_num;
+        statements.push(statement);
+      }
+    }
+  }
+  this.statements = statements;
+}
+
+// EXECUTION CODE
+
+function SimpleCommand(cmd) {
+  this.command = cmd['command'];
+  function step(program_env) {
+    result = program_env[this.command]();
+    if (result) {
+      throw(result);
+    }
+    return 1;
+  }
+  this.line_num = cmd.line_num;
+  this.step = step;
+}
+
+function WhileCommand(cmd) {
+  this.cmd = cmd;
+  this.top_of_loop = true;
+  this.condition = cmd['condition'];
+  this.block = new Block(cmd['block']);
+  this.line_num = cmd.line_num;
+
+  this.step = function (program_env) {
+    if (this.top_of_loop) {
+      result = program_env[this.condition]();
+      if (result) {
+        this.top_of_loop = false;
+        return false;
+      }
+      else {
+        this.top_of_loop = true; // reset for next use
+        return true; // release control
+      }
+    }
+    else {
+      advance = this.block.step(program_env);
+      if (advance) {
+        this.top_of_loop = true;
+      }
+      return false;
+    }
+  }
+
+}
+
+function DoCommand(cmd) {
+  this.cmd = cmd;
+  this.iteration = 0;
+  this.count = cmd['count'];
+  this.block = new Block(cmd['block']);
+  this.line_num = cmd.line_num;
+
+  this.step = function (program_env) {
+    if (this.iteration >= this.count) {
+      this.iteration = 0; // reset for next use
+      return 1;
+    }
+    advance = this.block.step(program_env);
+    if (advance) {
+      this.iteration += 1;
+    }
+    return 0;
+  }
+
+}
+
+function MethodCall(cmd) {
+  // this seems wasteful to me, but I haven't
+  // figured out how to eliminate it
+  this.cmd = cmd;
+  this.block = new Block(cmd['block']);
+  this.line_num = cmd.line_num;
+
+  this.step = function (program_env) {
+    advance = this.block.step(program_env);
+    if (advance) {
+      return 1;
+    }
+    return 0;
+  }
+}
+
+function get_command(cmd) {
+  if (cmd['command'] == 'do') {
+    return new DoCommand(cmd);
+  }
+  else if (cmd['command'] == 'while') {
+    return new WhileCommand(cmd);
+  }
+  else if (cmd.command == 'method_call') {
+    return new MethodCall(cmd);
+  }
+  else {
+    return new SimpleCommand(cmd);
+  }
+}
+
+
+function Block(program) {
+  this.program = program;
+  this.block = []
+  this.i = 0;
+  this.last_line_num = undefined;
+
+  for (var i in this.program) {
+    this.block[i] = get_command(program[i]);
+  }
+
+  function step(program_env) {
+    try {
+      if (this.last_line_num) {
+        lowlight_line(this.last_line_num);
+      }
+      if (this.i >= this.program.length) {
+        this.i = 0;
+        return 1;
+      }
+      var cmd = this.block[this.i];
+      if (cmd.line_num) {
+        highlight_line(cmd.line_num);
+      }
+      advance = cmd.step(program_env);
+      if (advance) {
+        this.last_line_num = cmd.line_num;
+        this.i += 1;
+      }
+      return 0;
+    }
+    catch (e) {
+      alert(e);
+      RUNNING = false;
+    }
+  }
+  this.step = step;
+
+  this.step_all = function(program_env) {
+    if (!RUNNING) {
+      return;
+    }
+    done = this.step(program_env);
+    if (done) {
+      alert('done!');
+      RUNNING = false;
+    }
+    else {
+      delay = 200; // just enough to see
+      setTimeout(
+        function(thisObj) {
+          thisObj.step_all(program_env);
+        }, delay, this);
+    }
+  }
+}
+
+// ------------------------------
+
+
+function text_box() {
+  return document.forms['the_form'].elements['the_text'];
+}
+
+function showMsg(the_message) {
+  tb = text_box();
+  if (tb) {
+    tb.value += the_message + "\n";
+  }
+}
+
+function clearMsg() {
+  tb = text_box();
+  if (tb) {
+    tb.value = '';
+  }
+}
+
+function World() {
+  this.robot_x = 1;
+  this.robot_y = 1;
+  this.robot_dir = "E";
+  this.robot_beepers = 0;
+  var north_walls = [];
+  var east_walls = [];
+  this.num_aves = 10;
+  this.num_streets = 8;
+  this.left = {
+    'N': 'W',
+    'W': 'S',
+    'S': 'E',
+    'E': 'N'};
+  this.right = {
+    'N': 'E',
+    'E': 'S',
+    'S': 'W',
+    'W': 'N'};
+  this.robot_char = {
+    'N': '^',
+    'E': ">",
+    'S': 'v',
+    'W': "<"
+  };
+  this.beepers = {};
+
+  function wall_on_north(x, y)
+  {
+    if (y == 0 || y == this.num_streets) {
+      return true;
+    }
+    coords = x + "," + y;
+    return (north_walls[coords] == 1);
+  }
+  this.wall_on_north = wall_on_north;
+
+  function wall_on_south(x, y)
+  {
+    return this.wall_on_north(x, y - 1);
+  }
+  this.wall_on_south = wall_on_south;
+
+  function wall_on_east(x, y)
+  {
+    if (x == 0 || x == this.num_aves) {
+      return true;
+    }
+    coords = x + "," + y;
+    return (east_walls[coords] == 1);
+  }
+  this.wall_on_east = wall_on_east;
+
+  function wall_on_west(x, y)
+  {
+    return this.wall_on_east(x - 1, y);
+  }
+  this.wall_on_west = wall_on_west;
+
+  function is_facing_wall() {
+    switch (this.robot_dir) {
+      case 'N':
+        return this.wall_on_north(this.robot_x, this.robot_y);
+      case 'W':
+        return this.wall_on_west(this.robot_x, this.robot_y);
+      case 'S':
+        return this.wall_on_south(this.robot_x, this.robot_y);
+      case 'E':
+        return this.wall_on_east(this.robot_x, this.robot_y);
+    }
+  }
+  this.is_facing_wall = is_facing_wall;
+
+  this.front_is_clear = function() {
+    return !this.is_facing_wall();
+  }
+
+  this.putbeeper = function() {
+    if (this.robot_beepers <= 0) {
+      throw 'need to makebeeper because beeper bag is empty';
+    }
+    var coords = this.robot_x + ',' + this.robot_y;
+    if (!this.beepers[coords]) {
+      this.beepers[coords] = 0;
+    }
+    this.beepers[coords] += 1;
+    this.robot_beepers -= 1;
+  }
+
+  this.makebeeper = function() {
+    this.robot_beepers += 1;
+  }
+
+  this.move = function() {
+    if (this.is_facing_wall()) {
+      throw 'blocked by wall';
+    }
+    switch (this.robot_dir) {
+       case 'N': this.robot_y += 1; break;
+       case 'W': this.robot_x -= 1; break;
+       case 'S': this.robot_y -= 1; break;
+       case 'E': this.robot_x += 1; break;
+    }
+  }
+
+
+  function turnleft() {
+    this.robot_dir = this.left[this.robot_dir];
+  }
+  this.turnleft = turnleft;
+
+  function turnright() {
+    this.robot_dir = this.right[this.robot_dir];
+  }
+  this.turnright = turnright;
+
+  function build_east_wall(x, y) {
+    if (this.wall_on_east(x, y)) {
+      throw 'There is already a wall there';
+    }
+    coords = x + "," + y;
+    east_walls[coords] = 1;
+  }
+  this.build_east_wall = build_east_wall;
+
+  function build_west_wall(x, y) {
+    return this.build_east_wall(x-1, y);
+  }
+  this.build_west_wall = build_west_wall;
+
+  function build_north_wall(x, y) {
+    if (this.wall_on_north(x, y)) {
+      throw 'There is already a wall there';
+    }
+    coords = x + "," + y;
+    north_walls[coords] = 1;
+  }
+  this.build_north_wall = build_north_wall;
+
+  function build_south_wall(x, y) {
+    return this.build_north_wall(x, y-1);
+  }
+  this.build_south_wall = build_south_wall;
+
+  function build_wall_on_left() {
+    x = this.robot_x;
+    y = this.robot_y;
+    switch (this.robot_dir) {
+      case 'N': return this.build_west_wall(x, y);
+      case 'S': return this.build_east_wall(x, y);
+      case 'E': return this.build_north_wall(x, y);
+      case 'W': return this.build_south_wall(x, y);
+    }
+  }
+  this.build_wall_on_left =  build_wall_on_left;
+
+  function robot() {
+    return this.robot_char[this.robot_dir];
+  }
+  this.robot = robot;
+
+  function render(avenue, street)
+  {
+    var data = '';
+    var klass = '';
+    var coords = avenue + ',' + street;
+
+    if (north_walls[coords] == 1) {
+      klass += 'north';
+    }
+    else {
+      klass += 'no_north';
+    }
+
+    if (east_walls[coords] == 1) {
+      klass += ' east';
+    }
+    else {
+      klass += ' no_east';
+    }
+
+    if (this.robot_x == avenue && this.robot_y == street) {
+      data = '<div class="robot">' + this.robot() + '</div>';
+    }
+    else if (this.beepers[coords]) {
+      data = '<div class="beeper">' + this.beepers[coords] + '</div>';
+    }
+    else {
+      data = '<div class="tiny">' + coords + '</div>';
+    }
+
+    var text = '<td class="' + klass + '">' + data + '</td>';
+    return text;
+  }
+  this.render = render;
+}
+
+the_world = new World();
+
+function start_over() {
+  if (RUNNING) {
+    alert('program stopped');
+    RUNNING = false;
+  }
+  else {
+    draw_code('');
+    refresh_world();
+  }
+}
+
+function refresh_world() {
+  the_world = new World();
+  redraw_grid();
+  clearMsg();
+}
+
+function set_row(row, text)
+{
+  try {
+    row.innerHTML = text;
+  } catch(e) {
+    alert("IE not supported by this page!");
+    throw("IE does not support innerHTML");
+  }
+}
+
+function redraw_street(street)
+{
+  row = document.getElementById("street"+street);
+
+  var text = '<th class="st east">S' + street + '</th>';
+  for (var ave = 1; ave <= the_world.num_aves; ++ave) {
+    text += the_world.render(ave, street);
+  }
+  set_row(row, text);
+  row.id = 'street' + street;
+}
+
+function create_world() {
+  ave_row = document.getElementById("ave_heading");
+  text = '<th></th>';
+  for (var ave = 1; ave <= the_world.num_aves; ++ave) {
+    text += '<th class="ave">A' + ave + '</td>';
+  }
+  set_row(ave_row, text);
+
+  table = document.getElementById("world");
+  for (var street = 1; street <= the_world.num_streets; ++street) {
+    x = table.insertRow(2);
+    x.id = "street"+street;
+  }
+  redraw_grid();
+}
+
+function redraw_grid() {
+  for (var street = 1; street <= the_world.num_streets; ++street) {
+    redraw_street(street);
+  }
+}
+
+function redraw_to_bottom(street) {
+  for (var i = street; i >= 1; --i) {
+    redraw_street(i);
+  }
+}
+
+function try_build_wall_on_left() {
+  try {
+    the_built_ins.build_wall_on_left();
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function try_move() {
+  try {
+    the_built_ins.move();
+  } catch (e) {
+    alert(e);
+  }
+}
+
+function try_putbeeper() {
+  try {
+    the_built_ins.putbeeper();
+  } catch (e) {
+    alert(e);
+  }
+}
+
+
+function BuiltIns() {
+  this.move = function() {
+    old_street = the_world.robot_y;
+    the_world.move();
+    new_street = the_world.robot_y;
+    redraw_street(old_street);
+    redraw_street(new_street);
+  }
+
+  this.turnleft = function() {
+    the_world.turnleft();
+    street = the_world.robot_y;
+    redraw_street(street);
+  }
+
+  this.turnright = function() {
+    the_world.turnright();
+    street = the_world.robot_y;
+    redraw_street(street);
+  }
+
+  this.putbeeper = function() {
+    the_world.putbeeper();
+  }
+
+  this.makebeeper = function() {
+    the_world.makebeeper();
+  }
+
+  this.build_wall_on_left = function() {
+    problem = the_world.build_wall_on_left()
+    if (problem) {
+      alert(problem);
+      return problem;
+    }
+    showMsg('build_wall_on_left');
+    var street = the_world.robot_y;
+    redraw_to_bottom(street); /* browsers are stupid */
+  }
+
+  this.COND_front_is_clear = function() {
+    return the_world.front_is_clear();
+  }
+}
+
+the_built_ins = new BuiltIns();
+
+function run_code() {
+  var code = the_program_editor().value;
+  draw_code(code);
+  var program = parse_program(code);
+  var current_block = new Block(program, the_built_ins);
+  RUNNING = true;
+  refresh_world();
+  current_block.step_all(the_built_ins);
+}
+
+function the_program_editor() {
+  return document.forms['the_program_editor_form'].elements['the_program_editor'];
+}
+
+function load_code(code) {
+  tb = the_program_editor();
+  tb.value = code;
+  draw_code('');
+}
+
+function load(example) {
+  var div = document.getElementById(example)
+  var pre = div.getElementsByTagName('pre')[0]
+  var code = pre.innerHTML;
+  load_code(code);
+}
+
+function get_heading(div) {
+  var h3 = div.getElementsByTagName('h3')[0]
+  return h3.innerHTML;
+}
+
+function highlight_line(line_num) {
+  var elem_id = 'line' + line_num
+  var elem = document.getElementById(elem_id);
+  if (elem) {
+    klass = 'highlight';
+    elem.setAttribute('className', klass);
+    elem.setAttribute('class', klass);
+  }
+  else {
+    alert('unexpected call to highlight_line');
+  }
+}
+
+function lowlight_line(line_num) {
+  var elem_id = 'line' + line_num
+  var elem = document.getElementById(elem_id);
+  if (elem) {
+    klass = 'lowlight';
+    elem.setAttribute('className', klass);
+    elem.setAttribute('class', klass);
+  }
+  else {
+    alert('unexpected call to lowlight_line');
+  }
+}
+
+function draw_code(code) {
+  var elem = document.getElementById('the_program');
+  var lines = code.split('\n');
+  var output = '<pre>';
+  for (i in lines) {
+    var line = lines[i];
+    var line_num = parseInt(i) + 1;
+    output += '<span id="line'+ (line_num) + '">' + line + '</span><br>';
+  }
+  output += '</pre>'
+  elem.innerHTML = output;
+}
+
+function make_demo_links() {
+  var target = document.getElementById('demo_links');
+  var text = ''
+  var i = 1;
+  while (1) {
+    var demo = 'demo' + i
+    var demo_doc = document.getElementById(demo);
+    if (!demo_doc) {
+      break;
+    }
+    var cmd = "load('" + demo + "'); return false;";
+    var label = 'Demo #' + i
+    text += '<a href="#" onClick="' + cmd + '">' + label + '</a>';
+    text += '(' + get_heading(demo_doc) + ')'
+    text += '<br />';
+    i += 1;
+  }
+  target.innerHTML = text
+}
+
+</script>
+
+<table>
+<tr>
+<td valign="top">
+<a href="#" onClick="start_over(); return false;">start_over</a>
+<br />
+
+<a href="#" onClick="try_move(); return false;">move</a>
+
+<a href="#" onClick="the_built_ins.turnleft(); return false;">turnleft</a>
+
+<a href="#" onClick="the_built_ins.turnright(); return false;">turnright</a>
+<a href="#" onClick="try_build_wall_on_left(); return false;">build_wall_on_left</a>
+<a href="#" onClick="try_putbeeper(); return false;">putbeeper</a>
+<a href="#" onClick="the_built_ins.makebeeper(); return false;">makebeeper</a>
+<br>
+
+
+<table id="world" class="wvr">
+<tr>
+<th colspan=13 class="heading">Webster van Robot's World</th>
+</tr>
+
+<tr id="ave_heading">
+</tr>
+<tr class="north"></tr>
+
+</table>
+
+
+</td>
+<td valign="top">
+<div id="demo_links">
+</div>
+
+<div id="the_program">
+</div>
+
+<form name="the_program_editor_form" onSubmit="run_code(); return false;">
+<input type="submit" value="Run the program below"> (you can edit it)
+<br />
+<textarea name="the_program_editor" rows=15 cols=40>
+</textarea>
+</form>
+
+<form name="the_form">
+<!--
+<textarea name="the_text" rows=30 cols=40>
+</textarea>
+-->
+</form>
+
+</td>
+
+</tr>
+
+</table>
+
+<br />
+If you like minimal programming languages, you may like
+<a href="http://gvr.sourceforge.net/" target="_blank">Guido van Robot</a>.
+<hr>
+(c) GNU General Public license
+<hr>
+<h3>Steal this program, please!</h3>
+<p>
+This software is free.  You are encouraged to make your own copy of it, as long as you keep the source
+code free.  One of my design goals here is to make the
+program very easy to distribute, so all of the
+code is in one file, and you can literally copy the source by using the "View Source" feature
+of your browser.
+</p>
+<p>
+
+Normally authors of software discourage "forking," but I encourage it.  If you make your own version,
+you can say something along the lines of "I evolved this program from an initial version written by
+Steve Howell" somewhere on your page, but there is no obligation.
+If you decide to fork your own version, I would love to know about it, so you can
+<a href="mailto:steve@webstervanrobot.com?subject=reuse">contact me here</a>.
+But again, there is no obligation.
+</p>
+<p>
+If you would like to collaborate with me, please send an email to
+<a href="mailto:steve@webstervanrobot.com?subject=collaboration">Steve</a>.
+</p>
+<hr>
+<h2>Demos</h2>
+<div id="demo1">
+<h3>Simple Commands</h3>
+<pre>
+do 1:
+  move
+  turnleft
+  build_wall_on_left
+  turnright
+
+</pre>
+</div>
+<div id="demo2">
+<h3>Build a Square</h3>
+<pre>
+# This build a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
+def build_square:
+  do 4:
+    do 5:
+      move
+      build_wall_on_left
+    move
+    turnleft
+  turnleft
+  do 4:
+    do 5:
+      move
+    move
+    turnright
+build_square
+</pre>
+</div>
+<div id="demo3">
+<h3>Zig Zag</h3>
+<pre>
+def zig_zag_and_build:
+  do 5:
+    build_wall_on_left
+    move
+    turnleft
+    move
+    build_wall_on_left
+    turnright
+
+def turn_the_corner:
+  turnleft
+  move
+  turnleft
+  move
+  turnleft
+  move
+
+def zag_zig:
+  do 4:
+    turnright
+    move
+    turnleft
+    move
+
+zig_zag_and_build
+turn_the_corner
+zag_zig
+</pre>
+</div>
+<div id="demo4">
+
+<h3>Beepers</h3>
+<pre>
+def make_and_put_beeper:
+  makebeeper
+  putbeeper
+make_and_put_beeper
+move
+make_and_put_beeper
+make_and_put_beeper
+turnleft
+move
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+turnleft
+move
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+make_and_put_beeper
+turnright
+move
+
+</pre>
+</div>
+<div id="demo5">
+<h3>While Loop</h3>
+<pre>
+do 4:
+  while front_is_clear:
+    move
+  turnleft
+</pre>
+</div>
+</body>
+</html>
