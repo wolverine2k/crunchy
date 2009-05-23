@@ -5,16 +5,8 @@
 
     Lexers for non-source code file types.
 
-    :copyright: 2006-2008 by Armin Ronacher, Georg Brandl,
-                Tim Hatch <tim@timhatch.com>,
-                Ronny Pfannschmidt,
-                Dennis Kaarsemaker,
-                Kumar Appaiah <akumar@ee.iitm.ac.in>,
-                Varun Hiremath <varunhiremath@gmail.com>,
-                Jeremy Thurgood,
-                Max Battcher,
-                Kirill Simonov <xi@resolvent.net>.
-    :license: BSD, see LICENSE for more details.
+    :copyright: Copyright 2006-2009 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
 """
 
 import re
@@ -54,7 +46,7 @@ class IniLexer(RegexLexer):
             (r'\s+', Text),
             (r'[;#].*?$', Comment),
             (r'\[.*?\]$', Keyword),
-            (r'(.*?)(\s*)(=)(\s*)(.*?)$',
+            (r'(.*?)([ \t]*)(=)([ \t]*)(.*?)$',
              bygroups(Name.Attribute, Text, Operator, Text, String))
         ]
     }
@@ -126,7 +118,7 @@ class MakefileLexer(Lexer):
 
     name = 'Makefile'
     aliases = ['make', 'makefile', 'mf', 'bsdmake']
-    filenames = ['*.mak', 'Makefile', 'makefile', 'Makefile.*']
+    filenames = ['*.mak', 'Makefile', 'makefile', 'Makefile.*', 'GNUmakefile']
     mimetypes = ['text/x-makefile']
 
     r_special = re.compile(r'^(?:'
@@ -184,7 +176,7 @@ class BaseMakefileLexer(RegexLexer):
             # targets
             (r'([^\n:]+)(:+)([ \t]*)', bygroups(Name.Function, Operator, Text),
              'block-header'),
-            #TODO: add paren handling (grr)
+            # TODO: add paren handling (grr)
         ],
         'export': [
             (r'[a-zA-Z0-9_${}-]+', Name.Variable),
@@ -208,7 +200,7 @@ class DiffLexer(RegexLexer):
     """
 
     name = 'Diff'
-    aliases = ['diff']
+    aliases = ['diff', 'udiff']
     filenames = ['*.diff', '*.patch']
     mimetypes = ['text/x-diff', 'text/x-patch']
 
@@ -219,7 +211,7 @@ class DiffLexer(RegexLexer):
             (r'-.*\n', Generic.Deleted),
             (r'!.*\n', Generic.Strong),
             (r'@.*\n', Generic.Subheading),
-            (r'(Index|diff).*\n', Generic.Heading),
+            (r'([Ii]ndex|diff).*\n', Generic.Heading),
             (r'=.*\n', Generic.Heading),
             (r'.*\n', Text),
         ]
@@ -233,6 +225,9 @@ class DiffLexer(RegexLexer):
         if text[:4] == '--- ':
             return 0.9
 
+
+DPATCH_KEYWORDS = ['hunk', 'addfile', 'adddir', 'rmfile', 'rmdir', 'move',
+    'replace']
 
 class DarcsPatchLexer(RegexLexer):
     """
@@ -250,25 +245,40 @@ class DarcsPatchLexer(RegexLexer):
         'root': [
             (r'<', Operator),
             (r'>', Operator),
-            (r'{', Operator, 'patch'),
+            (r'{', Operator),
+            (r'}', Operator),
+            (r'(\[)((?:TAG )?)(.*)(\n)(.*)(\*\*)(\d+)(\s?)(\])',
+             bygroups(Operator, Keyword, Name, Text, Name, Operator,
+                      Literal.Date, Text, Operator)),
             (r'(\[)((?:TAG )?)(.*)(\n)(.*)(\*\*)(\d+)(\s?)',
              bygroups(Operator, Keyword, Name, Text, Name, Operator,
                       Literal.Date, Text), 'comment'),
             (r'New patches:', Generic.Heading),
             (r'Context:', Generic.Heading),
             (r'Patch bundle hash:', Generic.Heading),
-            (r'\s+|\w+', Text),
+            (r'(\s*)(%s)(.*\n)' % '|'.join(DPATCH_KEYWORDS),
+                bygroups(Text, Keyword, Text)),
+            (r'\+', Generic.Inserted, "insert"),
+            (r'-', Generic.Deleted, "delete"),
+            (r'.*\n', Text),
         ],
         'comment': [
-            (r' .*\n', Comment),
+            (r'[^\]].*\n', Comment),
             (r'\]', Operator, "#pop"),
         ],
-        'patch': [
-            (r'}', Operator, "#pop"),
-            (r'(\w+)(.*\n)', bygroups(Keyword, Text)),
-            (r'\+.*\n', Generic.Inserted),
-            (r'-.*\n', Generic.Deleted),
-            (r'.*\n', Text),
+        'specialText': [ # darcs add [_CODE_] special operators for clarity
+            (r'\n', Text, "#pop"), # line-based
+            (r'\[_[^_]*_]', Operator),
+        ],
+        'insert': [
+            include('specialText'),
+            (r'\[', Generic.Inserted),
+            (r'[^\n\[]*', Generic.Inserted),
+        ],
+        'delete': [
+            include('specialText'),
+            (r'\[', Generic.Deleted),
+            (r'[^\n\[]*', Generic.Deleted),
         ],
     }
 
@@ -458,7 +468,7 @@ class GroffLexer(RegexLexer):
     }
 
     def analyse_text(text):
-        if text[0] != '.':
+        if text[:1] != '.':
             return False
         if text[:3] == '.\\"':
             return True
@@ -569,7 +579,7 @@ class RstLexer(RegexLexer):
     name = 'reStructuredText'
     aliases = ['rst', 'rest', 'restructuredtext']
     filenames = ['*.rst', '*.rest']
-    mimetypes = ["text/x-rst"]
+    mimetypes = ["text/x-rst", "text/prs.fallenstein.rst"]
     flags = re.MULTILINE
 
     def _handle_sourcecode(self, match):
@@ -702,6 +712,7 @@ class RstLexer(RegexLexer):
             text[p1+1] == text[p2-1]): # ...a sufficiently high header
             return 0.5
 
+
 class VimLexer(RegexLexer):
     """
     Lexer for VimL script files.
@@ -810,6 +821,7 @@ class GettextLexer(RegexLexer):
              bygroups(Name.Variable, Number.Integer, Name.Variable, Text, String)),
         ]
     }
+
 
 class SquidConfLexer(RegexLexer):
     """
@@ -1410,6 +1422,7 @@ class YamlLexer(ExtendedRegexLexer):
             context = YamlLexerContext(text, 0)
         return super(YamlLexer, self).get_tokens_unprocessed(text, context)
 
+
 class LighttpdConfLexer(RegexLexer):
     """
     Lexer for `Lighttpd <http://lighttpd.net/>`_ configuration files.
@@ -1436,6 +1449,7 @@ class LighttpdConfLexer(RegexLexer):
         ],
 
     }
+
 
 class NginxConfLexer(RegexLexer):
     """
@@ -1467,10 +1481,10 @@ class NginxConfLexer(RegexLexer):
         'base': [
             (r'#.*\n', Comment.Single),
             (r'on|off', Name.Constant),
-            (r'\$[^\s;#]+', Name.Variable),
+            (r'\$[^\s;#()]+', Name.Variable),
             (r'([a-z0-9.-]+)(:)([0-9]+)',
              bygroups(Name, Punctuation, Number.Integer)),
-            (r'[a-z-]+/[a-z-]+', Name), # mimetype
+            (r'[a-z-]+/[a-z-+]+', String), # mimetype
             #(r'[a-zA-Z._-]+', Keyword),
             (r'[0-9]+[km]?\b', Number.Integer),
             (r'(~)(\s*)([^\s{]+)', bygroups(Punctuation, Text, String.Regex)),
