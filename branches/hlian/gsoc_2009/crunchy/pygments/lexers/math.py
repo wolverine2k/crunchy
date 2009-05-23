@@ -5,9 +5,8 @@
 
     Lexers for math languages.
 
-    :copyright: 2007-2008 by Christopher Creutzig, Ken Schutte, Stou Sandalski,
-                Laurent Gautier <lgautier@gmail.com>.
-    :license: BSD, see LICENSE for more details.
+    :copyright: Copyright 2006-2009 by the Pygments team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
 """
 
 import re
@@ -16,7 +15,7 @@ try:
 except NameError:
     from sets import Set as set
 
-from pygments.lexer import Lexer, RegexLexer, bygroups, include
+from pygments.lexer import Lexer, RegexLexer, bygroups, include, do_insertions
 from pygments.token import Comment, String, Punctuation, Keyword, Name, \
     Operator, Number, Text, Generic
 
@@ -159,11 +158,11 @@ class MatlabLexer(RegexLexer):
             (r'^\s*function', Keyword, 'deffunc'),
 
             # from 'iskeyword' on version 7.4.0.336 (R2007a):
-            (r'break|case|catch|classdef|continue|else|elseif|end|for|function|'
-             r'global|if|otherwise|parfor|persistent|return|switch|try|while',
+            (r'(break|case|catch|classdef|continue|else|elseif|end|for|function|'
+             r'global|if|otherwise|parfor|persistent|return|switch|try|while)\b',
              Keyword),
 
-            ("|".join(elfun+specfun+elmat), Name.Builtin),
+            ("(" + "|".join(elfun+specfun+elmat) + r')\b',  Name.Builtin),
 
             # operators:
             (r'-|==|~=|<|>|<=|>=|&&|&|~', Operator),
@@ -175,9 +174,11 @@ class MatlabLexer(RegexLexer):
             (r'=|:|;', Punctuation),
 
             # quote can be transpose, instead of string:
-            (r'(\w+)(\')', bygroups(Text, Operator)),
+            # (not great, but handles common cases...)
+            (r'([\w\)\]]+)(\')', bygroups(Text, Operator)),
 
             (r'\'', String, 'string'),
+            ('[a-zA-Z_][a-zA-Z0-9_]*', Name),
             (r'.', Text),
         ],
         'string': [
@@ -191,6 +192,12 @@ class MatlabLexer(RegexLexer):
         ],
     }
 
+    def analyse_text(text):
+        if re.match('^\s*%', text, re.M): # comment
+            return 0.9
+        elif re.match('^!\w+', text, re.M): # system cmd
+            return 0.9
+        return 0.1
 
 line_re  = re.compile('.*?\n')
 
@@ -255,6 +262,7 @@ class NumPyLexer(PythonLexer):
 
     # override the mimetypes to not inherit them from python
     mimetypes = []
+    filenames = []
 
     EXTRA_KEYWORDS = set([
         'abs', 'absolute', 'accumulate', 'add', 'alen', 'all', 'allclose',
@@ -400,3 +408,6 @@ class SLexer(RegexLexer):
             (r'[^\"]*\"', String, '#pop'),
         ],
     }
+
+    def analyse_text(text):
+        return '<-' in text
