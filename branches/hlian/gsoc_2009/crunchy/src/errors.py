@@ -81,7 +81,7 @@ def simplify_traceback(code=None, username=None):
             tb_list = saved_tb_list
 
     retval = StringIO()
-    map(retval.write, tb_list)
+    list(map(retval.write, tb_list))
     if ex_type is SystemExit:
         out = retval.getvalue().replace("Your program exited.",
                              _(u"Your program exited.") )
@@ -123,7 +123,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
     else:
         list = traceback.format_exception_only(ex_type, value)
     retval = StringIO()
-    map(retval.write, list)
+    list(map(retval.write, list))
 
     out = retval.getvalue().replace("Error on line",
                              _(u"Error on line") )
