@@ -1,5 +1,6 @@
 '''Account Manager For Crunchy
 '''
+import codecs
 import os
 import sys
 from getpass import getpass
@@ -49,8 +50,7 @@ class Accounts(dict): # tested
 
     def load(self): # tested indirectly
         '''loads data from password file'''
-        data = open(self.pwd_file_path, 'rb').read()
-        for line in data.split('\n'):
+        for line in codecs.open(self.pwd_file_path, 'r', encoding='utf-8'):
             if not line:
                 continue
             username, user_dir, encoded_password, admin_rights = line.split(
@@ -64,7 +64,8 @@ class Accounts(dict): # tested
         for key, value in self.items():
             lines.append(self.separator.join([key, value[0], value[1], value[2]]))
         data = '\n'.join(lines)
-        f = open(self.pwd_file_path, 'w')
+
+        f = codecs.open(self.pwd_file_path, 'w', encoding='utf-8')
         f.write(data)
         f.close()
 
@@ -217,8 +218,10 @@ class AMCLI(object):
                     ...
                 You can use a single space [' '], a comma [','], or
                 a tab character ['\\t'] as separator between values.'''
-        f = open(file_name)
+        f = codecs.open(file_name, encoding='utf-8')
         lines = f.readlines()
+        f.close()
+
         try_sep = ('\t', ' ', ',')
         for sep in try_sep:
             data = []
