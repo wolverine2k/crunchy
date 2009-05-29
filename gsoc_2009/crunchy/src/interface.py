@@ -50,9 +50,15 @@ translate = {} # initialized below
 exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
 
-config['crunchy_base_dir'] = os.path.normpath(os.path.join(
-                                              os.path.dirname(__file__), '..')
-                                           ).decode(sys.getfilesystemencoding())
+def get_base_dir():
+    path = os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                         '..'))
+    # Python 3: normpath() decodes by default into a string.
+    if isinstance(path, unicode):
+        return path
+    return path.decode(sys.getfilesystemencoding())
+
+config['crunchy_base_dir'] = get_base_dir()
 
 import src.translation
 translate['_'] = src.translation._
