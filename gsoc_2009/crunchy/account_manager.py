@@ -38,8 +38,13 @@ class Accounts(dict): # tested
         automatically encrypted.'''
         home = item[0]
         admin_rights = item[2]
-        encoded_password = md5('%s:%s:%s' %
-                           (username, self.realm, item[1])).hexdigest()
+        password = '%s:%s:%s' % (username, self.realm, item[1])
+
+        # Python 3: md5() does not take unicode strings.
+        if isinstance(password, unicode):
+            password = password.encode('utf8')
+
+        encoded_password = md5(password).hexdigest()
         dict.__setitem__(self, username, (home, encoded_password, admin_rights))
 
     def load(self): # tested indirectly
