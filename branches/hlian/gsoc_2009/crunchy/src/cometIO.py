@@ -328,7 +328,9 @@ class ThreadedBuffer(object):
             data = data.replace('\\', r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
-            self.default_out.write(data.encode(sys.getfilesystemencoding()))
+            if sys.version_info < (3, 0):
+                data = data.encode(sys.getfilesystemencoding())
+            self.default_out.write(data)
 
     def read(self):
         """N.B. this function is rarely, if ever, used - and is probably untested"""

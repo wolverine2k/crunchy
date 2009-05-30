@@ -56,18 +56,17 @@
 ##
 
 import htmlentitydefs
-import re, string, sys
-import mimetools, StringIO
+import re
+import string
+import sys
+from email.parser import Parser as MIMEParser
 
 import ElementTree
 
 AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body", "input" # "input" added by a.r.
 IGNOREEND = "img", "hr", "meta", "link", "br"
 
-if sys.version[:3] == "1.5":
-    is_not_ascii = re.compile(r"[\x80-\xff]").search # 1.5.2
-else:
-    is_not_ascii = re.compile(eval(r'u"[\u0080-\uffff]"')).search
+is_not_ascii = re.compile(ur"[\u0080-\uffff]", re.U).search
 
 try:
     from HTMLParser import HTMLParser
@@ -141,11 +140,10 @@ class HTMLTreeBuilder(HTMLParser):
                 elif k == "content":
                     content = v
             if http_equiv == "content-type" and content:
-                # use mimetools to parse the http header
-                header = mimetools.Message(
-                    StringIO.StringIO("%s: %s\n\n" % (http_equiv, content))
-                    )
-                encoding = header.getparam("charset")
+                # use the email module to parse the http header
+                header = "%s: %s\n\n" % (http_equiv, content)
+                header = MIMEParser().parsestr(header)
+                encoding = header.get_param("charset")
                 if encoding:
                     self.encoding = encoding
         if tag in AUTOCLOSE:
