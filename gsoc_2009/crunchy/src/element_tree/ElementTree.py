@@ -2,7 +2,7 @@
 # ElementTree
 # $Id: ElementTree.py 2326 2005-03-17 07:45:21Z fredrik $
 #
-# light-weight XML support for Python 1.5.2 and later.
+# light-weight XML support for Python 2.0 and later.
 #
 # history:
 # 2001-10-20 fl   created (from various sources)
@@ -752,10 +752,7 @@ def _encode(s, encoding):
     except AttributeError:
         return s # 1.5.2: assume the string uses the right encoding
 
-if sys.version[:3] == "1.5":
-    _escape = re.compile(r"[&<>\"\x80-\xff]+") # 1.5.2
-else:
-    _escape = re.compile(eval(r'u"[&<>\"\u0080-\uffff]+"'))
+_escape = re.compile(ur'[&<>"\u0080-\uffff]+', re.U)
 
 _escape_map = {
     "&": "&amp;",
@@ -787,7 +784,7 @@ def _encode_entity(text, pattern=_escape):
             if text is None:
                 text = "&#%d;" % ord(char)
             append(text)
-        return string.join(out, "")
+        return "".join(out)
     try:
         return _encode(pattern.sub(escape_entities, text), "ascii")
     except TypeError:
@@ -797,7 +794,7 @@ def _encode_entity(text, pattern=_escape):
 # the following functions assume an ascii-compatible encoding
 # (or "utf-16")
 
-def _escape_cdata(text, encoding=None, replace=string.replace):
+def _escape_cdata(text, encoding=None):
     # escape character data
     try:
         if encoding:
@@ -805,14 +802,14 @@ def _escape_cdata(text, encoding=None, replace=string.replace):
                 text = _encode(text, encoding)
             except UnicodeError:
                 return _encode_entity(text)
-        text = replace(text, "&", "&amp;")
-        text = replace(text, "<", "&lt;")
-        text = replace(text, ">", "&gt;")
+        text = text.replace("&", "&amp;")
+        text = text.replace("<", "&lt;")
+        text = text.replace(">", "&gt;")
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
 
-def _escape_attrib(text, encoding=None, replace=string.replace):
+def _escape_attrib(text, encoding=None):
     # escape attribute value
     try:
         if encoding:
@@ -820,11 +817,11 @@ def _escape_attrib(text, encoding=None, replace=string.replace):
                 text = _encode(text, encoding)
             except UnicodeError:
                 return _encode_entity(text)
-        text = replace(text, "&", "&amp;")
-        text = replace(text, "'", "&apos;") # FIXME: overkill
-        text = replace(text, "\"", "&quot;")
-        text = replace(text, "<", "&lt;")
-        text = replace(text, ">", "&gt;")
+        text = text.replace("&", "&amp;")
+        text = text.replace("'", "&apos;") # FIXME: overkill
+        text = text.replace("\"", "&quot;")
+        text = text.replace("<", "&lt;")
+        text = text.replace(">", "&gt;")
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
@@ -834,7 +831,7 @@ def fixtag(tag, namespaces):
     # tag and namespace declaration, if any
     if isinstance(tag, QName):
         tag = tag.text
-    namespace_uri, tag = string.split(tag[1:], "}", 1)
+    namespace_uri, tag = tag[1:].split("}", 1)
     prefix = namespaces.get(namespace_uri)
     if prefix is None:
         prefix = _namespace_map.get(namespace_uri)
@@ -1007,7 +1004,7 @@ def tostring(element, encoding=None):
     file = dummy()
     file.write = data.append
     ElementTree(element).write(file, encoding)
-    return string.join(data, "")
+    return "".join(data)
 
 ##
 # Generic element structure builder.  This builder converts a sequence
@@ -1050,7 +1047,7 @@ class TreeBuilder:
         # original:
         #if self._data:
             if self._last is not None:
-                text = string.join(self._data, "")
+                text = "".join(self._data)
                 if self._tail:
                     assert self._last.tail is None, "internal error (tail)"
                     self._last.tail = text
@@ -1211,7 +1208,7 @@ class XMLTreeBuilder:
             if prefix == ">":
                 self._doctype = None
                 return
-            text = string.strip(text)
+            text = text.strip()
             if not text:
                 return
             self._doctype.append(text)
