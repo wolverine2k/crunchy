@@ -28,7 +28,7 @@ Sample use of extending the Base class for a single object:
     ...        self._preferences[name] = value
     ...    y = make_property('y')
     ...    x = make_property('x')
-    
+
     >>>
     >>> a_dict = {}
     >>> example = Simple(a_dict)
@@ -38,7 +38,7 @@ Sample use of extending the Base class for a single object:
     The current value is: True
     >>> example.y = False
     Saving y = False
-    >>> print a_dict == example._preferences
+    >>> print(a_dict == example._preferences)
     True
 
 Multi users examples.
@@ -53,8 +53,5 @@ Multi users examples.
     >>> users['Tao'].x = 4
     Saving x = 4
     >>> for name in user_names:
-    ...    print users[name].x, 
+    ...    print(users[name].x, )
     4 1 1 1
-
-    
-
