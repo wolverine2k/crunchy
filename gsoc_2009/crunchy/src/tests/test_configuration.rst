@@ -24,7 +24,7 @@ Sample use of extending the Base class for a single object:
     ...        self._init_properties(Simple)
     ...    def _save_settings(self, name, value, initial=False):
     ...        if not initial:
-    ...            print "Saving", name, '=', value
+    ...            print("Saving %s = %s" % (name, value))
     ...        self._preferences[name] = value
     ...    y = make_property('y')
     ...    x = make_property('x')
@@ -52,6 +52,5 @@ Multi users examples.
     ...     users[name] = Simple(configs[name])
     >>> users['Tao'].x = 4
     Saving x = 4
-    >>> for name in user_names:
-    ...    print(users[name].x, )
-    4 1 1 1
+    >>> print([users[name].x for name in user_names])
+    [4, 1, 1, 1]

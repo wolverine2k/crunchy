@@ -3,6 +3,7 @@ translation.py
 Translation infrastructure for Crunchy.
 """
 
+import codecs
 import os.path
 from imp import find_module
 
@@ -15,35 +16,34 @@ DEBUG = False
 _selected = {}
 languages = {}
 
-def init_translation(lang=None):
+def init_translation(lang='en'):
+    '''Selects the translation corresponding to the language code and
+       returns it. Builds the language dictionary out of the gettext
+       file if it is not already loaded.'''
+
     global _selected
-    #trans_path = os.path.join(os.path.dirname(
-    #                                find_module("crunchy")[1]), "translations")
-    #print "original trans_path = ", trans_path
-    trans_path = os.path.normpath(os.path.join(os.path.dirname(__file__),
-                                               '..', "translations"))
-                                          #).decode(sys.getfilesystemencoding())
-    #print "new trans_path =", trans_path
-    if lang in languages:
-        _selected = languages[lang]
-    else:
+    if lang not in languages:
+        paths = os.path
+        trans_path = paths.join(paths.dirname(__file__),
+                                '..',
+                                "translations")
+        trans_path = paths.normpath(trans_path)
+        filename = paths.join(trans_path,
+                              'en',
+                              'LC_MESSAGES',
+                              'crunchy.po')
         try:
-            filename = os.path.join(trans_path, lang, "LC_MESSAGES", "crunchy.po")
             languages[lang] = build_dict(filename)
+        except IOError:
+            _selected = {}
+        else:
             _selected = languages[lang]
-        except:   # English is the default
-            if 'en' in languages:
-                _selected = languages['en']
-            else:
-                try:
-                    filename = os.path.join(trans_path, 'en', "LC_MESSAGES", "crunchy.po")
-                    languages['en'] = build_dict(filename)
-                    _selected = languages['en']
-                except:  # returning an empty dict will result in untranslated strings
-                    _selected = {}
+    else:
+        _selected = languages[lang]
+
     if DEBUG:
         import pprint
-        pprint.pprint( _selected)
+        pprint.pprint(_selected)
 
 def _(message):
     ''' translate a message, taking care of encoding issues if needed.'''
@@ -52,28 +52,35 @@ def _(message):
     if message in _selected:
         return _selected[message]
     else:
+        # Since most of the crunchy code is encoded in UTF-8, we will
+        # assume the message key is UTF-8 in order to ensure that _
+        # always returns Unicode.
+        if getattr(message, 'decode', None):
+            message = message.decode('utf8')
         return message # returns untranslated one as default
 
 def build_dict(filename):
-    global _language_file_encoding
-    translation = {}
     """This function creates a Python dict from a simple standard .po file."""
-    try:
-        lines = open(filename).readlines()
-    except:
-        u_print("In translation.py's build_dict, could not open file = ", filename)
-        raise
-    header = True
-    msgid = False
-    msgstr = False
+    global _language_file_encoding
     # currently (January 2007), both language files (English and French)
     # have been set up in poedit with utf-8 as the default encoding.
     # In the future, as other languages are added by contributors,
     # we might want to extract the real encoding used instead of assuming
     # it is utf-8.
     _language_file_encoding = "utf-8"
+    translation = {}
+
+    try:
+        lines = codecs.open(filename, 'r',
+                            _language_file_encoding).readlines()
+    except IOError:
+        u_print("In translation.py's build_dict, could not open file = ", filename)
+        raise
+
+    header = True
+    msgid = False
+    msgstr = False
     for line in lines:
-        line = line.decode(_language_file_encoding)
         if header:       # may need to be adapted to extract the information
             if line.startswith("#"): header = False # from the .po file
         else:
