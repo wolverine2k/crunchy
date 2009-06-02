@@ -1,5 +1,3 @@
-import sys
-
 '''tools_2k.py
 
 This module contains various utility functions compatible with
@@ -38,7 +36,6 @@ def u_print(*args):
         s = ''.join(unicode(arg) for arg in args)
         print(s)
     except:
-        raise
         print("Problem in u_print: could not print args:")
         print(args)
 
