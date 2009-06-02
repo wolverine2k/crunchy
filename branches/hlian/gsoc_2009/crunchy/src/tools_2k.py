@@ -1,3 +1,5 @@
+import sys
+
 '''tools_2k.py
 
 This module contains various utility functions compatible with
@@ -10,21 +12,35 @@ in tools_3k.py
 def u_print(*args):
     '''u_print is short for unicode_print
 
-    Encodes a series of string arguments in utf-8, concatenate them
-    and prints out the resulting string.'''
-    to_print = []
-    for arg in args:
-        try:
-            to_print.append(arg.encode("utf-8"))
-        except:
-            to_print.append(str(arg))
+    Given a list of objects, prints them to standard output. If an
+    object is unicode, it is encoded to UTF-8. If an object is a bytes
+    string, it must be in UTF-8 encoding. If an object is not a string
+    at all, it is converted into its unicode representation.
+
+    The resulting list of strings is concatenated and printed.'''
+
+    # Make a copy so we can modify while enumerating.
+    u_args = list(args)
+
+    for i, arg in enumerate(args):
+        if getattr(arg, 'decode', None):
+            try:
+                u_args[i] = arg.decode('utf8')
+            except:
+                print("Problem in u_print: argument already encoded:")
+                print(repr(arg))
+
+    args = u_args
+
     try:  # exceptions appear to be catched silently elsewhere
           # without this try/except block...
           # likely a problem with printing encoded args
-        print ''.join(to_print)
+        s = ''.join(unicode(arg) for arg in args)
+        print(s)
     except:
-        print "PROBLEM in u_print; could not print encoded args:"
-        print args
+        raise
+        print("Problem in u_print: could not print args:")
+        print(args)
 
 def exec_code(code, local_dict, source='', username=None): # tested via test_interface.rst
     import src.errors as errors   # prevent premature import
