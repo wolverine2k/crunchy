@@ -7,7 +7,7 @@ import codecs
 import os.path
 from imp import find_module
 
-from src.interface import u_print
+from src.interface import u_print, crunchy_bytes
 
 current_locale = None
 DEBUG = False
@@ -55,7 +55,7 @@ def _(message):
         # Since most of the crunchy code is encoded in UTF-8, we will
         # assume the message key is UTF-8 in order to ensure that _
         # always returns Unicode.
-        if getattr(message, 'decode', None):
+        if isinstance(message, crunchy_bytes):
             message = message.decode('utf8')
         return message # returns untranslated one as default
 

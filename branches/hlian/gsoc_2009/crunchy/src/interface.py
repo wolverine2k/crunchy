@@ -19,15 +19,20 @@ version = sys.version.split('.')
 python_version = float(version[0] + '.' + version[1][0])
 
 # StringIO is used for creating in-memory files
+# We also take a page from Django's book and create an identifiable
+# string/bytes type.
 if python_version < 3:  # kept for reference
     from StringIO import StringIO
+    crunchy_bytes = str
 else:
     from io import StringIO
+    crunchy_bytes = bytes
 
 # Some special functions, specific to a given
 # Python version are defined below
 import src.tools_2k as tools
 u_print = tools.u_print
+u_join = tools.u_join
 exec_code = tools.exec_code
 
 # Rather than having various modules importing the configuration.py,
