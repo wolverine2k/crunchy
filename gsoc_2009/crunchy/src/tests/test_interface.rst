@@ -1,4 +1,4 @@
-﻿interface.py tests
+interface.py tests
 ==================
 
 Note: this file is encoded in utf-8.
@@ -28,10 +28,16 @@ which is meant to print a series of arguments.
     >>> if interface.python_version < 3:
     ...     to_print = "André".decode('utf-8')
     ... else: 
-    ...     to_print = "André"
-    >>> interface.u_print(to_print)
-    André
-    >>> interface.u_print("a", "b", "c")
+    ...     to_print = u"André"
+
+Given that doctest converts from bytes to Unicode haphazardly and that
+Python 3 makes writing raw bytes to standard output moderately
+convoluted, we made u_print() into a bare wrapper around u_join() and
+here we test u_join() instead of u_print().
+
+    >>> interface.u_join(u"André") == u"André"
+    True
+    >>> interface.u_print(u"a", u"b", u"c")
     abc
 
 Testing ElementTree and friends
