@@ -20,7 +20,7 @@ See how_to.rst_ for details.
     >>> config.clear()
     >>> def print_args(*args):
     ...     for arg in args:
-    ...         print arg
+    ...         print(arg)
     >>> plugin['add_vlam_option'] = print_args
     >>> plugin['services'] = print_args
     >>> import src.plugins.handle_local as handle_local
@@ -150,7 +150,7 @@ add path and see if it is in there.
     >>> elem = Element("dummy")
     >>> elem.attrib['name'] = fake_path
     >>> page = mocks.Page()
-    >>> print page.url
+    >>> print(page.url)
     crunchy_server
     >>> handle_local.add_to_path(page, elem, 'dummy')
     >>> fake_path == sys.path[0]
@@ -165,7 +165,7 @@ base directory.
     >>> page.is_from_root = True
     >>> config['crunchy_base_dir'] = '/base'
     >>> handle_local.add_to_path(page, elem, 'dummy')
-    >>> print sys.path[0]
+    >>> print(sys.path[0])
     /base/server_root/fake_path_which_does_not_exist
     >>> del sys.path[0]  # cleaning up
 

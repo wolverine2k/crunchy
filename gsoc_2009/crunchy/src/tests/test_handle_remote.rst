@@ -21,7 +21,7 @@ See how_to.rst_ for details.
     >>> config.clear()
     >>> def print_args(*args):
     ...     for arg in args:
-    ...         print arg
+    ...         print(arg)
     >>> plugin['add_vlam_option'] = print_args
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
