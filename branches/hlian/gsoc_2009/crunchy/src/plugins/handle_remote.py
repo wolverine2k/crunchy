@@ -5,7 +5,13 @@ Creates a form allowing to specify the URL of a tutorial to be loaded
 by Crunchy.
 """
 
-from urllib import FancyURLopener, unquote_plus
+import sys
+
+if sys.version_info < (3, 0):
+    from urllib import FancyURLopener, unquote_plus
+else:
+    from urllib.request import FancyURLopener
+    from urllib.parse import unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, preprocessor, config, SubElement
