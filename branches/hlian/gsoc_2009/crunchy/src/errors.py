@@ -32,7 +32,7 @@ def simplify_traceback(code=None, username=None):
         sys.last_traceback = trace
         sys.last_value = value
     except:
-        return "Internal error: could not retrieve traceback information."
+        return u"Internal error: could not retrieve traceback information."
     try:
         lineno = trace.tb_next.tb_lineno
     except:
@@ -40,13 +40,13 @@ def simplify_traceback(code=None, username=None):
     if ex_type is SyntaxError:
         return simplify_syntax_error(code, ex_type, value, trace, lineno, username)
     if ex_type is SystemExit:
-        value = "Your program exited.\n"
+        value = u"Your program exited.\n"
 
     tblist = traceback.extract_tb(trace)
     del tblist[:1]
     tb_list = traceback.format_list(tblist)
     if tb_list:
-        tb_list.insert(0, "Traceback (most recent call last):\n")
+        tb_list.insert(0, u"Traceback (most recent call last):\n")
     tb_list[len(tb_list):] = traceback.format_exception_only(ex_type, value)
 
     saved_tb_list = []
@@ -56,7 +56,7 @@ def simplify_traceback(code=None, username=None):
     if username and config[username]['friendly']:
         try:
             if code is not None:
-                code_line = code.split('\n')[lineno - 1]
+                code_line = code.split(u'\n')[lineno - 1]
             else:
                 try:
                     dummy_filename, dummy_line_number, dummy_function_name, \
@@ -64,40 +64,39 @@ def simplify_traceback(code=None, username=None):
                 except:
                     code_line = None
             del tb_list[0]
-            tb_list[0] = tb_list[0].replace('  File "Crunchy console", line',
+            tb_list[0] = tb_list[0].replace(u'  File "Crunchy console", line',
                                    _(u"Error on line"))
-            tb_list[0] = tb_list[0].replace(' File "User\'s code", line',
+            tb_list[0] = tb_list[0].replace(u' File "User\'s code", line',
                                    _(u"Error on line"))
-            tb_list[0] = tb_list[0].replace(', in <module>', ':')
+            tb_list[0] = tb_list[0].replace(u', in <module>', u':')
             if code_line is not None:
-                tb_list.insert(1, ">>> " + code_line + "\n")
+                tb_list.insert(1, u">>> " + code_line + u"\n")
             for index, line in enumerate(tb_list):
-                if ' File "Crunchy console", line' in line:
-                    tb_list[index] = line.replace(' File "Crunchy console", line',
+                if u' File "Crunchy console", line' in line:
+                    tb_list[index] = line.replace(u' File "Crunchy console", line',
                                         _(u"called by line"))
-                if ', in <module>' in line:
-                    tb_list[index] = line.replace(', in <module>', '')
+                if u', in <module>' in line:
+                    tb_list[index] = line.replace(u', in <module>', u'')
         except:
             tb_list = saved_tb_list
 
     retval = StringIO()
     list(map(retval.write, tb_list))
     if ex_type is SystemExit:
-        out = retval.getvalue().replace("Your program exited.",
+        out = retval.getvalue().replace(u"Your program exited.",
                              _(u"Your program exited.") )
-        return out.encode("utf-8")
+        return out
 
     if debug:
+        added_info = u'Crunchy debug::  In errors.simplify_traceback:'
         if username:
-            added_info = ("Crunchy debug::  In errors.simplify_traceback:\n"
-                          "username = %s"%username + "friendly = " +
-                                            str(config[username]['friendly']))
+            info = (username, config[username]['friendly'])
+            added_info += u'\nusername = %s friendly = %s' % info
         else:
-            added_info = ("Crunchy debug::  "
-                          "In errors.simplify_traceback: username=%s\n"%username)
+            added_info += u' username=%s\n' % username
     else:
-        added_info = ''
-    return retval.getvalue().encode("utf-8") + added_info
+        added_info = u''
+    return retval.getvalue() + added_info
 
 
 def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
@@ -106,7 +105,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
     closely based on showsyntaxerror from the code module
     in the standard library
     """
-    filename = _(u"User's code").encode("utf-8")  # will most likely not be used
+    filename = _(u"User's code")  # will most likely not be used
     # Work hard to stuff the correct filename in the exception
     try:
         msg, (filename, lineno, offset, line) = value
@@ -119,15 +118,15 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
         sys.last_value = value
     if username and config[username]['friendly']:# ignore that filename stuff!
         excs = traceback.format_exception_only(ex_type, value)[1:]
-        excs.insert(0, "Error on line %s:\n"%lineno)
+        excs.insert(0, u"Error on line %s:\n" % lineno)
     else:
         excs = traceback.format_exception_only(ex_type, value)
     retval = StringIO()
     list(map(retval.write, excs))
 
-    out = retval.getvalue().replace("Error on line",
+    out = retval.getvalue().replace(u"Error on line",
                              _(u"Error on line") )
-    return out.encode("utf-8")
+    return out
 
 def simplify_doctest_error_message(msg):
     '''Simplifies doctest messages, assuming standard format.'''
@@ -135,54 +134,54 @@ def simplify_doctest_error_message(msg):
     # new for Python 2.6
     #- Doctest now returns results as a named tuple for readability:
     # (0, 7) --> TestResults(failed=0, attempted=7)
-    if "TestResults" in msg:
-        msg = msg.replace("TestResults", '').replace("=", '')
-        msg = msg.replace("failed", '').replace("attempted", '')
-    failures, total = eval( msg.split('\n')[-1])
+    if u"TestResults" in msg:
+        msg = msg.replace(u"TestResults", u'').replace(u"=", u'')
+        msg = msg.replace(u"failed", u'').replace(u"attempted", u'')
+    failures, total = eval( msg.split(u'\n')[-1])
 
     if failures:
         success = False
     else:
         success = True
     if total == 0:
-        summary = _(u"There was no test to satisfy.").encode("utf-8")
+        summary = _(u"There was no test to satisfy.")
     elif total == 1:
         if failures == 0:
-            summary = _(u"Congratulations, your code passed the test!").encode("utf-8")
+            summary = _(u"Congratulations, your code passed the test!")
         else:
-            summary = _(u"You code failed the test.").encode("utf-8")
+            summary = _(u"You code failed the test.")
     else:
         if failures == 0:
-            summary = (_(u"Congratulations, your code passed all (%d) tests!")%total).encode("utf-8")
+            summary = (_(u"Congratulations, your code passed all (%d) tests!")%total)
         elif failures == total:
-            summary = (_(u"Your code failed all (%d) tests.")%total).encode("utf-8")
+            summary = (_(u"Your code failed all (%d) tests.")%total)
         else:
-            summary = (_(u"Your code passed %s out of %s tests.")%(total-failures, total)).encode("utf-8")
+            summary = (_(u"Your code passed %s out of %s tests.")%(total-failures, total))
 
     if failures == 0:
         return summary, success
 
-    stars = "*"*70  # doctest prints this before each failed test
+    stars = u"*" * 70 # doctest prints this before each failed test
     failed = msg.split(stars)
     new_mesg=[summary]
-    new_mesg.append("="*70)
+    new_mesg.append(u"=" * 70)
     exception_found = False
     for fail in failed:
         if fail: # ignore empty lines
-            lines = fail.split('\n')
+            lines = fail.split(u'\n')
             for line in lines[2:-2]:
-                if line.startswith("Failed example:"):
-                    new_mesg.append(_(u"The following example failed:").encode("utf-8"))
-                elif line.startswith("Expected:"):
-                    new_mesg.append(_(u"The expected result was:").encode("utf-8"))
-                elif line.startswith("Got"):
-                    new_mesg.append(_(u"The result obtained was:").encode("utf-8"))
-                elif line.startswith("Exception raised:"):
-                    new_mesg.append(_(u"An exception was raised:").encode("utf-8"))
+                if line.startswith(u"Failed example:"):
+                    new_mesg.append(_(u"The following example failed:"))
+                elif line.startswith(u"Expected:"):
+                    new_mesg.append(_(u"The expected result was:"))
+                elif line.startswith(u"Got"):
+                    new_mesg.append(_(u"The result obtained was:"))
+                elif line.startswith(u"Exception raised:"):
+                    new_mesg.append(_(u"An exception was raised:"))
                     exception_found = True
                     break
                 else:
                     new_mesg.append(line)
             new_mesg.append(lines[-2])
-            new_mesg.append("-"*70)
-    return '\n'.join(new_mesg), success
+            new_mesg.append(u"-" * 70)
+    return u'\n'.join(new_mesg), success

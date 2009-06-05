@@ -16,7 +16,7 @@ Now we try to evaluate that code and calling ``simplify_traceback`` on
 the resulting ``sys.exc_info()``:
 
     >>> try:
-    ...     exec code
+    ...     exec(code)
     ... except:
     ...     print(simplify_traceback(code, None))
       File "<string>", line 1
