@@ -28,16 +28,16 @@ which is meant to print a series of arguments.
     >>> if interface.python_version < 3:
     ...     to_print = "André".decode('utf-8')
     ... else: 
-    ...     to_print = u"André"
+    ...     to_print = "André"
 
 Given that doctest converts from bytes to Unicode haphazardly and that
 Python 3 makes writing raw bytes to standard output moderately
 convoluted, we made u_print() into a bare wrapper around u_join() and
 here we test u_join() instead of u_print().
 
-    >>> interface.u_join(u"André") == u"André"
+    >>> interface.u_join(to_print) == to_print
     True
-    >>> interface.u_print(u"a", u"b", u"c")
+    >>> interface.u_print("a", "b", "c")
     abc
 
 Testing ElementTree and friends
@@ -48,7 +48,13 @@ The following is incomplete.
     >>> elem = interface.Element("p")
     >>> elem.attrib['class'] = 'crunchy'
     >>> elem.text = "This is a neat sentence."
-    >>> interface.u_print(interface.tostring(elem))
+    >>> to_print = interface.tostring(elem)
+    >>> if interface.python_version < 3:
+    ...     print(type(to_print) == str)
+    ... else:
+    ...     print(type(to_print) == bytes)
+    True
+    >>> interface.u_print(to_print)
     <p class="crunchy">This is a neat sentence.</p>
 
 We create a fake html file
