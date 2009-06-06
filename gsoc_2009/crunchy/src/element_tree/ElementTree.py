@@ -84,6 +84,16 @@ __all__ = [
     "XMLTreeBuilder",
     ]
 
+ATTRIB_REPLACEMENTS = [u"& &amp",
+                       u"' &apos;",
+                       u'" &quot;',
+                       u"< &lt;",
+                       u"> &gt;"];
+
+CDATA_REPLACEMENTS = [u"& &amp",
+                      u"< &lt;",
+                      u"> &gt;"];
+
 ##
 # The <b>Element</b> type is a flexible container object, designed to
 # store hierarchical data structures in memory. The type can be
@@ -106,7 +116,10 @@ __all__ = [
 # structure, and convert it from and to XML.
 ##
 
-import string, sys, re
+import codecs
+import string
+import sys
+import re
 
 class _SimpleElementPath:
     # emulate pre-1.2 find/findtext/findall behaviour
@@ -566,14 +579,15 @@ class ElementTree:
     # Loads an external XML document into this element tree.
     #
     # @param source A file name or file object.
+    # @param encoding Encoding for the file.
     # @param parser An optional parser instance.  If not given, the
     #     standard {@link XMLTreeBuilder} parser is used.
     # @return The document root element.
     # @defreturn Element
 
-    def parse(self, source, parser=None):
+    def parse(self, source, encoding='utf8', parser=None):
         if not hasattr(source, "read"):
-            source = open(source, "rb")
+            source = codecs.open(source, "r", encoding)
         if not parser:
             parser = XMLTreeBuilder()
         while 1:
@@ -652,10 +666,10 @@ class ElementTree:
     def write(self, file, encoding="us-ascii"):
         assert self._root is not None
         if not hasattr(file, "write"):
-            file = open(file, "wb")
+            file = codecs.open(file, "w", encoding)
         if not encoding:
             encoding = "us-ascii"
-        elif encoding != "utf-8" and encoding != "us-ascii":
+        elif encoding not in 'utf8 utf-8 us-ascii'.split():
             file.write("<?xml version='1.0' encoding='%s'?>\n" % encoding)
         self._write(file, self._root, encoding, {})
 
@@ -675,7 +689,7 @@ class ElementTree:
                     if xmlns: xmlns_items.append(xmlns)
             except TypeError:
                 _raise_serialization_error(tag)
-            file.write("<" + _encode(tag, encoding))
+            file.write("<" + tag)
             if items or xmlns_items:
                 items.sort() # lexical order
                 for k, v in items:
@@ -691,10 +705,10 @@ class ElementTree:
                             if xmlns: xmlns_items.append(xmlns)
                     except TypeError:
                         _raise_serialization_error(v)
-                    file.write(" %s=\"%s\"" % (_encode(k, encoding),
+                    file.write(" %s=\"%s\"" % (k,
                                                _escape_attrib(v, encoding)))
                 for k, v in xmlns_items:
-                    file.write(" %s=\"%s\"" % (_encode(k, encoding),
+                    file.write(" %s=\"%s\"" % (k,
                                                _escape_attrib(v, encoding)))
             ### following line modified from original for Crunchy
             # by preventing divs from self-closing, we can display
@@ -705,7 +719,7 @@ class ElementTree:
                     file.write(_escape_cdata(node.text, encoding))
                 for n in node:
                     self._write(file, n, encoding, namespaces)
-                file.write("</" + _encode(tag, encoding) + ">")
+                file.write("</" + tag + ">")
             else:
                 file.write(" />")
             for k, v in xmlns_items:
@@ -786,7 +800,7 @@ def _encode_entity(text, pattern=_escape):
             append(text)
         return "".join(out)
     try:
-        return _encode(pattern.sub(escape_entities, text), "ascii")
+        return pattern.sub(escape_entities, text)
     except TypeError:
         _raise_serialization_error(text)
 
@@ -794,37 +808,27 @@ def _encode_entity(text, pattern=_escape):
 # the following functions assume an ascii-compatible encoding
 # (or "utf-16")
 
-def _escape_cdata(text, encoding=None):
-    # escape character data
+def _escape(text, encoding, replacements):
+    # escape attribute value
     try:
-        if encoding:
-            try:
-                text = _encode(text, encoding)
-            except UnicodeError:
-                return _encode_entity(text)
-        text = text.replace("&", "&amp;")
-        text = text.replace("<", "&lt;")
-        text = text.replace(">", "&gt;")
+        if not isinstance(text, unicode):
+            text = text.decode(encoding)
+
+        # Our string manipulation must first be encoded down in order
+        # to work in Python 3.
+        for replacement in replacements:
+            oldstr, newstr = replacement.split()
+            text = text.replace(oldstr, newstr)
+
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
 
+def _escape_cdata(text, encoding=None):
+    return _escape(text, encoding, CDATA_REPLACEMENTS)
+
 def _escape_attrib(text, encoding=None):
-    # escape attribute value
-    try:
-        if encoding:
-            try:
-                text = _encode(text, encoding)
-            except UnicodeError:
-                return _encode_entity(text)
-        text = text.replace("&", "&amp;")
-        text = text.replace("'", "&apos;") # FIXME: overkill
-        text = text.replace("\"", "&quot;")
-        text = text.replace("<", "&lt;")
-        text = text.replace(">", "&gt;")
-        return text
-    except (TypeError, AttributeError):
-        _raise_serialization_error(text)
+    return _escape(text, encoding, ATTRIB_REPLACEMENTS)
 
 def fixtag(tag, namespaces):
     # given a decorated tag (of the form {uri}tag), return prefixed
@@ -997,14 +1001,15 @@ fromstring = XML
 # @return An encoded string containing the XML data.
 # @defreturn string
 
-def tostring(element, encoding=None):
-    class dummy:
-        pass
+def tostring(element, encoding='utf8'):
     data = []
-    file = dummy()
-    file.write = data.append
-    ElementTree(element).write(file, encoding)
-    return "".join(data)
+
+    class dummy(object):
+        def write(self, text):
+            data.append(text)
+
+    ElementTree(element).write(dummy(), encoding)
+    return u"".join(data).encode(encoding)
 
 ##
 # Generic element structure builder.  This builder converts a sequence
@@ -1147,13 +1152,6 @@ class XMLTreeBuilder:
         self._doctype = None
         self.entity = {}
 
-    def _fixtext(self, text):
-        # convert text string to ascii, if possible
-        try:
-            return _encode(text, "ascii")
-        except UnicodeError:
-            return text
-
     def _fixname(self, key):
         # expand qname, and convert name string to ascii, if possible
         try:
@@ -1162,7 +1160,7 @@ class XMLTreeBuilder:
             name = key
             if "}" in name:
                 name = "{" + name
-            self._names[key] = name = self._fixtext(name)
+            self._names[key] = name = name
         return name
 
     def _start(self, tag, attrib_in):
@@ -1170,7 +1168,7 @@ class XMLTreeBuilder:
         tag = fixname(tag)
         attrib = {}
         for key, value in attrib_in.items():
-            attrib[fixname(key)] = self._fixtext(value)
+            attrib[fixname(key)] = value
         return self._target.start(tag, attrib)
 
     def _start_list(self, tag, attrib_in):
@@ -1179,11 +1177,11 @@ class XMLTreeBuilder:
         attrib = {}
         if attrib_in:
             for i in range(0, len(attrib_in), 2):
-                attrib[fixname(attrib_in[i])] = self._fixtext(attrib_in[i+1])
+                attrib[fixname(attrib_in[i])] = attrib_in[i+1]
         return self._target.start(tag, attrib)
 
     def _data(self, text):
-        return self._target.data(self._fixtext(text))
+        return self._target.data(text)
 
     def _end(self, tag):
         return self._target.end(self._fixname(tag))
