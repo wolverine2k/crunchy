@@ -131,10 +131,10 @@ class _SimpleElementPath:
     def findtext(self, element, tag, default=None):
         for elem in element:
             if elem.tag == tag:
-                return elem.text or ""
+                return elem.text or u""
         return default
     def findall(self, element, tag):
-        if tag[:3] == ".//":
+        if tag[:3] == u".//":
             return element.getiterator(tag[3:])
         result = []
         for elem in element:
@@ -428,7 +428,7 @@ class _ElementInterface:
 
     def getiterator(self, tag=None):
         nodes = []
-        if tag == "*":
+        if tag == u"*":
             tag = None
         if tag is None or self.tag == tag:
             nodes.append(self)
@@ -509,7 +509,7 @@ def ProcessingInstruction(target, text=None):
     element = Element(ProcessingInstruction)
     element.text = target
     if text:
-        element.text = element.text + " " + text
+        element.text = element.text + u" " + text
     return element
 
 PI = ProcessingInstruction
@@ -527,7 +527,7 @@ PI = ProcessingInstruction
 class QName:
     def __init__(self, text_or_uri, tag=None):
         if tag:
-            text_or_uri = "{%s}%s" % (text_or_uri, tag)
+            text_or_uri = u"{%s}%s" % (text_or_uri, tag)
         self.text = text_or_uri
     def __str__(self):
         return self.text
@@ -585,7 +585,7 @@ class ElementTree:
     # @return The document root element.
     # @defreturn Element
 
-    def parse(self, source, encoding='utf8', parser=None):
+    def parse(self, source, encoding='utf-8', parser=None):
         if not hasattr(source, "read"):
             source = codecs.open(source, "r", encoding)
         if not parser:
@@ -620,8 +620,8 @@ class ElementTree:
 
     def find(self, path):
         assert self._root is not None
-        if path[:1] == "/":
-            path = "." + path
+        if path[:1] == u"/":
+            path = u"." + path
         return self._root.find(path)
 
     ##
@@ -638,8 +638,8 @@ class ElementTree:
 
     def findtext(self, path, default=None):
         assert self._root is not None
-        if path[:1] == "/":
-            path = "." + path
+        if path[:1] == u"/":
+            path = u"." + path
         return self._root.findtext(path, default)
 
     ##
@@ -653,8 +653,8 @@ class ElementTree:
 
     def findall(self, path):
         assert self._root is not None
-        if path[:1] == "/":
-            path = "." + path
+        if path[:1] == u"/":
+            path = u"." + path
         return self._root.findall(path)
 
     ##
@@ -663,38 +663,38 @@ class ElementTree:
     # @param file A file name, or a file object opened for writing.
     # @param encoding Optional output encoding (default is US-ASCII).
 
-    def write(self, file, encoding="us-ascii"):
+    def write(self, file, encoding="utf-8"):
         assert self._root is not None
         if not hasattr(file, "write"):
             file = codecs.open(file, "w", encoding)
         if not encoding:
-            encoding = "us-ascii"
+            encoding = "utf-8"
         elif encoding not in 'utf8 utf-8 us-ascii'.split():
-            file.write("<?xml version='1.0' encoding='%s'?>\n" % encoding)
+            file.write(u"<?xml version='1.0' encoding='%s'?>\n" % encoding)
         self._write(file, self._root, encoding, {})
 
     def _write(self, file, node, encoding, namespaces):
         # write XML to file
         tag = node.tag
         if tag is Comment:
-            file.write("<!-- %s -->" % _escape_cdata(node.text, encoding))
+            file.write(u"<!-- %s -->" % _escape_cdata(node.text, encoding))
         elif tag is ProcessingInstruction:
-            file.write("<?%s?>" % _escape_cdata(node.text, encoding))
+            file.write(u"<?%s?>" % _escape_cdata(node.text, encoding))
         else:
             items = node.items()
             xmlns_items = [] # new namespaces in this scope
             try:
-                if isinstance(tag, QName) or tag[:1] == "{":
+                if isinstance(tag, QName) or tag[:1] == u"{":
                     tag, xmlns = fixtag(tag, namespaces)
                     if xmlns: xmlns_items.append(xmlns)
             except TypeError:
                 _raise_serialization_error(tag)
-            file.write("<" + tag)
+            file.write(u"<" + tag)
             if items or xmlns_items:
                 items.sort() # lexical order
                 for k, v in items:
                     try:
-                        if isinstance(k, QName) or k[:1] == "{":
+                        if isinstance(k, QName) or k[:1] == u"{":
                             k, xmlns = fixtag(k, namespaces)
                             if xmlns: xmlns_items.append(xmlns)
                     except TypeError:
@@ -705,23 +705,23 @@ class ElementTree:
                             if xmlns: xmlns_items.append(xmlns)
                     except TypeError:
                         _raise_serialization_error(v)
-                    file.write(" %s=\"%s\"" % (k,
+                    file.write(u" %s=\"%s\"" % (k,
                                                _escape_attrib(v, encoding)))
                 for k, v in xmlns_items:
-                    file.write(" %s=\"%s\"" % (k,
+                    file.write(u" %s=\"%s\"" % (k,
                                                _escape_attrib(v, encoding)))
             ### following line modified from original for Crunchy
             # by preventing divs from self-closing, we can display
             # sites such as www.python.org properly.
-            if node.text != None or len(node) or tag=='div':
-                file.write(">")
+            if node.text != None or len(node) or tag==u'div':
+                file.write(u">")
                 if node.text:
                     file.write(_escape_cdata(node.text, encoding))
                 for n in node:
                     self._write(file, n, encoding, namespaces)
-                file.write("</" + tag + ">")
+                file.write(u"</" + tag + u">")
             else:
-                file.write(" />")
+                file.write(u" />")
             for k, v in xmlns_items:
                 del namespaces[v]
         if node.tail:
@@ -757,8 +757,8 @@ def dump(elem):
         elem = ElementTree(elem)
     elem.write(sys.stdout)
     tail = elem.getroot().tail
-    if not tail or tail[-1] != "\n":
-        sys.stdout.write("\n")
+    if not tail or tail[-1] != u"\n":
+        sys.stdout.write(u"\n")
 
 def _encode(s, encoding):
     try:
@@ -769,18 +769,18 @@ def _encode(s, encoding):
 _escape = re.compile(ur'[&<>"\u0080-\uffff]+', re.U)
 
 _escape_map = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
+    u"&": u"&amp;",
+    u"<": u"&lt;",
+    u">": u"&gt;",
+    u'"': u"&quot;",
 }
 
 _namespace_map = {
     # "well-known" namespace prefixes
-    "http://www.w3.org/XML/1998/namespace": "xml",
-    "http://www.w3.org/1999/xhtml": "html",
-    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
-    "http://schemas.xmlsoap.org/wsdl/": "wsdl",
+    u"http://www.w3.org/XML/1998/namespace": u"xml",
+    u"http://www.w3.org/1999/xhtml": u"html",
+    u"http://www.w3.org/1999/02/22-rdf-syntax-ns#": u"rdf",
+    u"http://schemas.xmlsoap.org/wsdl/": u"wsdl",
 }
 
 def _raise_serialization_error(text):
@@ -796,9 +796,9 @@ def _encode_entity(text, pattern=_escape):
         for char in m.group():
             text = map.get(char)
             if text is None:
-                text = "&#%d;" % ord(char)
+                text = u"&#%d;" % ord(char)
             append(text)
-        return "".join(out)
+        return u"".join(out)
     try:
         return pattern.sub(escape_entities, text)
     except TypeError:
@@ -814,8 +814,6 @@ def _escape(text, encoding, replacements):
         if not isinstance(text, unicode):
             text = text.decode(encoding)
 
-        # Our string manipulation must first be encoded down in order
-        # to work in Python 3.
         for replacement in replacements:
             oldstr, newstr = replacement.split()
             text = text.replace(oldstr, newstr)
@@ -835,20 +833,20 @@ def fixtag(tag, namespaces):
     # tag and namespace declaration, if any
     if isinstance(tag, QName):
         tag = tag.text
-    namespace_uri, tag = tag[1:].split("}", 1)
+    namespace_uri, tag = tag[1:].split(u"}", 1)
     prefix = namespaces.get(namespace_uri)
     if prefix is None:
         prefix = _namespace_map.get(namespace_uri)
         if prefix is None:
-            prefix = "ns%d" % len(namespaces)
+            prefix = u"ns%d" % len(namespaces)
         namespaces[namespace_uri] = prefix
-        if prefix == "xml":
+        if prefix == u"xml":
             xmlns = None
         else:
-            xmlns = ("xmlns:%s" % prefix, namespace_uri)
+            xmlns = (u"xmlns:%s" % prefix, namespace_uri)
     else:
         xmlns = None
-    return "%s:%s" % (prefix, tag), xmlns
+    return u"%s:%s" % (prefix, tag), xmlns
 
 ##
 # Parses an XML document into an element tree.
@@ -876,7 +874,7 @@ class iterparse:
 
     def __init__(self, source, events=None):
         if not hasattr(source, "read"):
-            source = open(source, "rb")
+            source = s.open(source, "r", "utf-8")
         self._file = source
         self._events = []
         self._index = 0
@@ -909,10 +907,10 @@ class iterparse:
             elif event == "start-ns":
                 def handler(prefix, uri, event=event, append=append):
                     try:
-                        uri = _encode(uri, "ascii")
+                        uri = _encode(uri, "utf-8")
                     except UnicodeError:
                         pass
-                    append((event, (prefix or "", uri)))
+                    append((event, (prefix or u"", uri)))
                 parser.StartNamespaceDeclHandler = handler
             elif event == "end-ns":
                 def handler(prefix, event=event, append=append):
@@ -1001,7 +999,7 @@ fromstring = XML
 # @return An encoded string containing the XML data.
 # @defreturn string
 
-def tostring(element, encoding='utf8'):
+def tostring(element, encoding='utf-8'):
     data = []
 
     class dummy(object):
@@ -1041,8 +1039,8 @@ class TreeBuilder:
     # @defreturn Element
 
     def close(self):
-        assert len(self._elem) == 0, "missing end tags"
-        assert self._last != None, "missing toplevel element"
+        assert len(self._elem) == 0, u"missing end tags"
+        assert self._last != None, u"missing toplevel element"
         return self._last
 
     def _flush(self):
@@ -1052,12 +1050,12 @@ class TreeBuilder:
         # original:
         #if self._data:
             if self._last is not None:
-                text = "".join(self._data)
+                text = u"".join(self._data)
                 if self._tail:
-                    assert self._last.tail is None, "internal error (tail)"
+                    assert self._last.tail is None, u"internal error (tail)"
                     self._last.tail = text
                 else:
-                    assert self._last.text is None, "internal error (text)"
+                    assert self._last.text is None, u"internal error (text)"
                     self._last.text = text
             self._data = []
 
@@ -1098,7 +1096,7 @@ class TreeBuilder:
         self._flush()
         self._last = self._elem.pop()
         assert self._last.tag == tag,\
-               "end tag mismatch (expected %s, got %s)" % (
+               u"end tag mismatch (expected %s, got %s)" % (
                    self._last.tag, tag)
         self._tail = 1
         return self._last
@@ -1121,9 +1119,9 @@ class XMLTreeBuilder:
             from xml.parsers import expat
         except ImportError:
             raise ImportError(
-                "No module named expat; use SimpleXMLTreeBuilder instead"
+                u"No module named expat; use SimpleXMLTreeBuilder instead"
                 )
-        self._parser = parser = expat.ParserCreate(None, "}")
+        self._parser = parser = expat.ParserCreate(None, u"}")
         if target is None:
             target = TreeBuilder()
         self._target = target
@@ -1146,8 +1144,14 @@ class XMLTreeBuilder:
         except AttributeError:
             pass
         encoding = None
-        if not parser.returns_unicode:
-            encoding = "utf-8"
+
+        # xmlparser.returns_unicode is an attribute that disappeared
+        # in Python 3. This is because pyexpat now always returns
+        # Unicode in Python 3.
+        #
+        # http://hg.concordance-xmpp.org/genshi-py3/rev/bceb8d369dbe
+        if sys.version_info < (3, 0) and not parser.returns_unicode:
+            encoding = u"utf-8"
         # target.xml(encoding, None)
         self._doctype = None
         self.entity = {}
@@ -1158,8 +1162,8 @@ class XMLTreeBuilder:
             name = self._names[key]
         except KeyError:
             name = key
-            if "}" in name:
-                name = "{" + name
+            if u"}" in name:
+                name = u"{" + name
             self._names[key] = name = name
         return name
 
@@ -1188,22 +1192,22 @@ class XMLTreeBuilder:
 
     def _default(self, text):
         prefix = text[:1]
-        if prefix == "&":
+        if prefix == u"&":
             # deal with undefined entities
             try:
                 self._target.data(self.entity[text[1:-1]])
             except KeyError:
                 from xml.parsers import expat
                 raise expat.error(
-                    "undefined entity %s: line %d, column %d" %
+                    u"undefined entity %s: line %d, column %d" %
                     (text, self._parser.ErrorLineNumber,
                     self._parser.ErrorColumnNumber)
                     )
-        elif prefix == "<" and text[:9] == "<!DOCTYPE":
+        elif prefix == u"<" and text[:9] == u"<!DOCTYPE":
             self._doctype = [] # inside a doctype declaration
         elif self._doctype is not None:
             # parse doctype contents
-            if prefix == ">":
+            if prefix == u">":
                 self._doctype = None
                 return
             text = text.strip()
@@ -1213,9 +1217,9 @@ class XMLTreeBuilder:
             n = len(self._doctype)
             if n > 2:
                 type = self._doctype[1]
-                if type == "PUBLIC" and n == 4:
+                if type == u"PUBLIC" and n == 4:
                     name, type, pubid, system = self._doctype
-                elif type == "SYSTEM" and n == 3:
+                elif type == u"SYSTEM" and n == 3:
                     name, type, system = self._doctype
                     pubid = None
                 else:
@@ -1250,7 +1254,7 @@ class XMLTreeBuilder:
     # @defreturn Element
 
     def close(self):
-        self._parser.Parse("", 1) # end of data
+        self._parser.Parse(u"", 1) # end of data
         tree = self._target.close()
         del self._target, self._parser # get rid of circular references
         return tree
