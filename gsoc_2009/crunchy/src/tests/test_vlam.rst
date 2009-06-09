@@ -62,7 +62,7 @@ Let us define a utility function that will:
     ...     page.create_tree(fake_file)  # tested separately below
     ...     output = StringIO()
     ...     page.tree.write(output)
-    ...     out_html = output.getvalue()
+    ...     out_html = output.getvalue().encode('utf8')
     ...     return page, out_html
     >>>
 
@@ -71,7 +71,7 @@ Also, let us define the 4th part of that function as a function on its own
     >>> def output(page):
     ...     output = StringIO()
     ...     page.tree.write(output)
-    ...     out_html = output.getvalue()
+    ...     out_html = output.getvalue().encode('utf8')
     ...     return out_html
     >>>
 
@@ -371,7 +371,7 @@ Next, we create a simple page.
 
     >>> html = '<html><head>brain</head><body><p>This is a test.</p></body></html>'
     >>> page, out_html = process_html(html)
-    >>> page.read()
+    >>> page.read().encode('utf8')
     '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n<html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>'
 
 
