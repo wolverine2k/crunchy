@@ -7,7 +7,8 @@ by Crunchy.
 
 import sys
 
-if sys.version_info < (3, 0):
+# urllib reshuffled in Python 3.
+if sys.version_info[0] < 3:
     from urllib import FancyURLopener, unquote_plus
 else:
     from urllib.request import FancyURLopener
