@@ -11,8 +11,8 @@
 # 2003-04-13 fl   added HTMLTreeBuilder alias
 # 2004-12-02 fl   don't feed non-ASCII charrefs/entities as 8-bit strings
 # 2004-12-05 fl   don't feed non-ASCII CDATA as 8-bit strings
-#
 # 2005-05-02      Updated for Crunchy by Johannes Woolard
+# 2009-06-10      Updated for porting Crunchy to Python 3 by Hao Lian
 #
 # Copyright (c) 1999-2004 by Fredrik Lundh.  All rights reserved.
 #
@@ -57,7 +57,6 @@
 
 import htmlentitydefs
 import re
-import string
 import sys
 from email.parser import Parser as MIMEParser
 
@@ -136,7 +135,7 @@ class HTMLTreeBuilder(HTMLParser):
             http_equiv = content = None
             for k, v in attrs:
                 if k == "http-equiv":
-                    http_equiv = string.lower(v)
+                    http_equiv = v.lower()
                 elif k == "content":
                     content = v
             if http_equiv == "content-type" and content:
@@ -153,7 +152,7 @@ class HTMLTreeBuilder(HTMLParser):
         attrib = {}
         if attrs:
             for k, v in attrs:
-                attrib[string.lower(k)] = v
+                attrib[k.lower()] = v
         self.__builder.start(tag, attrib)
         if tag in IGNOREEND:
             self.__stack.pop()

@@ -33,6 +33,7 @@
 # 2004-08-23 fl   take advantage of post-2.1 expat features
 # 2005-02-01 fl   added iterparse implementation
 # 2005-03-02 fl   fixed iterparse support for pre-2.2 versions
+# 2009-06-10      Updated for porting Crunchy to Python 3 by Hao Lian
 #
 # Copyright (c) 1999-2005 by Fredrik Lundh.  All rights reserved.
 #
@@ -117,7 +118,6 @@ CDATA_REPLACEMENTS = [u"& &amp",
 ##
 
 import codecs
-import string
 import sys
 import re
 
