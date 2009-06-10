@@ -1150,7 +1150,7 @@ class XMLTreeBuilder:
         # Unicode in Python 3.
         #
         # http://hg.concordance-xmpp.org/genshi-py3/rev/bceb8d369dbe
-        if sys.version_info < (3, 0) and not parser.returns_unicode:
+        if sys.version_info[0] < 3 and not parser.returns_unicode:
             encoding = u"utf-8"
         # target.xml(encoding, None)
         self._doctype = None

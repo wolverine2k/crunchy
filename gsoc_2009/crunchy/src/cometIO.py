@@ -328,8 +328,10 @@ class ThreadedBuffer(object):
             data = data.replace('\\', r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
-            if sys.version_info < (3, 0):
-                data = data.encode(sys.getfilesystemencoding())
+            # Normalize to Unicode because Python 3's doctest will not
+            # take bytes for its _SpoofOut = self.default_out.
+            if sys.version_info[0] < 3:
+                data = data.decode('utf-8')
             self.default_out.write(data)
 
     def read(self):
@@ -363,6 +365,10 @@ class ThreadedBuffer(object):
 
     def default_write(self, data):
         """write to the default output"""
+        # Normalize to Unicode because Python 3's doctest will not
+        # take bytes for its _SpoofOut = self.default_out.
+        if sys.version_info[0] < 3:
+            data = data.decode('utf-8')
         self.default_out.write(data)
 
 def debug_msg(data, id_=None):

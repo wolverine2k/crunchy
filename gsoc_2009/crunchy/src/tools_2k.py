@@ -11,7 +11,7 @@ import sys
 
 # We can't import these from src.interface because that would create a
 # mutual dependency.
-if sys.version_info < (3, 0):
+if sys.version_info[0] < 3:
     _bytes = str
 else:
     _bytes = bytes
