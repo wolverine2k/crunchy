@@ -44,6 +44,7 @@ Testing exec_handler()
     >>> execution.exec_handler(request)
     data
     spam
+    >>> request.print_lines()
     200
     End headers
 

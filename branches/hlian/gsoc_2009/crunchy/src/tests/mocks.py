@@ -56,27 +56,52 @@ class Page(object):
 
 class Wfile(object):
     '''fake Wfile added as attribute of Request object.'''
+
+    def __init__(self, lines):
+        self.lines = lines
+
     def write(self, text):
-        print(text)
+        """Takes *encoded data* like BaseHTTPRequestHandler, not
+        Unicode, as an argument."""
+
+        assert type(text) != unicode
+        self.lines.append(text)
 
 class Request(object):
-    '''Totally fake request object'''
-    def __init__(self, data='data', args='args'):
+    '''Totally fake request object. Like BaseHTTPRequestHandler,
+    outputs encoded data. See comment in handle_local.py's
+    local_loader for more details. Request stores output in a lines
+    object because doctest does not allow encoded data to be written
+    to stdout in Python 3.'''
+
+    def __init__(self, data=u'data', args=u'args'):
         self.data = data
         self.args = args
         self.headers = {}
-        self.wfile = Wfile()
-        self.crunchy_username = "Crunchy"
+        self.lines = []
+        self.wfile = Wfile(self.lines)
+        self.crunchy_username = u"Crunchy"
 
     def send_response(self, response=42):
-        print(response)
+        self.lines.append(str(response).encode('utf-8'))
 
     def end_headers(self):
-        print("End headers")
+        self.lines.append(u"End headers".encode('utf-8'))
 
     def send_header(self, *args):
-        print ''.join(args)
+        '''As with BaseHTTPRequestHandler in Python 3, send_header
+        takes Unicode.'''
+        for arg in args:
+            assert type(arg) == unicode
 
+        self.lines.append(u''.join(args).encode('utf-8'))
+
+    def print_lines(self):
+        '''Assumes all the data written is *not* binary, which is true
+        for tests. Decodes them from UTF-8 and prints them to standard
+        out.'''
+        for line in self.lines:
+            print(line.decode('utf-8'))
 
 def register_tag_handler(tag, attribute, value, function):
     if tag not in registered_tag_handler:

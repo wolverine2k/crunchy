@@ -50,11 +50,12 @@ def remote_loader(request):  # tested
         page = plugin['create_vlam_page'](opener.open(url), url,
                                           username=username, remote=True)
     request.send_response(200)
-    request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
+    request.send_header(u'Cache-Control',
+                        u'no-cache, must-revalidate, no-store')
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
-    dummy = request.wfile.write(page.read())
+    dummy = request.wfile.write(page.read().encode('utf-8'))
 
 def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     '''inserts a form to load a remote page'''
