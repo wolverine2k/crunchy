@@ -15,8 +15,7 @@ as possible from those in Crunchy's core.
 import imp
 import os
 import sys
-version = sys.version.split('.')
-python_version = float(version[0] + '.' + version[1][0])
+python_version = sys.version_info[0]
 
 # StringIO is used for creating in-memory files
 # We also take a page from Django's book and create an identifiable
