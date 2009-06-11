@@ -25,33 +25,50 @@ def register():  # tested
     plugin['register_service']("local_html", insert_load_local)
 
 def local_loader(request):  # tested
-    '''loads a local file;
-    if it determines that it is an html file (based on the extension), it
-    creates a new vlam page from it and, if not already present, adds the
-    base path to sys.path - so that any python file located in the same
-    directory could be imported.
+    '''Loads a local file. If it's an HTML file based on the
+    extension, it creates a new vlam page from it. If not already
+    present, it adds the file's directory to sys.path so that any
+    Python file located in the same directory can imported. If it's
+    not an HTML file, it simply reads the file.'''
 
-    If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
     username = request.crunchy_username
+
     if "htm" in extension:
         handle = codecs.open(url, 'r', 'utf8')
         page = plugin['create_vlam_page'](handle, url, username=username,
                                           local=True)
+
+        # Let the Crunchy internals handle Unicode but encode back to
+        # UTF-8 for wfile.write. See comment below.
+        page = page.read().encode('utf8')
+
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
-        base_url, fname = os.path.split(url)
+        base_url, __irrelevant = os.path.split(url)
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
     else:
-        page = codecs.open(url, 'r', 'utf8')
+        page = open(url, 'rb').read()
+
     request.send_response(200)
-    request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
+    request.send_header(u'Cache-Control',
+                        u'no-cache, must-revalidate, no-store')
     request.end_headers()
+
+    # BaseHTTPRequestHandler in Python 3, in an apparently violation
+    # of file-like object duck typing, takes *encoded data* for the
+    # wfile.write method, not Unicode. This makes our lives easier
+    # since writing binary data to wfile is the same in Python 2 and
+    # 3.
+    #
+    # You can see encoded data being passed to the write method here:
+    # http://svn.python.org/projects/python/branches/py3k/Lib/http/server.py
+
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
-    __irrelevant = request.wfile.write(page.read())
+    __irrelevant = request.wfile.write(page)
 
 def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''
