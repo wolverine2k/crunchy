@@ -5,6 +5,9 @@ menu.py tests
 Setting things up
 ------------------
 
+    >>> def uprint(text):
+    ...     print(text.decode('utf-8'))
+
     >>> from src.interface import config, plugin, tostring, translate
     >>> import src.interface
     >>> class Accounts(dict):
@@ -15,7 +18,7 @@ Setting things up
     >>> config.clear()
     >>> def dummy_add(*args):
     ...      for arg in args:
-    ...          print arg
+    ...          print(arg)
     >>> plugin['add_vlam_option'] = dummy_add
     >>> def repeat(msg):
     ...      return msg
@@ -41,25 +44,25 @@ Testing create_empty_menu()
 ============================
 
     >>> _menu, _menu_items = menu.create_empty_menu()
-    >>> tostring(_menu)
-    '<div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>'
-    >>> tostring(_menu_items)
-    '<ul />'
+    >>> uprint(tostring(_menu))
+    <div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>
+    >>> uprint(tostring(_menu_items))
+    <ul />
 
 
 Testing create_home()
 =====================
 
     >>> home = menu.create_home()
-    >>> tostring(home)
-    '<li><a href="/index.html">Crunchy Home</a></li>'
+    >>> uprint(tostring(home))
+    <li><a href="/index.html">Crunchy Home</a></li>
 
 Testing create_quit()
 =====================
 
     >>> Quit = menu.create_quit()
-    >>> tostring(Quit) #doctest: +ELLIPSIS
-    '<li><a href="/exit...">Quit Crunchy</a></li>'
+    >>> uprint(tostring(Quit)) #doctest: +ELLIPSIS
+    <li><a href="/exit...">Quit Crunchy</a></li>
 
 Testing insert_menu()
 ======================
@@ -72,8 +75,8 @@ yield the same results using our mock functions.  So, we only test one here.
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
-    >>> tostring(page.body[0]) #doctest: +ELLIPSIS
-    '<div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>'
+    >>> uprint(tostring(page.body[0])) #doctest: +ELLIPSIS
+    <div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>
     >>> page.added_info[0] == 'add_css_code'
     True
 
