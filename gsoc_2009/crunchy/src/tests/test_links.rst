@@ -69,14 +69,16 @@ We will first do a test with each page type, with a different number of
 arguments for each.
 
     >>> links.external_link(page_default, a_link)
-    >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /images/external_link.png
+    >>> print(a_link[0].tag)
+    img
+    >>> print(a_link[0].attrib['src'])
+    /images/external_link.png
     >>> links.external_link(page_local, a_link, 'dummy1')
-    >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /images/external_link.png
+    >>> print(a_link[0].attrib['src'])
+    /images/external_link.png
     >>> links.external_link(page_remote, a_link, 'dummy1', 'dummy2')
-    >>> print a_link[0].tag, a_link[0].attrib['src']
-    img /images/external_link.png
+    >>> print(a_link[0].attrib['src'])
+    /images/external_link.png
 
 Next, we do an example with a more complicated link object, one that
 has a subelement.
@@ -86,10 +88,14 @@ has a subelement.
     >>> an_image = SubElement(a_link, 'img', src="logo.png", alt="Python")
     >>> a_link.tail = "official website"
     >>> links.external_link(page_default, a_link)
-    >>> print a_link[0].tag, a_link[0].attrib['src']
-    img logo.png
-    >>> print a_link[1].tag, a_link[1].attrib['src']
-    img /images/external_link.png
+    >>> print(a_link[0].tag)
+    img
+    >>> print(a_link[0].attrib['src'])
+    logo.png
+    >>> print(a_link[1].tag)
+    img
+    >>> print(a_link[1].attrib['src'])
+    /images/external_link.png
 
 For remote site, relative (ie without http://) links must be changed in
 absolute links. Here for relative to the root links:
@@ -244,20 +250,20 @@ Relative link
 Testing link_tag_handler()
 -----------------------------
 
-For remote page , only relative path will be converted . 
+For remote page , only relative path will be converted .
 
     >>> page_remote.url = "http://python.org/"
     >>> link_ele = Element('link', href='http://python.org/path/to/some_file.css')
-    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> links.link_tag_handler(page_remote, link_ele)
     >>> link_ele.attrib['href']
     'http://python.org/path/to/some_file.css'
     >>> link_ele = Element('link', href="path/to/some_file.css")
-    >>> links.link_tag_handler(page_remote, link_ele) 
+    >>> links.link_tag_handler(page_remote, link_ele)
     >>> link_ele.attrib['href']
     'http://python.org/path/to/some_file.css'
 
 For locale page, relative path will be coverted absoulte local path.
-Note: link_tag_handler() may act differently among different OSs , as it use os.path.join. 
+Note: link_tag_handler() may act differently among different OSs , as it use os.path.join.
 TODO:write this test.
 
 .. _`src_handler()`:
@@ -269,12 +275,12 @@ Testing src_handler()
 It will work just the same as link element.
 
     >>> src_ele = Element('script', src='http://python.org/path/to/some_js.js')
-    >>> links.src_handler(page_remote, src_ele) 
+    >>> links.src_handler(page_remote, src_ele)
     >>> src_ele.attrib['src']
     'http://python.org/path/to/some_js.js'
     >>> page_remote.url = "http://python.org/"
     >>> src_ele = Element('script', src="path/to/some_js.js")
-    >>> links.src_handler(page_remote, src_ele) 
+    >>> links.src_handler(page_remote, src_ele)
     >>> src_ele.attrib['src']
     'http://python.org/path/to/some_js.js'
 
