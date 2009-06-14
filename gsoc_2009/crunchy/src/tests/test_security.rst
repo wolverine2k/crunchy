@@ -52,7 +52,7 @@ Finally, we will create some utility functions that we will use repeatedly.
     ...    if add_to_head is not None:
     ...       head.append(add_to_head)
     ...    if add_to_body is not None:
-    ...       body.append(add_to_body)    
+    ...       body.append(add_to_body)
     ...    return ElementTree.ElementTree(root), ElementTree.tostring(root)
     >>>
     >>> def to_string(tree):
@@ -66,7 +66,7 @@ Testing remove_unwanted()
 We first start with a totally acceptable tree, making sure that nothing is removed.
 
     >>> tree, tree_string = new_tree()
-    >>> print tree_string
+    >>> print(tree_string.decode('utf8'))
     <html><head><title /></head><body>Crunchy is neat!</body></html>
     >>> page.url = 'trusted'
     >>> security.remove_unwanted(tree, page)
@@ -101,13 +101,13 @@ Next, we repeat this for all security levels.
     ...    script.text = "nasty stuff"
     ...    bad_tree, bad_tree_string = new_tree(add_to_head=script)
     ...    if not 'script' in bad_tree_string:
-    ...        print "javascript not inserted properly"
+    ...        print("javascript not inserted properly")
     ...    security.remove_unwanted(bad_tree, page)
     ...    cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
     ...    if cleaned_string != tree_string:
-    ...        print "Problem with removing unwanted stuff."
+    ...        print("Problem with removing unwanted stuff.")
     ...    if cleaned_string == bad_tree_string:
-    ...        print "Nothing was removed."
+    ...        print("Nothing was removed.")
 
 
 We now move to even more comprehensive tests.
@@ -142,7 +142,7 @@ A tree created under 'display strict' conditions should yield the same result.
 
 Let's repeat this test with "normal" and "display normal".
 First, with 'normal'.  Note that we can't validate images (so we'll skip the tag <img>)
-nor can we validate <link>, and we only allow some specific values for <meta>.  
+nor can we validate <link>, and we only allow some specific values for <meta>.
 We will need to treat these separately later.
 
     >>> div = Element('div')
@@ -174,7 +174,7 @@ Then the 'display normal' test which should yield the same result as "normal".
     True
 
 We finally do the same for "trusted" and "display trusted".  The allowed content is
-basically the same as for normal, except that we do not validate <img> nor <link>. 
+basically the same as for normal, except that we do not validate <img> nor <link>.
 Therefore, we can keep them in.
 
     >>> div = Element('div')
@@ -217,7 +217,7 @@ same as a "normal" one, by selecting a different security mode for the page.
     >>> trusted_to_normal_string == normal_tree_string  # now, they should be the same
     True
 
-Finally, let's do another comparison...  
+Finally, let's do another comparison...
 We first create a "normal" tree with no <style> tag.
 
     >>> div = Element('div')

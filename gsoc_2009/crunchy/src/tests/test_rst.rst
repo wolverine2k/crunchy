@@ -1,7 +1,7 @@
 rst.py tests
 ================================
 
-rst.py is a plugin whose purpose is to create a form allowing a user to browse 
+rst.py is a plugin whose purpose is to create a form allowing a user to browse
 for a local tutorial written in reStructuredText to be loaded by Crunchy.
 
 It contains two functions that need to be tested:
@@ -22,12 +22,12 @@ set up some dummy registering functions.
    >>> plugin.clear()
    >>> def dummy_add(*args):
    ...      for arg in args:
-   ...          print arg
+   ...          print(arg)
    >>> plugin['add_vlam_option'] = dummy_add
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
    >>> import src.plugins.rst as rst
-   
+
 Note that if docutils is not installed for the Python version we are testing,
 some tests would normally fail; we prevent this from happening by setting up
 an appropriate flag.
@@ -45,8 +45,8 @@ an appropriate flag.
     >>> if _docutils_installed:
     ...     rst.register()
     ... else:
-    ...     print "power_browser"
-    ...     print "rst"
+    ...     print("power_browser")
+    ...     print("rst")
     power_browser
     rst
     >>> if _docutils_installed:
