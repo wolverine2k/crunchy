@@ -17,7 +17,7 @@ power_browser.py has has the following functions that require testing:
     >>> src.utilities.COUNT = 0
     >>> plugin.clear()
     >>> def dummy(*args):
-    ...    print args
+    ...    print(args)
     >>> plugin['local_html'] = dummy
     >>> plugin['remote_html'] = dummy
     >>> plugin['local_python'] = dummy
@@ -36,7 +36,7 @@ Testing register()
 ----------------------
 
     >>> pb.register()
-    >>> print mocks.registered_end_pagehandlers #doctest: +ELLIPSIS
+    >>> print(mocks.registered_end_pagehandlers) #doctest: +ELLIPSIS
     {'<function insert_browser at ...>': <function insert_browser at ...>}
 
 
@@ -84,9 +84,8 @@ An unrecognized value.
     >>> page.body = Element("body")
     >>> config['Crunchy']['power_browser'] = 'unknown'
     >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
+    >>> print(tostring(page.body).decode('utf8'))
     <body />
-    <BLANKLINE>
 
 None should yield the same result.
 
@@ -94,7 +93,6 @@ None should yield the same result.
     >>> page.body = Element("body")
     >>> config['Crunchy']['power_browser'] = None
     >>> pb.insert_browser(page)
-    >>> print tostring(page.body).replace('>', '>\n')
+    >>> print(tostring(page.body).decode('utf8'))
     <body />
-    <BLANKLINE>
 
