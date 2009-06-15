@@ -121,7 +121,7 @@ import codecs
 import sys
 import re
 
-class _SimpleElementPath:
+class _SimpleElementPath(object):
     # emulate pre-1.2 find/findtext/findall behaviour
     def find(self, element, tag):
         for elem in element:
@@ -166,7 +166,7 @@ VERSION = "1.2.6"
 # @see Comment
 # @see ProcessingInstruction
 
-class _ElementInterface:
+class _ElementInterface(object):
     # <tag attrib>text<child/>...</tag>tail
 
     ##
@@ -224,7 +224,7 @@ class _ElementInterface:
         return len(self._children)
 
     ##
-    # Returns the given subelement.
+    # Returns the given subelement(s).
     #
     # @param index What subelement to return.
     # @return The given subelement.
@@ -234,57 +234,29 @@ class _ElementInterface:
         return self._children[index]
 
     ##
-    # Replaces the given subelement.
+    # Replaces the given subelement(s).
     #
     # @param index What subelement to replace.
     # @param element The new element value.
     # @exception IndexError If the given element does not exist.
     # @exception AssertionError If element is not a valid object.
 
-    def __setitem__(self, index, element):
-        assert iselement(element)
-        self._children[index] = element
+    def __setitem__(self, index, value):
+        if isinstance(index, slice):
+            assert iselements(value)
+        else:
+            assert iselement(value)
+
+        self._children[index] = value
 
     ##
-    # Deletes the given subelement.
+    # Deletes the given subelement(s).
     #
     # @param index What subelement to delete.
     # @exception IndexError If the given element does not exist.
 
     def __delitem__(self, index):
         del self._children[index]
-
-    ##
-    # Returns a list containing subelements in the given range.
-    #
-    # @param start The first subelement to return.
-    # @param stop The first subelement that shouldn't be returned.
-    # @return A sequence object containing subelements.
-
-    def __getslice__(self, start, stop):
-        return self._children[start:stop]
-
-    ##
-    # Replaces a number of subelements with elements from a sequence.
-    #
-    # @param start The first subelement to replace.
-    # @param stop The first subelement that shouldn't be replaced.
-    # @param elements A sequence object with zero or more elements.
-    # @exception AssertionError If a sequence member is not a valid object.
-
-    def __setslice__(self, start, stop, elements):
-        for element in elements:
-            assert iselement(element)
-        self._children[start:stop] = list(elements)
-
-    ##
-    # Deletes a number of subelements.
-    #
-    # @param start The first subelement to delete.
-    # @param stop The first subelement to leave in there.
-
-    def __delslice__(self, start, stop):
-        del self._children[start:stop]
 
     ##
     # Adds a subelement to the end of this element.
@@ -524,7 +496,7 @@ PI = ProcessingInstruction
 #     an URI, and this argument is interpreted as a local name.
 # @return An opaque object, representing the QName.
 
-class QName:
+class QName(object):
     def __init__(self, text_or_uri, tag=None):
         if tag:
             text_or_uri = u"{%s}%s" % (text_or_uri, tag)
@@ -547,7 +519,7 @@ class QName:
 # @keyparam file Optional file handle or name.  If given, the
 #     tree is initialized with the contents of this XML file.
 
-class ElementTree:
+class ElementTree(object):
 
     def __init__(self, element=None, file=None):
         assert element is None or iselement(element)
@@ -743,6 +715,20 @@ def iselement(element):
     return isinstance(element, _ElementInterface) or hasattr(element, "tag")
 
 ##
+# Checks if an object appears to be a valid list of element objects.
+#
+# @param An list (of elements) instance.
+# @return A true value if this is a list of element objects, which
+# includes the empty list.
+# @defreturn flag
+
+def iselements(elements):
+    try:
+        return all(iselement(e) for e in elements)
+    except TypeError:
+        return False
+
+##
 # Writes an element tree or element structure to sys.stdout.  This
 # function should be used for debugging only.
 # <p>
@@ -870,7 +856,7 @@ def parse(source, parser=None):
 #     events are reported.
 # @return A (event, elem) iterator.
 
-class iterparse:
+class iterparse(object):
 
     def __init__(self, source, events=None):
         if not hasattr(source, "read"):
@@ -1020,7 +1006,7 @@ def tostring(element, encoding='utf-8'):
 # @param element_factory Optional element factory.  This factory
 #    is called to create new Element instances, as necessary.
 
-class TreeBuilder:
+class TreeBuilder(object):
 
     def __init__(self, element_factory=None):
         self._data = [] # data collector
@@ -1112,7 +1098,7 @@ class TreeBuilder:
 # @see #ElementTree
 # @see #TreeBuilder
 
-class XMLTreeBuilder:
+class XMLTreeBuilder(object):
 
     def __init__(self, html=0, target=None):
         try:

@@ -84,7 +84,7 @@ For the next step, we add some javascript which should definitely be removed.
     >>> script = Element('script')
     >>> script.text = "nasty stuff"
     >>> bad_tree, bad_tree_string = new_tree(add_to_head=script)
-    >>> 'script' in bad_tree_string
+    >>> 'script' in bad_tree_string.decode('utf8')
     True
     >>> security.remove_unwanted(bad_tree, page)
     >>> cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
@@ -100,7 +100,7 @@ Next, we repeat this for all security levels.
     ...    script = Element('script')
     ...    script.text = "nasty stuff"
     ...    bad_tree, bad_tree_string = new_tree(add_to_head=script)
-    ...    if not 'script' in bad_tree_string:
+    ...    if not 'script' in bad_tree_string.decode('utf8'):
     ...        print("javascript not inserted properly")
     ...    security.remove_unwanted(bad_tree, page)
     ...    cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!

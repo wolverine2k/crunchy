@@ -422,12 +422,12 @@ def remove_unwanted(tree, page):  # partially tested
         print(unwanted)
     return
 
-def __cleanup(elem, filter):
+def __cleanup(elem, afilter):
     ''' See http://effbot.org/zone/element-bits-and-pieces.htm'''
     out = []
     for e in elem:
-        __cleanup(e, filter)
-        if not filter(e):
+        __cleanup(e, afilter)
+        if not afilter(e):
             if e.text:
                 if out:
                     out[-1].tail += e.text
@@ -467,7 +467,7 @@ def validate_image(src, page):
         fn = urlparse.urljoin(page.url, src)
     else:
         src = urlparse.urljoin(page.url, src)[1:]
-        fn = os.path.join(root_path, src.decode('utf-8'))
+        fn = os.path.join(root_path, src)
 
     try:
         if DEBUG:
