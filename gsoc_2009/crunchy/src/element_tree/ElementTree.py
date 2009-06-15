@@ -860,7 +860,7 @@ class iterparse(object):
 
     def __init__(self, source, events=None):
         if not hasattr(source, "read"):
-            source = s.open(source, "r", "utf-8")
+            source = codecs.open(source, "r", "utf-8")
         self._file = source
         self._events = []
         self._index = 0
