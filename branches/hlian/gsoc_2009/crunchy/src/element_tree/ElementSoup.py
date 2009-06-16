@@ -1,25 +1,29 @@
 # $Id$
 # element loader based on BeautifulSoup
 
+# Absolute imports will ensure that BeautifulSoup, which relies on
+# them, will be importing the same modules that we do. Without this,
+# BeautifulSoup would use Declaration and get
+# "beautifulsoup.element.Declaration" and we would use Declaration and
+# get "src.element_tree.beautifusoup.element.Declaration", which not
+# only breaks equality but also isinstance.
+from __future__ import absolute_import
+
+import sys
+import os.path
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'beautifulsoup'))
+
 # http://www.crummy.com/software/BeautifulSoup/
-import BeautifulSoup as BS
+import beautifulsoup as BS
 
 # soup classes that are left out of the tree
-ignorable_soup = BS.Comment, BS.Declaration, BS.ProcessingInstruction
+ignorable_soup = (BS.element.Comment,
+                  BS.element.Declaration,
+                  BS.element.ProcessingInstruction,
+                  )
 
-### original import:
-### slightly silly
-##try:
-##    import xml.etree.cElementTree as ET
-##except ImportError:
-##    try:
-##        import cElementTree as ET
-##    except ImportError:
-##        import elementtree.ElementTree as ET
-
-## import adapted for crunchy
 import ElementTree as ET
-
 import htmlentitydefs, re
 
 pattern = re.compile("&(\w+);")
@@ -77,7 +81,7 @@ def parse(file, builder=None, encoding=None):
         except UnicodeError:
             encoding = "iso-8859-1"
     soup = BS.BeautifulSoup(
-        text, convertEntities="html", fromEncoding=encoding
+        text, fromEncoding=encoding
         )
     # build the tree
     if not bob:
