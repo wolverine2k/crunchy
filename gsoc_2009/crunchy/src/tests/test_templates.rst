@@ -2,7 +2,7 @@ templates.py tests
 ================================
 
 templates.py is a plugin whose purpose is to create templates from
-existing html files and/or use them in conjunction with another file.  
+existing html files and/or use them in conjunction with another file.
 It has the following functions that require testing:
 
 #. `register()`_
@@ -33,9 +33,9 @@ Testing create_template()
 
     >>> handle = open(os.path.join(base_dir, "server_root", "index.html"))
     >>> templates.create_template('a_name', 'user_name', handle)
-    >>> print templates._templates #doctest: +ELLIPSIS
+    >>> print(templates._templates) #doctest: +ELLIPSIS
     {'a_name': <src.vlam.BasePage object at ...}
-    >>> print templates._templates['a_name'].username
+    >>> print(templates._templates['a_name'].username)
     user_name
 
 Testing merge_elements()
@@ -62,7 +62,7 @@ Testing merge_elements()
     >>> body.append(div1)
     >>> body.append(div2)
     >>> body.append(div3)
-    >>> print tostring(template)
+    >>> print(tostring(template).decode('utf8'))
     <main><head><title>This is the title.
     </title></head><body><div id="not this one"><p>
     Keep this.
@@ -93,7 +93,7 @@ Testing merge_elements()
     >>> body.append(div1a)
     >>> body.append(div2a)
     >>> body.append(div3a)
-    >>> print tostring(to_combine)
+    >>> print(tostring(to_combine).decode('utf8'))
     <main><head><title>This is the second title.
     </title></head><body><div id="not this one"><p>
     This should be discarded.
@@ -106,7 +106,7 @@ Testing merge_elements()
     >>> target_head = to_combine.find(".//head") # normally, clear title...
     >>> template_head = template.find(".//head")
     >>> new_head = templates.merge_elements(template_head, target_head)
-    >>> print tostring(new_head)
+    >>> print(tostring(new_head).decode('utf8'))
     <head><title>This is the title.
     </title><title>This is the second title.
     </title></head>
@@ -120,17 +120,21 @@ Testing find_divs()
     >>> template_page.tree = template
     >>> divs = templates.find_divs(template_page)
     >>> for div in divs:
-    ...    print div, ":", tostring(divs[div])
-    ...    print "-------"
-    content : <div id="content"><p>
+    ...    print(div)
+    ...    print(tostring(divs[div]).decode('utf8'))
+    ...    print("-------")
+    content
+    <div id="content"><p>
     This is part of the target.
     </p></div>
     -------
-    not this one : <div id="not this one"><p>
+    not this one
+    <div id="not this one"><p>
     Keep this.
     </p></div>
     -------
-    not that one : <div id="not that one"><p>
+    not that one
+    <div id="not that one"><p>
     This should be kept.
     </p></div>
     -------
@@ -148,7 +152,7 @@ Testing merge_heads()
     >>> fake_page = Page()
     >>> fake_page.head = target_head
     >>> templates.merge_heads(template_page, fake_page)
-    >>> print tostring(fake_page.head)
+    >>> print(tostring(fake_page.head).decode('utf8'))
     <head><title>This is the title.
     </title><title>This is the second title.
     </title></head>
