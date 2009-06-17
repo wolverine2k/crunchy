@@ -24,7 +24,7 @@ See how_to.rst_ for details.
   >>> plugin.clear()
   >>> def dummy_add(*args):
   ...      for arg in args:
-  ...          print arg
+  ...          print(arg)
   >>> plugin['add_vlam_option'] = dummy_add
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
@@ -33,7 +33,7 @@ See how_to.rst_ for details.
 
 Note: we should have a test when the following is True.
   >>> config['Crunchy']['popups'] = False
-  >>> import src.plugins.vlam_editor as vlam_editor 
+  >>> import src.plugins.vlam_editor as vlam_editor
   >>> import src.plugins.editarea
   >>> import src.tests.mocks as mocks
   >>> mocks.init()
@@ -66,7 +66,3 @@ Testing register()
     True
 
 .. _`insert_editor_subwidget()`:
-
-
-
-

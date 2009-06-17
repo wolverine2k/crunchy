@@ -20,7 +20,7 @@ user_markup.py has has the following functions that require testing:
     >>> mocks.init()
     >>> def repeat_args(*args):
     ...      for arg in args:
-    ...          print arg
+    ...          print(arg)
     >>>
 
 
@@ -30,9 +30,9 @@ Testing register()
 ----------------------
 
     >>> user_markup.register()
-    >>> print mocks.registered_begin_tag_handlers #doctest: +ELLIPSIS
+    >>> print(mocks.registered_begin_tag_handlers) #doctest: +ELLIPSIS
     {'pre': <function modify_vlam at ...>}
-    >>> print mocks.registered_final_tag_handlers #doctest: +ELLIPSIS
+    >>> print(mocks.registered_final_tag_handlers) #doctest: +ELLIPSIS
     {'pre': <function custom_vlam at ...>}
 
 
@@ -49,7 +49,7 @@ First, no markup specified.
     >>> config['Crunchy']['no_markup'] = None
     >>> config['Crunchy']['modify_markup'] = False
     >>> user_markup.custom_vlam(page, page.pre, '42')
-    >>> print tostring(page.pre).replace('>', '>\n')
+    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
     <pre />
     <BLANKLINE>
 
@@ -64,7 +64,7 @@ has no markup.
     <src.tests.mocks.Page object at ...>
     <Element pre at ...>
     42
-    >>> print tostring(page.pre).replace('>', '>\n')
+    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
     <pre title="silly" />
     <BLANKLINE>
 
@@ -81,7 +81,7 @@ are handled properly.
     <src.tests.mocks.Page object at ...>
     <Element pre at ...>
     42
-    >>> print tostring(page.pre).replace('>', '>\n')
+    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
     <pre title="Parrots" />
     <BLANKLINE>
 
@@ -92,7 +92,7 @@ Testing add_option()
 
     >>> test_vlam = "silly string"
     >>> test_vlam = user_markup.add_option(test_vlam, ['modified'])
-    >>> print test_vlam
+    >>> print(test_vlam)
     silly string modified
 
 .. _`remove_option()`:
@@ -102,10 +102,10 @@ Testing remove_option()
 
     >>> test_vlam = "silly string"
     >>> test_vlam = user_markup.remove_option(test_vlam, ['not here'])
-    >>> print test_vlam 
+    >>> print(test_vlam)
     silly string
     >>> test_vlam = user_markup.remove_option(test_vlam, ['string'])
-    >>> print test_vlam 
+    >>> print(test_vlam)
     silly
 
 .. _`replace()`:
@@ -115,10 +115,10 @@ Testing replace()
 
     >>> test_vlam = "silly string"
     >>> test_vlam = user_markup.replace(test_vlam, ['silly', 'clever'])
-    >>> print test_vlam
+    >>> print(test_vlam)
     clever string
     >>> test_vlam = user_markup.replace(test_vlam, ['not there', 'ok'])
-    >>> print test_vlam
+    >>> print(test_vlam)
     clever string
 
 
@@ -136,20 +136,24 @@ to make sure that they are ignored when appropriate.
 
     >>> elem1 = Element("pre")
     >>> elem2 = Element("pre", title="one two three")
-    >>> print elem1.attrib, elem2.attrib
-    {} {'title': 'one two three'}
+    >>> print(elem1.attrib)
+    {}
+    >>> print(elem2.attrib)
+    {'title': 'one two three'}
 
 First we test with combinations that do nothing, ignoring any pre-defined rules.
 
     >>> config['Crunchy']['modify_markup'] = False
     >>> user_markup.modify_vlam(page, elem2, 'dummy')
     >>> config['Crunchy']['modify_markup'] = True
-    >>> user_markup.modify_vlam(page, elem1, 'dummy')    
-    >>> print elem1.attrib, elem2.attrib
-    {} {'title': 'one two three'}
- 
+    >>> user_markup.modify_vlam(page, elem1, 'dummy')
+    >>> print(elem1.attrib)
+    {}
+    >>> print(elem2.attrib)
+    {'title': 'one two three'}
+
  Now, we apply the rules so as to make real changes.
- 
+
     >>> user_markup.modify_vlam(page, elem2, 'dummy')
-    >>> print elem2.attrib
+    >>> print(elem2.attrib)
     {'title': 'four three five'}
