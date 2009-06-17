@@ -23,7 +23,7 @@ Testing register()
 ----------------------
 
     >>> username.register()
-    >>> print mocks.registered_tag_handler #doctest: +ELLIPSIS
+    >>> print(mocks.registered_tag_handler) #doctest: +ELLIPSIS
     {'span': {'title': {'username': <function insert_username at ...>}}}
 
 Testing insert_username()
@@ -34,6 +34,6 @@ Testing insert_username()
     >>> elem = Element('whatever')
     >>> elem.text = "this will be replaced"
     >>> username.insert_username(page, elem, 42)
-    >>> print elem.text
+    >>> print(elem.text)
     Crunchy
 
