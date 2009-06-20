@@ -5,9 +5,9 @@ This plugin is an analyzer backend for pyflakes.
 
 import sys
 import StringIO
-import compiler
 try:
     # Try to import pyflakes
+    import compiler
     from pyflakes import checker
     pyflakes_available = True
 except ImportError:
