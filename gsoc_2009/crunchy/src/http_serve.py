@@ -34,7 +34,6 @@ else:
 def require_digest_access_authenticate(func):
     '''A decorator to add digest authorization checks to HTTP Request Handlers'''
     accounts = src.interface.accounts
-    md5hex = lambda x:md5.md5(x).hexdigest()
 
     def wrapped(self):
         method = self.command
