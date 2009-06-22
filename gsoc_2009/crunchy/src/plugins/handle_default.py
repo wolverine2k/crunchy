@@ -1,8 +1,8 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
-from os.path import normpath, join, isdir,  exists
-from dircache import listdir, annotate
+import os
 import sys
+from os.path import normpath, join, isdir, exists
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, plugin, server, debug, \
@@ -110,19 +110,31 @@ def handler(request):
             print("Error in handle_default; should not have happened!")
             raise
 
+def list_directory(path):
+    '''Returns a list of files and annotated directories in a path.'''
+    childs = os.listdir(path)
+    def annotate(child):
+        if isdir(os.path.join(path, child)):
+            return child + '/'
+        else:
+            return child
+    return map(annotate, childs)
+
 def get_directory(npath, crunchy_username):
-    '''gets a directory listing from a path or, if a default page, such as
-    index.html, is found, gives that page instead.'''
+    '''Returns a directory listing from a path. If index.htm or
+    index.html exists, it returns that page instead.'''
     global tell_Safari_page_is_html
-    childs = listdir(npath)
-    annotate(npath, childs)
+
+    childs = list_directory(npath)
     for i in ["index.htm", "index.html"]:
         if i in childs:
             tell_Safari_page_is_html = True
             return path_to_filedata("/"+i, npath, crunchy_username)
-    tstring = ""
-    for child in childs:
-        tstring += '<li><a href="' + str(child) + '">' + str(child) +'</a></li>'
+
+    def to_bullet(x):
+        return '<li><a href="%s">%s</a></li>' % (x, x)
+
+    tstring = u''.join(to_bullet(child) for child in childs)
     return dir_list_page % (_("Directory Listing"), tstring)
 
 not_found = open(join(root_path, "404.html")).read()
