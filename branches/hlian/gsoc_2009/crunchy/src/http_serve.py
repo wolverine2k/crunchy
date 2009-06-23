@@ -7,13 +7,24 @@ for instance, it can only handle GET and POST requests and actually
 treats them the same.
 """
 
-from SocketServer import ThreadingMixIn, TCPServer
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import urllib
-import urllib2
-from traceback import format_exc
 import base64
+import email
+import sys
 import time
+import urllib
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from SocketServer import ThreadingMixIn, TCPServer
+from traceback import format_exc
+
+# Selective imports only for urllib2 because 2to3 will not replace the
+# urllib2.<method> calls below. Also, 2to3 will throw an error if we
+# try to do a from _ import _.
+if sys.version_info[0] < 3:
+    import urllib2
+    parse_http_list = urllib2.parse_http_list
+    parse_keqv_list = urllib2.parse_keqv_list
+else:
+    from urllib.request import parse_http_list, parse_keqv_list
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interface
@@ -21,6 +32,10 @@ import src.interface
 DEBUG = False
 
 realm = "Crunchy Access"
+
+# This is convoluted because there's no way to tell 2to3 to insert a
+# byte literal.
+HEADER_NEWLINES = [x.encode('ascii') for x in (u'\r\n', u'\n', u'')]
 
 if src.interface.python_version < 3:
     import md5
@@ -39,12 +54,12 @@ def require_digest_access_authenticate(func):
         method = self.command
         if not hasattr(self, 'authenticated'):
             self.authenticated =  None
-        auth = self.headers.getheader('authorization')
+        auth = self.headers.get('Authorization')
         if not self.authenticated and auth is not None:
             token, fields = auth.split(' ', 1)
             if token == 'Digest':
-                cred = urllib2.parse_http_list(fields)
-                cred = urllib2.parse_keqv_list(cred)
+                cred = parse_http_list(fields)
+                cred = parse_keqv_list(cred)
                 if 'realm' not in cred or 'username' not in cred \
                     or 'nonce' not in cred or 'uri' not in cred or 'response' not in cred:
                     self.authenticated = False
@@ -128,7 +143,37 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
                 print("path %s NOT in self.handler_table."%path)
             return self.default_handler
 
+def parse_headers(fp, _class=email.message.Message):
+    """Parses only RFC2822 headers from a file pointer.
+
+    email Parser wants to see strings rather than bytes.
+    But a TextIOWrapper around self.rfile would buffer too many bytes
+    from the stream, bytes which we later need to read as bytes.
+    So we read the correct bytes here, as bytes, for email Parser
+    to parse. This code is taken directly from the Python 3 stdlib.
+    """
+    headers = []
+    while True:
+        line = fp.readline()
+        headers.append(line)
+        if line in HEADER_NEWLINES:
+            break
+    hstring = u''.encode('ascii').join(headers).decode('iso-8859-1')
+    return email.parser.Parser(_class=_class).parsestr(hstring)
+
+def message_wrapper(self, fp, irrelevant):
+    return parse_headers(fp)
+
 class HTTPRequestHandler(BaseHTTPRequestHandler):
+
+    # In Python 3, BaseHTTPRequestHandler went from using the
+    # deprecated mimetools.Message class to the new
+    # email.message.Message class for self.headers. Unfortunately, the
+    # two APIs are not compatible. Fortunately, there's an API in
+    # place to fiddle with the class that's chosen. Here we force
+    # Python 2 to adopt email.message.Message.
+    if sys.version_info[0] < 0:
+        MessageClass = message_wrapper
 
     @require_authenticate
     def do_POST(self):
