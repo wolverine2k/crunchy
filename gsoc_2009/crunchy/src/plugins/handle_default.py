@@ -18,21 +18,23 @@ def register():
 root_path = join(plugin['get_root_dir'](), "server_root/")
 
 def path_to_filedata(path, root, crunchy_username=None):
-    """
-    Given a path, finds the matching file and returns a read-only reference
-    to it. If the path specifies a directory and does not have a trailing slash
-    (ie. /example instead of /example/) this function will return none, the
-    browser should then be redirected to the same path with a trailing /.
-    Root is the fully qualified path to server root.
-    Paths starting with / and containing .. will return an error message.
-    POSIX version, should work in Windows.
+    """ Given a path, finds the matching file and returns a read-only
+    reference to it. If the path specifies a directory and does not
+    have a trailing slash (ie. /example instead of /example/) this
+    function will return none, the browser should then be redirected
+    to the same path with a trailing /. Root is the fully qualified
+    path to server root. Paths starting with / and containing .. will
+    return an error message. POSIX version, should work in Windows.
+    Data will be returned in encoded, non-Unicode form because the
+    path could point to a binary file and is tailored for the
+    request.wfile.write method.
     """
     if path == server['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
         return open(exit_file).read()
     if path.startswith("/") and (path.find("/../") != -1):
-        return error_page(path)
+        return error_page(path).encode('utf8')
     if exists(path) and path != "/":
         npath = path
     else:
@@ -42,16 +44,20 @@ def path_to_filedata(path, root, crunchy_username=None):
         if path[-1] != "/":
             return None
         else:
-            return get_directory(npath, crunchy_username)
+            return get_directory(npath, crunchy_username).encode('utf8')
     else:
         try:
             extension = npath.split('.')[-1]
             if extension in ["htm", "html"]:
-                return plugin['create_vlam_page'](open(npath), path,
-                                                  crunchy_username).read()
+                text = plugin['create_vlam_page']
+                text = text(open(npath), path, crunchy_username)
+                text = text.read().encode('utf8')
+                return text
             elif extension in preprocessor:
-                return plugin['create_vlam_page'](preprocessor[extension](npath),
-                                            path, crunchy_username).read()
+                text = plugin['create_vlam_page']
+                text = text(preprocessor[extension](npath), path, crunchy_username)
+                text = text.read().encode('utf8')
+                return text
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -139,7 +145,7 @@ def get_directory(npath, crunchy_username):
 
 not_found = open(join(root_path, "404.html")).read()
 
-dir_list_page = """
+dir_list_page = u"""
 <html>
 <head>
 <title>
