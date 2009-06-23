@@ -13,7 +13,14 @@ REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
-import account_manager
+# In Python 3, absolute imports are the default, and 2to3 will convert
+# "import account_manager" to a relative import like this one, which
+# is fine and dandy in most cases. The problem is, this isn't a module
+# when it's run as an executable, so we need to work around 2to3 a
+# little.
+#
+# http://www.python.org/dev/peps/pep-0328/#id7
+account_manager = __import__('account_manager')
 
 def find_port(start=8001):
     """finds the first free port on 127.0.0.1 starting at start"""
