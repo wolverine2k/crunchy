@@ -82,7 +82,7 @@ def path_to_filedata(path, root, username=None):
         return open(npath, mode="rb").read()
     except IOError:
         print("In path_to_filedata, can not open path = " + npath)
-        return error_page(path)
+        return error_page(path).encode('utf8')
 
 def handler(request):
     """the actual handler"""
