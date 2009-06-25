@@ -2,7 +2,7 @@
 
 import os
 import sys
-from os.path import normpath, join, isdir, exists
+from os.path import normpath, isdir, join, exists
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, plugin, server, debug, \
@@ -17,7 +17,21 @@ def register():
 # the root of the server is in a separate directory:
 root_path = join(plugin['get_root_dir'](), "server_root/")
 
-def path_to_filedata(path, root, crunchy_username=None):
+def index(npath):
+    """ Normalizes npath to an index.htm or index.html file if
+    possible. Returns normalized path. """
+
+    if not isdir(npath):
+        return npath
+
+    childs = os.listdir(npath)
+    for i in ("index.htm", "index.html"):
+        if i in childs:
+            return join(npath, i)
+
+    return npath
+
+def path_to_filedata(path, root, username=None):
     """ Given a path, finds the matching file and returns a read-only
     reference to it. If the path specifies a directory and does not
     have a trailing slash (ie. /example instead of /example/) this
@@ -29,51 +43,49 @@ def path_to_filedata(path, root, crunchy_username=None):
     path could point to a binary file and is tailored for the
     request.wfile.write method.
     """
+    # Path is guaranteed to be Unicode. See parse_headers in
+    # http_serve.py for details.
+    assert isinstance(path, unicode)
+
     if path == server['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
-        return open(exit_file).read()
+        return open(exit_file, mode="rb").read()
     if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path).encode('utf8')
+
     if exists(path) and path != "/":
         npath = path
     else:
         npath = normpath(join(root, normpath(path[1:])))
 
+    npath = index(npath)
+
     if isdir(npath):
         if path[-1] != "/":
             return None
-        else:
-            return get_directory(npath, crunchy_username).encode('utf8')
-    else:
-        try:
-            extension = npath.split('.')[-1]
-            if extension in ["htm", "html"]:
-                text = plugin['create_vlam_page']
-                text = text(open(npath), path, crunchy_username)
-                text = text.read().encode('utf8')
-                return text
-            elif extension in preprocessor:
-                text = plugin['create_vlam_page']
-                text = text(preprocessor[extension](npath), path, crunchy_username)
-                text = text.read().encode('utf8')
-                return text
-            # we need binary mode because otherwise the file may not get
-            # read properly on windows (e.g. for image files)
-            return open(npath, mode="rb").read()
-        except IOError:
-            try:
-                return open(npath.encode(sys.getfilesystemencoding()),
-                            mode="rb").read()
-            except IOError:
-                print("In path_to_filedata, can not open path = " + npath)
-                return error_page(path)
+        return get_directory(npath, username).encode('utf8')
 
-tell_Safari_page_is_html = False
+    try:
+        extension = npath.split('.')[-1]
+        creator = plugin['create_vlam_page']
+        if extension in ["htm", "html"]:
+            text = creator(open(npath), path, username)
+            text = text.read().encode('utf8')
+            return text
+        elif extension in preprocessor:
+            text = creator(preprocessor[extension](npath), path, username)
+            text = text.read().encode('utf8')
+            return text
+        # we need binary mode because otherwise the file may not get
+        # read properly on windows (e.g. for image files)
+        return open(npath, mode="rb").read()
+    except IOError:
+        print("In path_to_filedata, can not open path = " + npath)
+        return error_page(path)
 
 def handler(request):
     """the actual handler"""
-    global tell_Safari_page_is_html
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
     try:
@@ -106,9 +118,7 @@ def handler(request):
         # Tell Firefox not to cache; otherwise back button can bring back to
         # a page with a broken interpreter
         request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
-        if tell_Safari_page_is_html:
-            request.send_header ("Content-Type", "text/html; charset=UTF-8")
-            tell_Safari_page_is_html = False
+        # Todo: Send out a proper Content-type here.
         request.end_headers()
         try:
             request.wfile.write(data)
@@ -127,15 +137,11 @@ def list_directory(path):
     return map(annotate, childs)
 
 def get_directory(npath, crunchy_username):
-    '''Returns a directory listing from a path. If index.htm or
-    index.html exists, it returns that page instead.'''
-    global tell_Safari_page_is_html
+    '''Returns a directory listing from a path. Always returns
+    Unicode.'''
 
+    assert isdir(npath)
     childs = list_directory(npath)
-    for i in ["index.htm", "index.html"]:
-        if i in childs:
-            tell_Safari_page_is_html = True
-            return path_to_filedata("/"+i, npath, crunchy_username)
 
     def to_bullet(x):
         return '<li><a href="%s">%s</a></li>' % (x, x)
