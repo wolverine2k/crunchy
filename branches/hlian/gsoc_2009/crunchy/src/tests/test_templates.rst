@@ -62,7 +62,7 @@ Testing merge_elements()
     >>> body.append(div1)
     >>> body.append(div2)
     >>> body.append(div3)
-    >>> print(tostring(template).decode('utf8'))
+    >>> print(tostring(template))
     <main><head><title>This is the title.
     </title></head><body><div id="not this one"><p>
     Keep this.
@@ -93,7 +93,7 @@ Testing merge_elements()
     >>> body.append(div1a)
     >>> body.append(div2a)
     >>> body.append(div3a)
-    >>> print(tostring(to_combine).decode('utf8'))
+    >>> print(tostring(to_combine))
     <main><head><title>This is the second title.
     </title></head><body><div id="not this one"><p>
     This should be discarded.
@@ -106,7 +106,7 @@ Testing merge_elements()
     >>> target_head = to_combine.find(".//head") # normally, clear title...
     >>> template_head = template.find(".//head")
     >>> new_head = templates.merge_elements(template_head, target_head)
-    >>> print(tostring(new_head).decode('utf8'))
+    >>> print(tostring(new_head))
     <head><title>This is the title.
     </title><title>This is the second title.
     </title></head>
@@ -121,7 +121,7 @@ Testing find_divs()
     >>> divs = templates.find_divs(template_page)
     >>> for div in divs:
     ...    print(div)
-    ...    print(tostring(divs[div]).decode('utf8'))
+    ...    print(tostring(divs[div]))
     ...    print("-------")
     content
     <div id="content"><p>
@@ -152,7 +152,7 @@ Testing merge_heads()
     >>> fake_page = Page()
     >>> fake_page.head = target_head
     >>> templates.merge_heads(template_page, fake_page)
-    >>> print(tostring(fake_page.head).decode('utf8'))
+    >>> print(tostring(fake_page.head))
     <head><title>This is the title.
     </title><title>This is the second title.
     </title></head>

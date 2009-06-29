@@ -65,7 +65,7 @@ Testing remove_unwanted()
 We first start with a totally acceptable tree, making sure that nothing is removed.
 
     >>> tree, tree_string = new_tree()
-    >>> print(tree_string.decode('utf8'))
+    >>> print(tree_string)
     <html><head><title /></head><body>Crunchy is neat!</body></html>
     >>> page.url = 'trusted'
     >>> security.remove_unwanted(tree, page)
@@ -83,7 +83,7 @@ For the next step, we add some javascript which should definitely be removed.
     >>> script = Element('script')
     >>> script.text = "nasty stuff"
     >>> bad_tree, bad_tree_string = new_tree(add_to_head=script)
-    >>> 'script' in bad_tree_string.decode('utf8')
+    >>> 'script' in bad_tree_string
     True
     >>> security.remove_unwanted(bad_tree, page)
     >>> cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
@@ -99,7 +99,7 @@ Next, we repeat this for all security levels.
     ...    script = Element('script')
     ...    script.text = "nasty stuff"
     ...    bad_tree, bad_tree_string = new_tree(add_to_head=script)
-    ...    if not 'script' in bad_tree_string.decode('utf8'):
+    ...    if not 'script' in bad_tree_string:
     ...        print("javascript not inserted properly")
     ...    security.remove_unwanted(bad_tree, page)
     ...    cleaned_string = to_string(bad_tree)  # bad_tree has been cleaned!
