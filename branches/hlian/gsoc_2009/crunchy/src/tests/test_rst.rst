@@ -58,3 +58,6 @@ an appropriate flag.
     True
     True
 
+Check if convert_rst non-local paths properly.
+    >>> url = 'http://crunchy.googlecode.com/svn/trunk/crunchy/src/tests/how_to.rst'
+    >>> assert rst.convert_rst(url, local=False)

@@ -13,10 +13,10 @@ Setting things up
 --------------------
 
     >>> import os
-    >>> base_dir = os.getcwd()
-    >>> from src.interface import Element, SubElement, tostring, config, from_comet
+    >>> from src.interface import Element, SubElement, tostring, config, from_comet, get_base_dir
     >>> config.clear()
     >>> from_comet.clear()
+    >>> base_dir = get_base_dir()
     >>> config['crunchy_base_dir'] = base_dir
     >>> def ignore(*args):
     ...    return
