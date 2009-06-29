@@ -27,7 +27,7 @@ which is meant to print a series of arguments.
     >>> interface.config['crunchy_base_dir'] = getcwd()
     >>> if interface.python_version < 3:
     ...     to_print = "André".decode('utf-8')
-    ... else: 
+    ... else:
     ...     to_print = "André"
 
 Given that doctest converts from bytes to Unicode haphazardly and that
@@ -50,15 +50,15 @@ The following is incomplete.
     >>> elem.text = "This is a neat sentence."
     >>> to_print = interface.tostring(elem)
     >>> if interface.python_version < 3:
-    ...     print(type(to_print) == str)
+    ...     print(type(to_print) == unicode)
     ... else:
-    ...     print(type(to_print) == bytes)
+    ...     print(type(to_print) == str)
     True
     >>> interface.u_print(to_print)
     <p class="crunchy">This is a neat sentence.</p>
 
 We create a fake html file
-    >>> html_content = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    >>> html_content = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     ... "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     ... <html>
     ... <head>
@@ -72,7 +72,7 @@ We create a fake html file
     >>> dummy = fake_file.write(html_content) # return value in Py3k
     >>> dummy = fake_file.seek(0)  # return value in Py3k
     >>> tree = interface.parse(fake_file)
-    
+
 Testing exec_code()
 -------------------
 

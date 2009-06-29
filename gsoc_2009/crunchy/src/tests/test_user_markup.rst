@@ -49,7 +49,7 @@ First, no markup specified.
     >>> config['Crunchy']['no_markup'] = None
     >>> config['Crunchy']['modify_markup'] = False
     >>> user_markup.custom_vlam(page, page.pre, '42')
-    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
+    >>> print(tostring(page.pre).replace('>', '>\n'))
     <pre />
     <BLANKLINE>
 
@@ -64,7 +64,7 @@ has no markup.
     <src.tests.mocks.Page object at ...>
     <Element pre at ...>
     42
-    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
+    >>> print(tostring(page.pre).replace('>', '>\n'))
     <pre title="silly" />
     <BLANKLINE>
 
@@ -81,7 +81,7 @@ are handled properly.
     <src.tests.mocks.Page object at ...>
     <Element pre at ...>
     42
-    >>> print(tostring(page.pre).decode('utf8').replace('>', '>\n'))
+    >>> print(tostring(page.pre).replace('>', '>\n'))
     <pre title="Parrots" />
     <BLANKLINE>
 

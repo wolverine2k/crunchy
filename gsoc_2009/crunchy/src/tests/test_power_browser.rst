@@ -84,7 +84,7 @@ An unrecognized value.
     >>> page.body = Element("body")
     >>> config['Crunchy']['power_browser'] = 'unknown'
     >>> pb.insert_browser(page)
-    >>> print(tostring(page.body).decode('utf8'))
+    >>> print(tostring(page.body))
     <body />
 
 None should yield the same result.
@@ -93,6 +93,6 @@ None should yield the same result.
     >>> page.body = Element("body")
     >>> config['Crunchy']['power_browser'] = None
     >>> pb.insert_browser(page)
-    >>> print(tostring(page.body).decode('utf8'))
+    >>> print(tostring(page.body))
     <body />
 

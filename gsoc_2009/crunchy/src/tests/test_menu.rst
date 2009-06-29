@@ -5,9 +5,6 @@ menu.py tests
 Setting things up
 ------------------
 
-    >>> def uprint(text):
-    ...     print(text.decode('utf-8'))
-
     >>> from src.interface import config, plugin, tostring, translate
     >>> import src.interface
     >>> class Accounts(dict):
@@ -44,9 +41,9 @@ Testing create_empty_menu()
 ============================
 
     >>> _menu, _menu_items = menu.create_empty_menu()
-    >>> uprint(tostring(_menu))
+    >>> print(tostring(_menu))
     <div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>
-    >>> uprint(tostring(_menu_items))
+    >>> print(tostring(_menu_items))
     <ul />
 
 
@@ -54,14 +51,14 @@ Testing create_home()
 =====================
 
     >>> home = menu.create_home()
-    >>> uprint(tostring(home))
+    >>> print(tostring(home))
     <li><a href="/index.html">Crunchy Home</a></li>
 
 Testing create_quit()
 =====================
 
     >>> Quit = menu.create_quit()
-    >>> uprint(tostring(Quit)) #doctest: +ELLIPSIS
+    >>> print(tostring(Quit)) #doctest: +ELLIPSIS
     <li><a href="/exit...">Quit Crunchy</a></li>
 
 Testing insert_menu()
@@ -75,7 +72,7 @@ yield the same results using our mock functions.  So, we only test one here.
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
-    >>> uprint(tostring(page.body[0])) #doctest: +ELLIPSIS
+    >>> print(tostring(page.body[0])) #doctest: +ELLIPSIS
     <div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>
     >>> page.added_info[0] == 'add_css_code'
     True

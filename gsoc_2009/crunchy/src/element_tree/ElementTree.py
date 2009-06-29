@@ -993,7 +993,7 @@ def tostring(element, encoding='utf-8'):
             data.append(text)
 
     ElementTree(element).write(dummy(), encoding)
-    return u"".join(data).encode(encoding)
+    return u"".join(data)
 
 ##
 # Generic element structure builder.  This builder converts a sequence
