@@ -323,7 +323,7 @@ are usually launched.""")
         values if file specific settings is not found.
         '''
         success = False
-        pickled_path = os.path.join(self.user_dir, SETTINGS)
+        pickled_path = os.path.join(self.user_dir, settings_path)
         try:
             pickled = open(pickled_path, 'rb')
             success = True
@@ -387,7 +387,7 @@ are usually launched.""")
             if not (name in self._not_saved or name.startswith('_')):
                 saved[name] = self._preferences[name]
         saved['_modification_rules'] = self._modification_rules
-        pickled_path = os.path.join(self.user_dir, SETTINGS)
+        pickled_path = os.path.join(self.user_dir, settings_path)
         try:
             pickled = open(pickled_path, 'wb')
         except:
