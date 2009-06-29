@@ -14,7 +14,9 @@ import os
 from urlparse import urlsplit
 import cPickle
 
-from src.interface import config, u_print, translate, additional_vlam, accounts
+from src.interface import (
+    config, u_print, translate, additional_vlam, accounts,
+    python_version)
 
 import src.interface as interface
 
@@ -27,6 +29,12 @@ translate['init_translation']()
 trans_path = os.path.join(config['crunchy_base_dir'], "translations")
 trans_path2 = os.path.join(config['crunchy_base_dir'], "server_root",
                                                           "edit_area", "langs")
+# Different Pickle protocol in Python 3.
+if python_version < 3:
+    settings_path = "settings.pkl"
+else:
+    settings_path = "settings-3.pkl"
+
 options = {
     'analyzer': [None],
     'dir_help': [True, False],
@@ -315,7 +323,7 @@ are usually launched.""")
         values if file specific settings is not found.
         '''
         success = False
-        pickled_path = os.path.join(self.user_dir, "settings.pkl")
+        pickled_path = os.path.join(self.user_dir, SETTINGS)
         try:
             pickled = open(pickled_path, 'rb')
             success = True
@@ -379,7 +387,7 @@ are usually launched.""")
             if not (name in self._not_saved or name.startswith('_')):
                 saved[name] = self._preferences[name]
         saved['_modification_rules'] = self._modification_rules
-        pickled_path = os.path.join(self.user_dir, "settings.pkl")
+        pickled_path = os.path.join(self.user_dir, SETTINGS)
         try:
             pickled = open(pickled_path, 'wb')
         except:
