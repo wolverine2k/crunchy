@@ -7,20 +7,27 @@ Runs a series of tests contained in text files, using the doctest framework.
 All the tests are asssumed to be located in the "src/tests" sub-directory.
 '''
 
-from doctest import OutputChecker
-original_check_output = OutputChecker.check_output
 import doctest
 import os
 import random
 import sys
+from doctest import OutputChecker
+from os.path import realpath
+from optparse import OptionParser
 
-# sometime we want to ignore Crunchy's output as it may be in a
+parser = OptionParser()
+parser.add_option("--det", dest="det",
+                  action="store_true",
+                  help="Run the tests deterministically")
+(options, args) = parser.parse_args()
+
+# Sometime we want to ignore Crunchy's output as it may be in a
 # unpredictable language, based on user's preferences.
-
-# define a new doctest directive to ignore the output of a given test
-
+#
+# Define a new doctest directive to ignore the output of a given test
+# and monkeypatch OutputChecker with it.
+original_check_output = OutputChecker.check_output
 IGNORE_OUTPUT = doctest.register_optionflag("IGNORE_OUTPUT")
-
 class MyOutputChecker(doctest.OutputChecker):
     def check_output(self, want, got, optionflags):
         if optionflags & IGNORE_OUTPUT:
@@ -28,18 +35,18 @@ class MyOutputChecker(doctest.OutputChecker):
         return original_check_output(self, want, got, optionflags)
 
 doctest.OutputChecker = MyOutputChecker
-# end of new directive definition and replacement (monkeypatching)
 
-os.chdir("..")
-cwd = os.getcwd()
-sys.path.insert(0, cwd)
-test_path = os.path.join(os.getcwd(), "src", "tests")
-test_files = [f for f in os.listdir(test_path) if f.startswith("test_")
-              and f.endswith(".rst")]
+test_path = realpath(os.path.dirname(__file__))
+test_path = realpath(os.path.join(test_path, '../src/tests'))
+test_files = [os.path.join(test_path, f)
+              for f in os.listdir(test_path)
+              if f.startswith("test_") and f.endswith(".rst")]
+sys.path.insert(0, realpath(os.path.join(test_path, '../..')))
 
 # do the test in somewhat arbitrary order in order to try and
 # ensure true independence.
-random.shuffle(test_files)
+if not options.det:
+    random.shuffle(test_files)
 
 sep = os.path.sep
 
@@ -63,16 +70,19 @@ excluded = ["test_colourize.rst"] # now obsolete
 
 for t in test_files:
     if t in excluded:
-        continue # skip
+        continue
+
     if include_only:
         if t not in include_only:
             continue
-    failure, nb_tests = doctest.testfile(os.path.join("src", "tests", t))
+
+    failure, nb_tests = doctest.testfile(t, module_relative=False)
     total_tests += nb_tests
     total_failures += failure
     if failure > 0:
         files_with_failures += 1
         all_files_with_failures.append((failure, t))
+
     print "%d failures in %d tests in file: %s"%(failure, nb_tests, t)
     nb_files += 1
 

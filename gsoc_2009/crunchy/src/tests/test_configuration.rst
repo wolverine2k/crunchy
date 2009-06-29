@@ -5,11 +5,10 @@ configuration.py tests
 Setting things up
 ------------------
 
-    >>> from src.interface import config, plugin
+    >>> from src.interface import config, plugin, get_base_dir
     >>> plugin.clear()
     >>> config.clear()
-    >>> from os import getcwd
-    >>> config['crunchy_base_dir'] = getcwd()
+    >>> config['crunchy_base_dir'] = get_base_dir()
     >>> from src.configuration import Base, make_property, options
 
 Sample use of extending the Base class for a single object:

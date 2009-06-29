@@ -21,15 +21,14 @@ See how_to.rst_ for details.
 .. _how_to.rst: how_to.rst
 
 
-    >>> from src.interface import config, ElementTree, Element, SubElement
+    >>> from src.interface import config, ElementTree, Element, SubElement, get_base_dir
     >>> et = ElementTree.ElementTree
     >>> config.clear()
     >>> config['Crunchy'] = {}
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
     >>> page = mocks.Page()
-    >>> import os
-    >>> config['crunchy_base_dir'] = os.getcwd()
+    >>> config['crunchy_base_dir'] = get_base_dir()
     >>> import src.security as security
 
 
