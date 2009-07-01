@@ -8,8 +8,9 @@
 
 # All plugins should import the crunchy plugin API via interface.py
 import os
-from src.interface import plugin
-from urllib import urlopen
+from StringIO import StringIO
+from src.interface import plugin, python_version
+from urllib2 import urlopen
 
 _docutils_installed = True
 try:
@@ -19,6 +20,12 @@ try:
         print("rst plugin disabled: docutils installed but version too old.")
         _docutils_installed = False
 except:
+    def publish_string(*a, **k):
+        raise NotImplementedError('docutils not installed')
+
+    def rst_test(*a, **k):
+        raise NotImplementedError('docutils not installed')
+
     _docutils_installed = False
 
 if _docutils_installed:
@@ -213,13 +220,10 @@ if _docutils_installed:
     for key, value in DIRECTIVE_DICT.items():
         rst.directives.register_directive( key, value )
 
-class ReST_file(object):
+class ReST_file(StringIO):
     """Represents file with transformed text from rst into html.
     vlam thinks it is an ordinary file object"""
-    def __init__(self, data):
-        self._data = data
-    def read(self):
-        return self._data
+    pass
 
 def load_rst(request):
     """Loads rst file from disk,
@@ -227,7 +231,10 @@ def load_rst(request):
     url = request.args["url"]
     file_ = open(url)
 
-    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
+    # docutils returns bytes.
+    data = publish_string(file_.read(), writer_name="html")
+    data = data.decode('utf8')
+    rst_file = ReST_file(data)
     page = plugin['create_vlam_page'](rst_file, url, local=True,
                                       username=request.crunchy_username)
 
@@ -241,7 +248,11 @@ def convert_rst(path, local=True):
         file_ = open(path)
     else:
         file_ = urlopen(path)
-    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
+
+    # See above.
+    data = publish_string(file_.read(), writer_name="html")
+    data = data.decode('utf8')
+    rst_file = ReST_file(data)
     return rst_file
 
 def insert_load_rst(page, elem, uid):
