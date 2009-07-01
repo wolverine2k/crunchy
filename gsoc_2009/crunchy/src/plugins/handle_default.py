@@ -1,5 +1,6 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
+import codecs
 import os
 import sys
 from os.path import normpath, isdir, join, exists
@@ -70,7 +71,7 @@ def path_to_filedata(path, root, username=None):
         extension = npath.split('.')[-1]
         creator = plugin['create_vlam_page']
         if extension in ["htm", "html"]:
-            text = creator(open(npath), path, username)
+            text = creator(codecs.open(npath, encoding='utf8'), path, username)
             text = text.read().encode('utf8')
             return text
         elif extension in preprocessor:
@@ -149,7 +150,8 @@ def get_directory(npath, crunchy_username):
     tstring = u''.join(to_bullet(child) for child in childs)
     return dir_list_page % (_("Directory Listing"), tstring)
 
-not_found = open(join(root_path, "404.html")).read()
+not_found = codecs.open(join(root_path, "404.html"),
+                        encoding='utf8').read()
 
 dir_list_page = u"""
 <html>
