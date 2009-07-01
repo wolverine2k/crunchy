@@ -34,10 +34,7 @@ See how_to.rst_ for details.
 .. _how_to.rst: how_to.rst
 
     >>> import sys
-    >>> if sys.version_info[0] < 3:
-    ...     from StringIO import StringIO
-    ... else:
-    ...     from io import StringIO
+    >>> from StringIO import StringIO
     >>> from src.interface import Element, plugin, config, from_comet
     >>> from src.utilities import uidgen
     >>> plugin.clear()

@@ -66,14 +66,14 @@ def remove(victim):
     print('Removing {}'.format(victim))
     os.remove(victim)
 
-def main_copy(src, dst):
+def main_copy(src, dst, opts=[]):
     """Copies src to dst and then runs the mutating 2to3 on dst in a
     subprocess. Raises an Error if 2to3 fails."""
 
     copy(src, dst)
 
     # Call 2to3.
-    args = _2TO3 + [dst]
+    args = _2TO3 + opts + [dst]
     ret  = call(args)
     if not ret == 0:
         raise Error('_2to3', args=args, ret=ret)
@@ -106,7 +106,7 @@ def main_deep_copy(src, dst):
                 os.remove(b)
             continue
 
-        if ext == '.py':
+        if ext in ('.py', '.rst'):
             # os.path.join thinks "b" is a directory and does the
             # wrong thing here.
             bak = b + '.bak'
@@ -126,7 +126,10 @@ def main_deep_copy(src, dst):
                         print('Skipping {}: unchanged'.format(a))
                         continue
 
-            main_copy(a, b)
+            if ext == '.py':
+                main_copy(a, b)
+            else:
+                main_copy(a, b, opts=['-d'])
 
         else:
             if not filecmp.cmp(a, b):

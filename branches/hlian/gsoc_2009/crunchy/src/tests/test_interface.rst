@@ -10,25 +10,16 @@ Python version being used, but provided to the user in a totally transparent way
 Testing u_print
 ---------------
 
-Whereas the original Python used ascii as the default encoding,
-Python 3k is using utf-8 as a default.  One of the many consequences is that
-unicode strings are not specified with a prefix "u".  Thus, whereas in the
-original Python, one might have written u"André", in Python 3k the same
-string is simply written "André".
-
-Furthermore, in Python 3k, "print" is now a function.   To provide a
-transparent way of printing, we have defined a function called u_print()
-which is meant to print a series of arguments.
+In Python 3, "print" is now a function. To provide a transparent way
+of printing, we have defined a function called u_print() which is
+meant to print a series of arguments.
 
     >>> import src.interface as interface
     >>> interface.config.clear()
     >>> interface.plugin.clear()
     >>> from os import getcwd
     >>> interface.config['crunchy_base_dir'] = getcwd()
-    >>> if interface.python_version < 3:
-    ...     to_print = "André".decode('utf-8')
-    ... else:
-    ...     to_print = "André"
+    >>> to_print = u"André"
 
 Given that doctest converts from bytes to Unicode haphazardly and that
 Python 3 makes writing raw bytes to standard output moderately
@@ -49,10 +40,7 @@ The following is incomplete.
     >>> elem.attrib['class'] = 'crunchy'
     >>> elem.text = "This is a neat sentence."
     >>> to_print = interface.tostring(elem)
-    >>> if interface.python_version < 3:
-    ...     print(type(to_print) == unicode)
-    ... else:
-    ...     print(type(to_print) == str)
+    >>> print(type(to_print) == unicode)
     True
     >>> interface.u_print(to_print)
     <p class="crunchy">This is a neat sentence.</p>
