@@ -9,8 +9,8 @@
 # All plugins should import the crunchy plugin API via interface.py
 import os
 from StringIO import StringIO
-from src.interface import plugin, python_version
 from urllib2 import urlopen
+from src.interface import plugin
 
 _docutils_installed = True
 try:

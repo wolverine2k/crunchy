@@ -52,12 +52,15 @@ def unescape(string):
 # Loads an XHTML or HTML file into an Element structure, using Leonard
 # Richardson's tolerant BeautifulSoup parser.
 #
-# @param file Source file (either a file object or a file name).
+# @param file Source file (either a file object or a file name). On
+# Python 2, this must be a filehandle that returns Unicode, such as
+# the one returned by codecs or a StringIO constructed from a Unicode
+# string. Will raise an AssertionError otherwise.
 # @param builder Optional tree builder.  If omitted, defaults to the
 #     "best" available <b>TreeBuilder</b> implementation.
 # @return An Element instance representing the HTML root element.
 
-def parse(file, builder=None, encoding=None):
+def parse(file, builder=None):
     bob = builder
     def emit(soup):
         if isinstance(soup, BS.NavigableString):
@@ -70,19 +73,14 @@ def parse(file, builder=None, encoding=None):
             for s in soup:
                 emit(s)
             bob.end(soup.name)
-    # determine encoding (the document charset is not reliable)
+
     if not hasattr(file, "read"):
         file = open(file)
+
     text = file.read()
-    if not encoding:
-        try:
-            encoding = "utf-8"
-            unicode(text, encoding)
-        except UnicodeError:
-            encoding = "iso-8859-1"
-    soup = BS.BeautifulSoup(
-        text, fromEncoding=encoding
-        )
+    assert isinstance(text, unicode)
+    soup = BS.BeautifulSoup(text)
+
     # build the tree
     if not bob:
         bob = ET.TreeBuilder()
