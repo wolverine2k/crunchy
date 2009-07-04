@@ -15,12 +15,12 @@ sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'beautifulsoup'))
 
 # http://www.crummy.com/software/BeautifulSoup/
-import beautifulsoup as BS
+import BeautifulSoup as BS
 
 # soup classes that are left out of the tree
-ignorable_soup = (BS.element.Comment,
-                  BS.element.Declaration,
-                  BS.element.ProcessingInstruction,
+ignorable_soup = (BS.Comment,
+                  BS.Declaration,
+                  BS.ProcessingInstruction,
                   )
 
 import ElementTree as ET
