@@ -67,7 +67,7 @@ class BasePage(object): # tested
     def create_tree(self, filehandle):  # tested
         '''creates a tree (elementtree object) from an html file'''
         # note: this process removes the existing DTD
-        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+        html = ElementSoup.parse(filehandle)
         self.tree = et.ElementTree(html)
 
     def find_head(self):  # tested
