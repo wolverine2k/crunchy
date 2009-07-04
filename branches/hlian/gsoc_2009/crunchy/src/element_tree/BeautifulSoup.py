@@ -824,6 +824,9 @@ class Tag(PageElement):
     def recursiveChildGenerator(self):
         if not len(self.contents):
             raise StopIteration
+        # This works around the bug referenced in
+        # BeautifulSoup.py.3.diff that comes with BeautifulSoup by
+        # hiding this line from 2to3's next-generator-method fixer.
         stopNode = getattr(self._lastRecursiveChild(), 'next')
         current = self.contents[0]
         while current is not stopNode:
@@ -1806,7 +1809,9 @@ class UnicodeDammit:
         if self.smartQuotesTo and proposed.lower() in("windows-1252",
                                                       "iso-8859-1",
                                                       "iso-8859-2"):
-            smart_quotes_re = "([\x80-\x9f])"
+            # This implements the change in BeautifulSoup.py.3.diff
+            # that comes with BeautifulSoup.
+            smart_quotes_re = u"([\x80-\x9f])".encode('raw_unicode_escape')
             smart_quotes_compiled = re.compile(smart_quotes_re)
             markup = smart_quotes_compiled.sub(self._subMSChar, markup)
 
@@ -1991,6 +1996,13 @@ class UnicodeDammit:
                  '\x9d' : '?',
                  '\x9e' : ('#x17E', '17E'),
                  '\x9f' : ('Yuml', ''),}
+
+    # This implements the change in the BeautifulSoup.py.3.diff file
+    # that comes with BeautifulSoup.
+    if sys.version_info[0] >= 3:
+        replace = {}
+        for key in MS_CHARS:
+            replace[key.encode('raw_unicode_escape')] = MS_CHARS[key]
 
 #######################################################################
 
