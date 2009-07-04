@@ -831,7 +831,7 @@ class Tag(PageElement):
         current = self.contents[0]
         while current is not stopNode:
             yield current
-            current = current.next
+            current = getattr(current, 'next')
 
     def childGenerator(self):
         if not len(self.contents):
@@ -2003,6 +2003,7 @@ class UnicodeDammit:
         replace = {}
         for key in MS_CHARS:
             replace[key.encode('raw_unicode_escape')] = MS_CHARS[key]
+        MS_CHARS = replace
 
 #######################################################################
 
