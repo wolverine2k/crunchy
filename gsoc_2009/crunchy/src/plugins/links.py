@@ -28,11 +28,13 @@ def external_link(page, elem, *dummy):  # tested
         elem.tail += " "
     else:
         elem.text += " "
-    dummy = SubElement(elem, "img", src="/images/external_link.png",
-                     style="border:0;", alt="external_link.png")
-    elem.attrib['target'] = "_blank" # opens in separate window/tab.
+    dummy = SubElement(elem, "img",
+                       src=u"/images/external_link.png",
+                       style=u"border:0;",
+                       alt=u"external_link.png")
+    elem.attrib['target'] = u"_blank" # opens in separate window/tab.
     # If the links is a relative link, make it absolute
-    if "://" not in elem.attrib["href"]:
+    if u"://" not in elem.attrib["href"]:
         elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
     return
 

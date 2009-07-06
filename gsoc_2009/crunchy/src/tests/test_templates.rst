@@ -45,20 +45,20 @@ Testing merge_elements()
     >>> template = Element("main")
     >>> head = SubElement(template, "head")
     >>> title = SubElement(head, "title")
-    >>> title.text = "This is the title.\n"
+    >>> title.text = u"This is the title.\n"
     >>> body = Element("body")
     >>> template.append(body)
-    >>> div1 = Element("div", id="not this one")
+    >>> div1 = Element("div", id=u"not this one")
     >>> p1 = Element("p")
-    >>> p1.text = "\nKeep this.\n"
+    >>> p1.text = u"\nKeep this.\n"
     >>> div1.append(p1)
-    >>> div2 = Element("div", id="content")
+    >>> div2 = Element("div", id=u"content")
     >>> p2 = Element("p")
-    >>> p2.text = "\nThis is part of the target.\n"
+    >>> p2.text = u"\nThis is part of the target.\n"
     >>> div2.append(p2)
-    >>> div3 = Element("div", id="not that one")
+    >>> div3 = Element("div", id=u"not that one")
     >>> p3 = Element("p")
-    >>> p3.text = "\nThis should be kept.\n"
+    >>> p3.text = u"\nThis should be kept.\n"
     >>> div3.append(p3)
     >>> body.append(div1)
     >>> body.append(div2)
@@ -76,20 +76,20 @@ Testing merge_elements()
     >>> to_combine = Element("main")
     >>> head = SubElement(to_combine, "head")
     >>> title = SubElement(head, "title")
-    >>> title.text = "This is the second title.\n"
+    >>> title.text = u"This is the second title.\n"
     >>> body = Element("body")
     >>> to_combine.append(body)
-    >>> div1a = Element("div", id="not this one")
+    >>> div1a = Element("div", id=u"not this one")
     >>> p1a = Element("p")
-    >>> p1a.text = "\nThis should be discarded.\n"
+    >>> p1a.text = u"\nThis should be discarded.\n"
     >>> div1a.append(p1a)
-    >>> div2a = Element("div", id="content")
+    >>> div2a = Element("div", id=u"content")
     >>> p2a = Element("p")
-    >>> p2a.text = "\nThis should be added.\n"
+    >>> p2a.text = u"\nThis should be added.\n"
     >>> div2a.append(p2a)
-    >>> div3a = Element("div", id="not that one")
+    >>> div3a = Element("div", id=u"not that one")
     >>> p3a = Element("p")
-    >>> p3a.text = "\nThis also should be discarded.\n"
+    >>> p3a.text = u"\nThis also should be discarded.\n"
     >>> div3a.append(p3a)
     >>> body.append(div1a)
     >>> body.append(div2a)

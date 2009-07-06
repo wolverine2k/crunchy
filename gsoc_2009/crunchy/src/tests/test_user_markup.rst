@@ -49,14 +49,14 @@ First, no markup specified.
     >>> config['Crunchy']['no_markup'] = None
     >>> config['Crunchy']['modify_markup'] = False
     >>> user_markup.custom_vlam(page, page.pre, '42')
-    >>> print(tostring(page.pre).replace('>', '>\n'))
+    >>> print(tostring(page.pre).replace(u'>', u'>\n'))
     <pre />
     <BLANKLINE>
 
 Next, some silly markup; we can reuse the same page since it still
 has no markup.
 
-    >>> config['Crunchy']['no_markup'] = "silly"
+    >>> config['Crunchy']['no_markup'] = u"silly"
     >>> page.handlers3["pre"] = {}
     >>> page.handlers3["pre"]["title"] = {}
     >>> page.handlers3["pre"]["title"]["silly"] = repeat_args # fake handler
@@ -64,7 +64,7 @@ has no markup.
     <src.tests.mocks.Page object at ...>
     <Element pre at ...>
     42
-    >>> print(tostring(page.pre).replace('>', '>\n'))
+    >>> print(tostring(page.pre).replace(u'>', u'>\n'))
     <pre title="silly" />
     <BLANKLINE>
 
@@ -73,7 +73,7 @@ are handled properly.
 
     >>> page = mocks.Page(username='Crunchy')
     >>> page.pre = Element("pre")
-    >>> config['Crunchy']['no_markup'] = "Parrots"
+    >>> config['Crunchy']['no_markup'] = u"Parrots"
     >>> page.handlers3["pre"] = {}
     >>> page.handlers3["pre"]["title"] = {}
     >>> page.handlers3["pre"]["title"]["Parrots"] = repeat_args # fake handler
@@ -135,11 +135,13 @@ to make sure that they are ignored when appropriate.
     >>>
 
     >>> elem1 = Element("pre")
-    >>> elem2 = Element("pre", title="one two three")
+    >>> elem2 = Element("pre", title=u"one two three")
     >>> print(elem1.attrib)
     {}
-    >>> print(elem2.attrib)
-    {'title': 'one two three'}
+    >>> len(elem2.attrib)
+    1
+    >>> print(elem2.attrib['title'])
+    one two three
 
 First we test with combinations that do nothing, ignoring any pre-defined rules.
 
@@ -149,11 +151,15 @@ First we test with combinations that do nothing, ignoring any pre-defined rules.
     >>> user_markup.modify_vlam(page, elem1, 'dummy')
     >>> print(elem1.attrib)
     {}
-    >>> print(elem2.attrib)
-    {'title': 'one two three'}
+    >>> len(elem2.attrib)
+    1
+    >>> print(elem2.attrib['title'])
+    one two three
 
  Now, we apply the rules so as to make real changes.
 
     >>> user_markup.modify_vlam(page, elem2, 'dummy')
-    >>> print(elem2.attrib)
-    {'title': 'four three five'}
+    >>> len(elem2.attrib)
+    1
+    >>> print(elem2.attrib['title'])
+    four three five

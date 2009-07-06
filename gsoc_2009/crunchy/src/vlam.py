@@ -76,7 +76,7 @@ class BasePage(object): # tested
         self.head = self.tree.find("head")
         if self.head is None:
             self.head = et.Element("head")
-            self.head.text = " "
+            self.head.text = u" "
             html = self.tree.find("html")
             try:
                 html.insert(0, self.head)
@@ -84,7 +84,6 @@ class BasePage(object): # tested
                 html = self.tree.getroot()
                 assert html.tag == 'html'
                 html.insert(0, self.head)
-        return
 
     def find_body(self):  # tested
         '''finds the body in an html tree; adds one if none is found.
@@ -112,22 +111,27 @@ class BasePage(object): # tested
 
     def add_css_code(self, code):  # tested
         '''inserts styling code in <head>'''
-        css = et.Element("style", type="text/css")
+        assert isinstance(code, unicode)
+
+        css = et.Element(u"style", type=u"text/css")
         css.text = code
         try:
             self.head.insert(0, css)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError, e:
             self.find_head()
             self.head.insert(0, css)
-        return
 
     def add_crunchy_style(self):  # tested
         '''inserts a link to the standard Crunchy style file'''
-        css = et.Element("link", type= "text/css", rel="stylesheet",
-                         href="/css/crunchy.css")
+        css = et.Element("link",
+                         type=u"text/css",
+                         rel=u"stylesheet",
+                         href=u"/css/crunchy.css")
         try:
             self.head.insert(0, css)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.insert(0, css)
         # we inserted first so that it can be overriden by tutorial writer's
@@ -140,7 +144,8 @@ class BasePage(object): # tested
                          href=path)
         try:
             self.head.append(css)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.append(css)
         return
@@ -159,14 +164,15 @@ class BasePage(object): # tested
 
         if styles == {}:
             return
-        style = et.Element("style", type="text/css")
-        style.text = ''
+        style = et.Element("style", type=u"text/css")
+        style.text = u''
         for key in styles:
             if key != 'name':
-                style.text += key + "{" + styles[key] + "}\n"
+                style.text += key + u"{" + styles[key] + u"}\n"
         try:
             self.head.append(style) # has to appear last to override all others.
-        except:   # should never be needed in normal call from CrunchyPage
+        # Should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.append(style)
         return
@@ -174,11 +180,12 @@ class BasePage(object): # tested
     def add_js_code(self, code):  # tested
         ''' includes some javascript code in the <head>.
             This is the preferred method.'''
-        js = et.Element("script", type="text/javascript")
+        js = et.Element("script", type=u"text/javascript")
         js.text = code
         try:
             self.head.append(js)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.append(js)
         return
@@ -188,22 +195,28 @@ class BasePage(object): # tested
            This should only be used for really big scripts
            (like editarea); the preferred method is to add the
            javascript code directly'''
-        js = et.Element("script", src=filename, type="text/javascript")
-        js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
+        js = et.Element("script",
+                        src=filename,
+                        type=u"text/javascript")
+        # prevents premature closing of <script> tag, misinterpreted by Firefox
+        js.text = u" "
         try:
             self.head.insert(0, js)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.insert(0, js)
         return
 
     def add_charset(self):  # tested
         '''adds utf-8 charset information on a page'''
-        meta = et.Element("meta", content="text/html; charset=UTF-8")
-        meta.set("http-equiv", "Content-Type")
+        meta = et.Element("meta",
+                          content=u"text/html; charset=UTF-8")
+        meta.set(u"http-equiv", u"Content-Type")
         try:
             self.head.append(meta)
-        except:   # should never be needed in normal call from CrunchyPage
+        # should never be needed in normal call from CrunchyPage
+        except AttributeError:
             self.find_head()
             self.head.append(meta)
         return

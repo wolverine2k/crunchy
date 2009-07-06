@@ -37,8 +37,8 @@ Testing ElementTree and friends
 The following is incomplete.
 
     >>> elem = interface.Element("p")
-    >>> elem.attrib['class'] = 'crunchy'
-    >>> elem.text = "This is a neat sentence."
+    >>> elem.attrib['class'] = u'crunchy'
+    >>> elem.text = u"This is a neat sentence."
     >>> to_print = interface.tostring(elem)
     >>> print(type(to_print) == unicode)
     True
@@ -46,7 +46,7 @@ The following is incomplete.
     <p class="crunchy">This is a neat sentence.</p>
 
 We create a fake html file
-    >>> html_content = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    >>> html_content = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     ... "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     ... <html>
     ... <head>

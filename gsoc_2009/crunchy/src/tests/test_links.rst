@@ -61,9 +61,9 @@ Testing external_link()
 This function leaves an external link, of the form http://... unchanged,
 except that it adds an image to help the user identify it.
 
-    >>> fake_url_1 = "http://www.python.org"
+    >>> fake_url_1 = u"http://www.python.org"
     >>> a_link = Element('a', href=fake_url_1)
-    >>> a_link.text = "Python"
+    >>> a_link.text = u"Python"
 
 We will first do a test with each page type, with a different number of
 arguments for each.
@@ -84,9 +84,9 @@ Next, we do an example with a more complicated link object, one that
 has a subelement.
 
     >>> a_link = Element('a', href=fake_url_1)
-    >>> a_link.text = " "
-    >>> an_image = SubElement(a_link, 'img', src="logo.png", alt="Python")
-    >>> a_link.tail = "official website"
+    >>> a_link.text = u" "
+    >>> an_image = SubElement(a_link, 'img', src=u"logo.png", alt=u"Python")
+    >>> a_link.tail = u"official website"
     >>> links.external_link(page_default, a_link)
     >>> print(a_link[0].tag)
     img
@@ -101,20 +101,20 @@ For remote site, relative (ie without http://) links must be changed in
 absolute links. Here for relative to the root links:
 
     >>> page_remote.url = "http://python.org/download/"
-    >>> a_link = Element('a', href='/doc/')
-    >>> a_link.text = ""
+    >>> a_link = Element('a', href=u'/doc/')
+    >>> a_link.text = u""
     >>> links.external_link(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'http://python.org/doc/'
+    >>> print(a_link.attrib['href'])
+    http://python.org/doc/
 
 And here for relative to the current page:
 
-    >>> page_remote.url = "http://www.python.org/download/releases/"
-    >>> a_link = Element('a', href='../linux/')
-    >>> a_link.text = ""
+    >>> page_remote.url = u"http://www.python.org/download/releases/"
+    >>> a_link = Element('a', href=u'../linux/')
+    >>> a_link.text = u""
     >>> links.external_link(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'http://www.python.org/download/linux/'
+    >>> print(a_link.attrib['href'])
+    http://www.python.org/download/linux/
 
 .. _`fixed_link()`:
 
@@ -123,43 +123,43 @@ Testing fixed_link()
 
 This function leaves the links unchanged.
 
-    >>> a_link = Element('a', href="path/to/", title="security_link")
+    >>> a_link = Element('a', href=u"path/to/", title=u"security_link")
     >>> links.fixed_link(page_default, a_link)
-    >>> a_link.attrib['href']
-    'path/to/'
+    >>> print(a_link.attrib['href'])
+    path/to/
     >>> links.fixed_link(page_local, a_link)
-    >>> a_link.attrib['href']
-    'path/to/'
+    >>> print(a_link.attrib['href'])
+    path/to/
     >>> links.fixed_link(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'path/to/'
+    >>> print(a_link.attrib['href'])
+    path/to/
 
 .. _`a_tag_handler()`:
 
 Testing a_tag_handler()
 --------------------------
 
-    >>> fake_url_2 = "http://docs.python.org/tut/tut.html#hash"
+    >>> fake_url_2 = u"http://docs.python.org/tut/tut.html#hash"
 
 leave link starting with / unchanged except for remote sites.
 
-    >>> a_link = Element('a', href="/path/to/")
+    >>> a_link = Element('a', href=u"/path/to/")
     >>> links.a_tag_handler(page_default, a_link)
-    >>> a_link.attrib['href']
-    '/path/to/'
+    >>> print(a_link.attrib['href'])
+    /path/to/
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '/path/to/'
-    >>> page_remote.url = "http://www.python.org"
+    >>> print(a_link.attrib['href'])
+    /path/to/
+    >>> page_remote.url = u"http://www.python.org"
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    '/remote?url=http%3A%2F%2Fwww.python.org%2Fpath%2Fto%2F'
+    >>> print(a_link.attrib['href'])
+    /remote?url=http%3A%2F%2Fwww.python.org%2Fpath%2Fto%2F
 
 An exception is if the link has been inserted by Crunchy
-    >>> a_link = Element('a', href="path/to/", title="security_link")
+    >>> a_link = Element('a', href=u"path/to/", title=u"security_link")
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'path/to/'
+    >>> print(a_link.attrib['href'])
+    path/to/
 
 Testing a_tag_handler() for default page
 ------------------------------------------
@@ -168,15 +168,15 @@ External link
 
     >>> a_link = Element('a', href=fake_url_1)
     >>> links.a_tag_handler(page_default, a_link)
-    >>> a_link.attrib['href']
-    '/remote?url=http%3A%2F%2Fwww.python.org'
+    >>> print(a_link.attrib['href'])
+    /remote?url=http%3A%2F%2Fwww.python.org
 
 Relative link, leave unchanged
 
-    >>> a_link = Element('a', href="crunchy_tutor/welcome_en.html")
+    >>> a_link = Element('a', href=u"crunchy_tutor/welcome_en.html")
     >>> links.a_tag_handler(page_default, a_link)
-    >>> a_link.attrib['href']
-    'crunchy_tutor/welcome_en.html'
+    >>> print(a_link.attrib['href'])
+    crunchy_tutor/welcome_en.html
 
 Testing a_tag_handler() for local page
 ----------------------------------------
@@ -185,32 +185,32 @@ External link (with ://)
 
     >>> a_link = Element('a', href=fake_url_1)
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '/remote?url=http%3A%2F%2Fwww.python.org'
+    >>> print(a_link.attrib['href'])
+    /remote?url=http%3A%2F%2Fwww.python.org
 
 
 Relative link
 
-    >>> a_link = Element('a', href="path/to/some_file.htm#hash")
+    >>> a_link = Element('a', href=u"path/to/some_file.htm#hash")
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '/local?url=path%2Fto%2Fsome_file.htm'
+    >>> print(a_link.attrib['href'])
+    /local?url=path%2Fto%2Fsome_file.htm
     >>> page_local.url = a_link.attrib['href']
-    >>> a_link = Element('a', href="some_file.htm#hash")
+    >>> a_link = Element('a', href=u"some_file.htm#hash")
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '#hash'
+    >>> print(a_link.attrib['href'])
+    #hash
 
 Files with extension 'rst' and 'txt'
 
-    >>> a_link = Element('a', href="path/to/some_rst.rst")
+    >>> a_link = Element('a', href=u"path/to/some_rst.rst")
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '/rst?url=//path%2Fto%2Fsome_rst.rst'
-    >>> a_link = Element('a', href="path/to/some_txt.txt")
+    >>> print(a_link.attrib['href'])
+    /rst?url=//path%2Fto%2Fsome_rst.rst
+    >>> a_link = Element('a', href=u"path/to/some_txt.txt")
     >>> links.a_tag_handler(page_local, a_link)
-    >>> a_link.attrib['href']
-    '/rst?url=//path%2Fto%2Fsome_txt.txt'
+    >>> print(a_link.attrib['href'])
+    /rst?url=//path%2Fto%2Fsome_txt.txt
 
 Testing a_tag_handler() for remote page
 -----------------------------------------
@@ -219,31 +219,31 @@ External link (with ://)
 
     >>> a_link = Element('a', href=fake_url_1)
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'http://www.python.org'
+    >>> print(a_link.attrib['href'])
+    http://www.python.org
 
 External link with hash
 
     >>> a_link = Element('a', href=fake_url_2)
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    'http://docs.python.org/tut/tut.html'
+    >>> print(a_link.attrib['href'])
+    http://docs.python.org/tut/tut.html
 
 Relative link
     >>> page_remote.url = ""
-    >>> a_link = Element('a', href="path/to/some_file.htm")
+    >>> a_link = Element('a', href=u"path/to/some_file.htm")
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    '/remote?url=path%2Fto%2Fsome_file.htm'
-    >>> a_link = Element('a', href="path/to/some_file.htm#hash")
+    >>> print(a_link.attrib['href'])
+    /remote?url=path%2Fto%2Fsome_file.htm
+    >>> a_link = Element('a', href=u"path/to/some_file.htm#hash")
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    '/remote?url=path%2Fto%2Fsome_file.htm'
+    >>> print(a_link.attrib['href'])
+    /remote?url=path%2Fto%2Fsome_file.htm
     >>> page_remote.url = a_link.attrib['href']
-    >>> a_link = Element('a', href="some_file.htm#hash")
+    >>> a_link = Element('a', href=u"some_file.htm#hash")
     >>> links.a_tag_handler(page_remote, a_link)
-    >>> a_link.attrib['href']
-    '#hash'
+    >>> print(a_link.attrib['href'])
+    #hash
 
 .. _`link_tag_handler()`:
 
@@ -252,15 +252,15 @@ Testing link_tag_handler()
 
 For remote page , only relative path will be converted .
 
-    >>> page_remote.url = "http://python.org/"
-    >>> link_ele = Element('link', href='http://python.org/path/to/some_file.css')
+    >>> page_remote.url = u"http://python.org/"
+    >>> link_ele = Element('link', href=u"http://python.org/path/to/some_file.css")
     >>> links.link_tag_handler(page_remote, link_ele)
-    >>> link_ele.attrib['href']
-    'http://python.org/path/to/some_file.css'
-    >>> link_ele = Element('link', href="path/to/some_file.css")
+    >>> print(link_ele.attrib['href'])
+    http://python.org/path/to/some_file.css
+    >>> link_ele = Element('link', href=u"path/to/some_file.css")
     >>> links.link_tag_handler(page_remote, link_ele)
-    >>> link_ele.attrib['href']
-    'http://python.org/path/to/some_file.css'
+    >>> print(link_ele.attrib['href'])
+    http://python.org/path/to/some_file.css
 
 For locale page, relative path will be coverted absoulte local path.
 Note: link_tag_handler() may act differently among different OSs , as it use os.path.join.
@@ -274,15 +274,15 @@ Testing src_handler()
 
 It will work just the same as link element.
 
-    >>> src_ele = Element('script', src='http://python.org/path/to/some_js.js')
+    >>> src_ele = Element('script', src=u"http://python.org/path/to/some_js.js")
     >>> links.src_handler(page_remote, src_ele)
-    >>> src_ele.attrib['src']
-    'http://python.org/path/to/some_js.js'
+    >>> print(src_ele.attrib['src'])
+    http://python.org/path/to/some_js.js
     >>> page_remote.url = "http://python.org/"
-    >>> src_ele = Element('script', src="path/to/some_js.js")
+    >>> src_ele = Element('script', src=u"path/to/some_js.js")
     >>> links.src_handler(page_remote, src_ele)
-    >>> src_ele.attrib['src']
-    'http://python.org/path/to/some_js.js'
+    >>> print(src_ele.attrib['src'])
+    http://python.org/path/to/some_js.js
 
 TODO: test local page
 
@@ -293,12 +293,12 @@ Testing style_handler()
 --------------------------
 
 
-    >>> page_default.url = "/crunchy/"
+    >>> page_default.url = u"/crunchy/"
     >>> css_import = Element('style')
-    >>> css_import.text = '@import "some_file.css"'
+    >>> css_import.text = u'@import "some_file.css"'
     >>> links.style_handler(page_default, css_import)
-    >>> css_import.text
-    '@import "/crunchy/some_file.css"'
+    >>> print(css_import.text)
+    @import "/crunchy/some_file.css"
 
 .. _`secure_url()`:
 
@@ -306,8 +306,8 @@ Testing secure_url():
 ------------------------
 
     >>> safe_url = 'http://python.org/some/path/some_file.html'
-    >>> links.secure_url(safe_url)
-    'http://python.org/some/path/some_file.html'
+    >>> print(links.secure_url(safe_url))
+    http://python.org/some/path/some_file.html
     >>> un_safe_url = 'http://python.org/some/path/some_file.html?act=xxx'
-    >>> links.secure_url(un_safe_url)
-    'http://python.org/some/path/some_file.html'
+    >>> print(links.secure_url(un_safe_url))
+    http://python.org/some/path/some_file.html

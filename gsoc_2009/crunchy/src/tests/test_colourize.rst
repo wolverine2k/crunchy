@@ -278,7 +278,7 @@ First, we define and test a function to extract the text content from
 a piece of html code, converting <br/> into "\n"
 
     >>> et = colourize.et
-    >>> sample = "<pre>a\nb<br/>c<span>d</span></pre>"
+    >>> sample = u"<pre>a\nb<br/>c<span>d</span></pre>"
     >>> pre = et.fromstring(sample)
     >>> print(colourize.extract_code(pre))
     a
@@ -300,8 +300,8 @@ We also have a function to extract the value of the linenumber option if present
     2
 
 Next, a function to replace an ElementTree Element "in place".
-    >>> original = '<a b="c">d<e>f</e>g</a>'
-    >>> new = '<aa bb="cc">dd<ee>ff</ee>gg</aa>'
+    >>> original = u'<a b="c">d<e>f</e>g</a>'
+    >>> new = u'<aa bb="cc">dd<ee>ff</ee>gg</aa>'
     >>> elem = et.fromstring(original)
     >>> replacement = et.fromstring(new)
     >>> elem_id = id(elem)
@@ -314,9 +314,10 @@ Next, a function to replace an ElementTree Element "in place".
 Next, we introduce a series of tests of increasing complexity.
 First, some unstyled code.
 
-    >>> sample = '<pre>print "Hello World!"</pre>'
+    >>> sample = u'<pre>print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
-    >>> pre.attrib['title'] = 'py_code'
+    >>> assert et.tostring(pre) == sample
+    >>> pre.attrib['title'] = u'py_code'
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
     >>> print(py_code)
@@ -328,7 +329,7 @@ First, some unstyled code.
 
 
 Next, some simple styled code
-    >>> sample = '<pre title="junk">print "Hello World!"</pre>'
+    >>> sample = u'<pre title="junk">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
@@ -342,7 +343,7 @@ Next, some simple styled code
 In the following example, the order of the attributes is changed by
 ElementTree - at least in the version used for this test.
 
-    >>> sample = '<pre title="junk" tag="other">print <span>"Hello World!"</span></pre>'
+    >>> sample = u'<pre title="junk" tag="other">print <span>"Hello World!"</span></pre>'
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
@@ -354,7 +355,7 @@ ElementTree - at least in the version used for this test.
     </pre>
 
 Finally, a test including the linenumber option
-    >>> sample = '<pre title="junk linenumber=2">print "Hello World!"</pre>'
+    >>> sample = u'<pre title="junk linenumber=2">print "Hello World!"</pre>'
     >>> pre = et.fromstring(sample)
     >>> py_code, new_elem, dummy_error = colourize.style(pre)
     >>> styled = et.tostring(new_elem)
@@ -367,7 +368,7 @@ Finally, a test including the linenumber option
 
 Make sure we parse properly from html tree with a prompt included.
 
-    >>> sample = """<html><body><pre title="py_code">>>> print 'Hello!'</pre></body></html>"""
+    >>> sample = u"""<html><body><pre title="py_code">>>> print 'Hello!'</pre></body></html>"""
     >>> tree = et.fromstring(sample)
     >>> pre2 = tree.find(".//pre")
     >>> pycode, new_elem, dummy_error = colourize.style(pre2)
@@ -381,7 +382,7 @@ Make sure we parse properly from html tree with a prompt included.
 Testing with a <code> element that is followed by some text; this
 tests the proper handling of an Element's "tail".
 
-    >>> sample = """<html><body><p> An embedded code sample as in
+    >>> sample = u"""<html><body><p> An embedded code sample as in
     ...            <code title="py_code">print 'Hi!'
     ...            </code> with a tail.</p></body></html>"""
     >>> tree = et.fromstring(sample)
