@@ -255,7 +255,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         except:
             self.send_response(500)
             self.end_headers()
-            self.wfile.write(format_exc())
+            self.wfile.write(format_exc().encode('utf8'))
 
     # We draw no distinction.
     do_GET = do_POST
