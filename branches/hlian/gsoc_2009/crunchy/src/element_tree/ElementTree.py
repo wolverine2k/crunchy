@@ -199,6 +199,8 @@ class _ElementInterface(object):
 
     def __init__(self, tag, attrib):
         self.tag = tag
+        for key in attrib:
+            assert isinstance(attrib[key], unicode)
         self.attrib = attrib
         self._children = []
 
@@ -364,6 +366,7 @@ class _ElementInterface(object):
     # @param value The attribute value.
 
     def set(self, key, value):
+        assert isinstance(value, unicode)
         self.attrib[key] = value
 
     ##
@@ -464,6 +467,7 @@ def SubElement(parent, tag, attrib={}, **extra):
 # @defreturn Element
 
 def Comment(text=None):
+    assert isinstance(text, unicode)
     element = Element(Comment)
     element.text = text
     return element
@@ -478,9 +482,12 @@ def Comment(text=None):
 # @defreturn Element
 
 def ProcessingInstruction(target, text=None):
+    assert isinstance(target, unicode)
+
     element = Element(ProcessingInstruction)
     element.text = target
     if text:
+        assert isinstance(text, unicode)
         element.text = element.text + u" " + text
     return element
 
@@ -500,6 +507,7 @@ class QName(object):
     def __init__(self, text_or_uri, tag=None):
         if tag:
             text_or_uri = u"{%s}%s" % (text_or_uri, tag)
+        assert isinstance(text_or_uri, unicode)
         self.text = text_or_uri
     def __str__(self):
         return self.text
@@ -564,6 +572,7 @@ class ElementTree(object):
             parser = XMLTreeBuilder()
         while 1:
             data = source.read(32768)
+            assert isinstance(data, unicode)
             if not data:
                 break
             parser.feed(data)
@@ -637,11 +646,11 @@ class ElementTree(object):
 
     def write(self, file, encoding="utf-8"):
         assert self._root is not None
+
         if not hasattr(file, "write"):
             file = codecs.open(file, "w", encoding)
-        if not encoding:
-            encoding = "utf-8"
-        elif encoding not in 'utf8 utf-8 us-ascii'.split():
+
+        if encoding not in 'utf8 utf-8 us-ascii'.split():
             file.write(u"<?xml version='1.0' encoding='%s'?>\n" % encoding)
         self._write(file, self._root, encoding, {})
 
@@ -649,9 +658,9 @@ class ElementTree(object):
         # write XML to file
         tag = node.tag
         if tag is Comment:
-            file.write(u"<!-- %s -->" % _escape_cdata(node.text, encoding))
+            file.write(u"<!-- %s -->" % _escape_cdata(node.text))
         elif tag is ProcessingInstruction:
-            file.write(u"<?%s?>" % _escape_cdata(node.text, encoding))
+            file.write(u"<?%s?>" % _escape_cdata(node.text))
         else:
             items = node.items()
             xmlns_items = [] # new namespaces in this scope
@@ -678,17 +687,17 @@ class ElementTree(object):
                     except TypeError:
                         _raise_serialization_error(v)
                     file.write(u" %s=\"%s\"" % (k,
-                                               _escape_attrib(v, encoding)))
+                                               _escape_attrib(v)))
                 for k, v in xmlns_items:
                     file.write(u" %s=\"%s\"" % (k,
-                                               _escape_attrib(v, encoding)))
+                                               _escape_attrib(v)))
             ### following line modified from original for Crunchy
             # by preventing divs from self-closing, we can display
             # sites such as www.python.org properly.
             if node.text != None or len(node) or tag==u'div':
                 file.write(u">")
                 if node.text:
-                    file.write(_escape_cdata(node.text, encoding))
+                    file.write(_escape_cdata(node.text))
                 for n in node:
                     self._write(file, n, encoding, namespaces)
                 file.write(u"</" + tag + u">")
@@ -697,7 +706,7 @@ class ElementTree(object):
             for k, v in xmlns_items:
                 del namespaces[v]
         if node.tail:
-            file.write(_escape_cdata(node.tail, encoding))
+            file.write(_escape_cdata(node.tail))
 
 # --------------------------------------------------------------------
 # helpers
@@ -746,12 +755,6 @@ def dump(elem):
     if not tail or tail[-1] != u"\n":
         sys.stdout.write(u"\n")
 
-def _encode(s, encoding):
-    try:
-        return s.encode(encoding)
-    except AttributeError:
-        return s # 1.5.2: assume the string uses the right encoding
-
 _escape = re.compile(ur'[&<>"\u0080-\uffff]+', re.U)
 
 _escape_map = {
@@ -774,32 +777,12 @@ def _raise_serialization_error(text):
         "cannot serialize %r (type %s)" % (text, type(text).__name__)
         )
 
-def _encode_entity(text, pattern=_escape):
-    # map reserved and non-ascii characters to numerical entities
-    def escape_entities(m, map=_escape_map):
-        out = []
-        append = out.append
-        for char in m.group():
-            text = map.get(char)
-            if text is None:
-                text = u"&#%d;" % ord(char)
-            append(text)
-        return u"".join(out)
-    try:
-        return pattern.sub(escape_entities, text)
-    except TypeError:
-        _raise_serialization_error(text)
-
-#
-# the following functions assume an ascii-compatible encoding
-# (or "utf-16")
-
-def _escape(text, encoding, replacements):
+def _escape(text, replacements):
     # escape attribute value
-    try:
-        if not isinstance(text, unicode):
-            text = text.decode(encoding)
 
+    assert isinstance(text, unicode)
+
+    try:
         for replacement in replacements:
             oldstr, newstr = replacement.split()
             text = text.replace(oldstr, newstr)
@@ -808,11 +791,11 @@ def _escape(text, encoding, replacements):
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
 
-def _escape_cdata(text, encoding=None):
-    return _escape(text, encoding, CDATA_REPLACEMENTS)
+def _escape_cdata(text):
+    return _escape(text, CDATA_REPLACEMENTS)
 
-def _escape_attrib(text, encoding=None):
-    return _escape(text, encoding, ATTRIB_REPLACEMENTS)
+def _escape_attrib(text):
+    return _escape(text, ATTRIB_REPLACEMENTS)
 
 def fixtag(tag, namespaces):
     # given a decorated tag (of the form {uri}tag), return prefixed
@@ -893,7 +876,7 @@ class iterparse(object):
             elif event == "start-ns":
                 def handler(prefix, uri, event=event, append=append):
                     try:
-                        uri = _encode(uri, "utf-8")
+                        uri = uri.encode("utf-8")
                     except UnicodeError:
                         pass
                     append((event, (prefix or u"", uri)))
@@ -939,11 +922,13 @@ class iterparse(object):
 # Parses an XML document from a string constant.  This function can
 # be used to embed "XML literals" in Python code.
 #
-# @param source A string containing XML data.
+# @param source A Unicode string containing XML data.
 # @return An Element instance.
 # @defreturn Element
 
 def XML(text):
+    assert isinstance(text, unicode)
+
     parser = XMLTreeBuilder()
     parser.feed(text)
     return parser.close()
@@ -957,6 +942,8 @@ def XML(text):
 # @defreturn (Element, dictionary)
 
 def XMLID(text):
+    assert isinstance(text, unicode)
+
     parser = XMLTreeBuilder()
     parser.feed(text)
     tree = parser.close()
@@ -983,7 +970,7 @@ fromstring = XML
 #
 # @param element An Element instance.
 # @return An encoded string containing the XML data.
-# @defreturn string
+# @defreturn Unicode string
 
 def tostring(element, encoding='utf-8'):
     data = []

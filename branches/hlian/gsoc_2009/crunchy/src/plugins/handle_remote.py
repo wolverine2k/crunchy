@@ -61,11 +61,17 @@ def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     '''inserts a form to load a remote page'''
     # in general, page and uid are used by similar plugins, but they are
     # redundant here.
-    form = SubElement(parent, 'form', name='url', size='80', method='get',
-                       action='/remote')
-    SubElement(form, 'input', name='url', size='80',
-                           value=parent.text)
-    input2 = SubElement(form, 'input', type='submit',
-                           value='Load remote tutorial')
-    input2.attrib['class'] = 'crunchy'
-    parent.text = ' '
+    form = SubElement(parent, 'form',
+                      name=u'url',
+                      size=u'80',
+                      method=u'get',
+                      action=u'/remote')
+    SubElement(form, 'input',
+               name=u'url',
+               size=u'80',
+               value=parent.text)
+    input2 = SubElement(form, 'input',
+                        type=u'submit',
+                        value=u'Load remote tutorial')
+    input2.attrib['class'] = u'crunchy'
+    parent.text = u' '

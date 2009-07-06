@@ -22,28 +22,28 @@ def register(): # tested
 def create_empty_menu(): # tested
     '''creates the basic menu structure including only the title'''
     menu = Element('div')
-    menu.attrib['class'] = "crunchy_menu"
+    menu.attrib['class'] = u"crunchy_menu"
     _ul = SubElement(menu, "ul")
     _li = SubElement(_ul, "li")
-    _li.text = _("Crunchy Menu")
+    _li.text = _(u"Crunchy Menu")
     menu_items = SubElement(_li, "ul")
     return menu, menu_items
 
 def create_home():  # tested
     '''creates the home element for the menu'''
     home = Element("li")
-    a = SubElement(home, "a", href="/index.html")
-    a.text = _("Crunchy Home")
+    a = SubElement(home, "a", href=u"/index.html")
+    a.text = _(u"Crunchy Home")
     return home
 
 quit_random_id = str(int(random.random()*1000000000)) + str(
                                            int(random.random()*1000000000))
-server['exit'] = "/exit" + quit_random_id
+server['exit'] = u"/exit" + quit_random_id
 def create_quit(): # tested
     '''creates the quit element for the menu'''
     Quit = Element("li")
     a = SubElement(Quit, "a", href=server['exit'])
-    a.text = _("Quit Crunchy")
+    a.text = _(u"Quit Crunchy")
     return Quit
 
 def insert_menu(page): # tested

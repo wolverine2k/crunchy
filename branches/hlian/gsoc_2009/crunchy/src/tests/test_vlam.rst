@@ -36,6 +36,7 @@ See how_to.rst_ for details.
     >>> import sys
     >>> from StringIO import StringIO
     >>> from src.interface import Element, plugin, config, from_comet
+    >>> from src.interface import ElementTree as et
     >>> from src.utilities import uidgen
     >>> plugin.clear()
     >>> config.clear()
@@ -218,7 +219,7 @@ Testing includes()
 Testing add_css_code()
 -----------------------
 
-    >>> sample = "pre{font:1000pt;}"
+    >>> sample = u"pre{font:1000pt;}"
     >>> no_body = u'<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_css_code(sample)
@@ -230,6 +231,7 @@ proper insertion of css code.
 
     >>> no_body = u'<html></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
+    >>> assert output(page_no_body)
     >>> page_no_body.add_css_code(sample)
     >>> print(output(page_no_body))
     <html><head> <style type="text/css">pre{font:1000pt;}</style></head></html>
@@ -295,7 +297,7 @@ Next, some null styling is defined.
 
 Finally, some real styling is defined.
 
-    >>> config['styles'] = {'pre': 'font:1000pt;', 'body': 'color: red;'}
+    >>> config['styles'] = {'pre': u'font:1000pt;', 'body': u'color: red;'}
     >>> page_no_body.add_user_style()
     >>> print(output(page_no_body))
     <html><head>brain<title>Hi!</title><style type="text/css">pre{font:1000pt;}
@@ -305,7 +307,7 @@ Finally, some real styling is defined.
 Testing add_js_code()
 ---------------------
 
-    >>> sample = "alert(Crunchy!);"
+    >>> sample = u"alert(Crunchy!);"
     >>> no_body = u'<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_js_code(sample)
@@ -328,7 +330,7 @@ Testing insert_js_file()
 
     >>> no_body = u'<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
-    >>> page_no_body.insert_js_file('smart.js')
+    >>> page_no_body.insert_js_file(u'smart.js')
     >>> print(output(page_no_body))
     <html><head>brain<script src="smart.js" type="text/javascript"> </script></head></html>
 
@@ -337,7 +339,7 @@ proper insertion of javascript code.
 
     >>> no_body = u'<html></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
-    >>> page_no_body.insert_js_file('smart.js')
+    >>> page_no_body.insert_js_file(u'smart.js')
     >>> print(output(page_no_body))
     <html><head> <script src="smart.js" type="text/javascript"> </script></head></html>
 

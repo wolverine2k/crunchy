@@ -78,7 +78,7 @@ def service_style_nostrip(dummy_page, elem, css_class='crunchy'):
 
 #--------Begin ElementTree dependent part-------------
 
-def style(elem, css_class='crunchy', no_strip=False): # tested
+def style(elem, css_class=u'crunchy', no_strip=False): # tested
     """
     style some Python code (adding html markup) and return it inside the
     original html element (<pre> or <code>, most likely) with attributes
@@ -126,22 +126,12 @@ def style(elem, css_class='crunchy', no_strip=False): # tested
 
     # re-creating element
     tag = elem.tag
-    new_html = "<%s>\n%s\n</%s>" % (tag, styled_code, tag)
-    try:
-        new_elem = et.fromstring(new_html)
-    except:
-        new_html = new_html.encode('utf-8')
-        try:
-            new_elem = et.fromstring(new_html)
-        except:
-            sp = et.Element("span")
-            sp.attrib['class'] = "py_warning"
-            sp.text = _("Crunchy: could not style the following code")
-            return '', '', sp
+    new_html = u"<%s>\n%s\n</%s>" % (tag, styled_code, tag)
+    new_elem = et.fromstring(new_html)
     new_elem.attrib = dict(elem.attrib) # quick *copy* of a dict!
     if 'class' in new_elem.attrib:
         if 'crunchy' not in new_elem.attrib['class']:
-            new_elem.attrib['class'] += ' ' + css_class
+            new_elem.attrib['class'] += u' ' + css_class
     else:
         new_elem.attrib['class'] = css_class
     new_elem.tail = tail

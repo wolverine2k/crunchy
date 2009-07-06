@@ -47,7 +47,7 @@ Finally, we will create some utility functions that we will use repeatedly.
     ...    head = SubElement(root, "head")
     ...    title = SubElement(head, "title")
     ...    body = SubElement(root, "body")
-    ...    body.text = "Crunchy is neat!"
+    ...    body.text = u"Crunchy is neat!"
     ...    if add_to_head is not None:
     ...       head.append(add_to_head)
     ...    if add_to_body is not None:
@@ -81,7 +81,7 @@ We will continue with more tests, comparing "strings" before and after the secur
 For the next step, we add some javascript which should definitely be removed.
 
     >>> script = Element('script')
-    >>> script.text = "nasty stuff"
+    >>> script.text = u"nasty stuff"
     >>> bad_tree, bad_tree_string = new_tree(add_to_head=script)
     >>> 'script' in bad_tree_string
     True
@@ -97,7 +97,7 @@ Next, we repeat this for all security levels.
     >>> for level in security_levels:
     ...    page.url = level
     ...    script = Element('script')
-    ...    script.text = "nasty stuff"
+    ...    script.text = u"nasty stuff"
     ...    bad_tree, bad_tree_string = new_tree(add_to_head=script)
     ...    if not 'script' in bad_tree_string:
     ...        print("javascript not inserted properly")
@@ -114,12 +114,12 @@ We create a tree with all allowed attributes under 'strict' conditions.
 We then clean up this tree.  Nothing should be removed.
 
     >>> div = Element('div')
-    >>> page.url = 'strict'
+    >>> page.url = u'strict'
     >>> allowed = security.allowed_attributes['strict']
     >>> for tag in allowed:
     ...     elem = SubElement(div, tag)
     ...     for attr in allowed[tag]:
-    ...         elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...         elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> strict_tree, strict_tree_string = new_tree(add_to_body=div)
     >>> security.remove_unwanted(strict_tree, page)
     >>> cleaned_string = to_string(strict_tree)
@@ -129,12 +129,12 @@ We then clean up this tree.  Nothing should be removed.
 A tree created under 'display strict' conditions should yield the same result.
 
     >>> div = Element('div')
-    >>> page.url = 'display strict'
+    >>> page.url = u'display strict'
     >>> allowed = security.allowed_attributes['display strict']
     >>> for tag in allowed:
     ...     elem = SubElement(div, tag)
     ...     for attr in allowed[tag]:
-    ...         elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...         elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> d_strict_tree, d_strict_tree_string = new_tree(add_to_body=div)
     >>> d_strict_tree_string == strict_tree_string
     True
@@ -145,13 +145,13 @@ nor can we validate <link>, and we only allow some specific values for <meta>.
 We will need to treat these separately later.
 
     >>> div = Element('div')
-    >>> page.url = 'normal'
+    >>> page.url = u'normal'
     >>> allowed = security.allowed_attributes['normal']
     >>> for tag in allowed:
-    ...     if tag not in ['img', 'meta', 'link']:
+    ...     if tag not in u'img meta link'.split():
     ...         elem = SubElement(div, tag)
     ...         for attr in allowed[tag]:
-    ...            elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...            elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> normal_tree, normal_tree_string = new_tree(add_to_body=div)
     >>> security.remove_unwanted(normal_tree, page)
     >>> cleaned_normal_string = to_string(normal_tree)
@@ -161,13 +161,13 @@ We will need to treat these separately later.
 Then the 'display normal' test which should yield the same result as "normal".
 
     >>> div = Element('div')
-    >>> page.url = 'display normal'
+    >>> page.url = u'display normal'
     >>> allowed = security.allowed_attributes['display normal']
     >>> for tag in allowed:
-    ...     if tag not in ['img', 'meta', 'link']:
+    ...     if tag not in u'img meta link'.split():
     ...         elem = SubElement(div, tag)
     ...         for attr in allowed[tag]:
-    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...             elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> d_normal_tree, d_normal_tree_string = new_tree(add_to_body=div)
     >>> d_normal_tree_string == normal_tree_string
     True
@@ -177,13 +177,13 @@ basically the same as for normal, except that we do not validate <img> nor <link
 Therefore, we can keep them in.
 
     >>> div = Element('div')
-    >>> page.url = 'trusted'
+    >>> page.url = u'trusted'
     >>> allowed = security.allowed_attributes['trusted']
     >>> for tag in allowed:
     ...     if tag != 'meta':
     ...         elem = SubElement(div, tag)
     ...         for attr in allowed[tag]:
-    ...            elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...            elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> trusted_tree, trusted_tree_string = new_tree(add_to_body=div)
     >>> security.remove_unwanted(trusted_tree, page)
     >>> cleaned_trusted_string = to_string(trusted_tree)
@@ -199,7 +199,7 @@ Then the 'display trusted'
     ...     if tag != 'meta':
     ...         elem = SubElement(div, tag)
     ...         for attr in allowed[tag]:
-    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...             elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> d_trusted_tree, d_trusted_tree_string = new_tree(add_to_body=div)
     >>> d_trusted_tree_string == trusted_tree_string
     True
@@ -210,7 +210,7 @@ same as a "normal" one, by selecting a different security mode for the page.
 
     >>> trusted_tree_string == normal_tree_string  # they are not the same originally
     False
-    >>> page.url = 'normal'
+    >>> page.url = u'normal'
     >>> security.remove_unwanted(trusted_tree, page)
     >>> trusted_to_normal_string = to_string(trusted_tree)
     >>> trusted_to_normal_string == normal_tree_string  # now, they should be the same
@@ -220,13 +220,13 @@ Finally, let's do another comparison...
 We first create a "normal" tree with no <style> tag.
 
     >>> div = Element('div')
-    >>> page.url = 'normal'
+    >>> page.url = u'normal'
     >>> allowed = security.allowed_attributes['normal']
     >>> for tag in allowed:
     ...     if tag != 'style':
     ...         elem = SubElement(div, tag)
     ...         for attr in allowed[tag]:
-    ...             elem.attrib[attr] = tag + '_' + attr   # just because...
+    ...             elem.attrib[attr] = tag + u'_' + attr   # just because...
     >>> new_normal_tree, new_normal_tree_string = new_tree(add_to_body=div)
 
 
