@@ -4,6 +4,7 @@ Page template plugin.
 Enable the use of a template for tutorial pages.
 '''
 
+import codecs
 import copy
 import os
 from src.vlam import BasePage
@@ -44,7 +45,7 @@ def return_template(page, elem):
         url = os.path.normpath(os.path.join(base_dir, url))
     if url not in _templates:
         try:
-            filehandle = open(url)
+            filehandle = codecs.open(url, encoding='utf8')
         except:
             print "In merge_with_template, can not open url =", url
             return None
