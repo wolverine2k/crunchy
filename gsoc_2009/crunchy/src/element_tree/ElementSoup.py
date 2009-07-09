@@ -48,20 +48,22 @@ def unescape(string):
             return m.group(0) # use as is
     return pattern.sub(unescape_entity, string)
 
-##
-# Loads an XHTML or HTML file into an Element structure, using Leonard
-# Richardson's tolerant BeautifulSoup parser.
-#
-# @param file Source file (either a file object or a file name). On
-# Python 2, this must be a filehandle that returns Unicode, such as
-# the one returned by codecs or a StringIO constructed from a Unicode
-# string. Will raise an AssertionError otherwise.
-# @param builder Optional tree builder.  If omitted, defaults to the
-#     "best" available <b>TreeBuilder</b> implementation.
-# @return An Element instance representing the HTML root element.
-
 def parse(file, builder=None):
+    """Loads an XHTML or HTML file into an Element structure, using
+    Leonard Richardson's tolerant BeautifulSoup parser.
+
+    @param file Source file (a file object). Even on Python 2, this must
+        be a filehandle that returns Unicode (see the codecs module),
+        such as the one returned by codecs or a StringIO constructed
+        from a Unicode string. Will raise an AssertionError otherwise.
+    @param builder Optional tree builder. If omitted, defaults to the
+        "best" available <b>TreeBuilder</b> implementation.
+    @return An Element instance representing the HTML root element."""
+
     bob = builder
+    if bob == None:
+        bob = ET.TreeBuilder()
+
     def emit(soup):
         if isinstance(soup, BS.NavigableString):
             if isinstance(soup, ignorable_soup):
@@ -74,21 +76,18 @@ def parse(file, builder=None):
                 emit(s)
             bob.end(soup.name)
 
-    if not hasattr(file, "read"):
-        file = open(file)
-
     text = file.read()
     assert isinstance(text, unicode)
     soup = BS.BeautifulSoup(text)
 
     # build the tree
-    if not bob:
-        bob = ET.TreeBuilder()
     emit(soup)
     root = bob.close()
+
     # wrap the document in a html root element, if necessary
     if len(root) == 1 and root[0].tag == "html":
         return root[0]
+
     root.tag = "html"
     return root
 
