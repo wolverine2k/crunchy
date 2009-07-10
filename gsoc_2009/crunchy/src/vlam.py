@@ -4,22 +4,26 @@ perform vlam substitution
 sets up the page and calls appropriate plugins
 """
 
+import codecs
+import traceback
 from StringIO import StringIO
-from traceback import print_exc
 from os.path import join
 
 from src.security import remove_unwanted
+from src.utilities import uidgen
 
 # Third party modules - included in crunchy distribution
 from src.element_tree import ElementSoup
 from src.interface import ElementTree, config, from_comet, plugin
 et = ElementTree
 
-from src.utilities import uidgen
 import src.interface as interface
 
-DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
-'"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
+DTD = u"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n"""
+
+TRACE = u"""Please file a bug report at http://code.google.com/p/crunchy/issues/list
+================================================================================
+"""
 
 # The purpose of the following class is to facilitate unit testing.  It can
 # be initialized with no further action taking place, and each method
@@ -28,18 +32,17 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 # the required processing automatically.
 
 def handle_exception(full_page=True):
-    '''basic handler for exceptions'''
+    '''Basic handler for exceptions.'''
+
     root_path = join(plugin['get_root_dir'](), "server_root/")
     if full_page:
-        exception_file = join(root_path, "exception.html")
-        text = open(exception_file).read()
+        path = join(root_path, "exception.html")
+        text = codecs.open(path, encoding='utf8').read()
     else:
-        text = "TRACEBACK"
-    tmp = StringIO()
-    print_exc(file=tmp)
-    text = text.replace("TRACEBACK",
-        "Please file a bug report at http://code.google.com/p/crunchy/issues/list\n"
-        + "="*80 + "\n" + tmp.getvalue())
+        text = u"TRACEBACK"
+
+    trace = traceback.format_exc()
+    text = text.replace(u"TRACEBACK", TRACE + trace)
     return text
 
 class BasePage(object): # tested
@@ -329,7 +332,7 @@ class BasePage(object): # tested
         '''create fake file from a tree, adding DTD and charset information
            and return its value as a string'''
         fake_file = StringIO()
-        fake_file.write(DTD + '\n')
+        fake_file.write(DTD + u'\n')
         self.add_charset()
         try:
             self.tree.write(fake_file)
