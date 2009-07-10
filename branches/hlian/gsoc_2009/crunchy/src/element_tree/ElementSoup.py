@@ -94,7 +94,17 @@ def parse(file, builder=None):
 if __name__ == "__main__":
     import sys
     source = sys.argv[1]
+
     if source.startswith("http:"):
         import urllib
-        source = urllib.urlopen(source)
+        from StringIO import StringIO
+        req = urllib.urlopen(source)
+        encoding = req.headers['content-type']
+        encoding = encoding.split('charset=')[-1]
+        source = req.read().decode(encoding)
+        source = StringIO(source)
+    else:
+        import codecs
+        source = codecs.open(source, encoding='utf8')
+
     print ET.tostring(parse(source))
