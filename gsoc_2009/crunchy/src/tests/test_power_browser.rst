@@ -12,7 +12,10 @@ power_browser.py has has the following functions that require testing:
 
 
 
-    >>> from src.interface import plugin, config, Element, tostring
+    >>> from src.interface import (
+    ...     plugin, config, Element, tostring,
+    ...     additional_menu_items)
+    >>> from src.interface import ElementTree as et
     >>> import src.utilities
     >>> src.utilities.COUNT = 0
     >>> plugin.clear()
@@ -96,3 +99,10 @@ None should yield the same result.
     >>> print(tostring(page.body))
     <body />
 
+Testing add_browsing_to_menu
+============================
+
+    >>> pb.add_browsing_to_menu(dummy=None)
+    >>> assert 'browsing' in additional_menu_items
+    >>> print(et.tostring(additional_menu_items['browsing']))
+    <li><a href="/docs/basic_tutorial/browsing.html">Browsing</a></li>
