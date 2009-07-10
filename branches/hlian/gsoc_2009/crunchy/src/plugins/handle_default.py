@@ -71,7 +71,17 @@ def path_to_filedata(path, root, username=None):
         extension = npath.split('.')[-1]
         creator = plugin['create_vlam_page']
         if extension in ["htm", "html"]:
-            text = creator(codecs.open(npath, encoding='utf8'), path, username)
+            try:
+                text = creator(codecs.open(npath, encoding='utf8'),
+                               path,
+                               username)
+            except UnicodeDecodeError:
+                # A few files are stored in ISO-8859-1, as per the
+                # functional test.
+                text = creator(codecs.open(npath, encoding='iso-8859-1'),
+                               path,
+                               username)
+
             text = text.read().encode('utf8')
             return text
         elif extension in preprocessor:
