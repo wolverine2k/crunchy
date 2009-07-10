@@ -104,9 +104,8 @@ def main_deep_copy(src, dst):
             # case it conflicts with newer .py files.
             if paths.exists(b):
                 os.remove(b)
-            continue
 
-        if ext in ('.py', '.rst'):
+        elif ext in ('.py', '.rst'):
             # os.path.join thinks "b" is a directory and does the
             # wrong thing here.
             bak = b + '.bak'
@@ -132,7 +131,7 @@ def main_deep_copy(src, dst):
                 main_copy(a, b, opts=['-d'])
 
         else:
-            if not filecmp.cmp(a, b):
+            if not paths.exists(b) or not filecmp.cmp(a, b):
                 copy(a, b)
 
 def main():
