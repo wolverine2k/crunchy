@@ -19,24 +19,29 @@ def register():
 def add_configuration_to_menu(page):
     '''adds a menu item allowing the user to choose the preferences'''
     menu_item = Element("li")
-    link = SubElement(menu_item, 'a', href="/docs/basic_tutorial/preferences.html")
-    link.text = _("Preferences")
+    link = SubElement(menu_item, 'a',
+                      href=u"/docs/basic_tutorial/preferences.html")
+    link.text = _(u"Preferences")
     additional_menu_items['preferences'] = menu_item
 
 def insert_preferences(page, elem, uid):
-    '''insert the requested preference choosers on a page'''
+    '''Inserts the requested preference choosers on a page.'''
+
     if not page.includes("set_config"):
         page.add_include("set_config")
         page.add_js_code(set_config_jscode)
+
     # The original div in the raw html page may contain some text
     # as a visual reminder that we need to remove here.
-    elem.text = ''
-    elem.attrib['class'] = 'config_gui'
+    elem.text = u''
+    elem.attrib['class'] = u'config_gui'
+
     parent = SubElement(elem, 'table')
     username = page.username
-    to_show = elem.attrib['title'].split(' ')
+    to_show = elem.attrib['title'].split(u' ')
     if len(to_show) == 1: # choices = "preferences"; all values are shown
-        to_show = ['boolean', 'multiple_choice', 'user_defined']
+        to_show = u'boolean multiple_choice user_defined'.split()
+
     show(parent, username, uid, to_show)
     return
 
@@ -64,10 +69,6 @@ def show(parent, username, uid, to_show=None):
             if (_type in to_show) or (key in to_show):
                 keys.append(key)
 
-    #for key in configuration.options:
-    #    _type = select_option_type(key, username, uid)
-    #    if (_type in to_show) or (key in to_show):
-    #        keys.append(key)
     keys.sort()
     for key in keys:
         ConfigOption.all_options[key].render(parent)
@@ -80,19 +81,19 @@ def select_option_type(key, username, uid, allowed_options=configuration.options
     if key in config[username] and key not in excluded:
         if set(allowed_options[key]) == set((True, False)):
             BoolOption(key, config[username][key], username, uid)
-            _type = 'boolean'
+            _type = u'boolean'
         elif ANY in allowed_options[key]:
             StringOption(key, config[username][key], username, uid)
-            _type = 'user_defined'
+            _type = u'user_defined'
         elif key in allowed_options:
             MultiOption(key, config[username][key], allowed_options[key],
                         username, uid)
-            _type = 'multiple_choice'
+            _type = u'multiple_choice'
         else:
-            print "Unexpected error in select_option_type; option = ", key
-            print "not found in configuration.options but found in config[]."
+            print u"Unexpected error in select_option_type; option = ", key
+            print u"not found in configuration.options but found in config[]."
     else:
-        print key, "is not a valid configuration option"
+        print key, u"is not a valid configuration option"
         return False
     return _type
 
@@ -105,7 +106,11 @@ class ConfigOption(object):
     all_options = {}
 
     def __init__(self, key, initial, username=None, uid=None):
-        self.key = key
+        # Most keys are bytestrings in Python 2 being that they come
+        # from keys in the config dict, and it's much too tedious to
+        # give all of them a Unicode literal. As long as they're all
+        # ASCII, this should work instead.
+        self.key = unicode(key)
         self.uid = uid
         self.username = username
         self.set(initial)
@@ -119,6 +124,22 @@ class ConfigOption(object):
         """sets and saves the value of the option"""
         self.value = value
         get_prefs(self.username)._save_settings(self.key, value)
+
+    def onchange(self, value=None):
+        onchange = u"set_config('%s', '%s');"
+        onchange = onchange % (self.id(value), self.key)
+        return onchange
+
+    def id(self, value=None):
+        if value:
+            _id = unicode(self.uid) + u"__VALUE__" + unicode(value)
+        else:
+            _id = unicode(self.uid) + u"__KEY__" + unicode(self.key)
+        return _id
+
+    @property
+    def prefs_class(self):
+        return get_prefs(self.username).__class__
 
 class MultiOption(ConfigOption):
     """An option that has multiple predefined choices
@@ -147,44 +168,46 @@ class MultiOption(ConfigOption):
         values = self.get_values()
         row = SubElement(elem, 'tr')
         option = SubElement(row, 'td')
+
         # we use a unique id, rather than simply the key, in case two
         # identical preference widgets are on the same page...
         if len(values) <= MultiOption.threshold:
-            option.text = "%s: " % self.key
+            option.text = u"%s: " % self.key
             SubElement(option, 'br')
             form = SubElement(option, 'form')
             for value in values:
-                _id = str(self.uid) + "__VALUE__" + str(value)
                 input = SubElement(form, 'input',
-                    type = 'radio',
+                    type = u'radio',
                     name = self.key,
-                    id = _id,
-                    onchange = "set_config('%(id)s', '%(key)s');" \
-                        % {'id': _id, 'key': self.key},
+                    id = self.id(value),
+                    onchange = self.onchange(value),
                 )
                 if value == self.get():
-                    input.attrib['checked'] = 'checked'
+                    input.attrib['checked'] = u'checked'
+
                 label = SubElement(form, 'label')
-                label.attrib['for'] = "%s_%s" % (self.key, str(value))
-                label.text = str(value)
+                label.attrib['for'] = u"%s_%s" % (self.key, unicode(value))
+                label.text = unicode(value)
                 SubElement(form, 'br')
         else:
-            _id = str(self.uid) + "__KEY__" + str(self.key)
             label = SubElement(option, 'label')
             label.attrib['for'] = self.key
-            label.text = "%s: " % self.key
+            label.text = u"%s: " % self.key
+
             select = SubElement(option, 'select',
                 name = self.key,
-                id = _id,
-                onchange = "set_config('%s', '%s');" % (_id, self.key)
+                id = self.id(),
+                onchange = self.onchange(),
             )
             for value in values:
-                select_elem = SubElement(select, 'option', value = str(value))
+                select_elem = SubElement(select, 'option',
+                                         value = unicode(value))
                 if value == self.get():
-                    select_elem.attrib['selected'] = 'selected'
-                select_elem.text = str(value) # str( ) is needed for None
+                    select_elem.attrib['selected'] = u'selected'
+                select_elem.text = unicode(value) # needed for None
+
         desc = SubElement(row, 'td')
-        desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
+        desc.text = unicode(getattr(self.prefs_class, self.key).__doc__)
 
 class BoolOption(ConfigOption):
     """An option that has two choices [True, False]
@@ -193,22 +216,25 @@ class BoolOption(ConfigOption):
         """render the widget to a particular file object"""
         row = SubElement(elem, 'tr')
         option = SubElement(row, 'td')
+
         # we use a unique id, rather than simply the key, in case two
         # identical preference widgets are on the same page...
-        _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'checkbox',
             name = self.key,
-            id = _id,
-            onchange = "set_config('%s', '%s');" % (_id, self.key)
+            id = self.id(),
+            onchange = self.onchange(),
         )
+
         if self.get():
-            input.attrib['checked'] = 'checked'
+            input.attrib['checked'] = u'checked'
+
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
         label.text = self.key
+
         desc = SubElement(row, 'td')
-        desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
+        desc.text = unicode(getattr(self.prefs_class, self.key).__doc__)
 
     def set(self, value):
         """Define the value of the option
@@ -231,20 +257,21 @@ class StringOption(ConfigOption):
         option = SubElement(row, 'td')
         label = SubElement(option, 'label')
         label.attrib['for'] = self.key
-        label.text = "%s: " % self.key
+        label.text = u"%s: " % self.key
+
         # we use a unique id, rather than simply the key, in case two
         # identical preference widgets are on the same page...
-        _id = str(self.uid) + "__KEY__" + str(self.key)
         input = SubElement(option, 'input',
             type = 'text',
-            id = _id,
+            id = self.id(),
             name = self.key,
             value = self.get(),
-            onchange = "set_config('%s', '%s');" % (_id, self.key)
+            onchange = self.onchange(),
         )
-        input.attrib['class'] = 'config_gui'
+        input.attrib['class'] = u'config_gui'
+
         desc = SubElement(row, 'td')
-        desc.text = str(getattr(get_prefs(self.username).__class__, self.key).__doc__)
+        desc.text = unicode(getattr(self.prefs_class, self.key).__doc__)
 
 set_config_jscode = """
 function set_config(id, key){
