@@ -198,6 +198,9 @@ class BasePage(object): # tested
            This should only be used for really big scripts
            (like editarea); the preferred method is to add the
            javascript code directly'''
+
+        assert isinstance(filename, unicode)
+
         js = et.Element("script",
                         src=filename,
                         type=u"text/javascript")
@@ -390,7 +393,7 @@ class CrunchyPage(BasePage):
             return
 
         # adding the javascript for communication between the browser and the server
-        self.insert_js_file("/javascript/jquery.js")
+        self.insert_js_file(u"/javascript/jquery.js")
         self.add_js_code(comet_js % self.pageid)
 
         # Extra styling
@@ -426,7 +429,7 @@ class CrunchyPage(BasePage):
 
 
 # jquery compatible javascript:
-comet_js = """
+comet_js = u"""
 function runOutput(channel){
     $.ajax({type : "GET",
             url : "/comet?pageid=" + channel,
