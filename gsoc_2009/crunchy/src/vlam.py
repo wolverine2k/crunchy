@@ -143,7 +143,9 @@ class BasePage(object): # tested
 
     def insert_css_file(self, path):
         '''inserts a link to the standard Crunchy style file'''
-        css = et.Element("link", type= "text/css", rel="stylesheet",
+        css = et.Element("link",
+                         type=u"text/css",
+                         rel=u"stylesheet",
                          href=path)
         try:
             self.head.append(css)

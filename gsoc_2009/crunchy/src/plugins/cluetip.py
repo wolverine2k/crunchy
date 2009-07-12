@@ -16,27 +16,28 @@ def register():
 def insert_cluetip(page, elem, uid):
     '''inserts the required javascript to insert cluetips'''
 
-    if not page.includes("jquery.dimensions.js"):
-        page.add_include("jquery.dimensions.js")
-        page.insert_js_file("/javascript/jquery.dimensions.js")
+    if not page.includes(u"jquery.dimensions.js"):
+        page.add_include(u"jquery.dimensions.js")
+        page.insert_js_file(u"/javascript/jquery.dimensions.js")
 
-    if not page.includes("jquery.cluetip.js"):
-        page.add_include("jquery.cluetip.js")
-        page.insert_js_file("/javascript/jquery.cluetip.js")
+    if not page.includes(u"jquery.cluetip.js"):
+        page.add_include(u"jquery.cluetip.js")
+        page.insert_js_file(u"/javascript/jquery.cluetip.js")
 
-    if not page.includes("jquery.hoverIntent.js"):
-        page.add_include("jquery.hoverIntent.js")
-        page.insert_js_file("/javascript/jquery.hoverIntent.js")
-        page.insert_css_file("/css/jquery.cluetip.css")
+    if not page.includes(u"jquery.hoverIntent.js"):
+        page.add_include(u"jquery.hoverIntent.js")
+        page.insert_js_file(u"/javascript/jquery.hoverIntent.js")
+        page.insert_css_file(u"/css/jquery.cluetip.css")
 
     elem.attrib['title'] = elem.attrib['title'][7:] # remove keyword "cluetip"
-    uid = "cluetip_%s" % uid
+    uid = u"cluetip_%s" % uid
     if 'class' in elem.attrib:
-        elem.attrib['class'] += ' %s' % uid
+        elem.attrib['class'] += u' ' + uid
     else:
         elem.attrib['class'] = uid
+
     if 'rel' in elem.attrib:
-        if ' ' not in elem.attrib['rel']:
+        if u' ' not in elem.attrib['rel']:
             # pull a single page using ajax...
             page.add_js_code(js_code_rel % (elem.tag, uid))
         else:
@@ -45,19 +46,19 @@ def insert_cluetip(page, elem, uid):
             args = ""
             for path in paths:
                 if path: # multiple spaces will result in null strings
-                    args += "'%s', " % path
+                    args += u"'%s', " % path
             args = args[:-2] # removed trailing comma
             page.add_js_code(js_code_multiple % (uid, elem.tag, uid, uid, args))
     else:
         # use info from title element
         page.add_js_code(js_code_title % (elem.tag, uid))
 
-js_code_rel = """
+js_code_rel = u"""
 $(document).ready(function() {
   $('%s.%s').cluetip({width: 600});
 });"""
 
-js_code_title = """
+js_code_title = u"""
 $(document).ready(function() {
   $('%s.%s').cluetip({
   splitTitle: '|',
@@ -66,7 +67,7 @@ $(document).ready(function() {
 });
 """
 
-js_code_multiple = """
+js_code_multiple = u"""
     $(document).ready(function() {
 
       function multipleFiles%s() {
