@@ -42,7 +42,7 @@ realm = "Crunchy Access"
 # byte literal.
 HEADER_NEWLINES = [x.encode('ascii') for x in (u'\r\n', u'\n', u'')]
 
-if src.interface.python_version < 3:
+if src.interface.python_version < 2.5:
     import md5
     def md5hex(x):
         return md5.md5(x).hexdigest()
