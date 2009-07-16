@@ -220,7 +220,7 @@ class BoolOption(ConfigOption):
         # we use a unique id, rather than simply the key, in case two
         # identical preference widgets are on the same page...
         input = SubElement(option, 'input',
-            type = 'checkbox',
+            type = u'checkbox',
             name = self.key,
             id = self.id(),
             onchange = self.onchange(),
@@ -262,7 +262,7 @@ class StringOption(ConfigOption):
         # we use a unique id, rather than simply the key, in case two
         # identical preference widgets are on the same page...
         input = SubElement(option, 'input',
-            type = 'text',
+            type = u'text',
             id = self.id(),
             name = self.key,
             value = self.get(),
@@ -273,7 +273,7 @@ class StringOption(ConfigOption):
         desc = SubElement(row, 'td')
         desc.text = unicode(getattr(self.prefs_class, self.key).__doc__)
 
-set_config_jscode = """
+set_config_jscode = u"""
 function set_config(id, key){
     var value;
     field=document.getElementById(id);

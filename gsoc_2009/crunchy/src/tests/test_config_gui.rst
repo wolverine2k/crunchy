@@ -7,7 +7,7 @@ Setting things up:
     >>> from StringIO import StringIO
     >>> from src.interface import (
     ...     config, plugin, get_base_dir,
-    ...     additional_menu_items)
+    ...     additional_menu_items, Element)
     >>> from src.interface import ElementTree as et
     >>> plugin.clear()
     >>> config.clear()
@@ -41,3 +41,17 @@ Test add_configuration_to_menu:
     >>> assert 'preferences' in additional_menu_items
     >>> print(et.tostring(additional_menu_items['preferences']))
     <li><a href="/docs/basic_tutorial/preferences.html">Preferences</a></li>
+
+Test insert_preferences:
+
+    >>> html = u'<html></html>'
+    >>> page = process_html(html)
+    >>> elem = Element("div", title=u"fake")
+
+But first, disable show:
+
+    >>> config_gui.show = lambda *a: None
+    >>> config_gui.insert_preferences(page, elem, 'fake uid')
+    >>> assert page.includes("set_config")
+    >>> print(et.tostring(elem))
+    <div class="config_gui" title="fake"><table /></div>
