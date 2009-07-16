@@ -24,7 +24,7 @@ def kill_thread_handler(request):
     plugin['kill_thread'](request.args["uid"])
 
 def insert_io_subwidget(page, elem, uid, interp_kind=None,
-                        sample_code='', show=False):  # partially tested
+                        sample_code=u'', show=False):  # partially tested
     """insert an output widget into elem, usable for editors and interpreters,
     and includes a canvas.
     """
@@ -34,9 +34,9 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
     # so that it can work together with the floated io widget
     # (and python code sample) to have a two-column display if desired.
     new_div = SubElement(elem, "div")
-    new_div.attrib['class'] = "io_div " + interface.crunchy_pygments
+    new_div.attrib['class'] = u"io_div " + interface.crunchy_pygments
     clear_div = SubElement(elem, "div")
-    clear_div.attrib['class'] = "end_io_widget"
+    clear_div.attrib['class'] = u"end_io_widget"
 
     # When a security mode is set to "display ...", we only parse the
     # page, but no Python execution from is allowed from that page.
@@ -46,23 +46,23 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         if config['ctypes_available']:
             kill_link = Element("a")
             elem.insert(-2, kill_link)
-            kill_link.attrib["id"] = "kill_%s" % uid
-            kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
+            kill_link.attrib["id"] = u"kill_%s" % uid
+            kill_link.attrib["onclick"] = u"kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
-            kill_image.attrib["src"] = "/images/stop.png"
-            kill_image.attrib["alt"] = "Interrupt thread"
-            kill_image.attrib["class"] = "kill_thread_image"
+            kill_image.attrib["src"] = u"/images/stop.png"
+            kill_image.attrib["alt"] = u"Interrupt thread"
+            kill_image.attrib["class"] = u"kill_thread_image"
             _id = "kill_image_%s" % uid
             kill_image.attrib["id"] = _id
             if config[page.username]['popups']:
                 # insert popup helper
-                kill_image.attrib["title"] = "cluetip KeyboardInterrupt"
-                kill_image.attrib["rel"] = "/docs/popups/keyboard_interrupt.html"
+                kill_image.attrib["title"] = u"cluetip KeyboardInterrupt"
+                kill_image.attrib["rel"] = u"/docs/popups/keyboard_interrupt.html"
                 plugin['services'].insert_cluetip(page, kill_image, _id)
 
             # hide them initially
-            kill_image.attrib['style'] = 'display: none;'
-            kill_link.attrib['style'] = 'display: none;'
+            kill_image.attrib['style'] = u'display: none;'
+            kill_link.attrib['style'] = u'display: none;'
 
         if not page.includes("io_included"):
             page.add_include("io_included")
@@ -76,43 +76,44 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
             if not page.includes("editarea_included"):
                 page.add_include("editarea_included")
                 page.add_js_code(editArea_load_and_save)
-                page.insert_js_file("/edit_area/edit_area_crunchy.js")
+                page.insert_js_file(u"/edit_area/edit_area_crunchy.js")
         elif config['ctypes_available']:
-            kill_image.attrib['style'] = 'display:none;'  # revealed by Execute button
+            kill_image.attrib['style'] = u'display:none;'  # revealed by Execute button
     else:
         return
 
     output = SubElement(new_div, "span")
-    output.attrib["class"] = "output"
-    output.attrib["id"] = "out_" + uid
+    output.attrib["class"] = u"output"
+    output.attrib["id"] = u"out_" + uid
     output.text = "\n"
     span_input = SubElement(new_div, "span")
     inp = SubElement(span_input, "input")
-    inp.attrib["id"] = "in_" + uid
-    inp.attrib["onkeydown"] = 'return push_keys(event, "%s")' % uid
+    inp.attrib["id"] = u"in_" + uid
+    inp.attrib["onkeydown"] = u'return push_keys(event, "%s")' % uid
     if interp_kind is not None:
         editor_link = SubElement(span_input, "a")
-        editor_link.attrib["onclick"] = "return convertToEditor(this,'%s')" \
-                                      % _("Execute")
-        editor_link.attrib["id"] = "ed_link_" + uid
+        onclick = u"return convertToEditor(this,'%s')" % _(u"Execute")
+        editor_link.attrib["onclick"] = onclick
+        editor_link.attrib["id"] = u"ed_link_" + uid
+
         image = SubElement(editor_link, 'img')
-        image.attrib["src"] = "/images/editor.png"
-        image.attrib["alt"] = "copy existing code"
-        image.attrib["class"] = "interpreter_image"
+        image.attrib["src"] = u"/images/editor.png"
+        image.attrib["alt"] = u"copy existing code"
+        image.attrib["class"] = u"interpreter_image"
 
         code_sample = SubElement(new_div, "textarea")
-        code_sample.attrib["id"] = "code_sample_" + uid
-        code_sample.attrib["style"] = 'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
+        code_sample.attrib["id"] = u"code_sample_" + uid
+        code_sample.attrib["style"] = u'visibility:hidden;overflow:hidden;z-index:-1;position:fixed;top:0;'
         code_sample.text = sample_code + '\n'
     if interp_kind == 'borg':
-        inp.attrib["onkeypress"] = 'return tooltip_display(event, "%s")' % uid
-    inp.attrib["type"] = "text"
+        inp.attrib["onkeypress"] = u'return tooltip_display(event, "%s")' % uid
+    inp.attrib["type"] = u"text"
     if show:
-        inp.attrib["class"] = "input"
+        inp.attrib["class"] = u"input"
     else:
-        inp.attrib["class"] = "input hidden"
+        inp.attrib["class"] = u"input hidden"
 
-io_js = r"""
+io_js = ur"""
 function push_keys(event, uid){
     // prevent Esc from breaking the interpreter
     if (event.keyCode == 27) return false;
@@ -140,7 +141,7 @@ function kill_thread(uid){
 };
 """ % (plugin['session_random_id'], plugin['session_random_id'])
 
-push_input = r"""
+push_input = ur"""
 function push_input(uid){
     data = document.getElementById("code_"+uid).value;
     document.getElementById("in_"+uid).value = "";

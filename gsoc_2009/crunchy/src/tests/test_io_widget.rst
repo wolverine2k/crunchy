@@ -12,7 +12,7 @@ It has the following functions that require testing:
 --------------------
 
 See how_to.rst_ for details.
-Note that io_widget imports editarea.py which requires 
+Note that io_widget imports editarea.py which requires
 config['editarea_language'].
 
 .. _how_to.rst: how_to.rst
@@ -74,7 +74,7 @@ There are various options that we need to tests, depending on the page content.
 a. Testing the display only option.
 ------------------------------------
 
-We first consider the simplest possible case (in terms of information 
+We first consider the simplest possible case (in terms of information
 included by io_widget.py), that of a page that does not include an
 interpreter and whose security level is such that we "display" only the
 page, and no interactive element is included.
@@ -86,7 +86,7 @@ page, and no interactive element is included.
     >>> io_widget.insert_io_subwidget(page, elem, uid)
 
 In this simplest case, two elements will have been included.
-As a first crude test, we investigate to see if all the required elements 
+As a first crude test, we investigate to see if all the required elements
 have been inserted (and none unexpected).
 
     >>> spans = []
@@ -130,7 +130,7 @@ interpreter and whose security level is such that we do more than
     >>> io_widget.insert_io_subwidget(page, elem, uid, interp_kind="Human")
 
 In this simplest case, three elements will have been included.
-As a first crude test, we investigate to see if all the required elements 
+As a first crude test, we investigate to see if all the required elements
 have been inserted (and none unexpected).
 
     >>> spans = []
@@ -181,8 +181,8 @@ have been inserted (and none unexpected).
 
 Note that we also need to check if the proper "includes" have been inserted.
 
-    >>> page.added_info
-    ['includes', ('add_include', 'io_included'), 'add_js_code', 'includes', ('add_include', 'push_input_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', '/edit_area/edit_area_crunchy.js')]
+    >>> page.added_info  #doctest: +ELLIPSIS
+    ['includes', ('add_include', 'io_included'), 'add_js_code', 'includes', ('add_include', 'push_input_included'), 'add_js_code', 'includes', ('add_include', 'editarea_included'), 'add_js_code', ('insert_js_file', ...'/edit_area/edit_area_crunchy.js')]
 
 todo: we need to conclude this test as we did with the previous one, to check
 the content of the new elements.
