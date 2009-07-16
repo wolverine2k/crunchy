@@ -84,16 +84,13 @@ def insert_menu(page): # tested
 
     _css = menu_css % (menu_position, items_width, items_width,
                        padding, padding, width)
-    try:
-        page.add_css_code(_css)
-    except Exception:#, info:
-        print("Cannot append css code in the head") # info
-    return
+
+    page.add_css_code(_css)
 
 ## NOTE: Most of the menu styling is in crunchy.css.  We only take care
 # of positioning and related sizing issues here.
 
-menu_position_css = """
+menu_position_css = u"""
 .crunchy_menu {%s}
 .crunchy_menu ul li:hover ul, .crunchy_menu ul li a:hover ul {%s}
 .crunchy_menu ul li , .crunchy_menu ul li a, .crunchy_menu ul li a:visited {
@@ -110,7 +107,7 @@ height:%spx; line-height:%spx;}
 #           height=25
 
 # insert menu_position_css into menu_css below
-menu_css = """%s
+menu_css = u"""%s
 .crunchy_menu {
     width:%spx;
 }

@@ -42,15 +42,15 @@ class Page(object):
         self.added_info.append(('add_include', function))
 
     def add_js_code(self, dummy):
+        assert isinstance(dummy, unicode)
         self.added_info.append('add_js_code')
 
     def insert_js_file(self, filename):
+        assert isinstance(filename, unicode)
         self.added_info.append(('insert_js_file', filename))
 
-    def add_css_file(self, filename):
-        self.added_info.append(('add_css_file', filename))
-
     def add_css_code(self, dummy):
+        assert isinstance(dummy, unicode)
         self.added_info.append('add_css_code')
 
 
