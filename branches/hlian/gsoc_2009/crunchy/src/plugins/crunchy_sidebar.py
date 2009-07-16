@@ -13,15 +13,15 @@ def insert_javascript(page, elem, dummy):
 
     if not page.includes("jquery.dimensions.js"):
         page.add_include("jquery.dimensions.js")
-        page.insert_js_file("/javascript/jquery.dimensions.js")
+        page.insert_js_file(u"/javascript/jquery.dimensions.js")
 
     if not page.includes("jquery.accordion.js"):
         page.add_include("jquery.accordion.js")
-        page.insert_js_file("/javascript/jquery.accordion.js")
+        page.insert_js_file(u"/javascript/jquery.accordion.js")
 
     page.add_js_code(js_code)
 
-js_code = """
+js_code = u"""
 $(function () {
   $('ul.categories').accordion({
     // the drawer handle
