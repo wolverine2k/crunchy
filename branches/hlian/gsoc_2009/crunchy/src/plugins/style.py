@@ -23,8 +23,8 @@ for name in LEXERS:
     for alias in aliases:
         _pygment_language_names.append(alias)
 
-interface.crunchy_pygments = CRUNCHY_PYGMENTS = ("crunchy_pygments_" +
-                             str(int(random.random()*1000000000000)))
+interface.crunchy_pygments = CRUNCHY_PYGMENTS = \
+    u"crunchy_pygments_%d" % int(random.random()*1000000000000)
 
 lexers = {}
 options['style'] = list(get_all_styles())
