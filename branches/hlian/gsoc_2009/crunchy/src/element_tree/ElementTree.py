@@ -200,7 +200,7 @@ class _ElementInterface(object):
     def __init__(self, tag, attrib):
         self.tag = tag
         for key in attrib:
-            assert isinstance(attrib[key], unicode)
+            assert isinstance(attrib[key], unicode), (key, attrib[key])
         self.attrib = attrib
         self._children = []
 
@@ -780,7 +780,7 @@ def _raise_serialization_error(text):
 def _escape(text, replacements):
     # escape attribute value
 
-    assert isinstance(text, unicode)
+    assert isinstance(text, unicode), text
 
     try:
         for replacement in replacements:

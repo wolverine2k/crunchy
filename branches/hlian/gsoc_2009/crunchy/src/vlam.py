@@ -113,7 +113,9 @@ class BasePage(object): # tested
         return include_str in self.included
 
     def add_css_code(self, code):  # tested
-        '''inserts styling code in <head>'''
+        '''Inserts styling code in <head>. Raises AssertionError if
+        code is not a Unicode string.'''
+
         assert isinstance(code, unicode)
 
         css = et.Element(u"style", type=u"text/css")
@@ -183,8 +185,12 @@ class BasePage(object): # tested
         return
 
     def add_js_code(self, code):  # tested
-        ''' includes some javascript code in the <head>.
-            This is the preferred method.'''
+        ''' Includes some javascript code in the <head>. This is the
+        preferred method. Raises AssertionError if code is not a
+        Unicode string.'''
+
+        assert isinstance(code, unicode)
+
         js = et.Element("script", type=u"text/javascript")
         js.text = code
         try:
@@ -196,10 +202,11 @@ class BasePage(object): # tested
         return
 
     def insert_js_file(self, filename):  # tested
-        '''Inserts a javascript file link in the <head>.
-           This should only be used for really big scripts
-           (like editarea); the preferred method is to add the
-           javascript code directly'''
+        '''Inserts a javascript file link in the <head>. This should
+           only be used for really big scripts (like editarea); the
+           preferred method is to add the javascript code directly.
+           Raises AssertionError if filename is not a Unicode
+           string.'''
 
         assert isinstance(filename, unicode)
 
