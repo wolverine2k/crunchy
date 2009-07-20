@@ -52,7 +52,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
             kill_image.attrib["src"] = u"/images/stop.png"
             kill_image.attrib["alt"] = u"Interrupt thread"
             kill_image.attrib["class"] = u"kill_thread_image"
-            _id = "kill_image_%s" % uid
+            _id = u"kill_image_%s" % uid
             kill_image.attrib["id"] = _id
             if config[page.username]['popups']:
                 # insert popup helper
