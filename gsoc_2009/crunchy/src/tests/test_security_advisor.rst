@@ -3,7 +3,6 @@ security_advisor plugin tests
 
 Setting things up:
 
-    >>> import src.vlam as vlam
     >>> from StringIO import StringIO
     >>> from src.interface import (
     ...     config, plugin, get_base_dir,
@@ -19,6 +18,8 @@ Setting things up:
     >>> config['Crunchy']['page_security_level'] = trust_me
     >>> config['Crunchy']['local_security'] = u'trusted'
     >>> config['crunchy_base_dir'] = get_base_dir()
+
+    >>> import src.vlam as vlam
 
 Because of our fake URL of 'test_security_advisor.rst', the netloc in
 security_advisor.py is just the empty string. Since we want to trigger

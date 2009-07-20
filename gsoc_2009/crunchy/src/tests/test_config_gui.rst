@@ -3,7 +3,11 @@ config_gui plugin tests
 
 Setting things up:
 
-    >>> import src.vlam as vlam
+    >>> from src.interface import from_comet
+    >>> from_comet.clear()
+    >>> def dummy(arg): pass
+    >>> from_comet['register_new_page'] = dummy
+
     >>> from StringIO import StringIO
     >>> from src.interface import (
     ...     config, plugin, get_base_dir,
@@ -13,10 +17,9 @@ Setting things up:
     >>> config.clear()
     >>> additional_menu_items.clear()
     >>> config['crunchy_base_dir'] = get_base_dir()
-
-Get a session_random_id value:
-
-    >>> import src.CrunchyPlugin
+    >>> import src.vlam as vlam
+    >>> plugin['session_random_id'] = 42
+    >>> import src.plugins.config_gui as config_gui
 
 And our birthday boy:
 
