@@ -151,7 +151,7 @@ Testing add_to_path()
 Make sure that test path not in sys.path; remove if needed
 add path and see if it is in there.
 
-    >>> fake_path = "fake_path_which_does_not_exist"
+    >>> fake_path = u"fake_path_which_does_not_exist"
     >>> # just in case we are wrong...
     >>> while fake_path in sys.path:
     ...    sys.path.remove(fake_path)

@@ -53,7 +53,7 @@ def a_tag_handler(page, elem, *dummy):  # tested
     elem.attrib["href"] = secure_url(elem.attrib["href"])
     if page.is_remote: #is_remote_url(page.url):
         if 'title' in elem.attrib:
-            if elem.attrib['title'] == 'security_link':
+            if elem.attrib['title'] == u'security_link':
                 return
         if "#" in elem.attrib["href"]:
             if elem.attrib["href"].startswith("#"):
@@ -63,19 +63,19 @@ def a_tag_handler(page, elem, *dummy):  # tested
                 #   node#some_reference i.e. there is an extra prefix
                 splitted = elem.attrib["href"].split("#")
                 if page.url.endswith(splitted[0]): # remove extra prefix
-                    elem.attrib["href"] = "#" + splitted[1]
+                    elem.attrib["href"] = u"#" + splitted[1]
                     return
                 else:  # remove trailing #... which Crunchy can't handle
                     elem.attrib["href"] = splitted[0]
 
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
-            elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(elem.attrib["href"])
+            elem.attrib["href"] = u"/remote?url=%s" % urllib.quote_plus(elem.attrib["href"])
         return
 
     href = elem.attrib["href"]
     if "://" in href:
-        elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+        elem.attrib["href"] = u"/remote?url=%s" % urllib.quote_plus(href)
         return
 
     ### To do: deal better with .rst, .txt and .py files
@@ -91,19 +91,19 @@ def a_tag_handler(page, elem, *dummy):  # tested
                 #   node#some_reference i.e. there is an extra prefix
                 splitted = elem.attrib["href"].split("#")
                 if page.url.endswith(splitted[0]): # remove extra prefix
-                    elem.attrib["href"] = "#" + splitted[1]
+                    elem.attrib["href"] = u"#" + splitted[1]
                     return
                 else:  # remove trailing #... which Crunchy can't handle
                     elem.attrib["href"] = splitted[0]
         extension = elem.attrib["href"].split(".")[-1]
         if extension in ["rst", "txt"]:
-            elem.attrib["href"] = "/rst?url=%s" % \
+            elem.attrib["href"] = u"/rst?url=%s" % \
                 os.path.dirname(page.url) + "/" + \
                 urllib.quote_plus(elem.attrib["href"])
             return
         if "://" not in elem.attrib["href"]:
             href = urljoin(page.url, elem.attrib["href"])
-            elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
+            elem.attrib["href"] = u"/local?url=%s" % urllib.quote_plus(href)
             return
     #extension = elem.attrib["href"].split('.')[-1]
 
@@ -125,7 +125,7 @@ def src_handler(page, elem, *dummy):  # partially tested
         if elem.attrib["src"].startswith("/"):
             return
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
+        elem.attrib["src"] = u"/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
 def link_tag_handler(page, elem, *dummy):  # partially tested
@@ -140,7 +140,7 @@ def link_tag_handler(page, elem, *dummy):  # partially tested
         if elem.attrib["href"].startswith("/"):
             return
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
+        elem.attrib["href"] = u"/local?url=%s" % urllib.quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))
 
 def secure_url(url):  # tested

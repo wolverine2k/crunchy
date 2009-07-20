@@ -414,6 +414,27 @@ class _ElementInterface(object):
 # compatibility
 _Element = _ElementInterface
 
+class UnicodeDict(dict):
+    """Enforces Unicode with an assertion where possible. This
+    definitely affects performance and should be removed after Unicode
+    porting is finished."""
+
+    def __init__(self, adict={}):
+        for key in adict:
+            assert isinstance(adict[key], unicode)
+
+        dict.__init__(self, adict)
+
+    def update(self, adict):
+        for key in adict:
+            assert isinstance(adict[key], unicode)
+
+        return dict.update(self, adict)
+
+    def __setitem__(self, index, value):
+        assert isinstance(value, unicode)
+        return dict.__setitem__(self, index, value)
+
 ##
 # Element factory.  This function returns an object implementing the
 # standard Element interface.  The exact class or type of that object
@@ -430,7 +451,7 @@ _Element = _ElementInterface
 # @defreturn Element
 
 def Element(tag, attrib={}, **extra):
-    attrib = attrib.copy()
+    attrib = UnicodeDict(attrib)
     attrib.update(extra)
     return _ElementInterface(tag, attrib)
 
