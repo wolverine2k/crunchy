@@ -109,8 +109,6 @@ all_files_with_failures = []
 
 
 for t in test_files:
-    if t in excluded:
-        continue
 
     failure, nb_tests = doctest.testfile(t, module_relative=False)
     total_tests += nb_tests
