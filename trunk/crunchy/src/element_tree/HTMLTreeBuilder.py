@@ -13,6 +13,7 @@
 # 2004-12-05 fl   don't feed non-ASCII CDATA as 8-bit strings
 #
 # 2005-05-02      Updated for Crunchy by Johannes Woolard
+# 2009-06-10      Updated for porting Crunchy to Python 3 by Hao Lian
 #
 # Copyright (c) 1999-2004 by Fredrik Lundh.  All rights reserved.
 #
@@ -56,18 +57,16 @@
 ##
 
 import htmlentitydefs
-import re, string, sys
-import mimetools, StringIO
+import re
+import sys
+from email.parser import Parser as MIMEParser
 
 import ElementTree
 
 AUTOCLOSE = "p", "li", "tr", "th", "td", "head", "body", "input" # "input" added by a.r.
 IGNOREEND = "img", "hr", "meta", "link", "br"
 
-if sys.version[:3] == "1.5":
-    is_not_ascii = re.compile(r"[\x80-\xff]").search # 1.5.2
-else:
-    is_not_ascii = re.compile(eval(r'u"[\u0080-\uffff]"')).search
+is_not_ascii = re.compile(ur"[\u0080-\uffff]", re.U).search
 
 try:
     from HTMLParser import HTMLParser
@@ -137,15 +136,14 @@ class HTMLTreeBuilder(HTMLParser):
             http_equiv = content = None
             for k, v in attrs:
                 if k == "http-equiv":
-                    http_equiv = string.lower(v)
+                    http_equiv = v.lower()
                 elif k == "content":
                     content = v
             if http_equiv == "content-type" and content:
-                # use mimetools to parse the http header
-                header = mimetools.Message(
-                    StringIO.StringIO("%s: %s\n\n" % (http_equiv, content))
-                    )
-                encoding = header.getparam("charset")
+                # use the email module to parse the http header
+                header = "%s: %s\n\n" % (http_equiv, content)
+                header = MIMEParser().parsestr(header)
+                encoding = header.get_param("charset")
                 if encoding:
                     self.encoding = encoding
         if tag in AUTOCLOSE:
@@ -155,7 +153,7 @@ class HTMLTreeBuilder(HTMLParser):
         attrib = {}
         if attrs:
             for k, v in attrs:
-                attrib[string.lower(k)] = v
+                attrib[k.lower()] = v
         self.__builder.start(tag, attrib)
         if tag in IGNOREEND:
             self.__stack.pop()
@@ -219,7 +217,7 @@ class HTMLTreeBuilder(HTMLParser):
     # (Internal) Handles character data.
 
     def handle_data(self, data):
-        if isinstance(data, type('')) and is_not_ascii(data):
+        if not isinstance(data, unicode) and is_not_ascii(data):
             # convert to unicode, but only if necessary
             data = unicode(data, self.encoding, "ignore")
         self.__builder.data(data)
