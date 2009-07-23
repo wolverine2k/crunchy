@@ -1288,6 +1288,9 @@ class XMLTreeBuilder(object):
     # @param data Encoded data.
 
     def feed(self, data):
+        if sys.version_info[0] < 3:
+            # xml.parsers.expat only takes bytestrings in Python 2.
+            data = data.encode('utf8')
         self._parser.Parse(data, 0)
 
     ##
@@ -1297,7 +1300,7 @@ class XMLTreeBuilder(object):
     # @defreturn Element
 
     def close(self):
-        self._parser.Parse(u"", 1) # end of data
+        self._parser.Parse("", 1) # end of data
         tree = self._target.close()
         del self._target, self._parser # get rid of circular references
         return tree
