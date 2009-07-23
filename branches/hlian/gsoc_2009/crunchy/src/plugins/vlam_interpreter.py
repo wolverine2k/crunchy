@@ -166,37 +166,37 @@ def include_interpreter(interp_kind, page, uid):
         if not page.includes("BorgInterpreter_included"):
             page.add_include("BorgInterpreter_included")
             page.add_js_code(BorgInterpreter_js)
-        page.add_js_code('init_BorgInterpreter("%s");' % uid)
+        page.add_js_code(u'init_BorgInterpreter("%s");' % uid)
     elif interp_kind == "isolated" or interp_kind == "Human":
         if not page.includes("SingleInterpreter_included"):
             page.add_include("SingleInterpreter_included")
             page.add_js_code(SingleInterpreter_js)
-        page.add_js_code('init_SingleInterpreter("%s");' % uid)
+        page.add_js_code(u'init_SingleInterpreter("%s");' % uid)
     elif interp_kind == "parrot":
         if not page.includes("parrot_included"):
             page.add_include("parrot_included")
             page.add_js_code(parrot_js)
-        page.add_js_code('init_parrotInterpreter("%s");' % uid)
+        page.add_js_code(u'init_parrotInterpreter("%s");' % uid)
     elif interp_kind == "Parrots":
         if not page.includes("Parrots_included"):
             page.add_include("Parrots_included")
             page.add_js_code(Parrots_js)
-        page.add_js_code('init_ParrotsInterpreter("%s");' % uid)
+        page.add_js_code(u'init_ParrotsInterpreter("%s");' % uid)
     elif interp_kind == "TypeInfoConsole":
         if not page.includes("TypeInfoConsole_included"):
             page.add_include("TypeInfoConsole_included")
             page.add_js_code(TypeInfoConsole_js)
-        page.add_js_code('init_TypeInfoConsole("%s");' % uid)
+        page.add_js_code(u'init_TypeInfoConsole("%s");' % uid)
 #  Unfortunately, IPython interferes with Crunchy; I'm commenting it out, keeping it in as a reference.
 ##        else:
 ##          if not page.includes("IPythonInterpreter_included"):
 ##              page.add_include("IPythonInterpreter_included")
 ##              page.add_js_code(IPythonInterpreter_js)
-##          page.add_js_code('init_IPythonInterpreter("%s");' % uid)
+##          page.add_js_code(u'init_IPythonInterpreter("%s");' % uid)
 
 def borg_javascript(prefix, page):
     '''create string needed to initialize a Borg interpreter using javascript'''
-    return r"""
+    return ur"""
     function init_BorgInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s',username='%s')";
         code += "\nborg.interact()\n";
@@ -209,7 +209,7 @@ def borg_javascript(prefix, page):
 def single_javascript(prefix, page):
     '''create string needed to initialize an Isolated (single) interpreter
        using javascript'''
-    return r"""
+    return ur"""
     function init_SingleInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
         code += "\nisolated.interact(ps1='--> ')\n";
@@ -222,7 +222,7 @@ def single_javascript(prefix, page):
 def parrot_javascript(prefix, page):
     '''create string needed to initialize a parrot (single) interpreter
        using javascript'''
-    return   r"""
+    return ur"""
     function init_parrotInterpreter(uid){
         code = "import src.interpreter\nisolated=src.interpreter.SingleConsole(username='%s')";
         code += "\nisolated.interact(ps1='_u__) ', symbol='exec')\n";
@@ -235,7 +235,7 @@ def parrot_javascript(prefix, page):
 def parrots_javascript(prefix, page):
     '''create string needed to initialize a parrots (shared) interpreter
        using javascript'''
-    return r"""
+    return ur"""
     function init_ParrotsInterpreter(uid){
         code = "import src.interpreter\nborg=src.interpreter.BorgConsole(group='%s', username='%s')";
         code += "\nborg.interact(ps1='_u__)) ', symbol='exec')\n";
@@ -248,7 +248,7 @@ def parrots_javascript(prefix, page):
 def type_info_javascript(prefix, page):
     '''create string needed to initialize a TypeInfo (shared) interpreter
        using javascript'''
-    return r"""
+    return ur"""
     function init_TypeInfoConsole(uid){
         code = "import src.interpreter\nborg=src.interpreter.TypeInfoConsole(group='%s', username='%s')";
         code += "\nborg.interact(ps1='<t>>> ')\n";
@@ -263,7 +263,7 @@ def type_info_javascript(prefix, page):
 ## Note: the code has been edited since the original version has been
 ## commented out ... and has not been tested.
 
-##IPythonInterpreter_js = r"""
+##IPythonInterpreter_js = ur"""
 ##function init_IPythonInterpreter(uid){
 ##    code = "import src.interpreter\n";
 ##    code += "isolated=src.interpreter.SingleConsole()\n";
