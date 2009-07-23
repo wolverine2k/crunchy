@@ -52,7 +52,11 @@ def path_to_filedata(path, root, username=None):
     if path == server['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
-        return open(exit_file, mode="rb").read()
+
+        f = open(exit_file, mode="rb")
+        x = f.read()
+        f.close()
+        return x
     if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path).encode('utf8')
 
@@ -73,15 +77,15 @@ def path_to_filedata(path, root, username=None):
         creator = plugin['create_vlam_page']
         if extension in ["htm", "html"]:
             try:
-                text = creator(codecs.open(npath, encoding='utf8'),
-                               path,
-                               username)
+                f = codecs.open(npath, encoding='utf8')
+                text = creator(f, path, username)
+                f.close()
             except UnicodeDecodeError:
                 # A few files are stored in ISO-8859-1, as per the
                 # functional test.
-                text = creator(codecs.open(npath, encoding='iso-8859-1'),
-                               path,
-                               username)
+                f = codecs.open(npath, encoding='iso-8859-1')
+                text = creator(f, path, username)
+                f.close()
 
             text = text.read().encode('utf8')
             return text
@@ -91,7 +95,10 @@ def path_to_filedata(path, root, username=None):
             return text
         # we need binary mode because otherwise the file may not get
         # read properly on windows (e.g. for image files)
-        return open(npath, mode="rb").read()
+        f = open(npath, mode="rb")
+        x = f.read()
+        f.close()
+        return x
     except IOError:
         print("In path_to_filedata, can not open path: " + npath)
         traceback.print_exc()
@@ -107,7 +114,11 @@ def handler(request):
         request.wfile.write(_("You need to create an account before you can use Crunchy. "))
         request.wfile.write(_("Please use account_manager.py to create an account."))
         exit_file = join(root_path, "exit_en.html")
-        request.wfile.write(open(exit_file).read())
+
+        f = open(exit_file)
+        request.wfile.write(f.read())
+        f.close()
+
         request.end_headers()
         server['server'].still_serving = False
         return
