@@ -16,18 +16,18 @@ def insert_colorpicker(page, elem, uid):
 
     if not page.includes("jquery.colorpicker.js"):
         page.add_include("jquery.colorpicker.js")
-        page.insert_js_file("/javascript/colorpicker/js/colorpicker.js")
-        page.insert_css_file("/javascript/colorpicker/css/colorpicker.css")
+        page.insert_js_file(u"/javascript/colorpicker/js/colorpicker.js")
+        page.insert_css_file(u"/javascript/colorpicker/css/colorpicker.css")
 
-    uid = "colorpicker_%s" % uid
+    uid = u"colorpicker_%s" % uid
     if 'class' in elem.attrib:
-        elem.attrib['class'] += ' %s' % uid
+        elem.attrib['class'] += u' %s' % uid
     else:
         elem.attrib['class'] = uid
-    elem.text = ''
+    elem.text = u''
     page.add_js_code(js_code_picker % uid)
 
-js_code_picker = """
+js_code_picker = u"""
 $(document).ready(function() {
   $('div.%s').ColorPicker({flat: true});
 });"""

@@ -128,14 +128,14 @@ def doctest_widget_callback(page, elem, uid):
         plugin['services'].insert_analyzer_button(page, elem, uid)
     SubElement(elem, "br")
     if limit_time:
-        page.add_js_code("window.addEventListener('load', function(e){count_down('%s', get_doctest_time('%s'));}, false);" %(uid, uid))
+        page.add_js_code(u"window.addEventListener('load', function(e){count_down('%s', get_doctest_time('%s'));}, false);" %(uid, uid))
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
 # we need some unique javascript in the page; note how the
 # "/doctest" handler mentioned above appears here, together with the
 # random session id.
-doctest_jscode = """
+doctest_jscode = u"""
 function exec_doctest(uid){
     try{
     document.getElementById("kill_image_"+uid).style.display = "block";
@@ -191,7 +191,7 @@ function get_doctest_time(uid){
 """ % plugin['session_random_id']
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
-doctest_pycode = """
+doctest_pycode = u"""
 __teststring = \"\"\"%s\"\"\"
 from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
 __test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)

@@ -141,7 +141,7 @@ def pdb_widget_callback(page, elem, uid):
         if not page.includes("pdb_included"):
             page.add_include("pdb_included")
             #element tree always escape < to &lt; and break my js code , so...
-            page.insert_js_file("/pdb_js%s.js"%plugin['session_random_id'])
+            page.insert_js_file(u"/pdb_js%s.js"%plugin['session_random_id'])
         if not page.includes("pdb_css_code"):
             page.add_include("pdb_css_code")
             page.add_css_code(pdb_css)
@@ -150,51 +150,56 @@ def pdb_widget_callback(page, elem, uid):
     vlam = elem.attrib["title"]
     python_code = util.extract_code(elem)
     if util.is_interpreter_session(python_code):
-        elem.attrib['title'] = "pycon"
+        elem.attrib['title'] = u"pycon"
         python_code = util.extract_code_from_interpreter(python_code)
     else:
-        elem.attrib['title'] = "python"
+        elem.attrib['title'] = u"python"
     code, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = vlam
     util.wrap_in_div(elem, uid, vlam, "pdb", show_vlam)
 
     plugin['services'].insert_editor_subwidget(page, elem, uid, python_code)
 
-    t = SubElement(elem, "h4", style="background-color:white;color:darkblue;")
+    t = SubElement(elem, "h4",
+                   style=u"background-color:white;color:darkblue;")
     t.text = _("Local Namespace")
     local_ns_div = SubElement(elem, "div")
-    local_ns_div.attrib["id"] = "local_ns_%s"%uid
+    local_ns_div.attrib["id"] = u"local_ns_%s"%uid
 
     #some spacing:
     SubElement(elem, "br")
 
     btn = SubElement(elem, "button")
     btn.text = _("Start PDB")
-    btn.attrib["onclick"] = "init_pdb('%s');" %(uid)
-    btn.attrib["id"] = "btn_start_pdb_%s" % uid
+    btn.attrib["onclick"] = u"init_pdb('%s');" %(uid)
+    btn.attrib["id"] = u"btn_start_pdb_%s" % uid
 
     btn = SubElement(elem, "button")
     btn.text = _("Next Step")
-    btn.attrib["id"] = "btn_next_step_%s" % uid
-    btn.attrib["disabled"] = "disabled"
+    btn.attrib["id"] = u"btn_next_step_%s" % uid
+    btn.attrib["disabled"] = u"disabled"
 
     btn = SubElement(elem, "button")
     btn.text = _("Step Into")
-    btn.attrib["id"] = "btn_step_into_%s" % uid
-    btn.attrib["disabled"] = "disabled"
+    btn.attrib["id"] = u"btn_step_into_%s" % uid
+    btn.attrib["disabled"] = u"disabled"
 
     btn = SubElement(elem, "button")
     btn.text = _("Return")
-    btn.attrib["id"] = "btn_return_%s" % uid
-    btn.attrib["disabled"] = "disabled"
+    btn.attrib["id"] = u"btn_return_%s" % uid
+    btn.attrib["disabled"] = u"disabled"
 
     btn = SubElement(elem, "button")
     btn.text = _("Next Multiple Steps")
-    btn.attrib["id"] = "btn_next_many_steps_%s" % uid
-    btn.attrib["disabled"] = "disabled"
-    input1 = SubElement(elem, 'input', id='input_many_'+uid, size='4', value='1')
+    btn.attrib["id"] = u"btn_next_many_steps_%s" % uid
+    btn.attrib["disabled"] = u"disabled"
+    input1 = SubElement(elem, 'input',
+                        id=u'input_many_'+uid,
+                        size=u'4',
+                        value=u'1')
 
-    t = SubElement(elem, "h4", style="background-color:white;color:darkblue;")
+    t = SubElement(elem, "h4",
+                   style=u"background-color:white;color:darkblue;")
     t.text = _("Output")
     # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
@@ -211,7 +216,7 @@ def pdb_js_file_callback(request):
     request.wfile.write(pdb_jscode)
 
 
-pdb_css = r"""
+pdb_css = ur"""
 table.namespace{
     background-color: white;
     color: black;
@@ -227,7 +232,7 @@ table.namespace tr.new {
     background-color:yellow;
 }
 """
-pdb_jscode = r"""
+pdb_jscode = ur"""
 var random_session_id = '%s';
 
 function pdb_interpreter(uid)
@@ -349,7 +354,7 @@ function init_pdb(uid)
 }
 """ % (plugin['session_random_id'])
 
-pdb_pycode = '''
+pdb_pycode = u'''
 from src.plugins.vlam_pdb import MyPdb,Proto
 _debug_string = """%s
 """

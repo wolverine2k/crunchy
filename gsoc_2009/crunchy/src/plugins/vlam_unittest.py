@@ -110,7 +110,7 @@ def unittest_widget_callback(page, elem, uid):
 # we need some unique javascript in the page; note how the
 # "/unittest" handler mentioned above appears here, together with the
 # random session id.
-unittest_jscode = """
+unittest_jscode = u"""
 function exec_unittest(uid){
     try{
     document.getElementById("kill_image_"+uid).style.display = "block";
@@ -124,7 +124,7 @@ function exec_unittest(uid){
 """ % plugin['session_random_id']
 # Finally, the special Python code used to call the unittest module,
 # mentioned previously
-unittest_pycode = '''
+unittest_pycode = u'''
 import unittest
 
 %(user_code)s

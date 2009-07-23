@@ -82,14 +82,14 @@ def insert_file_tree(page, elem, uid, action, callback, title, label):
     if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("jquery_file_tree"):
             page.add_include("jquery_file_tree")
-            page.insert_js_file("/javascript/jquery.filetree.js")
-            page.insert_css_file("/css/jquery.filetree.css")
+            page.insert_js_file(u"/javascript/jquery.filetree.js")
+            page.insert_css_file(u"/css/jquery.filetree.css")
     else:
         return
-    tree_id = "tree_" + uid
-    form_id = "form_" + uid
+    tree_id = u"tree_" + uid
+    form_id = u"form_" + uid
     root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
-    js_code =  """$(document).ready( function() {
+    js_code = u"""$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',
           script: '%s',
@@ -103,18 +103,25 @@ def insert_file_tree(page, elem, uid, action, callback, title, label):
     """ % (tree_id, root, action, form_id)
     page.add_js_code(js_code)
     elem.text = title
-    elem.attrib['class'] = "filetree_wrapper"
+    elem.attrib['class'] = u"filetree_wrapper"
 
-    form = SubElement(elem, 'form', name='url', size='80', method='get',
-                       action=callback)
-    SubElement(form, 'input', name='url', size='80', id=form_id)
-    input_ = SubElement(form, 'input', type='submit',
-                           value=label)
-    input_.attrib['class'] = 'crunchy'
+    form = SubElement(elem, 'form',
+                      name=u'url',
+                      size=u'80',
+                      method=u'get',
+                      action=callback)
+    SubElement(form, 'input',
+               name=u'url',
+               size=u'80',
+               id=form_id)
+    input_ = SubElement(form, 'input',
+                        type=u'submit',
+                        value=label)
+    input_.attrib['class'] = u'crunchy'
 
     file_div = SubElement(elem, 'div')
     file_div.attrib['id'] = tree_id
-    file_div.attrib['class'] = "filetree_window"
+    file_div.attrib['class'] = u"filetree_window"
     return
 
 

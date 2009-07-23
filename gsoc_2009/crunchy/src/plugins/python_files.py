@@ -38,7 +38,7 @@ def load_python(request):
         interpreter_python_code = "__name__ = '__main__'\n" + python_code
     else:
         interpreter_python_code = python_code
-    html_template = """
+    html_template = u"""
     <html>
     <head><title>%s</title></head>
     <body>
