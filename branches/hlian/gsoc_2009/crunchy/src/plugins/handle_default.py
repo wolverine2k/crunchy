@@ -3,6 +3,7 @@
 import codecs
 import os
 import sys
+import traceback
 from os.path import normpath, isdir, join, exists
 
 # All plugins should import the crunchy plugin API via interface.py
@@ -92,7 +93,8 @@ def path_to_filedata(path, root, username=None):
         # read properly on windows (e.g. for image files)
         return open(npath, mode="rb").read()
     except IOError:
-        print("In path_to_filedata, can not open path = " + npath)
+        print("In path_to_filedata, can not open path: " + npath)
+        traceback.print_exc()
         return error_page(path).encode('utf8')
 
 def handler(request):

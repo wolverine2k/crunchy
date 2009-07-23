@@ -173,7 +173,7 @@ def insert_alternate_python(page, elem, uid):
 # "/exec"  and /run_external handlers referred to above as required
 # services appear here
 # with a random session id appended for security reasons.
-exec_jscode = """
+exec_jscode = u"""
 function exec_code(uid){
     try{
     document.getElementById("kill_image_"+uid).style.display = "inline";
