@@ -26,23 +26,23 @@ def insert_tooltip(page, *dummy):
         borg_console[page.pageid] = interpreter.BorgConsole(group=page.pageid)
 
         page.add_include("tooltip_included")
-        page.insert_js_file("/javascript/tooltip.js")
+        page.insert_js_file(u"/javascript/tooltip.js")
         page.add_js_code(tooltip_js)
 
         tooltip = Element("div")
-        tooltip.attrib["id"] = "interp_tooltip"
-        tooltip.text = " "
+        tooltip.attrib["id"] = u"interp_tooltip"
+        tooltip.text = u" "
         page.body.append(tooltip)
 
         help_menu = Element("div")
-        help_menu.attrib["id"] = "help_menu"
-        help_menu.text = " "
+        help_menu.attrib["id"] = u"help_menu"
+        help_menu.text = u" "
         page.body.append(help_menu)
 
         help_menu_x = Element("div")
-        help_menu_x.attrib["id"] = "help_menu_x"
-        help_menu_x.attrib["onclick"] = "hide_help();"
-        help_menu_x.text = "X"
+        help_menu_x.attrib["id"] = u"help_menu_x"
+        help_menu_x.attrib["onclick"] = u"hide_help();"
+        help_menu_x.text = u"X"
         page.body.append(help_menu_x)
 
 def dir_handler(request):
@@ -115,6 +115,6 @@ def doc_handler(request):
     return
 
 # javascript code
-tooltip_js = """
+tooltip_js = u"""
 var session_id = "%s";
 """ % plugin['session_random_id']

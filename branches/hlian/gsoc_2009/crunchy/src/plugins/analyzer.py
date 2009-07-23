@@ -197,7 +197,7 @@ def add_scoring(page, button, uid):
 # we need some unique javascript in the page; note how the
 # "/analyzer" handler mentioned above appears here, together with the
 # random session id.
-analyzer_jscode = """
+analyzer_jscode = u"""
 function exec_analyzer(uid){
     document.getElementById("kill_image_"+uid).style.display = "block";
     code=editAreaLoader.getValue("code_"+uid);
@@ -207,7 +207,7 @@ function exec_analyzer(uid){
     j.send(analyzer+"__SEPARATOR__"+code);
 };
 """ % plugin['session_random_id']
-analyzer_score_jscode = """
+analyzer_score_jscode = u"""
 function exec_analyzer_score(uid){
     code=editAreaLoader.getValue("code_"+uid);
     var j = new XMLHttpRequest();
