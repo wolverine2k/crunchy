@@ -141,6 +141,7 @@ def log():
     return log
 
 log = log()
+DEBUG = False
 
 def format_stack():
     return ''.join(traceback.format_stack())
@@ -227,7 +228,7 @@ class _ElementInterface(object):
 
         for key in attrib:
             value = attrib[key]
-            if not isinstance(attrib[key], unicode):
+            if DEBUG and not isinstance(attrib[key], unicode):
                 log.error('Not Unicode: %s' % [key, attrib[key]])
                 log.error(format_stack())
                 value = value.decode('utf8')
@@ -397,7 +398,7 @@ class _ElementInterface(object):
     # @param value The attribute value.
 
     def set(self, key, value):
-        if not isinstance(value, unicode):
+        if DEBUG and not isinstance(value, unicode):
             log.error('Not Unicode: %s' % [key, value])
             log.error(format_stack())
             value = value.decode('utf8')
@@ -458,7 +459,7 @@ class UnicodeDict(dict):
         x = {}
         for key in adict:
             value = adict[key]
-            if not isinstance(value, unicode):
+            if DEBUG and not isinstance(value, unicode):
                 log.error('Not Unicode: %s' % [key, value])
                 log.error(format_stack())
                 value = value.decode('utf8')
@@ -470,7 +471,7 @@ class UnicodeDict(dict):
         x = {}
         for key in adict:
             value = adict[key]
-            if not isinstance(value, unicode):
+            if DEBUG and not isinstance(value, unicode):
                 log.error('Not Unicode: %s' % [key, value])
                 log.error(format_stack())
                 value = value.decode('utf8')
@@ -479,7 +480,7 @@ class UnicodeDict(dict):
         return dict.update(self, x)
 
     def __setitem__(self, index, value):
-        if not isinstance(value, unicode):
+        if DEBUG and not isinstance(value, unicode):
             log.error('Not Unicode: %s' % [index, value])
             log.error(format_stack())
             value = value.decode('utf8')
@@ -502,7 +503,10 @@ class UnicodeDict(dict):
 # @defreturn Element
 
 def Element(tag, attrib={}, **extra):
-    attrib = UnicodeDict(attrib)
+    if DEBUG:
+        attrib = UnicodeDict(attrib)
+    else:
+        attrib = attrib.copy()
     attrib.update(extra)
     return _ElementInterface(tag, attrib)
 
@@ -847,7 +851,7 @@ def _raise_serialization_error(text):
 def _escape(text, replacements):
     # escape attribute value
 
-    if not isinstance(text, unicode):
+    if DEBUG and not isinstance(text, unicode):
         log.error('Not Unicode: %s' % text)
         # No point in a traceback, it's too late.
         text = text.decode('utf8')
