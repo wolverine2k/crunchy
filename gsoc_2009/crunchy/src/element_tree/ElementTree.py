@@ -121,6 +121,30 @@ import codecs
 import sys
 import re
 
+# These functions are here to help with porting Crunchy and should be
+# removed later.
+import traceback
+import logging
+
+# Unfortunately, doctests creates its own standard out.
+# http://bytes.com/groups/python/592788-logging-module-doctest
+class WrapStdOut(object):
+    def __getattr__(self, name):
+        return getattr(sys.stdout, name)
+
+def log():
+    log = logging.getLogger(__name__)
+    h   = logging.StreamHandler(WrapStdOut())
+    f   = logging.Formatter("%(levelname)s:%(name)s:line %(lineno)d: %(message)s")
+    h.setFormatter(f)
+    log.addHandler(h)
+    return log
+
+log = log()
+
+def format_stack():
+    return ''.join(traceback.format_stack())
+
 class _SimpleElementPath(object):
     # emulate pre-1.2 find/findtext/findall behaviour
     def find(self, element, tag):
@@ -199,9 +223,16 @@ class _ElementInterface(object):
 
     def __init__(self, tag, attrib):
         self.tag = tag
+        self.attrib = {}
+
         for key in attrib:
-            assert isinstance(attrib[key], unicode), (key, attrib[key])
-        self.attrib = attrib
+            value = attrib[key]
+            if not isinstance(attrib[key], unicode):
+                log.error('Not Unicode: %s' % [key, attrib[key]])
+                log.error(format_stack())
+                value = value.decode('utf8')
+            self.attrib[key] = value
+
         self._children = []
 
     def __repr__(self):
@@ -366,7 +397,11 @@ class _ElementInterface(object):
     # @param value The attribute value.
 
     def set(self, key, value):
-        assert isinstance(value, unicode)
+        if not isinstance(value, unicode):
+            log.error('Not Unicode: %s' % [key, value])
+            log.error(format_stack())
+            value = value.decode('utf8')
+
         self.attrib[key] = value
 
     ##
@@ -420,19 +455,35 @@ class UnicodeDict(dict):
     porting is finished."""
 
     def __init__(self, adict={}):
+        x = {}
         for key in adict:
-            assert isinstance(adict[key], unicode)
+            value = adict[key]
+            if not isinstance(value, unicode):
+                log.error('Not Unicode: %s' % [key, value])
+                log.error(format_stack())
+                value = value.decode('utf8')
+            x[key] = value
 
-        dict.__init__(self, adict)
+        dict.__init__(self, x)
 
     def update(self, adict):
+        x = {}
         for key in adict:
-            assert isinstance(adict[key], unicode)
+            value = adict[key]
+            if not isinstance(value, unicode):
+                log.error('Not Unicode: %s' % [key, value])
+                log.error(format_stack())
+                value = value.decode('utf8')
+            x[key] = value
 
-        return dict.update(self, adict)
+        return dict.update(self, x)
 
     def __setitem__(self, index, value):
-        assert isinstance(value, unicode)
+        if not isinstance(value, unicode):
+            log.error('Not Unicode: %s' % [index, value])
+            log.error(format_stack())
+            value = value.decode('utf8')
+
         return dict.__setitem__(self, index, value)
 
 ##
@@ -488,7 +539,6 @@ def SubElement(parent, tag, attrib={}, **extra):
 # @defreturn Element
 
 def Comment(text=None):
-    assert isinstance(text, unicode)
     element = Element(Comment)
     element.text = text
     return element
@@ -503,12 +553,9 @@ def Comment(text=None):
 # @defreturn Element
 
 def ProcessingInstruction(target, text=None):
-    assert isinstance(target, unicode)
-
     element = Element(ProcessingInstruction)
     element.text = target
     if text:
-        assert isinstance(text, unicode)
         element.text = element.text + u" " + text
     return element
 
@@ -528,7 +575,6 @@ class QName(object):
     def __init__(self, text_or_uri, tag=None):
         if tag:
             text_or_uri = u"{%s}%s" % (text_or_uri, tag)
-        assert isinstance(text_or_uri, unicode)
         self.text = text_or_uri
     def __str__(self):
         return self.text
@@ -801,7 +847,10 @@ def _raise_serialization_error(text):
 def _escape(text, replacements):
     # escape attribute value
 
-    assert isinstance(text, unicode), text
+    if not isinstance(text, unicode):
+        log.error('Not Unicode: %s' % text)
+        # No point in a traceback, it's too late.
+        text = text.decode('utf8')
 
     try:
         for replacement in replacements:
