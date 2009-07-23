@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''tools_2k.py
 
 This module contains various utility functions compatible with
@@ -6,6 +7,8 @@ Python 2.4+ (but not with Python 3.x).
 The corresponding functions compatible with Python 3.x are to be found
 in tools_3k.py
 '''
+
+test_name = u"André"
 
 def u_print(*args):
     '''u_print is short for unicode_print
