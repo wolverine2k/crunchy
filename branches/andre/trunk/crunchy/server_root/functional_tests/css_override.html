@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html>
+<head>
+<link href="css_override.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.crunchy_pygments .k{background-color:black; color: yellow}
+</style>
+<title>Crunchy css gest</title></head>
+<body>
+<h1>Crunchy css test</h1>
+<p>A tutorial writer should be override the Crunchy css default, either by specifying some <code>&lt;style&gt;</code> instructions in the file or by linking to an external style sheet.
+This file is intended to test these features.  
+<p>The following code should be styled by Crunchy, with the default overriden so as to clearly stand out (the goal is not to be esthetically pleasing!): </p><ul><li>the Python keyword are in yellow on a black background; this is done by some embedded styling command in the head of this file.</li>
+<li>the Python string is black on a yellow background; this is done by linking to an external style sheet.</li></ul>
+</p>
+<pre title="py_code">
+for i in range(10):
+    print i,
+print "Hello World"
+</pre>
+
+<p><b>Note</b> Crunchy messes with Pygments' class names - it only allow one style per page,
+and renames the css class <b>crunchy_pygments</b>.  This is to allow overriding the default
+style.  Note that <b>crunchy_pygments</b> is the generic class name; there are specific
+class names for keywords (k), strings (s), prompts (gp), tracebacks (tb), etc.  Just view the
+source of a styled page for reference, or go to <a href="/docs/experimental/pygment_style_experiment.html">Creating a new Pygments style</a>.
+</p>
+
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

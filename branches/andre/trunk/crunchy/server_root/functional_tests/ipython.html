@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>IPython Test</title></head>
+<body>
+<h1>IPython Test</h1>
+<p><a title="external_link" href="http://ipython.scipy.org/moin/">IPython</a> is a fairly advanced replacement for the normal Python console.
+Unfortunately, trying to use it as an intpreter shell messes up Crunchy rather badly.
+Assuming you have it installed on your system, to see it in action, execute the following code.  </p>
+<pre title="editor">
+from IPython.Shell import IPShellEmbed
+ipshell = IPShellEmbed(["-colors", "NoColor"])
+ipshell()
+</pre>
+<h2>Bugs</h2>
+<ul>
+  <li> It works ... but messes up everything else.  Try going to a normal interpreter and entering "42" to see what happens.</li>
+</ul>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
