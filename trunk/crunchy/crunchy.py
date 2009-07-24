@@ -4,8 +4,6 @@
 from optparse import OptionParser
 import os
 import socket
-import urllib
-from urlparse import urlsplit
 import webbrowser
 
 import src.interface
@@ -13,6 +11,14 @@ REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
+
+if src.interface.python_version < 3:
+    from urllib import quote_plus
+    from urlparse import urlsplit
+else:
+    from urllib.parse import quote_plus
+    from urllib.parse import urlsplit
+
 import account_manager
 
 def find_port(start=8001):
@@ -186,20 +192,20 @@ def convert_url(url):
     '''converts a url into a form used by Crunchy'''
     if src.interface.interactive:
         if 'py' in url.split('.')[-1]:
-            url = "/py?url=%s" %  urllib.quote_plus(url)
+            url = "/py?url=%s" %  quote_plus(url)
             return url
         else:
             print("invalid file type for --i option.")
             raise SystemExit
     if url.startswith("http:"):
-        url = "/remote?url=%s" % urllib.quote_plus(url)
+        url = "/remote?url=%s" % quote_plus(url)
     elif os.path.exists(url):
         if 'htm' in url.split('.')[-1]:
-            url = "/local?url=%s" % urllib.quote_plus(url)
+            url = "/local?url=%s" % quote_plus(url)
         elif url.split('.')[-1] in ['rst', 'txt']:
-            url = "/rst?url=%s" %  urllib.quote_plus(url)
+            url = "/rst?url=%s" %  quote_plus(url)
         elif 'py' in url.split('.')[-1]:
-            url = "/py?url=%s" %  urllib.quote_plus(url)
+            url = "/py?url=%s" %  quote_plus(url)
         else:
             print("unknown url file type")
             raise SystemExit
