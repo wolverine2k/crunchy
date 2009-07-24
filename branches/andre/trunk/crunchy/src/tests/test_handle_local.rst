@@ -1,7 +1,7 @@
 handle_local.py tests
 ================================
 
-handle_local.py is a plugin whose main purpose is to load local tutorials.  
+handle_local.py is a plugin whose main purpose is to load local tutorials.
 It has the following functions that require testing:
 
 #. `register()`_
@@ -20,7 +20,7 @@ See how_to.rst_ for details.
     >>> config.clear()
     >>> def print_args(*args):
     ...     for arg in args:
-    ...         print arg
+    ...         print(arg)
     >>> plugin['add_vlam_option'] = print_args
     >>> plugin['services'] = print_args
     >>> import src.plugins.handle_local as handle_local
@@ -37,7 +37,7 @@ Testing register()
     >>> handle_local.register()
     power_browser
     local_html
-    >>> 
+    >>>
     >>> mocks.registered_tag_handler['meta']['title']['python_import'] == handle_local.add_to_path
     True
     >>> mocks.registered_http_handler['/local'] == handle_local.local_loader
@@ -72,15 +72,16 @@ this interferes with unit tests unless we catch the return value.
     >>> handle.close()
     >>> request = mocks.Request(args={'url':filepath})
     >>> handle_local.local_loader(request)
+    >>> request.print_lines()
     200
-    Cache-Controlno-cache, must-revalidate, no-store
+    ('Cache-Control', 'no-cache, must-revalidate, no-store')
     End headers
     This is just a test.
     >>> os.remove(filepath)
 
 Now, let's repeat, but this time with an html file - as determined by
 the file extension - not the actual content.  Note that we need to
-determine if the path gets added properly.  
+determine if the path gets added properly.
 First, we define a dummy vlam page creator.
 
     >>> def open_html(file_handle, url, username, local):
@@ -94,7 +95,7 @@ First, we define a dummy vlam page creator.
 
 Next, we need to make sure the path we wish to add is not there,
 so we can be sure it's been added correctly.
-    
+
     >>> import sys
     >>> cwd = os.getcwd()
     >>> if cwd in sys.path:
@@ -120,13 +121,20 @@ We are now ready for the test as such.
     >>> __irrelevant = handle.write(file_content)
     >>> handle.close()
     >>> request = mocks.Request(args={'url':filepath})
+
+We test that the vlam page gets created.
+
     >>> handle_local.local_loader(request)
     This is just a test.
     .htm
     Crunchy
     True
+
+We test that the request was sent back.
+
+    >>> request.print_lines()
     200
-    Cache-Controlno-cache, must-revalidate, no-store
+    ('Cache-Control', 'no-cache, must-revalidate, no-store')
     End headers
     This is just a test.
     >>> os.remove(filepath)
@@ -150,7 +158,7 @@ add path and see if it is in there.
     >>> elem = Element("dummy")
     >>> elem.attrib['name'] = fake_path
     >>> page = mocks.Page()
-    >>> print page.url
+    >>> print(page.url)
     crunchy_server
     >>> handle_local.add_to_path(page, elem, 'dummy')
     >>> fake_path == sys.path[0]
@@ -165,7 +173,6 @@ base directory.
     >>> page.is_from_root = True
     >>> config['crunchy_base_dir'] = '/base'
     >>> handle_local.add_to_path(page, elem, 'dummy')
-    >>> print sys.path[0]
+    >>> print(sys.path[0])
     /base/server_root/fake_path_which_does_not_exist
     >>> del sys.path[0]  # cleaning up
-
