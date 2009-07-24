@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """handle local loading of tutorials (not from the server root).
 Uses the /local http request path.
 
@@ -6,10 +7,14 @@ by Crunchy.
 """
 import os
 import sys
-from urllib import unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin
+from src.interface import config, plugin, python_version
+
+if python_version < 3:
+    from urllib import unquote_plus
+else:
+    from urllib.parse import unquote_plus
 
 provides = set(["/local"])
 requires = set(["filtered_dir", "insert_file_tree"])
