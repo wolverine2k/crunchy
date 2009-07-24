@@ -23,9 +23,11 @@ python_version = sys.version_info[0] + sys.version_info[1]/10.0
 if python_version < 3:  # kept for reference
     from StringIO import StringIO
     crunchy_bytes = str
+    crunchy_unicode = unicode
 else:
     from io import StringIO
     crunchy_bytes = bytes
+    crunchy_unicode = str
 
 # Some special functions, specific to a given
 # Python version are defined below

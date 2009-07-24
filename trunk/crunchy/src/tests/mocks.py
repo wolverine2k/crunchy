@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 mocks.py
 
@@ -7,7 +8,7 @@ can be reused can save a fair bit of time and ensure a greater consistency
 in the various tests.
 '''
 import sys
-from src.interface import plugin
+from src.interface import plugin, crunchy_unicode, crunchy_bytes, u_print, u_join
 
 class Page(object):
     '''Fake page used for testing.
@@ -56,27 +57,52 @@ class Page(object):
 
 class Wfile(object):
     '''fake Wfile added as attribute of Request object.'''
+
+    def __init__(self, lines):
+        self.lines = lines
+
     def write(self, text):
-        print(text)
+        """Takes *encoded data* like BaseHTTPRequestHandler, not
+        Unicode, as an argument."""
+
+        assert not is_instance(text, crunchy_unicode)
+        self.lines.append(text)
 
 class Request(object):
-    '''Totally fake request object'''
+    '''Totally fake request object. Like BaseHTTPRequestHandler,
+    outputs encoded data. See comment in handle_local.py's
+    local_loader for more details. Request stores output in a lines
+    object because doctest does not allow encoded data to be written
+    to stdout in Python 3.'''
+
     def __init__(self, data='data', args='args'):
         self.data = data
         self.args = args
         self.headers = {}
-        self.wfile = Wfile()
-        self.crunchy_username = "Crunchy"
+        self.lines = []
+        self.wfile = Wfile(self.lines)
+        self.crunchy_username = 'Crunchy'
 
     def send_response(self, response=42):
-        print(response)
+        self.lines.append(crunchy_unicode(crunchy_bytes(response),'utf-8'))
 
     def end_headers(self):
-        print("End headers")
+        self.lines.append("End headers")
 
     def send_header(self, *args):
-        print ''.join(args)
+        '''As with BaseHTTPRequestHandler in Python 3, send_header
+        takes Unicode.'''
+        for arg in args:
+            assert isinstance(arg, crunchy_unicode)
 
+        self.lines.append(u_join(args))
+
+    def print_lines(self):
+        '''Assumes all the data written is *not* binary, which is true
+        for tests. Decodes them from UTF-8 and prints them to standard
+        out.'''
+        for line in self.lines:
+            u_print(line)
 
 def register_tag_handler(tag, attribute, value, function):
     if tag not in registered_tag_handler:
