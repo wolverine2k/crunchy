@@ -7,26 +7,44 @@ for instance, it can only handle GET and POST requests and actually
 treats them the same.
 """
 
-from SocketServer import ThreadingMixIn, TCPServer
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import urllib
-import urllib2
+
+
 from traceback import format_exc
 import base64
-import md5
 import time
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interface
 
+if src.interface.python_version < 3:
+    from urllib import unquote, unquote_plus
+    from urllib2 import parse_http_list, parse_keqv_list
+    from SocketServer import ThreadingMixIn, TCPServer
+    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+else:
+    from urllib.parse import unquote, unquote_plus
+    from urllib.request import parse_http_list, parse_keqv_list
+    from socketserver import ThreadingMixIn, TCPServer
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
 DEBUG = False
 
 realm = "Crunchy Access"
 
+
+
+if src.interface.python_version < 2.5:
+    import md5
+    def md5hex(x):
+        return md5.md5(x).hexdigest()
+else:
+    import hashlib
+    def md5hex(x):
+        return hashlib.md5(x).hexdigest()
+
 def require_digest_access_authenticate(func):
     '''A decorator to add digest authorization checks to HTTP Request Handlers'''
     accounts = src.interface.accounts
-    md5hex = lambda x:md5.md5(x).hexdigest()
 
     def wrapped(self):
         method = self.command
@@ -36,8 +54,8 @@ def require_digest_access_authenticate(func):
         if not self.authenticated and auth is not None:
             token, fields = auth.split(' ', 1)
             if token == 'Digest':
-                cred = urllib2.parse_http_list(fields)
-                cred = urllib2.parse_keqv_list(cred)
+                cred = parse_http_list(fields)
+                cred = parse_keqv_list(cred)
                 if 'realm' not in cred or 'username' not in cred \
                     or 'nonce' not in cred or 'uri' not in cred or 'response' not in cred:
                     self.authenticated = False
@@ -136,7 +154,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         # to what it should be
         if self.path.find("?") > -1:
             realpath, argstring = self.path.split("?")
-        self.path = urllib.unquote(realpath)
+        self.path = unquote(realpath)
         # parse any arguments there might be
         if argstring:
             arg = []
@@ -145,7 +163,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 arg = i.split('=')
                 val = ''
                 if len(arg) > 1:
-                    self.args[arg[0]] = urllib.unquote_plus(arg[1])
+                    self.args[arg[0]] = unquote_plus(arg[1])
         # extract any POSTDATA
         self.data = ""
         if "Content-Length" in self.headers:
