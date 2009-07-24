@@ -37,10 +37,10 @@ See how_to.rst_ for details.
   >>> def get_pageid():
   ...     return 'pageid'
   >>> def exec_js(pid, js):
-  ...     print pid
+  ...     print(pid)
   ...     js = js.replace('document.getElementById', '') # makes lines shorter
   ...     js = js.replace('  ', '')
-  ...     print js.replace('.getContext', '')  
+  ...     print(js.replace('.getContext', ''))
   >>> plugin['get_uid'] = get_uid
   >>> plugin['get_pageid'] = get_pageid
   >>> plugin['exec_js'] = exec_js
