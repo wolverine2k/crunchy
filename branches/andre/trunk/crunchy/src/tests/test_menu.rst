@@ -15,7 +15,7 @@ Setting things up
     >>> config.clear()
     >>> def dummy_add(*args):
     ...      for arg in args:
-    ...          print arg
+    ...          print(arg)
     >>> plugin['add_vlam_option'] = dummy_add
     >>> def repeat(msg):
     ...      return msg
