@@ -12,6 +12,7 @@ Settings things up
 
 First, we do the required imports.
 
+    >>> import sys
     >>> import src.pluginloader as pl
 
 Next, we create a few mock modules that would provide services and require others.
@@ -80,7 +81,10 @@ It should pass silently.
 We can see the object required appearing after being provided in the final
 list:
 
-    >>> ans = "[requires = set([])  provided = set(['C', 'B'])\n, requires = set(['B'])  provided = set([])\n]"
+    >>> if sys.version_info[0] < 3:
+    ...     ans = "[requires = set([])  provided = set(['C', 'B'])\n, requires = set(['B'])  provided = set([])\n]"
+    ... else:
+    ...     ans = "[requires = set()  provided = {'C', 'B'}\n, requires = {'B'}  provided = set()\n]"
     >>> str(a_list) == ans
     True
 
@@ -107,7 +111,10 @@ The next test is one in which an object "b" is not required but is provided.
 After it passes silently, we can inspect visually the final list, which
 should should contain that one object.
 
-    >>> ans = "[requires = set([])  provided = set(['G'])\n]"
+    >>> if sys.version_info[0] < 3:
+    ...     ans = "[requires = set([])  provided = set(['G'])\n]"
+    ... else:
+    ...     ans = "[requires = set()  provided = {'G'}\n]"
     >>> str(a_list) == ans
     True
 
