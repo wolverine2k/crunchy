@@ -8,8 +8,11 @@
 
 # All plugins should import the crunchy plugin API via interface.py
 import os
-from src.interface import plugin
-from urllib import urlopen
+from src.interface import plugin, python_version
+if python_version < 3:
+    from urllib import urlopen
+else:
+    from urllib.request import urlopen
 
 _docutils_installed = True
 try:
@@ -20,6 +23,7 @@ try:
         _docutils_installed = False
 except:
     _docutils_installed = False
+    print("rst plugin disabled: docutils not installed.")
 
 if _docutils_installed:
     provides = set(["/rst"])
@@ -73,7 +77,7 @@ if _docutils_installed:
                 raise ValueError("Wrong interpreter type: %s" % (self.arguments[0].strip(),))
             listOut = [ x.strip() for x in self.arguments ]
             for key in [ "linenumber", "log_id" ]:
-                if self.options.has_key(key):
+                if key in self.options:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -95,7 +99,7 @@ if _docutils_installed:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['editor'] + self.arguments ]
             for key in [ "linenumber", "log_id" ]:
-                if self.options.has_key(key):
+                if key in self.options:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -113,7 +117,7 @@ if _docutils_installed:
             code = linesep.join(self.content)
             listOut = [ x.strip() for x in ['doctest'] + self.arguments ]
             for key in [ "linenumber", "log_id" ]:
-                if self.options.has_key(key):
+                if key in self.options:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -131,7 +135,7 @@ if _docutils_installed:
                 if arg.strip() not in ['no_copy', 'no_pre' ]:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
-            if self.options.has_key("linenumber"):
+            if "linenumber" in self.options:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -146,7 +150,7 @@ if _docutils_installed:
         def run(self):
             code = linesep.join(self.content)
             listOut = ['python_code']
-            if self.options.has_key("linenumber"):
+            if "linenumber" in self.options:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -166,7 +170,7 @@ if _docutils_installed:
                                        'external', 'no_internal']:
                     raise ValueError("Invalid argument: %s" % (arg.strip(),))
             listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
-            if self.options.has_key("linenumber"):
+            if "linenumber" in self.options:
                 listOut.append("linenumber=%d" % (self.options["linenumber"],))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
@@ -198,7 +202,7 @@ if _docutils_installed:
 
     def visit_pre(translator, node):
         attrDict = {}
-        for key, value in node.attributes.items():
+        for key, value in list(node.attributes.items()):
             if value and (key is not "xml:space"):
                 attrDict[key] = value
         translator.body.append(translator.starttag(node, 'pre', **attrDict))
@@ -210,7 +214,7 @@ if _docutils_installed:
     HTMLTranslator.depart_pre = depart_pre
 
 if _docutils_installed:
-    for key, value in DIRECTIVE_DICT.items():
+    for key, value in list(DIRECTIVE_DICT.items()):
         rst.directives.register_directive( key, value )
 
 class ReST_file(object):
