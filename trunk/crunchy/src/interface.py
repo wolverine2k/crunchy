@@ -29,6 +29,7 @@ else:
     crunchy_bytes = bytes
     crunchy_unicode = str
 
+
 # Some special functions, specific to a given
 # Python version are defined below
 import src.tools as tools

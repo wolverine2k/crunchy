@@ -2,7 +2,7 @@ handle_local.py tests
 ================================
 
 handle_remote.py is a plugin whose main purpose is to load remote tutorials,
-i.e. those from some external website.  
+i.e. those from some external website.
 It has the following functions that require testing:
 
 1. `register()`_
@@ -21,7 +21,7 @@ See how_to.rst_ for details.
     >>> config.clear()
     >>> def print_args(*args):
     ...     for arg in args:
-    ...         print arg
+    ...         print(arg)
     >>> plugin['add_vlam_option'] = print_args
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -48,7 +48,7 @@ Testing remote_loader()
 
 We need to test loading of html files only; note that remote_loader uses
 FancyURLopener which can not deal with local files; we will need to use a trick
-so as to help us run tests that do not depend on the availability 
+so as to help us run tests that do not depend on the availability
 of an Internet connection.
 
 To make the test totally self-contained, we will create the required file
@@ -90,20 +90,23 @@ First, we do a test without the language-request on.
     >>> config["Crunchy"] = {}
     >>> config["Crunchy"]["forward_accept_language"] = False
     >>> handle_remote.remote_loader(request)
+    >>> request.print_lines()
     200
-    Cache-Controlno-cache, must-revalidate, no-store
+    ('Cache-Control', 'no-cache, must-revalidate, no-store')
     End headers
     This is just a test.
     >>> handle.close()
 
-Second, with the language-request on but "Accept-Language" 
+Second, with the language-request on but "Accept-Language"
 not in request.headers.
 
     >>> handle = open(filepath)
     >>> config["Crunchy"]["forward_accept_language"] = True
+    >>> request = mocks.Request(args={'url':filepath})
     >>> handle_remote.remote_loader(request)
+    >>> request.print_lines()
     200
-    Cache-Controlno-cache, must-revalidate, no-store
+    ('Cache-Control', 'no-cache, must-revalidate, no-store')
     End headers
     This is just a test.
     >>> handle.close()
@@ -113,9 +116,11 @@ Third, with "Accept-Language" in the headers.
     >>> request.headers["Accept-Language"] = 'junk'
     >>> handle = open(filepath)
     >>> config["Crunchy"]["forward_accept_language"] = True
+    >>> request = mocks.Request(args={'url':filepath})
     >>> handle_remote.remote_loader(request)
+    >>> request.print_lines()
     200
-    Cache-Controlno-cache, must-revalidate, no-store
+    ('Cache-Control', 'no-cache, must-revalidate, no-store')
     End headers
     This is just a test.
     >>> handle.close()
@@ -128,7 +133,7 @@ Testing insert_load_remote()
 ------------------------------
 
 This method inserts one form inside a <span> element.
-    
+
     >>> fake_page = ''  # unused
     >>> fake_uid = '2'  # unused
     >>> span = Element("span")
@@ -136,22 +141,22 @@ This method inserts one form inside a <span> element.
     >>> handle_remote.insert_load_remote(fake_page, span, fake_uid)
     >>> form = span.find("form")
 
-    >>> form.attrib["name"]
-    'url'
-    >>> form.attrib["size"]
-    '80'
-    >>> form.attrib["method"]
-    'get'
-    >>> form.attrib["action"]
-    '/remote'
+    >>> print(form.attrib["name"])
+    url
+    >>> print(form.attrib["size"])
+    80
+    >>> print(form.attrib["method"])
+    get
+    >>> print(form.attrib["action"])
+    /remote
     >>> inputs = form.findall("input")
     >>> len(inputs)
     2
-    >>> inputs[0].attrib["name"]
-    'url'
-    >>> inputs[0].attrib["size"]
-    '80'
-    >>> inputs[0].attrib["value"]
-    'Cool url'
-    >>> inputs[1].attrib["type"]
-    'submit'
+    >>> print(inputs[0].attrib["name"])
+    url
+    >>> print(inputs[0].attrib["size"])
+    80
+    >>> print(inputs[0].attrib["value"])
+    Cool url
+    >>> print(inputs[1].attrib["type"])
+    submit

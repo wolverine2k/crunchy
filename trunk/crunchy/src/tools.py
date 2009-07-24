@@ -13,11 +13,11 @@ import sys
 python_version = sys.version_info[0]  # name also defined for testing purpose
 if python_version < 3:
     _bytes = str
-    to_unicode = unicode
+    crunchy_unicode = unicode
     import tools_2k as specific_tools
 else:
     _bytes = bytes
-    to_unicode = str
+    crunchy_unicode = str
     import src.tools_3k as specific_tools
 
 def u_print(*args):
@@ -60,7 +60,7 @@ def u_join(*args):
     try:  # exceptions appear to be catched silently elsewhere
           # without this try/except block...
           # likely a problem with printing encoded args
-        s = ''.join(to_unicode(arg) for arg in args)
+        s = ''.join(crunchy_unicode(arg) for arg in args)
         return s
     except:
         print("Problem in u_print: could not print args:")
