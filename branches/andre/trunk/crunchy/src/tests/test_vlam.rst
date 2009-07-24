@@ -21,7 +21,7 @@ It contains two classes and a number of methods that need to be tested:
 #. `add_charset()`_
 #. `read()`_
 #. An introduction to the processing of  `handlers`_.  It covers testing of
-   process_handlers1(), process_handlers2(), process_handlers3(), 
+   process_handlers1(), process_handlers2(), process_handlers3(),
    process_final_handlers1(), process_type1().
 #. `extract_keyword()`_
 
@@ -45,7 +45,7 @@ See how_to.rst_ for details.
     >>> def dummy(arg):
     ...    pass
     >>> from_comet['register_new_page'] = dummy
-   
+
 
 Let us define a utility function that will:
 
@@ -83,9 +83,13 @@ Creating a page and a tree
 Let's start by creating a simple page.
 
     >>> page = vlam.BasePage('dummy_username')
-    >>> page.included
-    set([])
-    >>> print int(uidgen('dummy')) - int(page.pageid)
+
+Because of the changes to set() representation in Python 3, we first
+convert the page.included set to a list.
+
+    >>> list(page.included)
+    []
+    >>> print(int(uidgen('dummy')) - int(page.pageid))
     1
 
 .. _`create_tree()`:
@@ -106,17 +110,17 @@ Let's verify this for a file that has major problems with missing closing tags.
 
     >>> bad_html = '<html><head>brain<body><p>This is a test.'
     >>> page2, bad_out_html = process_html(bad_html)
-    >>> bad_out_html
-    '<html><head>brain<body><p>This is a test.</p></body></head></html>'
+    >>> print(bad_out_html)
+    <html><head>brain<body><p>This is a test.</p></body></head></html>
 
 The result is not entirely what we might have liked, as the head encloses the body,
-but all tags are at least closed. 
+but all tags are at least closed.
 Finally, what happens if we pass a straight text file.
 
     >>> no_tags = 'This is just text'
     >>> page_no_tags, out_no_tags = process_html(no_tags)
-    >>> out_no_tags
-    '<html>This is just text</html>'
+    >>> print(out_no_tags)
+    <html>This is just text</html>
 
 We do get a very basic html page...
 
@@ -124,30 +128,31 @@ Finally, three more examples
 
     >>> no_html = '<head>brain</head><body><p>This is a test.</p></body>'
     >>> page_no_html, out_no_html = process_html(no_html)
-    >>> out_no_html
-    '<html><head>brain</head><body><p>This is a test.</p></body></html>'
+    >>> print(out_no_html)
+    <html><head>brain</head><body><p>This is a test.</p></body></html>
 
     >>> no_head = '<html><body><p>This is a test.</p></body></html>'
     >>> page_no_head, out_no_head = process_html(no_head)
-    >>> out_no_head
-    '<html><body><p>This is a test.</p></body></html>'
+    >>> print(out_no_head)
+    <html><body><p>This is a test.</p></body></html>
 
     >>> no_body = '<html><head>brain</head></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
-    >>> out_no_body
-    '<html><head>brain</head></html>'
+    >>> print(out_no_body)
+    <html><head>brain</head></html>
 
     >>> just_body = '<body><p>This is a test.</p></body>'
     >>> page_just_body, out_just_body = process_html(just_body)
-    >>> out_just_body
-    '<html><body><p>This is a test.</p></body></html>'
+    >>> print(out_just_body)
+    <html><body><p>This is a test.</p></body></html>
 
 Finally, a weird example with a DTD, but no html tag.
 
     >>> dtd_no_html = vlam.DTD + '<head>brain</head><body><p>This is a test.</p></body>'
     >>> page_dtd_no_html, out_dtd_no_html = process_html(dtd_no_html)
-    >>> out_dtd_no_html
-    '<html>\n<head>brain</head><body><p>This is a test.</p></body></html>'
+    >>> print(out_dtd_no_html)
+    <html>
+    <head>brain</head><body><p>This is a test.</p></body></html>
 
 .. _`find_head()`:
 
@@ -176,22 +181,22 @@ Testing find_body()
 Let's try in the case of a missing body.
 
     >>> page_no_body.find_body()
-    >>> page_no_body.body[0].text   # enclosed inside an <h1>
-    'Missing body from original file'
+    >>> print(page_no_body.body[0].text)   # enclosed inside an <h1>
+    Missing body from original file
 
 .. _`add_include()`:
 
 Testing add_include()
 ---------------------
 
-    >>> page.included
-    set([])
+    >>> list(page.included)
+    []
     >>> page.add_include('junk')
-    >>> page.included
-    set(['junk'])
+    >>> list(page.included)
+    ['junk']
     >>> page.add_include('more junk')
-    >>> page.included
-    set(['junk', 'more junk'])
+    >>> list(page.included)
+    ['junk', 'more junk']
 
 .. _`includes()`:
 
@@ -216,8 +221,8 @@ Testing add_css_code()
     >>> no_body = '<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_css_code(sample)
-    >>> output(page_no_body)
-    '<html><head>brain<style type="text/css">pre{font:1000pt;}</style></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<style type="text/css">pre{font:1000pt;}</style></head></html>
 
 Just to make sure, an even simpler case, with no head; one will be created for
 proper insertion of css code.
@@ -225,8 +230,8 @@ proper insertion of css code.
     >>> no_body = '<html></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_css_code(sample)
-    >>> output(page_no_body)
-    '<html><head> <style type="text/css">pre{font:1000pt;}</style></head></html>'
+    >>> print(output(page_no_body))
+    <html><head> <style type="text/css">pre{font:1000pt;}</style></head></html>
 
 .. _`add_crunchy_style()`:
 
@@ -236,8 +241,8 @@ Testing add_crunchy_style()
     >>> no_body = '<html><head>brain<title>Hi!</title></head></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_crunchy_style()
-    >>> output(page_no_body)
-    '<html><head>brain<link href="/css/crunchy.css" rel="stylesheet" type="text/css" /><title>Hi!</title></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<link href="/css/crunchy.css" rel="stylesheet" type="text/css" /><title>Hi!</title></head></html>
 
 Just to make sure, an even simpler case, with no head; one will be created for
 proper insertion of css code.
@@ -245,8 +250,8 @@ proper insertion of css code.
     >>> no_body = '<html></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_crunchy_style()
-    >>> output(page_no_body)
-    '<html><head> <link href="/css/crunchy.css" rel="stylesheet" type="text/css" /></head></html>'
+    >>> print(output(page_no_body))
+    <html><head> <link href="/css/crunchy.css" rel="stylesheet" type="text/css" /></head></html>
 
 .. _`add_js_code()`:
 
@@ -256,43 +261,45 @@ proper insertion of css code.
 Testing add_user_style()
 -------------------------
 
-First, we test with an empty config file; while it was empty at the start, 
+First, we test with an empty config file; while it was empty at the start,
 we do it again in case other tests are added at some later time.
 
     >>> config.clear()
     >>> no_body = '<html><head>brain<title>Hi!</title></head></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_user_style()
-    >>> output(page_no_body)
-    '<html><head>brain<title>Hi!</title></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<title>Hi!</title></head></html>
 
 Next, we consider the case where an entry exists but no style is needed.
 
     >>> config['my_style'] = False
     >>> page_no_body.add_user_style()
-    >>> output(page_no_body)
-    '<html><head>brain<title>Hi!</title></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<title>Hi!</title></head></html>
 
 Next, an entry call for some styling, but none is defined.
 
     >>> config['my_style'] = True
     >>> page_no_body.add_user_style()
-    >>> output(page_no_body)
-    '<html><head>brain<title>Hi!</title></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<title>Hi!</title></head></html>
 
 Next, some null styling is defined.
 
     >>> config['styles'] = {}
     >>> page_no_body.add_user_style()
-    >>> output(page_no_body)
-    '<html><head>brain<title>Hi!</title></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<title>Hi!</title></head></html>
 
 Finally, some real styling is defined.
 
     >>> config['styles'] = {'pre': 'font:1000pt;', 'body': 'color: red;'}
     >>> page_no_body.add_user_style()
-    >>> output(page_no_body)
-    '<html><head>brain<title>Hi!</title><style type="text/css">pre{font:1000pt;}\nbody{color: red;}\n</style></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<title>Hi!</title><style type="text/css">pre{font:1000pt;}
+    body{color: red;}
+    </style></head></html>
 
 Testing add_js_code()
 ---------------------
@@ -301,8 +308,8 @@ Testing add_js_code()
     >>> no_body = '<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_js_code(sample)
-    >>> output(page_no_body)
-    '<html><head>brain<script type="text/javascript">alert(Crunchy!);</script></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<script type="text/javascript">alert(Crunchy!);</script></head></html>
 
 Just to make sure, an even simpler case, with no head; one will be created for
 proper insertion of javascript code.
@@ -310,8 +317,8 @@ proper insertion of javascript code.
     >>> no_body = '<html></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.add_js_code(sample)
-    >>> output(page_no_body)
-    '<html><head> <script type="text/javascript">alert(Crunchy!);</script></head></html>'
+    >>> print(output(page_no_body))
+    <html><head> <script type="text/javascript">alert(Crunchy!);</script></head></html>
 
 .. _`insert_js_file()`:
 
@@ -321,8 +328,8 @@ Testing insert_js_file()
     >>> no_body = '<html><head>brain</head></html>'    # chosen for simpler output below
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.insert_js_file('smart.js')
-    >>> output(page_no_body)
-    '<html><head>brain<script src="smart.js" type="text/javascript"> </script></head></html>'
+    >>> print(output(page_no_body))
+    <html><head>brain<script src="smart.js" type="text/javascript"> </script></head></html>
 
 Just to make sure, an even simpler case, with no head; one will be created for
 proper insertion of javascript code.
@@ -330,8 +337,8 @@ proper insertion of javascript code.
     >>> no_body = '<html></html>'
     >>> page_no_body, out_no_body = process_html(no_body)
     >>> page_no_body.insert_js_file('smart.js')
-    >>> output(page_no_body)
-    '<html><head> <script src="smart.js" type="text/javascript"> </script></head></html>'
+    >>> print(output(page_no_body))
+    <html><head> <script src="smart.js" type="text/javascript"> </script></head></html>
 
 .. _`add_charset()`:
 
@@ -343,8 +350,8 @@ We test this method with a very simple page.
     >>> html = '<html><head>brain</head><body><p>This is a test.</p></body></html>'
     >>> page, out_html = process_html(html)
     >>> page.add_charset()
-    >>> output(page)
-    '<html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>'
+    >>> print(output(page))
+    <html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>
 
 Next, we redo this test with a page that has no head (nor body).
 A head should be added automatically.
@@ -352,8 +359,8 @@ A head should be added automatically.
     >>> html = '<html></html>'
     >>> page, out_html = process_html(html)
     >>> page.add_charset()
-    >>> output(page)
-    '<html><head> <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head></html>'
+    >>> print(output(page))
+    <html><head> <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head></html>
 
 .. _`read()`:
 
@@ -364,15 +371,18 @@ Before we do this test, we will record the value of the DTD in case some
 accidental editing is done.  This might help us identify the source of an error,
 if ever one occurs in the test for read().
 
-    >>> vlam.DTD
-    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
+    >>> print(vlam.DTD)
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">
+    <BLANKLINE>
 
 Next, we create a simple page.
 
     >>> html = '<html><head>brain</head><body><p>This is a test.</p></body></html>'
     >>> page, out_html = process_html(html)
-    >>> page.read()
-    '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n\n<html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>'
+    >>> print(page.read())
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/strict.dtd">
+    <BLANKLINE>
+    <html><head>brain<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" /></head><body><p>This is a test.</p></body></html>
 
 
 .. _`handlers`:
@@ -388,7 +398,7 @@ first time around.  By handlers, we mean one of the following three types:
 -  handlers3 = {} # tag -> attribute -> keyword -> handler function
 
 We do not consider here the "page handlers" (begin_pagehandler and end_pagehandler).
-To simplify the processing, the same 3 arguments are passed to each handler: 
+To simplify the processing, the same 3 arguments are passed to each handler:
 
 1. the CrunchyPage instance
 2. an Element to which the processing is meant to be applied
@@ -409,7 +419,7 @@ Before we begin testing some functions, let us create some fictitious handlers,
 and a test function.
 
     >>> def func(page, elem, id):
-    ...    print elem.text
+    ...    print(elem.text)
     ...    return
     >>> handlers1 = {'a': func, 'b': func, 'c': func}
     >>> handlers2 = {'a': {'aa': func}, 'b': {'aa': func}}
@@ -421,15 +431,15 @@ and a test function.
     >>> vlam.BasePage.final_handlers1 = final_handlers1
 
 Next, let us create a tree with these tags, and some others.  The text we put inside
-each element will be a number chosen, by inspection of the above handlers structure, 
+each element will be a number chosen, by inspection of the above handlers structure,
 to be the handler type (1, 2 or 3).
 
     >>> open_html = "<html><head> </head><body>"
     >>> end_html = "</body></html>"
     >>> inner = "<a>1</a><a ee='eee'>1</a>"
     >>> page, out_html = process_html(open_html+inner+end_html)
-    >>> output(page)
-    '<html><head> </head><body><a>1</a><a ee="eee">1</a></body></html>'
+    >>> print(output(page))
+    <html><head> </head><body><a>1</a><a ee="eee">1</a></body></html>
 
     >>> page.process_handlers1()
     1
@@ -500,27 +510,27 @@ Words are separated by blank spaces.
     >>> html = '<html><head a="keyword">brain</head></html>'
     >>> page, out_html = process_html(html)
     >>> page.find_head()
-    >>> print page.extract_keyword(page.head, 'a')
+    >>> print(page.extract_keyword(page.head, 'a'))
     keyword
     >>> html = '<html><head a=" keyword ">brain</head></html>'
     >>> page, out_html = process_html(html)
     >>> page.find_head()
-    >>> print page.extract_keyword(page.head, 'a')
+    >>> print(page.extract_keyword(page.head, 'a'))
     keyword
     >>> html = '<html><head a="    keyword ignore the rest">brain</head></html>'
     >>> page, out_html = process_html(html)
     >>> page.find_head()
-    >>> print page.extract_keyword(page.head, 'a')
+    >>> print(page.extract_keyword(page.head, 'a'))
     keyword
     >>> html = '<html><head a="keyword      ignore the rest">brain</head></html>'
     >>> page, out_html = process_html(html)
     >>> page.find_head()
-    >>> print page.extract_keyword(page.head, 'a')
+    >>> print(page.extract_keyword(page.head, 'a'))
     keyword
     >>> html = '<html><head a="">brain</head></html>'
     >>> page, out_html = process_html(html)
     >>> page.find_head()
-    >>> print page.extract_keyword(page.head, 'a')
+    >>> print(page.extract_keyword(page.head, 'a'))
     None
 
 

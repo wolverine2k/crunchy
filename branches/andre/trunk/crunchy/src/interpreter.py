@@ -10,7 +10,7 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, translate, config, plugin, names
+from src.interface import StringIO, exec_code, translate, config, plugin, names, u_print
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -74,12 +74,12 @@ class Interpreter(KillableThread):
                 print ("Exception raised in Interpreter.init(); channel = %s" %
                                                                     self.channel)
                 try:
-                    print "username = ", self.username
+                    u_print("username = ", self.username)
                 except:
-                    print "username not defined..."
+                    print("username not defined...")
                     self.username = None
                 try:
-                    print "pageid in names: ", self.channel.split("_")[0] in names
+                    u_print("pageid in names: ", self.channel.split("_")[0] in names)
                 except:
                     pass
 
@@ -235,7 +235,7 @@ class InteractiveInterpreter(object):
         if username is not None:
             self.locals.update(config[username]['symbols'])
             #print _("Hello %s ! "% username)
-            print ''
+            print('')
         self.compile = CommandCompiler()
 
     def runsource(self, source, filename="User's code", symbol="single"):

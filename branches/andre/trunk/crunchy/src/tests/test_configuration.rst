@@ -5,11 +5,10 @@ configuration.py tests
 Setting things up
 ------------------
 
-    >>> from src.interface import config, plugin
+    >>> from src.interface import config, plugin, get_base_dir
     >>> plugin.clear()
     >>> config.clear()
-    >>> from os import getcwd
-    >>> config['crunchy_base_dir'] = getcwd()
+    >>> config['crunchy_base_dir'] = get_base_dir()
     >>> from src.configuration import Base, make_property, options
 
 Sample use of extending the Base class for a single object:
@@ -24,11 +23,11 @@ Sample use of extending the Base class for a single object:
     ...        self._init_properties(Simple)
     ...    def _save_settings(self, name, value, initial=False):
     ...        if not initial:
-    ...            print "Saving", name, '=', value
+    ...            print("Saving %s = %s" % (name, value))
     ...        self._preferences[name] = value
     ...    y = make_property('y')
     ...    x = make_property('x')
-    
+
     >>>
     >>> a_dict = {}
     >>> example = Simple(a_dict)
@@ -38,7 +37,7 @@ Sample use of extending the Base class for a single object:
     The current value is: True
     >>> example.y = False
     Saving y = False
-    >>> print a_dict == example._preferences
+    >>> print(a_dict == example._preferences)
     True
 
 Multi users examples.
@@ -52,9 +51,5 @@ Multi users examples.
     ...     users[name] = Simple(configs[name])
     >>> users['Tao'].x = 4
     Saving x = 4
-    >>> for name in user_names:
-    ...    print users[name].x, 
-    4 1 1 1
-
-    
-
+    >>> print([users[name].x for name in user_names])
+    [4, 1, 1, 1]
