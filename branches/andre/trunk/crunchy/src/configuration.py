@@ -11,10 +11,17 @@
 # out such methods from the display.
 
 import os
-from urlparse import urlsplit
-import cPickle
 
-from src.interface import config, u_print, translate, additional_vlam, accounts
+import pickle
+
+from src.interface import config, u_print, translate, additional_vlam, accounts, python_version
+
+if python_version < 3:
+    ask_ = raw_input
+    from urlparse import urlsplit
+else:
+    ask_ = input
+    from urllib.parse import urlsplit
 
 import src.interface as interface
 
@@ -148,7 +155,7 @@ class UserPreferences(Base):
         self._preferences.update({'_prefix': 'crunchy',
                             'page_security_level': self._page_security_level,
                             '_set_site_security': self._set_site_security})
-        self._not_saved = self._preferences.keys()
+        self._not_saved = list(self._preferences.keys())
         self._not_saved.extend(['user_dir', 'log', 'logging_uids', 'symbols',
                                 'initial_security_set', 'page_security_level'])
 
@@ -321,10 +328,10 @@ are usually launched.""")
             success = True
         except:
             u_print("No configuration file found.")
-            print "user_dir = ", self.user_dir
+            u_print("user_dir = ", self.user_dir)
         if success:
             try:
-                saved = cPickle.load(pickled)
+                saved = pickle.load(pickled)
                 pickled.close()
             except EOFError:
                 self._not_loaded = False
@@ -342,20 +349,20 @@ are usually launched.""")
                 if isinstance(val, property):
                     val.fset(self, saved[key])
                 else:
-                    print "*"*50
-                    print "Unless Crunchy has just been updated,"
-                    print "this should not happen."
-                    print "saved variable: %s is not a property", key
+                    u_print("*"*50)
+                    u_print("Unless Crunchy has just been updated,")
+                    u_print("this should not happen.")
+                    u_print("saved variable: %s is not a property", key)
             except:
                 try:
                     val = getattr(self, key)
                     setattr(self, key, saved[key])
                     self._preferences[key] = saved[key]
                 except:
-                    print "*"*50
-                    print "Unless Crunchy has just been updated,"
-                    print "this should not happen."
-                    print "saved variable: %s is not recognized" % key
+                    u_print("*"*50)
+                    u_print("Unless Crunchy has just been updated,")
+                    u_print("this should not happen.")
+                    u_print("saved variable: %s is not recognized" % key)
         self._not_loaded = False
         return
 
@@ -385,7 +392,7 @@ are usually launched.""")
         except:
             u_print("Could not open file in configuration._save_settings().")
             return
-        cPickle.dump(saved, pickled)
+        pickle.dump(saved, pickled)
         pickled.close()
         return
 
@@ -419,7 +426,7 @@ are usually launched.""")
     def _get_site_security(self, site):
         '''determines the appropriate level of security to use for given site'''
         if site in self.site_security:
-            print "in _get_site_security, site = ", site
+            u_print("in _get_site_security, site = ", site)
             return self.site_security[site]
         else:
             return 'display trusted'
@@ -438,27 +445,27 @@ are usually launched.""")
     def add_site(self):
         '''interactive function to facilitate adding new site to
            the secured list'''
-        site = raw_input(_("Enter site url (for example, docs.python.org) "))
-        level = raw_input(_("Enter security level (for example: normal) "))
+        site = ask_(_("Enter site url (for example, docs.python.org) "))
+        level = ask_(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
     def add_rule(self):
         '''interactive function to enable rules to modify markup'''
-        print _("Enter a rule method to modify markup.")
-        print _("The allowed methods are: add_option, remove_option, replace")
-        method = raw_input(_("Enter method: ")).strip()
+        u_print(_("Enter a rule method to modify markup."))
+        u_print(_("The allowed methods are: add_option, remove_option, replace"))
+        method = ask_(_("Enter method: ")).strip()
         if method == 'replace':
-            to_replace = raw_input(_("Markup value to replace: "))
-            replacement = raw_input(_("Replacement value: "))
+            to_replace = ask_(_("Markup value to replace: "))
+            replacement = ask_(_("Replacement value: "))
             self._modification_rules.append([method, to_replace, replacement])
         elif method == 'add_option':
-            add = raw_input(_("Enter option to add (e.g. linenumber): "))
+            add = ask_(_("Enter option to add (e.g. linenumber): "))
             self._modification_rules.append([method, add])
         elif method == 'remove_option':
-            remove = raw_input(_("Enter option to remove (e.g. linenumber)"))
+            remove = ask_(_("Enter option to remove (e.g. linenumber)"))
             self._modification_rules.append([method, remove])
         else:
-            print _("Unknown method.")
+            u_print(_("Unknown method."))
             return
         self._save_settings()
         return
@@ -469,15 +476,15 @@ are usually launched.""")
             del self._modification_rules[no]
             self._save_settings()
         except:
-            print _("Choose a valid rule number to remove.")
+            u_print(_("Choose a valid rule number to remove."))
             self.list_rules()
         return
 
     def list_rules(self):
         '''list the rules used to modify markup'''
-        print _("#"), _("\tmethod"), _("\targuments")
+        u_print(_("#"), _("\tmethod"), _("\targuments"))
         for i, rule in enumerate(self._modification_rules):
-            print i, "\t%s" % rule[0], "\t%s" % rule[1:]
+            u_print(i, "\t%s" % rule[0], "\t%s" % rule[1:])
 
     def _set_alternate_python_version(self, alt_py):
         '''sets the path to use for using an alternate Python version
@@ -506,11 +513,11 @@ def init():
         try:
             options[key].extend(additional_option)
         except:
-            print "Problem in config.init()"
-            print "The following additional vlam option"
-            print "key = %s, value= %s" %(key, additional_option)
-            print "is raising an exception."
-            print "Please file a bug report"
+            u_print("Problem in config.init()")
+            u_print("The following additional vlam option")
+            u_print("key = %s, value= %s" %(key, additional_option))
+            u_print("is raising an exception.")
+            u_print("Please file a bug report")
 
     users = {}
     for name in accounts:
