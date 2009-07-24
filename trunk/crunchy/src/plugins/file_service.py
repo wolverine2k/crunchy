@@ -9,7 +9,7 @@ import sys
 import urllib
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement
+from src.interface import config, plugin, SubElement, u_print
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external",
@@ -71,8 +71,8 @@ def filtered_dir(request, filter=None):
                 ext = os.path.splitext(f)[1][1:] # get .ext and remove dot
                 ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
         ul.append('</ul>')
-    except Exception,e:
-        ul.append('Could not load directory: %s' % str(e))
+    except Exception:
+        ul.append('Could not load directory: %s' % sys.exc_info()[1])
     ul.append('</ul>')
     request.wfile.write(''.join(ul))
     return
@@ -242,7 +242,7 @@ def save_file_python_interpreter_request_handler(request):
     content = '_::EOF::_'.join(info[2:])
     save_file(path, content)
     if DEBUG:
-        print "info =", info
+        u_print("info =", info)
     if info[0]:
         username = request.crunchy_username
         config[username]['alternate_python_version'] = info[0]
@@ -321,15 +321,15 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
             (terminal, start_parameter) = terminals_to_try[0]
             try:
                 if DEBUG:
-                    print 'Try to lauch "%s %s %s %s"' % (terminal, start_parameter,
-                                       python_interpreter, path)
+                    print('Try to launch:')
+                    u_print(terminal, start_parameter, python_interpreter, path)
                 Popen([terminal, start_parameter,
                                        python_interpreter, path])
                 # If it works, remove all terminals in the to_try list
                 terminals_to_try = []
             except:
                 if DEBUG:
-                    print 'Failed'
+                    print('Failed')
                 if len(terminals_to_try) == 1:
                     # Impossible to find a terminal
                     raise NotImplementedError
