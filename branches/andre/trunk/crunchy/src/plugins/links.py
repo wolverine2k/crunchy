@@ -4,13 +4,18 @@ Rewrites links so that crunchy can access remote pages.
 unit tests in in test_links.rst
 """
 
-import urllib
+
 import re
-from urlparse import urljoin, urlsplit, urlunsplit
 import os
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, SubElement
+from src.interface import plugin, SubElement, python_version
+
+if python_version < 3:
+    from urllib import quote_plus
+    from urlparse import urljoin, urlsplit, urlunsplit
+else:
+    from urllib.parse import quote_plus, urljoin, urlsplit, urlunsplit
 
 def register():  # tested
     '''registers a series of tag handlers, all related to html links '''
@@ -68,12 +73,12 @@ def a_tag_handler(page, elem, *dummy):  # tested
 
         if "://" not in elem.attrib["href"]:
             elem.attrib["href"] = urljoin(page.url, elem.attrib["href"])
-            elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(elem.attrib["href"])
+            elem.attrib["href"] = "/remote?url=%s" % quote_plus(elem.attrib["href"])
         return
 
     href = elem.attrib["href"]
     if "://" in href:
-        elem.attrib["href"] = "/remote?url=%s" % urllib.quote_plus(href)
+        elem.attrib["href"] = "/remote?url=%s" % quote_plus(href)
         return
 
     ### To do: deal better with .rst, .txt and .py files
@@ -97,11 +102,11 @@ def a_tag_handler(page, elem, *dummy):  # tested
         if extension in ["rst", "txt"]:
             elem.attrib["href"] = "/rst?url=%s" % \
                 os.path.dirname(page.url) + "/" + \
-                urllib.quote_plus(elem.attrib["href"])
+                quote_plus(elem.attrib["href"])
             return
         if "://" not in elem.attrib["href"]:
             href = urljoin(page.url, elem.attrib["href"])
-            elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(href)
+            elem.attrib["href"] = "/local?url=%s" % quote_plus(href)
             return
     #extension = elem.attrib["href"].split('.')[-1]
 
@@ -123,7 +128,7 @@ def src_handler(page, elem, *dummy):  # partially tested
         if elem.attrib["src"].startswith("/"):
             return
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["src"] = "/local?url=%s" % urllib.quote_plus(
+        elem.attrib["src"] = "/local?url=%s" % quote_plus(
                                 os.path.join(local_dir, elem.attrib["src"]))
 
 def link_tag_handler(page, elem, *dummy):  # partially tested
@@ -138,7 +143,7 @@ def link_tag_handler(page, elem, *dummy):  # partially tested
         if elem.attrib["href"].startswith("/"):
             return
         local_dir = os.path.split(page.url)[0]
-        elem.attrib["href"] = "/local?url=%s" % urllib.quote_plus(
+        elem.attrib["href"] = "/local?url=%s" % quote_plus(
                                 os.path.join(local_dir, elem.attrib["href"]))
 
 def secure_url(url):  # tested
