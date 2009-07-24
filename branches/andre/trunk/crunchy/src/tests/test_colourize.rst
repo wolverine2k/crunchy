@@ -310,6 +310,10 @@ Next, a function to replace an ElementTree Element "in place".
     True
     >>> print(et.tostring(elem) == new)# but with new content
     True
+    >>> print(new)
+    <aa bb="cc">dd<ee>ff</ee>gg</aa>
+    >>> print(et.tostring(elem))
+    <aa bb="cc">dd<ee>ff</ee>gg</aa>
 
 Next, we introduce a series of tests of increasing complexity.
 First, some unstyled code.
