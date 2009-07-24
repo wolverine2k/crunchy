@@ -18,7 +18,7 @@ Adding a user.
 
 Retrieving the stored information using the defined methods.
     >>> encoded_password = accounts.get_password('user1')
-    >>> print encoded_password
+    >>> print(encoded_password)
     ac50c86cc6b773c77b336d9bd3936e3a
     >>> 'home1' == accounts.get_home_dir('user1')
     True
