@@ -197,7 +197,12 @@ def replace_element(elem, replacement): # tested
     elem.tail = replacement.tail
     elem.tag = replacement.tag
     elem.attrib = replacement.attrib
-    elem[:] = replacement[:]
+    try:
+        elem[:] = replacement[:]  # quick and works with Python 2.x but not 3.x
+    except AssertionError:
+        del elem[:]
+        for child in replacement:
+            elem.append(child)
 
 
 #--------End ElementTree dependent part-------------
