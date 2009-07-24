@@ -2,8 +2,8 @@
 This plugin is used to process, according to the user's preference,
 elements with no specific vlam.
 """
-
-from src.interface import plugin, config
+import sys
+from src.interface import plugin, config, u_print
 
 def register(): # tested
     '''registers a simple tag handler'''
@@ -37,9 +37,9 @@ def modify_vlam(page, elem, dummy):
         try:
             elem.attrib["title"] = dispatcher[rule[0]](elem.attrib["title"],
                                                                 rule[1:])
-        except e, info:
-            print "Error found in user_markup.modify_vlam(): ", info
-            print "rule = ", rule
+        except e:
+            u_print("Error found in user_markup.modify_vlam(): ", sys.exc_info()[1])
+            u_print("rule = ", rule)
     return
 
 def add_option(vlam, option): # tested
