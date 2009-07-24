@@ -14,9 +14,11 @@ python_version = sys.version_info[0]  # name also defined for testing purpose
 if python_version < 3:
     _bytes = str
     to_unicode = unicode
+    import tools_2k as specific_tools
 else:
     _bytes = bytes
     to_unicode = str
+    import src.tools_3k as specific_tools
 
 def u_print(*args):
     '''u_print is short for unicode_print
@@ -64,6 +66,8 @@ def u_join(*args):
         print("Problem in u_print: could not print args:")
         print(repr(args))
         raise
+
+exec_code = specific_tools.exec_code
 
 #def exec_code(code, local_dict, source='', username=None): # tested via test_interface.rst
 #    import src.errors as errors   # prevent premature import
