@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Handle remote loading of tutorials.
 
 Defines the /remote http request path.
@@ -5,7 +6,14 @@ Creates a form allowing to specify the URL of a tutorial to be loaded
 by Crunchy.
 """
 
-from urllib import FancyURLopener, unquote_plus
+import sys
+
+# urllib reshuffled in Python 3.
+if sys.version_info[0] < 3:
+    from urllib import FancyURLopener, unquote_plus
+else:
+    from urllib.request import FancyURLopener
+    from urllib.parse import unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, preprocessor, config, SubElement
