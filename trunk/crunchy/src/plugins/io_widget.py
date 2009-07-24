@@ -7,7 +7,7 @@ unit tests in test_io_widget.rst
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, SubElement, Element
 import src.interface as interface
-from editarea import editArea_load_and_save
+from src.plugins.editarea import editArea_load_and_save
 _ = translate['_']
 
 provides = set(["io_widget"])
