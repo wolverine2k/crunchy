@@ -55,6 +55,7 @@ server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
 exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
+username_at_start = None
 
 def get_base_dir():
     path = os.path.normpath(os.path.join(os.path.dirname(__file__),
@@ -109,3 +110,4 @@ if python_version < 3:
     generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
     generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
     comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
+
