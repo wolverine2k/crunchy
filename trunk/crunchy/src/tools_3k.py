@@ -10,3 +10,14 @@ in tools_2k.py
 
 test_name = "André"
 
+def exec_code(code, local_dict, source='', username=None): # tested via test_interface.rst
+    #import src.errors as errors   # prevent premature import
+    import sys                    #
+    try:
+        exec(code, local_dict)
+    except:
+        if source is not None:
+            #sys.stderr.write(errors.simplify_traceback(source, username=username))
+            sys.stderr.write("Some traceback needs to appear here.")
+        else:
+            raise

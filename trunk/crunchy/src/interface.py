@@ -15,19 +15,23 @@ as possible from those in Crunchy's core.
 import imp
 import os
 import sys
-version = sys.version.split('.')
-python_version = float(version[0] + '.' + version[1][0])
+python_version = sys.version_info[0] + sys.version_info[1]/10.0
 
 # StringIO is used for creating in-memory files
+# We also take a page from Django's book and create an identifiable
+# string/bytes type.
 if python_version < 3:  # kept for reference
     from StringIO import StringIO
+    crunchy_bytes = str
 else:
     from io import StringIO
+    crunchy_bytes = bytes
 
 # Some special functions, specific to a given
 # Python version are defined below
-import src.tools_2k as tools
+import src.tools as tools
 u_print = tools.u_print
+u_join = tools.u_join
 exec_code = tools.exec_code
 
 # Rather than having various modules importing the configuration.py,
@@ -50,9 +54,15 @@ translate = {} # initialized below
 exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
 
-config['crunchy_base_dir'] = os.path.normpath(os.path.join(
-                                              os.path.dirname(__file__), '..')
-                                           ).decode(sys.getfilesystemencoding())
+def get_base_dir():
+    path = os.path.normpath(os.path.join(os.path.dirname(__file__),
+                                         '..'))
+    # Python 3: normpath() decodes by default into a string.
+    if isinstance(path, str):
+        return path
+    return path.decode(sys.getfilesystemencoding())
+
+config['crunchy_base_dir'] = get_base_dir()
 
 import src.translation
 translate['_'] = src.translation._
@@ -76,8 +86,13 @@ ElementTree = None
 # Nonetheless, we use a customized version.  We might be able to simply
 # redefine a method or two ... but we'll use the one we customized for now.
 
-from src.element_tree import ElementTree, HTMLTreeBuilder
-parse = HTMLTreeBuilder.parse
+if python_version < 3:
+    from src.element_tree import ElementTree#, HTMLTreeBuilder
+    #parse = HTMLTreeBuilder.parse
+else:
+    from xml.etree import ElementTree
+    #parse = ElementTree.parse
+
 Element = ElementTree.Element
 SubElement = ElementTree.SubElement
 fromstring = ElementTree.fromstring
@@ -85,8 +100,10 @@ tostring = ElementTree.tostring
 
 interactive = False # used with python crunchy -i option
 
-import pygments.token
-generic_output = pygments.token.STANDARD_TYPES[pygments.token.Generic.Output]
-generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
-generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
-comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
+#TODO: Need to adapt pygments (using 2to3 and a custom tool?) to use with Python 3.x
+if python_version < 3:
+    import pygments.token
+    generic_output = pygments.token.STANDARD_TYPES[pygments.token.Generic.Output]
+    generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
+    generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
+    comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
