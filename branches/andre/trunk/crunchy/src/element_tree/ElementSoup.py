@@ -96,4 +96,4 @@ if __name__ == "__main__":
     if source.startswith("http:"):
         import urllib
         source = urllib.urlopen(source)
-    print ET.tostring(parse(source))
+    print(ET.tostring(parse(source)))
