@@ -1,7 +1,10 @@
-"""This plugin handles loading all pages not loaded by other plugins"""
+"""This plugin handles loading all pages not loaded by other plugins.
+It's important to close file handles in this module as it seems to
+solve the too-many-files-open error that intermittently pops up."""
 
 import codecs
 import os
+import re
 import sys
 import traceback
 from os.path import normpath, isdir, join, exists
@@ -11,6 +14,12 @@ from src.interface import translate, plugin, server, debug, \
                       debug_msg, preprocessor
 
 _ = translate['_']
+
+# This should match the charset in meta tags with XHTML or HTML tag
+# endings. A more robust solution would be an HTML parser, but for
+# this it might be overkill.
+META_CONTENT_RE = re.compile(u'<meta.*?charset\s*?=(.*?)"/?>'.encode('ascii'),
+                             re.DOTALL)
 
 def register():
     '''registers a default http handler'''
@@ -32,6 +41,27 @@ def index(npath):
             return join(npath, i)
 
     return npath
+
+def meta_content_open(path):
+    """Returns a Unicode file-like object using the codecs module,
+    detecting an encoding stored in the <meta content="..."> attribute
+    if needed. Falls back to UTF-8."""
+
+    encoding = 'utf8'
+
+    # Byte regexp matching bytes here. It's important that this is
+    # *not* Unicode since we do not know the encoding yet. But! we can
+    # assume that whatever encoding it is, it's a superset of ASCII,
+    # hence the bytes.
+    f = open(path, 'rb')
+    m = META_CONTENT_RE.search(f.read())
+    f.close()
+
+    if m and m.groups():
+        # And now, back to Unicode.
+        encoding = m.group(1).strip().decode('ascii')
+
+    return codecs.open(path, encoding=encoding)
 
 def path_to_filedata(path, root, username=None):
     """ Given a path, finds the matching file and returns a read-only
@@ -76,17 +106,9 @@ def path_to_filedata(path, root, username=None):
         extension = npath.split('.')[-1]
         creator = plugin['create_vlam_page']
         if extension in ["htm", "html"]:
-            try:
-                f = codecs.open(npath, encoding='utf8')
-                text = creator(f, path, username)
-                f.close()
-            except UnicodeDecodeError:
-                # A few files are stored in ISO-8859-1, as per the
-                # functional test.
-                f = codecs.open(npath, encoding='iso-8859-1')
-                text = creator(f, path, username)
-                f.close()
-
+            f = meta_content_open(npath)
+            text = creator(f, path, username)
+            f.close()
             text = text.read().encode('utf8')
             return text
         elif extension in preprocessor:

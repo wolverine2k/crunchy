@@ -33,3 +33,17 @@ elide most of the output.
     True
     >>> 'images/' in alist
     True
+
+Test ``meta_content_open` now.
+
+    >>> isopath = os.path.join(handle_default.root_path, 'docs', 'tests', 'iso-8859-1.html')
+    >>> assert os.path.exists(isopath)
+    >>> f = handle_default.meta_content_open(isopath)
+    >>> assert f.read()
+    >>> f.close()
+
+    >>> isopath = os.path.join(handle_default.root_path, 'docs', 'tests', 'utf-8.html')
+    >>> assert os.path.exists(isopath)
+    >>> f = handle_default.meta_content_open(isopath)
+    >>> assert f.read()
+    >>> f.close()
