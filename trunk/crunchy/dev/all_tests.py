@@ -25,7 +25,7 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("--det", dest="det",
                   action="store_true",
-                  help="Run the tests deterministically (by alphabetical order)")
+                  help="Run the tests deterministically (in alphabetical order)")
 
 parser.add_option("--include_only", dest="incl",
                   action="store", type="string",
@@ -38,7 +38,11 @@ parser.add_option("--exclude", dest="excl",
                        " (file extension '.rst' and prefix 'test_' optional)" \
                        " [ignored if include_only is present]")
 
-(options, args) = parser.parse_args()
+parser.add_option("--nose", dest="nose",
+                  action="store_true",
+                  help="Turns into a thin wrapper over nosetests")
+
+options, args = parser.parse_args()
 
 # Sometime we want to ignore Crunchy's output as it may be in a
 # unpredictable language, based on user's preferences.
@@ -58,6 +62,16 @@ doctest.OutputChecker = MyOutputChecker
 test_path = realpath(os.path.dirname(__file__))
 test_path = realpath(os.path.join(test_path, '../src/tests'))
 sys.path.insert(0, realpath(os.path.join(test_path, '../..')))
+
+# Turn into nosetests if asked.
+if options.nose:
+    from nose.core import run
+    argv = ['-w', test_path,
+            '--exclude=how_to.rst',
+            '--with-doctest',
+            '--doctest-extension=.rst']
+    run(argv=argv)
+    raise SystemExit()
 
 test_file_names = [f for f in os.listdir(test_path)
               if f.startswith("test_") and f.endswith(".rst")]
