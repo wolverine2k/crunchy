@@ -111,4 +111,8 @@ if python_version < 3:
     generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
     generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
     comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
-
+else:  # placeholders for now
+    generic_output = 'go'
+    generic_traceback = 'gt'
+    generic_prompt = 'gp'
+    comment = 'co'
