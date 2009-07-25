@@ -2,7 +2,8 @@
 # element loader based on BeautifulSoup
 
 # http://www.crummy.com/software/BeautifulSoup/
-import BeautifulSoup as BS
+
+import src.element_tree.BeautifulSoup as BS
 
 # soup classes that are left out of the tree
 ignorable_soup = BS.Comment, BS.Declaration, BS.ProcessingInstruction

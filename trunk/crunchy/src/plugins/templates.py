@@ -10,7 +10,7 @@ from src.vlam import BasePage
 
 _templates = {}
 
-from src.interface import config, plugin
+from src.interface import config, plugin, u_print
 
 def register():
     '''registers a simple tag handler'''
@@ -46,7 +46,7 @@ def return_template(page, elem):
         try:
             filehandle = open(url)
         except:
-            print "In merge_with_template, can not open url =", url
+            u_print("In merge_with_template, can not open url =", url)
             return None
         create_template(url, page.username, filehandle)
     return _templates[url]
@@ -59,10 +59,10 @@ def merge_with_template(page, elem, dummy):
         return
     page_divs = find_divs(page)
     if not page_divs:
-        print "No div found in page; can not merge with template."
+        u_print("No div found in page; can not merge with template.")
         return
     if page.url.startswith('http'):
-        print "Merging with remote templates not implemented yet."
+        u_print("Merging with remote templates not implemented yet.")
         return
 
     template = return_template(page, elem)
