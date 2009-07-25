@@ -34,16 +34,17 @@ elide most of the output.
     >>> 'images/' in alist
     True
 
-Test ``meta_content_open` now.
+Test ``meta_content_open` now. We use Unicode literals because doctest
+does weird things to actual Unicode characters.
 
     >>> isopath = os.path.join(handle_default.root_path, 'docs', 'tests', 'iso-8859-1.html')
     >>> assert os.path.exists(isopath)
     >>> f = handle_default.meta_content_open(isopath)
-    >>> assert f.read()
+    >>> assert u'Andr\xe9' in f.read()
     >>> f.close()
 
     >>> isopath = os.path.join(handle_default.root_path, 'docs', 'tests', 'utf-8.html')
     >>> assert os.path.exists(isopath)
     >>> f = handle_default.meta_content_open(isopath)
-    >>> assert f.read()
+    >>> assert u'Andr\xe9' in f.read()
     >>> f.close()
