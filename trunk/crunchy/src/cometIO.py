@@ -12,7 +12,7 @@ import src.interpreter as interpreter
 import src.utilities as utilities
 import src.interface as interface
 
-from src.interface import config, accounts, names
+from src.interface import config, accounts, names, python_version
 
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -328,7 +328,9 @@ class ThreadedBuffer(object):
             data = data.replace('\\', r'\\')
             output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
         else:
-            self.default_out.write(data.encode(sys.getfilesystemencoding()))
+            if python_version < 3:
+                data = data.encode(sys.getfilesystemencoding())
+            self.default_out.write(data)
 
     def read(self):
         """N.B. this function is rarely, if ever, used - and is probably untested"""
