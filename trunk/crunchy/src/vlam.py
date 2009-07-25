@@ -4,7 +4,6 @@ perform vlam substitution
 sets up the page and calls appropriate plugins
 """
 
-from StringIO import StringIO
 from traceback import print_exc
 from os.path import join
 
@@ -17,6 +16,7 @@ et = ElementTree
 
 from src.utilities import uidgen
 import src.interface as interface
+from src.interface import StringIO
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
