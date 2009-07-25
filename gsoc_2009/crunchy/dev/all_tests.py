@@ -19,7 +19,10 @@ parser = OptionParser()
 parser.add_option("--det", dest="det",
                   action="store_true",
                   help="Run the tests deterministically")
-(options, args) = parser.parse_args()
+parser.add_option("--nose", dest="nose",
+                  action="store_true",
+                  help="Turns into a thin wrapper over nosetests")
+options, args = parser.parse_args()
 
 # Sometime we want to ignore Crunchy's output as it may be in a
 # unpredictable language, based on user's preferences.
@@ -42,6 +45,16 @@ test_files = [os.path.join(test_path, f)
               for f in os.listdir(test_path)
               if f.startswith("test_") and f.endswith(".rst")]
 sys.path.insert(0, realpath(os.path.join(test_path, '../..')))
+
+# Turn into nosetests if asked.
+if options.nose:
+    from nose.core import run
+    argv = ['-w', test_path,
+            '--exclude=how_to.rst',
+            '--with-doctest',
+            '--doctest-extension=.rst']
+    run(argv=argv)
+    raise SystemExit()
 
 # do the test in somewhat arbitrary order in order to try and
 # ensure true independence.
@@ -69,11 +82,13 @@ excluded = ["test_colourize.rst"] # now obsolete
 
 
 for t in test_files:
-    if t in excluded:
+    irrelevant, name = os.path.split(t)
+
+    if name in excluded:
         continue
 
     if include_only:
-        if t not in include_only:
+        if name not in include_only:
             continue
 
     failure, nb_tests = doctest.testfile(t, module_relative=False)
