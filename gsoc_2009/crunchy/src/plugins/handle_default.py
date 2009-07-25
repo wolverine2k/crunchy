@@ -18,7 +18,7 @@ _ = translate['_']
 # This should match the charset in meta tags with XHTML or HTML tag
 # endings. A more robust solution would be an HTML parser, but for
 # this it might be overkill.
-META_CONTENT_RE = re.compile(u'<meta.*?charset\s*?=(.*?)"/?>'.encode('ascii'),
+META_CONTENT_RE = re.compile(u'<meta.*?charset\s*?=(.*?)"\s*?/?>'.encode('ascii'),
                              re.DOTALL)
 
 def register():
