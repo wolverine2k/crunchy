@@ -57,7 +57,7 @@ class CrunchyFlakes:
         """
         self._code = code
         # Open a buffer for the output
-        output = StringIO.StringIO()
+        output = StringIO()
         # Start the check
         try:
             tree = compiler.parse(self._code)
