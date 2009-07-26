@@ -69,7 +69,8 @@ if options.nose:
     argv = ['-w', test_path,
             '--exclude=how_to.rst',
             '--with-doctest',
-            '--doctest-extension=.rst']
+            '--doctest-extension=.rst',
+            '--with-isolation']
     run(argv=argv)
     raise SystemExit()
 
