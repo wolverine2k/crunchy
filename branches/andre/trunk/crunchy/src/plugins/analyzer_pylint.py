@@ -94,7 +94,7 @@ class CrunchyLinter:
         temp.write(self._code)
         temp.flush()
         # Open a buffer for the output
-        output_buffer = StringIO.StringIO()
+        output_buffer = StringIO()
         self.linter.reporter.set_output(output_buffer)
         # Start the check
         self.linter.check(temp.name)
