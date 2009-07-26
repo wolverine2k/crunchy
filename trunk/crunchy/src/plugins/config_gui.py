@@ -89,10 +89,10 @@ def select_option_type(key, username, uid, allowed_options=configuration.options
                         username, uid)
             _type = 'multiple_choice'
         else:
-            print "Unexpected error in select_option_type; option = ", key
-            print "not found in configuration.options but found in config[]."
+            print("Unexpected error in select_option_type; option = ", key)
+            print("not found in configuration.options but found in config[].")
     else:
-        print key, "is not a valid configuration option"
+        print(key, "is not a valid configuration option")
         return False
     return _type
 

@@ -8,8 +8,11 @@ Features:
     highlight current line (can jump between files)
 """
 
+from pdb import Pdb
+import inspect
+
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring, translate
+from src.interface import config, plugin, SubElement, tostring, translate, StringIO
 import src.interface as interface
 from src.utilities import extract_log_id, unChangeHTMLspecialCharacters, escape_for_javascript
 import src.utilities as util
@@ -357,10 +360,6 @@ mypdb = MyPdb()
 mypdb.run(_debug_string, globals={}, locals={})
 mypdb.c_stdout.write(Proto().encode('crunchy_finished', '---FINISHED---'))
 '''
-
-from pdb import Pdb
-from StringIO import StringIO
-import inspect
 
 class Proto:
     '''Proto used to encode and decode information between mypdb and crunchy'''

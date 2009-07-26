@@ -87,7 +87,7 @@ class CrunchyLinter:
 
     def run(self, code):
         """Make the analysis"""
-        print "entering analyzer_pylint.run()"
+        print("entering analyzer_pylint.run()")
         self._code = code
         # Save the code in a temporary file
         temp = tempfile.NamedTemporaryFile(suffix = '.py')
