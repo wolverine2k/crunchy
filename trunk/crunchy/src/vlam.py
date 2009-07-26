@@ -9,10 +9,11 @@ from os.path import join
 
 from src.security import remove_unwanted
 
-# Third party modules - included in crunchy distribution
-from src.element_tree import ElementSoup
-from src.interface import ElementTree, config, from_comet, plugin
+from src.interface import ElementTree, config, from_comet, plugin, python_version
 et = ElementTree
+
+if python_version < 3:
+    from src.element_tree import ElementSoup
 
 from src.utilities import uidgen
 import src.interface as interface
@@ -20,12 +21,6 @@ from src.interface import StringIO
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
-
-# The purpose of the following class is to facilitate unit testing.  It can
-# be initialized with no further action taking place, and each method
-# has then to be called explicitly.
-# In production code, we invoke CrunchyPage instead which does all
-# the required processing automatically.
 
 def handle_exception(full_page=True):
     '''basic handler for exceptions'''
@@ -41,6 +36,12 @@ def handle_exception(full_page=True):
         "Please file a bug report at http://code.google.com/p/crunchy/issues/list\n"
         + "="*80 + "\n" + tmp.getvalue())
     return text
+
+# The purpose of the following class is to facilitate unit testing.  It can
+# be initialized with no further action taking place, and each method
+# has then to be called explicitly.
+# In production code, we invoke CrunchyPage instead which does all
+# the required processing automatically.
 
 class BasePage(object): # tested
     '''
@@ -67,8 +68,21 @@ class BasePage(object): # tested
     def create_tree(self, filehandle):  # tested
         '''creates a tree (elementtree object) from an html file'''
         # note: this process removes the existing DTD
-        html = ElementSoup.parse(filehandle, encoding = 'utf-8')
-        self.tree = et.ElementTree(html)
+        if python_version < 3:
+            html = ElementSoup.parse(filehandle, encoding = 'utf-8')
+            self.tree = et.ElementTree(html)
+        else:
+            #tree = et.ElementTree()
+            html = et.ElementTree().parse(filehandle)
+            #assert isinstance(self.tree, et.ElementTree)
+
+            # see Converting XHTML to HTML in
+            # http://effbot.org/zone/element-tidylib.htm
+            XHTML = html.tag[:-4]
+            for elem in html.getiterator():
+                if elem.tag.startswith(XHTML):
+                    elem.tag = elem.tag[len(XHTML):]
+            self.tree = et.ElementTree(html)
 
     def find_head(self):  # tested
         '''finds the head in an html tree; adds one in if none is found.

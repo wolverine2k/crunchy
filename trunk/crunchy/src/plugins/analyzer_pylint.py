@@ -4,7 +4,6 @@ This plugin is an analyzer backend for pylint.
 """
 
 import os
-import StringIO
 import tempfile
 try:
     from pylint import lint, checkers
@@ -15,7 +14,7 @@ except ImportError:
     pylint_available = False
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin
+from src.interface import config, plugin, StringIO
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["analyzer_widget"])
