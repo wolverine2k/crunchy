@@ -1,11 +1,11 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
 from os.path import normpath, join, isdir,  exists
-from dircache import listdir, annotate
+from os import listdir
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import translate, plugin, server, debug, \
+from src.interface import translate, config, plugin, server, debug, \
                       debug_msg, preprocessor
 
 _ = translate['_']
@@ -15,7 +15,7 @@ def register():
     plugin['register_http_handler'](None, handler)
 
 # the root of the server is in a separate directory:
-root_path = join(plugin['get_root_dir'](), "server_root/")
+root_path = join(config['crunchy_base_dir'], "server_root/")
 
 def path_to_filedata(path, root, crunchy_username=None):
     """
@@ -110,12 +110,23 @@ def handler(request):
             print("Error in handle_default; should not have happened!")
             raise
 
+def annotate(path, filenames):
+    '''Add '/' suffixes to directories in a directory listing'''
+    fnames = []
+    for name in filenames:
+        if isdir(join(path, name)):
+            fnames.append(name + '/')
+        else:
+            fnames.append(name)
+    return fnames
+
+
 def get_directory(npath, crunchy_username):
     '''gets a directory listing from a path or, if a default page, such as
     index.html, is found, gives that page instead.'''
     global tell_Safari_page_is_html
     childs = listdir(npath)
-    annotate(npath, childs)
+    childs = annotate(npath, childs)
     for i in ["index.htm", "index.html"]:
         if i in childs:
             tell_Safari_page_is_html = True

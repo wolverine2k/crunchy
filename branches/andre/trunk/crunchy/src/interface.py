@@ -62,10 +62,10 @@ def get_base_dir():
     path = os.path.normpath(os.path.join(os.path.dirname(__file__),
                                          '..'))
     # Python 3: normpath() decodes by default into a string.
+
     if isinstance(path, str):
         return path
     return path.decode(sys.getfilesystemencoding())
-
 config['crunchy_base_dir'] = get_base_dir()
 
 import src.translation
