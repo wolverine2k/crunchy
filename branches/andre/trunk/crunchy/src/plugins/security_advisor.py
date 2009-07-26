@@ -3,12 +3,16 @@ security_advisor.py
 
 Inserts security information about a given page
 '''
-from urlparse import urlsplit
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, translate, plugin, Element, SubElement, \
-     additional_menu_items
+     additional_menu_items, python_version
 _ = translate['_']
+
+if python_version < 3:
+    from urlparse import urlsplit
+else:
+    from urllib.parse import urlsplit
 
 provides = set(["/allow_site", "/set_trusted", "/remove_all"])
 
@@ -271,7 +275,7 @@ def set_security_list(request):
     site_list_info = request.data.strip(',').split(',')
     username = request.crunchy_username
     if DEBUG:
-        print 'inside set_security_list', site_list_info
+        print('inside set_security_list', site_list_info)
     to_be_deleted = []
     for site_info in site_list_info:
         if "::" not in site_info:
@@ -282,28 +286,28 @@ def set_security_list(request):
         mode = site[1].strip()
         site = site[0].strip()
         if DEBUG:
-            print "site = ", site
+            print("site = ", site)
 
         if 'localhost' not in site:
             if mode in ['trusted', 'normal', 'strict',
                'display normal', 'display strict', 'display trusted']:
                 config[username]['_set_site_security'](site, mode)
                 if DEBUG:
-                    print str(site) + ' has been set to ' + str(mode)
+                    print(str(site) + ' has been set to ' + str(mode))
             else:
                 to_be_deleted.append(site)
                 if DEBUG:
-                    print str(site) + ' is going to be removed.'
+                    print(str(site) + ' is going to be removed.')
         else:
             config[username]['_set_local_security'](mode)
             if DEBUG:
-                print "setting local security to ", mode
+                print("setting local security to ", mode)
             break  # should be only site
 
     for site in to_be_deleted:
         del config[username]['site_security'][site]
     if DEBUG:
-        print config[username]['site_security']
+        print(config[username]['site_security'])
     # If we are approving a site for the first time, we don't need
     # the user to confirm again in this session, so assign
     # initial_security_set to True

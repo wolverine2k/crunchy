@@ -17,8 +17,8 @@ def setup_exam(page, elem, dummy_uid):
     vlam_info = parse_vlam(vlam)
     exam_name = vlam_info['name']
     if 'name' not in vlam_info or 'start' not in vlam_info or 'duration' not in vlam_info:
-        print vlam_info
-        print "not a valid exam"
+        print(vlam_info)
+        print("not a valid exam")
         return
     else:
         now = time.time()
