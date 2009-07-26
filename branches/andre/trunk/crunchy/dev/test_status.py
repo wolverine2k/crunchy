@@ -22,7 +22,7 @@ def visit(arg, dirname, names):
         names.remove('.svn')
     # ignore non-core files
     for ignore in ['element_tree', 'tests', 'server_root', 'dev',
-                   'translations', '__init__.py']:
+                   'translations', '__init__.py', 'pygments']:
         if ignore in names:
             names.remove(ignore)
 

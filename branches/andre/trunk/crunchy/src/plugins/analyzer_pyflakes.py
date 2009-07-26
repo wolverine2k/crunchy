@@ -4,12 +4,12 @@ This plugin is an analyzer backend for pyflakes.
 """
 
 import sys
+import compiler      # not found in Python 3.1
 
 try:
     # Try to import pyflakes
     from pyflakes import checker
     pyflakes_available = True
-    import compiler      # not found in Python 3.1
 except ImportError:
     pyflakes_available = False
 
