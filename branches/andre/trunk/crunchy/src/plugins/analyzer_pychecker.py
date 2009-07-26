@@ -4,7 +4,6 @@ This plugin is an analyzer backend for pychecker.
 """
 
 import os
-import StringIO
 import tempfile
 try:
     # Try to import pychecker, but without checking the Crunchy code
@@ -16,7 +15,7 @@ except ImportError:
     pychecker_available = False
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin
+from src.interface import plugin, StringIO
 
 # The set of other "widgets/services" required from other plugins
 requires =  set(["analyzer_widget"])

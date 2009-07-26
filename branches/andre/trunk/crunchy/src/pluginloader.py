@@ -81,8 +81,11 @@ def init_plugin_system(server):
     if DEBUG:
         print("Importing plugins.")
     for plugin in plugins:
-        mod = __import__ (plugin, globals())
-        imported_plugins.append(mod)
+        try:
+            mod = __import__ (plugin, globals())
+            imported_plugins.append(mod)
+        except:
+            print("Could not import the following plugin:", plugin)
     register_list = gen_register_list(imported_plugins)
     if DEBUG:
         print("Registering plugins.")

@@ -33,8 +33,7 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-    >>> from StringIO import StringIO
-    >>> from src.interface import Element, plugin, config, from_comet
+    >>> from src.interface import Element, plugin, config, from_comet, StringIO
     >>> from src.utilities import uidgen
     >>> plugin.clear()
     >>> config.clear()
@@ -108,19 +107,19 @@ Let's verify that this tree has been read properly by writing it out again.
 Since we are using BeautifulSoup, we can handle files that have major problems.
 Let's verify this for a file that has major problems with missing closing tags.
 
-    >>> bad_html = '<html><head>brain<body><p>This is a test.'
+    >>> bad_html = '<html><head>brain<body><p>Missing closing tags.'
     >>> page2, bad_out_html = process_html(bad_html)
     >>> print(bad_out_html)
-    <html><head>brain<body><p>This is a test.</p></body></head></html>
+    <html><head>brain<body><p>Missing closing tags.</p></body></head></html>
 
 The result is not entirely what we might have liked, as the head encloses the body,
 but all tags are at least closed.
 Finally, what happens if we pass a straight text file.
 
-    >>> no_tags = 'This is just text'
+    >>> no_tags = 'No tags.'
     >>> page_no_tags, out_no_tags = process_html(no_tags)
     >>> print(out_no_tags)
-    <html>This is just text</html>
+    <html>No tags.</html>
 
 We do get a very basic html page...
 
@@ -532,6 +531,3 @@ Words are separated by blank spaces.
     >>> page.find_head()
     >>> print(page.extract_keyword(page.head, 'a'))
     None
-
-
-
