@@ -24,7 +24,7 @@ DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 
 def handle_exception(full_page=True):
     '''basic handler for exceptions'''
-    root_path = join(plugin['get_root_dir'](), "server_root/")
+    root_path = join(config['crunchy_base_dir'], "server_root/")
     if full_page:
         exception_file = join(root_path, "exception.html")
         text = open(exception_file).read()

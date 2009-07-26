@@ -63,19 +63,19 @@ def init_plugin_system(server):
     # python crunchy.py, but instead from another directory like
     # python /this/path/to/crunchy.py
     # we need to add explictly the path to the
-    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
+    sys.path.insert(0, os.path.join(interface.config['crunchy_base_dir'],
                                     "src", "plugins"))
     # another hack to make it work on a mac
-    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](), "plugins"))
+    sys.path.insert(0, os.path.join(interface.config['crunchy_base_dir'], "plugins"))
 
     # In addition, add the same for the non-plugins files that are meant to be
     # imported by the user, such as graphics.py, etc.
     # For this, we always need the absolute path as the base path may be changed
     # by the user through some code execution.
-    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](),
+    sys.path.insert(0, os.path.join(interface.config['crunchy_base_dir'],
                                     "src", "imports"))
     # another hack to make it work on a mac
-    sys.path.insert(0, os.path.join(interface.plugin['get_root_dir'](), "imports"))
+    sys.path.insert(0, os.path.join(interface.config['crunchy_base_dir'], "imports"))
 
     imported_plugins = []
     if DEBUG:
