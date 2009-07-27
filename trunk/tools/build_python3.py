@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 import filecmp
 import os
@@ -7,7 +6,6 @@ import shutil
 import sys
 from pprint import pformat
 from subprocess import call
-from optparse import OptionParser
 
 # Help message printed to STDERR when requested in main().
 HELP = """\
@@ -26,18 +24,18 @@ USAGE
 """
 
 # Argument for subprocess.call().
-_2TO3 = ['2to3', '-w']
+_2TO3 = ['/usr/local/py3.1/bin/2to3', '-w']
 
 class Error(SystemExit):
     """A SystemExit with error strings included."""
 
     _2to3 = \
-        'Called 2to3 with \n{args}\nand it exited with {ret}'
+        'Called 2to3 with {args} and it exited with {ret}'
 
     mismatch = \
-        'Both arguments have to be directories, or both have to be files.'
+        'Both arguments have to be directories, or both have to be files'
 
-    def __init__(key, **kw):
+    def __init__(self, key, **kw):
         """Prints a specified error to standard error then constructs
         a SystemExit instance with status code 1."""
 

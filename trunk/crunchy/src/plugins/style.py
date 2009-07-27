@@ -2,15 +2,24 @@
 import re
 import random
 
-from pygments import highlight
-from pygments.lexers import get_lexer_by_name, guess_lexer
-from pygments.formatters import HtmlFormatter
-from pygments.styles import get_style_by_name, get_all_styles
-from pygments.lexers._mapping import LEXERS
-from pygments.token import STANDARD_TYPES, Generic, Comment
-
 from src.interface import (fromstring, plugin, Element, SubElement,
-                           additional_properties, config)
+                           additional_properties, config, python_version)
+
+if python_version < 3:
+    from pygments import highlight
+    from pygments.lexers import get_lexer_by_name, guess_lexer
+    from pygments.formatters import HtmlFormatter
+    from pygments.styles import get_style_by_name, get_all_styles
+    from pygments.lexers._mapping import LEXERS
+    from pygments.token import STANDARD_TYPES, Generic, Comment
+else:
+    from pygments3 import highlight
+    from pygments3.lexers import get_lexer_by_name, guess_lexer
+    from pygments3.formatters import HtmlFormatter
+    from pygments3.styles import get_style_by_name, get_all_styles
+    from pygments3.lexers._mapping import LEXERS
+    from pygments3.token import STANDARD_TYPES, Generic, Comment
+
 import src.interface as interface
 from src.configuration import make_property, options
 from src.utilities import extract_code, wrap_in_div

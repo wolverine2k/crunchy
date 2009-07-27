@@ -112,7 +112,8 @@ if python_version < 3:
     generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
     comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
 else:  # placeholders for now
-    generic_output = 'go'
-    generic_traceback = 'gt'
-    generic_prompt = 'gp'
-    comment = 'co'
+    import pygments3.token
+    generic_output = pygments3.token.STANDARD_TYPES[pygments3.token.Generic.Output]
+    generic_traceback = pygments3.token.STANDARD_TYPES[pygments3.token.Generic.Traceback]
+    generic_prompt = pygments3.token.STANDARD_TYPES[pygments3.token.Generic.Prompt]
+    comment = pygments3.token.STANDARD_TYPES[pygments3.token.Comment]
