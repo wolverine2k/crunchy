@@ -20,6 +20,7 @@ provides = set(["/local"])
 requires = set(["filtered_dir", "insert_file_tree"])
 
 def register():  # tested
+    '''registers the plugins so that Crunchy can use them'''
     plugin['register_http_handler']("/local", local_loader)
     plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
     plugin['register_tag_handler']("div", "title", "local_html_file",
@@ -44,7 +45,7 @@ def local_loader(request):  # tested
                                           local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
-        base_url, fname = os.path.split(url)
+        base_url, dummy = os.path.split(url)
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
     else:
@@ -58,7 +59,7 @@ def local_loader(request):  # tested
 
 def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''
-    base_url, fname = os.path.split(page.url)
+    base_url, dummy = os.path.split(page.url)
     try:
         import_path = elem.attrib['name']
     except:

@@ -10,7 +10,7 @@ from src.interface import translate, config, plugin, server, debug, \
 
 _ = translate['_']
 
-def register():
+def register(): # tested
     '''registers a default http handler'''
     plugin['register_http_handler'](None, handler)
 
@@ -71,7 +71,7 @@ def handler(request):
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
     try:
-        username = request.crunchy_username
+        dummy = request.crunchy_username
     except:
         request.wfile.write(_("You need to create an account before you can use Crunchy. "))
         request.wfile.write(_("Please use account_manager.py to create an account."))
@@ -110,7 +110,7 @@ def handler(request):
             print("Error in handle_default; should not have happened!")
             raise
 
-def annotate(path, filenames):
+def annotate(path, filenames): # tested
     '''Add '/' suffixes to directories in a directory listing'''
     fnames = []
     for name in filenames:
@@ -131,9 +131,10 @@ def get_directory(npath, crunchy_username):
         if i in childs:
             tell_Safari_page_is_html = True
             return path_to_filedata("/"+i, npath, crunchy_username)
-    tstring = ""
+    tstring = []
     for child in childs:
-        tstring += '<li><a href="' + str(child) + '">' + str(child) +'</a></li>'
+        tstring.append( '<li><a href="%s">%s</a></li>' % (child, child) )
+    tstring = ''.join(tstring)
     return dir_list_page % (_("Directory Listing"), tstring)
 
 not_found = open(join(root_path, "404.html")).read()
