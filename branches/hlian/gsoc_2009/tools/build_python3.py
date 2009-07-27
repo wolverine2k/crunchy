@@ -32,12 +32,12 @@ class Error(SystemExit):
     """A SystemExit with error strings included."""
 
     _2to3 = \
-        'Called 2to3 with \n{args}\nand it exited with {ret}'
+        'Called 2to3 with {args} and it exited with {ret}'
 
     mismatch = \
-        'Both arguments have to be directories, or both have to be files.'
+        'Both arguments have to be directories, or both have to be files'
 
-    def __init__(key, **kw):
+    def __init__(self, key, **kw):
         """Prints a specified error to standard error then constructs
         a SystemExit instance with status code 1."""
 
