@@ -6,7 +6,7 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, config, plugin, server, debug, \
-                      debug_msg, preprocessor, crunchy_bytes
+                      debug_msg, preprocessor, crunchy_bytes, python_version
 
 _ = translate['_']
 
@@ -47,7 +47,11 @@ def path_to_filedata(path, root, crunchy_username=None):
         try:
             extension = npath.split('.')[-1]
             if extension in ["htm", "html"]:
-                return crunchy_bytes(plugin['create_vlam_page'](open(npath), path,
+                if python_version < 3:
+                    return plugin['create_vlam_page'](open(npath), path,
+                                                  crunchy_username).read()
+                else:
+                    return crunchy_bytes(plugin['create_vlam_page'](open(npath), path,
                                                   crunchy_username).read(), 'utf-8')
             elif extension in preprocessor:
                 return plugin['create_vlam_page'](preprocessor[extension](npath),
