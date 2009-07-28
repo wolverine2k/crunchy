@@ -7,31 +7,47 @@ for instance, it can only handle GET and POST requests and actually
 treats them the same.
 """
 
+import base64
+import email
+import email.message
+import sys
+import time
 
+if sys.version_info < (2, 6):
+    from cgi import parse_qs
+    import urllib
+    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+    from SocketServer import ThreadingMixIn, TCPServer
+    from urlparse import urlparse
+else:
+    from urllib.parse import parse_qs
+    import urllib.request, urllib.parse, urllib.error
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from socketserver import ThreadingMixIn, TCPServer
+    from urllib.parse import urlparse
 
 from traceback import format_exc
-import base64
-import time
+
+# Selective imports only for urllib2 because 2to3 will not replace the
+# urllib2.<method> calls below. Also, 2to3 will throw an error if we
+# try to do a from _ import _.
+if sys.version_info[0] < 3:
+    import urllib2
+    parse_http_list = urllib2.parse_http_list
+    parse_keqv_list = urllib2.parse_keqv_list
+else:
+    from urllib.request import parse_http_list, parse_keqv_list
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interface
-
-if src.interface.python_version < 3:
-    from urllib import unquote, unquote_plus
-    from urllib2 import parse_http_list, parse_keqv_list
-    from SocketServer import ThreadingMixIn, TCPServer
-    from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-else:
-    from urllib.parse import unquote, unquote_plus
-    from urllib.request import parse_http_list, parse_keqv_list
-    from socketserver import ThreadingMixIn, TCPServer
-    from http.server import BaseHTTPRequestHandler, HTTPServer
 
 DEBUG = False
 
 realm = "Crunchy Access"
 
-
+# This is convoluted because there's no way to tell 2to3 to insert a
+# byte literal.
+HEADER_NEWLINES = [x.encode('ascii') for x in ('\r\n', '\n', '')]
 
 if src.interface.python_version < 2.5:
     import md5
@@ -47,36 +63,42 @@ def require_digest_access_authenticate(func):
     accounts = src.interface.accounts
 
     def wrapped(self):
-        method = self.command
         if not hasattr(self, 'authenticated'):
-            self.authenticated =  None
-        auth = self.headers.getheader('authorization')
+            self.authenticated = None
+
+        auth = self.headers.get('Authorization')
         if not self.authenticated and auth is not None:
             token, fields = auth.split(' ', 1)
             if token == 'Digest':
                 cred = parse_http_list(fields)
                 cred = parse_keqv_list(cred)
-                if 'realm' not in cred or 'username' not in cred \
-                    or 'nonce' not in cred or 'uri' not in cred or 'response' not in cred:
+
+                # The request must contain all these keys to
+                # constitute a valid response.
+                keys = 'realm username nonce uri response'.split()
+                if not all(cred.get(key) for key in keys):
                     self.authenticated = False
                 elif cred['realm'] != realm or cred['username'] not in accounts:
                     self.authenticated = False
                 elif 'qop' in cred and ('nc' not in cred or 'cnonce' not in cred):
                     self.authenticated = False
                 else:
+                    location = '%s:%s' % (self.command, self.path)
+                    location = location.encode('utf8')
+                    location = md5hex(location)
+                    password = accounts.get_password(cred['username'])
                     if 'qop' in cred:
-                        expect_response = md5hex('%s:%s'%(
-                            accounts.get_password(cred['username']),
-                            ':'.join([cred['nonce'],cred['nc'],cred['cnonce'],cred['qop'], md5hex('%s:%s' %(method, self.path))])
-                            )
-                        )
+                        info = (cred['nonce'],
+                                cred['nc'],
+                                cred['cnonce'],
+                                cred['qop'],
+                                location)
                     else:
-                        expect_response = md5hex('%s:%s' %(
-                            accounts.get_password(cred['username']),
-                            ':'.join([cred['nonce'], md5hex('%s:%s' %(method, self.path))])
-                            )
-                        )
-                    self.authenticated = (expect_response == cred['response'])
+                        info = cred['nonce'], location
+
+                    expect = '%s:%s' % (password, ':'.join(info))
+                    expect = md5hex(expect.encode('utf8'))
+                    self.authenticated = (expect == cred['response'])
                     if self.authenticated:
                         self.crunchy_username = cred['username']
 
@@ -84,12 +106,16 @@ def require_digest_access_authenticate(func):
             msg = "You are not allowed to access this page. Please login first!"
         elif self.authenticated is False:
             msg = "Authenticated Failed"
-        if  not self.authenticated :
+        if not self.authenticated :
             self.send_response(401)
-            self._nonce = md5hex("%d:%s" % (time.time(), realm))
-            self.send_header('WWW-Authenticate','Digest realm="%s", qop="auth", algorithm="MD5", nonce="%s"' %(realm, self._nonce))
+            nonce = ("%d:%s" % (time.time(), realm)).encode('utf8')
+            self.send_header('WWW-Authenticate',
+                             'Digest realm="%s",'
+                             'qop="auth",'
+                             'algorithm="MD5",'
+                             'nonce="%s"' % (realm, nonce))
             self.end_headers()
-            self.wfile.write(msg)
+            self.wfile.write(msg.encode('utf8'))
         else:
             return func(self)
 
@@ -139,54 +165,107 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
                 print("path %s NOT in self.handler_table."%path)
             return self.default_handler
 
+def parse_headers(fp, _class=email.message.Message):
+    """Parses only RFC2822 headers from a file pointer.
+
+    This code is taken directly from the Python 3 stdlib, adapted for
+    2to3. Returns a dictionary of unicode strings mapping to unicode
+    strings.
+    """
+    headers = []
+    while True:
+        line = fp.readline()
+        headers.append(line)
+        if line in HEADER_NEWLINES:
+            break
+
+    hbytes = ''.encode('ascii').join(headers)
+
+    # It turns out that in Python 3, email.Parser requires Unicode.
+    # Unfortunately,in Python 2, email.Parser refuses to handle
+    # Unicode and returns an empty object. We have to make sure that
+    # parse_headers returns Unicode in both Python 2 and Python 3. The
+    # easiest way is to throw away the email.message.Message interface
+    # and just return a dict instead, which lets us massage the bytes
+    # into Unicode.
+
+    # iso-8559-1 encoding taken from http/client.py, where this
+    # function was stolen from.
+    E = 'iso-8859-1'
+
+    if sys.version_info[0] < 3:
+        items = list(email.message_from_string(hbytes).items())
+        return dict((k.decode(E), v.decode(E)) for k, v in items)
+
+    hstring = hbytes.decode(E)
+    return dict(email.message_from_string(hstring))
+
+def parse_url(path):
+    """Given a urlencoded path, returns the path and the dictionary of
+    query arguments, all in Unicode."""
+
+    # path changes from bytes to Unicode in going from Python 2 to
+    # Python 3.
+    if sys.version_info[0] < 3:
+        o = urlparse(urllib.parse.unquote_plus(path).decode('utf8'))
+    else:
+        o = urlparse(urllib.parse.unquote_plus(path))
+
+    path = o.path
+    args = {}
+
+    # Convert parse_qs' str --> [str] dictionary to a str --> str
+    # dictionary since we never use multi-value GET arguments
+    # anyway.
+    multiargs = parse_qs(o.query, keep_blank_values=True)
+    for arg, value in list(multiargs.items()):
+        args[arg] = value[0]
+
+    return path, args
+
+def message_wrapper(self, fp, irrelevant):
+    return parse_headers(fp)
+
 class HTTPRequestHandler(BaseHTTPRequestHandler):
+
+    # In Python 3, BaseHTTPRequestHandler went from using the
+    # deprecated mimetools.Message class to the new
+    # email.message.Message class for self.headers. Unfortunately, the
+    # two APIs are not compatible. Fortunately, there's an API in
+    # place to fiddle with the class that's chosen. Here we force
+    # Python 2 to adopt email.message.Message.
+    if sys.version_info[0] < 3:
+        MessageClass = message_wrapper
 
     @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
         # at first, assume that the given path is the actual path and there are no arguments
-        realpath = self.path
         if DEBUG:
-            print(realpath)
-        argstring = ""
-        self.args = {}
-        # if there is a ? in the path then there are some arguments, extract them and set the path
-        # to what it should be
-        if self.path.find("?") > -1:
-            realpath, argstring = self.path.split("?")
-        self.path = unquote(realpath)
-        # parse any arguments there might be
-        if argstring:
-            arg = []
-            arglist = argstring.split('&')
-            for i in arglist:
-                arg = i.split('=')
-                val = ''
-                if len(arg) > 1:
-                    self.args[arg[0]] = unquote_plus(arg[1])
-        # extract any POSTDATA
-        self.data = ""
-        if "Content-Length" in self.headers:
-            self.data = self.rfile.read(int(self.headers["Content-Length"]))
-        # and run the handler
+            print(self.path)
+
+        self.path, self.args = parse_url(self.path)
+        # Clumsy syntax due to Python 2 and 2to3's lack of a byte
+        # literal.
+        self.data = "".encode('ascii')
+
+        # Extract POST data, if any.
+        length = self.headers.get('Content-Length')
+        if length:
+            self.data = self.rfile.read(int(length))
+
+        # Run the handler.
         if DEBUG:
-            print("preparing to call get_handler in do_POST")
+            print("Preparing to call get_handler in do_POST")
         try:
-            self.server.get_handler(realpath)(self)
+            self.server.get_handler(self.path)(self)
         except:
             self.send_response(500)
             self.end_headers()
-            self.wfile.write(format_exc())
+            self.wfile.write(format_exc().encode('utf8'))
 
-##        if CrunchyPlugin.server.still_serving == False:
-##            #sometimes the program does not exit; so force it...
-##            import sys
-##            sys.exit()
-
-    @require_authenticate
-    def do_GET(self):
-        """the same as POST, we draw no distinction"""
-        self.do_POST()
+    # We draw no distinction.
+    do_GET = do_POST
 
     def send_response(self, code):
         BaseHTTPRequestHandler.send_response(self, code)
