@@ -15,7 +15,7 @@ import time
 
 if sys.version_info < (2, 6):
     from cgi import parse_qs
-    import urllib
+    from urllib import unquote_plus
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
     from SocketServer import ThreadingMixIn, TCPServer
     from urlparse import urlparse
@@ -24,7 +24,7 @@ else:
     import urllib.request, urllib.parse, urllib.error
     from http.server import BaseHTTPRequestHandler, HTTPServer
     from socketserver import ThreadingMixIn, TCPServer
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, unquote_plus
 
 from traceback import format_exc
 
@@ -207,9 +207,9 @@ def parse_url(path):
     # path changes from bytes to Unicode in going from Python 2 to
     # Python 3.
     if sys.version_info[0] < 3:
-        o = urlparse(urllib.parse.unquote_plus(path).decode('utf8'))
+        o = urlparse(unquote_plus(path).decode('utf8'))
     else:
-        o = urlparse(urllib.parse.unquote_plus(path))
+        o = urlparse(unquote_plus(path))
 
     path = o.path
     args = {}
