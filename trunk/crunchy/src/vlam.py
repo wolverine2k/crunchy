@@ -82,7 +82,15 @@ class BasePage(object): # tested
             for elem in html.getiterator():
                 if elem.tag.startswith(XHTML):
                     elem.tag = elem.tag[len(XHTML):]
+            html.tag = "html"
             self.tree = et.ElementTree(html)
+
+    def fix_divs(self):
+        '''ensure that empty divs are not self-closing so that sites are
+           displayed properly'''
+        for div in self.tree.getiterator("div"):
+            if div.text is None:
+                div.text = ' '
 
     def find_head(self):  # tested
         '''finds the head in an html tree; adds one in if none is found.
@@ -329,6 +337,7 @@ class BasePage(object): # tested
     def read(self):  # tested
         '''create fake file from a tree, adding DTD and charset information
            and return its value as a string'''
+        self.fix_divs()  # fix required when using etree
         fake_file = StringIO()
         fake_file.write(DTD + '\n')
         self.add_charset()
