@@ -8,7 +8,7 @@ treats them the same.
 """
 
 import base64
-import email
+import email.message
 import sys
 import time
 import urllib
