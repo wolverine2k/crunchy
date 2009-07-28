@@ -59,6 +59,7 @@ Let us define a utility function that will:
     ...     fake_file.seek(0)
     ...     page = vlam.BasePage('dummy_username')
     ...     page.create_tree(fake_file)  # tested separately below
+    ...     page.fix_divs()
     ...     output = StringIO()
     ...     page.tree.write(output)
     ...     out_html = output.getvalue()
@@ -103,6 +104,17 @@ Let's verify that this tree has been read properly by writing it out again.
 
     >>> out_html == html
     True
+
+Let's add another test for when we have an empty div. In order to take
+care of some browser quirks, these need to be adapted.  The fix_divs()
+used above in process_html takes care of this. Note that the version
+used with Python3.x introduces an extra space as compared with
+the one using Python2.x which uses an adapted version of ElementTree.
+
+    >>> empty_div = '<html><head>brain</head><body><div /></body></html>'
+    >>> dummy, out_empty_div = process_html(empty_div)
+    >>> print(out_empty_div.replace(" ", ''))
+    <html><head>brain</head><body><div></div></body></html>
 
 Since we are using BeautifulSoup, we can handle files that have major problems.
 Let's verify this for a file that has major problems with missing closing tags.
