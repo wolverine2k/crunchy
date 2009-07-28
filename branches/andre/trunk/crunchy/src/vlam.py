@@ -88,6 +88,16 @@ class BasePage(object): # tested
     def fix_divs(self):
         '''ensure that empty divs are not self-closing so that sites are
            displayed properly'''
+        # to be more specific, if a div is self-closing, as in
+        # <div id="something" />
+        # then it seems to be ignored or badly treated by a browser.
+        # Simply rewriting as
+        # <div id="something"></div>
+        # is enough to solve the problem.  However, unless the source
+        # for ElementTree is modified (as was done originally for the version
+        # included with Crunchy), this is not possible. An alternative is to
+        # insert an innocuous space which forces ElementTree to write
+        # <div id="something"> </div>
         for div in self.tree.getiterator("div"):
             if div.text is None:
                 div.text = ' '
