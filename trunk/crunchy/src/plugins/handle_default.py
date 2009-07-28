@@ -6,7 +6,7 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import translate, config, plugin, server, debug, \
-                      debug_msg, preprocessor
+                      debug_msg, preprocessor, crunchy_bytes
 
 _ = translate['_']
 
@@ -47,11 +47,13 @@ def path_to_filedata(path, root, crunchy_username=None):
         try:
             extension = npath.split('.')[-1]
             if extension in ["htm", "html"]:
-                return plugin['create_vlam_page'](open(npath), path,
-                                                  crunchy_username).read()
+                return crunchy_bytes(plugin['create_vlam_page'](open(npath), path,
+                                                  crunchy_username).read(), 'utf-8')
             elif extension in preprocessor:
                 return plugin['create_vlam_page'](preprocessor[extension](npath),
                                             path, crunchy_username).read()
+            #elif extension in ["js", "css"]:
+            #    return crunchy_bytes(open(npath, mode="r").read(), 'utf-8')
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
             return open(npath, mode="rb").read()
@@ -104,6 +106,7 @@ def handler(request):
             request.send_header ("Content-Type", "text/html; charset=UTF-8")
             tell_Safari_page_is_html = False
         request.end_headers()
+
         try:
             request.wfile.write(data)
         except:  # was introduced to deal with Python 3.x problems
