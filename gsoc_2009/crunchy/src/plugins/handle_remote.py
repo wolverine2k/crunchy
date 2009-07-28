@@ -6,16 +6,17 @@ by Crunchy.
 """
 
 import sys
+from StringIO import StringIO
 
-# urllib reshuffled in Python 3.
+# urllib reshuffled in Python 3 and 2to3 seems to skip this.
 if sys.version_info[0] < 3:
-    from urllib import FancyURLopener, unquote_plus
+    from urllib import unquote_plus
 else:
-    from urllib.request import FancyURLopener
     from urllib.parse import unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, preprocessor, config, SubElement
+from src.utilities import unicode_urlopen
 
 provides = set(["/remote"])
 
@@ -43,12 +44,13 @@ def remote_loader(request):  # tested
                     preprocessor[extension](url, local=False), url,
                                                 username=username, remote=True)
     else:
-        opener = FancyURLopener()
-        if (config[username]["forward_accept_language"]
-            and "Accept-Language" in request.headers):
-            opener.addheader("Accept-Language", request.headers["Accept-Language"])
-        page = plugin['create_vlam_page'](opener.open(url), url,
-                                          username=username, remote=True)
+        accept_lang = None
+        if config[username]["forward_accept_language"]:
+            accept_lang = request.headers.get("Accept-Language")
+        page = unicode_urlopen(url, accept_lang)
+        page = plugin['create_vlam_page'](page, url,
+                                          username=username,
+                                          remote=True)
     request.send_response(200)
     request.send_header(u'Cache-Control',
                         u'no-cache, must-revalidate, no-store')
