@@ -7,10 +7,11 @@
 # It was adapted and incorporated into Crunchy by A. Roberge
 
 # All plugins should import the crunchy plugin API via interface.py
+import codecs
 import os
 from StringIO import StringIO
-from urllib2 import urlopen
 from src.interface import plugin
+from src.utilities import unicode_urlopen
 
 _docutils_installed = True
 try:
@@ -245,9 +246,11 @@ def load_rst(request):
 def convert_rst(path, local=True):
     '''converts an rst file into a proper crunchy-ready html page'''
     if local:
-        file_ = open(path)
+        # It seems that this module assumes UTF-8 encoding, which is
+        # good enough for me.
+        file_ = codecs.open(path, encoding='utf8')
     else:
-        file_ = urlopen(path)
+        file_ = unicode_urlopen(path)
 
     # See above.
     data = publish_string(file_.read(), writer_name="html")

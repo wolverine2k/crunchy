@@ -1,4 +1,4 @@
-handle_local.py tests
+handle_remote.py tests
 ================================
 
 handle_remote.py is a plugin whose main purpose is to load remote tutorials,
@@ -63,10 +63,10 @@ First we create a the test file.
     >>> index = 0
     >>> # create non-existing file
     >>> while os.path.exists(filepath):
-    ...    orig = "%d.txt"%index
+    ...    orig = "test_file%d." % index
     ...    index += 1
-    ...    repl = "%d.txt"%index
-    ...    filepath.replace(orig, repl)
+    ...    repl = "test_file%d.c" % index
+    ...    filepath = filepath.replace(orig, repl)
     >>> handle = open(filepath, 'w')
 
 Next, we define a dummy vlam page creator.
