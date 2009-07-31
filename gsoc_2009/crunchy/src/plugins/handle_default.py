@@ -3,6 +3,7 @@ It's important to close file handles in this module as it seems to
 solve the too-many-files-open error that intermittently pops up."""
 
 import codecs
+import inspect
 import os
 import re
 import sys
@@ -87,7 +88,9 @@ def path_to_filedata(path, root, username=None):
             text = text.read().encode('utf8')
             return text
         elif extension in preprocessor:
-            text = creator(preprocessor[extension](npath), path, username)
+            f = preprocessor[extension](npath)
+            text = creator(f, path, username)
+            f.close()
             text = text.read().encode('utf8')
             return text
         # we need binary mode because otherwise the file may not get
