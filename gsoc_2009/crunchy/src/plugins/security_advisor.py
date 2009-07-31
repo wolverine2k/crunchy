@@ -105,7 +105,13 @@ def confirm_at_start(page, info_container):
 def format_site_security_options(parent, site, site_num, page):
     '''adds the various security options for a given site'''
 
-    assert isinstance(site, unicode)
+    # Since Crunchy users upgrading to Python 3 have an existing
+    # configuration, and it's too unwieldy to ask them to go through a
+    # step of converting it to Unicode, and we only need Unicode in a
+    # few places such as this one, we will manually decode any values
+    # we need.
+    if not isinstance(site, unicode):
+        site = site.decode('utf8')
 
     options = list(MODES)
     if u'localhost' not in site:
