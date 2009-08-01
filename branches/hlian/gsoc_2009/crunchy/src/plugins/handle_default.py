@@ -110,8 +110,10 @@ def handler(request):
     try:
         username = request.crunchy_username
     except:
-        request.wfile.write(_("You need to create an account before you can use Crunchy. "))
-        request.wfile.write(_("Please use account_manager.py to create an account."))
+        msg = _("You need to create an account before you can use Crunchy. ")
+        request.wfile.write(msg.encode('utf8'))
+        msg = _("Please use account_manager.py to create an account.")
+        request.wfile.write(msg.encode('utf8'))
         exit_file = join(root_path, "exit_en.html")
 
         f = open(exit_file)
