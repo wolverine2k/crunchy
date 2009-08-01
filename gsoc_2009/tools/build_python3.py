@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+import logging
+log = logging.getLogger(__name__)
+
 import filecmp
 import os
 import os.path as paths
 import shutil
-import sys
 from pprint import pformat
 from subprocess import call
 from optparse import OptionParser
@@ -34,7 +36,7 @@ class Error(SystemExit):
         a SystemExit instance with status code 1."""
 
         text = getattr(Error, key).format(**kw)
-        sys.stderr.write('build_python3.py: error: {}\n'.format(text))
+        log.error('build_python3.py: error: {}'.format(text))
         # Status code is always one.
         super().__init__(1)
 
@@ -46,16 +48,16 @@ def copy(src, dst):
     # ('..') in paths.
     dirname = paths.normpath(paths.dirname(dst))
     if not paths.exists(dirname):
-        print('Making {}'.format(dirname))
+        log.info('Making {}'.format(dirname))
         os.makedirs(dirname)
 
-    print('Copying {} to {}'.format(src, dst))
+    log.info('Copying {} to {}'.format(src, dst))
     shutil.copyfile(src, dst)
 
 def remove(victim):
     """Removes file and logs it to stdout."""
 
-    print('Removing {}'.format(victim))
+    log.info('Removing {}'.format(victim))
     os.remove(victim)
 
 def main_copy(src, dst, opts=[]):
@@ -106,17 +108,15 @@ def main_deep_copy(src, dst, force=False):
             if paths.exists(b) and not force:
                 # Skip if .bak exists and is a match, indicating the
                 # source file has not changed.
-                if paths.exists(bak):
-                    if filecmp.cmp(a, bak):
-                        print('Skipping {}: unchanged'.format(a))
-                        continue
+                if paths.exists(bak) and filecmp.cmp(a, bak):
+                    log.debug('Skipping {}: unchanged'.format(a))
+                    continue
 
                 # If no .bak file exists, that means 2to3 skipped the
                 # file.
-                else:
-                    if filecmp.cmp(a, b):
-                        print('Skipping {}: unchanged'.format(a))
-                        continue
+                elif filecmp.cmp(a, b):
+                    log.debug('Skipping {}: unchanged'.format(a))
+                    continue
 
             if ext == '.py':
                 main_copy(a, b)
@@ -131,13 +131,25 @@ def main():
     """Parses command-line arguments and raises the appropriate
     SystemExit exception."""
 
+    # Set up logging first. ####################
+    handler = logging.StreamHandler()
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
+
+    # On to the show. ####################
     usage  = "usage: %prog [-f] src dest\n\n" + BLURB
     parser = OptionParser(usage=usage)
     parser.add_option('-f', '--force', dest='force',
                       help='Force recompilation',
                       action='store_true')
+    parser.add_option('-v', '--verbose', dest='verbose',
+                      help='Be more circumlocutory, diffuse, garrulous, grandiloquent, involved, prolix, talkative, and -- last though not least -- verbose.',
+                      action='store_true')
 
     options, args = parser.parse_args()
+
+    if options.verbose:
+        log.setLevel(logging.DEBUG)
 
     # {filename} and {dest} were passed.
     if not len(args) == 2:
