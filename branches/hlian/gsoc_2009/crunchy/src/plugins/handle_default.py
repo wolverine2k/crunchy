@@ -3,7 +3,6 @@ It's important to close file handles in this module as it seems to
 solve the too-many-files-open error that intermittently pops up."""
 
 import codecs
-import inspect
 import os
 import re
 import sys
