@@ -9,21 +9,13 @@ from pprint import pformat
 from subprocess import call
 from optparse import OptionParser
 
-# Help message printed to STDERR when requested in main().
-HELP = """\
-NAME
-build_python3.py
-
-USAGE
-* python[3.x] build_python3.py {src filename} {dst filename}
-  Copies the file from filename to dest and runs the 2to3 tool on
-  the destination.
-
-* python[3.x] build_python3.py {src dir} {dst dir}
-  Copies all files from the source directory to the destination
-  directory and runs 2to3 on those files. Will skip files whose .bak
-  counterparts in the destination directory match exactly.
-"""
+# Usage sub-paragraph.
+BLURB = """I run 2to3 on a source directory and write the output files
+to a destination directory. The other way to run me is to pass a
+source file and a destination file. I handle doctest .rst files in
+addition to Python files. I avoid recompilation wherever possible by
+comparing file contents first. I require Python 3.1's 2to3; 2.6's 2to3
+is known to improperly convert Crunchy's source."""
 
 # Argument for subprocess.call().
 _2TO3 = ['2to3', '-w']
@@ -91,10 +83,11 @@ def parallel_walk(src, dst):
             b = a.replace(src, dst, 1)
             yield a, b
 
-def main_deep_copy(src, dst):
+def main_deep_copy(src, dst, force=False):
     """Walks the src directory and copies each file to dst before
     running 2to3 on it. Skips unnecessary files. Raises an Error if
-    2to3 fails."""
+    2to3 fails. A force argument of True skips the logic that tries to
+    avoid recompilation."""
 
     for a, b in parallel_walk(src, dst):
         root, ext = paths.splitext(a)
@@ -110,7 +103,7 @@ def main_deep_copy(src, dst):
             # wrong thing here.
             bak = b + '.bak'
 
-            if paths.exists(b):
+            if paths.exists(b) and not force:
                 # Skip if .bak exists and is a match, indicating the
                 # source file has not changed.
                 if paths.exists(bak):
@@ -138,24 +131,26 @@ def main():
     """Parses command-line arguments and raises the appropriate
     SystemExit exception."""
 
-    argv = sys.argv
-    if '--help' in argv or '-h' in argv:
-        sys.stderr.write(HELP)
-        raise SystemExit(2)
+    usage  = "usage: %prog [-f] src dest\n\n" + BLURB
+    parser = OptionParser(usage=usage)
+    parser.add_option('-f', '--force', dest='force',
+                      help='Force recompilation',
+                      action='store_true')
+
+    options, args = parser.parse_args()
 
     # {filename} and {dest} were passed.
-    if len(sys.argv) == 3:
-        src, dst = sys.argv[1:3]
-        if paths.isdir(src) and paths.isdir(dst):
-            main_deep_copy(src, dst)
-        elif paths.isfile(src) and paths.isfile(dst):
-            main_copy(sys.argv[1], sys.argv[2])
-        else:
-            raise Error('mismatch')
-
-    else:
-        sys.stderr.write(HELP)
+    if not len(args) == 2:
+        parser.print_help()
         raise SystemExit(1)
+
+    src, dst = args
+    if paths.isdir(src) and paths.isdir(dst):
+        main_deep_copy(src, dst, force=options.force)
+    elif paths.isfile(src) and paths.isfile(dst):
+        main_copy(src, dst)
+    else:
+        raise Error('mismatch')
 
     raise SystemExit()
 
