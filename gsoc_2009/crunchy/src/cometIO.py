@@ -299,13 +299,19 @@ class ThreadedBuffer(object):
 
     def write(self, data):
         """write some data"""
-        #
+
+        # First, check to see whether this is intended for comet at
+        # all. This lets us use pdb, among other things, without
+        # characters being escaped for HTML.
+        uid = threading.currentThread().getName()
+        if not self.__redirect(uid):
+            return self.default_out.write(data)
+
         # Note: even though we create interpreters in separate threads
         # identified by their uid, Borg interpreters share a common
         # state.  As a result, if we have long running code in one
         # Borg interpreter, there can be exchange of input or output between
         # the code running in that interpreter and code entered in another one.
-        uid = threading.currentThread().getName()
         pageid = uid.split("_")[0]
         data = utilities.changeHTMLspecialCharacters(data)
 
@@ -324,15 +330,9 @@ class ThreadedBuffer(object):
             dd = data.split('crunchy_py_prompt%s' % _prompt)
             data = ("<span class='%s'>%s" % (interface.generic_prompt, _prompt)).join(dd)
 
-        if self.__redirect(uid):
-            data = data.replace('\\', r'\\')
-            output_buffers[pageid].put_output(("<span class='%s'>" % self.buf_class) + data + '</span>', uid)
-        else:
-            # Normalize to Unicode because Python 3's doctest will not
-            # take bytes for its _SpoofOut = self.default_out.
-            if sys.version_info[0] < 3:
-                data = data.decode('utf-8')
-            self.default_out.write(data)
+        data = data.replace('\\', r'\\')
+        data = "<span class='%s'>%s</span>" % (self.buf_class, data)
+        output_buffers[pageid].put_output(data, uid)
 
     def read(self):
         """N.B. this function is rarely, if ever, used - and is probably untested"""
