@@ -28,8 +28,14 @@ class Error(SystemExit):
     _2to3 = \
         'Called 2to3 with {args} and it exited with {ret}'
 
-    mismatch = \
-        'Both arguments have to be directories, or both have to be files'
+    mismatch_directory = \
+        'Expected destination to be a directory and found a file instead'
+
+    mismatch_file = \
+        'Expected destination to be a file and found a directory instead'
+
+    imaginary = \
+        'Source file or directory does not exist'
 
     def __init__(self, key, **kw):
         """Prints a specified error to standard error then constructs
@@ -157,12 +163,16 @@ def main():
         raise SystemExit(1)
 
     src, dst = args
-    if paths.isdir(src) and paths.isdir(dst):
+    if paths.isdir(src):
+        if paths.isfile(dst):
+            raise Error('mismatch_directory')
         main_deep_copy(src, dst, force=options.force)
-    elif paths.isfile(src) and paths.isfile(dst):
+    elif paths.isfile(src):
+        if paths.isdir(dst):
+            raise Error('mismatch_file')
         main_copy(src, dst)
     else:
-        raise Error('mismatch')
+        raise Error('imaginary')
 
     raise SystemExit()
 
