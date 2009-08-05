@@ -52,29 +52,30 @@ def register():
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
 
-def filtered_dir(request, filter=None):
+def filtered_dir(request, afilter=None):
     '''returns the file listing from a directory,
        satisfying a given filter function,
        in a form suitable for the jquery FileTree plugin.'''
-    ul = ['<ul class="jqueryFileTree" style="display: none;">']
+    ul = [u'<ul class="jqueryFileTree" style="display: none;">']
     # request.data is of the form "dir=SomeDirectory"
     try:
         d = urllib.unquote(request.data)[4:]
         d = urllib.unquote(d)  # apparently need to call it twice on windows
         for f in os.listdir(d):
-            if filter(f, d):
+            if afilter(f, d):
                 continue
             ff = os.path.join(d, f)
             if os.path.isdir(ff):
-                ul.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+                ul.append(u'<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
             else:
                 ext = os.path.splitext(f)[1][1:] # get .ext and remove dot
-                ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
-        ul.append('</ul>')
-    except Exception,e:
-        ul.append('Could not load directory: %s' % str(e))
-    ul.append('</ul>')
-    request.wfile.write(''.join(ul))
+                ul.append(u'<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
+        ul.append(u'</ul>')
+    except OSError, e:
+        # We want the string, not the representation.
+        ul.append(u'Could not load directory: %s' % str(e))
+    ul.append(u'</ul>')
+    request.wfile.write(u''.join(ul).encode('utf8'))
     return
 
 def insert_file_tree(page, elem, uid, action, callback, title, label):
