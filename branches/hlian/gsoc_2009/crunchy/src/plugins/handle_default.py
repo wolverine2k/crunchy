@@ -116,7 +116,7 @@ def handler(request):
         request.wfile.write(msg.encode('utf8'))
         exit_file = join(root_path, "exit_en.html")
 
-        f = open(exit_file)
+        f = open(exit_file, 'rb')
         request.wfile.write(f.read())
         f.close()
 
@@ -125,6 +125,8 @@ def handler(request):
         return
 
     data = path_to_filedata(request.path, root_path, request.crunchy_username)
+    assert not isinstance(data, unicode)
+
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("in handle_default.handler(), beginning of data =")
         try:

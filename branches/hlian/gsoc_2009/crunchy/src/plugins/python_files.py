@@ -60,10 +60,11 @@ def load_python(request):
     fake_file = Python_file(html_template)
     page = plugin['create_vlam_page'](fake_file, url, local=True,
                                       username=request.crunchy_username)
+    page = page.read().encode('utf8')
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(page.read())
+    request.wfile.write(page)
 
 def insert_load_python(page, elem, uid):
     "Inserts a javascript browser object to load a local python file."

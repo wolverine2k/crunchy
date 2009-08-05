@@ -189,6 +189,7 @@ function get_doctest_time(uid){
     return -1;
 }
 """ % plugin['session_random_id']
+
 # Finally, the special Python code used to call the doctest module,
 # mentioned previously
 doctest_pycode = u"""
@@ -196,7 +197,10 @@ __teststring = \"\"\"%s\"\"\"
 from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
 __test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
 __x = __DocTestRunner().run(__test, out=doctest_out.write)
-doctest_out.write(__x)
+
+# It's import to call repr() because, in Python 3, StringIO no longer
+# happily converts the TestResults named tuple to its representation.
+doctest_out.write(repr(__x))
 """
 
-#Note: information about doctest_out is found in interpreter.py
+# Note: information about doctest_out is found in interpreter.py

@@ -317,7 +317,7 @@ def set_security_list(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write("")
+    request.wfile.write("".encode())
     request.wfile.flush()
 
 def empty_security_list(request):
@@ -337,7 +337,7 @@ def empty_security_list(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write("")
+    request.wfile.write("".encode())
     request.wfile.flush()
 
 # Note: the rest of the css appears in crunchy.css

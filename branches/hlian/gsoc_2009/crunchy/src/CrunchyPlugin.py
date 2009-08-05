@@ -128,6 +128,9 @@ plugin['create_vlam_page'] = create_vlam_page
 
 def exec_code(code, uid, doctest=False):
     """execute some code in a given uid"""
+    # Ensure that the caller has decoded the request.data bytestring
+    # into Unicode.
+    assert isinstance(code, unicode)
     cometIO.do_exec(code, uid, doctest=doctest)
 plugin['exec_code'] = exec_code
 

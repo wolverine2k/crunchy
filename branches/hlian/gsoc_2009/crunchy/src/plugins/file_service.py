@@ -9,7 +9,7 @@ import sys
 import urllib
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement
+from src.interface import config, plugin, SubElement, python_version
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external",
@@ -190,7 +190,11 @@ def load_file_request_handler(request):
         return 404
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(content)
+
+    if python_version < 3:
+        content = content.decode('utf8')
+
+    request.wfile.write(content.encode('utf8'))
     request.wfile.flush()
 
 def save_file(full_path, content):  # tested
