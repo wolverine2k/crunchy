@@ -164,7 +164,12 @@ def comet(request):
     # OK, data found
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(data)
+
+    # Python 3 std{in, out, err} are Unicode rather than bytestring.
+    if interface.python_version < 3:
+        data = data.decode('utf8')
+
+    request.wfile.write(data.encode('utf8'))
     request.wfile.flush()
     debug_msg(" ... done in comet()", 9)
 
@@ -367,7 +372,7 @@ class ThreadedBuffer(object):
         """write to the default output"""
         # Normalize to Unicode because Python 3's doctest will not
         # take bytes for its _SpoofOut = self.default_out.
-        if sys.version_info[0] < 3:
+        if interface.python_version < 3:
             data = data.decode('utf-8')
         self.default_out.write(data)
 

@@ -238,10 +238,11 @@ def load_rst(request):
     rst_file = ReST_file(data)
     page = plugin['create_vlam_page'](rst_file, url, local=True,
                                       username=request.crunchy_username)
+    page = page.read().encode('utf8')
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(page.read())
+    request.wfile.write(page)
 
 def convert_rst(path, local=True):
     '''converts an rst file into a proper crunchy-ready html page'''

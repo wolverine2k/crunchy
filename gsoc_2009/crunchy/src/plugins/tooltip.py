@@ -5,7 +5,7 @@ import urllib
 
 import src.interpreter as interpreter
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element, names
+from src.interface import config, translate, plugin, Element, names, python_version
 _ = translate['_']
 
 borg_console = {}
@@ -76,7 +76,11 @@ def dir_handler(request):
     result = repr(result)
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(result)
+
+    if python_version < 3:
+        result = result.decode('utf8')
+
+    request.wfile.write(result.encode('utf8'))
     request.wfile.flush()
 
 def doc_handler(request):
@@ -110,7 +114,11 @@ def doc_handler(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(result)
+
+    if python_version < 3:
+        result = result.decode('utf8')
+
+    request.wfile.write(result.encode('utf8'))
     request.wfile.flush()
     return
 

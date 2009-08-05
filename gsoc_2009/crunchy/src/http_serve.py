@@ -238,14 +238,22 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(self.path)
 
         self.path, self.args = parse_url(self.path)
-        # Clumsy syntax due to Python 2 and 2to3's lack of a byte
-        # literal.
-        self.data = u"".encode('ascii')
 
-        # Extract POST data, if any.
+        # Extract POST data, if any. Clumsy syntax due to Python 2 and
+        # 2to3's lack of a byte literal.
+        self.data = u"".encode()
         length = self.headers.get('Content-Length')
-        if length:
+        if length and length.isdigit():
             self.data = self.rfile.read(int(length))
+
+        # POST data gets automatically decoded into Unicode because
+        # much of Crunchy's code assumes this. The bytestring will
+        # still be available in the bdata attribute.
+        self.bdata = self.data
+        try:
+            self.data = self.data.decode('utf8')
+        except UnicodeDecodeError:
+            self.data = None
 
         # Run the handler.
         if DEBUG:
