@@ -6,10 +6,15 @@ Provides the means to save and load a file.
 from subprocess import Popen
 import os
 import sys
-import urllib
+
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, u_print
+from src.interface import config, plugin, SubElement, python_version, u_print
+
+if python_version < 3:
+    from urllib import unquote
+else:
+    from urllib.parse import unquote
 
 # The set of other "widgets/services" provided by this plugin
 provides = set(["/save_file", "/load_file", "/save_and_run", "/run_external",
@@ -52,17 +57,17 @@ def register():
     plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
 
-def filtered_dir(request, filter=None):
+def filtered_dir(request, afilter=None):
     '''returns the file listing from a directory,
        satisfying a given filter function,
        in a form suitable for the jquery FileTree plugin.'''
     ul = ['<ul class="jqueryFileTree" style="display: none;">']
     # request.data is of the form "dir=SomeDirectory"
     try:
-        d = urllib.unquote(request.data)[4:]
-        d = urllib.unquote(d)  # apparently need to call it twice on windows
+        d = unquote(request.data)[4:]
+        d = unquote(d)  # apparently need to call it twice on windows
         for f in os.listdir(d):
-            if filter(f, d):
+            if afilter(f, d):
                 continue
             ff = os.path.join(d, f)
             if os.path.isdir(ff):
@@ -74,7 +79,7 @@ def filtered_dir(request, filter=None):
     except Exception:
         ul.append('Could not load directory: %s' % sys.exc_info()[1])
     ul.append('</ul>')
-    request.wfile.write(''.join(ul))
+    request.wfile.write(''.join(ul).encode('utf-8'))
     return
 
 def insert_file_tree(page, elem, uid, action, callback, title, label):
@@ -182,6 +187,10 @@ def load_file_request_handler(request):
         return 404
     request.send_response(200)
     request.end_headers()
+
+    if python_version > 2:
+        content = content.encode('utf-8')
+
     request.wfile.write(content)
     request.wfile.flush()
 
