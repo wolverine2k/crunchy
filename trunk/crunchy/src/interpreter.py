@@ -10,7 +10,8 @@ try:
 except:
     ctypes_available = False
 
-from src.interface import StringIO, exec_code, translate, config, plugin, names, u_print
+from src.interface import (StringIO, exec_code, translate, config, plugin,
+                           names, u_print, python_version)
 config['ctypes_available'] = ctypes_available
 
 from src.utilities import trim_empty_lines_from_end, log_session
@@ -391,8 +392,10 @@ class InteractiveConsole(InteractiveInterpreter):
         implementation.
 
         """
-        # will need to replace by input(prompt)... for Python 3.0
-        return raw_input(prompt)
+        if python_version >= 3:
+            return input(prompt)
+        else:
+            return raw_input(prompt)
 
 #===== End of modified code.py ========
 

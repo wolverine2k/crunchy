@@ -13,7 +13,7 @@ def register():  # tested
 
 def exec_handler(request):  # tested
     """handle an execution request"""
-    if python_version > 2:
+    if python_version >= 3:
         request.data = request.data.decode('utf-8')
     plugin['exec_code'](request.data, request.args["uid"])
     request.send_response(200)

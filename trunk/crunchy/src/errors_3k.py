@@ -117,12 +117,12 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
         value = SyntaxError(msg, (filename, lineno, offset, line))
         sys.last_value = value
     if username and config[username]['friendly']:# ignore that filename stuff!
-        list = traceback.format_exception_only(ex_type, value)[1:]
-        list.insert(0, "Error on line %s:\n"%lineno)
+        tb_list = traceback.format_exception_only(ex_type, value)[1:]
+        tb_list.insert(0, "Error on line %s:\n"%lineno)
     else:
-        list = traceback.format_exception_only(ex_type, value)
+        tb_list = traceback.format_exception_only(ex_type, value)
     retval = StringIO()
-    list(map(retval.write, list))
+    list(map(retval.write, tb_list))
 
     out = retval.getvalue().replace("Error on line",
                              _("Error on line") )

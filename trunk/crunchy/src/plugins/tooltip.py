@@ -1,12 +1,17 @@
 """This plugin provides tooltips for interpreters"""
 
 import re
-import urllib
+
 
 import src.interpreter as interpreter
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, translate, plugin, Element, names
+from src.interface import config, translate, plugin, Element, names, python_version
 _ = translate['_']
+
+if python_version < 3:
+    from urllib import unquote_plus
+else:
+    from urllib.parse import unquote_plus
 
 borg_console = {}
 
@@ -48,6 +53,9 @@ def insert_tooltip(page, *dummy):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
+    if python_version > 2:
+        request.data = request.data.decode('utf-8')
+
     pageid = request.args['uid'].split("_")[0]
     username = names[pageid]
     if not config[username]['dir_help']:
@@ -55,7 +63,7 @@ def dir_handler(request):
         request.end_headers()
         return
 
-    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
+    line = re.split(r"\s", unquote_plus(request.data))[-1].strip()
 
     # Support lines like "thing.attr" as "thing.", because the browser
     # may not finish calculating the partial line until after the user
@@ -76,11 +84,14 @@ def dir_handler(request):
     result = repr(result)
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(result)
+    request.wfile.write(result.encode('utf-8'))
     request.wfile.flush()
 
 def doc_handler(request):
     """Examine a partial line and provide sig+doc of final expr."""
+
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
 
     pageid = request.args['uid'].split("_")[0]
     username = names[pageid]
@@ -88,7 +99,7 @@ def doc_handler(request):
         request.send_response(204)
         request.end_headers()
         return
-    line = re.split(r"\s", urllib.unquote_plus(request.data))[-1].strip()
+    line = re.split(r"\s", unquote_plus(request.data))[-1].strip()
 
     # Support lines like "func(text" as "func(", because the browser
     # may not finish calculating the partial line until after the user
@@ -110,7 +121,7 @@ def doc_handler(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(result)
+    request.wfile.write(result.encode('utf-8'))
     request.wfile.flush()
     return
 
