@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-errors_2k.py
+errors_3k.py
 
 Handle errors produced while running Crunchy, as well as Python
 tracebacks, displaying the result to the user in a friendly way.
@@ -84,7 +84,7 @@ def simplify_traceback(code=None, username=None):
     if ex_type is SystemExit:
         out = retval.getvalue().replace("Your program exited.",
                              _("Your program exited.") )
-        return out.encode("utf-8")
+        return out
 
     if debug:
         if username:
@@ -96,7 +96,7 @@ def simplify_traceback(code=None, username=None):
                           "In errors.simplify_traceback: username=%s\n"%username)
     else:
         added_info = ''
-    return retval.getvalue().encode("utf-8") + added_info
+    return retval.getvalue() + added_info
 
 
 def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
@@ -105,7 +105,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
     closely based on showsyntaxerror from the code module
     in the standard library
     """
-    filename = _("User's code").encode("utf-8")  # will most likely not be used
+    filename = _("User's code")  # will most likely not be used
     # Work hard to stuff the correct filename in the exception
     try:
         msg, (filename, lineno, offset, line) = value
@@ -126,7 +126,7 @@ def simplify_syntax_error(code, ex_type, value, trace, lineno, username):
 
     out = retval.getvalue().replace("Error on line",
                              _("Error on line") )
-    return out.encode("utf-8")
+    return out
 
 def simplify_doctest_error_message(msg):
     '''Simplifies doctest messages, assuming standard format.'''
@@ -144,19 +144,19 @@ def simplify_doctest_error_message(msg):
     else:
         success = True
     if total == 0:
-        summary = _("There was no test to satisfy.").encode("utf-8")
+        summary = _("There was no test to satisfy.")
     elif total == 1:
         if failures == 0:
-            summary = _("Congratulations, your code passed the test!").encode("utf-8")
+            summary = _("Congratulations, your code passed the test!")
         else:
-            summary = _("You code failed the test.").encode("utf-8")
+            summary = _("You code failed the test.")
     else:
         if failures == 0:
-            summary = (_("Congratulations, your code passed all (%d) tests!")%total).encode("utf-8")
+            summary = (_("Congratulations, your code passed all (%d) tests!")%total)
         elif failures == total:
-            summary = (_("Your code failed all (%d) tests.")%total).encode("utf-8")
+            summary = (_("Your code failed all (%d) tests.")%total)
         else:
-            summary = (_("Your code passed %s out of %s tests.")%(total-failures, total)).encode("utf-8")
+            summary = (_("Your code passed %s out of %s tests.")%(total-failures, total))
 
     if failures == 0:
         return summary, success
@@ -171,13 +171,13 @@ def simplify_doctest_error_message(msg):
             lines = fail.split('\n')
             for line in lines[2:-2]:
                 if line.startswith("Failed example:"):
-                    new_mesg.append(_("The following example failed:").encode("utf-8"))
+                    new_mesg.append(_("The following example failed:"))
                 elif line.startswith("Expected:"):
-                    new_mesg.append(_("The expected result was:").encode("utf-8"))
+                    new_mesg.append(_("The expected result was:"))
                 elif line.startswith("Got"):
-                    new_mesg.append(_("The result obtained was:").encode("utf-8"))
+                    new_mesg.append(_("The result obtained was:"))
                 elif line.startswith("Exception raised:"):
-                    new_mesg.append(_("An exception was raised:").encode("utf-8"))
+                    new_mesg.append(_("An exception was raised:"))
                     exception_found = True
                     break
                 else:

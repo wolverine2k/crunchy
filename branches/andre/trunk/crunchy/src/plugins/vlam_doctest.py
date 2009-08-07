@@ -12,7 +12,8 @@ for people familiar with the Crunchy plugin architecture.
 # All plugins should import the crunchy plugin API
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring, exams
+from src.interface import (config, plugin, Element, SubElement, tostring,
+                          exams, python_version)
 from src.utilities import extract_log_id, wrap_in_div, parse_vlam
 
 # The set of other "widgets/services" required from other plugins
@@ -49,6 +50,8 @@ def doctest_runner_callback(request):
     # the user, and obtained as "request.data", but also includes a part
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
+    if python_version > 2:
+        request.data = request.data.decode('utf-8')
     code = request.data + (doctest_pycode % doctests[request.args["uid"]])
     plugin['exec_code'](code, request.args["uid"], doctest=True)
     request.send_response(200)
@@ -196,7 +199,10 @@ __teststring = \"\"\"%s\"\"\"
 from doctest import DocTestParser as __DocTestParser, DocTestRunner as __DocTestRunner
 __test = __DocTestParser().get_doctest(__teststring, locals(), "Crunchy Doctest", "<crunchy>", 0)
 __x = __DocTestRunner().run(__test, out=doctest_out.write)
-doctest_out.write(__x)
+
+# It's import to call repr() because, in Python 3, StringIO no longer
+# happily converts the TestResults named tuple to its representation.
+doctest_out.write(repr(__x))
 """
 
 #Note: information about doctest_out is found in interpreter.py
