@@ -21,18 +21,23 @@ working properly.
 </p>
 </div>
 
-<p>Sometimes, you want to write Python code that is <i>*gasp*</i> worth saving.  In this case, rather than using the Python interpreter, you probably resort to your favourite editor which most likely allows you to run your Python code.  Normally, you would need to start your favourite editor, and type in (or cut-and-paste) the following example, most of which has been shamelessly lifted from the official Python tutorial.</p>
+<p>Sometimes, you want to write Python code that is <i>*gasp*</i> worth saving.
+In this case, rather than using the Python interpreter,
+you probably resort to your favourite editor which most likely allows you to run your Python code.
+Normally, you would need to start your favourite editor,
+and type in (or cut-and-paste) the following example,
+most of which has been shamelessly lifted from the official Python tutorial.</p>
 <pre title="editor size=(8, 80)">
 for n in range(2, 10):
-    for x in range(2, n):
-        if n % x == 0:
-            print n, 'equals', x, '*', n/x
+    for m in range(2, n):
+        if n % m == 0:
+            print('%d equals %d * %d' % ( n, m, n/m))
             break
     else: # loop fell through without finding a factor
-        print n, 'is a prime number'
+        print('%d is a prime number' % n)
 
-# The following will raise an error
-print a
+# The following will raise an error as "a" is not defined.
+print(a)
 </pre>
 <div class="notes">
 <h4>Save and run</h4>
@@ -49,22 +54,22 @@ If you click on it, you will see appear on the page a real editor, provided by C
 <p>When code in a code editor is executed, a new thread is started by Crunchy unless
 the "save and run" feature is used, in which case a separate process is started.  Neither the separate process nor the new thread have access to variables defined or modules imported in other environments. The required vlam code is as follows.</p>
 <pre title="html">
-&lt;pre title="editor [no_copy] [no_pre] [linenumber [=start_number]] 
+&lt;pre title="editor [no_copy] [no_pre] [linenumber [=start_number]]
                    [external [no_internal]]"&gt;
 Some Python code
 
 &lt;/pre&gt;</pre>
-This adds a code editor (enhanced html <code title="html">&lt;textarea&gt;</code>) 
+This adds a code editor (enhanced html <code title="html">&lt;textarea&gt;</code>)
 to the current page.
-<p>By default, Crunchy copies the contents of the <code title="html">&lt;pre&gt;</code> 
-in the original file into a new <code title="html">&lt;pre&gt;</code> above the editor; 
+<p>By default, Crunchy copies the contents of the <code title="html">&lt;pre&gt;</code>
+in the original file into a new <code title="html">&lt;pre&gt;</code> above the editor;
 however, this is prevented if
 <code title="python">"no_pre"</code> is present.
-Also by default, Crunchy copies the contents of the original 
+Also by default, Crunchy copies the contents of the original
 <code title="html">&lt;pre&gt;</code>
 into the editor; however, this is prevented if
 <code title="python">"no_copy"</code> is present.
-If the <code title="python">"linenumber"</code> option is present, 
+If the <code title="python">"linenumber"</code> option is present,
 a line number will appear before each line of input code.</p>
 <p>The <code title="python">"[external [no_internal]]"</code>
 options will be explained later.</p>
