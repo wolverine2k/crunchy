@@ -14,10 +14,13 @@ et = ElementTree
 
 if python_version < 3:
     from src.element_tree import ElementSoup
+else:
+    from src.element_tree3 import ElementSoup
 
 from src.utilities import uidgen
 import src.interface as interface
 from src.interface import StringIO
+from src.utilities import changeHTMLspecialCharacters
 
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
@@ -72,18 +75,21 @@ class BasePage(object): # tested
             html = ElementSoup.parse(filehandle, encoding = 'utf-8')
             self.tree = et.ElementTree(html)
         else:
-            #tree = et.ElementTree()
-            html = et.ElementTree().parse(filehandle)
-            #assert isinstance(self.tree, et.ElementTree)
-
-            # see Converting XHTML to HTML in
-            # http://effbot.org/zone/element-tidylib.htm
-            XHTML = html.tag[:-4]
-            for elem in html.getiterator():
-                if elem.tag.startswith(XHTML):
-                    elem.tag = elem.tag[len(XHTML):]
-            html.tag = "html"
+            html = ElementSoup.parse(filehandle)
             self.tree = et.ElementTree(html)
+        #    #tree = et.ElementTree()
+        #    html = et.ElementTree().parse(filehandle)
+        #    #assert isinstance(self.tree, et.ElementTree)
+        #
+        #    # see Converting XHTML to HTML in
+        #    # http://effbot.org/zone/element-tidylib.htm
+        #    XHTML = html.tag[:-4]
+        #    for elem in html.getiterator():
+        #        if elem.tag.startswith(XHTML):
+        #            elem.tag = elem.tag[len(XHTML):]
+        #    html.tag = "html"
+        #    self.tree = et.ElementTree(html)
+
 
     def fix_divs(self):
         '''ensure that empty divs are not self-closing so that sites are
@@ -386,7 +392,13 @@ class CrunchyPage(BasePage):
             self.is_from_root = False
 
         # Create the proper tree structure from the html file
-        self.create_tree(filehandle)  # assigns self.tree
+        try:
+            self.create_tree(filehandle)  # assigns self.tree
+        except:
+            text = changeHTMLspecialCharacters(handle_exception(False))
+            self.tree = et.ElementTree(et.fromstring(
+                            "<html><head/><body><pre>%s</pre></body></html>"%text))
+            return
 
         # Removing pre-existing javascript, unwanted objects and
         # all kinds of other potential security holes

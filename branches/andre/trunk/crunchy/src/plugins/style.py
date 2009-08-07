@@ -32,8 +32,8 @@ for name in LEXERS:
     for alias in aliases:
         _pygment_language_names.append(alias)
 
-interface.crunchy_pygments = CRUNCHY_PYGMENTS = ("crunchy_pygments_" +
-                             str(int(random.random()*1000000000000)))
+interface.crunchy_pygments = CRUNCHY_PYGMENTS = \
+    "crunchy_pygments_%d" % int(random.random()*1000000000000)
 
 lexers = {}
 options['style'] = list(get_all_styles())
@@ -78,7 +78,9 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     if language in ['py_code', 'python_code']:
         language = "python"
     text = extract_code(elem)
-    styled_code = _style(text, language, cssclass).encode("utf-8")
+    styled_code = _style(text, language, cssclass)
+    if python_version < 3:
+        styled_code = styled_code.encode("utf-8")
     if vlam is None:
         vlam = elem.attrib['title']
     if 'linenumber' in vlam:
@@ -144,7 +146,7 @@ def get_pygments_tokens(page, elem, uid):
     for title in ['Token type', 'css class']:
         column = SubElement(row, 'th')
         column.text = title
-    keys = STANDARD_TYPES.keys()
+    keys = list(STANDARD_TYPES.keys())
     keys.sort()
     for token in keys:
         if len(repr(token)) == 5: # token = Token
