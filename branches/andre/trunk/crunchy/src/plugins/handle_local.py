@@ -49,13 +49,14 @@ def local_loader(request):  # tested
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
     else:
-        page = open(url, 'rb')
+        page = open(url, 'r')
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
-    __irrelevant = request.wfile.write(page.read())
+    # also, in Python 3, need to convert between bytes and strings...
+    __irrelevant = request.wfile.write(page.read().encode('utf-8'))
 
 def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''

@@ -63,7 +63,7 @@ def load_python(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(page.read())
+    request.wfile.write(page.read().encode('utf-8'))
 
 def insert_load_python(page, elem, uid):
     "Inserts a javascript browser object to load a local python file."

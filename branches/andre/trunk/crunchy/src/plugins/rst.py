@@ -8,7 +8,7 @@
 
 # All plugins should import the crunchy plugin API via interface.py
 import os
-from src.interface import plugin, python_version
+from src.interface import plugin, python_version, StringIO
 if python_version < 3:
     from urllib import urlopen
 else:
@@ -217,13 +217,10 @@ if _docutils_installed:
     for key, value in list(DIRECTIVE_DICT.items()):
         rst.directives.register_directive( key, value )
 
-class ReST_file(object):
+class ReST_file(StringIO):
     """Represents file with transformed text from rst into html.
     vlam thinks it is an ordinary file object"""
-    def __init__(self, data):
-        self._data = data
-    def read(self):
-        return self._data
+    pass
 
 def load_rst(request):
     """Loads rst file from disk,
@@ -231,13 +228,17 @@ def load_rst(request):
     url = request.args["url"]
     file_ = open(url)
 
-    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
+    # docutils returns bytes (Python 3)
+    data = publish_string(file_.read(), writer_name="html")
+    data = data.decode('utf8')
+    rst_file = ReST_file(data)
     page = plugin['create_vlam_page'](rst_file, url, local=True,
                                       username=request.crunchy_username)
+    page = page.read().encode('utf-8') # encoding required for Python 3
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(page.read())
+    request.wfile.write(page)
 
 def convert_rst(path, local=True):
     '''converts an rst file into a proper crunchy-ready html page'''
