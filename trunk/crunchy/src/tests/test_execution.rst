@@ -12,7 +12,7 @@ It contains two functions that need to be tested:
 Setting things up
 --------------------
 
-    >>> from src.interface import plugin, config
+    >>> from src.interface import plugin, config, python_version
     >>> config.clear()
     >>> plugin.clear()
     >>> plugin['session_random_id'] = 42
@@ -41,12 +41,11 @@ Testing exec_handler()
 -------------------------
 
     >>> request = mocks.Request(args={'uid':'spam'})
+    >>> if python_version > 2:
+    ...     request.data = request.data.encode('utf-8')
     >>> execution.exec_handler(request)
     data
     spam
     >>> request.print_lines()
     200
     End headers
-
-
-
