@@ -169,7 +169,7 @@ def comet(request):
     # Python 3, request data (from std{in, out, err}) is passed along in
     # Unicode strings; these need to
     # be encoded to be properly understood by the browser
-    if python_version > 2:
+    if python_version >= 3:
         data = data.encode('utf-8')
 
     request.wfile.write(data)
@@ -226,6 +226,8 @@ def push_input(request):
     uid = request.args["uid"]
     pageid = uid.split("_")[0]
     # echo back to output:
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     in_to_browser = utilities.changeHTMLspecialCharacters(request.data)
     in_to_browser = in_to_browser.replace('\\', r'\\')
     output_buffers[pageid].put_output("<span class='%s'>"%interface.generic_output +
@@ -375,7 +377,7 @@ class ThreadedBuffer(object):
         """write to the default output"""
         # Normalize to Unicode because Python 3's doctest will not
         # take bytes for its _SpoofOut = self.default_out.
-        if interface.python_version < 3:
+        if python_version < 3:
             data = data.decode('utf-8')
         self.default_out.write(data)
 
