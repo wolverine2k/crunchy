@@ -392,7 +392,7 @@ are usually launched.""")
         except:
             u_print("Could not open file in configuration._save_settings().")
             return
-        pickle.dump(saved, pickled)
+        pickle.dump(saved, pickled, protocol=2)
         pickled.close()
         return
 

@@ -94,7 +94,8 @@ if python_version < 3:
     from src.element_tree import ElementTree#, HTMLTreeBuilder
     #parse = HTMLTreeBuilder.parse
 else:
-    from xml.etree import ElementTree
+    #from xml.etree import ElementTree
+    from src.element_tree3 import ElementTree
     #parse = ElementTree.parse
 
 Element = ElementTree.Element
