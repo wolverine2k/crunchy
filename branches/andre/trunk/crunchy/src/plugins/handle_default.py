@@ -114,8 +114,11 @@ def handler(request):
         try:
             request.wfile.write(data)
         except:  # was introduced to deal with Python 3.x problems
-            print("Error in handle_default; should not have happened!")
-            raise
+            try:
+                request.wfile.write(data.encode('utf-8'))
+            except:
+                print("Error in handle_default; should not have happened!")
+                raise
 
 def annotate(path, filenames): # tested
     '''Add '/' suffixes to directories in a directory listing'''
