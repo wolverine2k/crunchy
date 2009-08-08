@@ -82,21 +82,14 @@ def debug_msg(data):
 
 # We use ElementTree, if possible as ElementSoup in combination with
 # BeautifulSoup, in order to parse and process files.
-
-ElementTree = None
 # ElementTree is part of Python as of version 2.5;
-# however, HTMLTreeBuilder is not included in 2.5
-# (but another version of parse is included)
-# Nonetheless, we use a customized version.  We might be able to simply
-# redefine a method or two ... but we'll use the one we customized for now.
+# Nonetheless, we use a slightly customized version ... and an even
+# more customized one for Python 3.
 
 if python_version < 3:
-    from src.element_tree import ElementTree#, HTMLTreeBuilder
-    #parse = HTMLTreeBuilder.parse
+    from src.element_tree import ElementTree
 else:
-    #from xml.etree import ElementTree
     from src.element_tree3 import ElementTree
-    #parse = ElementTree.parse
 
 Element = ElementTree.Element
 SubElement = ElementTree.SubElement
@@ -105,14 +98,13 @@ tostring = ElementTree.tostring
 
 interactive = False # used with python crunchy -i option
 
-#TODO: Need to adapt pygments (using 2to3 and a custom tool?) to use with Python 3.x
 if python_version < 3:
     import pygments.token
     generic_output = pygments.token.STANDARD_TYPES[pygments.token.Generic.Output]
     generic_traceback = pygments.token.STANDARD_TYPES[pygments.token.Generic.Traceback]
     generic_prompt = pygments.token.STANDARD_TYPES[pygments.token.Generic.Prompt]
     comment = pygments.token.STANDARD_TYPES[pygments.token.Comment]
-else:  # placeholders for now
+else:
     import pygments3.token
     generic_output = pygments3.token.STANDARD_TYPES[pygments3.token.Generic.Output]
     generic_traceback = pygments3.token.STANDARD_TYPES[pygments3.token.Generic.Traceback]
