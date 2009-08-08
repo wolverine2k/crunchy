@@ -3,10 +3,12 @@
 Provides the means to save and load a file.
 """
 
-from subprocess import Popen
+import codecs
 import os
 import sys
+import traceback
 import urllib
+from subprocess import Popen
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, python_version
@@ -198,18 +200,23 @@ def load_file_request_handler(request):
     request.wfile.flush()
 
 def save_file(full_path, content):  # tested
-    """saves a file
-    """
+    """Saves a file with the passed content to the path given by
+    full_path."""
+
     if DEBUG:
         print("Entering save_file.")
-    #full_path = full_path.encode(sys.getfilesystemencoding)
+
     try:
-        f = open(full_path, 'w')
+        # All the instances of save_file occur in here, and all the
+        # instances involve passing Unicode content. Therefore, we can
+        # choose to save the file as UTF-8 without fear.
+        f = codecs.open(full_path, 'w', 'utf8')
         f.write(content)
         f.close()
-    except:
-        print("  Could not save file; full_path =")
-        print(full_path)
+    except OSError:
+        print("Could not save file with full_path: %s" % full_path)
+        print(traceback.format_exc())
+
     if DEBUG:
         print("Leaving save_file")
 
