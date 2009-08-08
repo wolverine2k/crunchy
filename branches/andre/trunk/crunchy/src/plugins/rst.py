@@ -229,8 +229,7 @@ def load_rst(request):
     file_ = open(url)
 
     # docutils returns bytes (Python 3)
-    data = publish_string(file_.read(), writer_name="html")
-    data = data.decode('utf8')
+    data = publish_string(file_.read(), writer_name="html").decode('utf-8')
     rst_file = ReST_file(data)
     page = plugin['create_vlam_page'](rst_file, url, local=True,
                                       username=request.crunchy_username)
@@ -246,7 +245,8 @@ def convert_rst(path, local=True):
         file_ = open(path)
     else:
         file_ = urlopen(path)
-    rst_file = ReST_file(publish_string(file_.read(), writer_name="html"))
+    data = publish_string(file_.read(), writer_name="html").decode('utf-8')
+    rst_file = ReST_file(data)
     return rst_file
 
 def insert_load_rst(page, elem, uid):
