@@ -63,7 +63,7 @@ def filtered_dir(request, afilter=None):
        in a form suitable for the jquery FileTree plugin.'''
     ul = ['<ul class="jqueryFileTree" style="display: none;">']
     # request.data is of the form "dir=SomeDirectory"
-    if python_version > 2:
+    if python_version >= 3:
         request.data = request.data.decode('utf-8')
     try:
         d = unquote(request.data)[4:]
@@ -190,7 +190,7 @@ def load_file_request_handler(request):
     request.send_response(200)
     request.end_headers()
 
-    if python_version > 2:
+    if python_version >= 3:
         content = content.encode('utf-8')
 
     request.wfile.write(content)

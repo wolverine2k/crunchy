@@ -53,7 +53,7 @@ def insert_tooltip(page, *dummy):
 def dir_handler(request):
     """Examine a partial line and provide attr list of final expr"""
 
-    if python_version > 2:
+    if python_version >= 3:
         request.data = request.data.decode('utf-8')
 
     pageid = request.args['uid'].split("_")[0]
