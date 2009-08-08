@@ -12,7 +12,8 @@ from pdb import Pdb
 import inspect
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, SubElement, tostring, translate, StringIO
+from src.interface import (config, plugin, SubElement, tostring, translate,
+                           StringIO, python_version)
 import src.interface as interface
 from src.utilities import extract_log_id, unChangeHTMLspecialCharacters, escape_for_javascript
 import src.utilities as util
@@ -54,6 +55,8 @@ def register():
 pdb_py_files = {}
 
 def pdb_start_callback(request):
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     pdb_py_files[request.args['uid']]['<string>'] = request.data
     code = pdb_pycode % (request.data.replace('""""', r'\"\"\"'))
     plugin['exec_code'](code, request.args["uid"])
@@ -352,6 +355,9 @@ function init_pdb(uid)
 }
 """ % (plugin['session_random_id'])
 
+if python_version >= 3:
+    pdb_jscode = pdb_jscode.encode('utf-8')
+
 pdb_pycode = '''
 from src.plugins.vlam_pdb import MyPdb,Proto
 _debug_string = """%s
@@ -409,13 +415,13 @@ class MyPdb(Pdb):
 
     def get_name_id_map(self, d):
         ret = {}
-        for key,item in d.items():
+        for key,item in list(d.items()):
             ret[key] = id(item)
         return ret
 
     def filter_dict(self, d):
         ret = {}
-        for key,value in d.items():
+        for key,value in list(d.items()):
             if key not in self.exclude_name_list:
                 ret[key] = value
         return ret
@@ -459,7 +465,7 @@ class MyPdb(Pdb):
 
     def dict2table(self, d, old = {}):
         s = "<table class='namespace'><tbody>"
-        for key,item in d.items():
+        for key,item in list(d.items()):
             t = "normal"
             if key not in old:
                 t = "new"
