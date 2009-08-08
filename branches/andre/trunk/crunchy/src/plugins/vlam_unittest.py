@@ -5,7 +5,7 @@ a user to enter some code which should satisfy the unittest.
 """
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, Element, SubElement, tostring
+from src.interface import config, plugin, Element, SubElement, tostring, python_version
 from src.utilities import extract_log_id, wrap_in_div
 
 # The set of other "widgets/services" required from other plugins
@@ -43,6 +43,8 @@ def unittest_runner_callback(request):
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
     # TODO: update the comment
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     code = unittest_pycode % {
         'user_code': request.data,
         'unit_test': unittests[request.args["uid"]],

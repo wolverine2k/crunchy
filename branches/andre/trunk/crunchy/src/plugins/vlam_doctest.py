@@ -50,7 +50,7 @@ def doctest_runner_callback(request):
     # the user, and obtained as "request.data", but also includes a part
     # (doctest_pycode) defined below used to automatically call the
     # correct method in the doctest module.
-    if python_version > 2:
+    if python_version >= 3:
         request.data = request.data.decode('utf-8')
     code = request.data + (doctest_pycode % doctests[request.args["uid"]])
     plugin['exec_code'](code, request.args["uid"], doctest=True)
