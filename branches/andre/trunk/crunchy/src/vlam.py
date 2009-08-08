@@ -77,18 +77,6 @@ class BasePage(object): # tested
         else:
             html = ElementSoup.parse(filehandle)
             self.tree = et.ElementTree(html)
-        #    #tree = et.ElementTree()
-        #    html = et.ElementTree().parse(filehandle)
-        #    #assert isinstance(self.tree, et.ElementTree)
-        #
-        #    # see Converting XHTML to HTML in
-        #    # http://effbot.org/zone/element-tidylib.htm
-        #    XHTML = html.tag[:-4]
-        #    for elem in html.getiterator():
-        #        if elem.tag.startswith(XHTML):
-        #            elem.tag = elem.tag[len(XHTML):]
-        #    html.tag = "html"
-        #    self.tree = et.ElementTree(html)
 
 
     def fix_divs(self):
@@ -227,7 +215,7 @@ class BasePage(object): # tested
            (like editarea); the preferred method is to add the
            javascript code directly'''
         js = et.Element("script", src=filename, type="text/javascript")
-        js.text = " "  # prevents premature closing of <script> tag, misinterpreted by Firefox
+        js.text = " " # prevents premature closing of <script> tag, misinterpreted by Firefox
         try:
             self.head.insert(0, js)
         except:   # should never be needed in normal call from CrunchyPage
@@ -394,7 +382,7 @@ class CrunchyPage(BasePage):
         # Create the proper tree structure from the html file
         try:
             self.create_tree(filehandle)  # assigns self.tree
-        except:
+        except: # reports formatted traceback in browser window
             text = changeHTMLspecialCharacters(handle_exception(False))
             self.tree = et.ElementTree(et.fromstring(
                             "<html><head/><body><pre>%s</pre></body></html>"%text))
