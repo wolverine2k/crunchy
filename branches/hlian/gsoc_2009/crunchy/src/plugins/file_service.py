@@ -1,6 +1,8 @@
 """  file_service.py
 
-Provides the means to save and load a file.
+Provides the means to save and load a file. Data can be assumed as
+Unicode due to request.data being the Unicode decoded version of POST
+data.
 """
 
 import codecs
@@ -180,16 +182,24 @@ def run_external_request_handler(request):
     exec_external(code=code, username=request.crunchy_username)
 
 def load_file_request_handler(request):
-    ''' reads a local file - most likely a Python file that will
-        be loaded in an EditArea embeded editor.'''
+    '''Reads a local file from the path argument of the request --
+    most likely a Python file that will be loaded in an EditArea
+    embedded editor.'''
+
     if DEBUG:
         print("Entering load_file_request_handler.")
-    try:
-        content = read_file(request.args['path'])
-    except:
-        print("  Exception found.")
-        print("  path = " + request.args['path'])
+
+    path = request.args.get('path')
+    if not path:
         return 404
+
+    try:
+        content = read_file(path)
+    except OSError:
+        print("Exception found reading path: %s" % path)
+        print(traceback.format_exc())
+        return 404
+
     request.send_response(200)
     request.end_headers()
 
@@ -221,18 +231,24 @@ def save_file(full_path, content):  # tested
         print("Leaving save_file")
 
 def read_file(full_path):  # tested
-    """reads a file
-    """
+    """Reads a file located at full_path."""
+
     if DEBUG:
         print("Entering read_file.")
+
     try:
-        f = open(full_path)
+        # We can choose the encoding without problems, see above.
+        f = codecs.open(full_path, encoding='utf8')
         content = f.read()
-    except:
-        print("  Could not open file " + full_path)
+        f.close()
+    except OSError:
+        print("Could not open file: " + full_path)
+        print(traceback.format_exc())
         return None
+
     if DEBUG:
-        print("  full_path in read_file = " + full_path)
+        print("full_path in read_file: " + full_path)
+
     return content
 
 def exec_external(code=None,  path=None, username=None):
@@ -300,6 +316,7 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         print("Entering exec_external_python_interpreter.")
         print("path =" + str(path))
         print("alternate version = " + str(alternate_version))
+
     if alternate_version:
         python_interpreter = config[username]['alternate_python_version']
     else:
@@ -311,7 +328,7 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         target_dir, fname = os.path.split(path)
     if code is not None and write_over:
         try:
-            filename = open(path, 'w')
+            filename = codecs.open(path, 'w', 'utf8')
             filename.write(code)
             filename.close()
         except:
