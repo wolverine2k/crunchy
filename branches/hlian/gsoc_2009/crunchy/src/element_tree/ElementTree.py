@@ -85,13 +85,13 @@ __all__ = [
     "XMLTreeBuilder",
     ]
 
-ATTRIB_REPLACEMENTS = [u"& &amp",
+ATTRIB_REPLACEMENTS = [u"& &amp;",
                        u"' &apos;",
                        u'" &quot;',
                        u"< &lt;",
                        u"> &gt;"];
 
-CDATA_REPLACEMENTS = [u"& &amp",
+CDATA_REPLACEMENTS = [u"& &amp;",
                       u"< &lt;",
                       u"> &gt;"];
 
