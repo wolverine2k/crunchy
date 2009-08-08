@@ -7,7 +7,6 @@ from subprocess import Popen
 import os
 import sys
 
-
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, python_version, u_print
 
@@ -253,10 +252,11 @@ def save_file_python_interpreter_request_handler(request):
     request.end_headers()
     info = data.split("_::EOF::_")
     path = info[1]
-    try:
-        path = path.encode(sys.getfilesystemencoding())
-    except:
-        print("  Could not encode path.")
+    if python_version < 3:
+        try:
+            path = path.encode(sys.getfilesystemencoding())
+        except:
+            print("  Could not encode path.")
 
     content = '_::EOF::_'.join(info[2:])
     save_file(path, content)
@@ -308,6 +308,9 @@ def exec_external_python_version(code=None,  path=None, alternate_version=True,
         python_interpreter = 'python'  # default interpreter
     if path is None:
         path = os.path.join(config[username]['temp_dir'], "temp.py")
+        if DEBUG:
+            print("temp path is:")
+            print(path)
     if os.name == 'nt' or sys.platform == 'darwin':
         current_dir = os.getcwd()
         target_dir, fname = os.path.split(path)
