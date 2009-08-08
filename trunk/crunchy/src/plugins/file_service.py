@@ -130,6 +130,8 @@ def save_file_request_handler(request):
        saves the content in the path as indicated.'''
     if DEBUG:
         print("Entering save_file_request_handler.")
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     data = request.data
     request.send_response(200)
     request.end_headers()
@@ -145,12 +147,13 @@ def save_file_request_handler(request):
     if DEBUG:
         print("info = ")
         print(info)
-    path = info[0].decode("utf-8")
-    try:
-        path = path.encode(sys.getfilesystemencoding())
-    except:
-        print("   Could not encode path.")
-    #path = info[0]
+    path = info[0]
+    if python_version < 3:
+        path = path.decode("utf-8")
+        try:
+            path = path.encode(sys.getfilesystemencoding())
+        except:
+            print("   Could not encode path.")
     # the following is in case "_::EOF::_" appeared in the file content
     content = '_::EOF::_'.join(info[1:])
     save_file(path, content)
@@ -171,6 +174,8 @@ def run_external_request_handler(request):
     '''saves the code in a default location and runs it from there'''
     if DEBUG:
         print("Entering run_external_request_handler.")
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     code = request.data
     request.send_response(200)
     request.end_headers()
@@ -201,6 +206,7 @@ def save_file(full_path, content):  # tested
     """
     if DEBUG:
         print("Entering save_file.")
+        print("full_path = %s" % full_path)
     #full_path = full_path.encode(sys.getfilesystemencoding)
     try:
         f = open(full_path, 'w')
@@ -240,6 +246,8 @@ def save_file_python_interpreter_request_handler(request):
        saves the content in the path as indicated.'''
     if DEBUG:
         print("Entering save_file_python_interpreter_request_handler.")
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     data = request.data
     request.send_response(200)
     request.end_headers()
@@ -275,6 +283,8 @@ def run_external_python_interpreter_request_handler(request):
     '''saves the code in a default location and runs it from there'''
     if DEBUG:
         print("Entering run_external_python_interpreter_request_handler.")
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     code = request.data
     request.send_response(200)
     request.end_headers()
