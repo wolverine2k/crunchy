@@ -717,14 +717,21 @@ class ElementTree(object):
 
     def write(self, file,
               # keyword arguments
-              encoding="us-ascii",
+              encoding="utf-8",
               xml_declaration=None,
               default_namespace=None,
               method=None):
         assert self._root is not None
         if not hasattr(file, "write"):
             file = open(file, "wb")
-        write = file.write
+
+        # For Crunchy: force UTF-8 up to Unicode.
+        def write(text):
+            if isinstance(text, unicode):
+                return file.write(text)
+            else:
+                return file.write(text.decode(encoding))
+
         if not method:
             method = "xml"
         if not encoding:
