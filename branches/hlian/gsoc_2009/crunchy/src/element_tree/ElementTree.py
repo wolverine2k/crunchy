@@ -246,7 +246,6 @@ class Element(object):
         return len(self._children)
 
     def __nonzero__(self):
-        import pdb; pdb.set_trace()
         import warnings
         warnings.warn(
             "The behavior of this method will change in future versions. "
