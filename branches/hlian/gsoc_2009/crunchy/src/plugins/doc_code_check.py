@@ -34,10 +34,13 @@ def register():
        """
     # 'doctest' only appears inside <pre> elements, using the notation
     # <pre title='doctest ...'>
-    plugin['register_tag_handler']("pre", "title", "setup_code",
-                                          code_setup_process)
-    plugin['register_tag_handler']("pre", "title", "check_code",
-                                          code_sample_process)
+
+    # Commenting out due to reliance on the colourize plugin.
+    # plugin['register_tag_handler']("pre", "title", "setup_code",
+    #                                       code_setup_process)
+    # plugin['register_tag_handler']("pre", "title", "check_code",
+    #                                       code_sample_process)
+
     plugin['register_tag_handler']("pre", "title", "code_output",
                                           expected_output_process)
     plugin['register_http_handler']("/check_code", doc_code_check_callback)
@@ -118,7 +121,12 @@ def do_single_test(pageid, uid):
         return 'Failed'
 
 def code_setup_process(page, elem, uid):
-    """Style and saves a copy of the setup code"""
+    """Style and saves a copy of the setup code. This code currently
+    does not work because it depends on the obsoleted style_pycode
+    service in the colourize plugin."""
+
+    raise NotImplementedError()
+
     vlam = elem.attrib["title"]
     name = extract_name(vlam)
     # next, we style the code, also extracting it in a useful form
@@ -146,7 +154,12 @@ def code_setup_process(page, elem, uid):
     elem.insert(0, h4)
 
 def code_sample_process(page, elem, uid):
-    """Style and saves a copy of the sample code"""
+    """Style and saves a copy of the sample code. This code currently
+    does not work because it depends on the obsoleted style_pycode
+    service in the colourize plugin."""
+
+    raise NotImplementedError()
+
     vlam = elem.attrib["title"]
     name = extract_name(vlam)
     names[uid] = name
@@ -154,7 +167,7 @@ def code_sample_process(page, elem, uid):
     # page, but no Python execution from is allowed from that page.
     # If that is the case, we won't include javascript either, to make
     # thus making the source easier to read.
-    if 'display' not in config['page_security_level'](page.url):
+    if 'display' not in config[page.username]['page_security_level'](page.url):
         if not page.includes("code_test_included") :
             page.add_include("code_test_included")
             page.add_js_code(code_test_jscode)
