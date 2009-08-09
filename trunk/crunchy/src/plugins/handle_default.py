@@ -56,15 +56,18 @@ def path_to_filedata(path, root, crunchy_username=None):
             elif extension in preprocessor:
                 return plugin['create_vlam_page'](preprocessor[extension](npath),
                                             path, crunchy_username).read()
-            #elif extension in ["js", "css"]:
-            #    return crunchy_bytes(open(npath, mode="r").read(), 'utf-8')
             # we need binary mode because otherwise the file may not get
             # read properly on windows (e.g. for image files)
-            return open(npath, mode="rb").read()
+            file_ = open(npath, mode="rb")
+            content = file_.read()
+            file_.close()
+            return content
         except IOError:
             try:
-                return open(npath.encode(sys.getfilesystemencoding()),
-                            mode="rb").read()
+                file_ = open(npath.encode(sys.getfilesystemencoding()), mode="rb")
+                content = file_.read()
+                file_.close()
+                return content
             except IOError:
                 print("In path_to_filedata, can not open path = " + npath)
                 return error_page(path)
