@@ -864,8 +864,13 @@ def _serialize_xml(write, elem, encoding, qnames, namespaces):
                     _serialize_xml(write, e, encoding, qnames, None)
                 write("</" + tag + ">")
             else:
-                # Crunchy: modified to not produce short tags.
-                write("></%s>" % tag)
+                # Crunchy: modified to not produce short tags. Firefox
+                # has problems with short tags being used for
+                # everything, especially divs.
+                if tag in ('meta', 'link', 'pre', 'body', 'table', 'ul', 'title'):
+                    write(" />")
+                else:
+                    write("></%s>" % tag)
     if elem.tail:
         write(_escape_cdata(elem.tail, encoding))
 
