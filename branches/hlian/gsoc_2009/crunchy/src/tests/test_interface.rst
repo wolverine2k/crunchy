@@ -40,8 +40,6 @@ The following is incomplete.
     >>> elem.attrib['class'] = u'crunchy'
     >>> elem.text = u"This is a neat sentence."
     >>> to_print = interface.tostring(elem)
-    >>> print(type(to_print) == unicode)
-    True
     >>> interface.u_print(to_print)
     <p class="crunchy">This is a neat sentence.</p>
 

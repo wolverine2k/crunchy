@@ -44,7 +44,7 @@ def create_security_menu_item(page):
 
 def insert_security_info(page):
     """Inserts security information on a page"""
-    if not page.body:
+    if not len(page.body):
         return
 
     create_security_menu_item(page)

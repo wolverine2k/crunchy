@@ -256,7 +256,7 @@ class BasePage(object): # tested
         processes:  (tag, attribute, keyword) -> handler function
         '''
         for tag in self.handlers3:
-            for elem in self.tree.getiterator(tag):
+            for elem in list(self.tree.iter(tag)):
                 # elem.attrib  size may change during the loop
                 attributes = dict(elem.attrib)
                 for attr in attributes:
