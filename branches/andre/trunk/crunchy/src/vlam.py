@@ -77,7 +77,7 @@ class BasePage(object): # tested
         else:
             html = ElementSoup.parse(filehandle)
             self.tree = et.ElementTree(html)
-
+        filehandle.close()
 
     def fix_divs(self):
         '''ensure that empty divs are not self-closing so that sites are
