@@ -14,7 +14,7 @@ from src.utilities import uidgen
 
 # Third party modules - included in crunchy distribution
 from src.element_tree import ElementSoup
-from src.interface import ElementTree, config, from_comet, plugin
+from src.interface import ElementTree, config, from_comet, plugin, python_version
 et = ElementTree
 
 import src.interface as interface
@@ -347,9 +347,10 @@ class BasePage(object): # tested
         fake_file.write(DTD + u'\n')
         self.add_charset()
         try:
-            self.tree.write(fake_file)
+            self.tree.write(fake_file, encoding='utf-8')
         except Exception:
             return handle_exception()
+
         return fake_file.getvalue()
 
 class CrunchyPage(BasePage):
