@@ -2,8 +2,8 @@
 config_gui.py : a plugin to enable users to configure crunchy nicely.
 
 """
-from src.interface import plugin, config, SubElement, Element, translate,\
-   additional_menu_items
+from src.interface import (plugin, config, SubElement, Element, translate,
+                        additional_menu_items, python_version)
 _ = translate['_']
 import src.configuration as configuration
 
@@ -42,6 +42,8 @@ def insert_preferences(page, elem, uid):
 
 def set_config(request):
     """Http handler to set an option"""
+    if python_version >= 3:
+        request.data = request.data.decode("utf-8")
     info = request.data.split("__SEPARATOR__")
     key = info[0]
     value = info[-1]
