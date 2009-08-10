@@ -23,7 +23,7 @@ print "Hello World!"
 that you type the following code in the interpreter prompt that appears just below it.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; answer = 211 // 5
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 <p>If you haven't made any mistake, Python will respond with <b>
 <a href="http://en.wikipedia.org/wiki/Image:Answer_to_Life.png" title="external_link">
@@ -32,14 +32,14 @@ The Python interpreter you just used was actually inspired by and adapted from s
 noticed that the Python code was displayed in colour, quite unlike the boring all black stuff of the original html page.</p>
 <p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
 <pre title="interpreter">
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 <p>Yes, <tt>WE ARE THE BORG</tt>.  Crunchy's Borg interpreters all share the same state so that variables entered in one of them are known to all the other
 interpreters on the same page.  However, if you are in search of a bit of 
 individuality, you can try the same experiment again below.</p>
 
 <pre title="isolated">
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 
 <div class="notes">
@@ -75,13 +75,13 @@ a question.</p>
 &gt;&gt;&gt; name = raw_input("What is your name? ")
 What is your name?
 [Type in your name in the input box with no prompt in front]
-&gt;&gt;&gt; print name
+&gt;&gt;&gt; print(name)
 Your_name_should_appear_here
 </pre>
 <p>Next we show examples of loops; make sure you indent the code properly.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; for i in range(4):
-...     print i
+...     print(i)
 ... 
 0
 1
@@ -137,7 +137,7 @@ but potentially tricky.
 Consider the following.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; name = "Guido van Rossum"
-&gt;&gt;&gt; print name
+&gt;&gt;&gt; print(name)
 Guido van Rossum
 </pre>
 <p>Instead of having only two lines of text, imagine we had 20 lines.  

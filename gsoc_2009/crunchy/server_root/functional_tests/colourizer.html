@@ -41,14 +41,14 @@ print "Hello World"
 <pre title="py_code">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 </pre>
 <p>Same as the previous one, but with some line numbers added,
 default starting value of 1.</p>
 <pre title="py_code linenumber">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 </pre>
 <p>Same as the previous one, but with explicit choice for
 starting value of 1.  We also use <code>python_code</code> instead of
@@ -56,20 +56,20 @@ starting value of 1.  We also use <code>python_code</code> instead of
 <pre title="python_code linenumber=1">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 </pre>
 <p>Same as the previous one, but with
 starting value of 100.</p>
 <pre title="py_code linenumber=100">
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 </pre>
 <p>The following code should NOT be styled properly, and some warning should
 be given to the user.</p>
 <pre title="py_code">
 for i in range(10:
-    print i
+    print(i)
 </pre>
 <p>In versions up to 0.8.1, comments and linenumbers apparently did not mix
 properly [overlapping <code>&lt;span&gt;</code> sometimes result in a small
@@ -81,9 +81,9 @@ which used not to be the same font size. </p>
 &gt;&gt;&gt; # Comment on the first line.
 &gt;&gt;&gt; for i in range(10):
 ...    print i,
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 &gt;&gt;&gt; # Another comment.
-&gt;&gt;&gt; print "Hello World"
+&gt;&gt;&gt; print("Hello World")
 </pre>
 
 <p>An interpreter session that ends with a comment, as in:
@@ -189,7 +189,7 @@ parsing problems for Crunchy</p>
 <code title="py_code">print "Hello world!"</code> and, with line numbering,
 <code title="python_code linenumber">print "How are you?"</code> as well
 as with fake interpreter prompt and line number starting at 999.
-<code title="python_code linenumber=999">&gt;&gt;&gt; print "Goodbye!"</code></p>
+<code title="python_code linenumber=999">&gt;&gt;&gt; print("Goodbye!")</code></p>
 <p>There used to be a missing part of a sentence between each code samples.
 This was a problem with a dropped "ElementTree tail".</p>
 <h2>Bugs</h2>
