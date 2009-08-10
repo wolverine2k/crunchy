@@ -13,11 +13,11 @@ Setting things up
 --------------------
 
     >>> import os
-    >>> base_dir = os.getcwd()
     >>> from src.interface import Element, SubElement, tostring, config, from_comet
     >>> config.clear()
     >>> from_comet.clear()
-    >>> config['crunchy_base_dir'] = base_dir
+    >>> from src.interface import get_base_dir
+    >>> base_dir = config['crunchy_base_dir'] = get_base_dir()
     >>> def ignore(*args):
     ...    return
     >>> from_comet['register_new_page'] = ignore
