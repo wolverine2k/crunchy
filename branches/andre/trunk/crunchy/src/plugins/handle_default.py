@@ -1,12 +1,16 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
-from os.path import normpath, join, isdir,  exists
-from os import listdir
 import sys
+import traceback
+from os.path import normpath, join, isdir, exists
+from os import listdir
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import translate, config, plugin, server, debug, \
-                      debug_msg, preprocessor, crunchy_bytes, python_version
+from src.interface import (
+    translate, config, plugin, server, debug,
+    debug_msg, preprocessor, python_version,
+    crunchy_bytes, crunchy_unicode)
+from src.utilities import meta_content_open
 
 _ = translate['_']
 
@@ -17,60 +21,87 @@ def register(): # tested
 # the root of the server is in a separate directory:
 root_path = join(config['crunchy_base_dir'], "server_root/")
 
-def path_to_filedata(path, root, crunchy_username=None):
+def index(npath):
+    """ Normalizes npath to an index.htm or index.html file if
+    possible. Returns normalized path. """
+
+    if not isdir(npath):
+        return npath
+
+    childs = listdir(npath)
+    for i in ("index.htm", "index.html"):
+        if i in childs:
+            return join(npath, i)
+
+    return npath
+
+def path_to_filedata(path, root, username=None):
     """
-    Given a path, finds the matching file and returns a read-only reference
-    to it. If the path specifies a directory and does not have a trailing slash
-    (ie. /example instead of /example/) this function will return none, the
-    browser should then be redirected to the same path with a trailing /.
-    Root is the fully qualified path to server root.
-    Paths starting with / and containing .. will return an error message.
-    POSIX version, should work in Windows.
+    Given a path, finds the matching file and returns a read-only
+    reference to it. If the path specifies a directory and does not
+    have a trailing slash (ie. /example instead of /example/) this
+    function will return none, the browser should then be redirected
+    to the same path with a trailing /. Root is the fully qualified
+    path to server root. Paths starting with / and containing .. will
+    return an error message. POSIX version, should work in Windows.
+    Data will be returned in encoded, non-Unicode form because the
+    path could point to a binary file and is tailored for the
+    request.wfile.write method.
     """
+    # Path is guaranteed to be Unicode. See parse_headers in
+    # http_serve.py for details.
+    assert isinstance(path, crunchy_unicode)
+
     if path == server['exit']:
         server['server'].still_serving = False
         exit_file = join(root_path, "exit_en.html")
-        return open(exit_file).read()
+
+        f = open(exit_file, mode="rb")
+        x = f.read()
+        f.close()
+        return x
+
     if path.startswith("/") and (path.find("/../") != -1):
-        return error_page(path)
+        return error_page(path).encode('utf8')
+
     if exists(path) and path != "/":
         npath = path
     else:
         npath = normpath(join(root, normpath(path[1:])))
 
+    npath = index(npath)
+
     if isdir(npath):
         if path[-1] != "/":
             return None
-        else:
-            return get_directory(npath, crunchy_username)
-    else:
-        try:
-            extension = npath.split('.')[-1]
-            if extension in ["htm", "html"]:
-                if python_version < 3:
-                    return plugin['create_vlam_page'](open(npath), path,
-                                                  crunchy_username).read()
-                else:
-                    return crunchy_bytes(plugin['create_vlam_page'](open(npath), path,
-                                                  crunchy_username).read(), 'utf-8')
-            elif extension in preprocessor:
-                return plugin['create_vlam_page'](preprocessor[extension](npath),
-                                            path, crunchy_username).read()
-            # we need binary mode because otherwise the file may not get
-            # read properly on windows (e.g. for image files)
-            file_ = open(npath, mode="rb")
-            content = file_.read()
-            file_.close()
-            return content
-        except IOError:
-            try:
-                file_ = open(npath.encode(sys.getfilesystemencoding()), mode="rb")
-                content = file_.read()
-                file_.close()
-                return content
-            except IOError:
-                print("In path_to_filedata, can not open path = " + npath)
-                return error_page(path)
+        return get_directory(npath, username).encode('utf8')
+
+    try:
+        extension = npath.split('.')[-1]
+        creator = plugin['create_vlam_page']
+        if extension in ["htm", "html"]:
+            f = meta_content_open(npath)
+            text = creator(f, path, username)
+            f.close()
+            text = text.read().encode('utf8')
+            return text
+        elif extension in preprocessor:
+            f = preprocessor[extension](npath)
+            text = creator(f, path, username)
+            f.close()
+            text = text.read().encode('utf8')
+            return text
+
+        # we need binary mode because otherwise the file may not get
+        # read properly on windows (e.g. for image files)
+        f = open(npath, mode="rb")
+        x = f.read()
+        f.close()
+        return x
+    except IOError:
+        print("In path_to_filedata, can not open path: " + npath)
+        traceback.print_exc()
+        return error_page(path).encode('utf8')
 
 tell_Safari_page_is_html = False
 
