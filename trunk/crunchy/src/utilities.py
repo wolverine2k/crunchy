@@ -4,10 +4,11 @@
 
    unit tests in test_utilities.rst
 '''
+
+import codecs
+import copy
 import re
 from src.interface import config, plugin, Element, SubElement, names
-
-import copy
 
 COUNT = 0
 def uidgen(username):  # tested
@@ -251,3 +252,39 @@ def append_image(pageid, parent_uid, attributes):
         tag_attr.append("document.getElementById('%s').%s='%s';"%(
                                 child_uid, key, attributes[key]))
     plugin['exec_js'](pageid, '\n'.join(tag_attr))
+
+# This should match the charset in meta tags with XHTML or HTML tag
+# endings. A more robust solution would be an HTML parser, but for
+# this it might be overkill.
+META_CONTENT_RE = re.compile('<meta.*?charset\s*?=(.*?)"\s*?/?>'.encode('ascii'),
+                             re.DOTALL)
+
+def meta_encoding(text):
+    """Given the text of an HTML document *as a bytestring in an
+    ASCII-superset encoding* or Unicode, returns the encoding read off
+    from <meta charset="..."> and returns it. If none found, returns
+    None."""
+
+    encoding = None
+
+    # Byte regexp matching bytes here. It's important that this is
+    # *not* Unicode since we do not know the encoding yet. But! we can
+    # assume that whatever encoding it is, it's a superset of ASCII,
+    # hence the bytes.
+    m = META_CONTENT_RE.search(text)
+
+    if m and m.groups():
+        # And now, back to Unicode.
+        encoding = m.group(1).strip().decode('ascii')
+
+    return encoding
+
+def meta_content_open(path):
+    """Returns a Unicode file-like object using the codecs module,
+    detecting an encoding stored in the <meta content="..."> attribute
+    if needed. Falls back to UTF-8."""
+
+    f = open(path, 'rb')
+    encoding = meta_encoding(f.read()) or 'utf8'
+    f.close()
+    return codecs.open(path, encoding=encoding)
