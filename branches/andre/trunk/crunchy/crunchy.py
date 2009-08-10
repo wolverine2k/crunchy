@@ -232,7 +232,7 @@ def open_browser(url):
     except webbrowser.Error:
         pass
 
-    print(u'Please open %s in Mozilla Firefox.' % url)
+    print('Please open %s in Mozilla Firefox.' % url)
 
 if __name__ == "__main__":
     _url, _port = parse_options()
