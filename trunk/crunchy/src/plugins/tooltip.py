@@ -27,7 +27,7 @@ def register():
 
 def insert_tooltip(page, *dummy):
     '''inserts a (hidden) tooltip object in a page'''
-    if not page.includes("tooltip_included") and page.body:
+    if not page.includes("tooltip_included") and len(page.body):
         borg_console[page.pageid] = interpreter.BorgConsole(group=page.pageid)
 
         page.add_include("tooltip_included")

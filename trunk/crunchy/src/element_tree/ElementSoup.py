@@ -1,26 +1,29 @@
 # $Id$
 # element loader based on BeautifulSoup
 
-# http://www.crummy.com/software/BeautifulSoup/
+# Absolute imports will ensure that BeautifulSoup, which relies on
+# them, will be importing the same modules that we do. Without this,
+# BeautifulSoup would use Declaration and get
+# "beautifulsoup.element.Declaration" and we would use Declaration and
+# get "src.element_tree.beautifusoup.element.Declaration", which not
+# only breaks equality but also isinstance.
+from __future__ import absolute_import
 
-import src.element_tree.BeautifulSoup as BS
+import sys
+import os.path
+sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'beautifulsoup'))
+
+# http://www.crummy.com/software/BeautifulSoup/
+import BeautifulSoup as BS
 
 # soup classes that are left out of the tree
-ignorable_soup = BS.Comment, BS.Declaration, BS.ProcessingInstruction
+ignorable_soup = (BS.Comment,
+                  BS.Declaration,
+                  BS.ProcessingInstruction,
+                  )
 
-### original import:
-### slightly silly
-##try:
-##    import xml.etree.cElementTree as ET
-##except ImportError:
-##    try:
-##        import cElementTree as ET
-##    except ImportError:
-##        import elementtree.ElementTree as ET
-
-## import adapted for crunchy
 import ElementTree as ET
-
 import htmlentitydefs, re
 
 pattern = re.compile("&(\w+);")
@@ -45,17 +48,22 @@ def unescape(string):
             return m.group(0) # use as is
     return pattern.sub(unescape_entity, string)
 
-##
-# Loads an XHTML or HTML file into an Element structure, using Leonard
-# Richardson's tolerant BeautifulSoup parser.
-#
-# @param file Source file (either a file object or a file name).
-# @param builder Optional tree builder.  If omitted, defaults to the
-#     "best" available <b>TreeBuilder</b> implementation.
-# @return An Element instance representing the HTML root element.
+def parse(file, builder=None):
+    """Loads an XHTML or HTML file into an Element structure, using
+    Leonard Richardson's tolerant BeautifulSoup parser.
 
-def parse(file, builder=None, encoding=None):
+    @param file Source file (a file object). Even on Python 2, this must
+        be a filehandle that returns Unicode (see the codecs module),
+        such as the one returned by codecs or a StringIO constructed
+        from a Unicode string. Will raise an AssertionError otherwise.
+    @param builder Optional tree builder. If omitted, defaults to the
+        "best" available <b>TreeBuilder</b> implementation.
+    @return An Element instance representing the HTML root element."""
+
     bob = builder
+    if bob == None:
+        bob = ET.TreeBuilder()
+
     def emit(soup):
         if isinstance(soup, BS.NavigableString):
             if isinstance(soup, ignorable_soup):
@@ -67,34 +75,36 @@ def parse(file, builder=None, encoding=None):
             for s in soup:
                 emit(s)
             bob.end(soup.name)
-    # determine encoding (the document charset is not reliable)
-    if not hasattr(file, "read"):
-        file = open(file)
+
     text = file.read()
-    if not encoding:
-        try:
-            encoding = "utf-8"
-            unicode(text, encoding)
-        except UnicodeError:
-            encoding = "iso-8859-1"
-    soup = BS.BeautifulSoup(
-        text, convertEntities="html", fromEncoding=encoding
-        )
+    assert isinstance(text, unicode)
+    soup = BS.BeautifulSoup(text)
+
     # build the tree
-    if not bob:
-        bob = ET.TreeBuilder()
     emit(soup)
     root = bob.close()
+
     # wrap the document in a html root element, if necessary
     if len(root) == 1 and root[0].tag == "html":
         return root[0]
+
     root.tag = "html"
     return root
 
 if __name__ == "__main__":
     import sys
     source = sys.argv[1]
+
     if source.startswith("http:"):
         import urllib
-        source = urllib.urlopen(source)
-    print(ET.tostring(parse(source)))
+        from StringIO import StringIO
+        req = urllib.urlopen(source)
+        encoding = req.headers['content-type']
+        encoding = encoding.split('charset=')[-1]
+        source = req.read().decode(encoding)
+        source = StringIO(source)
+    else:
+        import codecs
+        source = codecs.open(source, encoding='utf8')
+
+    print ET.tostring(parse(source))

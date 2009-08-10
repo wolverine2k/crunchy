@@ -41,25 +41,25 @@ Testing create_empty_menu()
 ============================
 
     >>> _menu, _menu_items = menu.create_empty_menu()
-    >>> tostring(_menu)
-    '<div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>'
-    >>> tostring(_menu_items)
-    '<ul />'
+    >>> print(tostring(_menu))
+    <div class="crunchy_menu"><ul><li>Crunchy Menu<ul /></li></ul></div>
+    >>> print(tostring(_menu_items))
+    <ul />
 
 
 Testing create_home()
 =====================
 
     >>> home = menu.create_home()
-    >>> tostring(home)
-    '<li><a href="/index.html">Crunchy Home</a></li>'
+    >>> print(tostring(home))
+    <li><a href="/index.html">Crunchy Home</a></li>
 
 Testing create_quit()
 =====================
 
     >>> Quit = menu.create_quit()
-    >>> tostring(Quit) #doctest: +ELLIPSIS
-    '<li><a href="/exit...">Quit Crunchy</a></li>'
+    >>> print(tostring(Quit)) #doctest: +ELLIPSIS
+    <li><a href="/exit...">Quit Crunchy</a></li>
 
 Testing insert_menu()
 ======================
@@ -72,8 +72,8 @@ yield the same results using our mock functions.  So, we only test one here.
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['menu_position'] = 'top_right'
     >>> menu.insert_menu(page)
-    >>> tostring(page.body[0]) #doctest: +ELLIPSIS
-    '<div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>'
+    >>> print(tostring(page.body[0])) #doctest: +ELLIPSIS
+    <div class="crunchy_menu"...Crunchy Menu...Crunchy Home...Quit Crunchy...</div>
     >>> page.added_info[0] == 'add_css_code'
     True
 

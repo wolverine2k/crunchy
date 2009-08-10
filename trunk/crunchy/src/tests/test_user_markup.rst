@@ -62,7 +62,7 @@ has no markup.
     >>> page.handlers3["pre"]["title"]["silly"] = repeat_args # fake handler
     >>> user_markup.custom_vlam(page, page.pre, '42') #doctest: +ELLIPSIS
     <src.tests.mocks.Page object at ...>
-    <Element pre at ...>
+    <Element 'pre' at ...>
     42
     >>> print(tostring(page.pre).replace('>', '>\n'))
     <pre title="silly" />
@@ -79,7 +79,7 @@ are handled properly.
     >>> page.handlers3["pre"]["title"]["Parrots"] = repeat_args # fake handler
     >>> user_markup.custom_vlam(page, page.pre, '42') #doctest: +ELLIPSIS
     <src.tests.mocks.Page object at ...>
-    <Element pre at ...>
+    <Element 'pre' at ...>
     42
     >>> print(tostring(page.pre).replace('>', '>\n'))
     <pre title="Parrots" />

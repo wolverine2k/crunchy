@@ -12,6 +12,7 @@ It has the following functions that require testing:
 Setting things up
 --------------------
 
+    >>> import codecs
     >>> import os
     >>> from src.interface import Element, SubElement, tostring, config, from_comet
     >>> config.clear()
@@ -31,7 +32,7 @@ to do
 Testing create_template()
 --------------------------
 
-    >>> handle = open(os.path.join(base_dir, "server_root", "index.html"))
+    >>> handle = codecs.open(os.path.join(base_dir, "server_root", "index.html"), 'r', 'utf8')
     >>> templates.create_template('a_name', 'user_name', handle)
     >>> print(templates._templates) #doctest: +ELLIPSIS
     {'a_name': <src.vlam.BasePage object at ...}

@@ -57,7 +57,7 @@ def insert_menu(page): # tested
             menu_items.append(additional_menu_items[item])
     if accounts.is_admin(page.username):
         menu_items.append(create_quit())
-    if page.body:
+    if len(page.body):
         page.body.insert(0, menu)
 
     height = 20
