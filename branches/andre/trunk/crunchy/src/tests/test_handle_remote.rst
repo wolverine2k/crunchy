@@ -149,7 +149,7 @@ This method inserts one form inside a <span> element.
     get
     >>> print(form.attrib["action"])
     /remote
-    >>> inputs = form.findall("input")
+    >>> inputs = list(form.findall("input"))
     >>> len(inputs)
     2
     >>> print(inputs[0].attrib["name"])

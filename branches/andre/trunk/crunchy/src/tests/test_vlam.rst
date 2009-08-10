@@ -29,6 +29,13 @@ It contains two classes and a number of methods that need to be tested:
 Setting things up
 --------------------
 
+For interoperability on Python 2 and 3:
+
+    >>> import sys
+    >>> def unicode(text):
+    ...    if sys.version_info[0] < 3: return text.decode('utf8')
+    ...    else: return text
+
 See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
@@ -55,7 +62,7 @@ Let us define a utility function that will:
 
     >>> def process_html(html):
     ...     fake_file = StringIO()
-    ...     fake_file.write(html)
+    ...     fake_file.write(unicode(html))
     ...     fake_file.seek(0)
     ...     page = vlam.BasePage('dummy_username')
     ...     page.create_tree(fake_file)  # tested separately below

@@ -71,12 +71,8 @@ class BasePage(object): # tested
     def create_tree(self, filehandle):  # tested
         '''creates a tree (elementtree object) from an html file'''
         # note: this process removes the existing DTD
-        if python_version < 3:
-            html = ElementSoup.parse(filehandle, encoding = 'utf-8')
-            self.tree = et.ElementTree(html)
-        else:
-            html = ElementSoup.parse(filehandle)
-            self.tree = et.ElementTree(html)
+        html = ElementSoup.parse(filehandle)
+        self.tree = et.ElementTree(html)
         filehandle.close()
 
     def fix_divs(self):
@@ -254,7 +250,7 @@ class BasePage(object): # tested
         processes:  (tag, attribute, keyword) -> handler function
         '''
         for tag in self.handlers3:
-            for elem in self.tree.getiterator(tag):
+            for elem in list(self.tree.iter(tag)):
                 # elem.attrib  size may change during the loop
                 attributes = dict(elem.attrib)
                 for attr in attributes:

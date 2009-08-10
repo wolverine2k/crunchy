@@ -79,8 +79,6 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
         language = "python"
     text = extract_code(elem)
     styled_code = _style(text, language, cssclass)
-    if python_version < 3:
-        styled_code = styled_code.encode("utf-8")
     if vlam is None:
         vlam = elem.attrib['title']
     if 'linenumber' in vlam:
