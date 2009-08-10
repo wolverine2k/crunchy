@@ -6,17 +6,12 @@ files = ["welcome_en.html", "interpreter_en.html", "editor_en.html",
 "doctest_en.html", "canvas_en.html", "writing_en.html", "remote_en.html",
 "external_en.html", "images_en.html", "config_en.html"]
 
-original = '<a href="writing_en.html">Writing tutorials</a>'
-replacement = '<a href="faq_en.html">FAQ, bugs, etc.</a>\n<a href="writing_en.html">Writing tutorials</a>'
-
 for f in files:
     inp = open(f, "r")
     lines = inp.readlines()
     inp.close()
     new_lines = []
     for line in lines:
-        if original in line:
-            line = line.replace(original, replacement)
         if line:
             new_lines.append(line)
     out = open(f, "w")

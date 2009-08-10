@@ -1,5 +1,6 @@
 """This plugin handles loading all pages not loaded by other plugins"""
 
+import codecs
 import sys
 import traceback
 from os.path import normpath, join, isdir, exists
@@ -181,7 +182,7 @@ def get_directory(npath, crunchy_username):
     tstring = ''.join(tstring)
     return dir_list_page % (_("Directory Listing"), tstring)
 
-not_found = open(join(root_path, "404.html")).read()
+not_found = codecs.open(join(root_path, "404.html"), 'r', 'utf8').read()
 
 dir_list_page = """
 <html>

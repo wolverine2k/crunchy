@@ -44,7 +44,7 @@ def return_template(page, elem):
         url = os.path.normpath(os.path.join(base_dir, url))
     if url not in _templates:
         try:
-            filehandle = open(url)
+            filehandle = codecs.open(url, encoding='utf8')
         except:
             u_print("In merge_with_template, can not open url =", url)
             return None
