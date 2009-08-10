@@ -143,7 +143,7 @@ class AMCLI(object):
            created when choosing 'default' or simply pressing enter.'''
         print("The current base directory is %s" % self.accounts.base_dir)
         print("If you want to keep the same base directory, simply press 'enter'.")
-        base_dir = input("Please enter the new base directory: ")
+        base_dir = raw_input("Please enter the new base directory: ")
         if base_dir != "":
             self.accounts.base_dir = base_dir
             print("The account information for 'username' will be saved in ")
@@ -167,7 +167,7 @@ class AMCLI(object):
         if username in self.accounts:
             print("Error: user %s already exists" % (username))
             return
-        home = input("Please input the home directory [or press 'enter' for default]: ")
+        home = raw_input("Please input the home directory [or press 'enter' for default]: ")
         while True:
             password = getpass("Please input the password: ")
             password2 = getpass("Please input the password again: ")
@@ -175,7 +175,7 @@ class AMCLI(object):
                 break
             else:
                 print("The passwords do not match; please try again.")
-        admin_rights = input(
+        admin_rights = raw_input(
                 "Does this user have administrative rights [y or n]? ")
         home = self.evaluate_home(username, home)
         self.accounts[username] = (home, password, admin_rights)
@@ -187,7 +187,7 @@ class AMCLI(object):
             print("Error: user %s doesn't exist" % (username))
             return
         else:
-            home = input("Please input the new home directory:[%s]" %
+            home = raw_input("Please input the new home directory:[%s]" %
                                                   (self.accounts[username][0]))
             if not home:
                 home = self.accounts[username][0]
@@ -200,7 +200,7 @@ class AMCLI(object):
                     break
                 else:
                     print("Password don't match, please try again.")
-            admin_rights = input(
+            admin_rights = raw_input(
                         "Does this user have administrative rights [y or n]? ")
             self.accounts[username] =  (home, password, admin_rights)
             self.accounts.save()
