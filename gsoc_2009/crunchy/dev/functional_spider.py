@@ -164,7 +164,7 @@ class Spider(object):
         2 Crunchy website given a url opener."""
 
         h = opener(url)
-        text = h.read()
+        text = h.read().decode('utf8')
         h.close()
 
         text = cannibalize(text)
