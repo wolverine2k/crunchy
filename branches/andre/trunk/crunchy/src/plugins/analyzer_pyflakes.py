@@ -4,14 +4,14 @@ This plugin is an analyzer backend for pyflakes.
 """
 
 import sys
-import compiler      # not found in Python 3.1
 
+pyflakes_available = False
 try:
-    # Try to import pyflakes
+    import compiler      # not found in Python 3.1
     from pyflakes import checker
     pyflakes_available = True
 except ImportError:
-    pyflakes_available = False
+    pass
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import plugin, StringIO
