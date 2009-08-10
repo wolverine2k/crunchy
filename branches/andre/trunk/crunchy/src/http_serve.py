@@ -13,7 +13,7 @@ import email.message
 import sys
 import time
 
-if sys.version_info < (2, 6):
+if sys.version_info[0] < 3:
     from cgi import parse_qs
     from urllib import unquote_plus
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
