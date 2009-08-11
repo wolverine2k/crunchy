@@ -37,7 +37,7 @@ TRACE = """Please file a bug report at http://code.google.com/p/crunchy/issues/l
 def handle_exception(full_page=True):
     '''Basic handler for exceptions.'''
 
-    root_path = join(plugin['get_root_dir'](), "server_root/")
+    root_path = join(plugin['crunchy_base_dir'](), "server_root/")
     if full_page:
         path = join(root_path, "exception.html")
         text = codecs.open(path, encoding='utf8').read()
