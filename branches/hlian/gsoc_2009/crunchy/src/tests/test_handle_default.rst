@@ -13,9 +13,7 @@ Setting things up:
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['page_security_level'] = trust_me
     >>> config['crunchy_base_dir'] = get_base_dir()
-
-    >>> from src.CrunchyPlugin import get_root_dir
-    >>> plugin['get_root_dir'] = get_root_dir
+    >>> plugin['crunchy_base_dir'] = get_base_dir
 
 And our debutante:
 

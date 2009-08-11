@@ -3,7 +3,6 @@ The crunchy plugin API
 """
 import threading
 from os.path import dirname
-from imp import find_module
 import random
 
 import src.vlam as vlam
@@ -165,13 +164,6 @@ def get_uid():
     """
     return threading.currentThread().getName()
 plugin['get_uid'] = get_uid
-
-def get_root_dir():
-    """return the data directory used by the current crunchy install,
-    for now this is always the crunchy base directory
-    """
-    return dirname(find_module("crunchy")[1])
-plugin['get_root_dir'] = get_root_dir
 
 def kill_thread(uid):
     """kill a thread, given its assocated uid"""
