@@ -18,7 +18,7 @@ code_samples = {}
 expected_outputs = {}
 names = {}
 
-css = u"""
+css = """
 .test_output{background-color:#ccffcc}
 .test_setup{background-color:#bbccff}
 """
@@ -207,7 +207,7 @@ def code_sample_process(page, elem, uid):
     return
 
 # javascript code for individual tests
-code_test_jscode = u"""
+code_test_jscode = """
 function exec_code_check(uid){
     var j = new XMLHttpRequest();
     j.open("POST", "/check_code?uid="+uid, false);
@@ -270,7 +270,7 @@ def insert_comprehensive_test_button(page):
     return
 
 # javascript code for all the tests on a page
-complete_test_jscode = u"""
+complete_test_jscode = """
 function check_all_code_samples(pageid){
     var j = new XMLHttpRequest();
     j.open("POST", "/check_all_code_samples?pageid="+pageid, false);
