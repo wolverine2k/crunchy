@@ -214,7 +214,7 @@ def pdb_widget_callback(page, elem, uid):
 def pdb_js_file_callback(request):
     request.send_response(200)
     request.end_headers()
-    request.wfile.write(pdb_jscode)
+    request.wfile.write(pdb_jscode.encode('utf8'))
 
 
 pdb_css = r"""

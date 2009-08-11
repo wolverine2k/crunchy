@@ -4,40 +4,48 @@ perform vlam substitution
 sets up the page and calls appropriate plugins
 """
 
-from traceback import print_exc
+import codecs
+import traceback
 from os.path import join
 
+import src.interface as interface
+from src.interface import (
+    ElementTree as et, config, from_comet,
+    plugin, python_version, StringIO)
 from src.security import remove_unwanted
-
-from src.interface import ElementTree, config, from_comet, plugin, python_version
-et = ElementTree
+from src.utilities import uidgen
+from src.utilities import changeHTMLspecialCharacters
 
 if python_version < 3:
     from src.element_tree import ElementSoup
 else:
     from src.element_tree3 import ElementSoup
 
-from src.utilities import uidgen
-import src.interface as interface
-from src.interface import StringIO
-from src.utilities import changeHTMLspecialCharacters
-
 DTD = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '\
 '"http://www.w3.org/TR/xhtml1/DTD/strict.dtd">\n'
 
+TRACE = """Please file a bug report at http://code.google.com/p/crunchy/issues/list
+================================================================================
+"""
+
+# The purpose of the following class is to facilitate unit testing.  It can
+# be initialized with no further action taking place, and each method
+# has then to be called explicitly.
+# In production code, we invoke CrunchyPage instead which does all
+# the required processing automatically.
+
 def handle_exception(full_page=True):
-    '''basic handler for exceptions'''
-    root_path = join(config['crunchy_base_dir'], "server_root/")
+    '''Basic handler for exceptions.'''
+
+    root_path = join(plugin['get_root_dir'](), "server_root/")
     if full_page:
-        exception_file = join(root_path, "exception.html")
-        text = open(exception_file).read()
+        path = join(root_path, "exception.html")
+        text = codecs.open(path, encoding='utf8').read()
     else:
         text = "TRACEBACK"
-    tmp = StringIO()
-    print_exc(file=tmp)
-    text = text.replace("TRACEBACK",
-        "Please file a bug report at http://code.google.com/p/crunchy/issues/list\n"
-        + "="*80 + "\n" + tmp.getvalue())
+
+    trace = traceback.format_exc()
+    text = text.replace("TRACEBACK", TRACE + trace)
     return text
 
 # The purpose of the following class is to facilitate unit testing.  It can
