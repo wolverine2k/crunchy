@@ -50,23 +50,23 @@ to see how Crunchy handles them and styles them.</p>
 <ul>
   <li>unprocessed element (using "no_vlam" option):
 <pre title="no_vlam">if 0 &lt; x and x &gt; -1:
-    print "neat &amp; tidy"
+    print("neat &amp; tidy")
 </pre>
   </li>
    <li>Same as above, but with explictly added markup:
 <pre title="no_vlam">if 0 <span class="py_keyword">&lt;</span> x and x  <span class="py_keyword">&gt;</span> -1:
-    print <span class="py_keyword">"neat &amp; tidy"</span>
+    print(<span class="py_keyword">"neat &amp; tidy"</span>)
 </pre>
   </li>
     <li>same input as first one, but processed by Crunchy:
 <pre title="py_code show_vlam">if 0 &lt; x and x &gt; -1:
-    print "neat &amp; tidy"
+    print("neat &amp; tidy")
 </pre>
   </li>
     <li>Same input as second one, but processed by Crunchy:
 <pre title="py_code show_vlam">
 if 0 <span class="py_keyword">&lt;</span> x and x  <span class="py_keyword">&gt;</span> -1:
-    print <span class="py_keyword">"neat &amp; tidy"</span>
+    print(<span class="py_keyword">"neat &amp; tidy"</span>)
 </pre>
   </li>
 </ul>
@@ -77,23 +77,23 @@ if 0 <span class="py_keyword">&lt;</span> x and x  <span class="py_keyword">&gt;
 <ul>
   <li>unprocessed element (using "no_vlam" option):
 <pre title="no_vlam">if 0 < x and x > -1:
-    print "neat & tidy"
+    print("neat & tidy")
 </pre>
   </li>
    <li>Same as above, but with explictly added markup:
 <pre title="no_vlam">if 0 <span class="py_keyword"><</span> x and x  <span class="py_keyword">></span> -1:
-    print <span class="py_keyword">"neat & tidy"</span>
+    print(<span class="py_keyword">"neat & tidy"</span>)
 </pre>
   </li>
     <li>same input as first one, but processed by Crunchy:
 <pre title="py_code show_vlam">if 0 < x and x > -1:
-    print "neat & tidy"
+    print("neat & tidy")
 </pre>
   </li>
     <li>Same input as second one, but processed by Crunchy:
 <pre title="py_code show_vlam">
 if 0 <span class="py_keyword"><</span> x and x  <span class="py_keyword">></span> -1:
-    print <span class="py_keyword">"neat & tidy"</span>
+    print(<span class="py_keyword">"neat & tidy"</span>)
 </pre>
   </li>
 </ul>

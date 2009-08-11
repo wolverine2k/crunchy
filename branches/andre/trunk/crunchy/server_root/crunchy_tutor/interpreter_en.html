@@ -26,7 +26,7 @@ print "Hello World!"
 that you type the following code in the interpreter prompt that appears just below it.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; answer = 211 // 5
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 <p>If you haven't made any mistake, Python will respond with <b>
 The Answer to The Ultimate Question Of Life, the Universe and Everything,</b>  <small>at least according to the Hitchhiker's Guide to the Galaxy.</small> 
@@ -34,14 +34,14 @@ The Python interpreter you just used was actually inspired by and adapted from s
 noticed that the Python code was displayed in colour, quite unlike the boring all black stuff of the original html page.</p>
 <p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
 <pre title="interpreter">
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 <p>Yes, <tt>WE ARE THE BORG</tt>.  Crunchy's Borg interpreters all share the same state so that variables entered in one of them are known to all the other
 interpreters on the same page.  However, if you are in search of a bit of 
 individuality, you can try the same experiment again below.</p>
 
 <pre title="interpreter isolated">
-&gt;&gt;&gt; print answer
+&gt;&gt;&gt; print(answer)
 </pre>
 
 <div class="notes">
@@ -67,13 +67,13 @@ a question.</p>
 &gt;&gt;&gt; name = raw_input("What is your name? ")
 What is your name?
 [Type in your name in the input box with no prompt in front]
-&gt;&gt;&gt; print name
+&gt;&gt;&gt; print(name)
 Your_name_should_appear_here
 </pre>
 <p>Next we show examples of loops; make sure you indent the code properly.</p>
 <pre title="interpreter linenumber">
 &gt;&gt;&gt; for i in range(4):
-...     print i
+...     print(i)
 ... 
 0
 1
@@ -126,7 +126,7 @@ security level of the docs.python.org site.</p>
 Consider the following.</p>
 <pre title="interpreter">
 &gt;&gt;&gt; name = "Guido van Rossum"
-&gt;&gt;&gt; print name
+&gt;&gt;&gt; print(name)
 Guido van Rossum
 </pre>
 <p>Instead of having only two lines of text, imagine we had 20 lines.  To reproduce this example would require lots of typing.
@@ -236,7 +236,7 @@ do not echo back what is typed into them; you need to explicitly type
 <code title="py_code">print</code> to get an output, as follows.</p>
 <pre title="parrot">
 >>> "'E's dead."
->>> print "He's resting."
+>>> print("He's resting.")
 He's resting.
 </pre>
 <div class="notes">
@@ -257,7 +257,7 @@ comes to Crunchy.  This is why I give you the <small>[dead]</small> Parrots
 
 <pre title="Parrots">
 >>> "'E's dead."
->>> print "He's resting."
+>>> print("He's resting.")
 He's resting.
 </pre>
 <p>Like the Borg interpreter
