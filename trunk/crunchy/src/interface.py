@@ -68,9 +68,9 @@ def get_base_dir():
     return path.decode(sys.getfilesystemencoding())
 config['crunchy_base_dir'] = get_base_dir()
 
-import src.translation
-translate['_'] = src.translation._
-translate['init_translation'] = src.translation.init_translation
+import src.translation as translation
+translate['_'] = translation._
+translate['init_translation'] = translation.init_translation
 
 from src.debug import debug
 def debug_msg(data):
