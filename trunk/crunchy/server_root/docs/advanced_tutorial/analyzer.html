@@ -63,7 +63,7 @@ analyze it):</p>
 
 <pre title="analyzer show_vlam">
 def Function_without_DocString(msg):
-    print msg
+    print(msg)
 
 foo=missingvar
 Function_without_DocString(missingvar)
@@ -87,7 +87,7 @@ by the analyzer</em>):</p>
 <pre title="editor analyzer_score show_vlam">
 def Function_without_DocString(msg = []):
     this_variable_is_not_used = 42
-    print ' '.join(msg)
+    print(' '.join(msg))
 
 Function_without_DocString(['Hello', 'world'])
 </pre>
@@ -105,7 +105,7 @@ This force your function to have a bad name:
 <pre title="py_code">
 def Function_with_A_BadName(msg = []):
     this_variable_is_not_used = 42
-    print ' '.join(msg)
+    print(' '.join(msg))
 </pre>
 
 <h3>With unittest</h3>
