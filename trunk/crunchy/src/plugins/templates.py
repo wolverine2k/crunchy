@@ -4,7 +4,6 @@ Page template plugin.
 Enable the use of a template for tutorial pages.
 '''
 import codecs
-import codecs
 import copy
 import os
 import traceback
