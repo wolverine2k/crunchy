@@ -71,23 +71,26 @@ an appropriate flag.
 
 Check if the rst plugin handles non-local paths properly.
 
-    >>> url = 'http://crunchy.googlecode.com/svn/trunk/crunchy/src/tests/how_to.rst'
-    >>> assert rst.convert_rst(url, local=False)
+    >>> if _docutils_installed:
+    ...     url = 'http://crunchy.googlecode.com/svn/trunk/crunchy/src/tests/how_to.rst'
+    ...     assert rst.convert_rst(url, local=False)
 
 Unfortunately, that code path isn't actually exposed in Crunchy at
 all. (Nobody ever calls convert_rst with a local=False except this
 test.) However, loading RST files from a local file is, so let's test
 that entire path as well.
 
-    >>> doc = """Hello\n=====\nThis is a *test*.""".encode()
-    >>> import tempfile
-    >>> f = tempfile.NamedTemporaryFile(mode='wb', delete=False)
-    >>> irrelevant = f.write(crunchy_bytes(doc))
-    >>> f.close()
-    >>> request = mocks.Request(args={'url': f.name})
-    >>> rst.load_rst(request)
-    >>> os.remove(f.name)
-
-    >>> body = ''.encode().join(request.wfile.lines).decode('utf8')
-    >>> assert '<h1 class="title">Hello</h1>' in body
-    >>> assert '<em>test</em>' in body
+    >>> if _docutils_installed:
+    ...     doc = """Hello\n=====\nThis is a *test*."""
+    ...     fname = os.path.join(os.getcwd(), "__temp_file__")
+    ...     while os.path.exists(fname):
+    ...         fname += "_"
+    ...     f = open(fname, 'w')
+    ...     irrelevant = f.write(doc)
+    ...     f.close()
+    ...     request = mocks.Request(args={'url': fname})
+    ...     rst.load_rst(request)
+    ...     os.remove(fname)
+    ...     body = ''.encode().join(request.wfile.lines).decode('utf8')
+    ...     assert '<h1 class="title">Hello</h1>' in body
+    ...     assert '<em>test</em>' in body
