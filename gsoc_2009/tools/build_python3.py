@@ -7,6 +7,7 @@ import filecmp
 import os
 import os.path as paths
 import shutil
+import sys
 from pprint import pformat
 from subprocess import call
 from optparse import OptionParser
@@ -17,10 +18,28 @@ to a destination directory. The other way to run me is to pass a
 source file and a destination file. I handle doctest .rst files in
 addition to Python files. I avoid recompilation wherever possible by
 comparing file contents first. I require Python 3.1's 2to3; 2.6's 2to3
-is known to improperly convert Crunchy's source."""
+is known to improperly convert Crunchy's source. In order for the
+conversion of relative and absolute imports to work correctly, you
+must be operating this script in a current working directory that's
+far far away from the directory you're trying to convert. I do my best
+to scrub sys.path before starting, but it won't catch all the weird
+and twisted sys.paths lurking out there. A safe place to convert the
+Crunchy trunk is from crunchy/tools, a.k.a. the directory containing
+this script in SVN as of 2008-08-11."""
 
 # Argument for subprocess.call().
 _2TO3 = ['2to3', '-w']
+
+def clean_sys_path():
+    """Does a minimal job of scrubbing sys.path so that the absolute
+    and relative fixers in 2to3 work correctly. As long as we never
+    use relative imports in build_python3.py itself, this should be
+    fine."""
+
+    cwd = os.getcwd()
+    while cwd in sys.path:
+        log.info('Scrubbing {} from sys.path'.format(cwd))
+        sys.path.remove(cwd)
 
 class Error(SystemExit):
     """A SystemExit with error strings included."""
@@ -54,7 +73,7 @@ def copy(src, dst):
     # ('..') in paths.
     dirname = paths.normpath(paths.dirname(dst))
     if not paths.exists(dirname):
-        log.info('Making {}'.format(dirname))
+        log.info('Making directory {}'.format(dirname))
         os.makedirs(dirname)
 
     log.info('Copying {} to {}'.format(src, dst))
@@ -137,12 +156,6 @@ def main():
     """Parses command-line arguments and raises the appropriate
     SystemExit exception."""
 
-    # Set up logging first. ####################
-    handler = logging.StreamHandler()
-    log.addHandler(handler)
-    log.setLevel(logging.INFO)
-
-    # On to the show. ####################
     usage  = "usage: %prog [-f] src dest\n\n" + BLURB
     parser = OptionParser(usage=usage)
     parser.add_option('-f', '--force', dest='force',
@@ -154,8 +167,16 @@ def main():
 
     options, args = parser.parse_args()
 
+    # Set up logging first. ####################
+    handler = logging.StreamHandler()
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
+
+    # On to the show. ####################
     if options.verbose:
         log.setLevel(logging.DEBUG)
+
+    clean_sys_path()
 
     # {filename} and {dest} were passed.
     if not len(args) == 2:
