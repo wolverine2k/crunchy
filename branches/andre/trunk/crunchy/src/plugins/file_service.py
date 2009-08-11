@@ -80,7 +80,10 @@ def filtered_dir(request, afilter=None):
     except Exception:
         ul.append('Could not load directory: %s' % sys.exc_info()[1])
     ul.append('</ul>')
-    request.wfile.write(''.join(ul).encode('utf-8'))
+    if python_version < 3:
+        request.wfile.write(''.join(ul))
+    else:
+        request.wfile.write(''.join(ul).encode('utf-8'))
     return
 
 def insert_file_tree(page, elem, uid, action, callback, title, label):
