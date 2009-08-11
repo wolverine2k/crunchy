@@ -10,7 +10,7 @@ import difflib
 import re
 import sys
 
-from src.interface import StringIO, plugin, config, Element, SubElement
+from src.interface import StringIO, plugin, config, Element, SubElement, crunchy_unicode
 from src.utilities import append_checkmark, append_warning
 
 code_setups = {}
@@ -18,10 +18,10 @@ code_samples = {}
 expected_outputs = {}
 names = {}
 
-css = """
+css = crunchy_unicode("""
 .test_output{background-color:#ccffcc}
 .test_setup{background-color:#bbccff}
-"""
+""")
 
 def register():
     """The register() function is required for all plugins.
@@ -207,13 +207,13 @@ def code_sample_process(page, elem, uid):
     return
 
 # javascript code for individual tests
-code_test_jscode = """
+code_test_jscode = crunchy_unicode("""
 function exec_code_check(uid){
     var j = new XMLHttpRequest();
     j.open("POST", "/check_code?uid="+uid, false);
     j.send('');
 };
-"""
+""")
 
 def expected_output_process(dummy, elem, uid):
     """Displays and saves a copy of the expected output"""
@@ -270,13 +270,13 @@ def insert_comprehensive_test_button(page):
     return
 
 # javascript code for all the tests on a page
-complete_test_jscode = """
+complete_test_jscode = crunchy_unicode("""
 function check_all_code_samples(pageid){
     var j = new XMLHttpRequest();
     j.open("POST", "/check_all_code_samples?pageid="+pageid, false);
     j.send('');
 };
-"""
+""")
 
 def run_sample(name):  # tested
     '''Given a setup script, as a precursor, executes a code sample
