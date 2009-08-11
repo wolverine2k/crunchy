@@ -4,8 +4,10 @@ Page template plugin.
 Enable the use of a template for tutorial pages.
 '''
 import codecs
+import codecs
 import copy
 import os
+import traceback
 from src.vlam import BasePage
 
 _templates = {}
@@ -47,6 +49,7 @@ def return_template(page, elem):
             filehandle = codecs.open(url, encoding='utf8')
         except:
             u_print("In merge_with_template, can not open url =", url)
+            traceback.print_exc()
             return None
         create_template(url, page.username, filehandle)
     return _templates[url]
