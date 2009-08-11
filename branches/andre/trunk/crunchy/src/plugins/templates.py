@@ -3,7 +3,7 @@ Page template plugin.
 
 Enable the use of a template for tutorial pages.
 '''
-
+import codecs
 import copy
 import os
 from src.vlam import BasePage
