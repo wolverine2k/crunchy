@@ -7,12 +7,10 @@
 # It was adapted and incorporated into Crunchy by A. Roberge
 
 # All plugins should import the crunchy plugin API via interface.py
+import codecs
 import os
 from src.interface import plugin, python_version, StringIO
-if python_version < 3:
-    from urllib import urlopen
-else:
-    from urllib.request import urlopen
+from src.utilities import unicode_urlopen
 
 _docutils_installed = True
 try:
@@ -226,7 +224,7 @@ def load_rst(request):
     """Loads rst file from disk,
     transforms it into html and then creates new page"""
     url = request.args["url"]
-    file_ = open(url)
+    file_ = codecs.open(url, 'r', 'utf-8')
 
     # docutils returns bytes (Python 3)
     data = publish_string(file_.read(), writer_name="html").decode('utf-8')
@@ -242,9 +240,9 @@ def load_rst(request):
 def convert_rst(path, local=True):
     '''converts an rst file into a proper crunchy-ready html page'''
     if local:
-        file_ = open(path)
+        file_ = codecs.open(path, 'r', 'utf-8')
     else:
-        file_ = urlopen(path)
+        file_ = unicode_urlopen(path)
     data = publish_string(file_.read(), writer_name="html").decode('utf-8')
     rst_file = ReST_file(data)
     return rst_file

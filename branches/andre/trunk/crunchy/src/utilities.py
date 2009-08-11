@@ -8,7 +8,14 @@
 import codecs
 import copy
 import re
-from src.interface import config, plugin, Element, SubElement, names
+import sys
+from src.interface import config, plugin, Element, SubElement, names, StringIO
+
+# urllib reshuffled in Python 3 and 2to3 seems to skip this.
+if sys.version_info[0] < 3:
+    from urllib import FancyURLopener
+else:
+    from urllib.request import FancyURLopener
 
 COUNT = 0
 def uidgen(username):  # tested
@@ -288,3 +295,32 @@ def meta_content_open(path):
     encoding = meta_encoding(f.read()) or 'utf8'
     f.close()
     return codecs.open(path, encoding=encoding)
+
+def unicode_urlopen(url, accept_lang=None):
+    """Returns a *Unicode* file-like object for non-local documents.
+    Client must ensure that the URL points to non-binary data. Pass in
+    an Accept-Language value to configure the FancyURLopener we
+    use."""
+
+    opener = FancyURLopener()
+
+    if accept_lang:
+        opener.addheader("Accept-Language", accept_lang)
+
+    # We want to convert the bytes file-like object returned by
+    # urllib, which is bytes in both Python 2 and Python 3
+    # fortunately, and turn it into a Unicode file-like object
+    # with a little help from our StringIO friend.
+    page = opener.open(url)
+    encoding = page.headers['content-type']
+    encoding = encoding.split('charset=')
+    if len(encoding) > 1:
+        encoding = encoding[-1]
+        page = page.read().decode(encoding)
+    else:
+        page = page.read()
+        encoding = meta_encoding(page) or 'utf8'
+        page = page.decode(encoding)
+
+    page = StringIO(page)
+    return page
