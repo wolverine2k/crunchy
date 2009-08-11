@@ -8,7 +8,7 @@ can be reused can save a fair bit of time and ensure a greater consistency
 in the various tests.
 '''
 import sys
-from src.interface import plugin, crunchy_unicode, u_print, u_join
+from src.interface import plugin, crunchy_unicode, crunchy_bytes, u_print, u_join
 
 class Page(object):
     '''Fake page used for testing.
@@ -63,9 +63,11 @@ class Wfile(object):
 
     def write(self, text):
         """Takes *encoded data* like BaseHTTPRequestHandler, not
-        Unicode, as an argument."""
-        # Is the docstring true about encoded data? ... removing assertion for now.
-        #assert isinstance(text, crunchy_bytes)
+        Unicode, as an argument because BaseHTTPRequestHandler will
+        throw an exception if you pass it Unicode in either Python 2
+        or Python 3."""
+
+        assert isinstance(text, crunchy_bytes)
         self.lines.append(text)
 
 class Request(object):
@@ -84,13 +86,13 @@ class Request(object):
         self.crunchy_username = 'Crunchy'
 
     def send_response(self, response=42):
-        self.lines.append(repr(response))
+        self.wfile.write(repr(response).encode())
 
     def end_headers(self):
-        self.lines.append("End headers")
+        self.wfile.write("End headers".encode())
 
     def send_header(self, *args):
-        self.lines.append(u_join(args))
+        self.wfile.write(u_join(args).encode())
 
     def print_lines(self):
         '''Assumes all the data written is *not* binary, which is true

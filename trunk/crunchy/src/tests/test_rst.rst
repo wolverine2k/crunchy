@@ -18,14 +18,25 @@ some functional testing that we do on a regular basis.
 We need to import the plugin, something to create an Element, and
 set up some dummy registering functions.
 
-   >>> from src.interface import Element, plugin
-   >>> plugin.clear()
+   >>> import os
+   >>> from src.interface import config, Element, plugin, crunchy_bytes
+   >>> from src.CrunchyPlugin import create_vlam_page
+
+   >>> def trust_me(url):
+   ...    return 'trusted'
+   >>> config['Crunchy'] = {}
+   >>> config['Crunchy']['page_security_level'] = trust_me
+
    >>> def dummy_add(*args):
    ...      for arg in args:
    ...          print(arg)
+   >>> plugin.clear()
    >>> plugin['add_vlam_option'] = dummy_add
+   >>> plugin['create_vlam_page'] = create_vlam_page
+
    >>> import src.tests.mocks as mocks
    >>> mocks.init()
+
    >>> import src.plugins.rst as rst
 
 Note that if docutils is not installed for the Python version we are testing,
@@ -57,3 +68,26 @@ an appropriate flag.
     ...     print(True)
     True
     True
+
+Check if the rst plugin handles non-local paths properly.
+
+    >>> url = 'http://crunchy.googlecode.com/svn/trunk/crunchy/src/tests/how_to.rst'
+    >>> assert rst.convert_rst(url, local=False)
+
+Unfortunately, that code path isn't actually exposed in Crunchy at
+all. (Nobody ever calls convert_rst with a local=False except this
+test.) However, loading RST files from a local file is, so let's test
+that entire path as well.
+
+    >>> doc = """Hello\n=====\nThis is a *test*.""".encode()
+    >>> import tempfile
+    >>> f = tempfile.NamedTemporaryFile(mode='wb', delete=False)
+    >>> irrelevant = f.write(crunchy_bytes(doc))
+    >>> f.close()
+    >>> request = mocks.Request(args={'url': f.name})
+    >>> rst.load_rst(request)
+    >>> os.remove(f.name)
+
+    >>> body = ''.encode().join(request.wfile.lines).decode('utf8')
+    >>> assert '<h1 class="title">Hello</h1>' in body
+    >>> assert '<em>test</em>' in body
