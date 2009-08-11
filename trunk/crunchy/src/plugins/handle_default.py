@@ -145,15 +145,8 @@ def handler(request):
             request.send_header ("Content-Type", "text/html; charset=UTF-8")
             tell_Safari_page_is_html = False
         request.end_headers()
-
-        try:
-            request.wfile.write(data)
-        except:  # was introduced to deal with Python 3.x problems
-            try:
-                request.wfile.write(data.encode('utf-8'))
-            except:
-                print("Error in handle_default; should not have happened!")
-                raise
+        # path_to_filedata guaranteed to return bytestrings.
+        request.wfile.write(data)
 
 def annotate(path, filenames): # tested
     '''Add '/' suffixes to directories in a directory listing'''
