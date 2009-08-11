@@ -22,7 +22,7 @@ def register():
     plugin['register_http_handler'](None, handler)
 
 # the root of the server is in a separate directory:
-root_path = join(plugin['get_root_dir'](), "server_root/")
+root_path = join(plugin['crunchy_base_dir'](), "server_root/")
 
 def index(npath):
     """ Normalizes npath to an index.htm or index.html file if

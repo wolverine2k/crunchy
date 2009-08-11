@@ -30,8 +30,6 @@ that conditional code path, we include it in site_security below.
 More setup for globals:
 
     >>> import src.CrunchyPlugin
-    >>> from src.CrunchyPlugin import get_root_dir
-    >>> plugin['get_root_dir'] = get_root_dir
 
 And our birthday boy:
 
