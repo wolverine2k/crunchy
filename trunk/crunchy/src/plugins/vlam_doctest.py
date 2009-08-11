@@ -103,7 +103,7 @@ def doctest_widget_callback(page, elem, uid):
     elem.attrib['title'] = vlam
 
     if log_id:
-        config[page.username]['log'][log_id] = [tostring(markup)]
+        config[page.username]['log'][log_id] = [tostring(elem)]
     # which we store
     doctests[uid] = doctestcode
 
