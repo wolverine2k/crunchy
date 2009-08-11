@@ -222,17 +222,13 @@ def open_browser(url):
         client = webbrowser.get("firefox")
         client.open(url)
         return
-    except webbrowser.Error:
-        pass
-
-    try:
-        client = webbrowser.get()
-        client.open(url)
-        return
-    except webbrowser.Error:
-        pass
-
-    print('Please open %s in Mozilla Firefox.' % url)
+    except:
+        try:
+            client = webbrowser.get()
+            client.open(url)
+            return
+        except:
+            print('Please open %s in Mozilla Firefox.' % url)
 
 if __name__ == "__main__":
     _url, _port = parse_options()

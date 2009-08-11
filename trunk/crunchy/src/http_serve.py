@@ -9,7 +9,12 @@ treats them the same.
 
 import base64
 import email
-import email.message
+try:
+    import email.message
+    Message = email.message.Message
+except:
+    import email.Message  # for Python 2.4
+    Message = email.Message.Message
 import sys
 import time
 
@@ -40,6 +45,12 @@ else:
 
 import src.CrunchyPlugin as CrunchyPlugin
 import src.interface
+if src.interface.python_version < 2.5:
+    def all(S):
+        for x in S:
+            if not x:
+               return False
+        return True
 
 DEBUG = False
 
@@ -165,7 +176,7 @@ class MyHTTPServer(ThreadingMixIn, HTTPServer):
                 print("path %s NOT in self.handler_table."%path)
             return self.default_handler
 
-def parse_headers(fp, _class=email.message.Message):
+def parse_headers(fp, _class=Message):
     """Parses only RFC2822 headers from a file pointer.
 
     This code is taken directly from the Python 3 stdlib, adapted for
@@ -211,13 +222,14 @@ def parse_url(path):
     else:
         o = urlparse(unquote_plus(path))
 
-    path = o.path
+    path = o[2]  # == o.path in python 2.5+
     args = {}
 
     # Convert parse_qs' str --> [str] dictionary to a str --> str
     # dictionary since we never use multi-value GET arguments
     # anyway.
-    multiargs = parse_qs(o.query, keep_blank_values=True)
+    multiargs = parse_qs(o[4], keep_blank_values=True)
+                      # o[4] == o.query in python 2.5+
     for arg, value in list(multiargs.items()):
         args[arg] = value[0]
 

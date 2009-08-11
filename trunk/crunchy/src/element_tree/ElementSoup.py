@@ -7,7 +7,7 @@
 # "beautifulsoup.element.Declaration" and we would use Declaration and
 # get "src.element_tree.beautifusoup.element.Declaration", which not
 # only breaks equality but also isinstance.
-from __future__ import absolute_import
+#from __future__ import absolute_import
 
 import sys
 import os.path
