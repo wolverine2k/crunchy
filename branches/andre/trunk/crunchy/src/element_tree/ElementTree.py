@@ -125,6 +125,15 @@ __all__ = [
 import sys, re
 import htmlentitydefs
 
+# The following is added for Crunchy
+python_version = sys.version_info[0] + sys.version_info[1]/10.0
+if python_version < 2.5:
+    def all(S):
+        for x in S:
+            if not x:
+               return False
+        return True
+
 class _SimpleElementPath(object):
     # emulate pre-1.2 find/findtext/findall behaviour
     def find(self, element, tag):
