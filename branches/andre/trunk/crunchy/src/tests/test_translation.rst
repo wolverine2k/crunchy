@@ -11,7 +11,7 @@ precluding us from simply importing "src.translation". Unfortunately,
 to compound this quirk of the Python module system with another quirk,
 this only shows up when you run test_translation in relative
 isolation: if another module gets to src.interface before us, this
-never shows up. For the most accurate, test this doctest file with
-"--include-only translation" passed to the test runner.
+never shows up. For the most accurate results, test this doctest file
+with "--include-only translation" passed to the test runner.
 
     >>> from src.interface import translation
