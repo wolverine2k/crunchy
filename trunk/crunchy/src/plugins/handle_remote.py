@@ -20,6 +20,7 @@ from src.utilities import unicode_urlopen
 
 provides = set(["/remote"])
 
+REMOTE_HTML = "remote_html"
 def register():  # tested
     '''registers http handler for dealing with remote files as well as
     handler for inserting widget for loading remote tutorials.'''
@@ -28,8 +29,8 @@ def register():  # tested
     # <span title='load_remote'>
     plugin['register_tag_handler']("span", "title", "load_remote",
                                                     insert_load_remote)
-    plugin['add_vlam_option']('power_browser', 'remote_html')
-    plugin['register_service']("remote_html", insert_load_remote)
+    plugin['add_vlam_option']('power_browser', REMOTE_HTML)
+    plugin['register_service'](REMOTE_HTML, insert_load_remote)
 
 def remote_loader(request):  # tested
     '''
@@ -62,7 +63,10 @@ def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     '''inserts a form to load a remote page'''
     # in general, page and uid are used by similar plugins, but they are
     # redundant here.
-    form = SubElement(parent, 'form', name='url', size='80', method='get',
+    div = SubElement(parent, "div")
+    p = SubElement(div, "p")
+    p.text = "Type url of remote tutorial."
+    form = SubElement(div, 'form', name='url', size='80', method='get',
                        action='/remote')
     SubElement(form, 'input', name='url', size='80',
                            value=parent.text)
@@ -70,3 +74,4 @@ def insert_load_remote(dummy_page, parent, dummy_uid): # tested
                            value='Load remote tutorial')
     input2.attrib['class'] = 'crunchy'
     parent.text = ' '
+plugin[REMOTE_HTML] = insert_load_remote

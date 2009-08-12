@@ -11,7 +11,7 @@ def register():
     """Registers new http handler and new widget for loading ReST files"""
     plugin['register_http_handler']("/py", load_python)
     plugin['register_tag_handler']("div", "title", "local_python_file", insert_load_python)
-    plugin['add_vlam_option']('power_browser', 'python')
+    plugin['add_vlam_option']('power_browser', 'local_python')
     plugin['register_http_handler']("/jquery_file_tree_py", jquery_file_tree_py)
     plugin['register_service']("local_python", insert_load_python)
 
@@ -70,6 +70,7 @@ def insert_load_python(page, elem, uid):
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_py',
                                 '/py', 'Load local Python file', 'Load Python file')
     return
+plugin['local_python'] = insert_load_python
 
 def filter_py(filename, basepath):
     '''filters out all files and directory with filename so as to include

@@ -252,6 +252,7 @@ def insert_load_rst(page, elem, uid):
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_rst',
                                 '/rst', 'Load local reStructuredText file', 'Load rst file')
     return
+plugin['rst'] = insert_load_rst
 
 def filter_rst(filename, basepath):
     '''filters out all files and directory with filename so as to include
