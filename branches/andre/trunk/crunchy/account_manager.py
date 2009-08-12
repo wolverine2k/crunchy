@@ -55,6 +55,7 @@ class Accounts(dict): # tested
     def load(self): # tested indirectly
         '''loads data from password file'''
         for line in codecs.open(self.pwd_file_path, 'r', encoding='utf-8'):
+            line = line.strip()
             if not line:
                 continue
             username, user_dir, encoded_password, admin_rights = line.split(
