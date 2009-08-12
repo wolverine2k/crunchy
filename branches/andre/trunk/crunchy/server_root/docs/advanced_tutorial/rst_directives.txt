@@ -2,6 +2,9 @@
  Crunchy/reStructuredText Demonstration
 ========================================
 
+*For this to work, you need to have a recent version of
+docutils installed.*
+
 This file is a simple reStructuredText file.  However,
 it does contain some *directives* which Crunchy can
 interpret.
@@ -40,7 +43,7 @@ If you type 'answer' into this text box, then it will be
 evaluated to 42. Try it:
 
 .. interpreter:: interpreter
-   
+
    >>> answer
    42
 

@@ -16,8 +16,10 @@ to automatically reveal what options we used to style the code just below it.
 Crunchy uses <a title="external_link" href="http://pygments.org">Pygments</a> to style code.
 To help you choose a given style, we provide you with a few code samples on this page to
 see the result of your choice.</p>
-<p>If you are a tutorial writer (or if you used the advanced options to override Crunchy's defaults), you might be interested to learn that, to specify a language, 
-Crunchy uses the same convention that is used by Pygment as given on 
+<p>If you are a tutorial writer
+(or if you used the advanced options to override Crunchy's defaults),
+you might be interested to learn that, to specify a language,
+Crunchy uses the same convention that is used by Pygment as given on
 <a title="external_link" href="http://pygments.org/docs/lexers/">Pygments available Lexers</a>,
 with a few other "obvious" choices as alternative options.
 </p>
@@ -34,17 +36,22 @@ or
 print "Hello World!"
 </pre>
 <p>
-or 
+or
 </p>
 <pre title="py show_vlam">
-# Andr&eacute;
+Andr&eacute; = "my name"  # note the syntax error
+print "Hello World!"
+</pre>
+<pre title="python3 show_vlam">
+# Identifiers with non-ascii characters are ok with Python 3!
+Andr&eacute; = "my name"
 print "Hello World!"
 </pre>
 
 <p>You can select the desired style here and reload the page to see its effect.</p>
 <div title="preferences style">pygments css class</div>
 
-<p>As further simple tests, we style  some Python code with an embedded 
+<p>As further simple tests, we style  some Python code with an embedded
 <code title='html'>&lt;br/&gt;</code> to complicate things.</p>
 <pre title="python">
 print "Hello World!"<br/>print "Done!"
@@ -72,7 +79,7 @@ class New(object):
         self.a = a
         self.b = b  # a comment
         return None
-    
+
     def other(self, choice):
         """ a multi
             line
@@ -87,8 +94,6 @@ for i in range(42):
 if __name__ == "__main__":
    n = New(3)
 </pre>
-
-
 
 </div>
 </body>
