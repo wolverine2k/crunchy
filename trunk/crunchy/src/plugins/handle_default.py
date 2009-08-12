@@ -55,7 +55,7 @@ def path_to_filedata(path, root, username=None):
 
     if path == server['exit']:
         server['server'].still_serving = False
-        exit_file = join(root_path, "exit_en.html")
+        exit_file = join(root, "exit_en.html")
 
         f = open(exit_file, mode="rb")
         x = f.read()
