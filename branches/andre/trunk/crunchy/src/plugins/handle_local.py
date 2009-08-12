@@ -19,15 +19,17 @@ else:
 provides = set(["/local"])
 requires = set(["filtered_dir", "insert_file_tree"])
 
+LOCAL_HTML = "local_html"
+
 def register():  # tested
     '''registers the plugins so that Crunchy can use them'''
     plugin['register_http_handler']("/local", local_loader)
     plugin['register_tag_handler']("meta", "title", "python_import", add_to_path)
     plugin['register_tag_handler']("div", "title", "local_html_file",
                                                  insert_load_local)
-    plugin['add_vlam_option']('power_browser', 'local_html')
+    plugin['add_vlam_option']('power_browser', LOCAL_HTML)
     plugin['register_http_handler']("/jquery_file_tree_html", jquery_file_tree_html)
-    plugin['register_service']("local_html", insert_load_local)
+    plugin['register_service'](LOCAL_HTML, insert_load_local)
 
 def local_loader(request):  # tested
     '''loads a local file;
@@ -79,6 +81,7 @@ def insert_load_local(page, elem, uid):
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_html',
                                 '/local', 'Load local html tutorial', 'Load tutorial')
     return
+plugin[LOCAL_HTML] = insert_load_local
 
 def filter_html(filename, basepath):
     '''filters out all files and directory with filename so as to include

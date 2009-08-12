@@ -246,7 +246,7 @@ Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
     power_browser = make_property('power_browser',
         doc="""\
 If the value is not None, inserts the requested file browser
-at the top of every page displayed by Crunchy.""")
+at the bottom of every page displayed by Crunchy.""")
 
 #    my_style = make_property('my_style', default=False,
 #        doc="""\
