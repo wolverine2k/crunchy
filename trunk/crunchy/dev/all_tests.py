@@ -27,16 +27,16 @@ parser.add_option("--det", dest="det",
                   action="store_true",
                   help="Run the tests deterministically (in alphabetical order)")
 
-parser.add_option("--include_only", dest="incl",
-                  action="store", type="string",
-                  help="list of test file[s] to include for tests, separated by spaces"\
+parser.add_option("-i", "--include_only", dest="incl",
+                  action="append", type="string",
+                  help="Test only this file; can be passed multiple times for multiple files"\
                        " (file extension '.rst' and prefix 'test_' optional)")
 
-parser.add_option("--exclude", dest="excl",
+parser.add_option("-x", "--exclude", dest="excl",
                   action="store", type="string",
-                  help="list of test file[s] to exclude for tests, separated by spaces"\
-                       " (file extension '.rst' and prefix 'test_' optional)" \
-                       " [ignored if include_only is present]")
+                  help="Exclude this file; can be passed multiple times for multiple files"\
+                       "; ignored if --include_only is present" \
+                       " (file extension '.rst' and prefix 'test_' optional)")
 
 parser.add_option("--nose", dest="nose",
                   action="store_true",
@@ -67,6 +67,7 @@ sys.path.insert(0, realpath(os.path.join(test_path, '../..')))
 if options.nose:
     from nose.core import run
     argv = ['-w', test_path,
+            '--verbose',
             '--exclude=how_to.rst',
             '--with-doctest',
             '--doctest-extension=.rst',
@@ -87,7 +88,7 @@ def normalize_name(filename):
 
 if options.incl:
     included_files = []
-    for f in options.incl.split():
+    for f in options.incl:
         f = normalize_name(f)
         if f in test_file_names:
             included_files.append(f)
@@ -99,7 +100,7 @@ if options.incl:
         test_file_names = included_files
 elif options.excl:
     excluded_files = False
-    for f in options.excl.split():
+    for f in options.excl:
         f = normalize_name(f)
         if f in test_file_names:
             test_file_names.remove(f)
@@ -122,9 +123,7 @@ total_failures = 0
 files_with_failures = 0
 all_files_with_failures = []
 
-
 for t in test_files:
-
     failure, nb_tests = doctest.testfile(t, module_relative=False)
     total_tests += nb_tests
     total_failures += failure
