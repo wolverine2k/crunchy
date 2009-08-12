@@ -63,6 +63,7 @@ def get_base_dir():
     return path.decode(sys.getfilesystemencoding())
 
 config['crunchy_base_dir'] = get_base_dir()
+plugin['crunchy_base_dir'] = get_base_dir
 
 import src.translation
 translate['_'] = src.translation._
