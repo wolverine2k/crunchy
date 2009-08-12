@@ -139,8 +139,9 @@ This method inserts one form inside a <span> element.
     >>> span = Element("span")
     >>> span.text = "Cool url"
     >>> handle_remote.insert_load_remote(fake_page, span, fake_uid)
-    >>> form = span.find("form")
-
+    >>> form = span.find(".//form")
+    >>> form is not None
+    True
     >>> print(form.attrib["name"])
     url
     >>> print(form.attrib["size"])
