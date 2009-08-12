@@ -8,14 +8,15 @@
 <div id="main_title">More Quiz!</div>
 <div id='content'>
 <div class="notes">
-<h4>Bug :-(</h4>
-<p> Sometimes, you may have to click on the Execute button a second time to get it
+<h4>Minor annoyance / Bug :-(</h4>
+<p> Sometimes, seemingly at random,
+you may have to click on the Run Unittest button a second time to get it
 working properly.
 </p>
 </div>
 
 <p>For those that don't like doctest-based quizzes <small>[I really can't see who
-wouldn't, but that's besides the point]</small>, Crunchy offers instead a 
+wouldn't, but that's besides the point]</small>, Crunchy offers instead a
 <b>unittest</b>-based quiz mode.  Try to define two functions,
 <code title="python">add</code> and <code title="python">sub</code>
 that would satisfy the following unittest.</p>
@@ -44,13 +45,13 @@ class UltimateAnswerTest(unittest.TestCase):
         """Tests for UltimateAnswer.__repr__"""
 
         answer = UltimateAnswer('Life')
-        self.assertEquals(str(answer), '42')
+        self.assertEquals(repr(answer), '42')
 
         answer = UltimateAnswer('Universe')
-        self.assertEquals(str(answer), '42')
+        self.assertEquals(repr(answer), '42')
 
         answer = UltimateAnswer('Everything')
-        self.assertEquals(str(answer), '42')
+        self.assertEquals(repr(answer), '42')
 </pre>
 
 <h3>For the cheaters among you...</h3>
@@ -69,15 +70,15 @@ class UltimateAnswer(object):
     """Class to emulate the behavior of Deep Thought"""
     def __init__(self, ultimate_question):
         self.ultimate_question = ultimate_question
-    
+
     def __repr__(self):
         return "42"
 </pre>
 
 <h3 >Advanced stuff, for tutorial writers</h3>
 <p><code title="html">&lt;pre title="unittest [linenumber [=starting_number]]"&gt;...&lt;/pre&gt;
-</code> adds a unittest-based quiz to the page; the text 
-between the <code title="html">&lt;pre&gt;</code> tags is always placed before the textarea and 
+</code> adds a unittest-based quiz to the page; the text
+between the <code title="html">&lt;pre&gt;</code> tags is always placed before the textarea and
 used as input for the unit test.</p>
 
 

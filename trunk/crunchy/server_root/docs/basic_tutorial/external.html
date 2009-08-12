@@ -7,7 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<title>Crunchy :: External Execution</title>
-	
+
 	<meta title="template local_template.html">
 </head>
 
@@ -18,15 +18,27 @@
 
 <h2 >Or how to launch an external application</h2>
 <p>One of the fun part of programming with Python is to produce your own programs running in a separate window. We'll give you a few examples to
-try, ending with a simple pyglet script. 
+try, ending with a simple pyglet script.
 Note that we know it is very likely that you might not be able to run some
 of them if you don't have the necessary modules installed.  Click on "Save and Run from file" to launch them as separate processes; <b>if nothing happens</b>, click on "Execute as separate thread" and see if there's an error message that appears.</p>
+
+<div class="notes">
+<h4>Annoyance / Bug :-(</h4>
+<p> Sometimes, running an application as a separate thread <b>may</b>
+yield a frozen app (Tkinter, I accuse you!).  However, Crunchy itself should
+still be ok - if not, please let us know.
+</p>
+</div>
+
 <h3 >Tkinter example</h3>
 <p>The first example has to be a simple Tkinter application - if only because
 Tkinter comes pretty much with all Python distributions and is likely
 to be already present on your computer.</p>
 <pre title="editor size=(6, 80) external">
-from Tkinter import *
+try:
+    from Tkinter import *   # for Python 2.x
+except:
+    from tkinter import *   # for Python 3.x
 root = Tk()
 w = Label(root, text="Crunchy!")
 w.pack()
@@ -101,12 +113,12 @@ while True:
     clock.tick(30)
     screen.fill(black)
     screen.blit(surf, ballrect)
-    pygame.display.flip()	
+    pygame.display.flip()
 </pre>
 <h3 >Pyglet example</h3>
-<p>Our fifth, and final example, requires pyglet.  
-For this example to work, you <b>must</b> save the file in the crunchy_tutor directory, where the required image and sound files are located. 
-This directory is found at crunchy/server_root/crunchy_tutorial, where "crunchy"
+<p>Our fifth, and final example, requires pyglet.
+For this example to work, you <b>must</b> save the file in the crunchy_tutor directory, where the required image and sound files are located.
+This directory is found at crunchy/server_root/crunchy_tutor, where "crunchy"
 is the base directory for ... you can guess.</p>
 
 <pre title="editor external no_internal">
@@ -120,7 +132,7 @@ for commercial purposes.
 
 The source code is licensed under the BSD license.
 
-All artwork is Copyright 2007 Alex Holkner.  
+All artwork is Copyright 2007 Alex Holkner.
 The sound is licensed under Creative Commons Sampling License:
 
 "ball.wav"
@@ -217,18 +229,18 @@ if __name__ == '__main__':
 </pre>
 <h3 >Advanced stuff</h3>
 <p>As mentioned before, you can toggle the editor, click on the save file icon
-and use the "save and run" feature to execute a Python script as a 
+and use the "save and run" feature to execute a Python script as a
 separate process. When you do so, you have to specify the file location.
 The option given here of running programs externally saves them in a default
 location, maintained by Crunchy.  The advantage of this latter approach is that
 it's a one-click step to run the application.  The disadvantage is that
 the script can not easily use other resources, such as images and sound in the
-Pyglet example, as it would not normally "know" the relative location of the 
+Pyglet example, as it would not normally "know" the relative location of the
 running programs and the files it needs to use.</p>
 <h3 >Advanced stuff, for tutorial writers</h3>
 <p>We have already seen the syntax for this:</p>
 <pre title="html">
-&lt;pre title="editor external [no_internal] 
+&lt;pre title="editor external [no_internal]
             [no_copy] [no_pre]  [linenumber [=start_number]] "&gt;
 Some Python code
 &lt;/pre&gt;</pre>
