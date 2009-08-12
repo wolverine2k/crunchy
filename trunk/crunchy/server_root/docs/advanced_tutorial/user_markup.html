@@ -22,7 +22,7 @@ result by the reader using Crunchy.  This is why we made it possible
 to modify the existing markup in a fairly simple fashion.</p>
 <p>In the following, we will give concrete examples of both situations.</p>
 <h2>No markup</h2>
-<p>The most frequent case is that of no existing markup.  By this, 
+<p>The most frequent case is that of no existing markup.  By this,
 we mean that a <tt>pre</tt> tag has been used with no <tt>title</tt>
 attribute.  By default, Crunchy will format these as follows:</p>
 <ul>
@@ -47,7 +47,7 @@ Hello
 8
 </pre>
 <p>The above should have an interpreter insert by default.</p>
-<p>A similar <tt>pre</tt> but this time with no interactive prompt.  
+<p>A similar <tt>pre</tt> but this time with no interactive prompt.
 This should just style the code.
 </p>
 <pre>
@@ -81,7 +81,7 @@ print "Crunchy is great!"
 <h3>A sample interactive session using "interpreter linenumber=99" as the markup.</h3>
 <pre title="interpreter linenumber=99">
 >>> for letter in 'Crunchy':
-...     print letter, '-', 
+...     print letter, '-',
 </pre>
 <h3>An editor with "editor linenumber" as the markup.</h3>
 <pre title="editor linenumber">
@@ -101,7 +101,7 @@ markup is to instruct Crunchy as follows:</p>
 <pre title="Borg">
 >>> crunchy.modify_markup = True
 </pre>
-<p>By default, this is set to <code title="py_code">False</code>. 
+<p>By default, this is set to <code title="py_code">False</code>.
 Every time you change this value, Crunchy saves the new value (like it does
 for any configuration option) in a configuration file.  This way, you don't
 have to select your favourite option every time you restart Crunchy.</p>
@@ -110,13 +110,13 @@ Crunchy to alter existing markup, we need to give it a series of rules.
 Try the following:</p>
 <pre title="Borg">
 >>> crunchy.add_rule()
-Enter a rule method to modify markup. 
-The allowed values are: add_option, remove_option, replace 
+Enter a rule method to modify markup.
+The allowed values are: add_option, remove_option, replace
 Enter method: add_option
 Enter option to add (e.g. linenumber): show_vlam
->>> crunchy.add_rule() 
-Enter a rule method to modify markup. 
-The allowed values are: add_option, remove_option, replace 
+>>> crunchy.add_rule()
+Enter a rule method to modify markup.
+The allowed values are: add_option, remove_option, replace
 Enter method: replace
 Markup value to replace: doctest
 Replacement value: interpreter
@@ -128,17 +128,16 @@ vlam code used for any element styled by Crunchy.</p>
 and delete those you don't want anymore.</p>
 <pre title="Borg">
 >>> crunchy.list_rules()
-# method arguments 
-0 add_option ['linenumber'] 
-1 replace ['doctest', 'interpreter'] 
->>> crunchy.remove_rule(0) 
->>> crunchy.remove_rule(1)  # will generate an error 
+# method arguments
+0 add_option ['linenumber']
+1 replace ['doctest', 'interpreter']
+>>> crunchy.remove_rule(0)
+>>> crunchy.remove_rule(1)  # will generate an error; can you think why?
 </pre>
 <p>As you instruct Crunchy to remove rule "0", it renumbers
 the existing rules (they are stored in a Python list) so that
-the old rule "1" becomes the new rule "0".</pre>
-
-<p><a href="index.html">Back to the test index</a></p>
+the old rule "1" becomes the new rule "0".
+Knowing this, you should be able to remove this last rule.</pre>
 
 </div>
 </body>

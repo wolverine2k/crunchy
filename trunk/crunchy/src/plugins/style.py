@@ -40,7 +40,7 @@ options['style'] = list(get_all_styles())
 additional_properties['style'] = make_property('style', default='tango',
 doc="""\
 Style used by pygments to colorize the code.  In addition to the default
-value ['crunchy'], it includes all the styles [css classes] included
+value ['tango'], it includes all the styles [css classes] included
 in the pygments distribution.""")
 
 def register():
