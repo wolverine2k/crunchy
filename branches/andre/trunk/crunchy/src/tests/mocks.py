@@ -101,6 +101,10 @@ class Request(object):
         for line in self.lines:
             u_print(line)
 
+class Server(object):
+    def __init__(self):
+        self.still_serving = True
+
 def register_tag_handler(tag, attribute, value, function):
     if tag not in registered_tag_handler:
         registered_tag_handler[tag] = {}

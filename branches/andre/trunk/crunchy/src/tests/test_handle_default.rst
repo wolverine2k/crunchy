@@ -4,10 +4,16 @@ handle_default.py tests
 Minimal test: making sure it imports properly.  This can help identify
 imcompatibilities with various Python version (e.g. Python 2/3)
 
-    >>> from src.interface import plugin, config, get_base_dir
+    >>> import codecs
     >>> import os
+    >>> import src.tests.mocks as mocks
+    >>> from src.interface import plugin, config, server, get_base_dir
+    >>> from src.interface import crunchy_unicode, crunchy_bytes
+
     >>> plugin.clear()
     >>> config.clear()
+    >>> server.clear()
+
     >>> base_dir = config['crunchy_base_dir'] = get_base_dir()
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -54,13 +60,75 @@ Unicode characters.
     ...    return text
 
     >>> isopath = os.path.join(hd.root_path, 'docs', 'tests', 'iso-8859-1.html')
-    >>> assert os.path.exists(isopath)
+    >>> os.path.exists(isopath)
+    True
     >>> f = hd.meta_content_open(isopath)
-    >>> assert unicode('Andr\xe9') in f.read()
+    >>> unicode('Andr\xe9') in f.read()
+    True
     >>> f.close()
 
     >>> isopath = os.path.join(hd.root_path, 'docs', 'tests', 'utf-8.html')
-    >>> assert os.path.exists(isopath)
+    >>> os.path.exists(isopath)
+    True
     >>> f = hd.meta_content_open(isopath)
-    >>> assert unicode('Andr\xe9') in f.read()
+    >>> unicode('Andr\xe9') in f.read()
+    True
     >>> f.close()
+
+testing path_to_filedata
+------------------------
+
+    >>> def u(text):
+    ...     """Allows us to write Unicode literals even in Python 2 bytestrings."""
+    ...     if isinstance(text, crunchy_unicode): return text
+    ...     else: return text.decode('unicode_escape')
+
+Code path: the server exit.
+
+    >>> server['exit'] = u('/exit')
+    >>> server['server'] = mocks.Server()
+    >>> data = hd.path_to_filedata(u('/exit'), hd.root_path)
+    >>> isinstance(data, crunchy_bytes)
+    True
+    >>> 'exited' in data.decode('utf8')
+    True
+
+Code path: the invalid path.
+
+    >>> data = hd.path_to_filedata(u('/../../../usr/local/bin'), hd.root_path)
+    >>> isinstance(data, crunchy_bytes)
+    True
+    >>> '404' in data.decode('utf8')
+    True
+
+Code path: the directory listing without a trailing slash.
+
+    >>> data = hd.path_to_filedata(u('/css'), hd.root_path)
+    >>> data is None
+    True
+
+Code path: the directory listing.
+
+    >>> data = hd.path_to_filedata(u('/css/'), hd.root_path)
+    >>> isinstance(data, crunchy_bytes)
+    True
+    >>> 'crunchy.css' in data.decode('utf8')
+    True
+
+Code path: an .html page.
+
+    >>> def trivial_vlam_page(file_handle, url, username):
+    ...    return codecs.open(os.path.join(hd.root_path, url[1:]), 'r', 'utf8')
+    >>> plugin['create_vlam_page'] = trivial_vlam_page
+
+    >>> data = hd.path_to_filedata(u('/index.html'), hd.root_path)
+    >>> isinstance(data, crunchy_bytes)
+    True
+    >>> 'Welcome' in data.decode('utf8')
+    True
+
+Code path: a binary file.
+
+    >>> data = hd.path_to_filedata(u('/images/crunchy-python-powered.png'), hd.root_path)
+    >>> isinstance(data, crunchy_bytes)
+    True
