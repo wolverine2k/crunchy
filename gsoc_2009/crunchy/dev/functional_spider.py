@@ -33,13 +33,13 @@ the HTML through a series of regular expressions that strip out
 session-specific identifiers. I use ElementTree to parse the HTML and
 extract anchor hrefs.
 
-To use, first run the two Crunchy servers; for example, "python2
+To use, first run the Crunchy servers; for example, "python2
 /path/to/left/crunchy.py --port=8002" and "python3
 /path/to/right/crunchy.py --port=8003". Each of these Crunchy
 instances must have a pristine account set up under the name
-"tools-spider" with the password "tools-spider". It is of crucial
-importance that these accounts are pristine as otherwise differences
-due to different preferences may arise.
+"tools-spider" with the password "tools-spider". It is crucially
+importance that these accounts are new and therefore have the same
+preferences.
 
 Then, you would run me with "python functional_spider localhost:8002
 localhost:8003". We designate localhost:8002 and localhost:8003
@@ -53,6 +53,8 @@ websites are different is to pass in a dump directory and then run
 won't work because cannibalization strips out newlines, but wdiff(1)
 produces amazing output so it hardly matters.
 """.strip()
+
+USER = 'tools-spider'
 
 NS_XHTML = "http://www.w3.org/1999/xhtml"
 
@@ -95,6 +97,11 @@ def dump_key(url):
     o = urlparse.urlparse(url)
     path, params, query = map(strip, o[2:5])
     return (path + params + query) or 'indexhtml'
+
+class NoAccountsError(Exception):
+    """Crunchy threw up the "no accounts have been created" page and
+    exited."""
+    pass
 
 class Tree(object):
     """Wrapper over ElementTree for a Crunchy page."""
@@ -179,6 +186,9 @@ class Spider(object):
         h = opener(url)
         text = h.read().decode('utf8')
         h.close()
+
+        if u'need to create an account' in text:
+            raise NoAccountsError()
 
         text = cannibalize(text)
         return text
@@ -280,17 +290,23 @@ def main():
 
     # On to the show. ####################
     if not len(args) == 2:
-        print('Error: Not enough or too many arguments host:port arguments entered')
+        print('Error: Not enough or too many arguments host:port arguments entered.')
         raise SystemExit(1)
 
-    s = Spider((args[0], 'tools-spider', 'tools-spider'),
-               (args[1], 'tools-spider', 'tools-spider'))
+    s = Spider((args[0], USER, USER), (args[1], USER, USER))
     s.run(dump=options.dump)
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        print('Keyboard interrupted, goodbye!')
+        log.info('Keyboard interrupt. Goodbye!')
+    except NoAccountsError:
+        print('Error: No account for "%s" found. Please create one first.' % USER)
+        raise SystemExit(1)
     except urllib2.URLError, e:
-        print('Error: One or both of the websites passed were unaccessible or became unaccessible. Recheck that you have inputted the correct information and consult the Crunchy server logs.')
+        if e.code == 401:
+            print('Error: Unable to log into account "%(user)s" with password "%(user)s". Check that the account was created and was created with this password.' % dict(user=USER))
+        else:
+            print('Error: One or both of the host:ports passed were or became unaccessible. Check the arguments and consult the Crunchy server logs.')
+        raise SystemExit(1)
