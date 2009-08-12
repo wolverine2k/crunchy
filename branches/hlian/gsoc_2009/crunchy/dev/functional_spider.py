@@ -1,9 +1,11 @@
 import logging
 log = logging.getLogger(__name__)
 
+import codecs
 import os
 import re
 import sys
+import traceback
 import urllib2
 import urlparse
 from optparse import OptionParser
@@ -46,12 +48,10 @@ left website, whose output is compared with the corresponding right
 website.
 
 If you are debugging this script, the best way to find out why two
-websites are different is to copy and paste the cannibalize function
-into another script, run it on two files, write the two outputs to two
-temp files, and use wdiff to compare the two files. You have to use
-wdiff because cannibalize strips out all newlines, which in turn is
-because ElementTree produces different whitespacing between Python 2
-and 3.
+websites are different is to pass in a dump directory and then run
+"wdiff -3" on the left and right post-cannibalization dumps. diff(1)
+won't work because cannibalization strips out newlines, but wdiff(1)
+produces amazing output so it hardly matters.
 """.strip()
 
 NS_XHTML = "http://www.w3.org/1999/xhtml"
@@ -66,6 +66,9 @@ R_JQUERY = re.compile(r'jquery_\d+')
 R_RUNOUTPUT = re.compile(r'runOutput\(.*?\)')
 R_CONSOLES = re.compile(r'Console\(.*?\)')
 R_EXIT = re.compile(r'exit\d+')
+
+# For dump_key, not cannibalize.
+R_KEYIZE = re.compile(r'[^a-zA-Z0-9]')
 
 def cannibalize(text):
     """Normalizes the text in different Crunchy websites by stripping
@@ -82,6 +85,16 @@ def cannibalize(text):
     text = R_CONSOLES.sub('Console', text)
     text = R_EXIT.sub('exit', text)
     return text
+
+def dump_key(url):
+    """Converts a URL into a key suitable as a filename."""
+
+    def strip(text):
+        return R_KEYIZE.sub(u'', text)
+
+    o = urlparse.urlparse(url)
+    path, params, query = map(strip, o[2:5])
+    return (path + params + query) or 'indexhtml'
 
 class Tree(object):
     """Wrapper over ElementTree for a Crunchy page."""
@@ -170,9 +183,15 @@ class Spider(object):
         text = cannibalize(text)
         return text
 
-    def run(self):
+    def run(self, dump=None):
         """Runs a breadth-first spider on the Python 2 Crunchy
-        website, checking contents against the Python 3."""
+        website, checking contents against the Python 3. A depth-first
+        search would do poorly if it ever gets stuck in an infinite
+        branch such as a calendar with links to the next month, not
+        that Crunchy has that type of thing. But it might! Dumps the
+        cannibalized web page contents into the dump argument
+        subdirectory if the dump argument is not None and the two web
+        pages are found to be different."""
 
         # BFS stack of nodes.
         stack = [self.opener2.root]
@@ -191,6 +210,15 @@ class Spider(object):
 
             if not x2 == x3:
                 log.error('Different: %s' % url)
+                if dump is not None:
+                    key = dump_key(url)
+                    try:
+                        self.dump(x2, x3, key=key, subdir=dump)
+                    except OSError, e:
+                        msg  = 'Error: Unable to dump to "%s" with key "%s"\n'
+                        msg += '==========================================='
+                        log.error(msg % (subdir, key))
+                        log.error(traceback.format_exc())
 
             # A semi-reliable way of detecting whether a traceback has
             # occurred or not by piggybacking the output of
@@ -204,6 +232,28 @@ class Spider(object):
             visited.add(url)
             stack.extend(tree.hrefs(via=url))
 
+    def dump(self, left, right, key, subdir):
+        """Stores the left and right strings into the passed
+        subdirectory for debugging, creating the subdirectory if
+        necessary."""
+
+        assert subdir is not None
+        assert not os.path.isfile(subdir)
+
+        if not os.path.isdir(subdir):
+            os.makedirs(subdir)
+
+        lpath = os.path.join(subdir, key + '-left')
+        rpath = os.path.join(subdir, key + '-right')
+
+        f = codecs.open(lpath, 'w', 'utf8')
+        f.write(left)
+        f.close()
+
+        f = codecs.open(rpath, 'w', 'utf8')
+        f.write(right)
+        f.close()
+
 def main():
     """The spidering script."""
 
@@ -212,6 +262,10 @@ def main():
     parser.add_option('-v', '--verbose', dest='verbose',
                       help='Be verbose',
                       action='store_true')
+    parser.add_option('-d', '--dump', dest='dump',
+                      help='Dump cannibalized outputs when two web pages differ for debugging',
+                      action='store',
+                      default=None)
 
     options, args = parser.parse_args()
 
@@ -225,9 +279,13 @@ def main():
         log.setLevel(logging.WARNING)
 
     # On to the show. ####################
+    if not len(args) == 2:
+        print('Error: Not enough or too many arguments host:port arguments entered')
+        raise SystemExit(1)
+
     s = Spider((args[0], 'tools-spider', 'tools-spider'),
                (args[1], 'tools-spider', 'tools-spider'))
-    s.run()
+    s.run(dump=options.dump)
 
 if __name__ == '__main__':
     try:
