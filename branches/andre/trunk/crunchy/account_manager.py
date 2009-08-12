@@ -13,6 +13,10 @@ try:
 except ImportError:
     from md5 import md5
 
+python_version = sys.version_info[0]
+if python_version >= 3:
+    unicode = str
+
 DEFAULT_PATH = os.path.join(os.path.dirname(__file__), ".PASSWD")
 
 class Accounts(dict): # tested
@@ -259,7 +263,7 @@ class AMCLI(cmd.Cmd):
 
 if __name__ == '__main__':
     # Gives cmd.Cmd history, Emacs keybindings, and other readline
-    # features.
+    # features - not available on Windows
     try:
         import readline
     except ImportError:
