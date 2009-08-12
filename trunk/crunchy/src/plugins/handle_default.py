@@ -114,10 +114,13 @@ def handler(request):
     try:
         dummy = request.crunchy_username
     except:
-        request.wfile.write(_("You need to create an account before you can use Crunchy. "))
-        request.wfile.write(_("Please use account_manager.py to create an account."))
+        msg = (_("You need to create an account before you can use Crunchy. ") +
+               _("Please use account_manager.py to create an account."))
+        if python_version >= 3:
+            msg = msg.encode('utf-8')
+        request.wfile.write(msg)
         exit_file = join(root_path, "exit_en.html")
-        request.wfile.write(open(exit_file).read())
+        request.wfile.write(open(exit_file, 'rb').read())
         request.end_headers()
         server['server'].still_serving = False
         return
