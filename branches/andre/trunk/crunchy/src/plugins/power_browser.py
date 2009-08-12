@@ -28,12 +28,14 @@ def insert_browser(page, *dummy): # tested
     '''Inserts a default file/url browser at the bottom of a page'''
     div = Element("div")
     div.text = ' '
-    if config[page.username]['power_browser'] is None:
+
+    browser = plugin.get(config[page.username]['power_browser'])
+    if not browser:
         return
-    else:
-        try:
-            plugin[config[page.username]['power_browser']](page, div, 'dummy')
-            page.body.append(div)
-        except:
-            print(traceback.format_exc())
-            return
+
+    try:
+        browser(page, div, 'dummy')
+        page.body.append(div)
+    except:
+        print(traceback.format_exc())
+        return
