@@ -9,10 +9,14 @@ import codecs
 import copy
 import re
 import sys
-from src.interface import config, plugin, Element, SubElement, names, StringIO
+from os.path import join
+from src.interface import (config, plugin, Element, SubElement, names,
+                           StringIO, server, translate)
+_ = translate['_']
+root_path = join(config['crunchy_base_dir'], "server_root/")
 
-# urllib reshuffled in Python 3 and 2to3 seems to skip this.
-if sys.version_info[0] < 3:
+python_version = sys.version_info[0] + sys.version_info[1]/10.0
+if python_version < 3:
     from urllib import FancyURLopener
 else:
     from urllib.request import FancyURLopener
@@ -324,3 +328,20 @@ def unicode_urlopen(url, accept_lang=None):
 
     page = StringIO(page)
     return page
+
+def account_exists(request):
+    '''Verify that we have a valid user account so that we can proceed.'''
+    try:
+        dummy = request.crunchy_username
+        return True
+    except:
+        msg = (_("You need to create an account before you can use Crunchy. ") +
+               _("Please use account_manager.py to create an account."))
+        if python_version >= 3:
+            msg = msg.encode('utf-8')
+        request.wfile.write(msg)
+        exit_file = join(root_path, "exit_en.html")
+        request.wfile.write(open(exit_file, 'rb').read())
+        request.end_headers()
+        server['server'].still_serving = False
+        return False
