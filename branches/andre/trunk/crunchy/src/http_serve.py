@@ -132,9 +132,17 @@ def require_digest_access_authenticate(func):
 
     return wrapped
 
-if src.interface.accounts:
+SECURITY_RISK = False
+if "Security Risk" in src.interface.accounts:
+    print("Security risk is present.")
+    # Meant for single user mode - bypass authentication
+    require_authenticate = lambda x: x
+    SECURITY_RISK = True
+elif src.interface.accounts:
     require_authenticate = require_digest_access_authenticate
 else:
+    # bypass authentication and allow flow through so that we can return
+    # proper error message via the browser
     require_authenticate = lambda x: x
 
 class MyHTTPServer(ThreadingMixIn, HTTPServer):
@@ -255,6 +263,9 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         # at first, assume that the given path is the actual path and there are no arguments
         if DEBUG:
             print(self.path)
+
+        if SECURITY_RISK:
+            self.crunchy_username = "Security Risk"
 
         self.path, self.args = parse_url(self.path)
         # Clumsy syntax due to Python 2 and 2to3's lack of a byte

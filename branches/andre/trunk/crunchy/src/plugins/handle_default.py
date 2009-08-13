@@ -11,7 +11,7 @@ from src.interface import (
     translate, config, plugin, server, debug,
     debug_msg, preprocessor, python_version,
     crunchy_bytes, crunchy_unicode)
-from src.utilities import meta_content_open
+from src.utilities import meta_content_open, account_exists
 
 _ = translate['_']
 
@@ -111,18 +111,8 @@ def handler(request):
     global tell_Safari_page_is_html
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
-    try:
-        dummy = request.crunchy_username
-    except:
-        msg = (_("You need to create an account before you can use Crunchy. ") +
-               _("Please use account_manager.py to create an account."))
-        if python_version >= 3:
-            msg = msg.encode('utf-8')
-        request.wfile.write(msg)
-        exit_file = join(root_path, "exit_en.html")
-        request.wfile.write(open(exit_file, 'rb').read())
-        request.end_headers()
-        server['server'].still_serving = False
+
+    if not account_exists(request):
         return
 
     data = path_to_filedata(request.path, root_path, request.crunchy_username)

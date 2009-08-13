@@ -29,10 +29,28 @@ how Crunchy performs it magic.
 There are a few steps to consider.</p>
 <ol>
 <li>The User starts Crunchy and communication is established.</li>
-<li>The User has to establish his credentials, entering a username
-and password.</li>
+<li><b>Unless the user name "Security Risk" exists</b> in the account file,
+the User has to establish his credentials, entering a username
+and password.  This normally needs only to be done once per browser
+session.</li>
+<ul>
+    <li>If the user name "Security Risk" exists, Crunchy is running in
+    single user mode, and never communicates through the browser to ask
+    about your username and password.  This is perfectly safe
+    <b><em>if and only if</em></b>
+    you are the only user on your computer and your computer can not be
+    accessed remotely by others.</li>
+    <li><b>If you share your computer with other people and happen to have
+    Crunchy running, and use Crunchy in single user mode,
+    they can access all your files through the browser and execute any Python
+    command (for example, to delete or modify your files) as though they
+    were you.</b> For this reason, we <b>strongly</b> suggest that you use the
+    account_manager.py script to delete the user "Security Risk" and
+    create one or more user profiles.  Consult the readme.html file
+    that was included with the Crunchy distribution for more details.</li>
+</ul>
 <li>Crunchy retrieves an html page.</li>
-<li>Crunchy parses the page to create a tree structure 
+<li>Crunchy parses the page to create a tree structure
 (using Elementtree - more on this later).</li>
 <li>Crunchy sanitizes the html pages requested to remove unwanted elements,
 such as any existing javascript, links to javascript files
@@ -43,8 +61,8 @@ custom elements <b><em>and</em></b> custom javascript.</li>
 communication open, waiting for user instruction.</li>
 <li>The User requests that some Python code be executed</li>
 </ol>
-<p>There is a saying that a picture is worth a thousand words.  Well, here's a
-thousand words worth, produced using
+<p>There is a saying that a picture is worth a thousand words.  Below is a
+few thousand words worth, produced using
 <a href="http://www.websequencediagrams.com/" title="external_link">
 a wonderful <b>free</b> tool.</a>
 </p>
@@ -94,20 +112,20 @@ only words and diagrams.
 
 <p>
 Before this type of interaction can happen,
-Crunchy inserts the required javascript code to enable 
-communication between the browser and the Python interpreter. 
+Crunchy inserts the required javascript code to enable
+communication between the browser and the Python interpreter.
 On its own, this step is harmless...
 </p>
 <p>
 However, before it includes this custom code,
 Crunchy removes any pre-existing javascript code, etc.
 <em>What if Crunchy fails in removing the existing javascript code?</em>
-And, <em>what if the existing javascript code is designed to 
-identify a Crunchy specific javascript function on the page and uses it 
+And, <em>what if the existing javascript code is designed to
+identify a Crunchy specific javascript function on the page and uses it
 to send some malicious Python code to the interpreter?</em>.
 </p>
 
-<p>If something like this were to happen ... it would be disastrous.  
+<p>If something like this were to happen ... it would be disastrous.
 Therefore, we must be very careful in identifying and removing potentially
 harmful content.  The method
 we use is based on the existence of a <em>white list</em> that we created.
@@ -119,40 +137,40 @@ we use is based on the existence of a <em>white list</em> that we created.
 Our white list consists of a series of html tags, each with their own set of attributes,
 that are allowed on the page.  For example, &lt;a&gt; is allowed, but &lt;applet&gt; is not.
 
-Here is an incomplete list of potentially dangerous <acronym >HTML</acronym> tags and 
+Here is an incomplete list of potentially dangerous <acronym >HTML</acronym> tags and
 attributes:</p>
 <ul>
 <li>
 <tt>script</tt>, which can contain malicious script</li>
 <li>
-<tt>applet</tt>, <tt>embed</tt>, and <tt>object</tt>, which can automatically download and 
+<tt>applet</tt>, <tt>embed</tt>, and <tt>object</tt>, which can automatically download and
 execute malicious code</li>
 
 <li>
 <tt>meta</tt>, which can contain malicious redirects</li>
 <li>
-<tt>onload</tt>, <tt>onunload</tt>, and all other <tt>on*</tt> attributes, 
+<tt>onload</tt>, <tt>onunload</tt>, and all other <tt>on*</tt> attributes,
 which can contain malicious script</li>
 <li>
-<tt>style</tt>, <tt>link</tt>, and the <tt>style</tt> attribute, which can contain 
+<tt>style</tt>, <tt>link</tt>, and the <tt>style</tt> attribute, which can contain
 malicious script</li>
 
 </ul>
 <p><em><tt>style</tt>?</em>
-Yes, <tt>style</tt>.  
-<acronym>CSS</acronym> 
+Yes, <tt>style</tt>.
+<acronym>CSS</acronym>
 definitions can contain executable code.
 </p>
 </div>
 
 <p>
 Before we proceed with a more detailed explanation, you might want
-to read 
+to read
 <a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">this</a>
 document from feedparser.org.  You may also want to do an Internet search for
 <em>cross site scripting</em> (XSS), which is a topic closely related to the
-problem we are trying to address.  Once you understand XSS, you might want to 
-have also a look at 
+problem we are trying to address.  Once you understand XSS, you might want to
+have also a look at
 <a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>.
 </p>
 
@@ -163,7 +181,7 @@ They are: <em>strict</em>, <em>normal</em> and <em>trusted</em>.
 
 <dl>
 <dt><b>strict</b></dt>
-<dd>With the strict level (previously named <em>paranoid</em>), 
+<dd>With the strict level (previously named <em>paranoid</em>),
 the following html tags are not included
 in our white list: applet, basefont, base, button, form, frameset,
 iframe, input, isindex, object, optgroup, option, param, script,
@@ -173,41 +191,41 @@ deprecated.<br/>
 For the included tags, only the <em>title</em> attribute is allowed, except
 for the &lt;a&gt; tag, for which we allow <em>id</em> and <em>href</em>
 as attributes and the &lt;meta&gt; for which we allow the <em>name</em> attribute which can
-be used in conjunction with the <em>title</em> attribute to add a relative path to 
+be used in conjunction with the <em>title</em> attribute to add a relative path to
 <code>sys.path</code> so that examples using <code title="py_code">import</code>
 can be used.  If they don't contain Crunchy objects, pages displayed
 with the strict level selected are essentially the same as old-fashioned html
 text only documents.</dd>
 <dt><b>normal</b></dt>
-<dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style 
-attribute.  However, we scan either the file being linked or the content 
+<dd>At the normal level, we allow &lt;link&gt; and &lt;style&gt;, as well as the style
+attribute.  However, we scan either the file being linked or the content
 inside the &lt;style&gt; tag, or style attribute
 for either the string "url("  [with possible spaces before the parenthese]
-and any string starting with "&amp;#" which often would denote an obfuscated character 
-meant to bypass normal filters [see the 
+and any string starting with "&amp;#" which often would denote an obfuscated character
+meant to bypass normal filters [see the
 <a title="external_link" href="http://feedparser.org/docs/html-sanitization.html">feedparser.org</a>
-and 
+and
 <a title="external_link" href="http://ha.ckers.org/xss.html">http://ha.ckers.org/xss.html</a>
 links already mentioned for an explanation].  We treat such content as automatically
 suspicious and remove automatically these tags entirely when such content is met.<br/>
-We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy 
-to allow a tutorial writer to design an alternate menu for Crunchy; we also allow the 
+We also allow the <em>content</em> attribute for the meta tag which is used by Crunchy
+to allow a tutorial writer to design an alternate menu for Crunchy; we also allow the
 <em>http-equiv</em> only together with the value <em>content-type</em>.
 Finally, we allow the img tag; however, we pre-scan each image
 to make sure that it is indeed an image file and not some cleverly disguised javascript
 code.  <em><b>Unfortunately</b></em>, as a result, it can take quite a while to load
 a page containing many external images.  However, we normally need to verify the
 validity of a given image only once per Crunchy session.<br/>
-The normal level is currently the default level used when starting Crunchy.  
+The normal level is currently the default level used when starting Crunchy.
 With this level, you can browse the official Python tutorial and it will look
-just the same <small>[better, actually! ... at least for versions prior to 2.6]</small> 
+just the same <small>[better, actually! ... at least for versions prior to 2.6]</small>
 as if you viewed it
 directly in your browser without Crunchy's help.  However, a site like python.org
 will look very different, as most styling will be removed.</dd>
 <dt><b>trusted</b></dt>
 <dd>Finally, at the trusted level, we allow the same content as with the normal level,
 except that we don't scan for suspicious styling information and assume that all images
-are safe.  Using the trusted level, a site like python.org will look almost identical as 
+are safe.  Using the trusted level, a site like python.org will look almost identical as
 intended when viewed through Crunchy.<br/>
 </dd>
 </dl>
@@ -217,11 +235,11 @@ intended when viewed through Crunchy.<br/>
 This is to prevent accidental communication between the webbrowser and the Python server, sending a
 "query" to the latter.</li>
 <li>All instructions sent to the Python server in order of having some Python command executed
-take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long 
+take the form <code>/command_RANDOM_ID?query</code> where <code>RANDOM_ID</code> is an 18 digit long
 random integer generated at the beginning of a session.  This way, even if a malicious query bypassed
 the cleanup mentioned at the previous step, it would still be nearly impossible to guess the
 commands required for the Python interpreter to execute some malicious code sent by a query; some
-javascript code specifically designed to scan the page and extract this session-specific random 
+javascript code specifically designed to scan the page and extract this session-specific random
 integer would have had to be inserted on that page.
 </li>
 </ul>
@@ -232,8 +250,8 @@ it is required for appropriate formatting.
 </p>
 
 <p>The possibility of using obfuscated code (e.g. using "&amp;#..." entities) is one that
-can cause problems for many filters [see the two links already mentioned].  
-However, as far as we have been able to verify, 
+can cause problems for many filters [see the two links already mentioned].
+However, as far as we have been able to verify,
 Crunchy is immune to this problem due to the way it parses
 html pages according to step 2 mentioned previously:
 Crunchy uses a combination of BeautifulSoup and Elementtree  (i.e. ElementSoup)
@@ -271,9 +289,9 @@ no foreign javascript is included, before loading it normally.</p>
 in the menu giving you some summary of what it actually removed.</p>
 
 <h4>Back to using pictures...</h4>
-<p>Let us go back to our use of diagrams.  
+<p>Let us go back to our use of diagrams.
 Remember the "retrieve and process file" box.  This
-consists of two step: a sanitizing/filtering step, and the processing of markup.  
+consists of two step: a sanitizing/filtering step, and the processing of markup.
 We will take each one in turn.</p>
 <h3>Security: Filtering Unwanted Elements</h3>
 <img src="/images/security.png">
@@ -287,7 +305,7 @@ added by a specific plugin.</p>
 <p>Interactivity is achieved through the use of custom javascript
 in each html page setting up a communication channel with the
 Python backend.  The technique we use is known as "comet" and is
-described in <a href="http://en.wikipedia.org/wiki/Comet_(programming)" 
+described in <a href="http://en.wikipedia.org/wiki/Comet_(programming)"
 title="external_link">Wikipedia</a> as follows.</p>
 
 <div class="notes" style="width:600px;">

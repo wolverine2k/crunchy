@@ -17,7 +17,7 @@ python_version = sys.version_info[0]
 if python_version >= 3:
     unicode = str
 
-DEFAULT_PATH = os.path.join(os.path.dirname(__file__), ".PASSWD")
+DEFAULT_PATH = os.path.join(os.path.dirname(__file__), "crunchy.pwd")
 
 class Accounts(dict): # tested
     '''dict-derived class to store user's account information.'''
@@ -29,6 +29,7 @@ class Accounts(dict): # tested
         if pwp is None:  # use this to allow redefining DEFAULT_PATH
             pwp = DEFAULT_PATH # from outside this module
         self.pwd_file_path = pwp
+        self.single_user_base_dir = os.path.join(os.getcwd(), ".crunchy")
         self.base_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         if os.path.exists(pwp):
             try:
@@ -257,7 +258,10 @@ class AMCLI(cmd.Cmd):
         "shortcuts" by their true values.'''
 
         if home == "default" or home == '':
-            return os.path.join(self.accounts.base_dir, username)
+            if username != "Security Risk":
+                return os.path.join(self.accounts.base_dir, username)
+            else:
+                return os.path.join(self.accounts.single_user_base_dir, username)
         else:
             return home
 
