@@ -281,7 +281,7 @@ are usually launched.""")
         if self.name != "Security Risk":
             self.user_dir = accounts[self.name][0]
         else:
-            self.user_dir = os.path.join(config['crunchy_base_dir'], ".crunchy")
+            self.user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         self.temp_dir = os.path.join(self._user_dir, "temp")
 
         if not os.path.exists(self.user_dir):  # first time ever
