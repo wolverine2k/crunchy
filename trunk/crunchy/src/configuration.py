@@ -278,12 +278,11 @@ are usually launched.""")
     def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
-        self.user_dir = accounts[self.name][0]
+        if self.name != "Security Risk":
+            self.user_dir = accounts[self.name][0]
+        else:
+            self.user_dir = os.path.join(config['crunchy_base_dir'], ".crunchy")
         self.temp_dir = os.path.join(self._user_dir, "temp")
-
-        ## hack to make it work for now.
-        #self.user_dir = config['user_dir'] = self._user_dir
-        #self.temp_dir = config['temp_dir'] = self._temp_dir
 
         if not os.path.exists(self.user_dir):  # first time ever
             try:
