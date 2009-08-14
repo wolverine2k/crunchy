@@ -28,6 +28,8 @@ See how_to.rst_ for details.
   >>> plugin['add_vlam_option'] = dummy_add
   >>> plugin['session_random_id'] = 42
   >>> config.clear()
+  >>> from os import getcwd
+  >>> config['crunchy_base_dir'] = getcwd()
   >>> config['Crunchy'] = {}
   >>> config['Crunchy']['editarea_language'] = 'en'
 

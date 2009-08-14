@@ -28,9 +28,12 @@ See how_to.rst_ for details.
 
 .. _how_to.rst: how_to.rst
 
-   >>> from src.interface import plugin
-   >>> plugin.clear()
-   >>> import src.plugins.doc_code_check as dcc
+    >>> from src.interface import plugin, config
+    >>> plugin.clear()
+    >>> config.clear()
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
+    >>> import src.plugins.doc_code_check as dcc
 
 .. _`compare()`:
 

@@ -23,6 +23,8 @@ See how_to.rst_ for details.
     ...     for arg in args:
     ...         print(arg)
     >>> plugin['add_vlam_option'] = print_args
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
     >>> import os

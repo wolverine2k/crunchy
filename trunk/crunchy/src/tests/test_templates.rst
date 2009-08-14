@@ -120,25 +120,24 @@ Testing find_divs()
     >>> template_page = Page()
     >>> template_page.tree = template
     >>> divs = templates.find_divs(template_page)
+
+Note: Jython's ordering of elements turned out not to be necessarily the
+same as CPython.  As a result, we can not compare item by item.
+
+    >>> expected_div = {}
+    >>> expected_div['content'] = '<div id="content"><p>\nThis is part of the target.\n</p></div>'
+    >>> expected_div['not this one'] = '<div id="not this one"><p>\nKeep this.\n</p></div>'
+    >>> expected_div['not that one'] = '<div id="not that one"><p>\nThis should be kept.\n</p></div>'
     >>> for div in divs:
-    ...    print(div)
-    ...    print(tostring(divs[div]))
-    ...    print("-------")
-    content
-    <div id="content"><p>
-    This is part of the target.
-    </p></div>
-    -------
-    not this one
-    <div id="not this one"><p>
-    Keep this.
-    </p></div>
-    -------
-    not that one
-    <div id="not that one"><p>
-    This should be kept.
-    </p></div>
-    -------
+    ...    div in expected_div
+    True
+    True
+    True
+    >>> for div in divs:
+    ...    tostring(divs[div]) == expected_div[div]
+    True
+    True
+    True
 
 
 Testing merge_with_template()
