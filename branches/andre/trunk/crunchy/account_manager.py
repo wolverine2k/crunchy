@@ -30,7 +30,12 @@ class Accounts(dict): # tested
         if pwp is None:  # use this to allow redefining DEFAULT_PATH
             self.pwd_file_path = DEFAULT_PATH
         self.base_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
-        if os.path.exists(self.pwd_file_path):
+
+        if pwp == False:
+            print("Starting in Single User Mode.")
+            item = [self.base_dir, "irrelevant password", "y"]
+            self.__setitem__("_Unknown User_", item)
+        elif os.path.exists(self.pwd_file_path):
             try:
                 self.load()
             except IOError:
@@ -41,6 +46,9 @@ class Accounts(dict): # tested
             print("No password file exists: will create a default account with no file.")
             item = [self.base_dir, "irrelevant password", "y"]
             self.__setitem__("_Unknown User_", item)
+        else:
+            print("Fatal error in account_manager.Accounts.__init__")
+            raise SystemExit
 
     def __setitem__(self, username, item): # tested indirectly
         '''overrides base class dict method so that the password gets

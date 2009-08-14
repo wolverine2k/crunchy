@@ -143,6 +143,8 @@ def parse_options():
     #        help=interactive_help)
     parser.add_option("--port", action="store", type="int", dest="port",
             help="Specifies the port number to try first (default is 8001) ")
+    parser.add_option("--single", action="store_true", dest="single_user",
+                      help="Start session in Single User Mode.")
     #parser.add_option("-d", "--debug", action="store_true", dest="debug",
     #        help="Enables interactive settings of debug flags "+\
     #             "(useful for developers)")
@@ -183,6 +185,11 @@ def parse_options():
         if os.path.exists(options.accounts_file):
             src.interface.accounts = account_manager.Accounts(
                                                           options.accounts_file)
+        else:
+            print("Specifid account file does not exists.")
+            raise SystemExit
+    elif options.single_user:
+        src.interface.accounts = account_manager.Accounts(False)
     else:
         src.interface.accounts = account_manager.Accounts()
     return url, port
