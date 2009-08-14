@@ -134,6 +134,11 @@ def handler(request):
         # Tell Firefox not to cache; otherwise back button can bring back to
         # a page with a broken interpreter
         request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
+        # Set cookies only once per session.  In single user mode, this
+        # will be used to prevent other users to access Crunchy.
+        if 'session_cookie_set' not in plugin:
+            request.send_header('Set-Cookie', plugin['session_random_id'])
+            plugin['session_cookie_set'] = True
         if tell_Safari_page_is_html:
             request.send_header ("Content-Type", "text/html; charset=UTF-8")
             tell_Safari_page_is_html = False
