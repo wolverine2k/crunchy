@@ -3,17 +3,24 @@
 """
 from optparse import OptionParser
 import os
+import random
 import socket
 try:
     import webbrowser
 except:
-    print("webbrowser not available")  # in Jython...
+    print("Module webbrowser not available; you must be using Jython!")
 
 import src.interface
 REQUIRED = 2.4
 if src.interface.python_version < REQUIRED:
     print("Crunchy requires at least Python version %s"%REQUIRED)
     raise SystemExit
+
+# We generate a random string that will be appended to javascript functions
+# (like /exec and /doctest) used to communicate with the Python server and
+# that will be used in any other instances where a session has to be identified.
+src.interface.plugin['session_random_id'] = str(int(random.random()*1000000000)) + str(
+                                           int(random.random()*1000000000))
 
 if src.interface.python_version < 3:
     from urllib import quote_plus
@@ -217,7 +224,8 @@ def convert_url(url):
 
 def open_browser(url):
     """
-    Open the browser. This function does its best to open firefox.
+    Open the browser. This function does its best to open Firefox as it's
+    the only browser we test Crunchy in.
     """
     try:
         client = webbrowser.get("firefox")
@@ -229,7 +237,7 @@ def open_browser(url):
             client.open(url)
             return
         except:
-            print('Please open %s in Mozilla Firefox.' % url)
+            print('Please open %s in Firefox.' % url)
 
 if __name__ == "__main__":
     _url, _port = parse_options()

@@ -3,7 +3,6 @@ The crunchy plugin API
 """
 import threading
 from os.path import dirname
-import random
 
 import src.vlam as vlam
 import src.cometIO as cometIO
@@ -16,12 +15,6 @@ import src.PluginServices as services
 
 from src.interface import plugin, server, preprocessor, additional_vlam
 plugin['services'] = services
-
-# We generate a random string that will be appended to javascript functions
-# (like /exec and /doctest) used to communicate with the Python server.
-session_random_id = str(int(random.random()*1000000000)) + str(
-                                           int(random.random()*1000000000))
-plugin['session_random_id'] = session_random_id
 
 DEBUG = False
 

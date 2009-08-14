@@ -132,12 +132,14 @@ def require_digest_access_authenticate(func):
 
     return wrapped
 
-SECURITY_RISK = False
+bypass_authentication = False
+first_request = True
 if "Security Risk" in src.interface.accounts:
     print("Security risk is present.")
     # Meant for single user mode - bypass authentication
     require_authenticate = lambda x: x
-    SECURITY_RISK = True
+    bypass_authentication = True
+
 elif src.interface.accounts:
     require_authenticate = require_digest_access_authenticate
 else:
@@ -260,12 +262,24 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     @require_authenticate
     def do_POST(self):
         """handle an HTTP request"""
+        global first_request
         # at first, assume that the given path is the actual path and there are no arguments
         if DEBUG:
             print(self.path)
 
-        if SECURITY_RISK:
+        if first_request and bypass_authentication:
             self.crunchy_username = "Security Risk"
+            first_request = False
+        elif bypass_authentication:
+            if ("Cookie" in self.headers and
+                    src.interface.plugin['session_random_id']
+                    in self.headers["Cookie"]):
+                self.crunchy_username = "Security Risk"
+            else:
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write("You are not allowed to view this page")
+                return
 
         self.path, self.args = parse_url(self.path)
         # Clumsy syntax due to Python 2 and 2to3's lack of a byte
