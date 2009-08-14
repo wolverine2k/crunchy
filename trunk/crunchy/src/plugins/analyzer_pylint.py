@@ -34,7 +34,13 @@ def register():
             'get_analyzer_pylint',
             CrunchyLinter(),
         )
-        plugin['services'].register_analyzer_name('pylint')#, 'PyLint')
+        plugin['services'].register_analyzer_name('pylint')
+        plugin['add_vlam_option']('analyzer', 'pylint_full')
+        plugin['register_service'](
+            'get_analyzer_pylint_full',
+            CrunchyLinter(crunchy_report="full"),
+        )
+        plugin['services'].register_analyzer_name('pylint_full')
 
 if pylint_available:
     # We redefine the verification of docstring
@@ -54,8 +60,11 @@ class CrunchyLinter:
 
     Based on the Run class from pylint.lint
     """
-
-    def __init__(self, reporter=None, quiet=0, pylintrc=None):
+    def __init__(self, reporter=None, quiet=0, pylintrc=None, crunchy_report=None):
+        if crunchy_report == "full":
+            self.full_report = True
+        else:
+            self.full_report = False
         self.LinterClass = lint.PyLinter
         self._rcfile = pylintrc
         self.linter = self.LinterClass(
@@ -71,58 +80,53 @@ class CrunchyLinter:
         self.linter.read_config_file()
         self.linter.load_config_file()
         # Disable some errors.
-        self.linter.load_command_line_configuration([
-            '--module-rgx=.*',  # don't check the module name
-            '--reports=n',      # remove tables
-            '--persistent=n',   # don't save the old score (no sens for temp)
-        ])
+        if self.full_report:
+            self.linter.load_command_line_configuration([
+                '--module-rgx=.*',  # don't check the module name
+                '--persistent=n',   # don't save the old score (no sens for temp)
+            ])
+        else:
+            self.linter.load_command_line_configuration([
+                '--module-rgx=.*',  # don't check the module name
+                '--reports=n',      # remove tables
+                '--persistent=n',   # don't save the old score (no sens for temp)
+            ])
         self.linter.load_configuration()
         self.linter.disable_message('C0121')# required attribute "__revision__"
         if reporter:
             self.linter.set_reporter(reporter)
 
-    #def set_code(self, code):
-    #    """Set the code to analyze"""
-    #    self._code = code
-
     def run(self, code):
         """Make the analysis"""
-        print("entering analyzer_pylint.run()")
-        self._code = code
-        # Save the code in a temporary file
         temp = tempfile.NamedTemporaryFile(suffix = '.py')
-        temp.write(self._code)
+        temp.write(code)
         temp.flush()
-        # Open a buffer for the output
+
         output_buffer = StringIO()
         self.linter.reporter.set_output(output_buffer)
-        # Start the check
         self.linter.check(temp.name)
-        # Get the output and remove the irrelevant file path
-        #self._report = output_buffer.getvalue().replace(
-        #                    os.path.splitext(os.path.basename(temp.name))[0],
-        #                    'line ')
         self._report = output_buffer.getvalue().replace(temp.name, 'line ')
 
-        # Close files
         output_buffer.close()
         temp.close()
 
+
     def get_report(self):
         """Return the full report"""
-        return self._report
+        if self.full_report:
+            return "Full report from pylint\n" + self._report
+        return "Report from pylint\n" + self._report
 
     def get_global_score(self):
         """Return the global score or None if not available.
 
         This score can be formatted with "%.2f/10" % score
         """
-        # Make sure there is a global_note (if --report=n, the global_note
-        # is not calculated)
+
         if not 'global_note' in self.linter.stats:
             try:
                 self.linter.report_evaluation([], self.linter.stats, {})
             except EmptyReport:
                 # If there is no code to make a score
                 return None
-        return self.linter.stats['global_note']
+        return  self.linter.stats['global_note']

@@ -55,6 +55,7 @@ class CrunchyFlakes:
         This function is inspired from the check function of the pyflakes start
         script.
         """
+        print("run called in pychecker")
         self._code = code
         # Open a buffer for the output
         output = StringIO()
@@ -86,10 +87,9 @@ class CrunchyFlakes:
         # Close the buffer
         output.close()
 
-
     def get_report(self):
         """Return the full report"""
-        return self._report
+        return "Report from pyflakes\n" + self._report
 
     def get_global_score(self):
         """Return the global score or None if not available.
