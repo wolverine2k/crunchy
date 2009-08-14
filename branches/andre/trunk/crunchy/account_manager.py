@@ -47,8 +47,9 @@ class Accounts(dict): # tested
             item = [self.base_dir, "irrelevant password", "y"]
             self.__setitem__("_Unknown User_", item)
         else:
-            print("Fatal error in account_manager.Accounts.__init__")
-            raise SystemExit
+            f = open(self.pwd_file_path, 'w') # create new file - empty
+            f.close()
+            self.load()
 
     def __setitem__(self, username, item): # tested indirectly
         '''overrides base class dict method so that the password gets
