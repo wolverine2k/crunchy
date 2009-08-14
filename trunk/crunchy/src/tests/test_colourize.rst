@@ -16,9 +16,13 @@ This file contains tests of styling Python code.  Unfortunately, the
 additional markup makes it near impossible to have short (<80 characters)
 output lines.
 
-We start by initializing a Colourizer instance, as is done in
-crunchyfier.py (version 0.8).
+We start by initializing a Colourizer instance, after we do the usual
+dance and clear any remaining entries in the plugin and config dicts.
 
+    >>> from src.interface import plugin, config, get_base_dir
+    >>> plugin.clear()
+    >>> config.clear()
+    >>> config['crunchy_base_dir'] = get_base_dir()
     >>> import src.plugins.colourize as colourize
     >>> styler = colourize.Colourizer()
 
