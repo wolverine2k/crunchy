@@ -134,8 +134,9 @@ def require_digest_access_authenticate(func):
 
 bypass_authentication = False
 first_request = True
-if "Security Risk" in src.interface.accounts:
-    print("Security risk is present.")
+if "_Unknown User_" in src.interface.accounts:
+    src.interface.unknown_user_name = "_Unknown User_"
+    print("Unknown user: Crunchy is in single user mode.")
     # Meant for single user mode - bypass authentication
     require_authenticate = lambda x: x
     bypass_authentication = True
@@ -268,13 +269,13 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             print(self.path)
 
         if first_request and bypass_authentication:
-            self.crunchy_username = "Security Risk"
+            self.crunchy_username = src.interface.unknown_user_name
             first_request = False
         elif bypass_authentication:
             if ("Cookie" in self.headers and
                     src.interface.plugin['session_random_id']
                     in self.headers["Cookie"]):
-                self.crunchy_username = "Security Risk"
+                self.crunchy_username = src.interface.unknown_user_name
             else:
                 self.send_response(200)
                 self.end_headers()

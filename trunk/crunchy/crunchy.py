@@ -128,19 +128,12 @@ def parse_options():
     #interactive_help = """Somewhat equivalent to normal "python -i script.py".
     #                      Ignored if --url is used.
     #                      """
-    #username_help = """use to specify a username to use when starting
-    #                    Crunchy with a specified url as a start page as this
-    #                    bypass the request by the browser for a username.
-    #                      """
     #automated_help = """Used when running automated tests to disable request
     #                    for authentication and to prevent security
     #                    advisory confirmation from appearing when launching
     #                    Crunchy."""
     parser.add_option("--url", action="store", type="string", dest="url",
             help=url_help)
-
-    #parser.add_option("--username", action="store", type="string", dest="username",
-    #        help=username_help)
 
     #parser.add_option("--completely_trusted", action="store", type="string",
     #                  dest="safe_url", help=safe_url_help)
@@ -180,8 +173,6 @@ def parse_options():
     #elif options.interactive:
     #    src.interface.interactive = True
     #    url = convert_url(options.interactive)
-    #if options.username:
-    #    src.interface.username_at_start = options.username
     #if options.automated:
     #    src.interface.config['initial_security_set'] = True
     #    src.interface.config['automated'] = True
