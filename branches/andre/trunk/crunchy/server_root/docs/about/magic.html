@@ -29,26 +29,27 @@ how Crunchy performs it magic.
 There are a few steps to consider.</p>
 <ol>
 <li>The User starts Crunchy and communication is established.</li>
-<li><b>Unless the user name "Security Risk" exists</b> in the account file,
-the User has to establish his credentials, entering a username
-and password.  This normally needs only to be done once per browser
-session.</li>
+<li>At this point, there are two possibilities:</li>
 <ul>
-    <li>If the user name "Security Risk" exists, Crunchy is running in
-    single user mode, and never communicates through the browser to ask
-    about your username and password.  This is perfectly safe
-    <b><em>if and only if</em></b>
-    you are the only user on your computer and your computer can not be
-    accessed remotely by others.</li>
-    <li><b>If you share your computer with other people and happen to have
-    Crunchy running, and use Crunchy in single user mode,
-    they can access all your files through the browser and execute any Python
-    command (for example, to delete or modify your files) as though they
-    were you.</b> For this reason, we <b>strongly</b> suggest that you use the
-    account_manager.py script to delete the user "Security Risk" and
-    create one or more user profiles.  Consult the readme.html file
-    that was included with the Crunchy distribution for more details.</li>
+
+    <li>User accounts have been already created and used by Crunchy.
+    This is the "Server Mode", where multiple users can use simultaneously
+    the same instance of Crunchy running.</li>
+    <ul><li>If accounts have been created, the User has to establish his credentials,
+entering a username and password.  This normally needs only to be done once per browser
+session.</li>
+    <li>The authentication process is described in more details below.</ul>
+    <li>Crunchy starts without user accounts created. This is the
+    "Single User Mode".</li>
+    <ul><li>In this case, Crunchy sends a unique, random session id as a Cookie
+    to the Browser that is first used.  When new requests come in from the
+    Browser, Crunchy checks to ensure that the cookie is valid.  This ensures
+    that only one user (with a single browser!) can access Crunchy.</li>
+    <li>We do not describe with pictures below this cookie-based validation
+    process; however, after explaining the Server Mode authentication process,
+    we do provide some other useful information.</li></ul>
 </ul>
+
 <li>Crunchy retrieves an html page.</li>
 <li>Crunchy parses the page to create a tree structure
 (using Elementtree - more on this later).</li>
