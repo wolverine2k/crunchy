@@ -17,7 +17,7 @@ python_version = sys.version_info[0]
 if python_version >= 3:
     unicode = str
 
-DEFAULT_PATH = os.path.join(os.path.dirname(__file__), "crunchy.pwd")
+DEFAULT_PATH = os.path.join(os.path.dirname(__file__), ".PASSWD")
 
 class Accounts(dict): # tested
     '''dict-derived class to store user's account information.'''
@@ -29,16 +29,18 @@ class Accounts(dict): # tested
         if pwp is None:  # use this to allow redefining DEFAULT_PATH
             pwp = DEFAULT_PATH # from outside this module
         self.pwd_file_path = pwp
-        self.single_user_base_dir = os.path.join(os.getcwd(), ".crunchy")
         self.base_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
         if os.path.exists(pwp):
             try:
                 self.load()
             except IOError:
                 print("WARNING: Could not open existing password file.")
-        else:
-            if from_AMCLI:
+        elif from_AMCLI:
                 print("New password file [path = %s] will be created." % pwp)
+        else:
+            print("No password file exists: will create a default account with no file.")
+            item = [self.base_dir, "irrelevant password", "y"]
+            self.__setitem__("_Unknown User_", item)
 
     def __setitem__(self, username, item): # tested indirectly
         '''overrides base class dict method so that the password gets
@@ -258,10 +260,7 @@ class AMCLI(cmd.Cmd):
         "shortcuts" by their true values.'''
 
         if home == "default" or home == '':
-            if username != "Security Risk":
-                return os.path.join(self.accounts.base_dir, username)
-            else:
-                return os.path.join(self.accounts.single_user_base_dir, username)
+            return os.path.join(self.accounts.base_dir, username)
         else:
             return home
 

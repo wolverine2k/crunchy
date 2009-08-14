@@ -56,7 +56,7 @@ server = {}  # initialized by pluginloader.py
 translate = {} # initialized below
 exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
-username_at_start = None
+unknown_user_name = None
 
 def get_base_dir():
     path = os.path.normpath(os.path.join(os.path.dirname(__file__),

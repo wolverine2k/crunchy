@@ -368,10 +368,7 @@ class CrunchyPage(BasePage):
         the full URL if it is remote.
         """
         if username is None:
-            try:
-                username = interface.username_at_start
-            except:
-                pass
+            username = interface.unknown_user
         BasePage.__init__(self, username=username)
         self.url = url
 

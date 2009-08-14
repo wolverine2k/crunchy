@@ -10,7 +10,7 @@ from os import listdir
 from src.interface import (
     translate, config, plugin, server, debug,
     debug_msg, preprocessor, python_version,
-    crunchy_bytes, crunchy_unicode)
+    crunchy_bytes, crunchy_unicode, unknown_user_name)
 from src.utilities import meta_content_open, account_exists
 
 _ = translate['_']
@@ -112,8 +112,10 @@ def handler(request):
     if debug['handle_default'] or debug['handle_default.handler']:
         debug_msg("--> entering handler() in handle_default.py")
 
-    if not account_exists(request):
-        return
+    try:
+        dummy = request.crunchy_username
+    except:
+        request.crunchy_username = unknown_user_name
 
     data = path_to_filedata(request.path, root_path, request.crunchy_username)
     if debug['handle_default'] or debug['handle_default.handler']:

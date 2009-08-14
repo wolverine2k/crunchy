@@ -333,15 +333,6 @@ def account_exists(request):
     '''Verify that we have a valid user account so that we can proceed.'''
     try:
         dummy = request.crunchy_username
-        return True
     except:
-        msg = (_("You need to create an account before you can use Crunchy. ") +
-               _("Please use account_manager.py to create an account."))
-        if python_version >= 3:
-            msg = msg.encode('utf-8')
-        request.wfile.write(msg)
-        exit_file = join(root_path, "exit_en.html")
-        request.wfile.write(open(exit_file, 'rb').read())
-        request.end_headers()
-        server['server'].still_serving = False
-        return False
+        request.crunchy_username = "_Unknown User_"
+    return True
