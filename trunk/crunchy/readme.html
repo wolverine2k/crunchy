@@ -16,15 +16,15 @@ at a terminal window.</li>
 </ol>
 <img src="server_root/images/crunchy.png" alt="Crunchy Logo"/>
 <h2>Just to complicate things a bit...</h2>
-<p>Due to security concerns, you may want to create a user account before you
-start using Crunchy.  To do so, you can double-click on
+<p>While this is not necessary if you are the only user of Crunchy on your
+computer, you may want to create a user account before you
+start using Crunchy so that Crunchy can know your name.
+To do so, you can double-click on
 account_manager.py or type <em>python account_manager.py</em>
-at a terminal window.  When Crunchy is distributed, a special account
-with user name "Security Risk" is created.  You may want to delete it first.
-As a result, a typical session might go like the following:</p>
+at a terminal window.
+A typical session might go like the following:</p>
 <pre>
 $ python account_manager.py
->>> <em>del Security Risk</em>
 >>> <em>new username</em>
 Please input the home directory [or press 'enter' for default]: <em>press 'enter'</em>
 Please input the password: <em>choose something simple</em>
@@ -32,7 +32,7 @@ Please input the password again: <em>follow the instruction</em> :-)
 Does this user have administrative rights [y or n]? <em>choose y</em>
 >>> exit
 </pre>
-<p>We <b>strongly</b> suggest that you give this
+<p>If you set up an account, we <b>strongly</b> suggest that you give this
 first account administrative rights - otherwise you will not be able to
 quit Crunchy from the menu.</p>
 </p>When you are done:</p>
@@ -62,12 +62,7 @@ Copy this in and press enter - Crunchy's first page should be displayed.
 Do not use the "open a file" option from the Firefox menu to try and open a file; type in the
 url as indicated in the previous step.
 </li>
-<li><b>The following has NOT been reproduced:
-</b>A linux user has reported that he needed to start Firefox using sudo (i.e. in superuser mode).
-Also, when he did that, Firefox did not start in its usual mode - it started with a "virgin" profile
-with no bookmarks, etc.  If this happens to you <b><em>and especially if you know why and how
-to prevent it</em></b>, please let us know.
-</li>
-<li>If all of the above fail, do not hesitate to write to us.</li>
+<li>If all of the above fail, do not hesitate to
+<a href="mailto:andre.roberge@gmail.com"> write to us</a>.</li>
 </ul>
 </body>
