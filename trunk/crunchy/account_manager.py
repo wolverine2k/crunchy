@@ -26,18 +26,18 @@ class Accounts(dict): # tested
     separator = '|'
 
     def __init__(self, pwp=None, from_AMCLI=False): # tested
-        if pwp is None:  # use this to allow redefining DEFAULT_PATH
-            pwp = DEFAULT_PATH # from outside this module
         self.pwd_file_path = pwp
+        if pwp is None:  # use this to allow redefining DEFAULT_PATH
+            self.pwd_file_path = DEFAULT_PATH
         self.base_dir = os.path.join(os.path.expanduser("~"), ".crunchy")
-        if os.path.exists(pwp):
+        if os.path.exists(self.pwd_file_path):
             try:
                 self.load()
             except IOError:
                 print("WARNING: Could not open existing password file.")
         elif from_AMCLI:
                 print("New password file [path = %s] will be created." % pwp)
-        else:
+        elif pwp is None:
             print("No password file exists: will create a default account with no file.")
             item = [self.base_dir, "irrelevant password", "y"]
             self.__setitem__("_Unknown User_", item)
