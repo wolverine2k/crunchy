@@ -19,7 +19,8 @@ We need to import the plugin, something to create an Element, and
 set up some dummy registering functions.
 
    >>> import os
-   >>> from src.interface import config, Element, plugin, crunchy_bytes
+   >>> from src.interface import config, Element, plugin, crunchy_bytes, get_base_dir
+   >>> config['crunchy_base_dir'] = get_base_dir()
    >>> from src.CrunchyPlugin import create_vlam_page
 
    >>> def trust_me(url):
