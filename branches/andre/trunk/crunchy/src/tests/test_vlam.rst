@@ -41,11 +41,11 @@ See how_to.rst_ for details.
 .. _how_to.rst: how_to.rst
 
     >>> from src.interface import Element, plugin, config, from_comet, StringIO
-    >>> from src.utilities import uidgen
     >>> plugin.clear()
     >>> config.clear()
     >>> from os import getcwd
     >>> config['crunchy_base_dir'] = getcwd()
+    >>> from src.utilities import uidgen 
     >>> import src.vlam as vlam
     >>> from_comet.clear()
     >>> def dummy(arg):
@@ -213,8 +213,9 @@ Testing add_include()
     >>> list(page.included)
     ['junk']
     >>> page.add_include('more junk')
-    >>> list(page.included)
-    ['junk', 'more junk']
+    >>> # compare the following as set so that Jython tests are also satisfied
+    >>> set(page.included) == set(['junk', 'more junk'])
+    True
 
 .. _`includes()`:
 
@@ -314,10 +315,16 @@ Finally, some real styling is defined.
 
     >>> config['styles'] = {'pre': 'font:1000pt;', 'body': 'color: red;'}
     >>> page_no_body.add_user_style()
-    >>> print(output(page_no_body))
-    <html><head>brain<title>Hi!</title><style type="text/css">pre{font:1000pt;}
-    body{color: red;}
-    </style></head></html>
+
+We have to do a bit of work-around for the following test to be satisfied
+in both Jython and Python as the ordering is different
+
+    >>> print(output(page_no_body)) # doctest: +ELLIPSIS
+    <html><head>brain<title>Hi!</title><style type="text/css">...</style></head></html>
+    >>> 'pre{font:1000pt;}' in output(page_no_body)
+    True
+    >>> 'body{color: red;}' in output(page_no_body)
+    True
 
 Testing add_js_code()
 ---------------------

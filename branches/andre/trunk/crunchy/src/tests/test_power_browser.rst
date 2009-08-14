@@ -15,17 +15,21 @@ power_browser.py has has the following functions that require testing:
     >>> from src.interface import (
     ...     plugin, config, Element, tostring,
     ...     additional_menu_items)
+    >>> config.clear()
+    >>> plugin.clear()
     >>> from src.interface import ElementTree as et
+    >>> from os import getcwd
+    >>> config['crunchy_base_dir'] = getcwd()
     >>> import src.utilities
     >>> src.utilities.COUNT = 0
-    >>> plugin.clear()
+
     >>> def dummy(*args):
     ...    print(args)
     >>> plugin['local_html'] = dummy
     >>> plugin['remote_html'] = dummy
     >>> plugin['local_python'] = dummy
     >>> plugin['local_rst'] = dummy
-    >>> config.clear()
+
     >>> config['Crunchy'] = {}
     >>> config['Crunchy']['editarea_language'] = 'en'
     >>> import src.plugins.power_browser as pb

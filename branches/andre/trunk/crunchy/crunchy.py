@@ -4,7 +4,10 @@
 from optparse import OptionParser
 import os
 import socket
-import webbrowser
+try:
+    import webbrowser
+except:
+    print("webbrowser not available")  # in Jython...
 
 import src.interface
 REQUIRED = 2.4
