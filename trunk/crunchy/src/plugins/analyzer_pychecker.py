@@ -5,6 +5,7 @@ This plugin is an analyzer backend for pychecker.
 
 import os
 import tempfile
+
 try:
     # Try to import pychecker, but without checking the Crunchy code
     os.environ['PYCHECKER_DISABLED'] = '1'
@@ -50,10 +51,6 @@ class CrunchyChecker:
         self._code = None
         self._output_buffer = None
 
-    #def set_code(self, code):
-    #    """Set the code to analyze"""
-    #    self._code = code
-
     def run(self, code):
         """Make the analysis"""
         self._code = code
@@ -61,22 +58,20 @@ class CrunchyChecker:
         temp = tempfile.NamedTemporaryFile(suffix = '.py')
         temp.write(self._code)
         temp.flush()
-        # Open a buffer for the output, and change the pychecker.printer
-        # function to write inside.
-        self._output_buffer = StringIO.StringIO()
+        fname = os.path.basename(temp.name)
+
+        self._output_buffer = StringIO()
         checker._printWarnings = self._printWarnings
-        # Start the check
         checker.main(['dummy_arg', '--only', temp.name])
-        # Get the output and remove the irrelevant file path
-        self._report = self._output_buffer.getvalue().replace(temp.name,
-                                                              'line')
-        # Close files
+        # remove all traces of the Temporary file name
+        self._report = self._output_buffer.getvalue().replace(temp.name, 'line')
+        self._report = self._report.replace(fname[:-3] + ":", "")
         self._output_buffer.close()
         temp.close()
 
     def get_report(self):
         """Return the full report"""
-        return self._report
+        return "Report from pychecker:\n" + self._report
 
     def get_global_score(self):
         """Return the global score or None if not available.
@@ -92,11 +87,13 @@ class CrunchyChecker:
                           if line.strip() and not line.strip().startswith('#')]
             report_lines = [line for line in self.get_report().split('\n') \
                             if line]
-            number_of_errors = float(len(report_lines))
+            if len(report_lines) == 1:
+                return 10
+            number_of_errors = float(len(report_lines)-1)
             number_of_lines = float(len(code_lines))
             return 10 - ((number_of_errors / number_of_lines) * 10)
         else:
-            return None
+            return 0
 
     def _printWarnings(self, warnings, stream=None):
         """This function call the original checker._printWarnings, but set
