@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<title>Enabling preferences settings</title>
+</head>
+<body>
+<div id="main_title">Enabling preferences settings</div>
+<div id='content'>
+
+<p>
+In the category of <b><em>you're never going to need this</em></b> 
+[<small><em>just kidding</em></small>], is
+the ability to create a page where the user is allowed to set her 
+preferences using graphical elements.  This is what we use in Crunchy's
+standard <a href="/crunchy_tutor/config_en.html">user's preference page</a>.
+Here's an example of this where you can change the value of "doc_help".</p>
+
+
+
+
+<div title="preferences doc_help">access to doc_help</div>
+<p>This was done with the following html code</p>
+<pre title="html">
+&lt;div title="preferences doc_help"&gt;irrelevant text&lt;/div&gt;
+</pre>
+
+<h3>More than one value?</h3>
+
+<p>Multiple values are also allowed; all you need is to separate them
+by spaces. For example, this code:</p>
+<pre title="html">
+&lt;div title="preferences language doc_help dir_help"&gt;some text&lt;/div&gt;
+</pre>
+<p>will yield the following:</p>
+<div title="preferences language doc_help dir_help">access to a few options</div>
+<p>Note that they have been re-arranged to be in alphabetical order.</p>
+<h3>Grouping by type</h3>
+<p>As you know, there are three types of user preferences:</p>
+<ul>
+<li>Those with boolean values <code title="py_code">True or False</code>
+
+<pre title="html">
+&lt;div title="preferences boolean"&gt;...&lt;/div&gt;
+</pre>
+<div title="preferences boolean">...</div>
+</li>
+<li>Multiple choices
+<pre title="html">
+&lt;div title="preferences multiple_choice"&gt;...&lt;/div&gt;
+</pre>
+<div title="preferences multiple_choice">...</div>
+</li>
+<li>User defined options
+
+<pre title="html">
+&lt;div title="preferences user_defined"&gt;...&lt;/div&gt;
+</pre>
+<div title="preferences user_defined">...</div>
+</li>
+</ul>
+<p>As you could see, Crunchy allows you to only display one type at a time 
+<small>otherwise we would not have raised the subject</small></p>
+
+<h3>And for those who want it all...</h3>
+<p>Quite simply, you do not specify any...</p>
+<pre title="html">
+&lt;div title="preferences"&gt;...&lt;/div&gt;
+</pre>
+<div title="preferences">all of them</div>
+</div>
+</body>
+</html>
