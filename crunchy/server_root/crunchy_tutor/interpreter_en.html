@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta title="template ../index.html">
+	<title>Crunchy :: Interpreter Tutorial</title>
+	
+</head>
+
+<body>
+
+<div id="main_title">Interpreter</div>
+<div id="content">
+<p>I am assuming that you are viewing this page using Crunchy.  If not, all you will see is
+a somewhat traditional page with some black text in it.  Any reference to a Python interpreter
+that I make will seem rather odd.</p>
+<h3 >An almost typical introduction to Python</h3>
+<p>I will not begin this introduction to Python the standard way, like it is done with all
+other languages, by asking you to write the traditional</p>
+<pre title="py_code">
+print "Hello World!"
+</pre>
+<p>No, this would just be too boring and neither worthy of Python nor of Crunchy.  Instead, I suggest
+that you type the following code in the interpreter prompt that appears just below it.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; answer = 211 // 5
+&gt;&gt;&gt; print(answer)
+</pre>
+<p>If you haven't made any mistake, Python will respond with <b>
+The Answer to The Ultimate Question Of Life, the Universe and Everything,</b>  <small>at least according to the Hitchhiker's Guide to the Galaxy.</small> 
+The Python interpreter you just used was actually inspired by and adapted from some great work by Robert Brewer. You may have also 
+noticed that the Python code was displayed in colour, quite unlike the boring all black stuff of the original html page.</p>
+<p>Impressive, isn't it?  Now try the following in this other interpreter.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; print(answer)
+</pre>
+<p>Yes, <tt>WE ARE THE BORG</tt>.  Crunchy's Borg interpreters all share the same state so that variables entered in one of them are known to all the other
+interpreters on the same page.  However, if you are in search of a bit of 
+individuality, you can try the same experiment again below.</p>
+
+<pre title="interpreter isolated">
+&gt;&gt;&gt; print(answer)
+</pre>
+
+<div class="notes">
+<h4>Different prompt</h4>
+<p> Notice how the prompt of the isolated interpreter (<code class = "py_prompt">--&gt;</code>)  is different
+from the standard Python prompt, used for the Borg interpreter.  The single <code class="py_prompt">&gt;</code> sign is meant as a reminder that this is an individual interpreter.
+</p>
+</div>
+
+<p>Python/Crunchy gave you an error message, as it did not know the answer
+to the ultimate question.  Generally, you should only see Borg type interpreters used in Crunchy.  However, you should keep in mind that there are other possibilities.</p>
+<p>After seeing these amazing feats, I am convinced that you will want to purchase Crunchy!</p>
+<blockquote><i> I'm not interested in your sales! I have to protect the general public!</i><br />
+<small>From the Monty Python Crunchy Frog sketch.</small></blockquote>
+<p>Crunchy is not for sale: it is free software.  However, it is not designed for the "general public".  Using a Python interpreter on a computer can lead to unwanted results, depending on the code that is being executed. 
+[<code title="py_code">import os:</code> <span style="color:red">use with caution!</span>]  We can not be held responsible for any negative consequence of code you type in for Crunchy/Python to execute.</p>
+<h3 >Slightly advanced stuff</h3>
+<p>Yes, it's ok to read on.  I am not going to introduce really super advanced stuff here.</p>
+<p>You can type in more than one line of code and interact with the interpreter in various ways.  In the examples below, I have tried to show both what you should type in, and a preview of the response from Crunchy.  First, we start
+with an interaction where the interpreter will be waiting for a response to
+a question.</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; name = raw_input("What is your name? ")
+What is your name?
+[Type in your name in the input box with no prompt in front]
+&gt;&gt;&gt; print(name)
+Your_name_should_appear_here
+</pre>
+<p>Next we show examples of loops; make sure you indent the code properly.</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; for i in range(4):
+...     print(i)
+... 
+0
+1
+2
+3
+</pre>
+
+<p>
+Next, try this example and notice how, at some point, a pop-up "help window" will appear at the top left.  You can make it go away by clicking on the 
+<span style="font:sans-serif;">X</span> or simply keep on typing until it goes away on its own, except for the next three examples.
+</p>
+
+<pre title="interpreter">
+&gt;&gt;&gt; import sys
+&gt;&gt;&gt; help(sys)   # click on the X when you're finished reading
+&gt;&gt;&gt; sys?        # shortcut for help.
+&gt;&gt;&gt; sys.exit?
+</pre>
+
+<p>Finally, you can view the variables defined so far (I won't show you
+the expected output since it depends on what <em>you</em> tried before)
+using the <code title="py_code">dir()</code> function, and remove them all,
+effectively starting a new session, using the <code title="py_code">restart()</code> function.
+</p>
+<pre title="interpreter">
+&gt;&gt;&gt; dir()
+&gt;&gt;&gt; restart()  # specific to Crunchy
+&gt;&gt;&gt; dir()
+</pre>
+
+<p>You now know enough to use the interpreter to learn about Python following a "real" Python tutorial.  You can either do this by go to the 
+<a href="http://docs.python.org/tut/tut.html">the official Python tutorial</a>
+on the python.org site or continue to learn about Crunchy by clicking on the editor link on the left.  WARNING: if you click on the above link, you will not, 
+in fact, be able to try out the Python code.  This is because Crunchy
+does not allow interactions with unknown sites; it will simply style the page
+in its own way and display it.  You will need to explicitly tell it (there are
+at least 3 different ways of doing this) that you consider the
+site "safe" for browsing.  If you can't wait, just enter</p>
+<pre title="interpreter">
+>>> crunchy.add_site()
+>>> # docs.python.org is the answer to the first question
+>>> # trusted is the likely answer to the second
+</pre>
+<p>In general, you might want to be a bit cautious as to the value you choose for the security
+level of a remote site.  
+However, it's most likely safe to write <code title="py_code">trusted</code> for the
+security level of the docs.python.org site.</p>
+<h3 >Advanced stuff</h3>
+<p>Crunchy's interpreter knows some new tricks that can be very useful ... but potentially tricky.
+Consider the following.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; name = "Guido van Rossum"
+&gt;&gt;&gt; print(name)
+Guido van Rossum
+</pre>
+<p>Instead of having only two lines of text, imagine we had 20 lines.  To reproduce this example would require lots of typing.
+Using some advanced feature of Crunchy, you can save yourself a fair bit of typing.
+Here is how: click on the image <img src="../images/editor.png" alt="editor.png" style="height:30px"/> to the right of
+the interpreter.
+You should see appearing below it a larger box (an html textarea for those interested)
+a button at the bottom.  
+Clicking on that button feeds the code to the interpreter. 
+Try it out!
+</p>
+<p>While this is a neat trick, there are a couple of caveats: Crunchy takes each line as though you had typed it yourself, one line at a time, in an interactive session.</p>
+<h4 >Caveat #1 </h4>
+<p>Try to click on the image, copy code and execute trick with the following.</p>
+<pre title="interpreter">
+&gt;&gt;&gt; name = raw_input("Enter your name: ")
+&gt;&gt;&gt; print "YOUR NAME IS", name
+</pre>
+<p>Now, try the next example below to see more clearly what happened:</p>
+<pre title="interpreter">
+&gt;&gt;&gt; name
+</pre>
+<p>As you should see, Crunchy had taken the second line as your answer to the first. 
+This is unlikely to be what you want.</p>
+<p><b>First lesson:</b> do not use <code title="py_code">input()</code> or 
+<code title="py_code">raw_input()</code> inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
+
+<h4 >Caveat #2 </h4>
+<p>Try again with the following example: click on the editor image and execute the code.  
+You will find that the interpreter will not be able to
+handle the result and give you a number of error messages.  When that happens, 
+continue reading below.</p>
+<pre title="interpreter linenumber">
+&gt;&gt;&gt; def flatten(seq):
+...     """flatten(sequence) -> list
+... 
+...     Returns a single, flat list which contains all elements retrieved
+...     from the sequence and all recursively contained sub-sequences
+...     (iterables).
+... 
+...     Examples:
+...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+...     """
+... 
+...     result = []
+...     for elem in seq:
+...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
+...             result.extend(flatten(elem))
+...         else:
+...             result.append(elem)
+...     return result
+...
+&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+</pre>
+<p>The problem is due to the empty line (12).  Imagine that you were typing in the code yourself, line by line.
+When you enter an empty line, the interpreter interprets this as the end of
+a function definition (or a loop, or if statement, etc.).
+To avoid this problem, we need to have something with no empty lines; so try again, this time removing the empty line before executing the code.
+</p>
+
+<p><b>Second lesson:</b> beware of empty lines inside a box obtained by clicking
+on the editor image next to an interpreter.</p>
+
+<h3 >Really advanced stuff: the <small>[dead]</small> parrot interpreter</h3>
+
+<blockquote>
+<em>
+     <b>Mr. Praline:</b> ... I wish to complain about this parrot that I purchased not half an hour ago from this very boutique.<br/><br/>
+
+     <b>Owner:</b> Oh yes, the, uh, the Norwegian Blue...What's, uh...What's wrong with it?<br/><br/>
+
+     <b>Mr. Praline:</b> I'll tell you what's wrong with it, my lad. 'E's dead, that's what's wrong with it!<br/><br/>
+     <b>Owner:</b> No, no, 'e's uh,...he's resting.<br/><br/>
+</em>
+<small>From Monty Python: the dead parrot sketch.</small>
+</blockquote>
+
+<p>The dead parrot sketch is a very funny, and very popular, sketch performed by Monty Python.  If you have never seen it, I encourage you to search for it on video.</p>
+<p><em>What does this have to do with interpreters, you ask? </em> On the Python 
+edu-sig list, Michael Tobis posted the following:</p>
+<blockquote><em>
+One problem I have consistently had with beginners is in explaining
+the difference between how the interpreter produces output without an
+explicit 'print' statement (producing the str() of the last evaluated
+expression) and how python run from a file does not.<br/><br/>
+
+This is perfectly natural and useful for an experienced user, but it
+is awkward and confusing for the beginner, who has enough of a
+cognitive load just trying to track all the pieces.<br/><br/>
+
+This leads to two (well, four) questions:<br/><br/>
+
+1) How have you folks addressed this problem in your beginning
+classes? Do you find it causes difficulties?<br/><br/>
+
+2) Would it be difficult to provide an alternative interpreter that
+produced nothing unless you asked it to print? Would this be a good
+idea?
+</em>
+</blockquote>
+<p>These are very good questions that follow an insightful observation.
+I will not attempt to answer them here, except to say that Crunchy addresses the third one [that is to say, the first one of the two that are
+labeled as the second one] by providing not one, but two <small>[dead]</small> parrot interpreters.  These <small>[dead]</small> parrot interpreters
+do not echo back what is typed into them; you need to explicitly type 
+<code title="py_code">print</code> to get an output, as follows.</p>
+<pre title="parrot">
+>>> "'E's dead."
+>>> print("He's resting.")
+He's resting.
+</pre>
+<div class="notes">
+<h4>Different prompts :-)</h4>
+<p> The prompt <code class = "py_prompt">_u__)</code> for the parrot interpreter
+is meant to look like a <small>[dead]</small> parrot lying on its back, with its 
+two legs pointing up as well as its long beak.  The <small>[dead]</small>
+Parrots prompt is meant to represent many (two actually) <small>[dead]</small>
+parrots, with only the beak from the second one showing, as it is hidden behind
+the first.
+</p>
+</div>
+<p>This <small>[dead]</small> parrot interpreter is unique; it behaves like an
+individual interpreter encountered before.</p>
+<p>There can never be enough of a good thing - at least, I think so when it
+comes to Crunchy.  This is why I give you the <small>[dead]</small> Parrots 
+<small>[with a capital P and an 's' at the end]</small> interpreter.</p>
+
+<pre title="Parrots">
+>>> "'E's dead."
+>>> print("He's resting.")
+He's resting.
+</pre>
+<p>Like the Borg interpreter
+these share all the same state.  They have been assimilated. 
+You can confirm this by defining a variable in it, and verifying that it
+is known by the other Borg interpreters on this page.</p>
+
+<h3 >More really advanced stuff: the TypeInfoConsole</h3>
+<p>As a follow-up to Michael Tobis original post on edu-sig mentioned above,
+John Posner suggested:</p>
+<blockquote><i>... if the user types an expression that
+returns a value,
+have IDLE echo the return value <b>annotated with its type</b>, and with 
+"&lt;&lt;&lt;" as a
+prefix. Reversing the direction of the angle brackets is a neat (IMHO) way
+to remind the user of the concept of "return value".
+</i></blockquote>
+<p>While we did not quite follow to the letter John's suggestion, we have
+made available the TypeInfoConsole which you can try below.</p>
+<pre title="TypeInfoConsole">
+>>> a = 3   # assignment does not echo anything as usual
+>>> a       # try and see for yourself what happens now
+>>> fun = (1, 'a', {'a':1}, (1, 2), [1, 2], set('abc'), 1.0, 1+1j)
+>>> for f in fun:
+...     f
+...
+</pre>
+
+
+<h3 >Advanced stuff, for tutorial writers</h3>
+<p>In order to instruct Crunchy to insert an interpreter below a Python code sample, one uses the <code>title</code> attribute as follows:</p>
+<p><code>&lt;pre title="&lt;&lt;interpreter&gt;&gt; [no_style] [linenumber [=starting_number]]"&gt;</code><br/>
+<code>Some Python code</code><br/>
+<code>&lt;/pre&gt;</code></p> <p> where the square brackets
+indicate optional arguments, and <code>&lt;&lt;interpreter&gt;&gt;</code> can
+be any value taken from the following list:
+<code>[interpreter, isolated, parrot, Parrots, TypeInfoConsole]</code>; the standard choice
+should be <code>interpreter</code> (or the equivalent <code>Borg</code>). There is
+also another option, <code>python_tutorial</code> which only inserts an interpreter
+if there are prompts appearing in the code sample; otherwise, it simply styles the
+code. <small>For the curious, there is yet another value that is undocumented - use
+the source...</small></p>
+
+<p>
+Any number of interpreter "prompts" can 
+appear within a page; if <code>interpreter</code> has been selected, every
+such interpreter used <b>on the same page</b> 
+shares the same environment; if <code>isolated</code> is chosen, then
+each such interpreter will have its own environment.  
+Sharing the same environment means that, if you need to import a given module as you go through a tutorial, you only have to do it once; similarly, a variable defined in one such interpreter will be known to others, until the user clicks on a link to load a new page.</p>
+<p>Any text between the <code>pre</code> tags is placed before the interpreter, in a <code>pre</code> element and styled, unless the <code>no_style</code>
+option is specified. If the <code>linenumber</code>
+option is present, a line number will appear before each line of input
+code; the line numbering will start at 1 unless a different starting value is given.</p>
+
+</div>
+
+</body>
+</html>

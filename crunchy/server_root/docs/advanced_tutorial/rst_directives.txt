@@ -1,0 +1,116 @@
+========================================
+ Crunchy/reStructuredText Demonstration
+========================================
+
+*For this to work, you need to have a recent version of
+docutils installed.*
+
+This file is a simple reStructuredText file.  However,
+it does contain some *directives* which Crunchy can
+interpret.
+
+We start by showing two simple Python code samples,
+with no special directives,
+one with a simulated interactive Python session,
+the other without, so that Crunchy will perform
+its magic based on your preferences.
+
+    >>> print "Python is great!"
+    Python is great!
+
+And for the other example without a Python prompt, that
+Crunchy will not know what to do with.
+
+    print "Crunchy is pretty good too!"
+
+We now move on to using embedded directives.
+
+Interpreters
+============
+
+The following is an example of a borg interpreter.
+If you type the above text into the box, you will see
+that "answer" can be defined and then printed
+
+.. interpreter:: interpreter
+   :linenumber:
+
+   >>> answer = 42
+   >>> print answer
+   42
+
+If you type 'answer' into this text box, then it will be
+evaluated to 42. Try it:
+
+.. interpreter:: interpreter
+
+   >>> answer
+   42
+
+If, however, we make an isolated interpreter, we can see
+that the variable 'answer' does not exist:
+
+.. interpreter:: isolated
+   :linenumber:
+
+   >>> answer
+   Error on line 1:
+   NameError: name 'answer' is not defined
+
+As you can see, isolated interpreters don't have access to the
+same environment as the rest.
+
+Editors
+=======
+
+Editors are spaces on the page where code can be edited and
+subsequently executed. If you try clicking on the "Toggle editor"
+checkbox, you will be presented with a nifty little editor. By
+typing the above code into the editor and clicking "Execute",
+you will see the results below:
+
+.. editor:: no_copy
+   :linenumber:
+
+   print "Ni! Ni! Ni!"
+
+Note that we did not write a Python prompt.
+
+
+Alternatively, the editor can come pre-loaded with a few lines of
+code, like so:
+
+.. editor::
+
+    >>> print "Pining for the fjords!"
+
+
+Alternate Python Versions
+=========================
+
+If you're feeling a little bit old school, and want to try out
+Python 2.3, or if you have the bleeding edge Py3K SVN snapshot
+installed, then you can test out different versions of Python
+like so:
+
+.. alt_py::
+
+   >>> print "Hello from the past!"
+   Hello from the past!
+
+Just enter the path to the Python executable you wish to use
+and Crunchy will execute it and return the value.
+
+DocTests
+========
+
+Crunchy can also embed DocTests within a page:
+
+.. doctest::
+   :linenumber:
+
+   >>> print greeting
+   Hello, World!
+
+Please use the back button of your browser to return
+to the previous page.

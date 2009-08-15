@@ -1,0 +1,160 @@
+See Reeborg's home <http://reeborg.world.googlepages.com/home> for a
+brief description.
+
+Try the following demos (you can edit them). Click on start to tell
+Reeborg to load your program (and/or restart at the beginning). Then,
+click on start to run the program automatically or start to run it one
+instruction at a time. If you click on start, the execution will pause.
+
+*Note: World 1 [below] does not recognize turn_right() as a valid command.*
+
+Demo #1 <#>(Build a Square - and demonstrates uses of set_delay())
+Demo #2 <#>(Beepers)
+Demo #3 <#>(While Loop (and going in and out))
+Demo #4 <#>(If statement)
+Reeborg's World
+										
+										
+										
+										
+										
+										
+										
+									
+
+	
+turn_right()
+
+# This builds a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
+def build_square():
+  set_delay(10)
+  for i in range(4):
+    for i in range(5):
+      move()
+      build_wall_on_left()
+    move()
+    turn_left()
+  turn_left()
+  set_delay(200)
+  for i in range(4):
+    for i in range(5):
+      move()
+    move()
+    turn_right()
+build_square()
+
+
+      Single instructions
+
+move() <#> turn_left() <#> turn_right() <#> enter_home() <#>
+go_outside() <#>
+build_wall_on_left() <#> put_beeper() <#> pick_beeper() <#>
+make_beeper() <#>
+
+
+    Demos
+
+Choose world 1 <#> or Choose world 2 <#>
+*World 1*
+
+new World({
+  'nb_ave': 8,
+  'nb_st': 8
+  });
+
+*World 2*
+
+new World({
+  'nb_ave': 10,
+  'nb_st': 8,
+  '_turn_right': true
+  });
+
+
+      Build a Square - and demonstrates uses of set_delay()
+
+# This builds a 5 x 5 square.
+# Try editing it to make a smaller
+# square!
+def build_square():
+  set_delay(10)
+  for i in range(4):
+    for i in range(5):
+      move()
+      build_wall_on_left()
+    move()
+    turn_left()
+  turn_left()
+  set_delay(200)
+  for i in range(4):
+    for i in range(5):
+      move()
+    move()
+    turn_right()
+build_square()
+
+
+      Beepers
+
+def make_and_put_beeper():
+  make_beeper()
+  put_beeper()
+
+make_and_put_beeper()
+move()
+make_and_put_beeper()
+make_and_put_beeper()
+turn_left()
+move()
+
+set_delay(10) # speed things up
+for i in range(9):
+    make_and_put_beeper()
+turn_left()
+move()
+# should be a different image
+for i in range(10):
+    make_and_put_beeper()
+
+set_delay(200) # back to default speed
+turn_left()
+
+# go back to origin; robot should appear (no beepers)
+# and image of house should indicate we can go in.
+move()
+turn_left()
+pick_beeper()
+move()
+
+
+      While Loop (and going in and out)
+
+set_delay(20)
+for i in range(4):
+    while front_is_clear():
+        move()
+    turn_left()
+
+turn_left()
+turn_left()
+pause()
+enter_home()
+go_outside()
+
+
+      If statement
+
+if front_is_clear():
+    move()
+if front_is_blocked():
+    # won't try to do this
+    put_beeper()
+if front_is_blocked():
+    # won't do this
+    turn_left()
+else:
+    # will do this instead
+    turn_right()
+
