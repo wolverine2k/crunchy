@@ -91,6 +91,10 @@ def add_font_choices(text):
        EditArea on a 'slide'.  This was motivated by the desire to
        demonstrate Crunchy (and EditArea) at Pycon 2007.
     """
+
+    ### note: this does not do anything with the latest version of editarea
+    ## the best way is to edit by hand after running adapt_for_crunchy.
+
     font_choice = "\"<option value='%d'>%d pt</option>\" +"
     font14 = font_choice%(14, 14)
     font17 = font_choice%(17, 17)

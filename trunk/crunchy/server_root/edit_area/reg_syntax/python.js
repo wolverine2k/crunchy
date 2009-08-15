@@ -1,3 +1,9 @@
+/**
+ * Python syntax v 1.1 
+ * 
+ * v1.1 by Andre Roberge (2006/12/27)
+ *   
+**/
 editAreaLoader.load_syntax["python"] = {
 	'COMMENT_SINGLE' : {1 : '#'}
 	,'COMMENT_MULTI' : {}
@@ -126,7 +132,7 @@ editAreaLoader.load_syntax["python"] = {
 		'COMMENTS': 'color: #AAAAAA;'
 		,'QUOTESMARKS': 'color: #660066;'
 		,'KEYWORDS' : {
-			'reserved' : 'color: #336699;'
+			'reserved' : 'color: #0000FF;'
 			,'builtins' : 'color: #009900;'
 			,'stdlib' : 'color: #009900;'
 			,'special': 'color: #006666;'
