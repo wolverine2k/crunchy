@@ -182,6 +182,34 @@ class PreHtmlFormatter(HtmlFormatter):
             yield i, t
         yield 0, '</pre>'
 
+# We need to prevent pygments from misinterpreting html numerical entities
+# as indicating the beginning of a comment in Python
+entity_pattern = re.compile("(&#\d{1,4};)")
+
+old = None
+new = None
+def replace_entity_pattern(text):
+    global old, new
+    old = []
+    new = []
+    repl = "_a_"
+    while repl in text:
+        repl += "_b_"
+    _splits = entity_pattern.split(text)
+    for i, s in enumerate(_splits):
+        if entity_pattern.match(s):
+            old.append(s)
+            _splits[i] = s.replace("&#", repl).replace(";", repl)
+            new.append(_splits[i])
+        else:
+            pass
+    return ''.join(_splits)
+
+def recover_entity_pattern(text):
+    for i, ent in enumerate(new):
+        text = text.replace(ent, old[i])
+    return text
+
 
 def _style(raw_code, language, cssclass):
     """Returns a string of formatted and styled HTML, where
@@ -189,7 +217,9 @@ def _style(raw_code, language, cssclass):
     and cssclass is a class style available for Pygments."""
     # Note: eventually, cssclass would be obtained from a user's preferences
     # and would not need to be passed as an argument to style()
-    global _pygment_lexer_names
+    global _pygment_lexer_names, _sharp
+
+    raw_code = replace_entity_pattern(raw_code)
     requested_language = language
     try:
         lexer = lexers[language]
@@ -207,7 +237,8 @@ def _style(raw_code, language, cssclass):
 
     # the removal of "\n" below prevents an extra space to be introduced
     # with the background color of the selected cssclass
-    return highlight(raw_code, lexer, formatter).replace("\n</pre>", "</pre>")
+    styled_code = highlight(raw_code, lexer, formatter).replace("\n</pre>", "</pre>")
+    return recover_entity_pattern(styled_code)
 
 def add_linenumber(styled_code, vlam):
     '''adds the line number information'''

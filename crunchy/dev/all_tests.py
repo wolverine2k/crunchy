@@ -14,6 +14,11 @@ This should be run from the base directory (crunchy).
 #TODO ??: add a command line option that would remove the current .crunchy
 # directory to start unit tests from the point of view of a new user.
 
+# Note for self: using with coverage:
+# python dev/all_tests.py --nose
+# coverage -b -d cover -i -m
+# then look for index.html inside cover directory
+
 import doctest
 import os
 import random
@@ -67,11 +72,15 @@ sys.path.insert(0, realpath(os.path.join(test_path, '../..')))
 if options.nose:
     from nose.core import run
     argv = ['-w', test_path,
-            '--verbose',
+            #'--verbose',
             '--exclude=how_to.rst',
             '--with-doctest',
             '--doctest-extension=.rst',
-            '--with-isolation']
+            '--with-coverage',
+            #'--cover-html',
+            '--cover-inclusive',
+            '--with-isolation'
+            ]
     run(argv=argv)
     raise SystemExit()
 

@@ -6,7 +6,7 @@ Translation infrastructure for Crunchy.
 import os.path
 from imp import find_module
 
-from src.interface import u_print
+from src.tools import u_print
 
 current_locale = None
 DEBUG = False

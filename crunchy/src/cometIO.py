@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Handles all the Output - ie. is used to push javascript code
 to the page asynchronously.
@@ -111,6 +112,11 @@ class CrunchyIOBuffer(StringBuffer):
         pdata = data.replace("\n", "\\n")
         pdata = pdata.replace("\r", "\\r")
         debug_msg("pdata = "+ pdata, 4)
+        if python_version < 3:
+            try:
+                pdata = pdata.decode('utf-8')
+            except:
+                pdate = 'Error in trying to decode'
         self.lock.acquire()
         pageid = uid.split("_")[0]
         username = names[pageid]
@@ -169,8 +175,8 @@ def comet(request):
     # Python 3, request data (from std{in, out, err}) is passed along in
     # Unicode strings; these need to
     # be encoded to be properly understood by the browser
-    if python_version >= 3:
-        data = data.encode('utf-8')
+    #if python_version >= 3:
+    data = data.encode('utf-8')
 
     request.wfile.write(data)
     request.wfile.flush()
