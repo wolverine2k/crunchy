@@ -71,6 +71,11 @@ def trim_empty_lines_from_end(text):  # tested
     # This function is used in interpreter.py and colourize.py.
     return text.strip(' \r\n')
 
+entity_pattern = re.compile("(&amp;#\d{1,4});")
+def recover_entity_pattern(match):
+    text = match.group().replace("&amp;", "&")
+    return text
+
 def changeHTMLspecialCharacters(text):  # tested
     '''replace <>& by their escaped valued so they are displayed properly
        in browser.'''
@@ -78,6 +83,8 @@ def changeHTMLspecialCharacters(text):  # tested
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
+    # this reverchanges like from &amp;1234; to &#1234;
+    text = entity_pattern.sub(recover_entity_pattern, text)
     return text
 
 def unChangeHTMLspecialCharacters(text):
