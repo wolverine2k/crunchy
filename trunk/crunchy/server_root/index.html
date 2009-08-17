@@ -123,6 +123,41 @@ Crunchy may work (at least partially) with some other browsers,
 but it is currently only tested with Firefox. </li>
 </ul>
 
+<h3>Warning: mixed behaviour when working with unicode</h3>
+<p>Internally, Crunchy works with utf-8 encoding.  This leads to a slight
+change when using Python 2.x with Crunchy for unicode strings.
+For example, when working from the terminal, on a Mac OS, the following happens:
+</p>
+<pre title="pycon">
+&gt;&gt;&gt; print 'André'
+André
+&gt;&gt;&gt; 'André'
+'Andr\xc3\xa9'
+&gt;&gt;&gt; u'André'
+u'Andr\xe9'
+&gt;&gt;&gt; print u'André'
+André
+</pre>
+<p>However, if you use Crunchy, this is what you will see instead:</p>
+<pre title="pycon">
+&gt;&gt;&gt; print 'André'
+André
+&gt;&gt;&gt; 'André'
+'Andr\xc3\xa9'
+&gt;&gt;&gt; u'André'   # This is different
+u'Andr\xc3\xa9'
+&gt;&gt;&gt; print u'André'   # and so is this
+   Crunchy Error in trying to decode inside cometIO.py
+   The likely cause is trying to print a unicode string prefixed by u
+   as in u"...". If not, please file a bug report.
+AndrÃ©
+</pre>
+<p>When you are writing code from within Crunchy (not to be saved in a file),
+and using Python 2.x, just drop the u prefix for unicode strings and
+everything will work just as though you had included it while coding
+in other environments.
+</p>
+
 <h3>New to Crunchy?</h3>
 <p>If you are new to Crunchy, or have used an older version,
 we strongly suggest that you first
