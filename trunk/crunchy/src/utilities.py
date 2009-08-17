@@ -83,7 +83,7 @@ def changeHTMLspecialCharacters(text):  # tested
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
-    # this reverchanges like from &amp;1234; to &#1234;
+    # this reverse changes like from &amp;1234; to &#1234;
     text = entity_pattern.sub(recover_entity_pattern, text)
     return text
 
