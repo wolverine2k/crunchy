@@ -15,7 +15,15 @@ import src.interface as interface
 
 from src.interface import config, accounts, names, python_version
 
+# When print statements occur in cometIO.py, they are swallowed by the
+# http server.  As a result, we introduce debug_msg as a utility function
+# which plays the role of "print" when debugging this module
 debug_ids = []#[1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+def debug_msg(data, id_=None):
+    """write a debug message, debug messages always appear on stderr"""
+    if id_ in debug_ids or id_ is None:
+        sys.stderr.default_write(data + "\n")
 
 show_io_js = """
 $("#out_%s").html("");
@@ -116,7 +124,9 @@ class CrunchyIOBuffer(StringBuffer):
             try:
                 pdata = pdata.decode('utf-8')
             except:
-                pdate = 'Error in trying to decode'
+                debug_msg('   Crunchy Error in trying to decode inside cometIO.py')
+                debug_msg('   The likely cause is trying to print a unicode string prefixed by u')
+                debug_msg('   as in u"...".  If not, please file a bug report.')
         self.lock.acquire()
         pageid = uid.split("_")[0]
         username = names[pageid]
@@ -386,11 +396,6 @@ class ThreadedBuffer(object):
         if python_version < 3:
             data = data.decode('utf-8')
         self.default_out.write(data)
-
-def debug_msg(data, id_=None):
-    """write a debug message, debug messages always appear on stderr"""
-    if id_ in debug_ids:
-        sys.stderr.default_write(data + "\n")
 
 sys.stdin = ThreadedBuffer(in_buf=sys.stdin)
 def init_stdios():

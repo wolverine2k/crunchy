@@ -989,6 +989,12 @@ def _encode(text, encoding):
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
 
+# added for crunchy
+entity_pattern = re.compile("(&amp;#\d{1,4});")
+def recover_entity_pattern(match):
+    text = match.group().replace("&amp;", "&")
+    return text
+
 def _escape_cdata(text, encoding):
     # escape character data
     try:
@@ -1001,6 +1007,8 @@ def _escape_cdata(text, encoding):
             text = text.replace("<", "&lt;")
         if ">" in text:
             text = text.replace(">", "&gt;")
+        # added for crunchy - from &amp;1234; to &#1234;
+        text = entity_pattern.sub(recover_entity_pattern, text)
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
@@ -1018,6 +1026,8 @@ def _escape_attrib(text, encoding):
             text = text.replace("\"", "&quot;")
         if "\n" in text:
             text = text.replace("\n", "&#10;")
+        # added for crunchy - from &amp;1234; to &#1234;
+        text = entity_pattern.sub(recover_entity_pattern, text)
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
@@ -1031,6 +1041,8 @@ def _escape_attrib_html(text, encoding):
             text = text.replace(">", "&gt;")
         if "\"" in text:
             text = text.replace("\"", "&quot;")
+        # added for crunchy - from &amp;1234; to &#1234;
+        text = entity_pattern.sub(recover_entity_pattern, text)
         return text
     except (TypeError, AttributeError):
         _raise_serialization_error(text)
