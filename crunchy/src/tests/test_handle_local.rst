@@ -173,6 +173,6 @@ base directory.
     >>> page.is_from_root = True
     >>> config['crunchy_base_dir'] = '/base'
     >>> handle_local.add_to_path(page, elem, 'dummy')
-    >>> print(sys.path[0])
+    >>> print(sys.path[0]).replace(os.path.sep, "/")
     /base/server_root/fake_path_which_does_not_exist
     >>> del sys.path[0]  # cleaning up
