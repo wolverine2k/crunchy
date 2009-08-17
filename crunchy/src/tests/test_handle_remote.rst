@@ -83,6 +83,8 @@ this interferes with unit tests unless we catch the return value.
 
     >>> __irrelevant = handle.write(file_content)
     >>> handle.close()
+    >>> if filepath[1] == ":":  # on Windows
+    ...    filepath = filepath[2:]
     >>> request = mocks.Request(args={'url':filepath})
     >>> request.crunchy_username = "Crunchy"
 
