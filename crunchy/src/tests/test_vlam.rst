@@ -33,7 +33,7 @@ For interoperability on Python 2 and 3:
 
     >>> import sys
     >>> def unicode(text):
-    ...    if sys.version_info[0] < 3: return text.decode('utf8')
+    ...    if sys.version_info[0] < 3: return text.decode('utf-8')
     ...    else: return text
 
 See how_to.rst_ for details.
@@ -45,7 +45,7 @@ See how_to.rst_ for details.
     >>> config.clear()
     >>> from os import getcwd
     >>> config['crunchy_base_dir'] = getcwd()
-    >>> from src.utilities import uidgen 
+    >>> from src.utilities import uidgen
     >>> import src.vlam as vlam
     >>> from_comet.clear()
     >>> def dummy(arg):
@@ -111,6 +111,17 @@ Let's verify that this tree has been read properly by writing it out again.
 
     >>> out_html == html
     True
+
+Similar test but, this time, with numerical character entities being present.
+
+    >>> html_2 = "<html><head>brain</head><body><p>&#39;</p></body></html>"
+    >>> page_2, out_html_2 = process_html(html_2)
+
+Let's verify that this tree has been read properly by writing it out again.
+
+    >>> out_html_2 == html_2
+    True
+
 
 Let's add another test for when we have an empty div. In order to take
 care of some browser quirks, these need to be adapted.  The fix_divs()
