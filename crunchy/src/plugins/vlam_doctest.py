@@ -13,7 +13,7 @@ for people familiar with the Crunchy plugin architecture.
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import (config, plugin, Element, SubElement, tostring,
-                          exams, python_version)
+                          exams, python_version, translate)
 from src.utilities import extract_log_id, wrap_in_div, parse_vlam
 
 # The set of other "widgets/services" required from other plugins
@@ -21,6 +21,7 @@ requires =  set(["editor_widget", "io_widget"])
 
 # each doctest code sample will be kept track via a uid used as a key.
 doctests = {}
+_ = translate['_']
 
 def register():
     """The register() function is required for all plugins.
@@ -111,7 +112,7 @@ def doctest_widget_callback(page, elem, uid):
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png", style="height:32px;",
-                title = "cluetip Hello %s! "%page.username + "This is a doctest.",
+                title = _("cluetip Hello %s! "%page.username) + _("This is a doctest."),
                 rel = "/docs/popups/doctest.html")
         elem.append(img)
         plugin['services'].insert_cluetip(page, img, uid)
@@ -123,7 +124,7 @@ def doctest_widget_callback(page, elem, uid):
     # the actual button used for code execution:
     btn = SubElement(elem, "button")
     btn.attrib["id"] = "run_doctest_btn_" + uid
-    btn.text = "Run Doctest"
+    btn.text = _("Run Doctest")
     btn.attrib["onclick"] = "exec_doctest('%s')" % uid
     if "analyzer_score" in vlam:
         plugin['services'].add_scoring(page, btn, uid)

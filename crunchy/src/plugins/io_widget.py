@@ -50,7 +50,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
             kill_link.attrib["onclick"] = "kill_thread('%s')" % uid
             kill_image = SubElement(kill_link, 'img')
             kill_image.attrib["src"] = "/images/stop.png"
-            kill_image.attrib["alt"] = "Interrupt thread"
+            kill_image.attrib["alt"] = _("Interrupt thread")
             kill_image.attrib["class"] = "kill_thread_image"
             _id = "kill_image_%s" % uid
             kill_image.attrib["id"] = _id
@@ -97,7 +97,7 @@ def insert_io_subwidget(page, elem, uid, interp_kind=None,
         editor_link.attrib["id"] = "ed_link_" + uid
         image = SubElement(editor_link, 'img')
         image.attrib["src"] = "/images/editor.png"
-        image.attrib["alt"] = "copy existing code"
+        image.attrib["alt"] = _("copy existing code")
         image.attrib["class"] = "interpreter_image"
 
         code_sample = SubElement(new_div, "textarea")
