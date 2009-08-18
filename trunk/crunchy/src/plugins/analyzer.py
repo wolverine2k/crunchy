@@ -111,9 +111,14 @@ def analyzer_score_callback(request):
     plugin['append_text'](pageid, uid, "\n")
     score = analyzer.get_global_score()
     if score is not None:
-        plugin['append_text'](pageid, uid,
+        if score > 0. :
+            plugin['append_text'](pageid, uid,
                     _("[From %s, code quality: %.2f/10]\n") %
                         (config[request.crunchy_username]['analyzer'], score))
+        else:
+            plugin['append_text'](pageid, uid,
+                    _("[From %s, code quality: 0]\n") %
+                        config[request.crunchy_username]['analyzer'])
 
 def analyzer_widget_callback(page, elem, uid):
     """Handles embedding suitable code into the page in order to display and

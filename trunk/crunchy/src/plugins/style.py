@@ -226,9 +226,9 @@ def _style(raw_code, language, cssclass):
     except:
         if language in _pygment_lexer_names:
             language = _pygment_lexer_names[requested_language]
-            lexers[requested_language] = get_lexer_by_name(language, stripall=True)
+            lexers[requested_language] = get_lexer_by_name(language)
         else:
-            lexers[language] = get_lexer_by_name(language, stripall=True)
+            lexers[language] = get_lexer_by_name(language)
         lexer = lexers[requested_language]
 
     formatter = PreHtmlFormatter()

@@ -9,7 +9,8 @@ import os
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import config, plugin, python_version
+from src.interface import config, plugin, python_version, translate
+_ = translate['_']
 
 if python_version < 3:
     from urllib import unquote_plus
@@ -79,7 +80,8 @@ def add_to_path(page, elem, *dummy):  # tested
 def insert_load_local(page, elem, uid):
     "Inserts a javascript browser object to load a local (html) file."
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_html',
-                                '/local', 'Load local html tutorial', 'Load tutorial')
+                                '/local', _('Load local html tutorial'),
+                                _('Load tutorial'))
     return
 plugin[LOCAL_HTML] = insert_load_local
 

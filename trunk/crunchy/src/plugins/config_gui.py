@@ -65,11 +65,6 @@ def show(parent, username, uid, to_show=None):
             _type = select_option_type(key, username, uid)
             if (_type in to_show) or (key in to_show):
                 keys.append(key)
-
-    #for key in configuration.options:
-    #    _type = select_option_type(key, username, uid)
-    #    if (_type in to_show) or (key in to_show):
-    #        keys.append(key)
     keys.sort()
     for key in keys:
         ConfigOption.all_options[key].render(parent)
@@ -91,10 +86,10 @@ def select_option_type(key, username, uid, allowed_options=configuration.options
                         username, uid)
             _type = 'multiple_choice'
         else:
-            print("Unexpected error in select_option_type; option = ", key)
-            print("not found in configuration.options but found in config[].")
+            print(_("Unexpected error in select_option_type; option = "), key)
+            print(_("not found in configuration.options but found in config[]."))
     else:
-        print(key, "is not a valid configuration option")
+        print(key, _("is not a valid configuration option"))
         return False
     return _type
 
