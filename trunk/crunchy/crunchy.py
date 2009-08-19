@@ -192,6 +192,8 @@ def parse_options():
         src.interface.accounts = account_manager.Accounts(False)
     else:
         src.interface.accounts = account_manager.Accounts()
+        if src.interface.accounts == {}:  # can happen with empty password file
+            src.interface.accounts = account_manager.Accounts(False)
     return url, port
 
 def convert_url(url):
