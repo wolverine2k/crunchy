@@ -55,7 +55,7 @@ def insert_security_info(page, *dummy):
 
     if not page.includes("security_included"):
         page.add_include("security_included")
-        page.insert_js_file("/security.js")
+        page.insert_js_file("/javascript/security.js")
 
         info_container = Element("div", id="security_info")
 
