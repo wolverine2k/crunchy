@@ -3,7 +3,8 @@ import re
 import random
 
 from src.interface import (fromstring, plugin, Element, SubElement,
-                           additional_properties, config, python_version)
+                           additional_properties, config, python_version,
+                           u_print)
 
 if python_version < 3:
     from pygments import highlight
@@ -189,10 +190,16 @@ entity_pattern = re.compile("(&#\d{1,4};)")
 old = None
 new = None
 def replace_entity_pattern(text):
+    '''replaces html entities by a unique string; this transformation is later
+    reversed by recover_entity_pattern().
+    Note that single apostrophe represented by html numerical entities are
+    converted as normal single apostrophe directly.
+    '''
     global old, new
     old = []
     new = []
     repl = "_a_"
+    text = text.replace("&#39;", "'")
     while repl in text:
         repl += "_b_"
     _splits = entity_pattern.split(text)
@@ -206,6 +213,7 @@ def replace_entity_pattern(text):
     return ''.join(_splits)
 
 def recover_entity_pattern(text):
+    '''reverses the transformation done by replace_entity_pattern'''
     for i, ent in enumerate(new):
         text = text.replace(ent, old[i])
     return text
