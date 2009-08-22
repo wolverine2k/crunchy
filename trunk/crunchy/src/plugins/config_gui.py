@@ -291,4 +291,4 @@ function growl_show(name){
     });
     return false;
 };
-"""%_("Preference has changed and has been saved.")
+"""%_("Preference has changed.")
