@@ -86,7 +86,7 @@ def unittest_widget_callback(page, elem, uid):
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png", style="height:32px;",
-                title = "cluetip Hello %s! "%page.username + "This is a unittest.",
+                title = "cluetip Hello %s! "%page.username + "This is a unittest.; click for more.",
                 rel = "/docs/popups/unittest.html")
         elem.append(img)
         plugin['services'].insert_cluetip(page, img, uid)

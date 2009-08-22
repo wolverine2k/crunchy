@@ -112,7 +112,7 @@ def doctest_widget_callback(page, elem, uid):
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png", style="height:32px;",
-                title = _("cluetip Hello %s! "%page.username) + _("This is a doctest."),
+                title = "cluetip Hello %s! "%page.username + "This is a doctest.;  click for more",
                 rel = "/docs/popups/doctest.html")
         elem.append(img)
         plugin['services'].insert_cluetip(page, img, uid)
