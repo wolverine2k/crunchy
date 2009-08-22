@@ -28,6 +28,11 @@ def insert_preferences(page, elem, uid):
     if not page.includes("set_config"):
         page.add_include("set_config")
         page.add_js_code(set_config_jscode)
+        page.add_js_code(gritter_jscode)
+        page.add_include("jquery.gritter.js")
+        page.insert_js_file("/javascript/jquery.gritter.js")
+        page.insert_css_file("/css/gritter.css")
+
     # The original div in the raw html page may contain some text
     # as a visual reminder that we need to remove here.
     elem.text = ''
@@ -156,7 +161,7 @@ class MultiOption(ConfigOption):
                     type = 'radio',
                     name = self.key,
                     id = _id,
-                    onchange = "set_config('%(id)s', '%(key)s');" \
+                    onchange = "growl_show('%(key)s');set_config('%(id)s', '%(key)s');" \
                         % {'id': _id, 'key': self.key},
                 )
                 if value == self.get():
@@ -173,7 +178,8 @@ class MultiOption(ConfigOption):
             select = SubElement(option, 'select',
                 name = self.key,
                 id = _id,
-                onchange = "set_config('%s', '%s');" % (_id, self.key)
+            onchange = "growl_show('%s');set_config('%s', '%s');" % (self.key,
+                                                                    _id, self.key)
             )
             for value in values:
                 select_elem = SubElement(select, 'option', value = str(value))
@@ -197,7 +203,8 @@ class BoolOption(ConfigOption):
             type = 'checkbox',
             name = self.key,
             id = _id,
-            onchange = "set_config('%s', '%s');" % (_id, self.key)
+            onchange = "growl_show('%s');set_config('%s', '%s');" % (self.key,
+                                                                    _id, self.key)
         )
         if self.get():
             input.attrib['checked'] = 'checked'
@@ -237,7 +244,8 @@ class StringOption(ConfigOption):
             id = _id,
             name = self.key,
             value = self.get(),
-            onchange = "set_config('%s', '%s');" % (_id, self.key)
+            onchange = "growl_show('%s');set_config('%s', '%s');" % (self.key,
+                                                                    _id, self.key)
         )
         input.attrib['class'] = 'config_gui'
         desc = SubElement(row, 'td')
@@ -266,3 +274,21 @@ function set_config(id, key){
     }
 };
 """ % plugin['session_random_id']
+
+gritter_jscode = """
+function growl_show(name){
+    $.gritter.add({
+            // (string | mandatory) the heading of the notification
+            title: name,
+            // (string | mandatory) the text inside the notification
+            text: '%s',
+            // (string | optional) the image to display on the left
+            image: '/images/ok_big.png',
+            // (bool | optional) if you want it to fade out on its own or just sit there
+            sticky: false,
+            // (int | optional) the time you want it to be alive for before fading out
+            time: 600
+    });
+    return false;
+};
+"""%_("Preference has changed and has been saved.")
