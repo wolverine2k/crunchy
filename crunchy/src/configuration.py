@@ -278,7 +278,7 @@ are usually launched.""")
     def _set_dirs(self):
         '''sets the user directory, creating it if needed.
            Creates also a temporary directory'''
-        if self.name != "_Unknown User_":
+        if self.name != "Unknown User":
             self.user_dir = accounts[self.name][0]
         else:
             self.user_dir = os.path.join(os.path.expanduser("~"), ".crunchy")

@@ -341,5 +341,5 @@ def account_exists(request):
     try:
         dummy = request.crunchy_username
     except:
-        request.crunchy_username = "_Unknown User_"
+        request.crunchy_username = "Unknown User"
     return True

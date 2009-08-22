@@ -34,7 +34,7 @@ class Accounts(dict): # tested
         if pwp == False:
             print("Starting in Single User Mode.")
             item = [self.base_dir, "irrelevant password", "y"]
-            self.__setitem__("_Unknown User_", item)
+            self.__setitem__("Unknown User", item)
         elif os.path.exists(self.pwd_file_path):
             try:
                 self.load()
@@ -45,7 +45,7 @@ class Accounts(dict): # tested
         elif pwp is None:
             print("No password file exists: will create a default account with no file.")
             item = [self.base_dir, "irrelevant password", "y"]
-            self.__setitem__("_Unknown User_", item)
+            self.__setitem__("Unknown User", item)
         else:
             f = open(self.pwd_file_path, 'w') # create new file - empty
             f.close()

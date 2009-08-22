@@ -134,8 +134,8 @@ def require_digest_access_authenticate(func):
 
 bypass_authentication = False
 first_request = True
-if "_Unknown User_" in src.interface.accounts:
-    src.interface.unknown_user_name = "_Unknown User_"
+if "Unknown User" in src.interface.accounts:
+    src.interface.unknown_user_name = "Unknown User"
     print("Unknown user: Crunchy is in single user mode.")
     # Meant for single user mode - bypass authentication
     require_authenticate = lambda x: x
