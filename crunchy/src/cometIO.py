@@ -331,7 +331,10 @@ class ThreadedBuffer(object):
         # characters being escaped for HTML.
         uid = threading.currentThread().getName()
         if not self.__redirect(uid):
-            return self.default_out.write(data)
+            try:
+                return self.default_out.write(data)
+            except:
+                return self.default_out.write(data.encode('utf-8'))
 
         # Note: even though we create interpreters in separate threads
         # identified by their uid, Borg interpreters share a common
