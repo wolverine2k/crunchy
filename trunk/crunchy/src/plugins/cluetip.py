@@ -54,14 +54,16 @@ def insert_cluetip(page, elem, uid):
 
 js_code_rel = """
 $(document).ready(function() {
-  $('%s.%s').cluetip({width: 600});
+  $('%s.%s').cluetip({width: 600, sticky: true, activation: 'click'});
 });"""
 
 js_code_title = """
 $(document).ready(function() {
   $('%s.%s').cluetip({
   splitTitle: '|',
-  width: '300px;'
+  width: '300px;',
+  sticky: true,
+  activation: 'click'
   });
 });
 """
@@ -81,7 +83,8 @@ js_code_multiple = """
               contents += txt;
               if (index == arglength-1) {
                 $('%s.%s').cluetip(contents, {width: '600px' , height: '450px',
-                                              sticky: true
+                                              sticky: true, dropShadow: false,
+                                              activation: 'click'
                                               });
               }
               index++;

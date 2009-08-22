@@ -93,7 +93,7 @@ def insert_bare_editor(page, elem, uid):
     if config[page.username]['popups']:
         # insert popup helper
         img = Element("img", src="/images/help.png", style="height:32px;",
-                title = "cluetip Hello %s! "%page.username + "This is an Editor.",
+                title = "cluetip Hello %s! "%page.username + "This is an Editor; click for more",
                 rel = "/docs/popups/editor.html")
         elem.append(img)
         plugin['services'].insert_cluetip(page, img, uid)
