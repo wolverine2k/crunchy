@@ -272,6 +272,8 @@ def set_security_list(request):
     '''
     sets the security level for a number of sites on a list
     '''
+    if python_version >= 3:
+        request.data = request.data.decode('utf-8')
     site_list_info = request.data.strip(',').split(',')
     username = request.crunchy_username
     if DEBUG:
@@ -316,7 +318,7 @@ def set_security_list(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write("")
+    request.wfile.write("".encode('utf-8'))
     request.wfile.flush()
 
 def empty_security_list(request):
@@ -336,7 +338,7 @@ def empty_security_list(request):
 
     request.send_response(200)
     request.end_headers()
-    request.wfile.write("")
+    request.wfile.write("".encode('utf-8'))
     request.wfile.flush()
 
 # Note: the rest of the css appears in crunchy.css
