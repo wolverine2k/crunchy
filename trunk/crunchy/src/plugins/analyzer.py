@@ -129,15 +129,10 @@ def analyzer_widget_callback(page, elem, uid):
         t = 'analyzer'
         config[page.username]['logging_uids'][uid] = (log_id, t)
 
-    # next, we style the code, also extracting it in a useful form ...
-    #analyzercode, markup, dummy = plugin['services'].style_pycode_nostrip(page,
-    #                                                                    elem)
     elem.attrib['title'] = "python"
     analyzercode, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = vlam
 
-    # next, we style the code, also extracting it in a useful form ...
-    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     wrap_in_div(elem, uid, vlam, "analyzer", show_vlam)

@@ -75,8 +75,6 @@ def unittest_widget_callback(page, elem, uid):
     unittestcode, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = vlam
 
-    # next, we style the code, also extracting it in a useful form ...
-    #unittestcode, markup, dummy = plugin['services'].style_pycode_nostrip(page, elem)
     if log_id:
         config['log'][log_id] = [tostring(markup)]
     # which we store
