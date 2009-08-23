@@ -1,521 +1,273 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: rur-ple\n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-08-23 21:21-0400\n"
+"Project-Id-Version: crunchy\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-14 22:55-0300\n"
+"PO-Revision-Date: 2009-08-22 22:57-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team:  <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
-"X-Poedit-Basepath: C:\\documents and settings\\André\\my documents\\crunchy\\branches\\andre\n"
-"X-Poedit-SearchPath-0: ..\\andre\n"
-"X-Poedit-SearchPath-1: src\n"
-"X-Poedit-SearchPath-2: src\\plugins\n"
+"X-Poedit-Basepath: /Users/andre/CrunchySVN/trunk/crunchy\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: src/plugins\n"
 
-#: ..\andre/src/configuration.py:216
-#: src/configuration.py:216
-msgid "(Fixed) User home directory: "
-msgstr "(Fixed) User home directory: "
-
-#: ..\andre/src/configuration.py:223
-#: src/configuration.py:223
-msgid "(Fixed) Temporary working directory: "
-msgstr "(Fixed) Temporary working directory: "
-
-#: ..\andre/src/configuration.py:232
-#: src/configuration.py:232
+#: src/configuration.py:115
 #, python-format
-msgid "Invalid choice for %s.dir_help"
-msgstr "Invalid choice for %s.dir_help"
+msgid "%s is an invalid choice for %s.%s"
+msgstr "%s is an invalid choice for %s.%s"
 
-#: ..\andre/src/configuration.py:233
-#: ..\andre/src/configuration.py:252
-#: ..\andre/src/configuration.py:322
-#: ..\andre/src/configuration.py:351
-#: ..\andre/src/configuration.py:368
-#: ..\andre/src/configuration.py:411
-#: ..\andre/src/configuration.py:423
-#: ..\andre/src/configuration.py:440
-#: ..\andre/src/configuration.py:460
-#: src/configuration.py:233
-#: src/configuration.py:252
-#: src/configuration.py:322
-#: src/configuration.py:351
-#: src/configuration.py:368
-#: src/configuration.py:411
-#: src/configuration.py:423
-#: src/configuration.py:440
-#: src/configuration.py:460
+#: src/configuration.py:117
+#: src/configuration.py:448
 msgid "The valid choices are: "
 msgstr "The valid choices are: "
 
-#: ..\andre/src/configuration.py:234
-#: ..\andre/src/configuration.py:253
-#: ..\andre/src/configuration.py:324
-#: src/configuration.py:234
-#: src/configuration.py:253
-#: src/configuration.py:324
+#: src/configuration.py:118
 msgid "The current value is: "
 msgstr "The current value is: "
 
-#: ..\andre/src/configuration.py:241
-#: src/configuration.py:241
-#, python-format
-msgid "The choices for dir_help are %s\n"
-msgstr "The choices for dir_help are %s\n"
-
-#: ..\andre/src/configuration.py:242
-#: ..\andre/src/configuration.py:261
-#: ..\andre/src/configuration.py:330
-#: ..\andre/src/configuration.py:355
-#: ..\andre/src/configuration.py:372
-#: ..\andre/src/configuration.py:392
-#: ..\andre/src/configuration.py:427
-#: ..\andre/src/configuration.py:446
-#: src/configuration.py:242
-#: src/configuration.py:261
-#: src/configuration.py:330
-#: src/configuration.py:355
-#: src/configuration.py:372
-#: src/configuration.py:392
-#: src/configuration.py:427
-#: src/configuration.py:446
-msgid "  The current value is: "
-msgstr "  The current value is: "
-
-#: ..\andre/src/configuration.py:251
-#: src/configuration.py:251
-#, python-format
-msgid "Invalid choice for %s.doc_help"
-msgstr "Invalid choice for %s.doc_help"
-
-#: ..\andre/src/configuration.py:260
-#: src/configuration.py:260
-#, python-format
-msgid "The choices for doc_help are %s\n"
-msgstr "The choices for doc_help are %s\n"
-
-#: ..\andre/src/configuration.py:268
-#: src/configuration.py:268
-msgid ""
-"\n"
-"You can change some of the default values by Crunchy, just like\n"
-"you can obtain this help message, using either an interpreter\n"
-"prompt or an editor, and assigning the desired value to a given\n"
-"variable.  Some of these variables are \"fixed\", which means that\n"
-"their value can not be changed by the user.\n"
-"-\n"
-"Here are the values of some variables currently used by Crunchy.\n"
-msgstr ""
-"\n"
-"You can change some of the default values by Crunchy, just like\n"
-"you can obtain this help message, using either an interpreter\n"
-"prompt or an editor, and assigning the desired value to a given\n"
-"variable.  Some of these variables are \"fixed\", which means that\n"
-"their value can not be changed by the user.\n"
-"-\n"
-"Here are the values of some variables currently used by Crunchy.\n"
-
-#: ..\andre/src/configuration.py:321
-#: src/configuration.py:321
-#, python-format
-msgid "Invalid choice for %s.no_markup"
-msgstr "Invalid choice for %s.no_markup"
-
-#: ..\andre/src/configuration.py:323
-#: src/configuration.py:323
-msgid "with \"image_file   file_name\" as a required option."
-msgstr "with \"image_file   file_name\" as a required option."
-
-#: ..\andre/src/configuration.py:329
-#: src/configuration.py:329
-#, python-format
-msgid "The choices for \"pre\" tag without Crunchy markup are %s\n"
-msgstr "The choices for \"pre\" tag without Crunchy markup are %s\n"
-
-#: ..\andre/src/configuration.py:340
-#: src/configuration.py:340
+#: src/configuration.py:408
 msgid "language set to: "
 msgstr "language set to: "
 
-#: ..\andre/src/configuration.py:343
-#: src/configuration.py:343
-msgid "editarea_language also set to: "
-msgstr "editarea_language also set to: "
-
-#: ..\andre/src/configuration.py:345
-#: src/configuration.py:345
-msgid "Note: while this is a valid choice, this choice is not available for a language provided by editarea. "
-msgstr "Note: while this is a valid choice, this choice is not available for a language provided by editarea. "
-
-#: ..\andre/src/configuration.py:346
-#: src/configuration.py:346
-msgid "The language choice for editarea remains "
-msgstr "The language choice for editarea remains "
-
-#: ..\andre/src/configuration.py:350
-#: src/configuration.py:350
-#, python-format
-msgid "Invalid choice for %s.language"
-msgstr "Invalid choice for %s.language"
-
-#: ..\andre/src/configuration.py:354
-#: src/configuration.py:354
-#, python-format
-msgid "The choices for language are %s\n"
-msgstr "The choices for language are %s\n"
-
-#: ..\andre/src/configuration.py:364
-#: src/configuration.py:364
-msgid "editarea_language set to: "
-msgstr "editarea_language set to: "
-
-#: ..\andre/src/configuration.py:367
-#: src/configuration.py:367
-#, python-format
-msgid "Invalid choice for %s.editarea_language"
-msgstr "Invalid choice for %s.editarea_language"
-
-#: ..\andre/src/configuration.py:371
-#: src/configuration.py:371
-#, python-format
-msgid "The choices for editarea_language are %s\n"
-msgstr "The choices for editarea_language are %s\n"
-
-#: ..\andre/src/configuration.py:381
-#: src/configuration.py:381
-msgid "Crunchy will attempt to provide friendly error messages."
-msgstr "Crunchy will attempt to provide friendly error messages."
-
-#: ..\andre/src/configuration.py:385
-#: src/configuration.py:385
-msgid "Crunchy's error messages will be similar to Python's default tracebacks."
-msgstr "Crunchy's error messages will be similar to Python's default tracebacks."
-
-#: ..\andre/src/configuration.py:388
-#: src/configuration.py:388
-msgid "friendly attribute must be set to True or False."
-msgstr "friendly attribute must be set to True or False."
-
-#: ..\andre/src/configuration.py:391
-#: src/configuration.py:391
-#, python-format
-msgid "The choices for friendly tracebacks are %s\n"
-msgstr "The choices for friendly tracebacks are %s\n"
-
-#: ..\andre/src/configuration.py:408
-#: src/configuration.py:408
+#: src/configuration.py:444
 msgid "site security set to: "
 msgstr "site security set to: "
 
-#: ..\andre/src/configuration.py:410
-#: src/configuration.py:410
+#: src/configuration.py:446
 #, python-format
 msgid "Invalid choice for %s.site_security"
 msgstr "Invalid choice for %s.site_security"
 
-#: ..\andre/src/configuration.py:419
-#: src/configuration.py:419
-msgid "security set to: "
-msgstr "security set to: "
+#: src/configuration.py:453
+msgid "Enter site url (for example, docs.python.org) "
+msgstr "Enter site url (for example, docs.python.org) "
 
-#: ..\andre/src/configuration.py:422
-#: src/configuration.py:422
-#, python-format
-msgid "Invalid choice for %s.local_security"
-msgstr "Invalid choice for %s.local_security"
+#: src/configuration.py:454
+msgid "Enter security level (for example: normal) "
+msgstr "Enter security level (for example: normal) "
 
-#: ..\andre/src/configuration.py:426
-#: src/configuration.py:426
-#, python-format
-msgid "The choices for local_security levels are %s\n"
-msgstr "The choices for local_security levels are %s\n"
-
-#: ..\andre/src/configuration.py:436
-#: src/configuration.py:436
-msgid "override_default_interpreter set to: "
-msgstr "override_default_interpreter set to: "
-
-#: ..\andre/src/configuration.py:439
-#: src/configuration.py:439
-#, python-format
-msgid "Invalid choice for %s.override_default_interpreter"
-msgstr "Invalid choice for %s.override_default_interpreter"
-
-#: ..\andre/src/configuration.py:444
-#: src/configuration.py:444
-#, python-format
-msgid "The choices for override_default_interpreter are %s\n"
-msgstr "The choices for override_default_interpreter are %s\n"
-
-#: ..\andre/src/configuration.py:456
-#: src/configuration.py:456
-msgid "my_style set to: "
-msgstr "my_style set to: "
-
-#: ..\andre/src/configuration.py:459
 #: src/configuration.py:459
-#, python-format
-msgid "Invalid choice for %s.my_style"
-msgstr "Invalid choice for %s.my_style"
+msgid "Enter a rule method to modify markup."
+msgstr "Enter a rule method to modify markup."
 
-#: ..\andre/src/configuration.py:463
+#: src/configuration.py:460
+msgid "The allowed methods are: add_option, remove_option, replace"
+msgstr "The allowed methods are: add_option, remove_option, replace"
+
+#: src/configuration.py:461
+msgid "Enter method: "
+msgstr "Enter method: "
+
 #: src/configuration.py:463
-#, python-format
-msgid "The choices for my_style are %s\n"
-msgstr "The choices for my_style are %s\n"
+msgid "Markup value to replace: "
+msgstr "Markup value to replace: "
 
-#: ..\andre/src/configuration.py:465
-#: src/configuration.py:465
-msgid "If set to True, Crunchy's default styles are replaced"
-msgstr "If set to True, Crunchy's default styles are replaced"
+#: src/configuration.py:464
+msgid "Replacement value: "
+msgstr "Replacement value: "
 
-#: ..\andre/src/configuration.py:466
-#: src/configuration.py:466
-#, python-format
-msgid " by the user's choice specified in %s.styles\n"
-msgstr " by the user's choice specified in %s.styles\n"
-
-#: ..\andre/src/configuration.py:467
 #: src/configuration.py:467
-msgid ""
-"\n"
-"  The current value for my_style is: "
+msgid "Enter option to add (e.g. linenumber): "
+msgstr "Enter option to add (e.g. linenumber): "
+
+#: src/configuration.py:470
+msgid "Enter option to remove (e.g. linenumber)"
+msgstr "Enter option to remove (e.g. linenumber)"
+
+#: src/configuration.py:473
+msgid "Unknown method."
+msgstr "Unknown method."
+
+#: src/configuration.py:484
+msgid "Choose a valid rule number to remove."
+msgstr "Choose a valid rule number to remove."
+
+#: src/configuration.py:490
+msgid "#"
 msgstr ""
-"\n"
-"  The current value for my_style is: "
 
-#: ..\andre/src/errors.py:36
-#: src/errors.py:36
-msgid "Your program tried to exit Crunchy.\n"
-msgstr "Your program tried to exit Crunchy.\n"
+#: src/configuration.py:490
+msgid "\tmethod"
+msgstr "\tmethod"
 
-#: ..\andre/src/errors.py:61
-#: ..\andre/src/errors.py:63
-#: src/errors.py:61
-#: src/errors.py:63
+#: src/configuration.py:490
+msgid "\targuments"
+msgstr "\targuments"
+
+#: src/errors_2k.py:67
+#: src/errors_2k.py:69
+#: src/errors_2k.py:128
+#: src/errors_3k.py:67
+#: src/errors_3k.py:69
+#: src/errors_3k.py:128
 msgid "Error on line"
 msgstr "Error on line"
 
-#: ..\andre/src/errors.py:70
-#: src/errors.py:70
+#: src/errors_2k.py:76
+#: src/errors_3k.py:76
 msgid "called by line"
 msgstr "called by line"
 
-#: ..\andre/src/errors.py:87
-#: src/errors.py:87
+#: src/errors_2k.py:86
+#: src/errors_3k.py:86
+msgid "Your program exited."
+msgstr "Your program exited."
+
+#: src/errors_2k.py:108
+#: src/errors_3k.py:108
 msgid "User's code"
 msgstr "User's code"
 
-#: ..\andre/src/errors.py:100
-#: src/errors.py:100
-#, python-format
-msgid "Error on line %s:\n"
-msgstr "Error on line %s:\n"
-
-#: ..\andre/src/errors.py:117
-#: src/errors.py:117
+#: src/errors_2k.py:147
+#: src/errors_3k.py:147
 msgid "There was no test to satisfy."
 msgstr "There was no test to satisfy."
 
-#: ..\andre/src/errors.py:120
-#: src/errors.py:120
+#: src/errors_2k.py:150
+#: src/errors_3k.py:150
 msgid "Congratulations, your code passed the test!"
 msgstr "Congratulations, your code passed the test!"
 
-#: ..\andre/src/errors.py:122
-#: src/errors.py:122
+#: src/errors_2k.py:152
+#: src/errors_3k.py:152
 msgid "You code failed the test."
 msgstr "You code failed the test."
 
-#: ..\andre/src/errors.py:125
-#: src/errors.py:125
+#: src/errors_2k.py:155
+#: src/errors_3k.py:155
 #, python-format
 msgid "Congratulations, your code passed all (%d) tests!"
 msgstr "Congratulations, your code passed all (%d) tests!"
 
-#: ..\andre/src/errors.py:127
-#: src/errors.py:127
+#: src/errors_2k.py:157
+#: src/errors_3k.py:157
 #, python-format
 msgid "Your code failed all (%d) tests."
 msgstr "Your code failed all (%d) tests."
 
-#: ..\andre/src/errors.py:129
-#: src/errors.py:129
+#: src/errors_2k.py:159
+#: src/errors_3k.py:159
 #, python-format
-msgid "Your code failed %s out of %s tests."
-msgstr "Your code failed %s out of %s tests."
+msgid "Your code passed %s out of %s tests."
+msgstr "Your code passed %s out of %s tests."
 
-#: ..\andre/src/errors.py:144
-#: src/errors.py:144
+#: src/errors_2k.py:174
+#: src/errors_3k.py:174
 msgid "The following example failed:"
 msgstr "The following example failed:"
 
-#: ..\andre/src/errors.py:146
-#: src/errors.py:146
+#: src/errors_2k.py:176
+#: src/errors_3k.py:176
 msgid "The expected result was:"
 msgstr "The expected result was:"
 
-#: ..\andre/src/errors.py:148
-#: src/errors.py:148
+#: src/errors_2k.py:178
+#: src/errors_3k.py:178
 msgid "The result obtained was:"
 msgstr "The result obtained was:"
 
-#: ..\andre/src/errors.py:150
-#: src/errors.py:150
+#: src/errors_2k.py:180
+#: src/errors_3k.py:180
 msgid "An exception was raised:"
 msgstr "An exception was raised:"
 
-#: ..\andre/src/interpreter.py:60
-#: ..\andre/src/interpreter.py:95
-#: src/interpreter.py:60
-#: src/interpreter.py:95
+#: src/interpreter.py:130
+#: src/interpreter.py:172
 msgid "# no code entered by user\n"
 msgstr "# no code entered by user\n"
 
-#: ..\andre/src/plugins/colourize.py:134
-#: src/plugins/colourize.py:134
-#: src\plugins/colourize.py:134
+#: src/plugins/analyzer.py:96
+msgid "Nothing to report."
+msgstr "Nothing to report."
+
+#: src/plugins/analyzer.py:99
+msgid "Please install and enable an analyzer."
+msgstr "Please install and enable an analyzer."
+
+#: src/plugins/analyzer.py:115
+#, python-format
+msgid "[From %s, code quality: %.2f/10]\n"
+msgstr "[From %s, code quality: %.2f/10]\n"
+
+#: src/plugins/analyzer.py:162
+msgid "Analyzer: "
+msgstr "Analyzer: "
+
+#: src/plugins/analyzer.py:182
+msgid "Analyze the code"
+msgstr "Analyze the code"
+
+#: src/plugins/analyzer_pyflakes.py:70
+msgid "Could not compile the code."
+msgstr "Could not compile the code."
+
+#: src/plugins/analyzer_pyflakes.py:74
+#, python-format
+msgid "line %d: could not compile"
+msgstr "line %d: could not compile"
+
+#: src/plugins/colourize.py:139
 msgid "Crunchy: could not style the following code"
 msgstr "Crunchy: could not style the following code"
 
-#: ..\andre/src/plugins/colourize.py:560
-#: src/plugins/colourize.py:560
-#: src\plugins/colourize.py:560
-#, python-format
-msgid ""
-"Parsing error occurred in the following Python code.\n"
-"Info: %s."
-msgstr ""
-"Parsing error occurred in the following Python code.\n"
-"Info: %s."
+#: src/plugins/colourize.py:543
+msgid "Parsing error occurred in the following Python code."
+msgstr "Parsing error occurred in the following Python code."
 
-#: ..\andre/src/plugins/editarea.py:63
-#: src/plugins/editarea.py:63
-#: src\plugins/editarea.py:63
-msgid "Load Python file"
-msgstr "Load Python file"
+#: src/plugins/config_gui.py:23
+msgid "Preferences"
+msgstr "Preferences"
 
-#: ..\andre/src/plugins/editarea.py:66
-#: ..\andre/src/plugins/editarea.py:89
-#: src/plugins/editarea.py:66
-#: src/plugins/editarea.py:89
-#: src\plugins/editarea.py:66
-#: src\plugins/editarea.py:89
+#: src/plugins/editarea.py:92
+msgid "Select a file to open"
+msgstr "Select a file to open"
+
+#: src/plugins/editarea.py:95
+#: src/plugins/editarea.py:134
 msgid "Cancel"
 msgstr "Cancel"
 
-#: ..\andre/src/plugins/editarea.py:81
-#: src/plugins/editarea.py:81
-#: src\plugins/editarea.py:81
-msgid "Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally."
-msgstr "Use 'Save and Run' to execute programs (like pygame and GUI based ones) externally."
+#: src/plugins/editarea.py:127
+msgid "Save file"
+msgstr "Save file"
 
-#: ..\andre/src/plugins/editarea.py:86
-#: src/plugins/editarea.py:86
-#: src\plugins/editarea.py:86
-msgid "Save Python file"
-msgstr "Save Python file"
+#: src/plugins/editarea.py:131
+msgid "Select a file to save"
+msgstr "Select a file to save"
 
-#: ..\andre/src/plugins/editarea.py:93
-#: src/plugins/editarea.py:93
-#: src\plugins/editarea.py:93
-msgid "Save and Run"
-msgstr "Save and Run"
-
-#: ..\andre/src/plugins/handle_default.py:75
-#: src/plugins/handle_default.py:75
-#: src\plugins/handle_default.py:75
+#: src/plugins/handle_default.py:176
 msgid "Directory Listing"
 msgstr "Directory Listing"
 
-#: ..\andre/src/plugins/handle_default.py:123
-#: src/plugins/handle_default.py:123
-#: src\plugins/handle_default.py:123
-msgid "Illegal path, page not found."
-msgstr "Illegal path, page not found."
-
-#: ..\andre/src/plugins/handle_default.py:124
-#: src/plugins/handle_default.py:124
-#: src\plugins/handle_default.py:124
-msgid "Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"
-msgstr "Crunchy could not open the page you requested. This could be for one of anumber of reasons, including:"
-
-#: ..\andre/src/plugins/handle_default.py:125
-#: src/plugins/handle_default.py:125
-#: src\plugins/handle_default.py:125
-msgid "The page doesn't exist."
-msgstr "The page doesn't exist."
-
-#: ..\andre/src/plugins/handle_default.py:126
-#: src/plugins/handle_default.py:126
-#: src\plugins/handle_default.py:126
-msgid "The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."
-msgstr "The path you requested was illegal, examples of illegal paths include those containing the .. path modifier."
-
-#: ..\andre/src/plugins/handle_default.py:127
-#: src/plugins/handle_default.py:127
-#: src\plugins/handle_default.py:127
-msgid "The path you requested was: "
-msgstr "The path you requested was: "
-
-#: ..\andre/src/plugins/io_widget.py:57
-#: ..\andre/src/plugins/vlam_editor.py:130
-#: src/plugins/io_widget.py:57
-#: src/plugins/vlam_editor.py:130
-#: src\plugins/io_widget.py:57
-#: src\plugins/vlam_editor.py:130
+#: src/plugins/io_widget.py:96
+#: src/plugins/vlam_editor.py:131
 msgid "Execute"
 msgstr "Execute"
 
-#: ..\andre/src/plugins/io_widget.py:57
-#: src/plugins/io_widget.py:57
-#: src\plugins/io_widget.py:57
-msgid "Copy code sample"
-msgstr "Copy code sample"
+#: src/plugins/menu.py:28
+msgid "Crunchy Menu"
+msgstr "Crunchy Menu"
 
-#: ..\andre/src/plugins/security_advisor.py:42
-#: src/plugins/security_advisor.py:42
-#: src\plugins/security_advisor.py:42
-msgid " Crunchy security level: "
-msgstr " Crunchy security level: "
+#: src/plugins/menu.py:36
+msgid "Crunchy Home"
+msgstr "Crunchy Home"
 
-#: ..\andre/src/plugins/security_advisor.py:52
-#: src/plugins/security_advisor.py:52
-#: src\plugins/security_advisor.py:52
-msgid " No elements were removed. "
-msgstr " No elements were removed. "
+#: src/plugins/menu.py:46
+msgid "Quit Crunchy"
+msgstr "Quit Crunchy"
 
-#: ..\andre/src/plugins/security_advisor.py:55
-#: src/plugins/security_advisor.py:55
-#: src\plugins/security_advisor.py:55
-msgid " One element was removed. - "
-msgstr " One element was removed. - "
+#: src/plugins/power_browser.py:24
+msgid "Browsing"
+msgstr "Browsing"
 
-#: ..\andre/src/plugins/security_advisor.py:58
-#: src/plugins/security_advisor.py:58
-#: src\plugins/security_advisor.py:58
-#, python-format
-msgid " %d elements were removed. - "
-msgstr " %d elements were removed. - "
-
-#: ..\andre/src/plugins/security_advisor.py:64
-#: src/plugins/security_advisor.py:64
-#: src\plugins/security_advisor.py:64
-msgid " View report "
-msgstr " View report "
-
-#: ..\andre/src/plugins/security_advisor.py:88
-#: src/plugins/security_advisor.py:88
-#: src\plugins/security_advisor.py:88
+#: src/plugins/security_advisor.py:92
 msgid "Confirm the security levels"
 msgstr "Confirm the security levels"
 
-#: ..\andre/src/plugins/security_advisor.py:91
-#: src/plugins/security_advisor.py:91
-#: src\plugins/security_advisor.py:91
+#: src/plugins/security_advisor.py:95
 msgid ""
 "Before browsing any further ...\n"
 "\n"
@@ -523,9 +275,7 @@ msgstr ""
 "Before browsing any further ...\n"
 "\n"
 
-#: ..\andre/src/plugins/security_advisor.py:92
-#: src/plugins/security_advisor.py:92
-#: src\plugins/security_advisor.py:92
+#: src/plugins/security_advisor.py:96
 msgid ""
 "Do you wish to retain the existing settings for these sites?\n"
 "\n"
@@ -533,9 +283,7 @@ msgstr ""
 "Do you wish to retain the existing settings for these sites?\n"
 "\n"
 
-#: ..\andre/src/plugins/security_advisor.py:93
-#: src/plugins/security_advisor.py:93
-#: src\plugins/security_advisor.py:93
+#: src/plugins/security_advisor.py:97
 msgid ""
 "You can change any of them before clicking on the approve button.\n"
 "\n"
@@ -543,248 +291,349 @@ msgstr ""
 "You can change any of them before clicking on the approve button.\n"
 "\n"
 
-#: ..\andre/src/plugins/security_advisor.py:99
-#: ..\andre/src/plugins/security_advisor.py:136
-#: src/plugins/security_advisor.py:99
-#: src/plugins/security_advisor.py:136
-#: src\plugins/security_advisor.py:99
-#: src\plugins/security_advisor.py:136
-msgid "Approve"
-msgstr "Approve"
-
-#: ..\andre/src/plugins/security_advisor.py:103
-#: ..\andre/src/plugins/security_advisor.py:140
-#: src/plugins/security_advisor.py:103
-#: src/plugins/security_advisor.py:140
-#: src\plugins/security_advisor.py:103
-#: src\plugins/security_advisor.py:140
-msgid "Remove all"
-msgstr "Remove all"
-
-#: ..\andre/src/plugins/security_advisor.py:112
-#: ..\andre/src/plugins/security_advisor.py:243
-#: src/plugins/security_advisor.py:112
-#: src/plugins/security_advisor.py:243
-#: src\plugins/security_advisor.py:112
-#: src\plugins/security_advisor.py:243
+#: src/plugins/security_advisor.py:122
 msgid "remove from list"
 msgstr "remove from list"
 
-#: ..\andre/src/plugins/security_advisor.py:158
-#: src/plugins/security_advisor.py:158
-#: src\plugins/security_advisor.py:158
+#: src/plugins/security_advisor.py:141
+msgid "Approve"
+msgstr "Approve"
+
+#: src/plugins/security_advisor.py:144
+msgid "Remove all"
+msgstr "Remove all"
+
+#: src/plugins/security_advisor.py:168
+msgid ""
+"\n"
+"Selection of a 'display MODE' will result in the same processing by Crunchy\n"
+" as the selection of 'MODE' except that no interactive elements\n"
+" (such as a Python interpreter)\n"
+" will be inserted in the page, thereby preserving the normal browser\n"
+" sandbox to protect your computer from malicious code."
+msgstr ""
+"\n"
+"Selection of a 'display MODE' will result in the same processing by Crunchy\n"
+" as the selection of 'MODE' except that no interactive elements\n"
+" (such as a Python interpreter)\n"
+" will be inserted in the page, thereby preserving the normal browser\n"
+" sandbox to protect your computer from malicious code."
+
+#: src/plugins/security_advisor.py:175
+msgid ""
+"\n"
+"Crunchy will remove any pre-existing javascript code on the page as\n"
+" well as a number of html elements that could be used to hide some\n"
+" javascript code."
+msgstr ""
+"\n"
+"Crunchy will remove any pre-existing javascript code on the page as\n"
+" well as a number of html elements that could be used to hide some\n"
+" javascript code."
+
+#: src/plugins/security_advisor.py:180
+msgid ""
+"\n"
+"'trusted' should only be used for sites that you are convinced will\n"
+" not attempt to insert malicious code.  Sites that allow users to post\n"
+" comments, or worse, that allow users to edit (such as wikis) should not\n"
+" be set to 'trusted'. With 'trusted' selected, Crunchy will display the\n"
+" site as closely as it can to the way the original looked using only\n"
+" your browser."
+msgstr ""
+"\n"
+"'trusted' should only be used for sites that you are convinced will\n"
+" not attempt to insert malicious code.  Sites that allow users to post\n"
+" comments, or worse, that allow users to edit (such as wikis) should not\n"
+" be set to 'trusted'. With 'trusted' selected, Crunchy will display the\n"
+" site as closely as it can to the way the original looked using only\n"
+" your browser."
+
+#: src/plugins/security_advisor.py:188
+msgid ""
+"\n"
+"'normal' will attempt to display the sites the same ways as 'trusted' does\n"
+" except that it will remove any styling deemed suspicious (see the docs for\n"
+" details) and will validate any image source before allowing the image to\n"
+" be displayed.  If the site contains many images, this validation process\n"
+" will slow down the display.  Images that can not be validated will not be\n"
+" shown.  Each image is validated only once during a given Crunchy session."
+msgstr ""
+"\n"
+"'normal' will attempt to display the sites the same ways as 'trusted' does\n"
+" except that it will remove any styling deemed suspicious (see the docs for\n"
+" details) and will validate any image source before allowing the image to\n"
+" be displayed.  If the site contains many images, this validation process\n"
+" will slow down the display.  Images that can not be validated will not be\n"
+" shown.  Each image is validated only once during a given Crunchy session."
+
+#: src/plugins/security_advisor.py:196
+msgid ""
+"\n"
+"'strict' will remove all styling and image on the page.  It will result\n"
+" in the fastest display, but one that will likely be the least visually\n"
+" appealing."
+msgstr ""
+"\n"
+"'strict' will remove all styling and image on the page.  It will result\n"
+" in the fastest display, but one that will likely be the least visually\n"
+" appealing."
+
+#: src/plugins/security_advisor.py:227
 msgid "Removed: tag not allowed"
 msgstr "Removed: tag not allowed"
 
-#: ..\andre/src/plugins/security_advisor.py:165
-#: src/plugins/security_advisor.py:165
-#: src\plugins/security_advisor.py:165
+#: src/plugins/security_advisor.py:228
 msgid "Tag removed"
 msgstr "Tag removed"
 
-#: ..\andre/src/plugins/security_advisor.py:167
-#: src/plugins/security_advisor.py:167
-#: src\plugins/security_advisor.py:167
+#: src/plugins/security_advisor.py:228
 msgid "Number of times"
 msgstr "Number of times"
 
-#: ..\andre/src/plugins/security_advisor.py:178
-#: src/plugins/security_advisor.py:178
-#: src\plugins/security_advisor.py:178
+#: src/plugins/security_advisor.py:233
 msgid "Removed: attribute, or attribute value not allowed"
 msgstr "Removed: attribute, or attribute value not allowed"
 
-#: ..\andre/src/plugins/security_advisor.py:186
-#: ..\andre/src/plugins/security_advisor.py:211
-#: src/plugins/security_advisor.py:186
-#: src/plugins/security_advisor.py:211
-#: src\plugins/security_advisor.py:186
-#: src\plugins/security_advisor.py:211
+#: src/plugins/security_advisor.py:234
+#: src/plugins/security_advisor.py:240
 msgid "Tag"
 msgstr "Tag"
 
-#: ..\andre/src/plugins/security_advisor.py:188
-#: src/plugins/security_advisor.py:188
-#: src\plugins/security_advisor.py:188
+#: src/plugins/security_advisor.py:234
 msgid "Attribute"
 msgstr "Attribute"
 
-#: ..\andre/src/plugins/security_advisor.py:190
-#: src/plugins/security_advisor.py:190
-#: src\plugins/security_advisor.py:190
+#: src/plugins/security_advisor.py:234
 msgid "Value (if relevant)"
 msgstr "Value (if relevant)"
 
-#: ..\andre/src/plugins/security_advisor.py:203
-#: src/plugins/security_advisor.py:203
-#: src\plugins/security_advisor.py:203
+#: src/plugins/security_advisor.py:239
 msgid "Removed: style tag or attribute not allowed"
 msgstr "Removed: style tag or attribute not allowed"
 
-#: ..\andre/src/plugins/security_advisor.py:213
-#: src/plugins/security_advisor.py:213
-#: src\plugins/security_advisor.py:213
+#: src/plugins/security_advisor.py:240
 msgid "Attribute (if relevant)"
 msgstr "Attribute (if relevant)"
 
-#: ..\andre/src/plugins/security_advisor.py:215
-#: src/plugins/security_advisor.py:215
-#: src\plugins/security_advisor.py:215
+#: src/plugins/security_advisor.py:240
 msgid "Value"
 msgstr "Value"
 
-#: ..\andre/src/plugins/security_advisor.py:229
-#: src/plugins/security_advisor.py:229
-#: src\plugins/security_advisor.py:229
+#: src/plugins/security_advisor.py:254
 msgid "You may select a site specific security level:"
 msgstr "You may select a site specific security level:"
 
-#: ..\andre/src/plugins/security_advisor.py:233
-#: src/plugins/security_advisor.py:233
-#: src\plugins/security_advisor.py:233
+#: src/plugins/security_advisor.py:258
 msgid "If you want to preserve the existing selection, "
 msgstr "If you want to preserve the existing selection, "
 
-#: ..\andre/src/plugins/security_advisor.py:234
-#: src/plugins/security_advisor.py:234
-#: src\plugins/security_advisor.py:234
+#: src/plugins/security_advisor.py:259
 msgid "simply dismiss this window by clicking on the X above."
 msgstr "simply dismiss this window by clicking on the X above."
 
-#: ..\andre/src/plugins/security_advisor.py:266
-#: src/plugins/security_advisor.py:266
-#: src\plugins/security_advisor.py:266
+#: src/plugins/security_advisor.py:264
 msgid "Select site security level"
 msgstr "Select site security level"
 
-#: ..\andre/src/plugins/security_advisor.py:269
-#: src/plugins/security_advisor.py:269
-#: src\plugins/security_advisor.py:269
-msgid ""
-"\n"
-"Selection of a 'display MODE' will result in the same processing by Crunchy\n"
-"as the selection of 'MODE' except that no interactive elements\n"
-"(such as a Python interpreter)\n"
-"will be inserted in the page, thereby preserving the normal browser\n"
-"sandbox to protect your computer from malicious code."
-msgstr ""
-"\n"
-"Selection of a 'display MODE' will result in the same processing by Crunchy\n"
-"as the selection of 'MODE' except that no interactive elements\n"
-"(such as a Python interpreter)\n"
-"will be inserted in the page, thereby preserving the normal browser\n"
-"sandbox to protect your computer from malicious code."
-
-#: ..\andre/src/plugins/security_advisor.py:277
-#: src/plugins/security_advisor.py:277
-#: src\plugins/security_advisor.py:277
-msgid ""
-"\n"
-"Crunchy will remove any pre-existing javascript code on the page as\n"
-"well as a number of html elements that could be used to hide some\n"
-"javascript code.\n"
-"        "
-msgstr ""
-"\n"
-"Crunchy will remove any pre-existing javascript code on the page as\n"
-"well as a number of html elements that could be used to hide some\n"
-"javascript code.\n"
-"        "
-
-#: ..\andre/src/plugins/security_advisor.py:284
-#: src/plugins/security_advisor.py:284
-#: src\plugins/security_advisor.py:284
-msgid ""
-"\n"
-"'trusted' should only be used for sites that you are convinced will\n"
-"not attempt to insert malicious code.  Sites that allow users to post\n"
-"comments, or worse, that allow users to edit (such as wikis) should not\n"
-"be set to 'trusted'. With 'trusted' selected, Crunchy will display the\n"
-"site as closely as it can to the wayt the original looked using only\n"
-" your browser.\n"
-"        "
-msgstr ""
-"\n"
-"'trusted' should only be used for sites that you are convinced will\n"
-"not attempt to insert malicious code.  Sites that allow users to post\n"
-"comments, or worse, that allow users to edit (such as wikis) should not\n"
-"be set to 'trusted'. With 'trusted' selected, Crunchy will display the\n"
-"site as closely as it can to the wayt the original looked using only\n"
-" your browser.\n"
-"        "
-
-#: ..\andre/src/plugins/security_advisor.py:294
-#: src/plugins/security_advisor.py:294
-#: src\plugins/security_advisor.py:294
-msgid ""
-"\n"
-"'normal' will attempt to display the sites the same ways as 'trusted' does\n"
-"except that it will remove any styling deemed suspicious (see the docs for\n"
-"details) and will validate any image source before allowing the image to\n"
-"be displayed.  If the site contains many images, this validation process\n"
-"will slow down the display.  Images that can not be validated will not be\n"
-"shown.  Each image is validated only once during a given Crunchy session.\n"
-"        "
-msgstr ""
-"\n"
-"'normal' will attempt to display the sites the same ways as 'trusted' does\n"
-"except that it will remove any styling deemed suspicious (see the docs for\n"
-"details) and will validate any image source before allowing the image to\n"
-"be displayed.  If the site contains many images, this validation process\n"
-"will slow down the display.  Images that can not be validated will not be\n"
-"shown.  Each image is validated only once during a given Crunchy session.\n"
-"        "
-
-#: ..\andre/src/plugins/security_advisor.py:304
-#: src/plugins/security_advisor.py:304
-#: src\plugins/security_advisor.py:304
-msgid ""
-"\n"
-"'strict' will remove all styling and image on the page.  It will result\n"
-"in the fastest display, but one that will likely be the least visually\n"
-"appealing.\n"
-"        "
-msgstr ""
-"\n"
-"'strict' will remove all styling and image on the page.  It will result\n"
-"in the fastest display, but one that will likely be the least visually\n"
-"appealing.\n"
-"        "
-
-#: ..\andre/src/plugins/security_advisor.py:332
-#: src/plugins/security_advisor.py:332
-#: src\plugins/security_advisor.py:332
-msgid "Host: "
-msgstr "Host: "
-
-#: ..\andre/src/plugins/security_advisor.py:333
-#: src/plugins/security_advisor.py:333
-#: src\plugins/security_advisor.py:333
-msgid "Confirmation code: "
-msgstr "Confirmation code: "
-
-#: ..\andre/src/plugins/tooltip.py:97
-#: src/plugins/tooltip.py:97
-#: src\plugins/tooltip.py:97
+#: src/plugins/tooltip.py:120
 msgid "builtins not defined in console yet."
 msgstr "builtins not defined in console yet."
 
-#: ..\andre/src/plugins/vlam_editor.py:114
-#: src/plugins/vlam_editor.py:114
-#: src\plugins/vlam_editor.py:114
-msgid "Execute as external program"
-msgstr "Execute as external program"
+#: src/plugins/user_info.py:23
+msgid ""
+"No user account has been set up: execution of Python code has\n"
+"been disabled. Please use account_manager.py to create one or more user accounts."
+msgstr ""
+"No user account has been set up: execution of Python code has\n"
+"been disabled. Please use account_manager.py to create one or more user accounts."
 
-#: ..\andre/src/plugins/vlam_editor.py:126
-#: src/plugins/vlam_editor.py:126
-#: src\plugins/vlam_editor.py:126
+#: src/plugins/vlam_editor.py:118
+msgid "Save and Run from file"
+msgstr "Save and Run from file"
+
+#: src/plugins/vlam_editor.py:128
 msgid "Execute as separate thread"
 msgstr "Execute as separate thread"
 
-#: ..\andre/src/plugins/vlam_interpreter.py:160
-#: src/plugins/vlam_interpreter.py:160
-#: src\plugins/vlam_interpreter.py:160
-#, python-format
-msgid "Type %s.help for more information."
-msgstr "Type %s.help for more information."
+#: src/plugins/vlam_editor.py:153
+msgid "Alternate Python path: "
+msgstr "Alternate Python path: "
+
+#: src/plugins/vlam_editor.py:162
+msgid "Execute as external program"
+msgstr "Execute as external program"
+
+#: src/plugins/vlam_pdb.py:131
+msgid "Reached the end of the code."
+msgstr "Reached the end of the code."
+
+#: src/plugins/vlam_pdb.py:170
+msgid "Local Namespace"
+msgstr "Local Namespace"
+
+#: src/plugins/vlam_pdb.py:178
+msgid "Start PDB"
+msgstr "Start PDB"
+
+#: src/plugins/vlam_pdb.py:183
+msgid "Next Step"
+msgstr "Next Step"
+
+#: src/plugins/vlam_pdb.py:188
+msgid "Step Into"
+msgstr "Step Into"
+
+#: src/plugins/vlam_pdb.py:193
+msgid "Return"
+msgstr "Return"
+
+#: src/plugins/vlam_pdb.py:198
+msgid "Next Multiple Steps"
+msgstr "Next Multiple Steps"
+
+#: src/plugins/vlam_pdb.py:204
+msgid "Output"
+msgstr "Output"
+
+#~ msgid "(Fixed) User home directory: "
+#~ msgstr "(Fixed) User home directory: "
+#~ msgid "(Fixed) Temporary working directory: "
+#~ msgstr "(Fixed) Temporary working directory: "
+#~ msgid "Invalid choice for %s.dir_help"
+#~ msgstr "Invalid choice for %s.dir_help"
+#~ msgid "The choices for dir_help are %s\n"
+#~ msgstr "The choices for dir_help are %s\n"
+#~ msgid "  The current value is: "
+#~ msgstr "  The current value is: "
+#~ msgid "Invalid choice for %s.doc_help"
+#~ msgstr "Invalid choice for %s.doc_help"
+#~ msgid "The choices for doc_help are %s\n"
+#~ msgstr "The choices for doc_help are %s\n"
+#~ msgid ""
+#~ "\n"
+#~ "You can change some of the default values by Crunchy, just like\n"
+#~ "you can obtain this help message, using either an interpreter\n"
+#~ "prompt or an editor, and assigning the desired value to a given\n"
+#~ "variable.  Some of these variables are \"fixed\", which means that\n"
+#~ "their value can not be changed by the user.\n"
+#~ "-\n"
+#~ "Here are the values of some variables currently used by Crunchy.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "You can change some of the default values by Crunchy, just like\n"
+#~ "you can obtain this help message, using either an interpreter\n"
+#~ "prompt or an editor, and assigning the desired value to a given\n"
+#~ "variable.  Some of these variables are \"fixed\", which means that\n"
+#~ "their value can not be changed by the user.\n"
+#~ "-\n"
+#~ "Here are the values of some variables currently used by Crunchy.\n"
+#~ msgid "Invalid choice for %s.no_markup"
+#~ msgstr "Invalid choice for %s.no_markup"
+#~ msgid "with \"image_file   file_name\" as a required option."
+#~ msgstr "with \"image_file   file_name\" as a required option."
+#~ msgid "The choices for \"pre\" tag without Crunchy markup are %s\n"
+#~ msgstr "The choices for \"pre\" tag without Crunchy markup are %s\n"
+#~ msgid "editarea_language also set to: "
+#~ msgstr "editarea_language also set to: "
+#~ msgid ""
+#~ "Note: while this is a valid choice, this choice is not available for a "
+#~ "language provided by editarea. "
+#~ msgstr ""
+#~ "Note: while this is a valid choice, this choice is not available for a "
+#~ "language provided by editarea. "
+#~ msgid "The language choice for editarea remains "
+#~ msgstr "The language choice for editarea remains "
+#~ msgid "Invalid choice for %s.language"
+#~ msgstr "Invalid choice for %s.language"
+#~ msgid "The choices for language are %s\n"
+#~ msgstr "The choices for language are %s\n"
+#~ msgid "editarea_language set to: "
+#~ msgstr "editarea_language set to: "
+#~ msgid "Invalid choice for %s.editarea_language"
+#~ msgstr "Invalid choice for %s.editarea_language"
+#~ msgid "The choices for editarea_language are %s\n"
+#~ msgstr "The choices for editarea_language are %s\n"
+#~ msgid "Crunchy will attempt to provide friendly error messages."
+#~ msgstr "Crunchy will attempt to provide friendly error messages."
+#~ msgid ""
+#~ "Crunchy's error messages will be similar to Python's default tracebacks."
+#~ msgstr ""
+#~ "Crunchy's error messages will be similar to Python's default tracebacks."
+#~ msgid "friendly attribute must be set to True or False."
+#~ msgstr "friendly attribute must be set to True or False."
+#~ msgid "The choices for friendly tracebacks are %s\n"
+#~ msgstr "The choices for friendly tracebacks are %s\n"
+#~ msgid "security set to: "
+#~ msgstr "security set to: "
+#~ msgid "Invalid choice for %s.local_security"
+#~ msgstr "Invalid choice for %s.local_security"
+#~ msgid "The choices for local_security levels are %s\n"
+#~ msgstr "The choices for local_security levels are %s\n"
+#~ msgid "override_default_interpreter set to: "
+#~ msgstr "override_default_interpreter set to: "
+#~ msgid "Invalid choice for %s.override_default_interpreter"
+#~ msgstr "Invalid choice for %s.override_default_interpreter"
+#~ msgid "The choices for override_default_interpreter are %s\n"
+#~ msgstr "The choices for override_default_interpreter are %s\n"
+#~ msgid "my_style set to: "
+#~ msgstr "my_style set to: "
+#~ msgid "The choices for my_style are %s\n"
+#~ msgstr "The choices for my_style are %s\n"
+#~ msgid "If set to True, Crunchy's default styles are replaced"
+#~ msgstr "If set to True, Crunchy's default styles are replaced"
+#~ msgid " by the user's choice specified in %s.styles\n"
+#~ msgstr " by the user's choice specified in %s.styles\n"
+#~ msgid ""
+#~ "\n"
+#~ "  The current value for my_style is: "
+#~ msgstr ""
+#~ "\n"
+#~ "  The current value for my_style is: "
+#~ msgid "Error on line %s:\n"
+#~ msgstr "Error on line %s:\n"
+#~ msgid "Load Python file"
+#~ msgstr "Load Python file"
+#~ msgid ""
+#~ "Use 'Save and Run' to execute programs (like pygame and GUI based ones) "
+#~ "externally."
+#~ msgstr ""
+#~ "Use 'Save and Run' to execute programs (like pygame and GUI based ones) "
+#~ "externally."
+#~ msgid "Illegal path, page not found."
+#~ msgstr "Illegal path, page not found."
+#~ msgid ""
+#~ "Crunchy could not open the page you requested. This could be for one of "
+#~ "anumber of reasons, including:"
+#~ msgstr ""
+#~ "Crunchy could not open the page you requested. This could be for one of "
+#~ "anumber of reasons, including:"
+#~ msgid "The page doesn't exist."
+#~ msgstr "The page doesn't exist."
+#~ msgid ""
+#~ "The path you requested was illegal, examples of illegal paths include "
+#~ "those containing the .. path modifier."
+#~ msgstr ""
+#~ "The path you requested was illegal, examples of illegal paths include "
+#~ "those containing the .. path modifier."
+#~ msgid "The path you requested was: "
+#~ msgstr "The path you requested was: "
+#~ msgid "Copy code sample"
+#~ msgstr "Copy code sample"
+#~ msgid " Crunchy security level: "
+#~ msgstr " Crunchy security level: "
+#~ msgid " No elements were removed. "
+#~ msgstr " No elements were removed. "
+#~ msgid " One element was removed. - "
+#~ msgstr " One element was removed. - "
+#~ msgid " %d elements were removed. - "
+#~ msgstr " %d elements were removed. - "
+#~ msgid " View report "
+#~ msgstr " View report "
+#~ msgid "Host: "
+#~ msgstr "Host: "
+#~ msgid "Confirmation code: "
+#~ msgstr "Confirmation code: "
+#~ msgid "Type %s.help for more information."
+#~ msgstr "Type %s.help for more information."
 
