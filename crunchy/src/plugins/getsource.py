@@ -12,9 +12,8 @@ def register():
     plugin['register_tag_handler']("div", "title", "getsource", get_source)
 
 def get_source(page, elem, uid):
-    elem.text = "Plugin was called; vlam = %s; url = %s; local = %s" % (elem.attrib["title"], page.url, page.is_local)
+    elem.text = " "
     vlam = elem.attrib["title"]
-
     if "show_vlam" in vlam:
         elem.insert(0, plugin['services'].show_vlam(page, elem, vlam))
 
@@ -28,11 +27,33 @@ def get_source(page, elem, uid):
         sys.path.insert(0, mod_dir)
         remove_from_syspath = True
     lines, lineno = get_lines(mod_name, source)
-    pre = SubElement(elem, "pre")
+    if lineno == 0:
+        lineno = 1
     if remove_from_syspath:
         sys.path.remove(mod_dir)
-    pre.text = "".join(lines)
+    insert_code(page, elem, lines, lineno)
     return
+
+def insert_code(page, elem, lines, lineno):
+    '''insert the code in the element and style it appropriately'''
+    # Note: in developping this plugin, we observed that the code was styled
+    # automatically - that is the "div/getsource" handler was called before the
+    # "pre" handler was.  This could just be a coincidence on which we can not
+    # rely.
+    pre = SubElement(elem, "pre")
+    if python_version < 3:
+        vlam = "python"
+    else:
+        vlam = "python3"
+    if "linenumber" in elem.attrib['title']:
+        vlam += " linenumber=%s"%lineno
+    pre.attrib['title'] = vlam
+    pre.text ="".join(lines)
+    dummy, dummy = plugin['services'].style(page, pre, None, vlam)
+    # prevent any further processing
+    pre.attrib["title"] = "no_vlam"
+    return
+
 
 def get_lines(mod_name, source):
     '''get the lines of code from an object located in module mod_name as well
