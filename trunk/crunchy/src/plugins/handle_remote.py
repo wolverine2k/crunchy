@@ -15,7 +15,8 @@ else:
     from urllib.parse import unquote_plus
 
 # All plugins should import the crunchy plugin API via interface.py
-from src.interface import plugin, preprocessor, config, SubElement
+from src.interface import plugin, preprocessor, config, SubElement, translate
+_ = translate['_']
 from src.utilities import unicode_urlopen
 
 provides = set(["/remote"])
@@ -65,13 +66,13 @@ def insert_load_remote(dummy_page, parent, dummy_uid): # tested
     # redundant here.
     div = SubElement(parent, "div")
     p = SubElement(div, "p")
-    p.text = "Type url of remote tutorial."
+    p.text = _("Type url of remote tutorial.")
     form = SubElement(div, 'form', name='url', size='80', method='get',
                        action='/remote')
     SubElement(form, 'input', name='url', size='80',
                            value=parent.text)
     input2 = SubElement(form, 'input', type='submit',
-                           value='Load remote tutorial')
+                           value=_('Load remote tutorial'))
     input2.attrib['class'] = 'crunchy'
     parent.text = ' '
 plugin[REMOTE_HTML] = insert_load_remote

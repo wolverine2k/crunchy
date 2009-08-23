@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Crunchy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-22 22:31-0400\n"
-"PO-Revision-Date: 2009-08-22 22:57-0400\n"
+"POT-Creation-Date: 2009-08-22 23:13-0400\n"
+"PO-Revision-Date: 2009-08-22 23:15-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team: André Roberge <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -86,10 +86,6 @@ msgstr "Méthode inconnue"
 #: src/configuration.py:484
 msgid "Choose a valid rule number to remove."
 msgstr "Choisissez un numéro de règle valide à enlever"
-
-#: src/configuration.py:490
-msgid "#"
-msgstr ""
 
 #: src/configuration.py:490
 msgid "\tmethod"
@@ -265,6 +261,14 @@ msgstr "Télécharger un tutoriel html local."
 msgid "Load tutorial"
 msgstr "Charger le fichier."
 
+#: src/plugins/handle_remote.py:69
+msgid "Type url of remote tutorial."
+msgstr "Écrivez l'adresse (URL) du tutoriel"
+
+#: src/plugins/handle_remote.py:75
+msgid "Load remote tutorial"
+msgstr "Télécharger le tutoriel"
+
 #: src/plugins/io_widget.py:53
 msgid "Interrupt thread"
 msgstr "Interrompez la \"thread\""
@@ -292,6 +296,22 @@ msgstr "Quittez Crunchy"
 #: src/plugins/power_browser.py:24
 msgid "Browsing"
 msgstr "Furetez"
+
+#: src/plugins/python_files.py:72
+msgid "Load local Python file"
+msgstr "Télécharger un fichier Python local."
+
+#: src/plugins/python_files.py:73
+msgid "Load Python file"
+msgstr "Charger le fichier Python"
+
+#: src/plugins/rst.py:254
+msgid "Load local reStructuredText file"
+msgstr "Télécharger un ficher \"reStructuredText\" local."
+
+#: src/plugins/rst.py:255
+msgid "Load rst file"
+msgstr "Charger le fichier rst."
 
 #: src/plugins/security_advisor.py:92
 msgid "Confirm the security levels"

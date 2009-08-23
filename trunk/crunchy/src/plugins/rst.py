@@ -9,7 +9,8 @@
 # All plugins should import the crunchy plugin API via interface.py
 import codecs
 import os
-from src.interface import plugin, python_version, StringIO
+from src.interface import plugin, python_version, StringIO, translate
+_ = translate['_']
 from src.utilities import unicode_urlopen
 
 _docutils_installed = True
@@ -250,7 +251,8 @@ def convert_rst(path, local=True):
 def insert_load_rst(page, elem, uid):
     "Inserts a javascript browser object to load a local reStructuredText file."
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_rst',
-                                '/rst', 'Load local reStructuredText file', 'Load rst file')
+                                '/rst', _('Load local reStructuredText file'),
+                                _('Load rst file'))
     return
 plugin['rst'] = insert_load_rst
 
