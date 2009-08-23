@@ -35,7 +35,7 @@ def get_source(page, elem, uid):
         return
     if lineno == 0:
         lineno = 1
-    insert_code(page, elem, lines, lineno)
+    insert_code(page, elem, uid, lines, lineno)
     return
 
 def insert_traceback(page, elem, tb):
@@ -49,8 +49,33 @@ def insert_traceback(page, elem, tb):
     pre.attrib["title"] = "no_vlam"
     return
 
-def insert_code(page, elem, lines, lineno):
+def insert_code(page, elem, uid, lines, lineno):
     '''insert the code in the element and style it appropriately'''
+    # Note: in developping this plugin, we observed that the code was styled
+    # automatically - that is the "div/getsource" handler was called before the
+    # "pre" handler was.  This could just be a coincidence on which we can not
+    # rely.
+    pre = SubElement(elem, "pre")
+    if 'editor' in elem.attrib['title']:
+        vlam = "editor"
+    elif python_version < 3:
+        vlam = "python"
+    else:
+        vlam = "python3"
+    if "linenumber" in elem.attrib['title']:
+        vlam += " linenumber=%s"%lineno
+    pre.attrib['title'] = vlam
+    pre.text ="".join(lines)
+    if 'editor' in vlam:
+        insert_editor(page, elem, uid, lines, lineno)
+    else:
+        dummy, dummy = plugin['services'].style(page, pre, None, vlam)
+    # prevent any further processing
+    pre.attrib["title"] = "no_vlam"
+    return
+
+def insert_editor(page, elem, uid, lines, lineno):
+    '''insert the an editor as usual'''
     # Note: in developping this plugin, we observed that the code was styled
     # automatically - that is the "div/getsource" handler was called before the
     # "pre" handler was.  This could just be a coincidence on which we can not
@@ -64,7 +89,7 @@ def insert_code(page, elem, lines, lineno):
         vlam += " linenumber=%s"%lineno
     pre.attrib['title'] = vlam
     pre.text ="".join(lines)
-    dummy, dummy = plugin['services'].style(page, pre, None, vlam)
+    plugin['services'].insert_editor(page, pre, uid)
     # prevent any further processing
     pre.attrib["title"] = "no_vlam"
     return
