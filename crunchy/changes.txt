@@ -1,11 +1,13 @@
 Version 1.0.1
 --------------
 
+- new experimental "get source" plugin
 - fixed bug: exception raised when attempting to load a local html file
    (issue 230, r1345)
 - fixed bug: exception raised when attempting to close a filehandle
     while loading a python file (issue 229, r1344)
-- started work on experimental "get source" plugin
 - fixed an incorrect button label for Loading html tutorials (r1342)
+- fixed a bug when linenumbering was used - the last line of code was
+  not numbered. (r1348)
 
 Release 1.0: starting point

@@ -5,6 +5,7 @@
 import inspect
 import os
 import sys
+import traceback
 
 from src.interface import config, plugin, python_version, SubElement
 
@@ -27,11 +28,25 @@ def get_source(page, elem, uid):
         sys.path.insert(0, mod_dir)
         remove_from_syspath = True
     lines, lineno = get_lines(mod_name, source)
-    if lineno == 0:
-        lineno = 1
     if remove_from_syspath:
         sys.path.remove(mod_dir)
+    if lineno == "Exception":
+        insert_traceback(page, elem, lines)
+        return
+    if lineno == 0:
+        lineno = 1
     insert_code(page, elem, lines, lineno)
+    return
+
+def insert_traceback(page, elem, tb):
+    '''inserts a traceback, nicely styled.'''
+    pre = SubElement(elem, "pre")
+    vlam = "pytb"
+    pre.attrib['title'] = vlam
+    pre.text = tb
+    dummy, dummy = plugin['services'].style(page, pre, None, vlam)
+    # prevent any further processing
+    pre.attrib["title"] = "no_vlam"
     return
 
 def insert_code(page, elem, lines, lineno):
@@ -62,7 +77,11 @@ def get_lines(mod_name, source):
     The object is referred to in the usual Python syntax for import statements
     e.g. source == mod_name.A_Class.a_method
     '''
-    mod = __import__(mod_name)
+    try:
+        mod = __import__(mod_name)
+    except:
+        return traceback.format_exc(), "Exception"
+
     to_inspect = {mod_name: mod}
 
     source_split = source.split(".")
@@ -70,9 +89,15 @@ def get_lines(mod_name, source):
     for i, s in enumerate(source_split):
         if i != 0:
             _obj.append(_obj[-1] + "." + s)
-            to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
+            try:
+                to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
+            except:
+                return traceback.format_exc(), "Exception"
 
-    return inspect.getsourcelines(to_inspect[source])
+    try:
+        return inspect.getsourcelines(to_inspect[source])
+    except:
+        return traceback.format_exc(), "Exception"
 
 def get_tutorial_path(page):
     '''obtains the full path of the local tutorial'''
