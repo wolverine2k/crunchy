@@ -121,24 +121,6 @@ if _docutils_installed:
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
 
-    class ImageFileDirective(rst.Directive):
-        required_arguments = 1
-        optional_arguments = 3
-        option_spec = {
-            'linenumber' : int_or_one
-        }
-        has_content = True
-        def run(self):
-            code = linesep.join(self.content)
-            for arg in self.arguments[1:]:
-                if arg.strip() not in ['no_copy', 'no_pre' ]:
-                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
-            listOut = [ x.strip() for x in ['image_file'] + self.arguments ]
-            if "linenumber" in self.options:
-                listOut.append("linenumber=%d" % (self.options["linenumber"],))
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
     class PythonCodeDirective(rst.Directive):
         required_arguments = 0
         optional_arguments = 0
@@ -191,7 +173,6 @@ if _docutils_installed:
         'interpreter' : InterpreterDirective,
         'editor' : EditorDirective,
         'doctest' : DocTestDirective,
-        'image_file' : ImageFileDirective,
         'py_code' : PythonCodeDirective,
         'python_code' : PythonCodeDirective,
         'alternate_python_version' : AltPythonVersionDirective,
