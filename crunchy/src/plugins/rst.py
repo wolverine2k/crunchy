@@ -60,6 +60,11 @@ if _docutils_installed:
             nodes.raw.__init__(self, *args, **kwargs)
             self.tagname = "pre"
 
+    class div(nodes.raw):
+        def __init__(self, *args, **kwargs):
+            nodes.raw.__init__(self, *args, **kwargs)
+            self.tagname = "div"
+
     class InterpreterDirective(rst.Directive):
         required_arguments = 1
         optional_arguments = 1
@@ -102,6 +107,16 @@ if _docutils_installed:
                     listOut.append(key + "=%s" % (str(self.options[key]),))
             titleAttr = " ".join(listOut)
             return [ pre(title=titleAttr, text=code) ]
+
+    class GetSourceDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 5
+        final_argument_whitespace = False
+        has_content = False
+        def run(self):
+            listOut = [ x.strip() for x in ['getsource'] + self.arguments ]
+            titleAttr = " ".join(listOut)
+            return [ div(title=titleAttr, text=' ') ]
 
     class DocTestDirective(rst.Directive):
         required_arguments = 0
@@ -172,6 +187,7 @@ if _docutils_installed:
     DIRECTIVE_DICT = {
         'interpreter' : InterpreterDirective,
         'editor' : EditorDirective,
+        'getsource': GetSourceDirective,
         'doctest' : DocTestDirective,
         'py_code' : PythonCodeDirective,
         'python_code' : PythonCodeDirective,
@@ -192,6 +208,19 @@ if _docutils_installed:
 
     HTMLTranslator.visit_pre = visit_pre
     HTMLTranslator.depart_pre = depart_pre
+
+    def visit_div(translator, node):
+        attrDict = {}
+        for key, value in list(node.attributes.items()):
+            if value and (key is not "xml:space"):
+                attrDict[key] = value
+        translator.body.append(translator.starttag(node, 'div', **attrDict))
+
+    def depart_div(translator, node):
+        translator.body.append('\n</div>\n')
+
+    HTMLTranslator.visit_div = visit_div
+    HTMLTranslator.depart_div = depart_div
 
 if _docutils_installed:
     for key, value in list(DIRECTIVE_DICT.items()):
