@@ -41,6 +41,7 @@ def register():  # tested
     plugin['add_vlam_option']('no_markup', 'editor', 'alternate_python_version',
                               'alt_py')
     plugin['register_service']("insert_editor_subwidget", insert_editor_subwidget)
+    plugin['register_service']("insert_editor", insert_editor)
     return
 
 def insert_editor_subwidget(page, elem, uid, code="\n"):  # tested
