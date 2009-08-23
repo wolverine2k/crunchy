@@ -26,7 +26,7 @@ of them if you don't have the necessary modules installed.  Click on "Save and R
 <h4>Annoyance / Bug :-(</h4>
 <p> Sometimes, running an application as a separate thread <b>may</b>
 yield a frozen app (Tkinter, I accuse you!).  However, Crunchy itself should
-still be ok - if not, please let us know.
+still be ok after you reload the page - if not, please let us know.
 </p>
 </div>
 
@@ -35,13 +35,18 @@ still be ok - if not, please let us know.
 Tkinter comes pretty much with all Python distributions and is likely
 to be already present on your computer.</p>
 <pre title="editor size=(6, 80) external">
+# Note: it is better to use
+# "Save and Run" rather than launch
+# from a separate thread.
+
 try:
     from Tkinter import *   # for Python 2.x
 except:
     from tkinter import *   # for Python 3.x
 root = Tk()
+root.title("Tkinter from Crunchy")
 w = Label(root, text="Crunchy!")
-w.pack()
+w.pack(pady=10, padx=100)
 root.mainloop()
 </pre>
 <p>Note that you can toggle the editor and save the file at a location of
