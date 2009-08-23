@@ -17,10 +17,10 @@ import pickle
 from src.interface import config, u_print, translate, additional_vlam, accounts, python_version
 
 if python_version < 3:
-    ask_ = raw_input
+    ask_user = raw_input
     from urlparse import urlsplit
 else:
-    ask_ = input
+    ask_user = input
     from urllib.parse import urlsplit
 
 import src.interface as interface
@@ -112,8 +112,8 @@ def make_property(name, default=None, doc=None): # tested
             try:
                 current = getattr(obj, "_"+name) # can raise AttributeError
                                                    # if not (yet) defined...
-                u_print(_("%s is an invalid choice for %s.%s") % (val,
-                                                        prefs['_prefix'], name))
+                u_print(_("%s is an invalid choice for %s.%s" % (val,
+                                                        prefs['_prefix'], name)))
                 u_print(_("The valid choices are: "), allowed)
                 u_print(_("The current value is: "), current)
             except AttributeError: # first time; set to default!
@@ -450,24 +450,24 @@ are usually launched.""")
     def add_site(self):
         '''interactive function to facilitate adding new site to
            the secured list'''
-        site = ask_(_("Enter site url (for example, docs.python.org) "))
-        level = ask_(_("Enter security level (for example: normal) "))
+        site = ask_user(_("Enter site url (for example, docs.python.org) "))
+        level = ask_user(_("Enter security level (for example: normal) "))
         self._set_site_security(site, level)
 
     def add_rule(self):
         '''interactive function to enable rules to modify markup'''
         u_print(_("Enter a rule method to modify markup."))
         u_print(_("The allowed methods are: add_option, remove_option, replace"))
-        method = ask_(_("Enter method: ")).strip()
+        method = ask_user(_("Enter method: ")).strip()
         if method == 'replace':
-            to_replace = ask_(_("Markup value to replace: "))
-            replacement = ask_(_("Replacement value: "))
+            to_replace = ask_user(_("Markup value to replace: "))
+            replacement = ask_user(_("Replacement value: "))
             self._modification_rules.append([method, to_replace, replacement])
         elif method == 'add_option':
-            add = ask_(_("Enter option to add (e.g. linenumber): "))
+            add = ask_user(_("Enter option to add (e.g. linenumber): "))
             self._modification_rules.append([method, add])
         elif method == 'remove_option':
-            remove = ask_(_("Enter option to remove (e.g. linenumber)"))
+            remove = ask_user(_("Enter option to remove (e.g. linenumber)"))
             self._modification_rules.append([method, remove])
         else:
             u_print(_("Unknown method."))
@@ -487,7 +487,7 @@ are usually launched.""")
 
     def list_rules(self):
         '''list the rules used to modify markup'''
-        u_print(_("#"), _("\tmethod"), _("\targuments"))
+        u_print("#", _("\tmethod"), _("\targuments"))
         for i, rule in enumerate(self._modification_rules):
             u_print(i, "\t%s" % rule[0], "\t%s" % rule[1:])
 
