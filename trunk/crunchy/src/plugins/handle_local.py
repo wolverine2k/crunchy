@@ -44,7 +44,7 @@ def local_loader(request):  # tested
     extension = url.split('.')[-1]
     username = request.crunchy_username
     if "htm" in extension:
-        page = plugin['create_vlam_page'](open(url), url, username=username,
+        page = plugin['create_vlam_page'](open(url, 'rb'), url, username=username,
                                           local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
@@ -52,7 +52,7 @@ def local_loader(request):  # tested
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
     else:
-        page = open(url, 'r')
+        page = open(url, 'rb')
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
     request.end_headers()

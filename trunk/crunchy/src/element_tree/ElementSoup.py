@@ -77,7 +77,7 @@ def parse(file, builder=None):
             bob.end(soup.name)
 
     text = file.read()
-    assert isinstance(text, unicode)
+    #assert isinstance(text, unicode)
     soup = BS.BeautifulSoup(text)
 
     # build the tree
