@@ -14,39 +14,44 @@ def register():
 def get_source(page, elem, uid):
     elem.text = "Plugin was called; vlam = %s; url = %s; local = %s" % (elem.attrib["title"], page.url, page.is_local)
     vlam = elem.attrib["title"]
+
+    if "show_vlam" in vlam:
+        elem.insert(0, plugin['services'].show_vlam(page, elem, vlam))
+
     tut_path = get_tutorial_path(page)
     base, mod_name, source = extract_module_information(vlam)
     mod_path = get_source_fullpath(tut_path, base, mod_name)
-    previous_cwd = os.getcwd()
-    os.chdir(os.path.dirname(mod_path))
-    cwd = os.getcwd()
-    sys.path.insert(0, cwd)
-    mod = __import__(mod_name)
-    to_inspect = {}
-    source_split = source.split(".")
-    source_path = [mod_name]
-    for i, s in enumerate(source_split):
-        if i != 0:
-            source_path.append(source_path[-1] + "." + s)
-            print i, s, source_path[i]
-
-    to_inspect[mod_name] = mod
-    for i, s in enumerate(source_split):
-        if i != 0:
-            print i, s, source_path[i]
-            to_inspect[source_path[i]] = getattr(to_inspect[source_path[i-1]], s)
-
+    mod_dir = os.path.dirname(mod_path)
+    if mod_dir in sys.path:
+        remove_from_syspath = False
+    else:
+        sys.path.insert(0, mod_dir)
+        remove_from_syspath = True
+    lines, lineno = get_lines(mod_name, source)
     pre = SubElement(elem, "pre")
-    _info = inspect.getsourcelines(to_inspect[source])
-    lines = _info[0]
-    linenumber = _info[1]
-    for line in lines:
-        print line
-    print linenumber
-    print "-"*66
-    os.chdir(previous_cwd)
-    sys.path.remove(cwd)
+    if remove_from_syspath:
+        sys.path.remove(mod_dir)
     pre.text = "".join(lines)
+    return
+
+def get_lines(mod_name, source):
+    '''get the lines of code from an object located in module mod_name as well
+       as the line number of the first line of the object returned.
+
+    The object is referred to in the usual Python syntax for import statements
+    e.g. source == mod_name.A_Class.a_method
+    '''
+    mod = __import__(mod_name)
+    to_inspect = {mod_name: mod}
+
+    source_split = source.split(".")
+    _obj = [mod_name]
+    for i, s in enumerate(source_split):
+        if i != 0:
+            _obj.append(_obj[-1] + "." + s)
+            to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
+
+    return inspect.getsourcelines(to_inspect[source])
 
 def get_tutorial_path(page):
     '''obtains the full path of the local tutorial'''

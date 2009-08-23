@@ -10,12 +10,17 @@
 <div id="content">
 <p>
 The getsource plugin is designed for automatic inclusion of Python source code
-from a python file.
+from a python file.  We use a small test file to show how it works, displaying
+the Very Little Added Markup (VLAM) used.
 </p>
-<div title="getsource getsource_t">Code will go here</div>
-<div title="getsource getsource_t.a_function">Code will go here</div>
-<div title="getsource getsource_t.Fantastic">Code will go here</div>
-<div title="getsource getsource_t.Fantastic.bye">Code will go here</div>
+<p>First, the complete file.</p>
+<div title="getsource a_test_file show_vlam">Code will go here</div>
+<p>Next, a function.</p>
+<div title="getsource a_test_file.a_function show_vlam">Code will go here</div>
+<p>An entire class.</p>
+<div title="getsource a_test_file.Fantastic show_vlam">Code will go here</div>
+<p>Finally, a single method within that class.</p>
+<div title="getsource a_test_file.Fantastic.bye show_vlam">Code will go here</div>
 </div>
 </body>
 </html>

@@ -31,7 +31,7 @@ Testing get_tutorial_path()
     >>> page.is_local = False
     >>> page.is_from_root = True
     >>> getsource.get_tutorial_path(page)#.replace(os.path.sep, "/")
-    '/crunchy/this/file'
+    '/crunchy/server_root/this/file'
 
 Testing extract_module_information()
 ---------------------------------------
