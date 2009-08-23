@@ -8,7 +8,7 @@ Settings things up.
     >>> from src.interface import plugin, config, get_base_dir
     >>> plugin.clear()
     >>> config.clear()
-    >>> config['crunchy_base_dir'] = get_base_dir()
+    >>> config['crunchy_base_dir'] = "/crunchy"
     >>> import src.plugins.getsource as getsource
     >>> import src.tests.mocks as mocks
     >>> mocks.init()
@@ -19,6 +19,29 @@ Testing register()
     >>> getsource.register()
     >>> mocks.registered_tag_handler['div']['title']['getsource'] == getsource.get_source
     True
+
+Testing get_tutorial_path()
+----------------------------
+
+    >>> page = mocks.Page()
+    >>> page.url = "/this/file"
+    >>> page.is_local = True
+    >>> getsource.get_tutorial_path(page)#.replace(os.path.sep, "/")
+    '/this/file'
+    >>> page.is_local = False
+    >>> page.is_from_root = True
+    >>> getsource.get_tutorial_path(page)#.replace(os.path.sep, "/")
+    '/crunchy/this/file'
+
+Testing extract_module_information()
+---------------------------------------
+
+    >>> getsource.extract_module_information("getsource module")
+    ('', 'module', 'module')
+    >>> getsource.extract_module_information("getsource ../module.function")
+    ('..', 'module', 'module.function')
+    >>> getsource.extract_module_information("getsource ../src/../module.function.other")
+    ('../src/..', 'module', 'module.function.other')
 
 Creating fake file to play with
 -------------------------------

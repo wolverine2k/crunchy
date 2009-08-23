@@ -1,5 +1,10 @@
 Version 1.0.1
 --------------
+
+- fixed bug: exception raised when attempting to load a local html file
+   (issue 230, r1345)
+- fixed bug: exception raised when attempting to close a filehandle
+    while loading a python file (issue 229, r1344)
 - started work on experimental "get source" plugin
 - fixed an incorrect button label for Loading html tutorials (r1342)
 

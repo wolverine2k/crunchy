@@ -27,7 +27,9 @@ class Python_file(object):
         return self._data
 
     def close(self):
-        '''to prevent an exception being raised'''
+        '''fake method to prevent an exception from being raised when treated as
+           a real file
+        '''
         pass
 
 def load_python(request):
