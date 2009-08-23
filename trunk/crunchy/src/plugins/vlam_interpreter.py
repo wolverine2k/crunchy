@@ -14,7 +14,6 @@ import sys
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, translate, tostring, Element
 import src.utilities as util
-import src.plugins.colourize as colourize
 
 _ = translate['_']
 
@@ -95,7 +94,7 @@ def insert_interpreter(page, elem, uid):
         python_code = util.extract_code_from_interpreter(python_code)
     else:
         elem.attrib['title'] = "python"
-    code, show_vlam = plugin['services'].style(page, elem, None, vlam)
+    dummy, show_vlam = plugin['services'].style(page, elem, None, vlam)
     elem.attrib['title'] = vlam
     if log_id:
         config[page.username]['log'][log_id] = [tostring(elem)]
@@ -130,7 +129,7 @@ def select_type(vlam, c, elem):
     ##    elif "ipython" in vlam:
     ##        interp_kind = "ipython"
         elif 'python_tutorial' in vlam:
-            text = colourize.extract_code(elem, trim=True)
+            text = util.extract_code(elem)
             if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
                 interp_kind = 'borg'
             else:
@@ -155,12 +154,11 @@ def select_type(vlam, c, elem):
 
 def include_interpreter(interp_kind, page, uid):
     '''includes the relevant code to initialize an interpreter'''
-    prefix = config[page.username]['_prefix']
-    BorgInterpreter_js = borg_javascript(prefix, page)
-    SingleInterpreter_js = single_javascript(prefix, page)
-    parrot_js = parrot_javascript(prefix, page)
-    Parrots_js = parrots_javascript(prefix, page)
-    TypeInfoConsole_js = type_info_javascript(prefix, page)
+    BorgInterpreter_js = borg_javascript(page)
+    SingleInterpreter_js = single_javascript(page)
+    parrot_js = parrot_javascript(page)
+    Parrots_js = parrots_javascript(page)
+    TypeInfoConsole_js = type_info_javascript(page)
     # first we need to make sure that the required javacript code is in the page:
     if interp_kind == "borg" or interp_kind == "interpreter":
         if not page.includes("BorgInterpreter_included"):
@@ -194,7 +192,7 @@ def include_interpreter(interp_kind, page, uid):
 ##              page.add_js_code(IPythonInterpreter_js)
 ##          page.add_js_code('init_IPythonInterpreter("%s");' % uid)
 
-def borg_javascript(prefix, page):
+def borg_javascript(page):
     '''create string needed to initialize a Borg interpreter using javascript'''
     return r"""
     function init_BorgInterpreter(uid){
@@ -206,7 +204,7 @@ def borg_javascript(prefix, page):
     };
     """ % (page.pageid, page.username, plugin['session_random_id'])
 
-def single_javascript(prefix, page):
+def single_javascript(page):
     '''create string needed to initialize an Isolated (single) interpreter
        using javascript'''
     return r"""
@@ -219,7 +217,7 @@ def single_javascript(prefix, page):
     };
     """ % (page.username, plugin['session_random_id'])
 
-def parrot_javascript(prefix, page):
+def parrot_javascript(page):
     '''create string needed to initialize a parrot (single) interpreter
        using javascript'''
     return   r"""
@@ -232,7 +230,7 @@ def parrot_javascript(prefix, page):
     };
     """ % (page.username, plugin['session_random_id'])
 
-def parrots_javascript(prefix, page):
+def parrots_javascript(page):
     '''create string needed to initialize a parrots (shared) interpreter
        using javascript'''
     return r"""
@@ -245,7 +243,7 @@ def parrots_javascript(prefix, page):
     };
     """ % (page.pageid, page.username, plugin['session_random_id'])
 
-def type_info_javascript(prefix, page):
+def type_info_javascript(page):
     '''create string needed to initialize a TypeInfo (shared) interpreter
        using javascript'''
     return r"""
