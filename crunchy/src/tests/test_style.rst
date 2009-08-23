@@ -11,7 +11,11 @@ imcompatibilities with various Python version (e.g. Python 2/3)
     >>> import src.plugins.style as style
 
 
-    >>> style._style("print 'Hello'", 'python', 'tango')
-    u'<pre>\n<span class="k">print</span> <span class="s">&#39;Hello&#39;</span></pre>'
-    >>> style._style("print u'Hello'", 'python', 'tango')
-    u'<pre>\n<span class="k">print</span> <span class="s">u&#39;Hello&#39;</span></pre>'
+    >>> out = style._style("print 'Hello'", 'python', 'tango')
+    >>> print(out)
+    <pre>
+    <span class="k">print</span> <span class="s">&#39;Hello&#39;</span></pre>
+    >>> out = style._style("print u'Hello'", 'python', 'tango')
+    >>> print(out)
+    <pre>
+    <span class="k">print</span> <span class="s">u&#39;Hello&#39;</span></pre>
