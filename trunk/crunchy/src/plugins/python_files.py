@@ -26,6 +26,10 @@ class Python_file(object):
         '''
         return self._data
 
+    def close(self):
+        '''to prevent an exception being raised'''
+        pass
+
 def load_python(request):
     """Loads python file from disk, inserts it into an html template
        and then creates new page
