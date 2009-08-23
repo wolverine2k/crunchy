@@ -19,8 +19,7 @@ _ = translate['_']
 # The set of other "widgets/services" provided by this plugin
 provides = set(["editor_widget"])
 # The set of other "widgets/services" required from other plugins
-requires = set(["io_widget", "/exec", "/run_external", "style_pycode",
-               "editarea"])
+requires = set(["io_widget", "/exec", "/run_external", "editarea"])
 
 def register():  # tested
     """The register() function is required for all plugins.
