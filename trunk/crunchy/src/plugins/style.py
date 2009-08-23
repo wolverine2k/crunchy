@@ -267,7 +267,7 @@ def add_linenumber(styled_code, vlam):
     lineno = get_linenumber_offset(vlam)
     # first and last lines are the embedding <pre>...</pre>
     open_span = "<span class = 'linenumber %s'>" % interface.comment
-    for index, line in enumerate(lines[1:-1]):
+    for index, line in enumerate(lines[1:]):
         if prompt_present:
             if lines[index+1].startswith(prompt):
                 lines[index+1] = open_span + "%3d </span>" % (lineno) + line
