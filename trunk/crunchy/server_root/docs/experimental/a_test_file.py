@@ -1,4 +1,4 @@
-'''A test file for getsource.py'''
+'''a_test_file.py: a test file for getsource.py'''
 
 def a_function(arg):
     '''The docstring'''

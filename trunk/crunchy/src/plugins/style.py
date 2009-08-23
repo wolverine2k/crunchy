@@ -63,15 +63,16 @@ def register():
     plugin["register_tag_handler"]("div", "title", "get_pygments_tokens",
                                    get_pygments_tokens)
     plugin['register_service']("style", pygments_style)
+    plugin['register_service']("show_vlam", create_show_vlam)
     randomize_css_classes()
 
 def pygments_style(page, elem, dummy_uid='42', vlam=None):
     cssclass = config[page.username]['style']
     wrap = False
     if vlam is not None:
-        show_vlam = create_show_vlam(cssclass, elem, vlam)
+        show_vlam = create_show_vlam(page, elem, vlam)
     elif 'show_vlam' in elem.attrib['title']:
-        show_vlam = create_show_vlam(cssclass, elem, elem.attrib['title'])
+        show_vlam = create_show_vlam(page, elem, elem.attrib['title'])
         wrap = True
     else:
         show_vlam = None
@@ -97,11 +98,12 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
         wrap_in_div(elem, dummy_uid, '', "show_vlam", show_vlam)
     return text, show_vlam
 
-def create_show_vlam(cssclass, elem, vlam):
+def create_show_vlam(page, elem, vlam):
     '''Creates a <code> element showing the complete vlam options
     used, as well as the element type.'''
     if 'show_vlam' not in vlam:
         return None
+    cssclass = config[page.username]['style']
     attributes = ' title="%s"' % vlam
     for attr in elem.attrib:
         if attr != 'title':
