@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: crunchy\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-14 22:55-0300\n"
-"PO-Revision-Date: 2009-08-22 22:57-0400\n"
+"POT-Creation-Date: 2009-08-22 23:11-0400\n"
+"PO-Revision-Date: 2009-08-22 23:13-0400\n"
 "Last-Translator: André Roberge <andre.roberge@gmail.com>\n"
 "Language-Team:  <andre.roberge@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -11,6 +11,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
 "X-Poedit-Basepath: /Users/andre/CrunchySVN/trunk/crunchy\n"
+"X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: src/plugins\n"
 
@@ -84,10 +85,6 @@ msgstr "Unknown method."
 #: src/configuration.py:484
 msgid "Choose a valid rule number to remove."
 msgstr "Choose a valid rule number to remove."
-
-#: src/configuration.py:490
-msgid "#"
-msgstr ""
 
 #: src/configuration.py:490
 msgid "\tmethod"
@@ -187,16 +184,21 @@ msgstr "Nothing to report."
 msgid "Please install and enable an analyzer."
 msgstr "Please install and enable an analyzer."
 
-#: src/plugins/analyzer.py:115
+#: src/plugins/analyzer.py:116
 #, python-format
 msgid "[From %s, code quality: %.2f/10]\n"
 msgstr "[From %s, code quality: %.2f/10]\n"
 
-#: src/plugins/analyzer.py:162
+#: src/plugins/analyzer.py:120
+#, python-format
+msgid "[From %s, code quality: 0]\n"
+msgstr "[From %s, code quality: 0]\n"
+
+#: src/plugins/analyzer.py:167
 msgid "Analyzer: "
 msgstr "Analyzer: "
 
-#: src/plugins/analyzer.py:182
+#: src/plugins/analyzer.py:187
 msgid "Analyze the code"
 msgstr "Analyze the code"
 
@@ -209,17 +211,25 @@ msgstr "Could not compile the code."
 msgid "line %d: could not compile"
 msgstr "line %d: could not compile"
 
-#: src/plugins/colourize.py:139
-msgid "Crunchy: could not style the following code"
-msgstr "Crunchy: could not style the following code"
-
-#: src/plugins/colourize.py:543
-msgid "Parsing error occurred in the following Python code."
-msgstr "Parsing error occurred in the following Python code."
-
 #: src/plugins/config_gui.py:23
 msgid "Preferences"
 msgstr "Preferences"
+
+#: src/plugins/config_gui.py:94
+msgid "Unexpected error in select_option_type; option = "
+msgstr "Unexpected error in select_option_type; option = "
+
+#: src/plugins/config_gui.py:95
+msgid "not found in configuration.options but found in config[]."
+msgstr "not found in configuration.options but found in config[]."
+
+#: src/plugins/config_gui.py:97
+msgid "is not a valid configuration option"
+msgstr "is not a valid configuration option"
+
+#: src/plugins/config_gui.py:294
+msgid "Preference has changed."
+msgstr "Preference has changed."
 
 #: src/plugins/editarea.py:92
 msgid "Select a file to open"
@@ -242,10 +252,33 @@ msgstr "Select a file to save"
 msgid "Directory Listing"
 msgstr "Directory Listing"
 
+#: src/plugins/handle_local.py:83
+msgid "Load local html tutorial"
+msgstr "Load local html tutorial"
+
+#: src/plugins/handle_local.py:84
+msgid "Load tutorial"
+msgstr "Load Python file"
+
+#: src/plugins/handle_remote.py:69
+msgid "Type url of remote tutorial."
+msgstr "Type url of remote tutorial."
+
+#: src/plugins/handle_remote.py:75
+msgid "Load remote tutorial"
+msgstr "Load remote tutorial"
+
+#: src/plugins/io_widget.py:53
+msgid "Interrupt thread"
+msgstr "Interrupt thread"
+
 #: src/plugins/io_widget.py:96
-#: src/plugins/vlam_editor.py:131
 msgid "Execute"
 msgstr "Execute"
+
+#: src/plugins/io_widget.py:100
+msgid "copy existing code"
+msgstr "copy existing code"
 
 #: src/plugins/menu.py:28
 msgid "Crunchy Menu"
@@ -262,6 +295,22 @@ msgstr "Quit Crunchy"
 #: src/plugins/power_browser.py:24
 msgid "Browsing"
 msgstr "Browsing"
+
+#: src/plugins/python_files.py:72
+msgid "Load local Python file"
+msgstr "Load local Python file"
+
+#: src/plugins/python_files.py:73
+msgid "Load Python file"
+msgstr "Load Python file"
+
+#: src/plugins/rst.py:254
+msgid "Load local reStructuredText file"
+msgstr "Load local reStructuredText file"
+
+#: src/plugins/rst.py:255
+msgid "Load rst file"
+msgstr "Load rst file"
 
 #: src/plugins/security_advisor.py:92
 msgid "Confirm the security levels"
@@ -440,13 +489,9 @@ msgstr "Select site security level"
 msgid "builtins not defined in console yet."
 msgstr "builtins not defined in console yet."
 
-#: src/plugins/user_info.py:23
-msgid ""
-"No user account has been set up: execution of Python code has\n"
-"been disabled. Please use account_manager.py to create one or more user accounts."
-msgstr ""
-"No user account has been set up: execution of Python code has\n"
-"been disabled. Please use account_manager.py to create one or more user accounts."
+#: src/plugins/vlam_doctest.py:127
+msgid "Run Doctest"
+msgstr "Run Doctest"
 
 #: src/plugins/vlam_editor.py:118
 msgid "Save and Run from file"
@@ -496,6 +541,18 @@ msgstr "Next Multiple Steps"
 msgid "Output"
 msgstr "Output"
 
+#~ msgid "Crunchy: could not style the following code"
+#~ msgstr "Crunchy: could not style the following code"
+#~ msgid "Parsing error occurred in the following Python code."
+#~ msgstr "Parsing error occurred in the following Python code."
+#~ msgid ""
+#~ "No user account has been set up: execution of Python code has\n"
+#~ "been disabled. Please use account_manager.py to create one or more user "
+#~ "accounts."
+#~ msgstr ""
+#~ "No user account has been set up: execution of Python code has\n"
+#~ "been disabled. Please use account_manager.py to create one or more user "
+#~ "accounts."
 #~ msgid "(Fixed) User home directory: "
 #~ msgstr "(Fixed) User home directory: "
 #~ msgid "(Fixed) Temporary working directory: "
@@ -592,8 +649,6 @@ msgstr "Output"
 #~ "  The current value for my_style is: "
 #~ msgid "Error on line %s:\n"
 #~ msgstr "Error on line %s:\n"
-#~ msgid "Load Python file"
-#~ msgstr "Load Python file"
 #~ msgid ""
 #~ "Use 'Save and Run' to execute programs (like pygame and GUI based ones) "
 #~ "externally."

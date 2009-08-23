@@ -1,7 +1,8 @@
 """Plugin for loading and transforming python files."""
 
 import os
-from src.interface import plugin, interactive
+from src.interface import plugin, interactive, translate
+_ = translate['_']
 from src.utilities import changeHTMLspecialCharacters
 
 provides = set(["/py"])
@@ -68,7 +69,8 @@ def load_python(request):
 def insert_load_python(page, elem, uid):
     "Inserts a javascript browser object to load a local python file."
     plugin['services'].insert_file_tree(page, elem, uid, '/jquery_file_tree_py',
-                                '/py', 'Load local Python file', 'Load Python file')
+                                '/py', _('Load local Python file'),
+                                _('Load Python file'))
     return
 plugin['local_python'] = insert_load_python
 
