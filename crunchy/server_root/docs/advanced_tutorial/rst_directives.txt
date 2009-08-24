@@ -6,7 +6,7 @@
 docutils installed.*
 
 This file is a simple reStructuredText file.  However,
-it does contain some *directives* which Crunchy can
+it does contain some **directives** which Crunchy can
 interpret.
 
 We start by showing two simple Python code samples,
@@ -18,8 +18,9 @@ its magic based on your preferences.
     >>> print "Python is great!"
     Python is great!
 
-And for the other example without a Python prompt, that
-Crunchy will not know what to do with.
+And for the other examplem without a Python prompt,
+Crunchy will not know what to do with as it will appear in
+an html <blockquote>.
 
     print "Crunchy is pretty good too!"
 
@@ -28,12 +29,11 @@ We now move on to using embedded directives.
 Interpreters
 ============
 
-The following is an example of a borg interpreter.
+The following is an example of a default (borg) interpreter with linenumbers.
 If you type the above text into the box, you will see
 that "answer" can be defined and then printed
 
-.. interpreter:: interpreter
-   :linenumber:
+.. crunchy:: interpreter linenumber
 
    >>> answer = 42
    >>> print answer
@@ -42,7 +42,7 @@ that "answer" can be defined and then printed
 If you type 'answer' into this text box, then it will be
 evaluated to 42. Try it:
 
-.. interpreter:: interpreter
+.. crunchy:: interpreter
 
    >>> answer
    42
@@ -50,8 +50,7 @@ evaluated to 42. Try it:
 If, however, we make an isolated interpreter, we can see
 that the variable 'answer' does not exist:
 
-.. interpreter:: isolated
-   :linenumber:
+.. crunchy:: isolated linenumber
 
    >>> answer
    Error on line 1:
@@ -69,21 +68,23 @@ checkbox, you will be presented with a nifty little editor. By
 typing the above code into the editor and clicking "Execute",
 you will see the results below:
 
-.. editor:: no_copy
-   :linenumber:
+.. crunchy:: editor
 
    print "Ni! Ni! Ni!"
 
 Note that we did not write a Python prompt.
 
 
-Alternatively, the editor can come pre-loaded with a few lines of
-code, like so:
+Alternatively, the editor can also extract lines of
+code from a simulated interpreter session; here we choose to
+number the lines of code starting at 10:
 
-.. editor::
+.. crunchy:: editor linenumber = 10
 
     >>> print "Pining for the fjords!"
-
+    Pining for the fjords!
+    >>> print "Crunchy and reStructuredText are neat together!"
+    Crunchy and reStructuredText are neat together!
 
 Alternate Python Versions
 =========================
@@ -93,7 +94,7 @@ Python 2.3, or if you have the bleeding edge Py3K SVN snapshot
 installed, then you can test out different versions of Python
 like so:
 
-.. alt_py::
+.. crunchy:: alt_py
 
    >>> print "Hello from the past!"
    Hello from the past!
@@ -106,8 +107,8 @@ DocTests
 
 Crunchy can also embed DocTests within a page:
 
-.. doctest::
-   :linenumber:
+.. crunchy:: doctest linenumber
+
 
    >>> print greeting
    Hello, World!

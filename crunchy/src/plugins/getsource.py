@@ -10,10 +10,11 @@ import traceback
 from src.interface import config, plugin, python_version, SubElement, Element
 
 def register():
-    plugin['register_tag_handler']("div", "title", "getsource", get_source)
+    plugin['register_tag_handler']("pre", "title", "getsource", get_source)
 
 def get_source(page, elem, uid):
     elem.text = " "
+    elem.tag = "div"
     vlam = elem.attrib["title"]
     if "show_vlam" in vlam:
         elem.insert(0, plugin['services'].show_vlam(page, elem, vlam))
