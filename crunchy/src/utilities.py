@@ -9,6 +9,7 @@ import codecs
 import copy
 import re
 import sys
+import textwrap
 from os.path import join
 from src.interface import (config, plugin, Element, SubElement, names,
                            StringIO, server, translate)
@@ -68,7 +69,6 @@ def trim_empty_lines_from_end(text):  # tested
     # this is needed to prevent indentation error if a blank line
     # with spaces at different levels is inserted at the end or beginning
     # of some code to be executed.
-    # This function is used in interpreter.py and colourize.py.
     return text.strip(' \r\n')
 
 entity_pattern = re.compile("(&amp;#\d{1,4});")
@@ -155,10 +155,11 @@ def extract_code(elem):
     expected in Python code; inspired by F.Lundh's gettext()
 
     It also remove blank lines at beginning and end of code sample.
+
+    It also removes common leading blank, in case the code written by
+    a tutorial writer is uniformly indented.  This is the case sometimes
+    for python code extracted by docutils.
     """
-    # The removal of blank lins is needed to prevent indentation error
-    # if a blank line with spaces at different levels is inserted at the end
-    # or beginning of some code to be executed.
     text = elem.text or ""
     for node in elem:
         text += extract_code(node)
@@ -167,6 +168,8 @@ def extract_code(elem):
         if node.tail:
             text += node.tail
     text = text.replace("\r", "")
+    text = textwrap.dedent(text)
+    text = trim_empty_lines_from_end(text)
     return text
 
 def is_interpreter_session(py_code):
