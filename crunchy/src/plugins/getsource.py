@@ -7,7 +7,7 @@ import os
 import sys
 import traceback
 
-from src.interface import config, plugin, python_version, SubElement
+from src.interface import config, plugin, python_version, SubElement, Element
 
 def register():
     plugin['register_tag_handler']("div", "title", "getsource", get_source)
@@ -55,7 +55,7 @@ def insert_code(page, elem, uid, lines, lineno):
     # automatically - that is the "div/getsource" handler was called before the
     # "pre" handler was.  This could just be a coincidence on which we can not
     # rely.
-    pre = SubElement(elem, "pre")
+    pre = Element("pre")
     if 'editor' in elem.attrib['title']:
         vlam = "editor"
     elif 'interpreter' in elem.attrib['title']:
@@ -74,6 +74,7 @@ def insert_code(page, elem, uid, lines, lineno):
         insert_interpreter(page, elem, uid, lines, lineno)
     else:
         dummy, dummy = plugin['services'].style(page, pre, None, vlam)
+        elem.append(pre)
     # prevent any further processing
     pre.attrib["title"] = "no_vlam"
     return
