@@ -89,7 +89,10 @@ def pygments_style(page, elem, dummy_uid='42', vlam=None):
     markup = fromstring(styled_code)
     elem[:] = markup[:]
     elem.text = markup.text
-    elem.attrib['class'] = CRUNCHY_PYGMENTS
+    if 'class' in elem.attrib:
+        elem.attrib['class'] += " " + CRUNCHY_PYGMENTS
+    else:
+        elem.attrib['class'] = CRUNCHY_PYGMENTS
     if not page.includes("pygment_cssclass"):
         # replacing class name for security reasons.
         page.add_css_code(HtmlFormatter(style=cssclass).get_style_defs("."+cssclass).replace(cssclass, CRUNCHY_PYGMENTS))

@@ -134,9 +134,6 @@ def select_type(vlam, c, elem):
             if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
                 interp_kind = 'borg'
             else:
-                print "+"*80
-                print text
-                print "+"*80
                 return # assume it is not an interpreter session.
         else:
             interp_kind = "borg"
