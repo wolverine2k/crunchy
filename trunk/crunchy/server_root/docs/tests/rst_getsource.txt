@@ -16,18 +16,18 @@ Get Source
 The following automatically import the module a_test_file, style it, and
 adds line numbers.
 
-.. getsource:: ../experimental/a_test_file linenumber
+.. crunchy:: getsource ../experimental/a_test_file linenumber
 
 Now, just importing the method "bye", still adding line numbers ...
 and an editor.  Note that the indentation will be such that this function
 could not be executed without raising an error.
 
-.. getsource:: ../experimental/a_test_file.Fantastic.bye linenumber editor
+.. crunchy:: getsource ../experimental/a_test_file.Fantastic.bye linenumber editor
 
 Finally, importing the function "a_function", with no linenumbers but with
 an interpreter embedded.
 
-.. getsource:: ../experimental/a_test_file.a_function interpreter
+.. crunchy:: getsource ../experimental/a_test_file.a_function interpreter
 
 
 Back to test menu

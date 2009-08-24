@@ -17,7 +17,7 @@ Testing register()
 ---------------------
 
     >>> getsource.register()
-    >>> mocks.registered_tag_handler['div']['title']['getsource'] == getsource.get_source
+    >>> mocks.registered_tag_handler['pre']['title']['getsource'] == getsource.get_source
     True
 
 Testing get_tutorial_path()

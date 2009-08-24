@@ -47,154 +47,22 @@ def register(): # tested
         plugin['register_service']("local_rst", insert_load_rst)
 
 if _docutils_installed:
-    def int_or_one(argument):
-        """If no argument is present, returns 1.
-        Else returns argument as integer."""
-        if argument and argument.strip():
-            return int(argument)
-        else:
-            return 1
 
     class pre(nodes.raw):
         def __init__(self, *args, **kwargs):
             nodes.raw.__init__(self, *args, **kwargs)
             self.tagname = "pre"
 
-    class div(nodes.raw):
-        def __init__(self, *args, **kwargs):
-            nodes.raw.__init__(self, *args, **kwargs)
-            self.tagname = "div"
-
-    class InterpreterDirective(rst.Directive):
-        required_arguments = 1
-        optional_arguments = 1
+    class CrunchyDirective(rst.Directive):
+        required_arguments = 0
+        optional_arguments = 20  # make sure we have enough!
         final_argument_whitespace = False
-        option_spec = {
-            'linenumber' : int_or_one,
-            'log_id' : str
-        }
         has_content = True
         def run(self):
-            code = linesep.join(self.content)
-            if self.arguments[0].strip() not in ['interpreter', 'isolated',
-                                        'parrot', 'Parrots', 'TypeInfoConsole']:
-                raise ValueError("Wrong interpreter type: %s" % (self.arguments[0].strip(),))
-            listOut = [ x.strip() for x in self.arguments ]
-            for key in [ "linenumber", "log_id" ]:
-                if key in self.options:
-                    listOut.append(key + "=%s" % (str(self.options[key]),))
+            content = linesep.join(self.content)
+            listOut = [ x.strip() for x in self.arguments]
             titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    class EditorDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 5
-        final_argument_whitespace = False
-        option_spec = {
-            'linenumber' : int_or_one,
-            'log_id' : str
-        }
-        has_content = True
-        def run(self):
-            code = linesep.join(self.content)
-            for arg in self.arguments:
-                if arg.strip() not in ['no_copy', 'no_pre',
-                                       'external', 'no_internal']:
-                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
-            listOut = [ x.strip() for x in ['editor'] + self.arguments ]
-            for key in [ "linenumber", "log_id" ]:
-                if key in self.options:
-                    listOut.append(key + "=%s" % (str(self.options[key]),))
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    class GetSourceDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 5
-        final_argument_whitespace = False
-        has_content = False
-        def run(self):
-            listOut = [ x.strip() for x in ['getsource'] + self.arguments ]
-            titleAttr = " ".join(listOut)
-            return [ div(title=titleAttr, text=' ') ]
-
-    class DocTestDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 1
-        option_spec = {
-            'linenumber' : int_or_one,
-            'log_id' : str
-        }
-        has_content = True
-        def run(self):
-            self.assert_has_content()
-            code = linesep.join(self.content)
-            listOut = [ x.strip() for x in ['doctest'] + self.arguments ]
-            for key in [ "linenumber", "log_id" ]:
-                if key in self.options:
-                    listOut.append(key + "=%s" % (str(self.options[key]),))
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    class PythonCodeDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 0
-        option_spec = {
-            'linenumber' : int_or_one
-        }
-        has_content = True
-        def run(self):
-            code = linesep.join(self.content)
-            listOut = ['python_code']
-            if "linenumber" in self.options:
-                listOut.append("linenumber=%d" % (self.options["linenumber"],))
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    class AltPythonVersionDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 5
-        final_argument_whitespace = False
-        option_spec = {
-            'linenumber' : int_or_one
-        }
-        has_content = True
-        def run(self):
-            code = linesep.join(self.content)
-            for arg in self.arguments:
-                if arg.strip() not in ['no_copy', 'no_pre',
-                                       'external', 'no_internal']:
-                    raise ValueError("Invalid argument: %s" % (arg.strip(),))
-            listOut = [ x.strip() for x in ['alternate_python_version'] + self.arguments ]
-            if "linenumber" in self.options:
-                listOut.append("linenumber=%d" % (self.options["linenumber"],))
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    class NoVLAMDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 0
-        final_argument_whitespace = False
-        option_spec = {}
-        has_content = True
-        def run(self):
-            self.assert_has_content()
-            code = linesep.join(self.content)
-            listOut = ['no_vlam']
-            titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=code) ]
-
-    DIRECTIVE_DICT = {
-        'interpreter' : InterpreterDirective,
-        'editor' : EditorDirective,
-        'getsource': GetSourceDirective,
-        'doctest' : DocTestDirective,
-        'py_code' : PythonCodeDirective,
-        'python_code' : PythonCodeDirective,
-        'alternate_python_version' : AltPythonVersionDirective,
-        'alt_py' : AltPythonVersionDirective,
-        'no_vlam' : NoVLAMDirective
-        }
+            return [ pre(title=titleAttr, text=content) ]
 
     def visit_pre(translator, node):
         attrDict = {}
@@ -209,22 +77,7 @@ if _docutils_installed:
     HTMLTranslator.visit_pre = visit_pre
     HTMLTranslator.depart_pre = depart_pre
 
-    def visit_div(translator, node):
-        attrDict = {}
-        for key, value in list(node.attributes.items()):
-            if value and (key is not "xml:space"):
-                attrDict[key] = value
-        translator.body.append(translator.starttag(node, 'div', **attrDict))
-
-    def depart_div(translator, node):
-        translator.body.append('\n</div>\n')
-
-    HTMLTranslator.visit_div = visit_div
-    HTMLTranslator.depart_div = depart_div
-
-if _docutils_installed:
-    for key, value in list(DIRECTIVE_DICT.items()):
-        rst.directives.register_directive( key, value )
+    rst.directives.register_directive('crunchy', CrunchyDirective)
 
 class ReST_file(StringIO):
     """Represents file with transformed text from rst into html.
