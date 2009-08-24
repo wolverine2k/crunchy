@@ -1,7 +1,8 @@
 Version 1.0.1
 --------------
 
-- new experimental "get source" plugin
+- new experimental "get source" plugin.  Works with html and
+   reStructuredText files.
 - fixed bug: exception raised when attempting to load a local html file
    (issue 230, r1345)
 - fixed bug: exception raised when attempting to close a filehandle
