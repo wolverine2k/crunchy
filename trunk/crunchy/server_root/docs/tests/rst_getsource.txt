@@ -19,8 +19,7 @@ adds line numbers.
 .. crunchy:: getsource ../experimental/a_test_file linenumber
 
 Now, just importing the method "bye", still adding line numbers ...
-and an editor.  Note that the indentation will be such that this function
-could not be executed without raising an error.
+and an editor.
 
 .. crunchy:: getsource ../experimental/a_test_file.Fantastic.bye linenumber editor
 

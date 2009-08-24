@@ -18,9 +18,9 @@ its magic based on your preferences.
     >>> print "Python is great!"
     Python is great!
 
-And for the other examplem without a Python prompt,
+And for the other example, without a Python prompt,
 Crunchy will not know what to do with as it will appear in
-an html <blockquote>.
+an html <blockquote> instead of a <pre>.
 
     print "Crunchy is pretty good too!"
 
