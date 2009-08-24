@@ -35,6 +35,7 @@ def register():
         plugin['register_tag_handler']("pre", "title", interp, insert_interpreter)
         plugin['add_vlam_option']('override_default_interpreter', interp)
         plugin['add_vlam_option']('no_markup', interp)
+    plugin['register_service']("insert_interpreter", insert_interpreter)
 
 Python_version = sys.version.split(" ")[0]
 titles = {
