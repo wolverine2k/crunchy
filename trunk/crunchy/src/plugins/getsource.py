@@ -58,6 +58,8 @@ def insert_code(page, elem, uid, lines, lineno):
     pre = SubElement(elem, "pre")
     if 'editor' in elem.attrib['title']:
         vlam = "editor"
+    elif 'interpreter' in elem.attrib['title']:
+        vlam = "interpreter"
     elif python_version < 3:
         vlam = "python"
     else:
@@ -68,6 +70,8 @@ def insert_code(page, elem, uid, lines, lineno):
     pre.text ="".join(lines)
     if 'editor' in vlam:
         insert_editor(page, elem, uid, lines, lineno)
+    elif 'interpreter' in vlam:
+        insert_interpreter(page, elem, uid, lines, lineno)
     else:
         dummy, dummy = plugin['services'].style(page, pre, None, vlam)
     # prevent any further processing
@@ -90,6 +94,26 @@ def insert_editor(page, elem, uid, lines, lineno):
     pre.attrib['title'] = vlam
     pre.text ="".join(lines)
     plugin['services'].insert_editor(page, pre, uid)
+    # prevent any further processing
+    pre.attrib["title"] = "no_vlam"
+    return
+
+def insert_interpreter(page, elem, uid, lines, lineno):
+    '''insert the an editor as usual'''
+    # Note: in developping this plugin, we observed that the code was styled
+    # automatically - that is the "div/getsource" handler was called before the
+    # "pre" handler was.  This could just be a coincidence on which we can not
+    # rely.
+    pre = SubElement(elem, "pre")
+    if python_version < 3:
+        vlam = "python"
+    else:
+        vlam = "python3"
+    if "linenumber" in elem.attrib['title']:
+        vlam += " linenumber=%s"%lineno
+    pre.attrib['title'] = vlam
+    pre.text ="".join(lines)
+    plugin['services'].insert_interpreter(page, pre, uid)
     # prevent any further processing
     pre.attrib["title"] = "no_vlam"
     return
