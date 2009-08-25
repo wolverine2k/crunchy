@@ -131,7 +131,7 @@ def select_type(vlam, c, elem):
     ##        interp_kind = "ipython"
         elif 'python_tutorial' in vlam:
             text = util.extract_code(elem)
-            if text.startswith(">>>") or text.startswith("&gt;&gt;&gt;"):
+            if util.is_interpreter_session(text):
                 interp_kind = 'borg'
             else:
                 return # assume it is not an interpreter session.

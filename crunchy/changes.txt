@@ -1,3 +1,14 @@
+
+Version 1.1
+------------
+
+- new experimental slideshow plugin.
+- fixed a "bug" where the class(es) for <pre> included by tutorial writer
+  were dropped.
+- simplified greatly crunchy specific rst directives (issue 232)
+- fixed a bug (issue 233) where default python_tutorial using rst did not
+  result in an interpreter being inserted.
+
 Version 1.0.1
 --------------
 
