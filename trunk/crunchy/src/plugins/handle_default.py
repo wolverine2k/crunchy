@@ -12,6 +12,7 @@ from src.interface import (
     debug_msg, preprocessor, python_version,
     crunchy_bytes, crunchy_unicode, unknown_user_name)
 from src.utilities import meta_content_open, account_exists
+import src.interface
 
 _ = translate['_']
 
@@ -65,8 +66,15 @@ def path_to_filedata(path, root, username=None):
     if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path).encode('utf8')
 
+    extension = path.split('.')[-1]
+
     if exists(path) and path != "/":
         npath = path
+    # next, attempting to deal with the case where a css file imports another
+    # one via something like @import "s5-core.css"
+    # which slides by docutils do.
+    elif extension == "css" and src.interface.last_local_base_url is not None:
+        npath = normpath(join(src.interface.last_local_base_url, normpath(path[1:])))
     else:
         npath = normpath(join(root, normpath(path[1:])))
 
@@ -78,7 +86,6 @@ def path_to_filedata(path, root, username=None):
         return get_directory(npath, username).encode('utf8')
 
     try:
-        extension = npath.split('.')[-1]
         creator = plugin['create_vlam_page']
         if extension in ["htm", "html"]:
             f = meta_content_open(npath)

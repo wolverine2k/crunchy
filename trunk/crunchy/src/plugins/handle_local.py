@@ -5,12 +5,14 @@ Uses the /local http request path.
 Also creates a form allowing to browse for a local tutorial to be loaded
 by Crunchy.
 """
+import imghdr
 import os
 import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, python_version, translate
 _ = translate['_']
+import src.interface
 
 if python_version < 3:
     from urllib import unquote_plus
@@ -51,6 +53,12 @@ def local_loader(request):  # tested
         base_url, dummy = os.path.split(url)
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
+    elif extension == 'css':
+        # record this value in case a css file imports another relative
+        # one via something like @import "s5-core.css";
+        # which slides by docutils do.
+        src.interface.last_local_base_url, dummy =  os.path.split(url)
+        page = open(url, 'rb')
     else:
         page = open(url, 'rb')
     request.send_response(200)
@@ -58,8 +66,13 @@ def local_loader(request):  # tested
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
-    # also, in Python 3, need to convert between bytes and strings...
-    __irrelevant = request.wfile.write(page.read().encode('utf-8'))
+    # also, in Python 3, need to convert between bytes and strings for text...
+    content = page.read()
+    is_image = imghdr.what('ignore', content)
+    if is_image is not None:
+        __irrelevant = request.wfile.write(content)
+    else:
+        __irrelevant = request.wfile.write(content.encode('utf-8'))
 
 def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''
