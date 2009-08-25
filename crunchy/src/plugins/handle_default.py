@@ -66,6 +66,9 @@ def path_to_filedata(path, root, username=None):
     if path.startswith("/") and (path.find("/../") != -1):
         return error_page(path).encode('utf8')
 
+    if path == "/null":
+        return " "
+
     extension = path.split('.')[-1]
 
     if exists(path) and path != "/":
@@ -75,6 +78,7 @@ def path_to_filedata(path, root, username=None):
     # which slides by docutils do.
     elif extension == "css" and src.interface.last_local_base_url is not None:
         npath = normpath(join(src.interface.last_local_base_url, normpath(path[1:])))
+        npath_normal = normpath(join(root, normpath(path[1:])))
     else:
         npath = normpath(join(root, normpath(path[1:])))
 
@@ -100,9 +104,16 @@ def path_to_filedata(path, root, username=None):
             text = text.read().encode('utf8')
             return text
 
-        # we need binary mode because otherwise the file may not get
-        # read properly on windows (e.g. for image files)
-        f = open(npath, mode="rb")
+        if extension == 'css':
+            try:
+                f = open(npath, mode="rb")
+            except: # reset
+                f = open(npath_normal, mode="rb")
+                src.interface.last_local_base_url = None
+        else:
+            # Note: we need binary mode because otherwise the file may not get
+            # read properly on windows (e.g. for image files)
+            f = open(npath, mode="rb")
         x = f.read()
         f.close()
         return x
