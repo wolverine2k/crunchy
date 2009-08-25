@@ -154,8 +154,6 @@ def extract_code(elem):
     <br/> into "\n" and removing "\r" which are not
     expected in Python code; inspired by F.Lundh's gettext()
 
-    It also remove blank lines at beginning and end of code sample.
-
     It also removes common leading blank, in case the code written by
     a tutorial writer is uniformly indented.  This is the case sometimes
     for python code extracted by docutils.
@@ -169,7 +167,6 @@ def extract_code(elem):
             text += node.tail
     text = text.replace("\r", "")
     text = textwrap.dedent(text)
-    text = trim_empty_lines_from_end(text)
     return text
 
 def is_interpreter_session(py_code):
