@@ -48,7 +48,7 @@ def register(): # tested
 
 if _docutils_installed:
 
-    class pre(nodes.raw):
+    class crunchy_node(nodes.raw):
         def __init__(self, *args, **kwargs):
             nodes.raw.__init__(self, *args, **kwargs)
             self.tagname = "pre"
@@ -62,16 +62,16 @@ if _docutils_installed:
             content = linesep.join(self.content)
             listOut = [ x.strip() for x in self.arguments]
             titleAttr = " ".join(listOut)
-            return [ pre(title=titleAttr, text=content) ]
+            return [ crunchy_node(title=titleAttr, text=content) ]
 
-    def visit_pre(translator, node):
+    def visit_crunchy(translator, node):
         attrDict = {}
         for key, value in list(node.attributes.items()):
             if value and (key is not "xml:space"):
                 attrDict[key] = value
         translator.body.append(translator.starttag(node, 'pre', **attrDict))
 
-    def depart_pre(translator, node):
+    def depart_crunchy(translator, node):
         translator.body.append('\n</pre>\n')
 
     HTMLTranslator.visit_pre = visit_pre
