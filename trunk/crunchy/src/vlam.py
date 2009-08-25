@@ -63,9 +63,10 @@ class BasePage(object): # tested
     handlers1 = {} # tag -> handler function
     handlers2 = {} # tag -> attribute -> handler function
     handlers3 = {} # tag -> attribute -> keyword -> handler function
-    begin_handlers1 = {}  # tag -> handler function
+    preprocess_page = {}  # tag -> handler function
     final_handlers1 = {}  # tag -> handler function
     begin_pagehandlers = []
+    meta_handler = {} # attribute -> [handler_fn1, handler_fn2, ...]
     end_pagehandlers = []
 
     def __init__(self, username):  # tested
@@ -322,7 +323,7 @@ class BasePage(object): # tested
                     handlers[tag](self, elem, uid)
         return
 
-    def process_begin_handlers1(self, handlers):
+    def process_preprocess_page(self, handlers):
         '''
         Processes handlers based on their tag.
 
@@ -332,6 +333,16 @@ class BasePage(object): # tested
             for elem in self.tree.getiterator(tag):
                 handlers[tag](self, elem, 'dummy')
         return
+
+    def process_meta_handlers(self):
+        '''processes meta handlers whose intent is similar to
+        preprocess_page handlers in that they may affect how the
+        rest of the page is handled.'''
+        for elem in self.tree.getiterator('meta'):
+            for attr in elem.attrib:
+                if attr in self.meta_handler:
+                    for handler in self.meta_handler[attr]:
+                        handler(self, elem)
 
     def process_handlers1(self):  # tested
         '''processes special handlers of type 1.'''
@@ -419,10 +430,12 @@ class CrunchyPage(BasePage):
     def process_tags(self):
         """process all the customised tags in the page"""
 
-        self.process_begin_handlers1(self.begin_handlers1)
+        self.process_preprocess_page(self.preprocess_page)
 
         for handler in CrunchyPage.begin_pagehandlers:
             handler(self)
+
+        self.process_meta_handlers()
 
         # Since handlers of type 2 or 3 can, in principle, add elements (tags)
         # with no vlam, and since such elements could be processed by

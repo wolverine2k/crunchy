@@ -74,8 +74,8 @@ if _docutils_installed:
     def depart_crunchy(translator, node):
         translator.body.append('\n</pre>\n')
 
-    HTMLTranslator.visit_pre = visit_pre
-    HTMLTranslator.depart_pre = depart_pre
+    HTMLTranslator.visit_crunchy = visit_crunchy
+    HTMLTranslator.depart_crunchy = depart_crunchy
 
     rst.directives.register_directive('crunchy', CrunchyDirective)
 

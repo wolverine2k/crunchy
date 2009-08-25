@@ -15,7 +15,7 @@ from src.interface import config, plugin, u_print
 
 def register():
     '''registers a simple tag handler'''
-    plugin['register_begin_tag_handler']("meta", merge_with_template)
+    plugin['register_meta_handler']("title", merge_with_template)
 
 def create_template(name, username, filehandle): # tested
     '''creates a page template from a file object'''
@@ -53,10 +53,8 @@ def return_template(page, elem):
         create_template(url, page.username, filehandle)
     return _templates[url]
 
-def merge_with_template(page, elem, dummy):
+def merge_with_template(page, elem):
     '''merge an html file with a template'''
-    if 'title' not in elem.attrib:
-        return
     if 'template' not in elem.attrib['title']:
         return
     page_divs = find_divs(page)

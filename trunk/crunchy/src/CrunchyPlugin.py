@@ -90,9 +90,13 @@ created, that conflicts with an existing one."""%(tag, attribute, keyword))
     return
 plugin['register_tag_handler'] = register_tag_handler
 
-def register_begin_tag_handler(tag, handler):
-    vlam.CrunchyPage.begin_handlers1[tag] = handler
-plugin['register_begin_tag_handler'] = register_begin_tag_handler
+def register_preprocess_page_handler(tag, handler):
+    vlam.CrunchyPage.preprocess_page[tag] = handler
+plugin['register_preprocess_page'] = register_preprocess_page_handler
+
+def register_meta_handler(attribute, handler):
+    vlam.CrunchyPage.meta_handler.setdefault(attribute, []).append(handler)
+plugin['register_meta_handler'] = register_meta_handler
 
 def register_final_tag_handler(tag, handler):
     vlam.CrunchyPage.final_handlers1[tag] = handler

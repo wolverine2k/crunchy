@@ -12,11 +12,13 @@ from src.utilities import uidgen
 
 def register():
     '''registers a simple tag handler'''
-    plugin['register_tag_handler']("meta", "content", "slideshow", insert_javascript)
+    plugin['register_meta_handler']("content", insert_javascript)
     plugin['register_end_pagehandler'](insert_interactive_objects)
 
-def insert_javascript(page, elem, dummy):
+def insert_javascript(page, elem):
     '''inserts the required javascript for the slideshow'''
+    if 's5 1' not in elem.attrib['content'].lower():
+        return
     if not page.includes("slideshow_included"):
         page.add_include("slideshow_included")
         page.insert_js_file("/javascript/slides.js")
