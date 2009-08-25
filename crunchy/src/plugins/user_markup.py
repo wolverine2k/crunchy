@@ -8,7 +8,7 @@ from src.interface import plugin, config, u_print
 def register(): # tested
     '''registers a simple tag handler'''
     plugin['register_final_tag_handler']("pre", custom_vlam)
-    plugin['register_begin_tag_handler']("pre", modify_vlam)
+    plugin['register_preprocess_page']("pre", modify_vlam)
 
 def custom_vlam(page, elem, uid): # tested
     '''

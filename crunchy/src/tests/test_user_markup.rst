@@ -30,7 +30,7 @@ Testing register()
 ----------------------
 
     >>> user_markup.register()
-    >>> print(mocks.registered_begin_tag_handlers) #doctest: +ELLIPSIS
+    >>> print(mocks.registered_preprocess_page) #doctest: +ELLIPSIS
     {'pre': <function modify_vlam at ...>}
     >>> print(mocks.registered_final_tag_handlers) #doctest: +ELLIPSIS
     {'pre': <function custom_vlam at ...>}
