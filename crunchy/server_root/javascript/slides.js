@@ -200,9 +200,11 @@ function toggle() {
 	var slideColl = GetElementsWithClassName('*','slide');
 	var slides = document.getElementById('slideProj');
 	var outline = document.getElementById('outlineStyle');
+        var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
 	if (!slides.disabled) {
 		slides.disabled = true;
 		outline.disabled = false;
+                crunchy_menu[0].style.visibility = 'visible';
 		s5mode = false;
 		fontSize('1em');
 		for (var n = 0; n < smax; n++) {
@@ -212,6 +214,7 @@ function toggle() {
 	} else {
 		slides.disabled = false;
 		outline.disabled = true;
+                crunchy_menu[0].style.visibility = 'hidden';
 		s5mode = true;
 		fontScale();
 		for (var n = 0; n < smax; n++) {
@@ -523,6 +526,8 @@ function startup() {
 	fixLinks();
 	externalLinks();
 	fontScale();
+        var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
+        crunchy_menu[0].style.visibility = 'hidden';
 	if (!isOp) {
 		notOperaFix();
 		incrementals = createIncrementals();
