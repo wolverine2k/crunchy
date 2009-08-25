@@ -25,16 +25,33 @@ def insert_interactive_objects(page):
     '''inserts the interactive objects required in a slideshow'''
     if not page.includes("slideshow_included"):
         return
-    return
     for div in page.tree.getiterator("div"):
         if 'class' in div.attrib:
             if div.attrib['class'] == "presentation":
+                # add slide with interpreter
                 new_div = Element("div")
                 new_div.attrib['class'] = "slide"
+                new_div.attrib['style'] = "height: 70%; overflow: auto;"
                 new_div.attrib['id'] = "crunchy_interpreter"
                 pre = SubElement(new_div, "pre", title="interpreter")
-                pre.text = "# Crunchy interpreter!"
+                # the following text is at least 50 characters
+                # with a non-space character at the end.  This is to allow
+                # the creation of a list with "short" titles to select
+                # a given slide.
+                # see slides.js line 100
+                pre.text = "# Crunchy Interpreter                             #"
                 uid = page.pageid + "_" + uidgen(page.username)
                 plugin['services'].insert_interpreter(page, pre, uid)
                 div.append(new_div)
+                # add slide with editor
+                new_div2 = Element("div")
+                new_div2.attrib['class'] = "slide"
+                new_div2.attrib['style'] = "height: 70%; overflow: auto;"
+                new_div2.attrib['id'] = "crunchy_editor"
+                pre2 = SubElement(new_div2, "pre", title="editor")
+                # same as above.
+                pre2.text = "# Crunchy editor                                 #"
+                uid = page.pageid + "_" + uidgen(page.username)
+                plugin['services'].insert_editor(page, pre2, uid)
+                div.append(new_div2)
                 return

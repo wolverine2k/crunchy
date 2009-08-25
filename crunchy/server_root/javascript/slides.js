@@ -17,6 +17,7 @@ var number = undef;
 var s5mode = true;
 var defaultView = 'slideshow';
 var controlVis = 'visible';
+var globalFontSize = '30px';
 
 var isIE = navigator.appName == 'Microsoft Internet Explorer' ? 1 : 0;
 var isOp = navigator.userAgent.indexOf('Opera') > -1 ? 1 : 0;
@@ -106,6 +107,8 @@ function slideLabel() {
 		for (var o = 0; o < menunodes.length; o++) {
 			otext += nodeValue(menunodes[o]);
 		}
+                // see the Crunchy slideshow.py plugin and keep the value of "50" in sync with what is there.
+                if (otext.length > 50) otext = otext.substring(0, 50);
 		list.options[list.length] = new Option(n + ' : '  + otext, n);
 	}
 }
@@ -201,10 +204,12 @@ function toggle() {
 	var slides = document.getElementById('slideProj');
 	var outline = document.getElementById('outlineStyle');
         var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
+        var crunchy_input = GetElementsWithClassName('*', 'input');
 	if (!slides.disabled) {
 		slides.disabled = true;
 		outline.disabled = false;
                 crunchy_menu[0].style.visibility = 'visible';
+                crunchy_input[0].style.fontSize = '11pt';
 		s5mode = false;
 		fontSize('1em');
 		for (var n = 0; n < smax; n++) {
@@ -215,6 +220,7 @@ function toggle() {
 		slides.disabled = false;
 		outline.disabled = true;
                 crunchy_menu[0].style.visibility = 'hidden';
+                crunchy_input[0].style.fontSize = globalFontSize;
 		s5mode = true;
 		fontScale();
 		for (var n = 0; n < smax; n++) {
@@ -248,10 +254,6 @@ function keys(key) {
 	}
 	if (s5mode) {
 		switch (key.which) {
-			//case 10: // return
-			//case 13: // enter
-			//	if (window.event && isParentOrSelf(window.event.srcElement, 'controls')) return;
-			//	if (key.target && isParentOrSelf(key.target, 'controls')) return;
 			case 34: // page down
 			case 40: // downkey
 				if(number != undef) {
@@ -374,9 +376,9 @@ function createControls() {
 	}
 	controlsDiv.innerHTML = '<form action="#" id="controlForm"' + hideDiv + '>' +
 	'<div id="navLinks">' +
-	'<a accesskey="t" id="toggle" href="javascript:toggle();">&#216;<\/a>' +
-	'<a accesskey="z" id="prev" href="javascript:go(-1);">&laquo;<\/a>' +
-	'<a accesskey="x" id="next" href="javascript:go(1);">&raquo;<\/a>' +
+	'<a id="toggle" href="javascript:toggle();">&#216;<\/a>' +
+	'<a id="prev" href="javascript:go(-1);">&laquo;<\/a>' +
+	'<a id="next" href="javascript:go(1);">&raquo;<\/a>' +
 	'<div id="navList"' + hideList + '><select id="jumplist" onchange="go(\'j\');"><\/select><\/div>' +
 	'<\/div><\/form>';
 	if (controlVis == 'hidden') {
@@ -387,30 +389,14 @@ function createControls() {
 	addClass(hidden,'hideme');
 }
 
-function fontScale() {  // causes layout problems in FireFox that get fixed if browser's Reload is used; same may be true of other Gecko-based browsers
-	if (!s5mode) return false;
-	var vScale = 22;  // both yield 32 (after rounding) at 1024x768
-	var hScale = 32;  // perhaps should auto-calculate based on theme's declared value?
-	if (window.innerHeight) {
-		var vSize = window.innerHeight;
-		var hSize = window.innerWidth;
-	} else if (document.documentElement.clientHeight) {
-		var vSize = document.documentElement.clientHeight;
-		var hSize = document.documentElement.clientWidth;
-	} else if (document.body.clientHeight) {
-		var vSize = document.body.clientHeight;
-		var hSize = document.body.clientWidth;
-	} else {
-		var vSize = 700;  // assuming 1024x768, minus chrome and such
-		var hSize = 1024; // these do not account for kiosk mode or Opera Show
-	}
-	var newSize = Math.min(Math.round(vSize/vScale),Math.round(hSize/hScale));
-	fontSize(newSize + 'px');
-	if (isGe) {  // hack to counter incremental reflow bugs
-		var obj = document.getElementsByTagName('body')[0];
-		obj.style.display = 'none';
-		obj.style.display = 'block';
-	}
+function fontScale() {
+    if (!s5mode) return false;
+    fontSize(globalFontSize); // removed all the automatic size ajustment for Crunchy.
+    if (isGe) {  // hack to counter incremental reflow bugs
+        var obj = document.getElementsByTagName('body')[0];
+        obj.style.display = 'none';
+        obj.style.display = 'block';
+    }
 }
 
 function fontSize(value) {
@@ -527,7 +513,9 @@ function startup() {
 	externalLinks();
 	fontScale();
         var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
+        var crunchy_input = GetElementsWithClassName('*', 'input');
         crunchy_menu[0].style.visibility = 'hidden';
+        crunchy_input[0].style.fontSize = globalFontSize;
 	if (!isOp) {
 		notOperaFix();
 		incrementals = createIncrementals();
@@ -536,7 +524,7 @@ function startup() {
 			toggle();
 		}
 		document.onkeyup = keys;
-		document.onkeypress = trap;
+		//document.onkeypress = trap;
 		document.onclick = clicker;
 	}
 }
