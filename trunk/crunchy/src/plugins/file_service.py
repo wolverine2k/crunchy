@@ -9,6 +9,10 @@ import sys
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, SubElement, python_version, u_print
+try:
+    from config import local_browser_root
+except:  # the user may, by mistake, have commented out all values inside config
+    local_browser_root = "does_not_exist"
 
 if python_version < 3:
     from urllib import unquote
@@ -97,7 +101,10 @@ def insert_file_tree(page, elem, uid, action, callback, title, label):
         return
     tree_id = "tree_" + uid
     form_id = "form_" + uid
-    root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
+
+    root = local_browser_root  # use value specified in config.py by default
+    if not os.path.exists(root):
+        root = os.path.splitdrive(__file__)[0] + "/"  # use base directory
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',
