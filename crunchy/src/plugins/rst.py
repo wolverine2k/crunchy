@@ -48,7 +48,7 @@ def register(): # tested
 
 if _docutils_installed:
 
-    class crunchy_node(nodes.raw):
+    class crunchy(nodes.raw):
         def __init__(self, *args, **kwargs):
             nodes.raw.__init__(self, *args, **kwargs)
             self.tagname = "pre"
@@ -62,7 +62,10 @@ if _docutils_installed:
             content = linesep.join(self.content)
             listOut = [ x.strip() for x in self.arguments]
             titleAttr = " ".join(listOut)
-            return [ crunchy_node(title=titleAttr, text=content) ]
+            return [ crunchy(title=titleAttr, text=content, CLASS="rst_crunchy") ]
+            # the class is going to be a class attribute and is simply included
+            # as a demo - something like this is to be used in crst2s5.py
+            # for a better purpose...
 
     def visit_crunchy(translator, node):
         attrDict = {}
