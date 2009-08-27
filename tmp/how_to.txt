@@ -1,0 +1,95 @@
+.. include:: <s5defs.txt>
+
+=================================
+crst2s5 How To
+=================================
+
+:Authors: André Roberge
+:Date:    circa september 2009
+
+This document is meant as a foolproof step by step way of using crst2s5.py
+and is written in parallel with the development of :green:`crst2s5.py`.
+
+Things may appear :tiny:`... ok, they are` more complicated than they should be
+at this point but it will get better as time goes on.
+
+.. This is an example of writing an html comment; and so is the next one:
+.. This document has been placed in the public domain.
+
+.. container:: notes
+
+   Ok, this is a sample speaker note.  This can appear in a secondary window.
+
+.. container:: handout
+
+   And this is a sample text included in the outline view but which does not
+   appear in either the speaker notes nor on the slide.
+
+.. footer:: Pycon 2010 Atlanta - February 2010.
+
+
+Introduction
+============
+
+.. class:: handout
+
+   crst2s5 is based on Docutils_/reStructuredText_ and S5_.
+
+.. _Docutils: http://docutils.sourceforge.net/
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _S5: http://meyerweb.com/eric/tools/s5/
+
+.. container:: notes
+
+   This note was entered via the
+   ``.. container:: notes`` directive...
+
+.. topic:: Installation
+   :class: handout
+
+   Prerequisites: Python and the Docutils_ package have to be
+   installed.  See the `Docutils README`__ file for installation
+   instructions.
+
+   __ http://docutils.sourceforge.net/README.html
+
+* reStructuredText
+
+  .. class:: handout
+
+  Uses normal reStructuredText as input.
+
+  .. class:: notes
+
+  ... Whereas this note was entered via the ``.. class:: notes`` directive.
+
+
+To do
+============
+
+* reference to useful firefox plugin for full screen for Mac
+* explain what to copy and where
+* explain how to use crst2s5.py
+
+* explain how to use html files produced by crst2s5.py
+
+  - by themselves
+  - with Crunchy
+
+* fix slides.js (v1.2a) for Crunchy
+* add choice in slideshow.py for 1.1 vs 1.2
+
+
+To do (cont'd)
+===============
+
+* fix crst2s5.py so that it outputs a special meta
+* fix the styles (subtitles in headers look wrong)
+* create pycon_dark style
+* add special crunchy directives
+* add to crunchy an automatic option that change user preferences so that they
+  don't cause trouble, and restore them automatically
+
+  * this includes a check for pycon_dark style.
+
+* END -----
