@@ -4,29 +4,29 @@
 #footer, #controls, #controlForm, #navLinks, #toggle {
   display: block; visibility: visible; margin: 0; padding: 0;}
 
-/* making the outline look pretty-ish */
-
+/*Make the outline look a bit like slides so that it is
+  easier to compare the outline mode with the slide view mode.*/
+.slide {border: 2px solid blue; -moz-border-radius: 15px; -webkit-border-radius: 15px;
+padding-bottom: 5px; margin-bottom:20px; width:800px;}
 .slide h1 {margin-top: 0; border-bottom: 1px solid blue;}
 
-#toggle {border: 1px solid; border-width: 0 0 1px 1px;
+
+/* moving the toggle button so that it is close to its position in
+  slide mode - and away from the normal position of the Crunchy menu */
+html>body #toggle {position: fixed; bottom: 0; right: 0;
+  border: 1px solid; border-width: 0 0 1px 1px;
   background: #eeeeec; color: darkblue;
   font-weight: bold; padding:20px; font-size:20pt;
 }
-/* moving the toggle button so that it is close to its position in
-  slide mode - and away from the normal position of the Crunchy menu */
-html>body #toggle {position: fixed; bottom: 0; right: 0;}
 
-/*Make the outline look a bit like slides so that it is
-  easier to compare the outline mode with the slide view mode.*/
-.slide {border: 2px solid blue; -moz-border-radius:5px; padding-bottom: 5px;
-margin-bottom:20px; width:800px;}
 
-.handout {font-style:oblique; color: darkgreen;}
+.handout {font-style:oblique; color: darkgreen; padding: 5pt;}
 
 .notes{
 background-color: #eeeeec;
 width: 450px;
 padding: 10px;
+margin-left: 50px;
 }
 .notes:before{content:"Speaker Notes:";
    display:block;
