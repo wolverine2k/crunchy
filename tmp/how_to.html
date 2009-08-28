@@ -410,6 +410,7 @@ don't cause trouble, and restore them automatically<ul>
 <li>this includes a check for pycon_dark style.</li>
 </ul>
 </li>
+<li>fix url inside local css files.</li>
 <li>END -----</li>
 </ul>
 </div>
@@ -451,7 +452,19 @@ print &quot;Hello world!&quot;
 <h1>getpythonsource tests (1)</h1>
 <p>The following automatically import the module a_test_file, style it, and
 adds line numbers.</p>
-<pre class="crunchy_widget" title="getsource a_test_file linenumber" xml:space="preserve">
+<pre class="crunchy_widget" title="python linenumber" xml:space="preserve">
+'''a_test_file.py: a test file for getsource.py'''
+
+def a_function(arg):
+    '''The docstring'''
+    pass
+
+class Fantastic(object):
+    def __init__(self):
+        print(&quot;Hello&quot;)
+
+    def bye(self):
+        print(&quot;Goodbye!&quot;)
 
 </pre>
 </div>
@@ -459,7 +472,9 @@ adds line numbers.</p>
 <h1>getpythonsource tests (2)</h1>
 <p>Now, just importing the method &quot;bye&quot;, still adding line numbers ...
 and an editor.</p>
-<pre class="crunchy_widget" title="getsource a_test_file.Fantastic.bye linenumber editor" xml:space="preserve">
+<pre class="crunchy_widget" title="editor linenumber" xml:space="preserve">
+    def bye(self):
+        print(&quot;Goodbye!&quot;)
 
 </pre>
 </div>
@@ -467,7 +482,10 @@ and an editor.</p>
 <h1>getpythonsource tests (3)</h1>
 <p>Finally, importing the function &quot;a_function&quot;, with no linenumbers but with
 an interpreter embedded.</p>
-<pre class="crunchy_widget" title="getsource a_test_file.a_function interpreter" xml:space="preserve">
+<pre class="crunchy_widget" title="interpreter" xml:space="preserve">
+def a_function(arg):
+    '''The docstring'''
+    pass
 
 </pre>
 </div>
