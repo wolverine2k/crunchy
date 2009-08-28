@@ -27,7 +27,9 @@ background-color: #eeeeec;
 width: 450px;
 padding: 10px;
 margin-left: 50px;
+border: dashed 1pt blue;
 }
+
 .notes:before{content:"Speaker Notes:";
    display:block;
    color:blue;

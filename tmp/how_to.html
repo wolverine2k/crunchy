@@ -351,7 +351,10 @@ at this point but it will get better as time goes on.</p>
 <!-- This is an example of writing an html comment; and so is the next one: -->
 <!-- This document has been placed in the public domain. -->
 <div class="notes container">
-Ok, this is a sample speaker note.  This can appear in a secondary window.</div>
+Ok, this is a sample speaker note.  This can appear in a secondary window.
+With the defaults currently chosen for print.css, the speakers notes will
+not appear if the presentation is printed - but they are visible in the
+outline view in the browser.</div>
 <div class="handout container">
 And this is a sample text included in the outline view but which does not
 appear in either the speaker notes nor on the slide.</div>
@@ -361,8 +364,11 @@ appear in either the speaker notes nor on the slide.</div>
 <h1>Introduction</h1>
 <p class="handout">crst2s5 is based on <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a>/<a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a> and <a class="reference external" href="http://meyerweb.com/eric/tools/s5/">S5</a>.</p>
 <div class="notes container">
-This note was entered via the
-<tt class="docutils literal"><span class="pre">..</span> <span class="pre">container::</span> <span class="pre">notes</span></tt> directive...</div>
+<blockquote>
+Showing off some speaker notes: this one was entered via the
+<tt class="docutils literal"><span class="pre">..</span> <span class="pre">container::</span> <span class="pre">notes</span></tt> directive...</blockquote>
+<p class="notes">... Whereas this note was entered via the <tt class="docutils literal"><span class="pre">..</span> <span class="pre">class::</span> <span class="pre">notes</span></tt> directive.</p>
+</div>
 <div class="handout topic">
 <p class="topic-title first">Installation</p>
 <p>Prerequisites: Python and the <a class="reference external" href="http://docutils.sourceforge.net/">Docutils</a> package have to be
@@ -370,16 +376,17 @@ installed.  See the <a class="reference external" href="http://docutils.sourcefo
 instructions.</p>
 </div>
 <ul>
-<li><p class="first">reStructuredText</p>
-<p class="handout">Uses normal reStructuredText as input.</p>
-<p class="notes">... Whereas this note was entered via the <tt class="docutils literal"><span class="pre">..</span> <span class="pre">class::</span> <span class="pre">notes</span></tt> directive.</p>
+<li><p class="first">This presentation was produced by the following command at a terminal prompt:</p>
+<p>-python ../crunchy/crst2s5.py --theme=ui/pycon_light --theme-url=ui/pycon_light how_to.txt how_to.html</p>
+<p class="handout">how_to.txt used normal reStructuredText.</p>
 </li>
 </ul>
 </div>
 <div class="slide" id="to-do">
 <h1>To do</h1>
 <ul class="simple">
-<li>reference to useful firefox plugin for full screen for Mac</li>
+<li>Note: if you are using Firefox on a Mac to do presentations,
+get the <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/1568">Full Fullscreen</a> add-on</li>
 <li>explain what to copy and where</li>
 <li>explain how to use crst2s5.py</li>
 <li>explain how to use html files produced by crst2s5.py<ul>

@@ -19,6 +19,9 @@ at this point but it will get better as time goes on.
 .. container:: notes
 
    Ok, this is a sample speaker note.  This can appear in a secondary window.
+   With the defaults currently chosen for print.css, the speakers notes will
+   not appear if the presentation is printed - but they are visible in the
+   outline view in the browser.
 
 .. container:: handout
 
@@ -41,8 +44,12 @@ Introduction
 
 .. container:: notes
 
-   This note was entered via the
+   Showing off some speaker notes: this one was entered via the
    ``.. container:: notes`` directive...
+
+   .. class:: notes
+
+  ... Whereas this note was entered via the ``.. class:: notes`` directive.
 
 .. topic:: Installation
    :class: handout
@@ -53,21 +60,26 @@ Introduction
 
    __ http://docutils.sourceforge.net/README.html
 
-* reStructuredText
+* This presentation was produced by the following command at a terminal prompt:
+
+  -python ../crunchy/crst2s5.py --theme=ui/pycon_light --theme-url=ui/pycon_light how_to.txt how_to.html
 
   .. class:: handout
 
-  Uses normal reStructuredText as input.
+  how_to.txt used normal reStructuredText.
 
-  .. class:: notes
 
-  ... Whereas this note was entered via the ``.. class:: notes`` directive.
 
 
 To do
 ============
 
-* reference to useful firefox plugin for full screen for Mac
+* Note: if you are using Firefox on a Mac to do presentations,
+  get the `Full Fullscreen`__ add-on
+
+  __ https://addons.mozilla.org/en-US/firefox/addon/1568
+
+
 * explain what to copy and where
 * explain how to use crst2s5.py
 
