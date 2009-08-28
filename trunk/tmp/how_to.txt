@@ -158,7 +158,7 @@ getpythonsource tests (1)
 The following automatically import the module a_test_file, style it, and
 adds line numbers.
 
-.. crunchy:: getsource a_test_file linenumber
+.. getpythonsource:: a_test_file python linenumber
 
 getpythonsource tests (2)
 ===========================
@@ -166,7 +166,7 @@ getpythonsource tests (2)
 Now, just importing the method "bye", still adding line numbers ...
 and an editor.
 
-.. getpythonsource:: a_test_file.Fantastic.bye linenumber editor
+.. getpythonsource:: a_test_file.Fantastic.bye editor linenumber
 
 getpythonsource tests (3)
 ===========================
