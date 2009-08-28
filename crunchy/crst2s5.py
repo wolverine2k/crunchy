@@ -43,7 +43,15 @@ description = ('Generates S5 (X)HTML slideshow documents from standalone '
                'reStructuredText sources.  ' + default_description)
 
 class CrunchySlideTranslator(s5_html.S5HTMLTranslator):
-    pass
+    def __init__(self, *args):
+        s5_html.S5HTMLTranslator.__init__(self, *args)
+        meta = '<meta name="true generator" content="crst2s5.py pre-alpha"/>\n'
+        self.meta.append(meta)
+        self.head.append(meta)
+        meta = '<meta name="true version" content="S5 1.2a modified"/>\n'
+        self.meta.append(meta)
+        self.head.append(meta)
+
 
 class CrunchySlideWriter(s5_html.Writer):
     def __init__(self):
