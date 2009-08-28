@@ -10,7 +10,7 @@ import traceback
 from src.interface import config, plugin, python_version, SubElement, Element
 
 def register():
-    plugin['register_tag_handler']("pre", "title", "getsource", get_source)
+    plugin['register_tag_handler']("pre", "title", "getpythonsource", get_source)
 
 def get_source(page, elem, uid):
     elem.text = " "
