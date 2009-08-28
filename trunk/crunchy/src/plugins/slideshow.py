@@ -14,6 +14,7 @@ def register():
     '''registers a simple tag handler'''
     plugin['register_meta_handler']("content", insert_javascript)
     plugin['register_end_pagehandler'](insert_interactive_objects)
+    plugin['register_tag_handler']("div", "class", "slide", set_overflow)
 
 def insert_javascript(page, elem):
     '''inserts the required javascript for the slideshow'''
@@ -22,6 +23,14 @@ def insert_javascript(page, elem):
     if not page.includes("slideshow_included"):
         page.add_include("slideshow_included")
         page.insert_js_file("/javascript/slides.js")
+
+def set_overflow(page, elem, dummy):
+    '''sets the proper overflow value for each slide.
+    This allows interactive elements to produce output that would not
+    normally fit on a slide to be seen by using the scrollbar.'''
+    if not page.includes("slideshow_included"):
+        return
+    elem.attrib['style'] = "height: 70%; overflow: auto;"
 
 def insert_interactive_objects(page):
     '''inserts the interactive objects required in a slideshow'''
@@ -33,6 +42,8 @@ def insert_interactive_objects(page):
                 # add slide with interpreter
                 new_div = Element("div")
                 new_div.attrib['class'] = "slide"
+                # new_div is not processed by set_overflow above which is why
+                # we must set this property explictly.
                 new_div.attrib['style'] = "height: 70%; overflow: auto;"
                 new_div.attrib['id'] = "crunchy_interpreter"
                 pre = SubElement(new_div, "pre", title="interpreter")
@@ -48,6 +59,7 @@ def insert_interactive_objects(page):
                 # add slide with editor
                 new_div2 = Element("div")
                 new_div2.attrib['class'] = "slide"
+                # new_div2 is not processed by set_overflow above ...
                 new_div2.attrib['style'] = "height: 70%; overflow: auto;"
                 new_div2.attrib['id'] = "crunchy_editor"
                 pre2 = SubElement(new_div2, "pre", title="editor")

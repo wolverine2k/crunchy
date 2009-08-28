@@ -70,7 +70,7 @@ class CrunchyDirective(rst.Directive):
         content = "\n".join(self.content)
         listOut = [ x.strip() for x in self.arguments]
         titleAttr = " ".join(listOut)
-        return [ crunchy(title=titleAttr, text=content, CLASS="crunchy_widget") ]
+        return [ crunchy(title=titleAttr, text=content) ]
 
 class GetPythonSourceDirective(rst.Directive):
     # Note that this version is intentionnally different from the one in
@@ -84,7 +84,7 @@ class GetPythonSourceDirective(rst.Directive):
         base, module_name, source = extract_module_information(to_be_inspected)
         content = ''.join(get_source_content(base, module_name, source))
         titleAttr = " ".join(listOut)
-        return [ getpythonsource(title=titleAttr, text=content, CLASS="crunchy_widget") ]
+        return [ getpythonsource(title=titleAttr, text=content) ]
 
 class CrunchySlideTranslator(s5_html.S5HTMLTranslator):
     def __init__(self, *args):
