@@ -403,8 +403,6 @@ get the <a class="reference external" href="https://addons.mozilla.org/en-US/fir
 <div class="slide" id="to-do-cont-d">
 <h1>To do (cont'd)</h1>
 <ul class="simple">
-<li>fix crst2s5.py so that it outputs a special meta</li>
-<li>fix the styles (subtitles in headers look wrong)</li>
 <li>create pycon_dark style</li>
 <li>add special crunchy directives</li>
 <li>add to crunchy an automatic option that change user preferences so that they
@@ -414,6 +412,64 @@ don't cause trouble, and restore them automatically<ul>
 </li>
 <li>END -----</li>
 </ul>
+</div>
+<div class="slide" id="crunchy-directives-1">
+<h1>crunchy directives (1)</h1>
+<p>Just a basic Python program:</p>
+<pre class="crunchy_widget" title="python" xml:space="preserve">
+print &quot;Hello world!&quot;
+</pre>
+<p>And the Python 3 version:</p>
+<pre class="crunchy_widget" title="python3 linenumber" xml:space="preserve">
+print(&quot;Hello world!&quot;)
+</pre>
+</div>
+<div class="slide" id="crunchy-directives-2">
+<h1>crunchy directives (2)</h1>
+<p>Time for including an interpreter:</p>
+<pre class="crunchy_widget" title="interpreter" xml:space="preserve">
+print &quot;Hello world!&quot;
+</pre>
+</div>
+<div class="slide" id="crunchy-directives-3">
+<h1>crunchy directives (3)</h1>
+<p>This time, we include an editor:</p>
+<pre class="crunchy_widget" title="editor linenumber" xml:space="preserve">
+print &quot;Hello world!&quot;
+</pre>
+</div>
+<div class="slide" id="crunchy-directives-4">
+<h1>crunchy directives (4)</h1>
+<p>Finally, how about some html code:</p>
+<pre class="crunchy_widget" title="html" xml:space="preserve">
+&lt;pre title=&quot;python&quot;&gt;
+print &quot;Hello world!&quot;
+&lt;/pre&gt;
+</pre>
+</div>
+<div class="slide" id="getpythonsource-tests-1">
+<h1>getpythonsource tests (1)</h1>
+<p>The following automatically import the module a_test_file, style it, and
+adds line numbers.</p>
+<pre class="crunchy_widget" title="getsource a_test_file linenumber" xml:space="preserve">
+
+</pre>
+</div>
+<div class="slide" id="getpythonsource-tests-2">
+<h1>getpythonsource tests (2)</h1>
+<p>Now, just importing the method &quot;bye&quot;, still adding line numbers ...
+and an editor.</p>
+<pre class="crunchy_widget" title="getsource a_test_file.Fantastic.bye linenumber editor" xml:space="preserve">
+
+</pre>
+</div>
+<div class="slide" id="getpythonsource-tests-3">
+<h1>getpythonsource tests (3)</h1>
+<p>Finally, importing the function &quot;a_function&quot;, with no linenumbers but with
+an interpreter embedded.</p>
+<pre class="crunchy_widget" title="getsource a_test_file.a_function interpreter" xml:space="preserve">
+
+</pre>
 </div>
 </div>
 </body>
