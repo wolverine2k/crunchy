@@ -5,9 +5,10 @@ Uses the /local http request path.
 Also creates a form allowing to browse for a local tutorial to be loaded
 by Crunchy.
 """
-import imghdr
 import os
+import re
 import sys
+import traceback
 
 # All plugins should import the crunchy plugin API via interface.py
 from src.interface import config, plugin, python_version, translate
@@ -15,9 +16,10 @@ _ = translate['_']
 import src.interface
 
 if python_version < 3:
-    from urllib import unquote_plus
+    from urllib import quote_plus, unquote_plus
+    from urlparse import urljoin
 else:
-    from urllib.parse import unquote_plus
+    from urllib.parse import quote_plus, unquote_plus, urljoin
 
 provides = set(["/local"])
 requires = set(["filtered_dir", "insert_file_tree"])
@@ -44,35 +46,48 @@ def local_loader(request):  # tested
     If it is not an html file, it simply reads the file.'''
     url = unquote_plus(request.args["url"])
     extension = url.split('.')[-1]
+    base_url, dummy = os.path.split(url)
     username = request.crunchy_username
     if "htm" in extension:
         page = plugin['create_vlam_page'](open(url, 'rb'), url, username=username,
                                           local=True)
         # The following will make it possible to include python modules
         # with tutorials so that they can be imported.
-        base_url, dummy = os.path.split(url)
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
+        content = page.read()
     elif extension == 'css':
         # record this value in case a css file imports another relative
         # one via something like @import "s5-core.css";
         # which slides by docutils do.
-        src.interface.last_local_base_url, dummy =  os.path.split(url)
+        #src.interface.last_local_base_url, dummy =  os.path.split(url)
+        base_url, dummy =  os.path.split(url)
         page = open(url, 'rb')
     else:
+        print "non css extension: ", extension
         page = open(url, 'rb')
+    content = page.read()
+    if extension == 'css':
+        content = replace_css_import(base_url, content)
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, must-revalidate, no-store')
     request.end_headers()
     # write() in python 3.0 returns an int instead of None;
     # this interferes with unit tests
     # also, in Python 3, need to convert between bytes and strings for text...
-    content = page.read()
-    is_image = imghdr.what('ignore', content)
-    if is_image is not None:
-        __irrelevant = request.wfile.write(content)
-    else:
+    try:
         __irrelevant = request.wfile.write(content.encode('utf-8'))
+    except:
+        __irrelevant = request.wfile.write(content)
+
+css_import_re = re.compile('@import\s+url\((.+?)\);')
+def replace_css_import(base_url, text):
+    """replace @import statements in style elements"""
+    def css_import_replace(imp_match):
+        '''replaces the relative path found by its absolute value'''
+        path = imp_match.group(1)
+        return '@import url(%s/%s);' % (base_url, path)
+    return css_import_re.sub(css_import_replace, text)
 
 def add_to_path(page, elem, *dummy):  # tested
     '''adds a path, relative to the html tutorial, to the Python path'''
