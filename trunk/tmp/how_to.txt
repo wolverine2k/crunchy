@@ -18,17 +18,18 @@ at this point but it will get better as time goes on.
 
 .. container:: notes
 
-   Ok, this is a sample speaker note.  This can appear in a secondary window.
+   This is a sample speaker note.  This can appear in a secondary window.
    With the defaults currently chosen for print.css, the speakers notes will
-   not appear if the presentation is printed - but they are visible in the
+   not appear if the presentation is printed - but they are very visible in the
    outline view in the browser.
 
 .. container:: handout
 
-   And this is a sample text included in the outline view but which does not
-   appear in either the speaker notes nor on the slide.
+   This is a sample text included in the outline view (and would appear if
+   printed as well) but which does not  appear in either the speaker notes
+   nor on the slide.
 
-.. footer:: Pycon 2010 Atlanta - February 2010.
+.. footer:: Use at: Pycon 2010 Atlanta - February 2010.
 
 
 Introduction
@@ -52,6 +53,10 @@ Introduction
   ... Whereas this note was entered via the ``.. class:: notes`` directive.
 
 .. topic:: Installation
+
+   See the notes for details.
+
+
    :class: handout
 
    Prerequisites: Python and the Docutils_ package have to be
@@ -69,7 +74,56 @@ Introduction
   how_to.txt used normal reStructuredText.
 
 
+What's new?
+===========
 
+Compared with rst2s5, crst2s5 introduces a few changes:
+
+* Based on S5 v1.2a  (as opposed to v1.1 for rst2s5)
+  This is what allows the use of speaker notes in a separate window
+* New directive::
+
+    .. crunchy:: Very Little Added Markup (or vlam)
+* New directive::
+
+    .. getpythonsource:: path/to/file/module.object.whatever [vlam]
+
+
+getpythonsource tests (1)
+===========================
+
+The following automatically import the module a_test_file.  When the generated
+html file is viewed with Crunchy the code will be styled and line numbers will
+be added.::
+
+   .. getpythonsource:: a_test_file python linenumber
+
+.. getpythonsource:: a_test_file python linenumber
+
+
+getpythonsource tests (2)
+===========================
+
+Now, just importing the method "bye", still adding line numbers ...
+and an editor.
+
+.. getpythonsource:: a_test_file.Fantastic.bye editor linenumber
+
+getpythonsource tests (3)
+===========================
+Importing the function "a_function", with no linenumbers but with
+an interpreter embedded.
+
+.. getpythonsource:: a_test_file.a_function interpreter
+
+
+getpythonsource tests (4)
+===========================
+
+Finally, if the desired object can not be imported, a traceback is produced
+instead.
+
+.. getpythonsource:: a_test_file.does_not_exist
 
 To do
 ============
@@ -150,27 +204,3 @@ Finally, how about some html code:
    <pre title="python">
    print "Hello world!"
    </pre>
-
-
-getpythonsource tests (1)
-===========================
-
-The following automatically import the module a_test_file, style it, and
-adds line numbers.
-
-.. getpythonsource:: a_test_file python linenumber
-
-getpythonsource tests (2)
-===========================
-
-Now, just importing the method "bye", still adding line numbers ...
-and an editor.
-
-.. getpythonsource:: a_test_file.Fantastic.bye editor linenumber
-
-getpythonsource tests (3)
-===========================
-Finally, importing the function "a_function", with no linenumbers but with
-an interpreter embedded.
-
-.. getpythonsource:: a_test_file.a_function interpreter

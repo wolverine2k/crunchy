@@ -1,7 +1,7 @@
 
 Version 1.1
 ------------
-
+- New program: crst2s5.py.  Based on rst2s5, creates slide shows from rst files.
 - new experimental slideshow plugin.
 - fixed a "bug" where the class(es) for <pre> included by tutorial writer
   were dropped.
