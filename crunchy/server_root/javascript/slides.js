@@ -1,4 +1,4 @@
-// S5 v1.1.crunchy slides.js -- released into the Public Domain
+// S5 v1.1 slides.js (modified for Crunchy)-- released into the Public Domain
 // Modified for Docutils (http://docutils.sf.net) by David Goodger
 // Modified for Crunchy (http://code.google.com/p/crunchy) by André Roberge
 // to disable most keyboard shortcuts (as well as reacting to mouse clicks)
@@ -17,7 +17,7 @@ var number = undef;
 var s5mode = true;
 var defaultView = 'slideshow';
 var controlVis = 'visible';
-var globalFontSize = '30px';
+var globalFontSize = '30px';  // added for Crunchy
 
 var isIE = navigator.appName == 'Microsoft Internet Explorer' ? 1 : 0;
 var isOp = navigator.userAgent.indexOf('Opera') > -1 ? 1 : 0;
@@ -203,11 +203,13 @@ function toggle() {
 	var slideColl = GetElementsWithClassName('*','slide');
 	var slides = document.getElementById('slideProj');
 	var outline = document.getElementById('outlineStyle');
+           // next 2 lines addedfor Crunchy!
         var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
         var crunchy_input = GetElementsWithClassName('*', 'input');
 	if (!slides.disabled) {
 		slides.disabled = true;
 		outline.disabled = false;
+                // added for Crunchy
                 crunchy_menu[0].style.visibility = 'visible';
                 crunchy_input[0].style.fontSize = '11pt';
 		s5mode = false;
@@ -219,6 +221,7 @@ function toggle() {
 	} else {
 		slides.disabled = false;
 		outline.disabled = true;
+                // added for Crunchy
                 crunchy_menu[0].style.visibility = 'hidden';
                 crunchy_input[0].style.fontSize = globalFontSize;
 		s5mode = true;
@@ -247,6 +250,8 @@ function showHide(action) {
 }
 
 // 'keys' code adapted from MozPoint (http://mozpoint.mozdev.org/)
+// Note: most of the keys have been disabled so that it could work with
+// Crunchy; many lines of code have been removed.
 function keys(key) {
 	if (!key) {
 		key = event;
@@ -292,6 +297,8 @@ function keys(key) {
 	return false;
 }
 
+// some lines in this function have been removed for Crunchy - to
+// prevent mouse clicks from changing slides.
 function clicker(e) {
 	number = undef;
 	var target;
@@ -389,6 +396,8 @@ function createControls() {
 	addClass(hidden,'hideme');
 }
 
+// fontScale has been tremendously simplified for Crunchy - preventing
+// automatics readjustments when the window is resized, for instance.
 function fontScale() {
     if (!s5mode) return false;
     fontSize(globalFontSize); // removed all the automatic size ajustment for Crunchy.
@@ -512,6 +521,7 @@ function startup() {
 	fixLinks();
 	externalLinks();
 	fontScale();
+        // added for Crunchy ... quite obviously!
         var crunchy_menu = GetElementsWithClassName('*', 'crunchy_menu');
         var crunchy_input = GetElementsWithClassName('*', 'input');
         crunchy_menu[0].style.visibility = 'hidden';

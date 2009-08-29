@@ -32,6 +32,7 @@ Special Crunchy directives are also available.
 
 import os
 import sys
+import traceback
 
 try:
     import locale
