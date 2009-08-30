@@ -11,7 +11,7 @@ from src.vlam import BasePage
 
 _templates = {}
 
-from src.interface import config, plugin, u_print
+from src.interface import config, plugin, u_print, Element, SubElement
 
 def register():
     '''registers a simple tag handler'''
@@ -65,7 +65,9 @@ def merge_with_template(page, elem):
     if elem.attrib['title'] == 'template':
         if 'content' not in elem.attrib:
             return
-        elem.attrib['title'] += " " + elem.attrib['content']
+        else:
+            elem.attrib['title'] = "template " + elem.attrib['content']
+            transform_rst(page)
 
     page_divs = find_divs(page)
     if not page_divs:
@@ -77,10 +79,33 @@ def merge_with_template(page, elem):
 
     template = return_template(page, elem)
     if template is None:
+        u_print("No template has been found.")
         return
     merge_heads(template, page)
     merge_bodies(template, page, page_divs)
     return
+
+def transform_rst(page):
+    '''transforms the elements in an rst page so that they can
+    be merged into a template.  It is assumed that the
+    entire body content is to be used as the content inside the template.'''
+    for div in page.tree.findall(".//div"):
+        if 'class' in div.attrib:
+            if (div.attrib['class'] == 'document' or
+                div.attrib['class'] == 'section'):
+                div.tag = 'span'
+    new_body = copy.deepcopy(page.body)
+    new_body.tag = "div"
+    new_body.attrib["id"] = "content"
+    page.body.clear()
+    page.body.text = ''
+    page.body.append(new_body)
+    for title in page.tree.findall(".//title"): # there should be only one:
+        div = Element("div")
+        div.attrib["id"] = "main_title"
+        div.text = title.text
+        page.body.insert(0, div)
+        break
 
 def find_divs(page): # tested
     '''find all divs with id attributes and return them in a dict'''
@@ -110,6 +135,7 @@ def merge_bodies(template, page, page_divs):
     '''using the template's <body> as the new body, selectively the template's
        <div>s by the page's <div>s.'''
     page.body.clear()
+    template.body.tag = "span"
     page.body[:] = [copy.deepcopy(template.body)]
     # to ensure that nested divs are replaced properly, we need to replace
     # them in the order in which they appear in the page

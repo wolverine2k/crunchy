@@ -2,7 +2,7 @@
    :content title=template: local_template.html
 
 ========================================
- Crunchy/reStructuredText Demonstration
+ reStructuredText Demonstration
 ========================================
 
 *For this to work, you need to have a recent version of
