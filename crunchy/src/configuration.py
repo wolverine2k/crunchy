@@ -236,12 +236,13 @@ the local server (127.0.0.1) running Crunchy.""")
         doc="""\
 If True, invokes a set of user-defined rules to modify the existing
 markup on a page (currently restricted to changing the title attributes
-of <pre> html elements)""")
+of <pre> html elements).  This is disabled when viewing a slideshow.""")
 
     no_markup = make_property('no_markup', default='python_tutorial',
         doc="""\
 Specifies the 'interactive element' to be included whenever
-Crunchy encounters a <pre> html tag with no Crunchy-related markup.""")
+Crunchy encounters a <pre> html tag with no Crunchy-related markup.
+This is disabled when viewing a slideshow.""")
 
     power_browser = make_property('power_browser',
         doc="""\

@@ -17,7 +17,8 @@ def register():
     plugin['register_tag_handler']("div", "class", "slide", set_overflow)
 
 def insert_javascript(page, elem):
-    '''inserts the required javascript for the slideshow'''
+    '''inserts the required javascript for the slideshow and notes the fact
+       that this is a slideshow.'''
     if 's5 1' not in elem.attrib['content'].lower():
         return
     if not page.includes("slideshow_included"):
