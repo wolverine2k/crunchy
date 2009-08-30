@@ -437,6 +437,17 @@ class CrunchyPage(BasePage):
 
         self.process_meta_handlers()
 
+        if self.includes("slideshow_included"):
+            # disable automatic substitution based on user preferences
+            # so that a slideshow always produce the same thing,
+            # no matter what the user preferences are in terms
+            # of custom markup
+            print("Disabling custom markup based on user's preferences.")
+            saved_no_markup = config[self.username]['no_markup']
+            saved_modify_markup = config[self.username]['modify_markup']
+            config[self.username]['no_markup'] = None
+            config[self.username]['modify_markup'] = False
+
         # Since handlers of type 2 or 3 can, in principle, add elements (tags)
         # with no vlam, and since such elements could be processed by
         # handlers of type 1, we must make sure we process the type 1
@@ -453,6 +464,12 @@ class CrunchyPage(BasePage):
 
         for handler in CrunchyPage.end_pagehandlers:
             handler(self)
+
+        if self.includes("slideshow_included"):
+            print("Restoring custom markup based on user's preferences.")
+            config[self.username]['no_markup'] = saved_no_markup
+            config[self.username]['modify_markup'] = saved_modify_markup
+
         return
 
 
