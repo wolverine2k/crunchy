@@ -57,6 +57,16 @@ def merge_with_template(page, elem):
     '''merge an html file with a template'''
     if 'template' not in elem.attrib['title']:
         return
+    # The format we expect is
+    # <meta title="template template_file.html">
+    # However, for reStructuredText files, we have instead the following:
+    # <meta title="template" content="template_file.html">
+    # So, let's convert to the canonical form if possible.
+    if elem.attrib['title'] == 'template':
+        if 'content' not in elem.attrib:
+            return
+        elem.attrib['title'] += " " + elem.attrib['content']
+
     page_divs = find_divs(page)
     if not page_divs:
         u_print("No div found in page; can not merge with template.")
