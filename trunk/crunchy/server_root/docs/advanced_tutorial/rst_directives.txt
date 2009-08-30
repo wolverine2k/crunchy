@@ -1,3 +1,6 @@
+.. meta::
+   :content title=template: local_template.html
+
 ========================================
  Crunchy/reStructuredText Demonstration
 ========================================
