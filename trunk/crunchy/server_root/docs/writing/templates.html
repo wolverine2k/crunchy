@@ -3,7 +3,7 @@
 <head>
 	<meta title="template local_template.html">
 <style>
-#main_title {margin-left: 1em; padding:1em; color: white; background-color: #204a87; 
+#main_title {margin-left: 1em; padding:1em; color: white; background-color: #204a87;
 border: 1px solid black; font-size:20px;}
 </style>
 <title>Using Templates</title>
@@ -15,36 +15,54 @@ border: 1px solid black; font-size:20px;}
 If you are designing a multi-file tutorial, such as the one you are reading,
 you may want to give it a coherent style.  Rather than having to repeat all
 the styling information and navigation menu (such as the one you find on the left-hand
-side of this page - not the one inserted by Crunchy itself), 
-you can instruct Crunchy to use another file as a
+side of this page - not the one inserted by Crunchy itself),
+you can instruct Crunchy to use an <b>html</b> file as a
 <em>template</em>.  An example is given by the very file you are reading.
 Other than the title, its style should be identical to that of all
-the other files about writing Crunchy tutorials you have been reading.</p>
+the other files about writing Crunchy tutorials you have been reading, even
+though no menu has been used.</p>
 <p>
-The instruction to use a template is given in <b>this</b> file as
+The instruction to use a template was given in <b>this</b> file as
 </p>
 <pre title="html">
-&lt;meta title="template ../index.html"&gt;
+&lt;meta title="template local_template"&gt;
 </pre>
-<p>To be consistent with normal html documents, 
+<p>To be consistent with normal html documents,
 such an instruction would normally be found in the <code title="html">&lt;head&gt;</code> of the
 html file, althought Crunchy would find it anywhere.
-In the example above <code title="python">"../index.html"</code> 
+In the example above <code title="python">"local_template.html"</code>
 gives the relative path of a file
-that is requested to be used as the template.</p>
+that is requested to be used as the template. A previous version of this tutorial
+used a different template located at <code title="python">"../template.html"</code>,
+which illustrated better the fact that this was a relative path.</p>
 <p>When requesting a file to be used as a template for another file (the <em>tutorial</em>),
 the following occurs as part of the normal processing by Crunchy:</p>
+
+
+<div class="notes">
+<h4>Restriction</h4>
+<p>For compatibility with reStructuredText documents,
+your templates must not contain <br />
+<code title="html">&lt;div class="document"&gt;</code> nor <br />
+<code title="html">&lt;div class="section"&gt;</code>.  These
+<code title="html">&lt;div&gt;</code>s will be transformed as
+<code title="html">&lt;span&gt;</code>s prior to the comparison
+betwen template and file is done.
+</p>
+</div>
+
+
 <ol>
 <li>
-The tutorial is scanned for any html <code title="html">&lt;div id="..."&gt;</code>. 
-If none is found, the instruction to use a template is ignored by Crunchy.  
+The tutorial is scanned for any html <code title="html">&lt;div id="..."&gt;</code>.
+If none is found, the instruction to use a template is ignored by Crunchy.
 Otherwise, it proceeds to the next step.</li>
-<li>A copy of the file requested as a template is loaded by Crunchy.  
+<li>A copy of the file requested as a template is loaded by Crunchy.
  <ul><li>It is
 strongly suggested that this template file do not include any Crunchy-specific
 instruction ("vlam").
 </li></ul></li>
-<li>The template is parsed and the same "purging" of elements 
+<li>The template is parsed and the same "purging" of elements
 (such as removing javascript) is
 performed on the template as it would be on a regular html file.
     <ul><li>For efficiency, the result is saved so that when the same template
@@ -54,21 +72,27 @@ performed on the template as it would be on a regular html file.
 <li>The content of the <code title="html">&lt;head&gt;</code> of the tutorial
 is merged with that of the template.  This ensures that all styling information
 in the template is preserved, and is augmented by any information found in
-the tutorial file itself.  
+the tutorial file itself.
     <ul><li>As an example of this, we have overriden the
 styling of the title of this page to make it stand out. In particular, the
 font size has been reduced to illustrate that styling instructions found
 in the tutorial file take precedence over those found in the template.
 </li></ul></li>
 <li>Using the previously found <code title="html">&lt;div&gt;</code>s having a specific
-<code title="python">id</code> attribute from the tutorial: 
+<code title="python">id</code> attribute from the tutorial:
 if a <code title="html">&lt;div&gt;</code> with an <code title="python">id</code>
 having the same value is found in the template, the content from the tutorial's
-<code title="html">&lt;div&gt;</code> replaces that of the tutorial.  
+<code title="html">&lt;div&gt;</code> replaces that of the tutorial.
     <ul><li>For example, in this file,
-we have two such <code title="html">&lt;div&gt;</code>s: 
-one with an <code title="python">id="main_title"</code>, 
-the other with an <code title="python">id="content"</code>.</li>
+we have two such <code title="html">&lt;div&gt;</code>s:
+one with an <code title="python">id="main_title"</code>,
+the other with an <code title="python">id="content"</code>.
+<b>Note that the use of the specially named "content" id is <em>required</em>
+for using templates with reStructuredText files; the "main_title" one
+is optional - but required for the template we use.</b>  When processing
+reStructuredText files, Crunchy will extract the content from the body
+and insert it in the appropriate div; it will do the same for the
+document title.</li>
 <li>
 The file structure (e.g., the order in which the <code title="html">&lt;div&gt;</code>s appear)
 does not have to be the same for both the template and the tutorial.  The final
