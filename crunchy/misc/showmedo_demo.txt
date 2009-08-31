@@ -87,7 +87,6 @@ Interactive element: editor
 Custom directives
 =====================
 
-
 * New directive::
 
     .. crunchy:: Very Little Added Markup (or vlam)
@@ -126,15 +125,7 @@ an editor embedded.
 getpythonsource tests (3)
 ===========================
 
-Now, just importing the method "bye", with a Python interpreter.
-
-.. getpythonsource:: a_test_file.Fantastic.bye interpreter
-
-
-getpythonsource tests (4)
-===========================
-
-Finally, if the desired object can not be imported, a traceback is produced
+If the desired object can not be imported, a traceback is produced
 instead.::
 
    .. getpythonsource:: a_test_file.does_not_exist python
@@ -145,76 +136,23 @@ Note that we added "python" at the end to tell Crunchy that we expected
 a Python source code and to style it (using pygments) appropriately.
 
 
-To do
-============
-
-* Note: if you are using Firefox on a Mac to do presentations,
-  get the `Full Fullscreen`__ add-on
-
-  __ https://addons.mozilla.org/en-US/firefox/addon/1568
-
-
-* explain what to copy and where
-* explain how to use crst2s5.py
-
-* explain how to use html files produced by crst2s5.py
-
-  - by themselves
-  - with Crunchy
-
-* fix slides.js (v1.2a) for Crunchy
-
-crunchy directives (1)
-===========================
-
-Just a basic Python program:
-
-.. crunchy:: python
-
-   print "Hello world!"
-
-And the Python 3 version:
-
-.. crunchy:: python3 linenumber
-
-   print("Hello world!")
-
-crunchy directives (2)
-===========================
-
-Time for including an interpreter:
-
-.. crunchy:: interpreter
-
-   print "Hello world!"
-
-
-crunchy directives (3)
-===========================
-
-This time, we include an editor:
-
-.. crunchy:: editor linenumber
-
-   print "Hello world!"
-
-crunchy directives (4)
-===========================
-
-Finally, how about some html code:
-
-.. crunchy:: html
-
-   <pre>
-   print "Hello world!"
-   </pre>
-
-How was this made?
-==================
+Odds and ends
+===============
 
 * This presentation was produced by the following command at a terminal prompt:
 
-  python crst2s5.py --theme=ui/showmedo --theme-url=ui/showmedo showmedo_demo.txt showmedo_demo.html
+  python ../crst2s5.py --theme=ui/showmedo --theme-url=ui/showmedo showmedo_demo.txt showmedo_demo.html
 
 * Note: if using a dark theme (say, with a black background), select the
   appropriate pygments theme in Crunchy's preferences.
+
+* To find out more about rst2s5, please consult http://docutils.sf.net/docs/user/slide-shows.s5.html
+
+* To get crst2s5 and/or crunchy, go to http://code.google.com/p/crunchy
+
+* Note: if you are using Firefox on a Mac to do presentations,
+  you may want to get the `Full Fullscreen`__ add-on
+
+  __ https://addons.mozilla.org/en-US/firefox/addon/1568
+
+* Final note on automatic addition by Crunchy (next two slides)
