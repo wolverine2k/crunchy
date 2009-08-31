@@ -481,7 +481,7 @@ instead.:</p>
 </pre>
 <pre title="python" xml:space="preserve">
 Traceback (most recent call last):
-  File &quot;../crunchy/crst2s5.py&quot;, line 198, in get_lines
+  File &quot;../crst2s5.py&quot;, line 198, in get_lines
     to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
 AttributeError: 'module' object has no attribute 'does_not_exist'
 
@@ -489,63 +489,23 @@ AttributeError: 'module' object has no attribute 'does_not_exist'
 <p>Note that we added &quot;python&quot; at the end to tell Crunchy that we expected
 a Python source code and to style it (using pygments) appropriately.</p>
 </div>
-<div class="slide" id="to-do">
-<h1>To do</h1>
-<ul class="simple">
-<li>Note: if you are using Firefox on a Mac to do presentations,
-get the <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/1568">Full Fullscreen</a> add-on</li>
-<li>explain what to copy and where</li>
-<li>explain how to use crst2s5.py</li>
-<li>explain how to use html files produced by crst2s5.py<ul>
-<li>by themselves</li>
-<li>with Crunchy</li>
-</ul>
-</li>
-<li>fix slides.js (v1.2a) for Crunchy</li>
-</ul>
-</div>
-<div class="slide" id="crunchy-directives-1">
-<h1>crunchy directives (1)</h1>
-<p>Just a basic Python program:</p>
-<pre title="python" xml:space="preserve">
-print &quot;Hello world!&quot;
-</pre>
-<p>And the Python 3 version:</p>
-<pre title="python3 linenumber" xml:space="preserve">
-print(&quot;Hello world!&quot;)
-</pre>
-</div>
-<div class="slide" id="crunchy-directives-2">
-<h1>crunchy directives (2)</h1>
-<p>Time for including an interpreter:</p>
-<pre title="interpreter" xml:space="preserve">
-print &quot;Hello world!&quot;
-</pre>
-</div>
-<div class="slide" id="crunchy-directives-3">
-<h1>crunchy directives (3)</h1>
-<p>This time, we include an editor:</p>
-<pre title="editor linenumber" xml:space="preserve">
-print &quot;Hello world!&quot;
-</pre>
-</div>
-<div class="slide" id="crunchy-directives-4">
-<h1>crunchy directives (4)</h1>
-<p>Finally, how about some html code:</p>
-<pre title="html" xml:space="preserve">
-&lt;pre&gt;
-print &quot;Hello world!&quot;
-&lt;/pre&gt;
-</pre>
-</div>
-<div class="slide" id="how-was-this-made">
-<h1>How was this made?</h1>
+<div class="slide" id="odds-and-ends">
+<h1>Odds and ends</h1>
 <ul>
 <li><p class="first">This presentation was produced by the following command at a terminal prompt:</p>
-<p>python crst2s5.py --theme=ui/showmedo --theme-url=ui/showmedo showmedo_demo.txt showmedo_demo.html</p>
+<p>python ../crst2s5.py --theme=ui/showmedo --theme-url=ui/showmedo showmedo_demo.txt showmedo_demo.html</p>
 </li>
 <li><p class="first">Note: if using a dark theme (say, with a black background), select the
 appropriate pygments theme in Crunchy's preferences.</p>
+</li>
+<li><p class="first">To find out more about rst2s5, please consult <a class="reference external" href="http://docutils.sf.net/docs/user/slide-shows.s5.html">http://docutils.sf.net/docs/user/slide-shows.s5.html</a></p>
+</li>
+<li><p class="first">To get crst2s5 and/or crunchy, go to <a class="reference external" href="http://code.google.com/p/crunchy">http://code.google.com/p/crunchy</a></p>
+</li>
+<li><p class="first">Note: if you are using Firefox on a Mac to do presentations,
+you may want to get the <a class="reference external" href="https://addons.mozilla.org/en-US/firefox/addon/1568">Full Fullscreen</a> add-on</p>
+</li>
+<li><p class="first">Final note on automatic addition by Crunchy (next two slides)</p>
 </li>
 </ul>
 </div>
