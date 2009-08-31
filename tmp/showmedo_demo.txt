@@ -1,0 +1,220 @@
+.. include:: <s5defs.txt>
+
+====================
+crst2s5 preview
+====================
+
+:Author: André Roberge
+:Date:    |date|
+
+This is a demonstration of a presentation made using Crunchy
+and a pre-alpha release version of crst2s5.
+
+.. |date| replace:: August 31, 2009
+.. footer:: |date|
+
+Why is it called crst2s5?
+================================
+
+.. class:: incremental
+
+* S5: Simple Standards-based Slide Show System
+
+.. container:: notes
+
+   S5 was created by Eric Meyer.  It consists in a series of style files
+   and some javascript code to transform an html file into a slide
+   show.
+
+.. class:: incremental
+
+* rst: reStructuredText
+
+.. class:: incremental
+
+* rst2s5.py: docutils script used to transform a reStructured text document into an S5 html file.
+
+  .. class:: incremental
+
+  * based on S5 version 1.1
+
+.. class:: incremental
+
+* crst2s5.py: similar to rst2s5.py
+
+  .. class:: incremental
+
+  * based on a customized version of S5 version 1.2a
+
+  * version 1.2a includes speaker notes & timer
+
+  .. container:: notes
+
+    Show some speaker notes.
+
+  .. class:: incremental
+
+  * crst2s5.py includes some custom directives
+
+  * automatic font scaling disabled, etc.
+
+.. class:: incremental
+
+* Crunchy + crst2s5.py == Interactive Presentations
+
+  .. class:: incremental
+
+  * :huge:`Interactive?`
+
+
+Interactive element: interpreter
+================================
+
+.. crunchy:: interpreter
+
+   >>> for i in range(20):
+   ...     print i
+
+Interactive element: editor
+================================
+
+.. crunchy:: editor
+
+   >>> for i in range(20):
+   ...     print i
+
+
+Custom directives
+=====================
+
+
+* New directive::
+
+    .. crunchy:: Very Little Added Markup (or vlam)
+
+.. container:: notes
+
+   This is what enables the embedding of interactive elements with Crunchy
+
+* New directive::
+
+    .. getpythonsource:: path/to/file/module.object
+
+.. container:: notes
+
+   Uses Python's inspect module to get insert the relevant source code.
+
+getpythonsource tests (1)
+===========================
+
+The following automatically import the module a_test_file.  When the generated
+html file is viewed with Crunchy the code will be styled and line numbers will
+be added.::
+
+    .. getpythonsource:: a_test_file python linenumber
+
+.. getpythonsource:: a_test_file python linenumber
+
+
+getpythonsource tests (2)
+===========================
+Importing the function "print_squares", with linenumbers and with
+an editor embedded.
+
+.. getpythonsource:: a_test_file.print_squares editor linenumber
+
+getpythonsource tests (3)
+===========================
+
+Now, just importing the method "bye", with a Python interpreter.
+
+.. getpythonsource:: a_test_file.Fantastic.bye interpreter
+
+
+getpythonsource tests (4)
+===========================
+
+Finally, if the desired object can not be imported, a traceback is produced
+instead.::
+
+   .. getpythonsource:: a_test_file.does_not_exist python
+
+.. getpythonsource:: a_test_file.does_not_exist python
+
+Note that we added "python" at the end to tell Crunchy that we expected
+a Python source code and to style it (using pygments) appropriately.
+
+
+To do
+============
+
+* Note: if you are using Firefox on a Mac to do presentations,
+  get the `Full Fullscreen`__ add-on
+
+  __ https://addons.mozilla.org/en-US/firefox/addon/1568
+
+
+* explain what to copy and where
+* explain how to use crst2s5.py
+
+* explain how to use html files produced by crst2s5.py
+
+  - by themselves
+  - with Crunchy
+
+* fix slides.js (v1.2a) for Crunchy
+
+crunchy directives (1)
+===========================
+
+Just a basic Python program:
+
+.. crunchy:: python
+
+   print "Hello world!"
+
+And the Python 3 version:
+
+.. crunchy:: python3 linenumber
+
+   print("Hello world!")
+
+crunchy directives (2)
+===========================
+
+Time for including an interpreter:
+
+.. crunchy:: interpreter
+
+   print "Hello world!"
+
+
+crunchy directives (3)
+===========================
+
+This time, we include an editor:
+
+.. crunchy:: editor linenumber
+
+   print "Hello world!"
+
+crunchy directives (4)
+===========================
+
+Finally, how about some html code:
+
+.. crunchy:: html
+
+   <pre>
+   print "Hello world!"
+   </pre>
+
+How was this made?
+==================
+
+* This presentation was produced by the following command at a terminal prompt:
+
+  python crst2s5.py --theme=ui/showmedo --theme-url=ui/showmedo showmedo_demo.txt showmedo_demo.html
+
+* Note: if using a dark theme (say, with a black background), select the
+  appropriate pygments theme in Crunchy's preferences.
