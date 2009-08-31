@@ -8,6 +8,11 @@ import os
 from src.interface import config, translate, plugin, SubElement
 _ = translate['_']
 
+try:
+    from config import local_browser_root
+except:  # the user may, by mistake, have commented out all values inside config
+    local_browser_root = "does_not_exist"
+
 provides = set(["editarea"])
 requires = set(["/save_file", "filtered_dir", "insert_file_tree"])
 
@@ -60,7 +65,9 @@ def insert_file_browser(page, elem, uid, action, title, js_script, klass):
     else:
         return
     tree_id = "tree_" + uid
-    root = os.path.splitdrive(__file__)[0] + "/"  # use base directory for now
+    root = local_browser_root  # use value specified in config.py by default
+    if not os.path.exists(root):
+        root = os.path.splitdrive(__file__)[0] + "/"  # use base directory
     js_code =  """$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',

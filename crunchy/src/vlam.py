@@ -447,6 +447,10 @@ class CrunchyPage(BasePage):
             saved_modify_markup = config[self.username]['modify_markup']
             config[self.username]['no_markup'] = None
             config[self.username]['modify_markup'] = False
+            if self.includes("S5 version 1.2"):
+                self.insert_js_file("/javascript/slides1.2.js")
+            else:
+                self.insert_js_file("/javascript/slides1.1.js")
 
         # Since handlers of type 2 or 3 can, in principle, add elements (tags)
         # with no vlam, and since such elements could be processed by
