@@ -83,8 +83,17 @@ class GetPythonSourceDirective(rst.Directive):
     def run(self):
         to_be_inspected, listOut = extract_object_name(self.arguments)
         base, module_name, source = extract_module_information(to_be_inspected)
-        content = ''.join(get_source_content(base, module_name, source))
+        content, lineno = get_source_content(base, module_name, source)
+        content = ''.join(content)
+        if lineno == 0:
+            lineno = 1
         titleAttr = " ".join(listOut)
+        try:
+            int(lineno)
+            if 'linenumber' in titleAttr:
+                titleAttr = titleAttr.replace('linenumber', 'linenumber=%s'%lineno)
+        except:
+            pass
         return [ getpythonsource(title=titleAttr, text=content) ]
 
 class CrunchySlideTranslator(s5_html.S5HTMLTranslator):
@@ -161,10 +170,10 @@ def get_source_content(base, mod_name, source):
     else:
         sys.path.insert(0, mod_dir)
         remove_from_syspath = True
-    content = get_lines(mod_name, source)
+    content, lineno = get_lines(mod_name, source) # lineno could be == "Exception"
     if remove_from_syspath:
         sys.path.remove(mod_dir)
-    return content
+    return content, lineno
 
 def get_lines(mod_name, source):
     '''get the lines of code from an object located in module mod_name as well
@@ -191,9 +200,9 @@ def get_lines(mod_name, source):
                 return traceback.format_exc(), "Exception"
 
     try:
-        return inspect.getsourcelines(to_inspect[source])[0]
+        return inspect.getsourcelines(to_inspect[source])
     except:
-        return traceback.format_exc()
+        return traceback.format_exc(), "Exception"
 
 source_base_dir = None
 def main():
