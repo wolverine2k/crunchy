@@ -23,7 +23,8 @@ def insert_javascript(page, elem):
         return
     if not page.includes("slideshow_included"):
         page.add_include("slideshow_included")
-        page.insert_js_file("/javascript/slides.js")
+    if 's5 1.2' in elem.attrib['content'].lower():
+        page.add_include("S5 version 1.2")
 
 def set_overflow(page, elem, dummy):
     '''sets the proper overflow value for each slide.

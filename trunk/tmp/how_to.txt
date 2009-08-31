@@ -143,20 +143,15 @@ To do
   - with Crunchy
 
 * fix slides.js (v1.2a) for Crunchy
-* add choice in slideshow.py for 1.1 vs 1.2
+
 
 
 To do (cont'd)
 ===============
 
 * create pycon_dark style
-* add special crunchy directives
-* add to crunchy an automatic option that change user preferences so that they
-  don't cause trouble, and restore them automatically
-
-  * this includes a check for pycon_dark style.
-
-* fix url inside local css files.
+* Note: if using a dark theme (say, with a black background), select the
+  appropriate pygments theme in Crunchy's preferences.
 
 * END -----
 

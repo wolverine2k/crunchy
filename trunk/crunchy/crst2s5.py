@@ -206,8 +206,6 @@ def main():
     publish_cmdline(writer=writer, description=description)
 
 if __name__ == '__main__':
-    print sys.argv
-    print os.getcwd()
 
     if ((len(sys.argv) == 2 and sys.argv[1] in ['-h', '--help'])
         or (
