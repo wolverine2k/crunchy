@@ -4,6 +4,9 @@ instant previewer of corresponding html code.
 '''
 
 from src.interface import plugin, SubElement, python_version
+from src.plugins.editarea import editArea_load_and_save
+
+from docutils.core import publish_string
 
 def register():
     """registers a tag handler to make an rst widget and a callback for
@@ -14,12 +17,18 @@ def register():
     plugin['register_tag_handler']("pre", "title", "rst_edit", rst_edit_setup)
     plugin['register_http_handler']("/rst_edit", rst_edit_callback)
 
-def rst_edit_setup(page, elem, dummy):
+def rst_edit_setup(page, elem, uid):
     elem.tag = "div"
     elem.text = ''
-    textarea = SubElement(elem, "textarea", name="rst_enter", style="width:80%; height:20em;")
-    div = SubElement(elem, "div", style="width:80%")
+    div = SubElement(elem, "div", style="width:800px; border: solid 1px blue;")
     div.attrib["id"] = "html_preview"
+    textarea = SubElement(elem, "textarea", name="rst_enter", style="width:800px; height:20em;")
+    textarea.attrib["id"] = uid + "_rst_edit"
+    plugin['services'].enable_editarea(page, elem, textarea.attrib["id"])
+    if not page.includes("editarea_included"):
+        page.add_include("editarea_included")
+        page.add_js_code(editArea_load_and_save)
+        page.insert_js_file("/edit_area/edit_area_crunchy.js")
     page.add_js_code(js_code)
 
 def rst_edit_callback(request):
@@ -28,7 +37,7 @@ def rst_edit_callback(request):
     if python_version >= 3:
         request.data = request.data.decode('utf-8')
     text = request.data
-    print "text = %s" % text
+    text = publish_string(text, writer_name="html")
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, no-store')
     request.end_headers()
@@ -36,41 +45,17 @@ def rst_edit_callback(request):
 
 
 js_code = '''
+$(document).ready(function(){
+    function send_rst(text){
+        var last_char = text.charAt(text.length-1);
+        if (last_char == "\\n"){
+            $.post("/rst_edit", text, function(data){$("#html_preview").html(data)});
+            };
+    };
 
-function send_rst(text){
-    var last_char = text.charAt(text.length-1);
-    if (last_char == "\\n"){
-        var j = new XMLHttpRequest();
-        j.open("POST", "/rst_edit", false);
-        j.send(text);
-        return text;
-        }
-};
-
- $(document).ready(function(){
     $("textarea[name='rst_enter']")
       .bind("keyup", function(){ $("#html_preview").html(
-                                                    send_rst($(this).val())
-                                                       );
-                                }
-            );
-    });
+                                                    send_rst($(this).val()));
+                                }); });
 
-'''
-#$("#html_preview").html( $(this).load('/rst_edit'));
-
-'''
-function keys(key) {
-	if (!key) {
-		key = event;
-		key.which = key.keyCode;
-	}
-	if (key.which == 84) {
-		toggle();
-		return;
-	}
-	if (s5mode) {
-		switch (key.which) {
-			case 10: // return
-			case 13: // enter
 '''
