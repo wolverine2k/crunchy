@@ -1,4 +1,7 @@
 
+- rst_edit plugin (live html previewer of processed reStructuredText)
+
+
 Version 1.1
 ------------
 - New program: crst2s5.py.  Based on rst2s5, creates slide shows from rst files.
