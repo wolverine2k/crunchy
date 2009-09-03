@@ -47,10 +47,7 @@ def rst_edit_callback(request):
 js_code = '''
 $(document).ready(function(){
     function send_rst(text){
-        var last_char = text.charAt(text.length-1);
-        if (last_char == "\\n"){
-            $.post("/rst_edit", text, function(data){$("#html_preview").html(data)});
-            };
+        $.post("/rst_edit", text, function(data){$("#html_preview").html(data)});
     };
 
     $("textarea[name='rst_enter']")
