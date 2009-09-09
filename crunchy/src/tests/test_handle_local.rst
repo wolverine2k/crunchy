@@ -85,7 +85,7 @@ determine if the path gets added properly.
 First, we define a dummy vlam page creator.
 
     >>> def open_html(file_handle, url, username, local):
-    ...    print(file_handle.read())
+    ...    print(file_handle.read().decode())
     ...    file_handle.seek(0)  # "rewind"
     ...    print(url[-4:]) # just the extension
     ...    print(username)

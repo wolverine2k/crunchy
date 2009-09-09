@@ -465,23 +465,14 @@ def print_squares(n):
 </div>
 <div class="slide" id="getpythonsource-tests-3">
 <h1>getpythonsource tests (3)</h1>
-<p>Now, just importing the method &quot;bye&quot;, with a Python interpreter.</p>
-<pre title="interpreter" xml:space="preserve">
-    def bye(self):
-        print(&quot;Goodbye!&quot;)
-
-</pre>
-</div>
-<div class="slide" id="getpythonsource-tests-4">
-<h1>getpythonsource tests (4)</h1>
-<p>Finally, if the desired object can not be imported, a traceback is produced
+<p>If the desired object can not be imported, a traceback is produced
 instead.:</p>
 <pre class="literal-block">
 .. getpythonsource:: a_test_file.does_not_exist python
 </pre>
 <pre title="python" xml:space="preserve">
 Traceback (most recent call last):
-  File &quot;../crst2s5.py&quot;, line 198, in get_lines
+  File &quot;/Users/andre/CrunchySVN/trunk/crunchy/src/plugins/rst_directives.py&quot;, line 122, in get_lines
     to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
 AttributeError: 'module' object has no attribute 'does_not_exist'
 

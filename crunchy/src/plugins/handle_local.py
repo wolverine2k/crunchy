@@ -55,7 +55,6 @@ def local_loader(request):  # tested
         # with tutorials so that they can be imported.
         if base_url not in sys.path:
             sys.path.insert(0, base_url)
-        content = page.read()
     elif extension == 'css':
         # record this value in case a css file imports another relative
         # one via something like @import "s5-core.css";
@@ -64,7 +63,7 @@ def local_loader(request):  # tested
         base_url, dummy =  os.path.split(url)
         page = open(url, 'rb')
     else:
-        print "non css extension: ", extension
+        #print "non css extension: ", extension
         page = open(url, 'rb')
     content = page.read()
     if extension == 'css':
