@@ -1,12 +1,11 @@
 """Plugin for loading and transforming ReST files."""
 
-# Note: much of the rst directives code was created as part of the
+# Note: much of the original rst directives code was created as part of the
 # Google Highly Open Participation Contest 2007/8 by
 # Copyright (C) 2008 Zachary Voase <cracka80 at gmail dot com>
 #
-# It was adapted and incorporated into Crunchy by A. Roberge
+# It has been adapted and incorporated into Crunchy by A. Roberge
 
-# All plugins should import the crunchy plugin API via interface.py
 import codecs
 import os
 from src.interface import plugin, python_version, StringIO, translate

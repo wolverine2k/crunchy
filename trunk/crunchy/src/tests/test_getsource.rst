@@ -17,7 +17,7 @@ Testing register()
 ---------------------
 
     >>> getsource.register()
-    >>> mocks.registered_tag_handler['pre']['title']['getsource'] == getsource.get_source
+    >>> mocks.registered_tag_handler['pre']['title']['getpythonsource'] == getsource.get_source
     True
 
 Testing get_tutorial_path()
@@ -66,7 +66,7 @@ Creating fake file to play with
     ...     fname += "_"
     ...     fname_py = fname + ".py"
     >>> f_open = open(fname_py, 'w')
-    >>> f_open.write(fake)
+    >>> irrelevant = f_open.write(fake)  # Python 3.1 write() returns the nb of bytes
     >>> f_open.close()
 
 
