@@ -295,3 +295,17 @@ background-color: #e9e9c7;
     background:#e9e9e0;
     color:#000;
 }
+
+/* for rst_edit plugin */
+#html_preview{
+    width: 50%;
+    min-height: 20px;
+    border: solid 1px green;
+    background: #F3FFF3;
+    float: left;
+}
+.rst_enter {
+    width: 48%;
+    height: 20em;
+    float:left;
+}

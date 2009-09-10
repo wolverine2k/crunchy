@@ -24,14 +24,15 @@ def register():
 def rst_edit_setup(page, elem, uid):
     elem.tag = "div"
     elem.text = ''
-    textarea = SubElement(elem, "textarea", name="rst_enter", style="width:48%; height:20em; float:left;")
+    textarea = SubElement(elem, "textarea", name="rst_enter")
     textarea.attrib["id"] = uid + "_rst_edit"
-    plugin['services'].enable_editarea(page, elem, textarea.attrib["id"])
+    textarea.attrib["class"] = "rst_enter"
+    plugin['services'].enable_editarea(page, elem, textarea.attrib["id"], syntax="robotstxt")
     if not page.includes("editarea_included"):
         page.add_include("editarea_included")
         page.add_js_code(editArea_load_and_save)
         page.insert_js_file("/edit_area/edit_area_crunchy.js")
-    div = SubElement(elem, "div", style="width:50%; border: solid 1px green; float: left;")
+    div = SubElement(elem, "div")
     div.attrib["id"] = "html_preview"
     page.add_js_code(js_code)
     if page.is_local:
