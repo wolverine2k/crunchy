@@ -309,3 +309,34 @@ background-color: #e9e9c7;
     height: 20em;
     float:left;
 }
+
+/* editarea plugin */
+   /* Load and save python forms. These are in a fixed position
+    the screen so that they can be seen even when the editor is
+    in fullscreen mode.  z-index of editarea when toggled is 9999 */
+
+.load_python{
+    position: fixed;
+    top: 100px;
+    z-index:-1;
+    border: 4px solid #339;
+    border-style: outset;
+    visibility: hidden;
+    background-color: #66C;
+    color: white;
+    font-size: 16pt;
+    padding: 15px;
+}
+
+.save_python{
+    position: fixed;
+    top: 200px;
+    z-index:-1;
+    border: 4px solid #063;
+    border-style: outset;
+    visibility: hidden;
+    background-color:#696;
+    color: white;
+    font-size: 16pt;
+    padding: 15px;
+}
