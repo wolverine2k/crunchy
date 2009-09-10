@@ -26,10 +26,7 @@ except:
 if _docutils_installed:
     provides = set(["/rst"])
     requires = set(["filtered_dir", "insert_file_tree"])
-    from os import linesep
-    from docutils.parsers import rst
-    from docutils.writers.html4css1 import HTMLTranslator
-    from docutils import nodes
+    import src.plugins.rst_directives
 
 def register(): # tested
     """Registers new http handler and new widget for loading ReST files"""
@@ -44,42 +41,6 @@ def register(): # tested
         plugin['add_vlam_option']('power_browser', 'rst')
         plugin['register_http_handler']("/jquery_file_tree_rst", jquery_file_tree_rst)
         plugin['register_service']("local_rst", insert_load_rst)
-
-if _docutils_installed:
-
-    class crunchy(nodes.raw):
-        def __init__(self, *args, **kwargs):
-            nodes.raw.__init__(self, *args, **kwargs)
-            self.tagname = "pre"
-
-    class CrunchyDirective(rst.Directive):
-        required_arguments = 0
-        optional_arguments = 20  # make sure we have enough!
-        final_argument_whitespace = False
-        has_content = True
-        def run(self):
-            content = linesep.join(self.content)
-            listOut = [ x.strip() for x in self.arguments]
-            titleAttr = " ".join(listOut)
-            return [ crunchy(title=titleAttr, text=content, CLASS="rst_crunchy") ]
-            # the class is going to be a class attribute and is simply included
-            # as a demo - something like this is to be used in crst2s5.py
-            # for a better purpose...
-
-    def visit_crunchy(translator, node):
-        attrDict = {}
-        for key, value in list(node.attributes.items()):
-            if value and (key is not "xml:space"):
-                attrDict[key] = value
-        translator.body.append(translator.starttag(node, 'pre', **attrDict))
-
-    def depart_crunchy(translator, node):
-        translator.body.append('\n</pre>\n')
-
-    HTMLTranslator.visit_crunchy = visit_crunchy
-    HTMLTranslator.depart_crunchy = depart_crunchy
-
-    rst.directives.register_directive('crunchy', CrunchyDirective)
 
 class ReST_file(StringIO):
     """Represents file with transformed text from rst into html.

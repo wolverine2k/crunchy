@@ -3,8 +3,12 @@ rst_edit is a plugin designed to insert an editor for reStructuredText with
 instant previewer of corresponding html code.
 '''
 
+import os, sys
+
 from src.interface import plugin, SubElement, python_version
+import src.interface
 from src.plugins.editarea import editArea_load_and_save
+import src.plugins.rst_directives
 
 from docutils.core import publish_string
 
@@ -30,6 +34,14 @@ def rst_edit_setup(page, elem, uid):
     div = SubElement(elem, "div", style="width:50%; border: solid 1px green; float: left;")
     div.attrib["id"] = "html_preview"
     page.add_js_code(js_code)
+    if page.is_local:
+        src.interface.path_info['source_base_dir'] = page.url
+    else:
+        src.interface.path_info['source_base_dir'] = os.path.normpath(os.path.join(
+                        plugin['crunchy_base_dir'](), "server_root", page.url[1:]))
+    base_dir = os.path.dirname(src.interface.path_info['source_base_dir'])
+    if base_dir not in sys.path:
+        sys.path.insert(0, base_dir)
 
 def rst_edit_callback(request):
     """Handles all execution of doctests. The request object will contain
