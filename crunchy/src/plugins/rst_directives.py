@@ -9,8 +9,12 @@ import traceback
 
 from docutils.parsers import rst
 from docutils import nodes
+from docutils.parsers import rst
+from docutils.writers.html4css1 import HTMLTranslator
 
-info = {}  # initialized from calling module
+info = {} # for crst2s5
+
+from src.interface import path_info  # for Crunchy itself
 
 class crunchy(nodes.raw):
     def __init__(self, *args, **kwargs):
@@ -56,6 +60,31 @@ class GetPythonSourceDirective(rst.Directive):
             pass
         return [ getpythonsource(title=titleAttr, text=content) ]
 
+def visit_crunchy(translator, node):
+    attrDict = {}
+    for key, value in list(node.attributes.items()):
+        if value and (key is not "xml:space"):
+            attrDict[key] = value
+    translator.body.append(translator.starttag(node, 'pre', **attrDict))
+
+def depart_crunchy(translator, node):
+    translator.body.append('\n</pre>\n')
+
+def visit_getpythonsource(translator, node):
+    attrDict = {}
+    for key, value in list(node.attributes.items()):
+        if value and (key is not "xml:space"):
+            attrDict[key] = value
+    translator.body.append(translator.starttag(node, 'pre', **attrDict))
+
+def depart_getpythonsource(translator, node):
+    translator.body.append('\n</pre>\n')
+
+HTMLTranslator.visit_crunchy = visit_crunchy
+HTMLTranslator.depart_crunchy = depart_crunchy
+HTMLTranslator.visit_getpythonsource = visit_getpythonsource
+HTMLTranslator.depart_getpythonsource = depart_getpythonsource
+
 rst.directives.register_directive('crunchy', CrunchyDirective)
 rst.directives.register_directive('getpythonsource', GetPythonSourceDirective)
 
@@ -88,7 +117,11 @@ def extract_module_information(path_):
     return base, module_name, source
 
 def get_source_content(base, mod_name, source):
-    mod_dir = os.path.normpath(os.path.join(info['source_base_dir'], base))
+    try:
+        mod_dir = os.path.normpath(os.path.join(info['source_base_dir'], base))
+    except KeyError:
+        mod_dir = os.path.normpath(os.path.join(path_info['source_base_dir'], base))
+
     if mod_dir in sys.path:
         remove_from_syspath = False
     else:

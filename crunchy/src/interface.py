@@ -58,6 +58,7 @@ exams = {}  #used by pluging exam_mode.py and vlam_doctest.py
 from_comet = {} # initialized from cometIO.py
 unknown_user_name = None
 last_local_base_url = None
+path_info = {}  # see rst_directives plugin
 
 def get_base_dir():
     path = os.path.normpath(os.path.join(os.path.dirname(__file__),
