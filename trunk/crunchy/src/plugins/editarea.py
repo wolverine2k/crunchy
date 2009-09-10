@@ -21,7 +21,7 @@ def register():
     plugin['register_service']("enable_editarea", enable_editarea)
     plugin['register_http_handler']("/jquery_file_tree_all", jquery_file_tree_all)
 
-def enable_editarea(page, elem, textarea_id):  # tested
+def enable_editarea(page, elem, textarea_id, syntax="python"):  # tested
     """enables an editarea editor on a given element (textarea) of a page.
     """
     if not page.includes("editarea_included"):
@@ -36,7 +36,7 @@ def enable_editarea(page, elem, textarea_id):  # tested
         page.add_css_code(load_save_css)
     # element specific code
     page.add_js_code(editAreaLoader_js%(textarea_id,
-                                config[page.username]['editarea_language']))
+                                config[page.username]['editarea_language'], syntax))
     add_hidden_load_and_save(page, elem, textarea_id)
     return
 
@@ -233,7 +233,7 @@ allow_resize: "both",
 allow_toggle: true,
 language: "%s",
 toolbar: "new_document, save, load, |, fullscreen, |, search, go_to_line, |, undo, redo, |, select_font, |, syntax_selection, |, change_smooth_selection, highlight, reset_highlight, |, help",
-syntax: "python",
+syntax: "%s",
 syntax_selection_allow: "python,html,css,js,php,vb,xml,c,cpp,sql,basic,pas,brainfuck,perl,ruby,coldfusion,robotstxt,tsql",
 start_highlight: true,
 load_callback:"my_load_file",
