@@ -30,10 +30,6 @@ def enable_editarea(page, elem, textarea_id, syntax="python"):  # tested
         # note: crunchy (handle_default.py) needs all js files loaded to be accessible
         # from the server root; "/.." are not allowed.
         page.insert_js_file("/edit_area/edit_area_crunchy.js")
-    # first we need to make sure that the required css code is in the page:
-    if not page.includes("hidden_load_and_save"):
-        page.add_include("hidden_load_and_save")
-        page.add_css_code(load_save_css)
     # element specific code
     page.add_js_code(editAreaLoader_js%(textarea_id,
                                 config[page.username]['editarea_language'], syntax))
@@ -122,7 +118,7 @@ def jquery_file_tree_all(request):
 
 def add_save_python(page, parent, hidden_save_id, textarea_id):
     '''Inserts the widget required to browse for and save a local Python
-       file.  This is intended to be used to load a file in the editor.
+       file.  This is intended to be used to save a file from the editor.
     '''
     input_id = "input_" + hidden_save_id
     js_saved_script = """save_python_file(document.getElementById('%s').value,
@@ -242,18 +238,3 @@ display: "later",
 replace_tab_by_spaces:4,
 min_height: 150});"""
 
-# css stuff
-load_save_css = """
-   /* Load and save python forms. These are in a fixed position
-    the screen so that they can be seen even when the editor is
-    in fullscreen mode.  z-index of editarea when toggled is 9999 */
-
-.load_python{position: fixed; top: 100px; z-index:-1;
-            border: 4px solid #339; border-style: outset;
-            visibility: hidden; background-color: #66C;
-            color: white; font: 16pt; padding: 15px;}
-.save_python{position: fixed; top: 200px; z-index:-1;
-            border: 4px solid #063; border-style: outset;
-            visibility: hidden; background-color:#696;
-            color: white; font: 16pt; padding: 15px;}
-"""

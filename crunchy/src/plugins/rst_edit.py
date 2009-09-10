@@ -5,7 +5,8 @@ instant previewer of corresponding html code.
 
 import os, sys
 
-from src.interface import plugin, SubElement, python_version
+from src.interface import plugin, SubElement, python_version, translate
+_ = translate['_']
 import src.interface
 from src.plugins.editarea import editArea_load_and_save
 import src.plugins.rst_directives
@@ -24,6 +25,10 @@ def register():
 def rst_edit_setup(page, elem, uid):
     elem.tag = "div"
     elem.text = ''
+    button = SubElement(elem, "button",
+        onclick="alert('you clicked me');")
+    button.text = _("Save html")
+
     textarea = SubElement(elem, "textarea", name="rst_enter")
     textarea.attrib["id"] = uid + "_rst_edit"
     textarea.attrib["class"] = "rst_enter"
@@ -55,7 +60,6 @@ def rst_edit_callback(request):
     request.send_header('Cache-Control', 'no-cache, no-store')
     request.end_headers()
     request.wfile.write(text.encode('utf-8'))
-
 
 js_code = '''
 $(document).ready(function(){
