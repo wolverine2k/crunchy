@@ -1,6 +1,10 @@
+Version 1.1.2
+--------------
 
-- rst_edit plugin (live html previewer of processed reStructuredText)
-
+- New rst_edit plugin (live html previewer of processed reStructuredText)
+- Added informative message when user is denied viewing a page - this occurs in
+  single user mode for a number of reasons including (unfortunately)
+  if Safari is used as the default browser.
 
 Version 1.1
 ------------
