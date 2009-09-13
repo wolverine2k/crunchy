@@ -421,14 +421,16 @@ be added.:</p>
 <pre class="literal-block">
 .. getpythonsource:: a_test_file python linenumber
 </pre>
-<pre title="python linenumber" xml:space="preserve">
-'''a_test_file.py: a test file for getsource.py'''
+<pre title="python linenumber=1" xml:space="preserve">
+'''a_test_file.py: a demo file for getsource.py'''
 
-def a_function(arg):
-    '''The docstring'''
-    pass
+def print_squares(n):
+    '''Prints a table of number and their squares'''
+    for i in range(n):
+        print i, i*i
 
 class Fantastic(object):
+    '''A sample class'''
     def __init__(self):
         print(&quot;Hello&quot;)
 
@@ -441,7 +443,7 @@ class Fantastic(object):
 <h1>getpythonsource tests (2)</h1>
 <p>Now, just importing the method &quot;bye&quot;, still adding line numbers ...
 and an editor.</p>
-<pre title="editor linenumber" xml:space="preserve">
+<pre title="editor linenumber=13" xml:space="preserve">
     def bye(self):
         print(&quot;Goodbye!&quot;)
 
@@ -452,9 +454,10 @@ and an editor.</p>
 <p>Importing the function &quot;a_function&quot;, with no linenumbers but with
 an interpreter embedded.</p>
 <pre title="interpreter" xml:space="preserve">
-def a_function(arg):
-    '''The docstring'''
-    pass
+Traceback (most recent call last):
+  File &quot;/Users/andre/CrunchySVN/trunk/crunchy/src/plugins/rst_directives.py&quot;, line 155, in get_lines
+    to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
+AttributeError: 'module' object has no attribute 'a_function'
 
 </pre>
 </div>
@@ -464,10 +467,10 @@ def a_function(arg):
 instead.</p>
 <pre xml:space="preserve">
 Traceback (most recent call last):
-  File &quot;../crunchy/crst2s5.py&quot;, line 189, in get_lines
+  File &quot;/Users/andre/CrunchySVN/trunk/crunchy/src/plugins/rst_directives.py&quot;, line 155, in get_lines
     to_inspect[_obj[i]] = getattr(to_inspect[_obj[i-1]], s)
 AttributeError: 'module' object has no attribute 'does_not_exist'
-Exception
+
 </pre>
 </div>
 <div class="slide" id="to-do">
@@ -483,20 +486,14 @@ get the <a class="reference external" href="https://addons.mozilla.org/en-US/fir
 </ul>
 </li>
 <li>fix slides.js (v1.2a) for Crunchy</li>
-<li>add choice in slideshow.py for 1.1 vs 1.2</li>
 </ul>
 </div>
 <div class="slide" id="to-do-cont-d">
 <h1>To do (cont'd)</h1>
 <ul class="simple">
 <li>create pycon_dark style</li>
-<li>add special crunchy directives</li>
-<li>add to crunchy an automatic option that change user preferences so that they
-don't cause trouble, and restore them automatically<ul>
-<li>this includes a check for pycon_dark style.</li>
-</ul>
-</li>
-<li>fix url inside local css files.</li>
+<li>Note: if using a dark theme (say, with a black background), select the
+appropriate pygments theme in Crunchy's preferences.</li>
 <li>END -----</li>
 </ul>
 </div>
