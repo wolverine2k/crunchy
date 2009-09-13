@@ -303,6 +303,7 @@ background-color: #e9e9c7;
     border: solid 1px green;
     background: #F3FFF3;
     float: left;
+    margin: 10px;
 }
 .rst_enter {
     width: 48%;
