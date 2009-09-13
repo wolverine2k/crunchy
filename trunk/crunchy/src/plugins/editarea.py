@@ -43,12 +43,12 @@ def add_hidden_load_and_save(page, elem, textarea_id):  # tested
     hidden_load_id = 'hidden_load' + textarea_id
     hidden_load = SubElement(elem, 'div', id=hidden_load_id)
     hidden_load.attrib['class'] = 'load_file'
-    add_load_python(page, hidden_load, hidden_load_id, textarea_id)
+    add_load_file(page, hidden_load, hidden_load_id, textarea_id)
 
     hidden_save_id = 'hidden_save' + textarea_id
     hidden_save = SubElement(elem, 'div', id=hidden_save_id)
     hidden_save.attrib['class'] = 'save_file'
-    add_save_python(page, hidden_save, hidden_save_id, textarea_id)
+    add_save_file(page, hidden_save, hidden_save_id, textarea_id)
     return
 
 def insert_file_browser(page, elem, uid, action, title, js_script, klass):
@@ -85,12 +85,12 @@ def insert_file_browser(page, elem, uid, action, title, js_script, klass):
     file_div.attrib['class'] = "filetree_window"
     return
 
-def add_load_python(page, parent, hidden_load_id, textarea_id):
+def add_load_file(page, parent, hidden_load_id, textarea_id):
     '''Inserts the widget required to browse for and load a local Python
        file.  This is intended to be used to load a file in the editor.
     '''
     js_script = """path = file;
-                   load_python_file('%s')""" % textarea_id
+                   load_file('%s')""" % textarea_id
     insert_file_browser(page, parent, hidden_load_id, '/jquery_file_tree_all',
                  _('Select a file to open'), js_script, "load_file")
     btn = SubElement(parent, 'button',
@@ -116,12 +116,12 @@ def jquery_file_tree_all(request):
     plugin['services'].filtered_dir(request, filter_none)
     return
 
-def add_save_python(page, parent, hidden_save_id, textarea_id):
+def add_save_file(page, parent, hidden_save_id, textarea_id):
     '''Inserts the widget required to browse for and save a local Python
        file.  This is intended to be used to save a file from the editor.
     '''
     input_id = "input_" + hidden_save_id
-    js_saved_script = """save_python_file(document.getElementById('%s').value,
+    js_saved_script = """save_file(document.getElementById('%s').value,
                         '%s');""" % (input_id, textarea_id)
     SubElement(parent, "br")
     SubElement(parent, 'input', name='url', size='60', id=input_id)
@@ -149,7 +149,7 @@ obj.style.zIndex = 99999;
 obj.style.visibility = "visible";
 }
 
-function load_python_file(obj_id)
+function load_file(obj_id)
 {
     e = document.getElementById(obj_id);
     e.innerHTML = '';
@@ -190,7 +190,7 @@ function load_python_file(obj_id)
     catch (e){};
     h.send('');
 }
-function save_python_file(path, id)
+function save_file(path, id)
 {
     if (path == ''){
         alert("No file specified");
