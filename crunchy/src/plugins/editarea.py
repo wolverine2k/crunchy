@@ -42,12 +42,12 @@ def add_hidden_load_and_save(page, elem, textarea_id):  # tested
     '''
     hidden_load_id = 'hidden_load' + textarea_id
     hidden_load = SubElement(elem, 'div', id=hidden_load_id)
-    hidden_load.attrib['class'] = 'load_python'
+    hidden_load.attrib['class'] = 'load_file'
     add_load_python(page, hidden_load, hidden_load_id, textarea_id)
 
     hidden_save_id = 'hidden_save' + textarea_id
     hidden_save = SubElement(elem, 'div', id=hidden_save_id)
-    hidden_save.attrib['class'] = 'save_python'
+    hidden_save.attrib['class'] = 'save_file'
     add_save_python(page, hidden_save, hidden_save_id, textarea_id)
     return
 
@@ -92,7 +92,7 @@ def add_load_python(page, parent, hidden_load_id, textarea_id):
     js_script = """path = file;
                    load_python_file('%s')""" % textarea_id
     insert_file_browser(page, parent, hidden_load_id, '/jquery_file_tree_all',
-                 _('Select a file to open'), js_script, "load_python")
+                 _('Select a file to open'), js_script, "load_file")
     btn = SubElement(parent, 'button',
         onclick="c=getElementById('%s');c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_load_id)
     btn.text = _("Cancel")
@@ -131,7 +131,7 @@ def add_save_python(page, parent, hidden_save_id, textarea_id):
 
     js_script = """document.getElementById('%s').value=file;""" % input_id
     insert_file_browser(page, parent, hidden_save_id, '/jquery_file_tree_all',
-                 _('Select a file to save'), js_script, "save_python")
+                 _('Select a file to save'), js_script, "save_file")
     btn = SubElement(parent, 'button',
         onclick="c=getElementById('%s');c.style.visibility='hidden';c.style.zIndex=-1;"%hidden_save_id)
     btn.text = _("Cancel")
