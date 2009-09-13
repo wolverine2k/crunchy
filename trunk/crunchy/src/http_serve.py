@@ -279,7 +279,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 self.send_response(200)
                 self.end_headers()
-                self.wfile.write("You are not allowed to view this page")
+                self.wfile.write("""<html><body><h1>You are not allowed to view this page.</h1>
+<p>There might be a few reasons for this (all assumed that Crunchy is running in single user mode)
+<br/> 1) You are prevented from accessing a Crunchy session started by another user on this computer!
+<br/> 2) you are not using Firefox! ;-)
+<br /> 3) your browser does not accept cookies (at least, not on 127.0.0.1)
+- in single user mode, for security reason (see 1 above), Crunchy requires the use of cookies.
+<br /> If you are the one who started the Crunchy session and get this message, try setting a user account with
+the account manager, and restart Crunchy - this should make use of authentication (username/password) rather
+than cookies.</p>
+<h4>If you still have problems not solved by any of the above, please file a bug report.</h4></body></html>""")
                 return
 
         self.path, self.args = parse_url(self.path)
