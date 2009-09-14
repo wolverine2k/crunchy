@@ -84,7 +84,9 @@ def replace_css_import(base_url, text):
     """replace @import statements in style elements"""
     def css_import_replace(imp_match):
         '''replaces the relative path found by its absolute value'''
-        path = imp_match.group(1)
+        # sometimes the path is enclosed in quotes; this is not needed
+        # and is actually causing problems when combinining paths.
+        path = imp_match.group(1).replace('"','').replace("'","")
         return '@import url(%s/%s);' % (base_url, path)
     return css_import_re.sub(css_import_replace, text)
 
