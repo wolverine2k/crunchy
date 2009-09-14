@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome To Crunchy &mdash; Crunchy v1.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.2',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Crunchy v1.2 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to Crunchy’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Crunchy’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Crunchy v1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-crunchy">
+<h1>Welcome To Crunchy<a class="headerlink" href="#welcome-to-crunchy" title="Permalink to this headline">¶</a></h1>
+<p>New: the <a class="reference external" href="/docs/experimental/rst_edit.html">rst_edit widget</a> can
+also be found in the experimental section of the menu</p>
+<div class="section" id="what-is-needed-to-run-crunchy">
+<h2>What is needed to run Crunchy?<a class="headerlink" href="#what-is-needed-to-run-crunchy" title="Permalink to this headline">¶</a></h2>
+<p>Since you are reading this, chances are that you are already using
+Crunchy. If that is not the case, in addition to Crunchy you will also
+need:</p>
+<ul class="simple">
+<li><a class="reference external" href="www.python.org">Python</a>. I do mean Guido van Rossum&#8217;s Python,
+not Monty Python nor a real life snake. Chances are it is already
+installed on your computer; but you do need a version no older than
+version 2.4. Crunchy has been tested with Python 2.4, 2.5, 2.6, and
+3.1 !!</li>
+<li>Alternatively, you may try <a class="reference external" href="www.jython.org">Jython</a>. Crunchy has
+been tested successfully with Jython 2.5.0.</li>
+<li><a class="reference external" href="firefox.com">Firefox</a>. Crunchy may work (at least partially)
+with some other browsers, but it is currently only tested with
+Firefox.</li>
+</ul>
+</div>
+<div class="section" id="warning-mixed-behaviour-when-working-with-unicode">
+<h2>Warning: mixed behaviour when working with unicode<a class="headerlink" href="#warning-mixed-behaviour-when-working-with-unicode" title="Permalink to this headline">¶</a></h2>
+<p>Internally, Crunchy works with utf-8 encoding. This leads to a slight
+change when using Python 2.x with Crunchy for unicode strings. For
+example, when working from the terminal, on a Mac OS, the following
+happens:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;André&#39;</span>
+<span class="go">André</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;André&#39;</span>
+<span class="go">&#39;Andr\xc3\xa9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">u&#39;André&#39;</span>
+<span class="go">u&#39;Andr\xe9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">u&#39;André&#39;</span>
+<span class="go">André</span>
+</pre></div>
+</div>
+<p>However, if you use Crunchy (with Python ... not Jython), this is what
+you will see instead:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;André&#39;</span>
+<span class="go">André</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;André&#39;</span>
+<span class="go">&#39;Andr\xc3\xa9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">u&#39;André&#39;</span>   <span class="c"># This is different</span>
+<span class="go">u&#39;Andr\xc3\xa9&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">u&#39;André&#39;</span>   <span class="c"># and so is this</span>
+<span class="go">   Crunchy Error in trying to decode inside cometIO.py</span>
+<span class="go">   The likely cause is trying to print a unicode string prefixed by u</span>
+<span class="go">   as in u&quot;...&quot;. If not, please file a bug report.</span>
+<span class="go">AndrÃ©</span>
+</pre></div>
+</div>
+<p>If you use Jython with unicode strings, it seems that no matter what
+you try, a traceback results.</p>
+<p>When you are writing code from within Crunchy (not to be saved in a
+file), and using Python 2.x, just drop the u prefix for unicode
+strings and everything will work just as though you had included it
+while coding in other environments.</p>
+</div>
+<div class="section" id="new-to-crunchy">
+<h2>New to Crunchy?<a class="headerlink" href="#new-to-crunchy" title="Permalink to this headline">¶</a></h2>
+<p>If you are new to Crunchy, or have used an older version, we strongly
+suggest that you first go through the basic tutorial.</p>
+<p>You can use the Crunchy Menu at the top right to come back to this
+page or if you have administrator privileges, to quit Crunchy
+altogether.</p>
+<p>Note that, whenever you see this image: , it is because the Crunchy
+developers (or perhaps some other tutorial writer) have written some
+useful tip that you can view by clicking on them. Note that if you
+click on them a second time, the useful tip will disappear. If you
+don&#8217;t want these images, and the information they refer to, to appear
+at all, use the selector below to turn them off (except for this
+page!)
+irrelevant text
+Other images, such as may also be used in this fashion - however,
+these can not be turned off.</p>
+<p>Other user preferences can be selected <a class="reference external" href="/docs/basic_tutorial/preferences.html">via this link</a>, or via the &#8220;Preferences&#8221;
+Crunchy menu item at the top-right corner.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">Welcome To Crunchy</a><ul>
+<li><a class="reference external" href="#what-is-needed-to-run-crunchy">What is needed to run Crunchy?</a></li>
+<li><a class="reference external" href="#warning-mixed-behaviour-when-working-with-unicode">Warning: mixed behaviour when working with unicode</a></li>
+<li><a class="reference external" href="#new-to-crunchy">New to Crunchy?</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Welcome to Crunchy&#8217;s documentation!</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/intro.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Crunchy’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Crunchy v1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, André Roberge and Johannes Woolard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
