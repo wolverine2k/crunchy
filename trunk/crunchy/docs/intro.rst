@@ -27,8 +27,6 @@ need:
   Firefox.
 
 
-
-
 Warning: mixed behaviour when working with unicode
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -39,7 +37,6 @@ happens:
 
 .. sourcecode:: python
 
-
     >>> print 'André'
     André
     >>> 'André'
@@ -49,12 +46,10 @@ happens:
     >>> print u'André'
     André
 
-
 However, if you use Crunchy (with Python ... not Jython), this is what
 you will see instead:
 
 .. sourcecode:: python
-
 
     >>> print 'André'
     André
