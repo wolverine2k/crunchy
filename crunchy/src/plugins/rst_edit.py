@@ -72,7 +72,10 @@ def rst_edit_callback(request):
     request.send_response(200)
     request.send_header('Cache-Control', 'no-cache, no-store')
     request.end_headers()
-    request.wfile.write(text.encode('utf-8'))
+    try:
+        request.wfile.write(text)
+    except:
+        request.wfile.write(text.encode('utf-8'))
 
 def add_save_file(page, parent, hidden_save_id, textarea_id):
     '''Inserts the widget required to browse for and save a local Python
