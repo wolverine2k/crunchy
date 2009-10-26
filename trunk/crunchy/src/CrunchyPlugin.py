@@ -29,7 +29,7 @@ def register_http_handler(pattern, handler):
     """Register a new http handler, see http_serve.py for documentation on
     the request object passed to http handlers."""
     if DEBUG:
-        print("Registering http handler " + pattern)
+        print("Registering http handler %s" % pattern)
     if pattern is None:
         server['server'].register_default_handler(handler)
     else:
