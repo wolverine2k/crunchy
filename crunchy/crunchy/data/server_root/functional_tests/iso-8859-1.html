@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<meta content="text/html; charset=iso-8859-1"/>
+<title>iso-8859-1 test</title>
+
+	<meta title="template tests_index.html">
+</head>
+<body>
+<div id="main_title">iso-8859-1 test</div>
+<div id='content'>
+<p>This file has been encoded (with the corresponding declaration in the head) in iso-8859-1 (latin-1). Crunchy should process it correctly - and output a file using an utf-8 encoding.</p>
+<p>Using my name as a simple test of letters with accents: André Roberge</p>
+<pre title="interpreter">
+# switch to French as a default and see if the error message includes only readable characters
+crunchy.language = 'fr'
+print a  # will raise an error
+</pre>
+
+</div>
+</body>
+</html>

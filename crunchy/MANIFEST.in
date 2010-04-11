@@ -1,0 +1,2 @@
+recursive-include crunchy/data *
+recursive-include docs *
