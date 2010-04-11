@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl">
+  <binding id="moz1">
+    <implementation>
+      <constructor><![CDATA[alert('security breach moz1')]]></constructor>
+    </implementation>
+  </binding>
+  <binding id="moz2">
+    <implementation>
+      <constructor><![CDATA[alert('security breach moz2: via a "style" tag')]]></constructor>
+    </implementation>
+  </binding>
+  <binding id="moz3">
+    <implementation>
+      <constructor><![CDATA[alert('security breach moz3: via a "style" attribute')]]></constructor>
+    </implementation>
+  </binding>
+  <binding id="moz4">
+    <implementation>
+      <constructor><![CDATA[alert('security breach moz4: via a css file reference by "link"')]]></constructor>
+    </implementation>
+  </binding>
+  <binding id="moz5">
+    <implementation>
+      <constructor><![CDATA[alert('security breach moz5: via a css file referenced by another css file')]]></constructor>
+    </implementation>
+  </binding>
+</bindings>
