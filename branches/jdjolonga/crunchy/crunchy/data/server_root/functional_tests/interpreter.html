@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<title>Interpreter Tests</title>
+</head>
+<body>
+<h1>Interpreter Tests</h1>
+<p>Crunchy allows embedding a number of Python interpreters in
+a given html page. All the interpreters share a common environment,
+which means that variables defined in one interpreter do not
+have to be redefined in an other one.</p>
+<p>The following is a sample interpreter session; verify that the
+output is as expected:</p>
+<pre title="interpreter">
+>>> # simple evaluation:
+>>> 7*6
+42
+>>> # handling spaces:
+>>> 7 * 6
+42
+>>> # assignment:
+>>> x = 7*6
+>>> print(x)
+42
+>>> # tooltip; type slowly and observe the "popup tooltip"
+>>> # appearing when typing "(" and disappearing with ")": 
+>>> range(5)
+[0, 1, 2, 3, 4]
+</pre>
+
+<p>Here are a few more examples (with added linenumbers):</p>
+<pre title="interpreter linenumber">
+>>> # undefined variable
+>>> print(a)
+Traceback (most recent call last):
+  File "", line 1, in 
+NameError: name 'a' is not defined
+>>> # however, previously defined variables should be remembered
+>>> print(x)
+42
+>>> #the following should not actually exit, but instead catch the error; 
+>>> # the error message could be improved upon!
+>>> # also note that a tooltip appears when typing "."
+>>> import sys
+>>> sys.exit()
+Traceback (most recent call last):
+  File "", line 1, in 
+SystemExit
+
+</pre>
+
+<p>Here's one using an alternative, secret syntax.  Verify that it shares the same variables
+as the previous ones.</p>
+<pre title="Borg">
+>>> print(x)
+42
+</pre>
+
+<p>Here's one that should not share any variables with the previous ones
+(the prompt will be different that what is displayed).</p>
+<pre title="interpreter isolated">
+>>> print(x)
+Traceback (most recent call last):
+  File "", line 1, in 
+NameError: name 'x' is not defined
+</pre>
+
+<p>Yet another isolated interpreter, using an alternative syntax.</p>
+<pre title="Human">
+>>> print(x)
+Traceback (most recent call last):
+  File "", line 1, in
+NameError: name 'x' is not defined
+</pre>
+
+<p>A parrot interpreter (the prompt will be different that what is displayed).</p>
+<pre title="parrot">
+>>> 7*8
+>>> print(7*8)
+56
+</pre>
+
+<p>A Parrots interpreter - shares state with Borg 
+(the prompt will be different that what is displayed).</p>
+<pre title="Parrots">
+>>> 7*8
+>>> print(7*8)
+56
+>>> print(x)
+42
+</pre>
+
+<p>An IPython shell - this used to work but it was found that IPython (0.8.1) interfered
+badly with Crunchy; once a shell was loaded, other interpreters (borg and isolated) became buggy; 
+also only the last Ipython shell on a page worked properly</p>
+<pre title="ipython">
+>>> print(44)
+44
+</pre>
+<p>To see IPython in action, you can try <a href="ipython.html">this link</a>.</p>
+
+
+<h2>Bugs</h2>
+<ul>
+<li>Auto-indent (which was implemented in the "old" Crunchy) is not working; 
+it is not entirely clear if this is something that is really necessary since, without it, 
+one does not need to use backspace to end a code block.
+</li>
+</ul>
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>

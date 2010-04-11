@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<meta title="template local_template.html">
+<style>
+code {color: white; background-color: white; border: 3px solid darkblue;
+line-height: 14pt; margin: 4px; padding:px;}
+var {color: black; background-color:black; border: 3px solid orange;
+line-height: 14pt; margin: 4px; font-style: normal;}
+</style>
+<title>Creating a new Pygments style</title>
+</head>
+<body>
+<div id="main_title">Creating a new Pygments style</div>
+<div id='content'>
+<p>The purpose of this document is to facilitate the design of styles (css classes)
+to be used with Pygments [and Crunchy :-)].  For more information, see the 
+<a title="external_link" href="http://pygments.org/docs/styles/">Pygments documentation</a>
+about creating your own style.
+</p>
+
+<p>You can select the desired style here and reload the page to see its effect.</p>
+<div title="preferences style">pygments css class</div>
+
+<div class="notes">
+<h4>Could this be made better?</h4>
+<p>
+Right now, if you use this page as a helper to design new styles
+for Pygments, every time you make changes to your style file (.py),
+you have to restart Crunchy and get to this page to see the effect 
+of your changes.
+</p>
+<p>This is not very convenient, I know ...</p>
+<p>A different approach might be possible, where 
+the style file is reloaded dynamically (so you wouldn't have to
+restart Crunchy).  I plan to do this in the future.  But if
+you <b>really</b> could use it <b>right now</b>, just send
+me an email and I'll see what I can do.
+</p>
+</div>
+
+<p>We start by extracting all the possible information (token types and corresponding
+css classes) directly from the Pygments source (as included in the Crunchy distribution).</p>
+<p>
+We have also added three columns designed to show some sample text:</p>
+<ul>
+<li>The first column shows the token in the chosen style</li>
+<li>The second column shows the token "white font on white background" with a blue border</li>
+<li>The third column shows the token "black font on black background" with an orange
+border</li>
+</ul>
+<p>The purpose of the last two columns is to help identify any definition that would
+rely on some default, if they don't show up (like the Text token, which does not have
+a css class assigned by Pygments).
+However, <b>if there has been a style defined</b>, it will override the defaults 
+and <b>the sample text should be visible</b> in at least one of these two columns.
+<b>Note:</b> the second last column encloses the sample text in an html 
+<tt>&lt;code&gt;</tt> 
+element; it is thus expected to be styled
+differently from the others, and should represent a truer picture of what to expect
+when styling is normally used.
+
+</p>
+
+<br><br><br>
+<div title="get_pygments_tokens">Create automatically the table</div>
+
+<h2>Some code samples</h2>
+<p>First, a comprehensive Python code example.</p>
+
+<pre title="python">
+# some comment
+'''A multi-
+line comment
+'''
+import this
+import sys
+
+import my_module as something_else
+
+class New(object):
+    """a docstring"""
+    def __init__(self, a, b=[], c={}):
+        self.a = a
+        self.b = b  # a comment
+        d = sys.path
+        e = something_else.other
+        return True or False
+    
+    def other(self, choice):
+        """ a multi
+            line
+            docstring
+        """
+        a = """a multi
+            line
+            variable string"""
+        return None
+
+print "Hello world!"
+for i in range(42):
+   print i,
+
+@some_decorator
+def a(b, c, d):
+    if b and c or d:
+       do_this()
+    else:
+       do_that()
+
+raise KeyboardInterrupt
+
+if __name__ == "__main__":
+   n = New(1234567890)
+</pre>
+<p>Perhaps, a more realistic Python code sample, this time a console simulation.</p>
+<pre title="pycon">
+&gt;&gt;&gt; def flatten(seq):
+...     """flatten(sequence) -> list
+... 
+...     Returns a single, flat list which contains all elements retrieved
+...     from the sequence and all recursively contained sub-sequences
+...     (iterables).
+... 
+...     Examples:
+...     >>> flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+...     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+...     """
+... 
+...     result = []
+...     for elem in seq:
+...         if hasattr(elem, "__iter__") and not isinstance(elem, basestring):
+...             result.extend(flatten(elem))
+...         else:
+...             result.append(elem)
+...     return result
+...
+&gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])
+</pre>
+
+<p>Next, an html sample.</p>
+<pre title="html">
+&lt;pre title="html"&gt; 
+Some text. 
+a &amp;lt; b
+&lt;/pre&gt;
+</pre>
+
+<p> Similar example, this time with an error in it.</p>
+<pre title="html">
+&lt;pre title="html"&gt; 
+Some text. 
+a &lt; b
+&lt;/pre&gt;
+</pre>
+
+<p>And a css sample.</p>
+
+<pre title="css">
+body {
+  font-size: 14pt; /* a comment */
+  color: #abcdef;
+  border: 1px solid red;
+  }
+</pre>
+
+</div>
+</body>
+</html>

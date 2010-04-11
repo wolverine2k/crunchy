@@ -1,0 +1,46 @@
+Version 1.1.2
+--------------
+
+- New rst_edit plugin (live html previewer of processed reStructuredText)
+- Added informative message when user is denied viewing a page - this occurs in
+  single user mode for a number of reasons including (unfortunately)
+  if Safari is used as the default browser.
+
+Version 1.1
+------------
+- New program: crst2s5.py.  Based on rst2s5, creates slide shows from rst files.
+  * includes two new directives:
+        - getpythonsource (based on the inspect module)
+        - crunchy (to insert crunchy specific markup)
+        - based on S5 v1.2a (as opposed to v1.1 for rst2s5)
+- new slideshow plugin
+  * automatically detects which version (1.1 or 1.2) of S5 is used
+  (if information present)
+  * automatically save/remove/restore the custom markup user preference
+    so that they don't interfere with the slideshow
+- added possibility to use templates with reStructuredText files.
+- fixed a bug where the class(es) for <pre> included by tutorial writer
+  were dropped.
+- simplified greatly crunchy specific rst directives (issue 232)
+- fixed a bug (issue 233) where default python_tutorial using rst did not
+  result in an interpreter being inserted.
+- fixed a bug where @import and url() instructions inside css files loaded
+  locally were ignored - as they can, in general, create security holes.
+  However, it is now assumed that they are safe if loaded locally.  Tutorial
+  loaded from remote site designated as "trusted" were already working
+  properly.
+
+Version 1.0.1
+--------------
+
+- new experimental "get source" plugin.  Works with html and
+   reStructuredText files.
+- fixed bug: exception raised when attempting to load a local html file
+   (issue 230, r1345)
+- fixed bug: exception raised when attempting to close a filehandle
+    while loading a python file (issue 229, r1344)
+- fixed an incorrect button label for Loading html tutorials (r1342)
+- fixed a bug when linenumbering was used - the last line of code was
+  not numbered. (r1348)
+
+Release 1.0: starting point

@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Get Source - test</title>
+	<meta title="template tests_index.html">
+</head>
+
+<body>
+<div id="main_title">getsource plugin tests- in development</div>
+<div id="content">
+<p>
+The getsource plugin is designed for automatic inclusion of Python source code
+from a python file.  We use a small test file to show how it works, displaying
+the Very Little Added Markup (VLAM) used. <b>Note that the file that is imported
+does not reside in the same directory as this html file.</b>
+</p>
+<p>First, the complete file.</p>
+<pre title="getpythonsource ../experimental/a_test_file linenumber show_vlam">Code will go here</pre>
+<p>Next, a function.</p>
+<pre title="getpythonsource ../experimental/a_test_file.a_function linenumber show_vlam">Code will go here</pre>
+<p>An entire class.</p>
+<pre title="getpythonsource ../experimental/a_test_file.Fantastic linenumber show_vlam">Code will go here</pre>
+<p>Finally, a single method within that class.</p>
+<pre title="getpythonsource ../experimental/a_test_file.Fantastic.bye show_vlam">Code will go here</pre>
+<p>A non-existent module will raise an error.</p>
+<pre title="getpythonsource does_not_exist show_vlam">Traceback will go here</pre>
+<p>Similarly, a non-existent function, within a module, will also raise an
+error.</p>
+<pre title="getpythonsource ../experimental/a_test_file.DoNotExist show_vlam">Traceback will go here.</pre>
+<p>Finally, it might be an idea to reload this page using the browser below - so
+that it simulates loading an arbitrary tutorial.</p>
+<div title="local_html_file"> </div>
+</div>
+</body>
+</html>
