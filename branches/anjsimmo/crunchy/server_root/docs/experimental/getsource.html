@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Get the (Python) Source, Luke!</title>
+	<meta title="template local_template.html">
+</head>
+
+<body>
+<div id="main_title">Get the (Python) Source, Luke!</div>
+<div id="content">
+<p>
+The getsource plugin is designed for automatic inclusion of Python source code
+from a python file.  We use a small test file to show how it works, displaying
+the Very Little Added Markup (VLAM) used.
+</p>
+<p>First, the complete file.</p>
+<pre title="getpythonsource a_test_file linenumber show_vlam">Code will go here</pre>
+<p>Next, a function - with editor widget.</p>
+<pre title="getpythonsource a_test_file.a_function editor linenumber show_vlam">Code will go here</pre>
+<p>An entire class, with an interpreter at the ready.
+<b>If you are feeding the code to the interpreter, make sure you remove
+the blank line between the two methods/</b></p>
+<pre title="getpythonsource a_test_file.Fantastic linenumber interpreter show_vlam">Code will go here</pre>
+<p>Finally, a single method within that class.</p>
+<pre title="getpythonsource a_test_file.Fantastic.bye show_vlam">Code will go here</pre>
+</div>
+</body>
+</html>

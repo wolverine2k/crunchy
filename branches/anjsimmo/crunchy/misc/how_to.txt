@@ -1,0 +1,201 @@
+.. include:: <s5defs.txt>
+
+=================================
+crst2s5 How To
+=================================
+
+:Authors: André Roberge
+:Date:    circa september 2009
+
+This document is meant as a foolproof step by step way of using crst2s5.py
+and is written in parallel with the development of :green:`crst2s5.py`.
+
+Things may appear :tiny:`... ok, they are` more complicated than they should be
+at this point but it will get better as time goes on.
+
+.. This is an example of writing an html comment; and so is the next one:
+.. This document has been placed in the public domain.
+
+.. container:: notes
+
+   This is a sample speaker note.  This can appear in a secondary window.
+   With the defaults currently chosen for print.css, the speakers notes will
+   not appear if the presentation is printed - but they are very visible in the
+   outline view in the browser.
+
+.. container:: handout
+
+   This is a sample text included in the outline view (and would appear if
+   printed as well) but which does not  appear in either the speaker notes
+   nor on the slide.
+
+.. footer:: Use at: Pycon 2010 Atlanta - February 2010.
+
+
+Introduction
+============
+
+.. class:: handout
+
+   crst2s5 is based on Docutils_/reStructuredText_ and S5_.
+
+.. _Docutils: http://docutils.sourceforge.net/
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _S5: http://meyerweb.com/eric/tools/s5/
+
+.. container:: notes
+
+   Showing off some speaker notes: this one was entered via the
+   ``.. container:: notes`` directive...
+
+   .. class:: notes
+
+  ... Whereas this note was entered via the ``.. class:: notes`` directive.
+
+.. topic:: Installation
+
+   See the notes for details.
+
+
+   :class: handout
+
+   Prerequisites: Python and the Docutils_ package have to be
+   installed.  See the `Docutils README`__ file for installation
+   instructions.
+
+   __ http://docutils.sourceforge.net/README.html
+
+* This presentation was produced by the following command at a terminal prompt:
+
+  -python ../crunchy/crst2s5.py --theme=ui/pycon_light --theme-url=ui/pycon_light how_to.txt how_to.html
+
+  .. class:: handout
+
+  how_to.txt used normal reStructuredText.
+
+
+What's new?
+===========
+
+Compared with rst2s5, crst2s5 introduces a few changes:
+
+* Based on S5 v1.2a  (as opposed to v1.1 for rst2s5)
+  This is what allows the use of speaker notes in a separate window
+* New directive::
+
+    .. crunchy:: Very Little Added Markup (or vlam)
+* New directive::
+
+    .. getpythonsource:: path/to/file/module.object.whatever [vlam]
+
+
+getpythonsource tests (1)
+===========================
+
+The following automatically import the module a_test_file.  When the generated
+html file is viewed with Crunchy the code will be styled and line numbers will
+be added.::
+
+   .. getpythonsource:: a_test_file python linenumber
+
+.. getpythonsource:: a_test_file python linenumber
+
+
+getpythonsource tests (2)
+===========================
+
+Now, just importing the method "bye", still adding line numbers ...
+and an editor.
+
+.. getpythonsource:: a_test_file.Fantastic.bye editor linenumber
+
+getpythonsource tests (3)
+===========================
+Importing the function "a_function", with no linenumbers but with
+an interpreter embedded.
+
+.. getpythonsource:: a_test_file.a_function interpreter
+
+
+getpythonsource tests (4)
+===========================
+
+Finally, if the desired object can not be imported, a traceback is produced
+instead.
+
+.. getpythonsource:: a_test_file.does_not_exist
+
+To do
+============
+
+* Note: if you are using Firefox on a Mac to do presentations,
+  get the `Full Fullscreen`__ add-on
+
+  __ https://addons.mozilla.org/en-US/firefox/addon/1568
+
+
+* explain what to copy and where
+* explain how to use crst2s5.py
+
+* explain how to use html files produced by crst2s5.py
+
+  - by themselves
+  - with Crunchy
+
+* fix slides.js (v1.2a) for Crunchy
+
+
+
+To do (cont'd)
+===============
+
+* create pycon_dark style
+* Note: if using a dark theme (say, with a black background), select the
+  appropriate pygments theme in Crunchy's preferences.
+
+* END -----
+
+crunchy directives (1)
+===========================
+
+Just a basic Python program:
+
+.. crunchy:: python
+
+   print "Hello world!"
+
+And the Python 3 version:
+
+.. crunchy:: python3 linenumber
+
+   print("Hello world!")
+
+crunchy directives (2)
+===========================
+
+Time for including an interpreter:
+
+.. crunchy:: interpreter
+
+   print "Hello world!"
+
+
+crunchy directives (3)
+===========================
+
+This time, we include an editor:
+
+.. crunchy:: editor linenumber
+
+   print "Hello world!"
+
+crunchy directives (4)
+===========================
+
+Finally, how about some html code:
+
+.. crunchy:: html
+
+   <pre title="python">
+   print "Hello world!"
+   </pre>

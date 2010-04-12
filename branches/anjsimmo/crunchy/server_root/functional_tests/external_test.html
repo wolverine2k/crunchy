@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta content="text/html; charset=utf-8"/>
+<title>Alternate Python version</title>
+</head>
+<body>
+<h1>Crunchy External Execution Tests using different Python version</h1>
+
+<p>Suppose you have two different Python versions installed on 
+your system and you would like to try programs using version A
+while launching Crunchy using version B.  You can now do this
+using the interactive element below.  All you have to do is to specify
+the path (or 'alias') of the Python version you want to use in
+the input box and then click on a button.  For example, on my
+system, 'python' defaults to the version 2.5 whereas 'python3.0'
+launches an alpha version of Python 3.0.
+</p>
+
+
+<p>The following code will start a Python interpreter in a separate
+terminal window.
+</p>
+<pre title="alternate_python_version">
+import code
+code.interact()
+</pre>
+
+<p>Here's a second Editor box, which uses identifiers (variable name) with accents; 
+this will only work with Python 3.0+.
+</p>
+<pre title="alternate_python_version">
+pr&eacute;nom = "Andr&eacute;"
+print(pr&eacute;nom)
+input("Press any key to quit. ")   # raw_input no longer exist in 3.0
+</pre>
+
+<p><a href="index.html">Back to the test index</a></p>
+</body>
+</html>
