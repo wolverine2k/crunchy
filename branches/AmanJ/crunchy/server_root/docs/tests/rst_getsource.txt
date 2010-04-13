@@ -1,0 +1,36 @@
+========================================
+ Crunchy/reStructuredText getsource
+========================================
+
+*For this to work, you need to have a recent version of
+docutils installed.*
+
+This file is a simple reStructuredText file.  However,
+it does contain some *directives* for the getsource plugin which Crunchy can
+interpret.
+
+
+Get Source
+============
+
+The following automatically import the module a_test_file, style it, and
+adds line numbers.
+
+.. crunchy:: getpythonsource ../experimental/a_test_file linenumber
+
+Now, just importing the method "bye", still adding line numbers ...
+and an editor.
+
+.. crunchy:: getpythonsource ../experimental/a_test_file.Fantastic.bye linenumber editor
+
+Finally, importing the function "a_function", with no linenumbers but with
+an interpreter embedded.
+
+.. crunchy:: getpythonsource ../experimental/a_test_file.a_function interpreter
+
+
+Back to test menu
+=====================
+
+Please use the back button of your browser to return
+to the previous page.

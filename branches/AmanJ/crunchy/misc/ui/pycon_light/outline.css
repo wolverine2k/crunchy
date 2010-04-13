@@ -1,0 +1,36 @@
+/* don't change this unless you want the layout stuff to show up in the outline view! */
+
+.layout div, #footer *, #controlForm * {display: none;}
+#footer, #controls, #controlForm, #navLinks, #toggle {
+  display: block; visibility: visible; margin: 0; padding: 0;}
+
+/*Make the outline look a bit like slides so that it is
+  easier to compare the outline mode with the slide view mode.*/
+.slide {border: 2px solid blue; -moz-border-radius: 15px; -webkit-border-radius: 15px;
+padding-bottom: 5px; margin-bottom:20px; width:800px;}
+.slide h1 {margin-top: 0; border-bottom: 1px solid blue;}
+
+
+/* moving the toggle button so that it is close to its position in
+  slide mode - and away from the normal position of the Crunchy menu */
+html>body #toggle {position: fixed; bottom: 0; right: 0;
+  border: 1px solid; border-width: 0 0 1px 1px;
+  background: #eeeeec; color: darkblue;
+  font-weight: bold; padding:20px; font-size:20pt;
+}
+
+
+.handout {font-style:oblique; color: darkgreen; padding: 5pt;}
+
+.notes{
+background-color: #eeeeec;
+width: 450px;
+padding: 10px;
+margin-left: 50px;
+border: dashed 1pt blue;
+}
+
+.notes:before{content:"Speaker Notes:";
+   display:block;
+   color:blue;
+}
