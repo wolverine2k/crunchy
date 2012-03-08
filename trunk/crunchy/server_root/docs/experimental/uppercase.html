@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta title="template local_template.html">
+<title>uppercase</title>
+</head>
+<body>
+<div id="main_title">Uppercase</div>
+<div id='content'>
+
+<p>The <b title="uppercase">uppercase</b> plugin converts lowercase text to <b title="uppercase">uppercase</b></p>
+<p>It operates on bold related tags, viz.:
+</p>
+<code title="html">
+&lt;b&gt;&lt;/b&gt; + &lt;em&gt;&lt;/em&gt; + &lt;strong&gt&lt;/strong&gt;
+</code>
+<h3>For example</h3>
+<code title="html">
+&lt;b title="uppercase"&gt;Your Text Here&lt/b&gt;
+</code>
+<p>becomes <b title="uppercase">Your Text Here</b></p>
+<p>It will also operate on any nested tags. eg.:</p>
+<code title="html">
+&lt;strong title="uppercase"&gt;Your Text &lt;i&gt;Here&lt;/i&gt;&lt/strong&gt;
+</code>
+<p>becomes <strong title="uppercase">Your Text <i>Here</i></b></strong>
+<h3>Just for fun</h3>
+<p>I have used jQuery to make the text fade out and in at different times.</p>
+<ul>
+<li><b title="uppercase">Short</b> text fades the soonest</li>
+<li><em title="uppercase">Loooooooooooooooooong</em> text takes the longest</li>
+<li><strong title="uppercase">Only <i>the length of the <u>first</u> part</i></strong> is counted time-wise if the text is broken up by other tags</li>
+</ul>
+
+</div>
+</body>
+</html>
+

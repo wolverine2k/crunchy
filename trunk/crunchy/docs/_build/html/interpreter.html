@@ -1,0 +1,343 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>An almost typical introduction to Python &mdash; Crunchy v1.2 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.2',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Crunchy v1.2 documentation" href="index.html" />
+    <link rel="prev" title="Welcome To Crunchy" href="intro.html" /> 
+  </head>
+  <body>
+<div style="color:yellow;">Please view this document using Crunchy</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Welcome To Crunchy"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Crunchy v1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="an-almost-typical-introduction-to-python">
+<h1>An almost typical introduction to Python<a class="headerlink" href="#an-almost-typical-introduction-to-python" title="Permalink to this headline">¶</a></h1>
+<p>I will not begin this introduction to Python the standard way, like it
+is done with all other languages, by asking you to write the
+traditional</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="s">&quot;Hello World!&quot;</span>
+</pre></div>
+</div>
+<p>No, this would just be too boring and neither worthy of Python nor of
+Crunchy. Instead, I suggest that you type the following code in the
+interpreter prompt that appears just below it.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">answer</span> <span class="o">=</span> <span class="mf">211</span> <span class="o">//</span> <span class="mf">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you haven&#8217;t made any mistake, Python will respond with <a class="reference external" href="http://en.wikipedia.org/wiki/Image:Answer_to_Life.png">The
+Answer to The Ultimate Question Of Life, the Universe and Everything</a>, at least
+according to the Hitchhiker&#8217;s Guide to the Galaxy. The Python
+interpreter you just used was actually inspired by and adapted from
+some great work by Robert Brewer. You may have also noticed that the
+Python code was displayed in colour, quite unlike the boring all black
+stuff of the original html page.</p>
+<p>Impressive, isn&#8217;t it? Now try the following in this other interpreter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Yes, WE ARE THE BORG . Crunchy&#8217;s Borg interpreters all share the same
+state so that variables entered in one of them are known to all the
+other interpreters on the same page. However, if you are in search of
+a bit of individuality, you can try the same experiment again below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="different-prompt">
+<h2>Different prompt<a class="headerlink" href="#different-prompt" title="Permalink to this headline">¶</a></h2>
+<p>Notice how the prompt of the isolated interpreter ( <cite>&#8211;&gt;</cite>) is
+different from the standard Python prompt, used for the Borg
+interpreter. The single <cite>&gt;</cite> sign is meant as a reminder that this is
+an individual interpreter.</p>
+<p>Python/Crunchy gave you an error message, as it did not know the
+answer to the ultimate question. Generally, you should only see Borg
+type interpreters used in Crunchy. However, you should keep in mind
+that there are other possibilities.</p>
+<p>After seeing these amazing feats, I am convinced that you will want to
+purchase Crunchy!
+I&#8217;m not interested in your sales! I have to protect the general
+public!
+From the Monty Python Crunchy Frog sketch.
+Crunchy is not for sale: it is free software. However, it is not
+designed for the &#8220;general public&#8221;. Using a Python interpreter on a
+computer can lead to unwanted results, depending on the code that is
+being executed. [ <cite>import os:</cite> use with caution!] We can not be held
+responsible for any negative consequence of code you type in for
+Crunchy/Python to execute.</p>
+<div class="section" id="more-than-just-the-basics">
+<h3>More than just the basics<a class="headerlink" href="#more-than-just-the-basics" title="Permalink to this headline">¶</a></h3>
+<p>You can type in more than one line of code and interact with the
+interpreter in various ways. In the examples below, I have tried to
+show both what you should type in, and a preview of the response from
+Crunchy. For some of these examples you may notice that, at some
+point, a pop-up &#8220;help window&#8221; will appear at the top right. You can
+make it go away by clicking on theX or simply keep on typing until it
+goes away on its own (in most cases).</p>
+<p>First, we start with an interaction where the interpreter will be
+waiting for a response to a question.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;What is your name? &quot;</span><span class="p">)</span>  <span class="c"># Python 2.x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s">&quot;What is your name? &quot;</span><span class="p">)</span>      <span class="c"># Python 3.x</span>
+<span class="go">What is your name?</span>
+<span class="go">[Type in your name in the input box with no prompt in front]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="go">Your_name_should_appear_here</span>
+</pre></div>
+</div>
+<p>Next we show examples of loops; make sure you indent the code
+properly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">4</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">0</span>
+<span class="go">1</span>
+<span class="go">2</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>We then move to various ways to access Python&#8217;s help system.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; import sys
+&gt;&gt;&gt; help(sys)   # click on the X when you're finished reading
+&gt;&gt;&gt; sys?        # shortcut for help.
+&gt;&gt;&gt; sys.exit?</pre>
+</div>
+<p>Finally, you can view the variables defined so far (I won&#8217;t show you
+the expected output since it depends on what <em>you</em> tried before) using
+the <cite>dir()</cite> function, and remove them all, effectively starting a new
+session, using the <cite>restart()</cite> function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">restart</span><span class="p">()</span>  <span class="c"># specific to Crunchy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You now know enough to use the interpreter to learn about Python
+following a &#8220;real&#8221; Python tutorial. You could do this at this point by
+going to`the official Python tutorial
+&lt;<a class="reference external" href="http://docs.python.org/tut/tut.html">http://docs.python.org/tut/tut.html</a>&gt;`__ on the python.org site.
+However, I strongly suggest that you continue to learn about Crunchy
+by clicking on the editor link on the left. WARNING: if you click on
+the link to the official Python tutorial, you will not, in fact, be
+able to try out the Python code. This is because Crunchy does not
+allow interactions with unknown sites; it will simply style the page
+in its own way and display it. You will need to explicitly tell it
+(there are at least 3 different ways of doing this) that you consider
+the site &#8220;safe&#8221; for browsing. If you really can&#8217;t wait, just enter</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">crunchy</span><span class="o">.</span><span class="n">add_site</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># docs.python.org is the answer to the first question</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># trusted is the likely answer to the second</span>
+</pre></div>
+</div>
+<p>In general, you might want to be a bit cautious as to the value you
+choose for the security level of a remote site. However, it&#8217;s most
+likely safe to write <cite>trusted</cite> for the security level of the
+docs.python.org site.</p>
+</div>
+<div class="section" id="just-a-little-more-about-the-interpreter">
+<h3>Just a little more about the interpreter ...<a class="headerlink" href="#just-a-little-more-about-the-interpreter" title="Permalink to this headline">¶</a></h3>
+<p>Crunchy&#8217;s interpreter has a few extra features that can be very useful
+... but potentially tricky. Consider the following.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Guido van Rossum&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="go">Guido van Rossum</span>
+</pre></div>
+</div>
+<p>Instead of having only two lines of text, imagine we had 20 lines. To
+reproduce this example would require lots of typing. Using some
+advanced feature of Crunchy, you can save yourself a fair bit of
+typing. Here is how: click on the image to the right of the
+interpreter. You should see appearing below it a larger box (an html
+textarea for those interested) a button at the bottom. Clicking on
+that button feeds the code to the interpreter. Try it out!</p>
+<p>While this is a neat trick, there are a couple of caveats: Crunchy
+takes each line as though you had typed it yourself, one line at a
+time, in an interactive session.</p>
+</div>
+</div>
+<div class="section" id="caveat-1">
+<h2>Caveat #1<a class="headerlink" href="#caveat-1" title="Permalink to this headline">¶</a></h2>
+<p>Try to click on the image, uncomment the appropriate line of code and,
+if using Python 2.x, delete the next one; then click on the execute
+execute button with the following.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c">#name = raw_input(&quot;Enter your name: &quot;) # Python 2.x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">#name = input(&quot;Enter your name: &quot;)     # Python 3.x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&quot;YOUR NAME IS&quot;</span><span class="p">,</span> <span class="n">name</span>
+</pre></div>
+</div>
+<p>Now, try the next example below to see more clearly what happened:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">name</span>
+</pre></div>
+</div>
+<p>As you should see, Crunchy had taken the second line as your answer to
+the first. This is unlikely to be what you want.</p>
+<p><strong>First lesson:</strong> do not use <cite>input()</cite> or <cite>raw_input()</cite> inside a box
+obtained by clicking on the editor image next to an interpreter.</p>
+</div>
+<div class="section" id="caveat-2">
+<h2>Caveat #2<a class="headerlink" href="#caveat-2" title="Permalink to this headline">¶</a></h2>
+<p>Try again with the following example: click on the editor image and
+execute the code. You will find that the interpreter will not be able
+to handle the result and give you a number of error messages. When
+that happens, continue reading below.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&quot;&quot;&quot;flatten(sequence) -&gt; list</span>
+<span class="gp">...</span><span class="sd"></span>
+<span class="gp">... </span><span class="sd">    Returns a single, flat list which contains all elements retrieved</span>
+<span class="gp">... </span><span class="sd">    from the sequence and all recursively contained sub-sequences</span>
+<span class="gp">... </span><span class="sd">    (iterables).</span>
+<span class="gp">...</span><span class="sd"></span>
+<span class="gp">... </span><span class="sd">    Examples:</span>
+<span class="gp">... </span><span class="sd">    &gt;&gt;&gt; flatten([[[1,2,3]], [4,5], [6], 7, (8,9,10)])</span>
+<span class="gp">... </span><span class="sd">    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</span>
+<span class="gp">... </span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="s">&quot;__iter__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">elem</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">result</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">flatten</span><span class="p">([[[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">]],</span> <span class="p">[</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">],</span> <span class="p">[</span><span class="mf">6</span><span class="p">],</span> <span class="mf">7</span><span class="p">,</span> <span class="p">(</span><span class="mf">8</span><span class="p">,</span><span class="mf">9</span><span class="p">,</span><span class="mf">10</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>The problem is due to the empty line (12). Imagine that you were
+typing in the code yourself, line by line. When you enter an empty
+line, the interpreter interprets this as the end of a function
+definition (or a loop, or if statement, etc.). To avoid this problem,
+we need to have something with no empty lines; so try again, this time
+removing the empty line before executing the code.</p>
+<p><strong>Second lesson:</strong> beware of empty lines inside a box obtained by
+clicking on the editor image next to an interpreter.</p>
+<div class="section" id="advanced-stuff-mostly-for-tutorial-writers">
+<h3>Advanced stuff, mostly for tutorial writers<a class="headerlink" href="#advanced-stuff-mostly-for-tutorial-writers" title="Permalink to this headline">¶</a></h3>
+<p>In order to instruct Crunchy to insert an interpreter below a Python
+code sample, one uses the <cite>title</cite> attribute as follows:</p>
+<p><cite>&lt;pre title=&#8221;&lt;&lt;interpreter&gt;&gt; [linenumber [=starting_number]]&#8221;&gt;</cite>
+&gt; &lt;code&gt;Some Python code&lt; code&gt;
+&gt; &lt;code title=&#8221;html&#8221;&gt;&lt; pre&gt;</p>
+<p>where the square brackets indicate optional arguments, and
+<cite>&lt;&lt;interpreter&gt;&gt;</cite> can be any value taken from the following list,
+which includes some advanced options not covered in this basic
+tutorial: <cite>[interpreter, isolated, parrot, Parrots, TypeInfoConsole]</cite>;
+the standard choice should be <cite>interpreter</cite> (or the equivalent
+<cite>Borg</cite>). There is also another option, <cite>python_tutorial</cite> which only
+inserts an interpreter if there are prompts appearing in the code
+sample; otherwise, it simply styles the code. For the curious, there
+is yet another value that is undocumented - use the source...</p>
+<p>Any number of interpreter &#8220;prompts&#8221; can appear within a page; if
+<cite>interpreter</cite> has been selected, every such interpreter used <strong>on the
+same page</strong> shares the same environment; if <cite>isolated</cite> is chosen, then
+each such interpreter will have its own environment. Sharing the same
+environment means that, if you need to import a given module as you go
+through a tutorial, you only have to do it once; similarly, a variable
+defined in one such interpreter will be known to others, until the
+user clicks on a link to load a new page.</p>
+<p>Any text between the <cite>pre</cite> tags is placed before the interpreter, in a
+<cite>pre</cite> element and styled according to the user&#8217;s preferences. If the
+<cite>linenumber</cite> option is present, a line number will appear before each
+line of input code; the line numbering will start at 1 unless a
+different starting value is given.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="">An almost typical introduction to Python</a><ul>
+<li><a class="reference external" href="#different-prompt">Different prompt</a><ul>
+<li><a class="reference external" href="#more-than-just-the-basics">More than just the basics</a></li>
+<li><a class="reference external" href="#just-a-little-more-about-the-interpreter">Just a little more about the interpreter ...</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#caveat-1">Caveat #1</a></li>
+<li><a class="reference external" href="#caveat-2">Caveat #2</a><ul>
+<li><a class="reference external" href="#advanced-stuff-mostly-for-tutorial-writers">Advanced stuff, mostly for tutorial writers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="intro.html"
+                                  title="previous chapter">Welcome To Crunchy</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/interpreter.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="intro.html" title="Welcome To Crunchy"
+             >previous</a> |</li>
+        <li><a href="index.html">Crunchy v1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2009, André Roberge and Johannes Woolard.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.3.
+    </div>
+  </body>
+</html>
