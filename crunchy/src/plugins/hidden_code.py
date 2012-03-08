@@ -21,6 +21,9 @@ extracted_lines = {}
 _ = translate['_']
 
 HIDDEN_CODE_MARKER = "# hidden code"
+HIDDEN_CODE_BEGIN = "!hidden_code_begin"
+HIDDEN_CODE_END = "!hidden_code_end"
+
 
 def register():
     """The register() function is required for all plugins.
@@ -85,7 +88,7 @@ def hidden_code_widget_callback(page, elem, uid):
             page.add_js_code(hidden_code_jscode)
 
     # next, we style the code, also extracting it in a useful form ...
-    elem.attrib['title'] = "pycon"
+    elem.attrib['title'] = "py"
     complete_code, show_vlam = plugin['services'].style(page, elem, None, vlam)
     #
     _lines = complete_code.split('\n')
@@ -95,13 +98,13 @@ def hidden_code_widget_callback(page, elem, uid):
     hide = False
     for _line in _lines:
         if hide:
-            if _line.strip() == "hidden_code_end":
+            if _line.strip() == HIDDEN_CODE_END:
                 hide = False
                 extracted_lines[uid].append('\n'.join(hidden_lines))
             else:
                 hidden_lines.append(_line)
         else:
-            if _line.strip() == "hidden_code_begin":
+            if _line.strip() == HIDDEN_CODE_BEGIN:
                 hide = True
                 hidden_lines = []
                 displayed_lines.append(HIDDEN_CODE_MARKER)
