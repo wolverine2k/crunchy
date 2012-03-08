@@ -27,20 +27,9 @@ HIDDEN_CODE_END = "hidden_code_end!"
 
 def register():
     """The register() function is required for all plugins.
-       In this case, we need to register two types of 'actions':
-       1. a custom 'vlam handler' designed to tell Crunchy how to
-          interpret the special Crunchy markup.
-       2. a custom http handler to deal with "run doctest" commands,
-          issued by clicking on a button incorporated in the
-          'doctest widget';
        """
-    # 'doctest' only appears inside <pre> elements, using the notation
-    # <pre title='doctest ...'>
     plugin['register_tag_handler']("pre", "title", "hidden_code",
                                           hidden_code_widget_callback)
-    # By convention, the custom handler for "name" will be called
-    # via "/name"; for security, we add a random session id
-    # to the custom handler's name to be executed.
     plugin['register_http_handler'](
                          "/hidden_code%s" % plugin['session_random_id'],
                                        hidden_code_runner_callback)
@@ -50,12 +39,9 @@ def hidden_code_runner_callback(request):
     """Handles all execution of hidden_code samples. The request object will contain
     all the data in the AJAX message sent from the browser."""
     # note how the code to be executed is not simply the code entered by
-    # the user, and obtained as "request.data", but also includes a part
+    # the user, and obtained as "request.data", but also incorporates
+    # back the code that was hidden.
     #
-#
-    # (doctest_pycode) defined below used to automatically call the
- #
-    # correct method in the doctest module.
     if python_version >= 3:
         request.data = request.data.decode('utf-8')
     # add back code here
@@ -87,7 +73,6 @@ def hidden_code_widget_callback(page, elem, uid):
             page.add_include("hidden_code_included")
             page.add_js_code(hidden_code_jscode)
 
-    # next, we style the code, also extracting it in a useful form ...
     elem.attrib['title'] = "py"
     complete_code, show_vlam = plugin['services'].style(page, elem, None, vlam)
     #
@@ -117,22 +102,15 @@ def hidden_code_widget_callback(page, elem, uid):
 
     wrap_in_div(elem, uid, vlam, "hidden_code", show_vlam)
 
-    # call the insert_editor_subwidget service to insert an editor:
     plugin['services'].insert_editor_subwidget(page, elem, uid, complete_code)
-    #some spacing:
     SubElement(elem, "br")
-    # the actual button used for code execution:
     btn = SubElement(elem, "button")
     btn.attrib["id"] = "run_code_btn_" + uid
     btn.text = _("Run Code")
     btn.attrib["onclick"] = "exec_hidden_code('%s')" % uid
     SubElement(elem, "br")
-    # finally, an output subwidget:
     plugin['services'].insert_io_subwidget(page, elem, uid)
 
-# we need some unique javascript in the page; note how the
-# "/hidden_code" handler mentioned above appears here, together with the
-# random session id.
 hidden_code_jscode = """
 function exec_hidden_code(uid){
     try{
