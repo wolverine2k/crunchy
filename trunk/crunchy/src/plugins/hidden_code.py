@@ -22,7 +22,7 @@ _ = translate['_']
 
 HIDDEN_CODE_MARKER = "# hidden code"
 HIDDEN_CODE_BEGIN = "!hidden_code_begin"
-HIDDEN_CODE_END = "!hidden_code_end"
+HIDDEN_CODE_END = "hidden_code_end!"
 
 
 def register():
