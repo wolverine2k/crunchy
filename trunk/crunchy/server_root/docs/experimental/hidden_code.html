@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+	<title>Hide and seek</title>
+	<meta title="template local_template.html">
+</head>
+
+<body>
+<div id="main_title">Hide and seek</div>
+<div id="content">
+<p>
+The hidden_code plugin is intended to provide a tutorial writer the
+capability of hiding code in a safe way for the user.  The idea behind this is
+to be able to display only a small part of a listing (say for a game) on
+which we want the learner to focus, and perhaps invite to modify, while
+providing a much larger body of code to be executed.
+
+</p>
+<p>First test</p>
+<pre title="hidden_code linenumbers show_vlam">
+a = 2
+hidden_code_begin
+a = 3
+hidden_code_end
+print a
+hidden_code_begin
+print 42
+hidden_code_end
+</pre>
+
+</div>
+</body>
+</html>
