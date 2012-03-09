@@ -99,8 +99,15 @@ def hidden_code_widget_callback(page, elem, uid):
     complete_code = '\n'.join(displayed_lines)
 
     elem.attrib['title'] = vlam
+    elem.attrib["class"] += " hidden"
+    elem.attrib["id"] = "hidden_pre_" + uid
 
     wrap_in_div(elem, uid, vlam, "hidden_code", show_vlam)
+
+    btn = SubElement(elem, "button")
+    btn.text = _("Show/hide complete code")
+    btn.attrib["onclick"] = "$('#%s').toggle()" % ("hidden_pre_" + uid)
+
 
     plugin['services'].insert_editor_subwidget(page, elem, uid, complete_code)
     SubElement(elem, "br")
