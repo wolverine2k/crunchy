@@ -35,6 +35,7 @@ linux_terminals = (
     ('xterm', '-e'),
 )
 
+
 def register():
     """The register() function is required for all plugins.
        In this case, we need to register three types of 'actions':
@@ -50,15 +51,16 @@ def register():
     plugin['register_service']("filtered_dir", filtered_dir)
     plugin['register_http_handler']("/save_file", save_file_request_handler)
     plugin['register_http_handler']("/load_file", load_file_request_handler)
-    plugin['register_http_handler']("/save_and_run%s"%plugin['session_random_id'],
+    plugin['register_http_handler']("/save_and_run%s" % plugin['session_random_id'],
                                         save_and_run_request_handler)
-    plugin['register_http_handler']("/run_external%s"%plugin['session_random_id'],
+    plugin['register_http_handler']("/run_external%s" % plugin['session_random_id'],
                                         run_external_request_handler)
     plugin['register_http_handler']("/save_file_python_interpreter", save_file_python_interpreter_request_handler)
-    plugin['register_http_handler']("/save_and_run_python_interpreter%s"%plugin['session_random_id'],
+    plugin['register_http_handler']("/save_and_run_python_interpreter%s" % plugin['session_random_id'],
                                         save_and_run_python_interpreter_request_handler)
-    plugin['register_http_handler']("/run_external_python_interpreter%s"%plugin['session_random_id'],
+    plugin['register_http_handler']("/run_external_python_interpreter%s" % plugin['session_random_id'],
                                         run_external_python_interpreter_request_handler)
+
 
 def filtered_dir(request, afilter=None):
     '''returns the file listing from a directory,
@@ -76,10 +78,10 @@ def filtered_dir(request, afilter=None):
                 continue
             ff = os.path.join(d, f)
             if os.path.isdir(ff):
-                ul.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
+                ul.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff, f))
             else:
-                ext = os.path.splitext(f)[1][1:] # get .ext and remove dot
-                ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext,ff,f))
+                ext = os.path.splitext(f)[1][1:]  # get .ext and remove dot
+                ul.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (ext, ff, f))
         ul.append('</ul>')
     except Exception:
         ul.append('Could not load directory: %s' % sys.exc_info()[1])
@@ -89,6 +91,7 @@ def filtered_dir(request, afilter=None):
     else:
         request.wfile.write(''.join(ul).encode('utf-8'))
     return
+
 
 def insert_file_tree(page, elem, uid, action, callback, title, label):
     '''inserts a file tree object in a page.'''
@@ -105,7 +108,7 @@ def insert_file_tree(page, elem, uid, action, callback, title, label):
     root = local_browser_root  # use value specified in config.py by default
     if not os.path.exists(root):
         root = os.path.splitdrive(__file__)[0] + "/"  # use base directory
-    js_code =  """$(document).ready( function() {
+    js_code = """$(document).ready( function() {
         $('#%s').fileTree({
           root: '%s',
           script: '%s',
@@ -165,8 +168,14 @@ def save_file_request_handler(request):
             print("   Could not encode path.")
     # the following is in case "_::EOF::_" appeared in the file content
     content = '_::EOF::_'.join(info[1:])
+
+    if request.args["uid"] in config["extracted_lines"]:  # for files with hidden content: see hidden_code.py
+        request.data = content
+        content = plugin['services'].reconstitute_hidden_file(request)
+
     save_file(path, content)
     return path
+
 
 def save_and_run_request_handler(request):
     '''saves the code in a file in user specified directory and runs it
@@ -179,6 +188,7 @@ def save_and_run_request_handler(request):
         print(path)
     exec_external(path=path, username=request.crunchy_username)
 
+
 def run_external_request_handler(request):
     '''saves the code in a default location and runs it from there'''
     if DEBUG:
@@ -189,6 +199,7 @@ def run_external_request_handler(request):
     request.send_response(200)
     request.end_headers()
     exec_external(code=code, username=request.crunchy_username)
+
 
 def load_file_request_handler(request):
     ''' reads a local file - most likely a Python file that will
@@ -210,6 +221,7 @@ def load_file_request_handler(request):
     request.wfile.write(content)
     request.wfile.flush()
 
+
 def save_file(full_path, content):  # tested
     """saves a file
     """
@@ -227,6 +239,7 @@ def save_file(full_path, content):  # tested
     if DEBUG:
         print("Leaving save_file")
 
+
 def read_file(full_path):  # tested
     """reads a file
     """
@@ -242,6 +255,7 @@ def read_file(full_path):  # tested
         print("  full_path in read_file = " + full_path)
     return content
 
+
 def exec_external(code=None,  path=None, username=None):
     """execute code in an external process with default interpreter
     """
@@ -249,6 +263,7 @@ def exec_external(code=None,  path=None, username=None):
         print("Entering exec_external.")
     exec_external_python_version(code, path, alternate_version=False,
                                  username=username)
+
 
 def save_file_python_interpreter_request_handler(request):
     '''extracts the path & the file content from the request and
@@ -279,6 +294,7 @@ def save_file_python_interpreter_request_handler(request):
         config[username]['_set_alternate_python_version'](info[0])
     return path
 
+
 def save_and_run_python_interpreter_request_handler(request):
     '''saves the code in a file in user specified directory and runs it
        from there'''
@@ -288,6 +304,7 @@ def save_and_run_python_interpreter_request_handler(request):
     if DEBUG:
         print("  path = " + str(path))
     exec_external_python_version(path=path, username=request.crunchy_username)
+
 
 def run_external_python_interpreter_request_handler(request):
     '''saves the code in a default location and runs it from there'''
@@ -299,6 +316,7 @@ def run_external_python_interpreter_request_handler(request):
     request.send_response(200)
     request.end_headers()
     exec_external_python_version(code=code, username=request.crunchy_username)
+
 
 def exec_external_python_version(code=None,  path=None, alternate_version=True,
                                  write_over=True, username=None):

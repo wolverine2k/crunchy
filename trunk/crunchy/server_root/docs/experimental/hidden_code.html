@@ -31,6 +31,36 @@ print 42
 hidden_code_end!
 </pre>
 
+<p>Second test: pygame</p>
+<pre title="hidden_code_external external">
+!hidden_code_begin
+import sys, pygame
+pygame.init()
+clock = pygame.time.Clock()
+size = width, height = 320, 240
+speed = [3, 3]
+black = 0, 0, 0
+screen = pygame.display.set_mode(size)
+surf = pygame.Surface((50, 50))
+ball = pygame.draw.circle(surf, (255,0,0), (25, 25), 25, 0)
+ballrect = surf.get_rect()
+hidden_code_end!
+
+while True:
+    for event in pygame.event.get():
+       if event.type == pygame.QUIT: sys.exit()
+    ballrect = ballrect.move(speed)
+    if ballrect.left &lt; 0 or ballrect.right &gt; width:
+        speed[0] = -speed[0]
+    if ballrect.top &lt; 0 or ballrect.bottom &gt; height:
+        speed[1] = -speed[1]
+    clock.tick(30)
+    screen.fill(black)
+    screen.blit(surf, ballrect)
+    pygame.display.flip()
+</pre>
+
+
 </div>
 </body>
 </html>
